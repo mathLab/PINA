@@ -1,6 +1,6 @@
 from mpmath import chebyt, chop, taylor
 
-from .problem import Problem
+from .problem import AbstractProblem
 import torch
 import torch.nn as nn
 import numpy as np
