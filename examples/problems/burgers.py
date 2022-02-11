@@ -15,7 +15,8 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
 
     def burger_equation(input_, output_):
         grad_u = grad(output_['u'], input_)
-        grad_x, grad_t = grad(output_['u'], input_).T
+        grad_x = grad_u['x']
+        grad_t = grad_u['t']
         gradgrad_u_x = grad(grad_u['x'], input_)
         return (
             grad_u['t'] + output_['u']*grad_u['x'] -

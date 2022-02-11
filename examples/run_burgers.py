@@ -37,7 +37,7 @@ if __name__ == "__main__":
         output_variables=burgers_problem.output_variables,
         input_variables=burgers_problem.input_variables,
         func=Softplus,
-        extra_features=feat
+        extra_features=feat,
     )
 
     pinn = PINN(

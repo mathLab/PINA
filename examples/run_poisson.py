@@ -1,17 +1,14 @@
+import argparse
 import sys
 import numpy as np
 import torch
-import argparse
-from pina import PINN
-from pina.ppinn import ParametricPINN as pPINN
-from pina.label_tensor import LabelTensor
 from torch.nn import ReLU, Tanh, Softplus
-from problems.poisson2D import Poisson2D
-from pina.deep_feed_forward import DeepFeedForward
 
+from pina import PINN, LabelTensor, Plotter
+from pina.model import FeedForward
 from pina.adaptive_functions import AdaptiveSin, AdaptiveCos, AdaptiveTanh
+from problems.poisson import Poisson
 
-from pina import Plotter
 
 class myFeature(torch.nn.Module):
     """
@@ -36,8 +33,8 @@ if __name__ == "__main__":
 
     feat = [myFeature()] if args.features else []
 
-    poisson_problem = Poisson2D()
-    model = DeepFeedForward(
+    poisson_problem = Poisson()
+    model = FeedForward(
         layers=[10, 10],
         output_variables=poisson_problem.output_variables,
         input_variables=poisson_problem.input_variables,
