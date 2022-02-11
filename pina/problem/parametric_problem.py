@@ -3,9 +3,9 @@ from abc import abstractmethod
 from .abstract_problem import AbstractProblem
 
 
-class TimeDependentProblem(AbstractProblem):
+class ParametricProblem(AbstractProblem):
 
     @property
     @abstractmethod
-    def temporal_variable(self):
+    def parameters(self):
         pass

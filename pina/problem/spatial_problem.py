@@ -3,9 +3,8 @@ from abc import abstractmethod
 from .abstract_problem import AbstractProblem
 
 
-class TimeDependentProblem(AbstractProblem):
+class SpatialProblem(AbstractProblem):
 
-    @property
     @abstractmethod
-    def temporal_variable(self):
+    def spatial_variables(self):
         pass

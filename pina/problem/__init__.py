@@ -1,4 +1,11 @@
+__all__ = [
+    'AbstractProblem',
+    'SpatialProblem',
+    'TimeDependentProblem',
+    'ParametricProblem',
+]
+
 from .abstract_problem import AbstractProblem
-from .problem2d import Problem2D
-from .problem1d import Problem1D
+from .spatial_problem import SpatialProblem
 from .timedep_problem import TimeDependentProblem
+from .parametric_problem import ParametricProblem

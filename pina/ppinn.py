@@ -1,28 +1,16 @@
-from mpmath import chebyt, chop, taylor
+import torch
+import numpy as np
 
 from .problem import AbstractProblem
-import torch
-import torch.nn as nn
-import numpy as np
-from .cube import Cube
-from .deep_feed_forward import DeepFeedForward
-from pina.label_tensor import LabelTensor
-from pina.pinn import PINN
-torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
+from . import PINN, LabelTensor
+torch.pi = torch.acos(torch.zeros(1)).item() * 2  # 3.1415927410125732
+
 
 class ParametricPINN(PINN):
 
-    def __init__(self,
-            problem, 
-            model, 
-            optimizer=torch.optim.Adam,
-            lr=0.001, 
-            regularizer=0.00001, 
-            data_weight=1., 
-            dtype=torch.float64, 
-            device='cpu',
-            lr_accelerate=None, 
-            error_norm='mse'):
+    def __init__(self, problem, model, optimizer=torch.optim.Adam, lr=0.001,
+                 regularizer=0.00001, data_weight=1., dtype=torch.float64,
+                 device='cpu', lr_accelerate=None, error_norm='mse'):
         '''
         :param Problem problem: the formualation of the problem.
         :param dict architecture: a dictionary containing the information to
@@ -40,7 +28,7 @@ class ParametricPINN(PINN):
             default is `torch.float64`.
         :param float lr_accelete: the coefficient that controls the learning
             rate increase, such that, for all the epoches in which the loss is
-            decreasing, the learning_rate is update using 
+            decreasing, the learning_rate is update using
                 $learning_rate = learning_rate * lr_accelerate$.
             When the loss stops to decrease, the learning rate is set to the
             initial value [TODO test parameters]
@@ -49,7 +37,7 @@ class ParametricPINN(PINN):
 
         self.problem = problem
 
-        
+
         # self._architecture = architecture if architecture else dict()
         # self._architecture['input_dimension'] = self.problem.domain_bound.shape[0]
         # self._architecture['output_dimension'] = len(self.problem.variables)
@@ -77,7 +65,7 @@ class ParametricPINN(PINN):
         self.trained_epoch = 0
         self.optimizer = optimizer(
             self.model.parameters(), lr=lr, weight_decay=regularizer)
-        
+
         self.data_weight = data_weight
 
     @property
@@ -86,7 +74,7 @@ class ParametricPINN(PINN):
 
     @problem.setter
     def problem(self, problem):
-        if not isinstance(problem, Problem):
+        if not isinstance(problem, AbstractProblem):
             raise TypeError
         self._problem = problem
 
@@ -103,124 +91,31 @@ class ParametricPINN(PINN):
     def get_phys_residuals(self):
         """
         """
-        
+
         residuals = []
         for equation in self.problem.equation:
             residuals.append(equation(self.phys_pts, self.model(self.phys_pts)))
         return residuals
 
 
-    def _compute_norm(self, vec):
-        """
-        Compute the norm of the `vec` one-dimensional tensor based on the
-        `self.error_norm` attribute. 
-
-        .. todo: complete
-
-        :param vec torch.tensor: the tensor
-        """
-        if isinstance(self.error_norm, int):
-            return torch.sum(torch.abs(vec**self.error_norm))**(1./self.error_norm)
-        elif self.error_norm == 'mse':
-            return torch.mean(vec**2)
-        elif self.error_norm == 'me':
-            return torch.mean(torch.abs(vec))
-        else:
-            raise RuntimeError
-
-    def save_state(self, filename):
-
-        checkpoint = {
-                'epoch': self.trained_epoch,
-                'model_state': self.model.state_dict(),
-                'optimizer_state' : self.optimizer.state_dict(),
-                'optimizer_class' : self.optimizer.__class__,
-        }
-
-        # TODO save also architecture param?
-        #if isinstance(self.model, DeepFeedForward):
-        #    checkpoint['model_class'] = self.model.__class__
-        #    checkpoint['model_structure'] = {
-        #    }
-        torch.save(checkpoint, filename)
-
-    def load_state(self, filename):
-
-        checkpoint = torch.load(filename)
-        self.model.load_state_dict(checkpoint['model_state'])
-
-        self.optimizer = checkpoint['optimizer_class'](self.model.parameters())
-        self.optimizer.load_state_dict(checkpoint['optimizer_state'])
-
-        self.trained_epoch = checkpoint['epoch']
-        return self
-
-
-    def span_pts(self, n, mode='grid', locations='all'):
-        '''
-         
-        '''
-
-        if locations == 'all':
-            locations = [condition for condition in self.problem.conditions]
-
-
-        for location in locations:
-            manifold, func = self.problem.conditions[location].values()
-            if torch.is_tensor(manifold):
-                pts = manifold
-            else:                
-                pts = manifold.discretize(n, mode)
-
-            pts = torch.from_numpy(pts)
-
-            self.input_pts[location] = LabelTensor(pts, self.problem.input_variables)
-            self.input_pts[location].tensor.to(dtype=self.dtype, device=self.device)
-            self.input_pts[location].tensor.requires_grad_(True)
-            self.input_pts[location].tensor.retain_grad()
-
 
     def train(self, stop=100, frequency_print=2, trial=None):
 
         epoch = 0
-
-        ## TODO for elliptic
-        # parameters = torch.cat(torch.linspace(
-        #     self.problem.parameter_domain[0, 0],
-        #     self.problem.parameter_domain[0, 1],
-        #     5)
-
-        ## for param laplacian
-        #parameters = torch.rand(50, 2)*2-1
-        parameters = torch.from_numpy(Cube([[-1, 1], [-1, 1]]).discretize(5, 'grid'))
-        # alpha_p = torch.logspace(start=-2, end=0, steps=10)
-        # mu_p = torch.linspace(0.5, 3, 5)
-        # g1_, g2_ = torch.meshgrid(alpha_p, mu_p)
-        # parameters = torch.cat([g2_.reshape(-1, 1), g1_.reshape(-1, 1)], axis=1)
-        print(parameters)
 
         while True:
 
             losses = []
 
             for condition_name in self.problem.conditions:
-
+                condition = self.problem.conditions[condition_name]
                 pts = self.input_pts[condition_name]
-                pts = torch.cat([
-                    pts.tensor.repeat_interleave(parameters.shape[0], dim=0),
-                    torch.tile(parameters, (pts.tensor.shape[0], 1))
-                ], axis=1)
-                pts = LabelTensor(pts, self.problem.input_variables + self.problem.parameters)
+
                 predicted = self.model(pts.tensor)
                 #predicted = self.model(pts)
 
-                if isinstance(self.problem.conditions[condition_name]['func'], list):
-                    for func in self.problem.conditions[condition_name]['func']:
-                        residuals = func(pts, None, predicted)
-                        losses.append(self._compute_norm(residuals))
-                else:
-                    residuals = self.problem.conditions[condition_name]['func'](pts, None, predicted)
-                    losses.append(self._compute_norm(residuals))
+                residuals = condition.function(pts, predicted)
+                losses.append(self._compute_norm(residuals))
             self.optimizer.zero_grad()
             sum(losses).backward()
             self.optimizer.step()
@@ -268,15 +163,15 @@ class ParametricPINN(PINN):
 
             if trial:
                 import optuna
-                rial.report(loss[0].item()+loss[1].item(), epoch)
+                trial.report(loss[0].item()+loss[1].item(), epoch)
                 if trial.should_prune():
                     raise optuna.exceptions.TrialPruned()
 
             if isinstance(stop, int):
-                if epoch == stop: 
+                if epoch == stop:
                     break
             elif isinstance(stop, float):
-                if loss[0].item() + loss[1].item() < stop: 
+                if loss[0].item() + loss[1].item() < stop:
                     break
 
             if epoch % frequency_print == 0:
@@ -289,7 +184,7 @@ class ParametricPINN(PINN):
 
 
     def error(self, dtype='l2', res=100):
-        
+
         import numpy as np
         if hasattr(self.problem, 'truth_solution') and self.problem.truth_solution is not None:
             pts_container = []
@@ -305,8 +200,8 @@ class ParametricPINN(PINN):
             unrolled_pts = torch.tensor([t.flatten() for t in grids_container]).T.to(dtype=self.dtype, device=self.device)
             Z_pred = self.model(unrolled_pts)
             Z_pred = Z_pred.detach().numpy().reshape(grids_container[0].shape)
-            
-            if dtype == 'l2': 
+
+            if dtype == 'l2':
                 return np.linalg.norm(Z_pred - Z_true)/np.linalg.norm(Z_true)
             else:
                 # TODO H1
@@ -339,7 +234,7 @@ class ParametricPINN(PINN):
 
             for i, output in enumerate(Z_pred.tensor.T, start=1):
                 output = output.detach().numpy().reshape(grids_container[0].shape)
-                plt.subplot(1, n, i) 
+                plt.subplot(1, n, i)
                 plt.contourf(*grids_container, output)
                 plt.colorbar()
 
@@ -354,14 +249,14 @@ class ParametricPINN(PINN):
             import matplotlib
             matplotlib.use('GTK3Agg')
             import matplotlib.pyplot as plt
-            
+
             if hasattr(self.problem, 'truth_solution') and self.problem.truth_solution is not None:
                 n_plot = 2
             elif hasattr(self.problem, 'data_solution') and self.problem.data_solution is not None:
                 n_plot = 2
             else:
                 n_plot = 1
-            
+
             fig, axs = plt.subplots(nrows=1, ncols=n_plot, figsize=(n_plot*6,4))
             if not isinstance(axs, np.ndarray): axs = [axs]
 
@@ -369,14 +264,14 @@ class ParametricPINN(PINN):
                 grids_container = self.problem.data_solution['grid']
                 Z_true = self.problem.data_solution['grid_solution']
             elif hasattr(self.problem, 'truth_solution') and self.problem.truth_solution is not None:
-                
+
                 pts_container = []
                 for mn, mx in self.problem.domain_bound:
                     pts_container.append(np.linspace(mn, mx, res))
 
                 grids_container = np.meshgrid(*pts_container)
                 Z_true = self.problem.truth_solution(*grids_container)
-                
+
             pts_container = []
             for mn, mx in self.problem.domain_bound:
                 pts_container.append(np.linspace(mn, mx, res))
@@ -396,38 +291,38 @@ class ParametricPINN(PINN):
             set_pred = axs[0].contourf(*grids_container, Z_pred)
             axs[0].set_title('PINN [trained epoch = {}]'.format(self.trained_epoch) + " " + variable) #TODO add info about parameter in the title
             fig.colorbar(set_pred, ax=axs[0])
-        
+
             if n_plot == 2:
-                
+
                 set_true = axs[1].contourf(*grids_container, Z_true)
-                
+
                 axs[1].set_title('Truth solution')
                 fig.colorbar(set_true, ax=axs[1])
-            
+
             if filename is None:
                     plt.show()
             else:
                     fig.savefig(filename + " " + variable)
-    
+
     def plot_error(self, res, filename=None):
         import matplotlib
         matplotlib.use('GTK3Agg')
         import matplotlib.pyplot as plt
-        
-        
+
+
         fig, axs = plt.subplots(nrows=1, ncols=1, figsize=(6,4))
         if not isinstance(axs, np.ndarray): axs = [axs]
 
         if hasattr(self.problem, 'data_solution') and self.problem.data_solution is not None:
             grids_container = self.problem.data_solution['grid']
             Z_true = self.problem.data_solution['grid_solution']
-        elif hasattr(self.problem, 'truth_solution') and self.problem.truth_solution is not None:    
+        elif hasattr(self.problem, 'truth_solution') and self.problem.truth_solution is not None:
             pts_container = []
             for mn, mx in self.problem.domain_bound:
                 pts_container.append(np.linspace(mn, mx, res))
 
             grids_container = np.meshgrid(*pts_container)
-            Z_true = self.problem.truth_solution(*grids_container)    
+            Z_true = self.problem.truth_solution(*grids_container)
         try:
             unrolled_pts = torch.tensor([t.flatten() for t in grids_container]).T.to(dtype=self.type)
 
@@ -449,7 +344,7 @@ class ParametricPINN(PINN):
 '''
 print(self.pred_loss.item(),loss.item(), self.old_loss.item())
 if self.accelerate is not None:
-    if self.pred_loss > loss and loss >= self.old_loss: 
+    if self.pred_loss > loss and loss >= self.old_loss:
         self.current_lr = self.original_lr
         #print('restart')
     elif (loss-self.pred_loss).item() < 0.1:
@@ -459,7 +354,7 @@ if self.accelerate is not None:
         self.current_lr -= .5*self.current_lr
         #print(self.current_lr)
         #self.current_lr = min(loss.item()*3, 0.02)
-        
+
     for g in self.optimizer.param_groups:
-        g['lr'] = self.current_lr 
+        g['lr'] = self.current_lr
 '''
