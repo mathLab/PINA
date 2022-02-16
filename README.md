@@ -32,13 +32,13 @@
 * [Dependencies and installation](#dependencies-and-installation)
 	* [Installing via PIP](#installing-via-pip)
 	* [Installing from source](#installing-from-source)
-* [Documentation](#documentation)
-* [Testing](#testing)
+<!-- * [Documentation](#documentation) -->
+<!-- * [Testing](#testing) -->
 * [Examples and Tutorials](#examples-and-tutorials)
-* [Awards](#awards)
+<!-- * [Awards](#awards) -->
 * [How to cite](#how-to-cite)
 	* [References](#references)
-	* [Recent works with PyDMD](#recent-works-with-pydmd)
+	<!-- * [Recent works with PyDMD](#recent-works-with-pydmd) -->
 * [Authors and contributors](#authors-and-contributors)
 * [How to contribute](#how-to-contribute)
 	* [Submitting a patch](#submitting-a-patch)
@@ -103,7 +103,10 @@ The directory `Examples` contains some examples showing Poisson and Burgers prob
 ### References
 To implement the package we follow these works:
 
-* Kutz, Brunton, Brunton, Proctor. *Dynamic Mode Decomposition: Data-Driven Modeling of Complex Systems*. SIAM Other Titles in Applied Mathematics, 2016. [[DOI](https://doi.org/10.1137/1.9781611974508)] [[bibitem](readme/Kutz2016_1.bib)].
+* Raissi, Maziar, Paris Perdikaris, and George E. Karniadakis.
+  *Physics-informed neural networks: A deep learning framework for solving
+  forward and inverse problems involving nonlinear partial differential
+  equations.* Journal of Computational Physics 378 (2019): 686-707.
 
 
 ## Authors and contributors
