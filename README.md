@@ -29,15 +29,15 @@
 
 ## Table of contents
 * [Description](#description)
+     * [Problem definition](#problem-definition)
+     * [Problem solution](#problem-solution)
 * [Dependencies and installation](#dependencies-and-installation)
 	* [Installing via PIP](#installing-via-pip)
 	* [Installing from source](#installing-from-source)
 <!-- * [Documentation](#documentation) -->
 <!-- * [Testing](#testing) -->
 * [Examples and Tutorials](#examples-and-tutorials)
-<!-- * [Awards](#awards) -->
-* [How to cite](#how-to-cite)
-	* [References](#references)
+* [References](#references)
 	<!-- * [Recent works with PyDMD](#recent-works-with-pydmd) -->
 * [Authors and contributors](#authors-and-contributors)
 * [How to contribute](#how-to-contribute)
@@ -45,10 +45,65 @@
 * [License](#license)
 
 ## Description
-**PINA** is a Python package providing an easy interface to deal with
-*physics-informed neural networks* (PINN) for the approximation of (differential,
-nonlinear, ...) functions. Based on Pytorch, PINA offers a simple and intuitive
-way to formalize a specific problem and solve it using PINN.
+**PINA** is a Python package providing an easy interface to deal with *physics-informed neural networks* (PINN) for the approximation of (differential, nonlinear, ...) functions. Based on Pytorch, PINA offers a simple and intuitive way to formalize a specific problem and solve it using PINN.
+
+#### Physics-informed neural network
+PINN is a novel approach that involves neural networks to solve supervised learning tasks while respecting any given law of physics described by general nonlinear differential equations. Proposed in *"Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations"*, such framework aims to solve problems in a continuous and nonlinear settings.
+
+#### Problem definition
+First step is formalization of the problem in the PINA framework. We take as example here a simple Poisson problem, but PINA is already able to deal with **multi-dimensional**, **parametric**, **time-dependent** problems.
+Consider:
+<p align="center">
+  <img alt="Poisson approximation" src="readme/poisson_problem.png" width="50%" />
+</p>
+where *D* is a square domain, *Gamma*s are the boundaries and *u* the unknown field. The translation in PINA code becomes a new class containing all the information about the domain, about the `conditions` and nothing more:
+
+```python
+class Poisson(SpatialProblem):
+	spatial_variables = ['x', 'y']
+	output_variables = ['u']
+	domain = Span({'x': [0, 1], 'y': [0, 1]})
+
+	def laplace_equation(input_, output_):
+		force_term = (torch.sin(input_['x']*torch.pi) *
+		              torch.sin(input_['y']*torch.pi))
+		return nabla(output_['u'], input_).flatten() - force_term
+
+	def nil_dirichlet(input_, output_):
+		value = 0.0
+		return output_['u'] - value
+
+	conditions = {
+		'gamma1': Condition(Span({'x': [-1, 1], 'y':  1}), nil_dirichlet),
+		'gamma2': Condition(Span({'x': [-1, 1], 'y': -1}), nil_dirichlet),
+		'gamma3': Condition(Span({'x':  1, 'y': [-1, 1]}), nil_dirichlet),
+		'gamma4': Condition(Span({'x': -1, 'y': [-1, 1]}), nil_dirichlet),
+		'D': Condition(Span({'x': [-1, 1], 'y': [-1, 1]}), laplace_equation),
+	}
+```
+
+#### Problem solution
+After defining it, we want of course to solve such a problem. The only things we need is a `model`, in this case a feed forward network, and some samples of the domain and boundaries, here using a Cartesian grid. In these points we are going to evaluate the residuals, which is nothing but the loss of the network.
+
+```python
+poisson_problem = Poisson()
+
+model = FeedForward(layers=[10, 10],
+                    output_variables=poisson_problem.output_variables,
+                    input_variables=poisson_problem.input_variables)
+
+pinn = PINN(poisson_problem, model, lr=0.003, regularizer=1e-8)
+pinn.span_pts(20, 'grid', ['D'])
+pinn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+pinn.train(1000, 100)
+
+plotter = Plotter()
+plotter.plot(pinn)
+```
+After the training we can infer our model, save it or just plot the PINN approximation. Below the graphical representation of the PINN approximation, the analytical solution of the problem and the absolute error, from left to right.
+<p align="center">
+  <img alt="Poisson approximation" src="readme/poisson_plot.png" width="100%" />
+</p>
 
 
 ## Dependencies and installation
