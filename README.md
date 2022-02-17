@@ -172,7 +172,7 @@ To implement the package we follow these works:
 
 under the supervision of [Prof. Gianluigi Rozza](mailto:gianluigi.rozza@sissa.it).
 
-Contact us by email for further information or questions about **PyDMD**, or suggest pull requests. Contributions improving either the code or the documentation are welcome!
+Contact us by email for further information or questions about **PINA**, or suggest pull requests. Contributions improving either the code or the documentation are welcome!
 
 
 ## How to contribute
