@@ -55,13 +55,10 @@ PINN is a novel approach that involves neural networks to solve supervised learn
 #### Problem definition
 First step is formalization of the problem in the PINA framework. We take as example here a simple Poisson problem, but PINA is already able to deal with **multi-dimensional**, **parametric**, **time-dependent** problems.
 Consider:
-$$
-\begin{cases} 
-\nabla u = \sin(\pi x)  \sin(\pi y) & \quad\text{in}\, D,\\
-u = 0 &\quad\text{on}\, \Gamma_1 \cup\Gamma_2 \cup\Gamma_3 \cup\Gamma_4,  \\
-\end{cases}
-$$
-where $D= [0, 1]^2$ is a square domain, $\Gamma_1 \cup\Gamma_2 \cup\Gamma_3 \cup\Gamma_4$ are the boundaries and $u$ the unknown field. The translation in PINA code becomes a new class containing all the information about the domain, about the `conditions` and nothing more:
+<p align="center">
+  <img alt="Poisson approximation" src="readme/poisson_problem.png" width="80%" />
+</p>
+where *D* is a square domain, *Gamma*s are the boundaries and *u* the unknown field. The translation in PINA code becomes a new class containing all the information about the domain, about the `conditions` and nothing more:
 ```python
 class Poisson(SpatialProblem):
 	spatial_variables = ['x', 'y']
@@ -104,6 +101,9 @@ plotter = Plotter()
 plotter.plot(pinn)
 ```
 After the training we can infer our model, save it or just plot the PINN approximation.
+<p align="center">
+  <img alt="Poisson approximation" src="readme/poisson_plot.png" width="80%" />
+</p>
 
 
 ## Dependencies and installation
