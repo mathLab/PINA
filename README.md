@@ -37,9 +37,7 @@
 <!-- * [Documentation](#documentation) -->
 <!-- * [Testing](#testing) -->
 * [Examples and Tutorials](#examples-and-tutorials)
-<!-- * [Awards](#awards) -->
-* [How to cite](#how-to-cite)
-	* [References](#references)
+* [References](#references)
 	<!-- * [Recent works with PyDMD](#recent-works-with-pydmd) -->
 * [Authors and contributors](#authors-and-contributors)
 * [How to contribute](#how-to-contribute)
@@ -56,9 +54,10 @@ PINN is a novel approach that involves neural networks to solve supervised learn
 First step is formalization of the problem in the PINA framework. We take as example here a simple Poisson problem, but PINA is already able to deal with **multi-dimensional**, **parametric**, **time-dependent** problems.
 Consider:
 <p align="center">
-  <img alt="Poisson approximation" src="readme/poisson_problem.png" width="80%" />
+  <img alt="Poisson approximation" src="readme/poisson_problem.png" width="50%" />
 </p>
 where *D* is a square domain, *Gamma*s are the boundaries and *u* the unknown field. The translation in PINA code becomes a new class containing all the information about the domain, about the `conditions` and nothing more:
+
 ```python
 class Poisson(SpatialProblem):
 	spatial_variables = ['x', 'y']
@@ -85,6 +84,7 @@ class Poisson(SpatialProblem):
 
 #### Problem solution
 After defining it, we want of course to solve such a problem. The only things we need is a `model`, in this case a feed forward network, and some samples of the domain and boundaries, here using a Cartesian grid. In these points we are going to evaluate the residuals, which is nothing but the loss of the network.
+
 ```python
 poisson_problem = Poisson()
 
@@ -100,9 +100,9 @@ pinn.train(1000, 100)
 plotter = Plotter()
 plotter.plot(pinn)
 ```
-After the training we can infer our model, save it or just plot the PINN approximation.
+After the training we can infer our model, save it or just plot the PINN approximation. Below the graphical representation of the PINN approximation, the analytical solution of the problem and the absolute error, from left to right.
 <p align="center">
-  <img alt="Poisson approximation" src="readme/poisson_plot.png" width="80%" />
+  <img alt="Poisson approximation" src="readme/poisson_plot.png" width="100%" />
 </p>
 
 
