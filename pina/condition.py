@@ -15,6 +15,9 @@ class Condition:
             elif isinstance(args[0], Location) and callable(args[1]):
                 self.location = args[0]
                 self.function = args[1]
+            elif isinstance(args[0], Location) and isinstance(args[1], list):
+                self.location = args[0]
+                self.function = args[1]
             else:
                 raise ValueError
 

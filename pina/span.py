@@ -37,6 +37,7 @@ class Span(Location):
                 for _ in range(bounds.shape[0])])
             grids = np.meshgrid(*pts)
             pts = np.hstack([grid.reshape(-1, 1) for grid in grids])
+            print(pts)
         elif mode == 'lh' or mode == 'latin':
             from scipy.stats import qmc
             sampler = qmc.LatinHypercube(d=bounds.shape[0])
