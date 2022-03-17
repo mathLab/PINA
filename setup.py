@@ -5,7 +5,8 @@ with open("pina/meta.py") as fp:
     exec(fp.read(), meta)
 
 # Package meta-data.
-NAME = meta['__title__']
+IMPORTNAME = meta['__title__']
+PIPNAME = meta['__packagename__']
 DESCRIPTION = 'Physic Informed Neural networks for Advance modeling.'
 URL = 'https://github.com/mathLab/PINA'
 MAIL = meta['__mail__']
@@ -14,7 +15,7 @@ VERSION = meta['__version__']
 KEYWORDS = 'physics-informed neural-network'
 
 REQUIRED = [
-    'future', 'numpy', 'matplotlib', 'torch'  
+    'future', 'numpy', 'matplotlib', 'torch'
 ]
 
 EXTRAS = {
@@ -27,7 +28,7 @@ LDESCRIPTION = (
 )
 
 setup(
-    name=NAME,
+    name=PIPNAME,
     version=VERSION,
     description=DESCRIPTION,
     long_description=LDESCRIPTION,

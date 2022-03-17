@@ -18,3 +18,5 @@ __version__ = "0.0.1"
 __mail__ = 'demo.nicola@gmail.com, '  # TODO
 __maintainer__ = __author__
 __status__ = "Alpha"
+__packagename__ = "pina-mathlab"
+
