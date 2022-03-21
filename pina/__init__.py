@@ -7,6 +7,7 @@ __all__ = [
     'Span'
 ]
 
+from .meta import *
 from .label_tensor import LabelTensor
 from .pinn import PINN
 #from .ppinn import ParametricPINN
