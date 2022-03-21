@@ -125,17 +125,17 @@ class Plotter:
             pts.tensor[:, 1].reshape(res, res),
         ]
         predicted_output = obj.model(pts)
-        predicted_output = predicted_output['ux']
+        predicted_output = predicted_output['u']
 
         if hasattr(obj.problem, 'truth_solution'):
             truth_output = obj.problem.truth_solution(*pts.tensor.T).float()
             fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
 
-            cb = getattr(axes[0], method)(*grids_container, predicted_output.tensor.reshape(res, res).detach())
+            cb = getattr(axes[0], method)(*grids_container, predicted_output.reshape(res, res).detach())
             fig.colorbar(cb, ax=axes[0])
             cb = getattr(axes[1], method)(*grids_container, truth_output.reshape(res, res).detach())
             fig.colorbar(cb, ax=axes[1])
-            cb = getattr(axes[2], method)(*grids_container, (truth_output-predicted_output.tensor.float().flatten()).detach().reshape(res, res))
+            cb = getattr(axes[2], method)(*grids_container, (truth_output-predicted_output.float().flatten()).detach().reshape(res, res))
             fig.colorbar(cb, ax=axes[2])
         else:
             fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 6))
@@ -147,7 +147,7 @@ class Plotter:
             plt.savefig(filename)
         else:
             plt.show()
-    
+
 
 
     def plot_samples(self, obj):
