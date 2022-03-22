@@ -32,7 +32,9 @@ solve problems in a continuous and nonlinear settings.
 .. toctree::
     :maxdepth: 2
     :numbered:
-    :caption: Tutorials
+    :caption: Tutorials:
+
+    Poisson problem <_rst/tutorial1/tutorial-1.rst>
 
 .. ........................................................................................
 
