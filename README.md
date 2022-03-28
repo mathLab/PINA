@@ -28,6 +28,9 @@
 **PINA**: Physics-Informed Neural networks for Advance modeling
 
 ## Table of contents
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/fcbc07de694e42f984cd73226b81d47a)](https://app.codacy.com/gh/mathLab/PINA?utm_source=github.com&utm_medium=referral&utm_content=mathLab/PINA&utm_campaign=Badge_Grade_Settings)
+
 * [Description](#description)
      * [Problem definition](#problem-definition)
      * [Problem solution](#problem-solution)
