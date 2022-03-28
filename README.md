@@ -1,28 +1,17 @@
-<!-- <p align="center"> -->
-<!--   <a href="http://mathlab.github.io/PyDMD/" target="_blank" > -->
-<!--     <img alt="Python Dynamic Mode Decomposition" src="readme/logo_PyDMD.png" width="200" /> -->
-<!--   </a> -->
-<!-- </p> -->
-<!-- <p align="center"> -->
-<!--     <a href="https://doi.org/10.21105/joss.00530" target="_blank"> -->
-<!--         <img alt="JOSS DOI" src="http://joss.theoj.org/papers/10.21105/joss.00530/status.svg"> -->
-<!--     </a> -->
-<!--     <a href="https://github.com/mathLab/PyDMD/blob/master/LICENSE" target="_blank"> -->
-<!--         <img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square"> -->
-<!--     </a> -->
-<!--     <a href="https://badge.fury.io/py/pydmd"  target="_blank"> -->
-<!--         <img alt="PyPI version" src="https://badge.fury.io/py/pydmd.svg"> -->
-<!--     </a> -->
-<!--     <a href="https://travis-ci.org/mathLab/PyDMD" target="_blank"> -->
-<!--         <img alt="Build Status" src="https://travis-ci.org/mathLab/PyDMD.svg"> -->
-<!--     </a> -->
-<!--     <a href="https://www.codacy.com/gh/mathLab/PyDMD/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mathLab/PyDMD&amp;utm_campaign=Badge_Coverage"> -->
-<!--       <img src="https://app.codacy.com/project/badge/Coverage/c36adbea2e4a44eb8c0e4505b75e8245"/> -->
-<!--     </a> -->
-<!--     <a href="https://www.codacy.com/gh/mathLab/PyDMD/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mathLab/PyDMD&amp;utm_campaign=Badge_Grade"> -->
-<!--       <img src="https://app.codacy.com/project/badge/Grade/c36adbea2e4a44eb8c0e4505b75e8245"/> -->
-<!--     </a> -->
-<!-- </p> -->
+<p align="center">
+    <a href="https://github.com/mathLab/PINA/blob/master/LICENSE" target="_blank">
+        <img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square">
+    </a>
+    <a href="https://badge.fury.io/py/pina-mathlab">
+	<img src="https://badge.fury.io/py/pina-mathlab.svg" alt="PyPI version" height="18">
+    </a>
+    <a href="https://github.com/mathLab/PINA/actions/workflows/ci.yml" target="_blank">
+        <img alt="Build Status" src="https://github.com/mathLab/PINA/actions/workflows/ci.yml/badge.svg">
+    </a>
+    <a href="https://www.codacy.com/gh/mathLab/PINA/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mathLab/PINA&amp;utm_campaign=Badge_Grade">
+	<img src="https://app.codacy.com/project/badge/Grade/1ed0b0279cbe44cc8207575fe6e55f91"/>
+    </a>
+</p>
 
 
 **PINA**: Physics-Informed Neural networks for Advance modeling
