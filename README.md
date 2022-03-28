@@ -11,6 +11,9 @@
     <a href="https://www.codacy.com/gh/mathLab/PINA/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mathLab/PINA&amp;utm_campaign=Badge_Grade">
 	<img src="https://app.codacy.com/project/badge/Grade/1ed0b0279cbe44cc8207575fe6e55f91"/>
     </a>
+    <a href="https://www.codacy.com/gh/mathLab/PINA/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mathLab/PINA&amp;utm_campaign=Badge_Coverage">
+	<img src="https://app.codacy.com/project/badge/Coverage/1ed0b0279cbe44cc8207575fe6e55f91"/>
+    </a>
 </p>
 
 
