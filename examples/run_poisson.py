@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     poisson_problem = Poisson()
     model = FeedForward(
-        layers=[10, 10],
+        layers=[20, 20],
         output_variables=poisson_problem.output_variables,
         input_variables=poisson_problem.input_variables,
         func=Softplus,
@@ -45,17 +45,17 @@ if __name__ == "__main__":
     pinn = PINN(
         poisson_problem,
         model,
-        lr=0.003,
+        lr=0.03,
         error_norm='mse',
-        regularizer=1e-8,
-        lr_accelerate=None)
+        regularizer=1e-8)
 
     if args.s:
 
-        pinn.span_pts(20, 'grid', ['D'])
+        print(pinn)
         pinn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+        pinn.span_pts(20, 'grid', ['D'])
         #pinn.plot_pts()
-        pinn.train(1000, 100)
+        pinn.train(5000, 100)
         with open('poisson_history_{}_{}.txt'.format(args.id_run, args.features), 'w') as file_:
             for i, losses in enumerate(pinn.history):
                 file_.write('{} {}\n'.format(i, sum(losses)))

@@ -54,7 +54,8 @@ intersphinx_mapping = {
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('http://matplotlib.sourceforge.net/', None),
-    'torch': ('https://pytorch.org/docs/stable/', None)
+    'torch': ('https://pytorch.org/docs/stable/', None),
+    'pina': ('https://mathlab.github.io/PINA/', None)
 }
 
 # Add any paths that contain templates here, relative to this directory.
