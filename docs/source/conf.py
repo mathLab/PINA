@@ -47,12 +47,15 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.mathjax',
 ]
+autosummary_generate = True
 
 intersphinx_mapping = {
-    'python': ('http://docs.python.org/2', None), 'numpy':
-    ('http://docs.scipy.org/doc/numpy/', None), 'scipy':
-    ('http://docs.scipy.org/doc/scipy/reference/', None), 'matplotlib':
-    ('http://matplotlib.sourceforge.net/', None)
+    'python': ('http://docs.python.org/2', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+    'matplotlib': ('http://matplotlib.sourceforge.net/', None),
+    'torch': ('https://pytorch.org/docs/stable/', None),
+    'pina': ('https://mathlab.github.io/PINA/', None)
 }
 
 # Add any paths that contain templates here, relative to this directory.

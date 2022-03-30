@@ -13,10 +13,10 @@ def grad(output_, input_):
 
     gradients = torch.autograd.grad(
         output_,
-        input_.tensor,
+        input_,
         grad_outputs=torch.ones(output_.size()).to(
-            dtype=input_.tensor.dtype,
-            device=input_.tensor.device),
+            dtype=input_.dtype,
+            device=input_.device),
         create_graph=True, retain_graph=True, allow_unused=True)[0]
     return LabelTensor(gradients, input_.labels)
 
@@ -25,14 +25,14 @@ def div(output_, input_):
     """
     TODO
     """
-    if output_.tensor.shape[1] == 1:
-        div = grad(output_.tensor, input_).sum(axis=1)
+    if output_.shape[1] == 1:
+        div = grad(output_, input_).sum(axis=1)
     else:  # really to improve
         a = []
-        for o in output_.tensor.T:
-            a.append(grad(o, input_).tensor)
-        div = torch.zeros(output_.tensor.shape[0], 1)
-        for i in range(output_.tensor.shape[1]):
+        for o in output_.T:
+            a.append(grad(o, input_))
+        div = torch.zeros(output_.shape[0], 1)
+        for i in range(output_.shape[1]):
             div += a[i][:, i].reshape(-1, 1)
 
     return div

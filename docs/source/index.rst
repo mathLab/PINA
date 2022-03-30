@@ -22,6 +22,7 @@ solve problems in a continuous and nonlinear settings.
    :caption: Package Documentation:
 
    Installation <_rst/installation>
+   API <_rst/code>
    Contributing <_rst/contributing>
    License <LICENSE.rst>
 
@@ -30,7 +31,7 @@ solve problems in a continuous and nonlinear settings.
 .. ........................................................................................
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :numbered:
     :caption: Tutorials:
 
