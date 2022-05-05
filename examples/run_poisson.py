@@ -52,9 +52,9 @@ if __name__ == "__main__":
     if args.s:
 
         print(pinn)
-        pinn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-        pinn.span_pts(20, 'grid', ['D'])
-        #pinn.plot_pts()
+        pinn.span_pts(20, mode_spatial='grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+        pinn.span_pts(20, mode_spatial='grid', locations=['D'])
+        pinn.plot_pts()
         pinn.train(5000, 100)
         with open('poisson_history_{}_{}.txt'.format(args.id_run, args.features), 'w') as file_:
             for i, losses in enumerate(pinn.history):
@@ -64,6 +64,6 @@ if __name__ == "__main__":
     else:
         pinn.load_state('pina.poisson')
         plotter = Plotter()
-        plotter.plot(pinn)
+        plotter.plot(pinn, component='u')
 
 

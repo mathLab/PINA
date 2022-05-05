@@ -6,7 +6,12 @@ from .location import Location
 class Condition:
     def __init__(self, *args, **kwargs):
 
-        if len(args) == 2 and not kwargs:
+        if 'data_weight' in kwargs:
+            self.data_weight = kwargs['data_weight']
+        if not 'data_weight' in kwargs:
+            self.data_weight = 1.
+
+        if len(args) == 2:
 
             if (isinstance(args[0], torch.Tensor) and
                     isinstance(args[1], torch.Tensor)):
@@ -21,7 +26,7 @@ class Condition:
             else:
                 raise ValueError
 
-        elif not args and len(kwargs) == 2:
+        elif not args and len(kwargs) >= 2:
 
             if 'input_points' in kwargs and 'output_points' in kwargs:
                 self.input_points = kwargs['input_points']
@@ -33,3 +38,4 @@ class Condition:
                 raise ValueError
         else:
             raise ValueError
+
