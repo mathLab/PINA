@@ -106,6 +106,7 @@ class Plotter:
                     ind_dict[location] = ind_to_exclude
         import functools
         from functools import reduce
+
         final_inds = reduce(np.intersect1d, ind_dict.values())
         predicted_output = obj.model(pts)
         predicted_output = predicted_output.extract([component])
@@ -122,7 +123,7 @@ class Plotter:
             fig.colorbar(cb, ax=axes[2])
         else:
             fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(8, 6))
-            cb = getattr(axes, method)(*grids_container, predicted_output.reshape(res, res).detach())
+            cb = getattr(axes, method)(*grids_container, predicted_output.reshape(res, res).detach(), levels=32)
             fig.colorbar(cb, ax=axes)
 
         if filename:

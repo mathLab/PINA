@@ -120,21 +120,53 @@ class PINN(object):
         return self
 
 
-    def span_pts(self, n_spatial, n_params=0, mode_spatial='grid', mode_param='random', locations='all'):
+    def span_pts(self, *args, **kwargs):
+        """
+        >>> pinn.span_pts(n=10, mode='grid')
+        >>> pinn.span_pts(n=10, mode='grid', variables=['x'])
+        """
+
+        def merge_tensors(tensors):  # name to be changed
+            if len(tensors) == 2:
+                tensor1 = tensors[0]
+                tensor2 = tensors[1]
+                n1 = tensor1.shape[0]
+                n2 = tensor2.shape[0]
+
+                tensor1 = LabelTensor(tensor1.repeat(n2, 1), labels=tensor1.labels)
+                tensor2 = LabelTensor(
+                    tensor2.repeat_interleave(n1, dim=0), labels=tensor2.labels)
+                return tensor1.append(tensor2)
+            else:
+                pass
+
+        if isinstance(args[0], int) and isinstance(args[1], str):
+            pass
+            variables = self.problem.input_variables
+        elif all(isinstance(arg, dict) for arg in args):
+            print(args)
+            arguments = args
+            pass
+        elif all(key in kwargs for key in ['n', 'mode']):
+            variables = self.problem.input_variables
+            pass
+        else:
+            raise RuntimeError
+
+        locations = kwargs.get('locations', 'all')
+
         if locations == 'all':
             locations = [condition for condition in self.problem.conditions]
         for location in locations:
             condition = self.problem.conditions[location]
 
-            try:
-                pts = condition.location.sample(n_spatial, mode_spatial, variables=self.problem.spatial_variables)
-                if n_params != 0:
-                    pts_params = condition.location.sample(n_params, mode_param, variables=self.problem.parameters)
-                    pts = LabelTensor(pts.repeat(n_params, 1), pts.labels)
-                    pts_params = LabelTensor(pts_params.repeat_interleave(n_spatial).reshape((n_spatial*n_params, len(self.problem.parameters))), pts_params.labels)
-                    pts = pts.append(pts_params)
-            except:
-                pts = condition.input_points
+            pts = merge_tensors([
+                condition.location.sample(
+                    argument['n'],
+                    argument['mode'],
+                    variables=argument['variables'])
+                for argument in arguments])
+
             self.input_pts[location] = pts  #.double()  # TODO
             self.input_pts[location] = (
                 self.input_pts[location].to(dtype=self.dtype,
@@ -168,9 +200,10 @@ class PINN(object):
 
             for condition_name in self.problem.conditions:
                 condition = self.problem.conditions[condition_name]
-                pts = self.input_pts[condition_name]
-                predicted = self.model(pts)
+
                 if hasattr(condition, 'function'):
+                    pts = self.input_pts[condition_name]
+                    predicted = self.model(pts)
                     if isinstance(condition.function, list):
                         for function in condition.function:
                             residuals = function(pts, predicted)
@@ -181,6 +214,10 @@ class PINN(object):
                         local_loss = condition.data_weight*self._compute_norm(residuals)
                         losses.append(local_loss)
                 elif hasattr(condition, 'output_points'):
+                    pts = condition.input_points
+                    # print(pts)
+                    predicted = self.model(pts)
+                    # print(predicted)
                     residuals = predicted - condition.output_points
                     local_loss = condition.data_weight*self._compute_norm(residuals)
                     losses.append(local_loss)

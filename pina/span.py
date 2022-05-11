@@ -71,7 +71,7 @@ class Span(Location):
         if not len(spatial_fixed_)==0:
             pts_fixed_ = torch.ones(pts.shape[0], len(spatial_fixed_),
                                 dtype=pts.dtype) * fixed
-
+            pts_fixed_ = pts_fixed_.float()
             pts_fixed_ = LabelTensor(pts_fixed_, spatial_fixed_)
             pts_range_ = pts_range_.append(pts_fixed_)
 
