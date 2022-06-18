@@ -94,3 +94,5 @@ if __name__ == "__main__":
     t *= 2
     print(t['u'])
     print(t[:, 0])
+    t**2
+    print(t)
