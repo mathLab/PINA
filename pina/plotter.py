@@ -79,7 +79,7 @@ class Plotter:
 
 
 
-    def plot(self, obj, method='contourf', component='u', parametric=False, params_value=1, filename=None):
+    def plot(self, obj, method='contourf', component='u', parametric=False, params_value=1.5, filename=None):
         """
         """
         res = 256

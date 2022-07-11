@@ -2,9 +2,8 @@
 import torch
 import torch.nn as nn
 
-from pina.label_tensor import LabelTensor
-import warnings
-import copy
+from pina import LabelTensor
+
 
 class DeepONet(torch.nn.Module):
     """
@@ -75,38 +74,23 @@ class DeepONet(torch.nn.Module):
         self.trunk_net = trunk_net
         self.branch_net = branch_net
 
-        if features:
+        # if features:
             # if len(features) != features_net.layers[0].in_features:
             #     raise ValueError('Incompatible features')
             # if trunk_out_dim != features_net.layers[-1].out_features:
             #     raise ValueError('Incompatible features')
 
-            self.features = features
+            # self.features = features
             # self.features_net = nn.Sequential(
             #     nn.Linear(len(features), 10), nn.Softplus(),
             #     # nn.Linear(10, 10), nn.Softplus(),
             #     nn.Linear(10, trunk_out_dim)
             # )
-            self.features_net = nn.Sequential(
-                nn.Linear(len(features), trunk_out_dim)
-            )
-
-
-
+            # self.features_net = nn.Sequential(
+            #     nn.Linear(len(features), trunk_out_dim)
+            # )
 
         self.reduction = nn.Linear(trunk_out_dim, self.output_dimension)
-
-        # print(self.branch_net.output_variables)
-        # print(self.trunk_net.output_variables)
-        # if isinstance(self.branch_net.output_variables, int) and isinstance(self.branch_net.output_variables, int):
-        #     if self.branch_net.output_dimension == self.trunk_net.output_dimension:
-        #         self.inner_size = self.branch_net.output_dimension
-        #         print('qui')
-        #     else:
-        #         raise ValueError('Branch and trunk networks have not the same output dimension.')
-        # else:
-        #     warnings.warn("The output dimension of the branch and trunk networks has been imposed by default as 10 for each output variable. To set it change the output_variable of networks to an integer.")
-        #     self.inner_size = self.output_dimension*inner_size
 
     @property
     def input_variables(self):
@@ -121,19 +105,33 @@ class DeepONet(torch.nn.Module):
         :return: the output computed by the model.
         :rtype: LabelTensor
         """
-        input_feature = []
-        for feature in self.features:
-            #print(feature)
-            input_feature.append(feature(x))
-        input_feature = torch.cat(input_feature, dim=1)
+        # print(x.shape)
+        #input_feature = []
+        #for feature in self.features:
+        #    #print(feature)
+        #    input_feature.append(feature(x))
+        #input_feature = torch.cat(input_feature, dim=1)
 
         branch_output = self.branch_net(
            x.extract(self.branch_net.input_variables))
+        # print(branch_output.shape)
         trunk_output = self.trunk_net(
            x.extract(self.trunk_net.input_variables))
-        feat_output = self.features_net(input_feature)
-        output_ = self.reduction(branch_output * trunk_output * feat_output)
-        output_ = self.reduction(trunk_output * feat_output)
+        # print(trunk_output.shape)
+        #feat_output = self.features_net(input_feature)
+        # print(feat_output.shape)
+        # inner_input = torch.cat([
+        #     branch_output * trunk_output,
+        #     branch_output,
+        #     trunk_output,
+        #     feat_output], dim=1)
+        # print(inner_input.shape)
+
+        # output_ = self.reduction(inner_input)
+        # print(output_.shape)
+        print(branch_output.shape)
+        print(trunk_output.shape)
+        output_ = self.reduction(trunk_output * branch_output)
         output_ = LabelTensor(output_, self.output_variables)
         # local_size = int(trunk_output.shape[1]/self.output_dimension)
         # for i, var in enumerate(self.output_variables):

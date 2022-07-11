@@ -22,7 +22,7 @@ class Span(Location):
 
     def sample(self, n, mode='random', variables='all'):
 
-        if variables=='all':
+        if variables == 'all':
             spatial_range_ = list(self.range_.keys())
             spatial_fixed_ = list(self.fixed_.keys())
             bounds = np.array(list(self.range_.values()))
@@ -41,6 +41,7 @@ class Span(Location):
                     fixed.append(int(self.fixed_[variable]))
             fixed = torch.Tensor(fixed)
             bounds = np.array(bounds)
+
         if mode == 'random':
             pts = np.random.uniform(size=(n, bounds.shape[0]))
         elif mode == 'chebyshev':
@@ -59,6 +60,7 @@ class Span(Location):
             from scipy.stats import qmc
             sampler = qmc.LatinHypercube(d=bounds.shape[0])
             pts = sampler.random(n)
+
         # Scale pts
         pts *= bounds[:, 1] - bounds[:, 0]
         pts += bounds[:, 0]

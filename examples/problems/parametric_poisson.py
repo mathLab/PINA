@@ -14,8 +14,8 @@ class ParametricPoisson(SpatialProblem, ParametricProblem):
 
     def laplace_equation(input_, output_):
         force_term = torch.exp(
-                - 2*(input_.extract(['x']) - input_.extract(['mu1']))**2 - 2*(input_.extract(['y']) -
-                                                          input_.extract(['mu2']))**2)
+                - 2*(input_.extract(['x']) - input_.extract(['mu1']))**2
+                - 2*(input_.extract(['y']) - input_.extract(['mu2']))**2)
         return nabla(output_.extract(['u']), input_) - force_term
 
     def nil_dirichlet(input_, output_):

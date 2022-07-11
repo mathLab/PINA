@@ -12,7 +12,7 @@ class myFeature(torch.nn.Module):
         super(myFeature, self).__init__()
 
     def forward(self, x):
-        return torch.sin(torch.pi * x.extract('a'))
+        return LabelTensor(torch.sin(torch.pi * x.extract('a')), 'sin(a)')
 
 
 data = torch.rand((20, 3))

@@ -39,3 +39,5 @@ class Condition:
         else:
             raise ValueError
 
+        if hasattr(self, 'function') and not isinstance(self.function, list):
+            self.function = [self.function]

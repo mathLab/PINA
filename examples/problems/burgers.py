@@ -14,13 +14,12 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
     domain = Span({'x': [-1, 1], 't': [0, 1]})
 
     def burger_equation(input_, output_):
-        grad_u = grad(output_.extract(['u']), input_)
-        grad_x = grad_u.extract(['x'])
-        grad_t = grad_u.extract(['t'])
-        gradgrad_u_x = grad(grad_u.extract(['x']), input_)
+        du = grad(output_, input_)
+        ddu = grad(du, input_, components=['dudx'])
         return (
-            grad_u.extract(['t']) + output_.extract(['u'])*grad_u.extract(['x']) -
-            (0.01/torch.pi)*gradgrad_u_x.extract(['x'])
+            du.extract(['dudt']) +
+            output_.extract(['u'])*du.extract(['dudx']) -
+            (0.01/torch.pi)*ddu.extract(['ddudxdx'])
         )
 
     def nil_dirichlet(input_, output_):

@@ -93,20 +93,10 @@ class FeedForward(torch.nn.Module):
         if self.input_variables:
             x = x.extract(self.input_variables)
 
-        labels = []
-        features = []
         for i, feature in enumerate(self.extra_features):
-            labels.append('k{}'.format(i))
-            features.append(feature(x))
-
-        if labels and features:
-            features = torch.cat(features, dim=1)
-            features_tensor = LabelTensor(features, labels)
-            input_ = x.append(features_tensor)  # TODO error when no LabelTens
-        else:
-            input_ = x
+            x = x.append(feature(x))
 
         if self.output_variables:
-            return LabelTensor(self.model(input_), self.output_variables)
+            return LabelTensor(self.model(x), self.output_variables)
         else:
-            return self.model(input_)
+            return self.model(x)
