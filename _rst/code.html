@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; PINA 0.0.2 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Code Documentation &mdash; PINA 0.0.2 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,8 +18,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Code Documentation" href="code.html" />
-    <link rel="prev" title="Welcome to PINA’s documentation!" href="../index.html" /> 
+    <link rel="next" title="LabelTensor" href="label_tensor.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,12 +42,14 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Package Documentation:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installing-via-pip">Installing via PIP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installing-from-source">Installing from source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fnn.html">FeedForward</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="code.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
 </ul>
@@ -70,9 +72,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Installation</li>
+      <li>Code Documentation</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/_rst/installation.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/_rst/code.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -80,31 +82,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p><strong>PINA</strong> requires requires <cite>numpy</cite>, <cite>scipy</cite>, <cite>matplotlib</cite>, <cite>future</cite>, <cite>torch</cite>, <cite>sphinx</cite> (for the documentation) and <cite>pytest</cite> (for local test). The code is tested for Python 3, while compatibility of Python 2 is not guaranteed anymore. It can be installed using <cite>pip</cite> or directly from the source code.</p>
-<div class="section" id="installing-via-pip">
-<h2>Installing via PIP<a class="headerlink" href="#installing-via-pip" title="Permalink to this headline">¶</a></h2>
-<p>Mac and Linux users can install pre-built binary packages using pip.
-To install the package just type:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install git+https://github.com/mathLab/PINA.git
-</pre></div>
-</div>
-<p>To uninstall the package:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip uninstall pina
-</pre></div>
-</div>
-</div>
-<div class="section" id="installing-from-source">
-<h2>Installing from source<a class="headerlink" href="#installing-from-source" title="Permalink to this headline">¶</a></h2>
-<p>The official distribution is on GitHub, and you can clone the repository using</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/mathLab/PINA
-</pre></div>
-</div>
-<p>To install the package just type:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install -e .
-</pre></div>
-</div>
+  <div class="section" id="code-documentation">
+<h1>Code Documentation<a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fnn.html">FeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pinn.html">PINN</a></li>
+</ul>
 </div>
 </div>
 
@@ -112,8 +98,8 @@ To install the package just type:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to PINA’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="code.html" class="btn btn-neutral float-right" title="Code Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="label_tensor.html" class="btn btn-neutral float-right" title="LabelTensor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

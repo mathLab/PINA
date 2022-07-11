@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepONet &mdash; PINA 0.0.2 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PINN" href="pinn.html" />
+    <link rel="prev" title="FeedForward" href="fnn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> PINA
+          </a>
+              <div class="version">
+                0.0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fnn.html">FeedForward</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DeepONet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial-1.html">1. Poisson problem</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="code.html">Code Documentation</a> &raquo;</li>
+      <li>DeepONet</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_rst/deeponet.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-pina.model.deeponet">
+<span id="deeponet"></span><h1>DeepONet<a class="headerlink" href="#module-pina.model.deeponet" title="Permalink to this headline">¶</a></h1>
+<p>Module for DeepONet model</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">branch_net</em>, <em class="sig-param">trunk_net</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">inner_size=10</em>, <em class="sig-param">features=None</em>, <em class="sig-param">features_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The PINA implementation of DeepONet network.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><strong>Original reference</strong>: Lu, L., Jin, P., Pang, G. et al. <em>Learning
+nonlinear operators via DeepONet based on the universal approximation
+theorem of operators</em>. Nat Mach Intell 3, 218–229 (2021).
+DOI: <a class="reference external" href="https://doi.org/10.1038/s42256-021-00302-5">10.1038/s42256-021-00302-5</a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>branch_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.12)"><em>torch.nn.Module</em></a>) – the neural network to use as branch
+model. It has to take as input a <code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code>. The number
+of dimension of the output has to be the same of the <cite>trunk_net</cite>.</p></li>
+<li><p><strong>trunk_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.12)"><em>torch.nn.Module</em></a>) – the neural network to use as trunk
+model. It has to take as input a <code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code>. The number
+of dimension of the output has to be the same of the <cite>branch_net</cite>.</p></li>
+<li><p><strong>output_variables</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – the list containing the labels
+corresponding to the components of the output computed by the
+model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Example</dt>
+<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">branch</span> <span class="o">=</span> <span class="n">FFN</span><span class="p">(</span><span class="n">input_variables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span> <span class="n">output_variables</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trunk</span> <span class="o">=</span> <span class="n">FFN</span><span class="p">(</span><span class="n">input_variables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">],</span> <span class="n">output_variables</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">onet</span> <span class="o">=</span> <span class="n">DeepONet</span><span class="p">(</span><span class="n">trunk_net</span><span class="o">=</span><span class="n">trunk</span><span class="p">,</span> <span class="n">branch_net</span><span class="o">=</span><span class="n">branch</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">output_variables</span><span class="o">=</span><span class="n">output_vars</span><span class="p">)</span>
+<span class="go">DeepONet(</span>
+<span class="go">  (trunk_net): FeedForward(</span>
+<span class="go">    (extra_features): Sequential()</span>
+<span class="go">    (model): Sequential(</span>
+<span class="go">    (0): Linear(in_features=1, out_features=20, bias=True)</span>
+<span class="go">    (1): Tanh()</span>
+<span class="go">    (2): Linear(in_features=20, out_features=20, bias=True)</span>
+<span class="go">    (3): Tanh()</span>
+<span class="go">    (4): Linear(in_features=20, out_features=20, bias=True)</span>
+<span class="go">    )</span>
+<span class="go">  )</span>
+<span class="go">  (branch_net): FeedForward(</span>
+<span class="go">    (extra_features): Sequential()</span>
+<span class="go">    (model): Sequential(</span>
+<span class="go">    (0): Linear(in_features=2, out_features=20, bias=True)</span>
+<span class="go">    (1): Tanh()</span>
+<span class="go">    (2): Linear(in_features=20, out_features=20, bias=True)</span>
+<span class="go">    (3): Tanh()</span>
+<span class="go">    (4): Linear(in_features=20, out_features=20, bias=True)</span>
+<span class="go">    )</span>
+<span class="go">  )</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_is_full_backward_hook</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet.forward"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>LabelTensor</em>) – the input tensor.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the output computed by the model.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>LabelTensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">property </em><code class="sig-name descname">input_variables</code></dt>
+<dd><p>The input variables of the model</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">training</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fnn.html" class="btn btn-neutral float-left" title="FeedForward" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pinn.html" class="btn btn-neutral float-right" title="PINN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
+      <span class="lastupdated">Last updated on Jul 11, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
