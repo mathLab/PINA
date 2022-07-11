@@ -13,28 +13,24 @@ class Stokes(SpatialProblem):
     domain = Span({'x': [-2, 2], 'y': [-1, 1]})
 
     def momentum(input_, output_):
-        #print(nabla(output_['ux', 'uy'], input_))
-        #print(grad(output_['p'], input_))
-        nabla_ = LabelTensor.hstack([
-            LabelTensor(nabla(output_['ux'], input_), ['x']),
-            LabelTensor(nabla(output_['uy'], input_), ['y'])])
-        #return LabelTensor(nabla_.tensor + grad(output_['p'], input_).tensor, ['x', 'y'])
-        return nabla_.tensor + grad(output_['p'], input_).tensor
+        nabla_ = torch.hstack((LabelTensor(nabla(output_.extract(['ux']), input_), ['x']),
+            LabelTensor(nabla(output_.extract(['uy']), input_), ['y'])))
+        return - nabla_ + grad(output_.extract(['p']), input_)
 
     def continuity(input_, output_):
-        return div(output_['ux', 'uy'], input_)
+        return div(output_.extract(['ux', 'uy']), input_)
 
     def inlet(input_, output_):
-        value = 2.0
-        return output_['ux'] - value
+        value = 2 * (1 - input_.extract(['y'])**2)
+        return output_.extract(['ux']) - value
 
     def outlet(input_, output_):
         value = 0.0
-        return output_['p'] - value
+        return output_.extract(['p']) - value
 
     def wall(input_, output_):
         value = 0.0
-        return output_['ux', 'uy'].tensor - value
+        return output_.extract(['ux', 'uy']) - value
 
     conditions = {
         'gamma_top': Condition(Span({'x': [-2, 2], 'y':  1}), wall),

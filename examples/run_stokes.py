@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     stokes_problem = Stokes()
     model = FeedForward(
-        layers=[40, 20, 20, 10],
+        layers=[10, 10, 10, 10],
         output_variables=stokes_problem.output_variables,
         input_variables=stokes_problem.input_variables,
         func=Softplus,
@@ -32,23 +32,24 @@ if __name__ == "__main__":
         model,
         lr=0.006,
         error_norm='mse',
-        regularizer=1e-8,
-        lr_accelerate=None)
+        regularizer=1e-8)
 
     if args.s:
 
-        #pinn.span_pts(200, 'grid', ['gamma_out'])
-        pinn.span_pts(200, 'grid', ['gamma_top', 'gamma_bot', 'gamma_in', 'gamma_out'])
-        pinn.span_pts(2000, 'random', ['D'])
-        #plotter = Plotter()
-        #plotter.plot_samples(pinn)
+        pinn.span_pts(200, mode_spatial='grid', locations=['gamma_top', 'gamma_bot', 'gamma_in', 'gamma_out'])
+        pinn.span_pts(2000, mode_spatial='random', locations=['D'])
+        pinn.plot_pts()
         pinn.train(10000, 100)
+        with open('stokes_history_{}.txt'.format(args.id_run), 'w') as file_:
+            for i, losses in enumerate(pinn.history):
+                file_.write('{} {}\n'.format(i, sum(losses)))
         pinn.save_state('pina.stokes')
 
     else:
         pinn.load_state('pina.stokes')
         plotter = Plotter()
-        plotter.plot_samples(pinn)
-        plotter.plot(pinn)
+        plotter.plot(pinn, component='ux')
+        plotter.plot(pinn, component='uy')
+        plotter.plot(pinn, component='p')
 
 

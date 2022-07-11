@@ -7,7 +7,7 @@ from torch.nn import ReLU, Tanh, Softplus
 from pina import PINN, LabelTensor, Plotter
 from pina.model import FeedForward
 from pina.adaptive_functions import AdaptiveSin, AdaptiveCos, AdaptiveTanh
-from problems.poisson import Poisson
+from poisson2 import Poisson
 
 
 class myFeature(torch.nn.Module):
@@ -19,7 +19,9 @@ class myFeature(torch.nn.Module):
         super(myFeature, self).__init__()
 
     def forward(self, x):
-        return torch.sin(x[:, 0]*torch.pi) * torch.sin(x[:, 1]*torch.pi)
+        t = (torch.sin(x.extract(['x'])*torch.pi) *
+             torch.sin(x.extract(['y'])*torch.pi))
+        return LabelTensor(t, ['sin(x)sin(y)'])
 
 if __name__ == "__main__":
 
@@ -35,7 +37,7 @@ if __name__ == "__main__":
 
     poisson_problem = Poisson()
     model = FeedForward(
-        layers=[10, 10],
+        layers=[20, 20],
         output_variables=poisson_problem.output_variables,
         input_variables=poisson_problem.input_variables,
         func=Softplus,
@@ -45,25 +47,20 @@ if __name__ == "__main__":
     pinn = PINN(
         poisson_problem,
         model,
-        lr=0.003,
+        lr=0.03,
         error_norm='mse',
-        regularizer=1e-8,
-        lr_accelerate=None)
+        regularizer=1e-8)
 
     if args.s:
 
-        pinn.span_pts(20, 'grid', ['D'])
-        pinn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-        #pinn.plot_pts()
-        pinn.train(1000, 100)
-        with open('poisson_history_{}_{}.txt'.format(args.id_run, args.features), 'w') as file_:
-            for i, losses in enumerate(pinn.history):
-                file_.write('{} {}\n'.format(i, sum(losses)))
+        pinn.span_pts(20, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+        pinn.span_pts(20, 'grid', locations=['D'])
+        pinn.train(5000, 100)
         pinn.save_state('pina.poisson')
 
     else:
         pinn.load_state('pina.poisson')
         plotter = Plotter()
-        plotter.plot(pinn)
+        plotter.plot(pinn, component='u')
 
 

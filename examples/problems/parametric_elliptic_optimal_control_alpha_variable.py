@@ -1,52 +1,59 @@
 import numpy as np
 import torch
-from pina.problem import Problem
-from pina.segment import Segment
-from pina.cube import Cube
-from pina.problem2d import Problem2D
 
-xmin, xmax, ymin, ymax = -1, 1, -1, 1
-
-class ParametricEllipticOptimalControl(Problem2D):
-
-    def __init__(self, alpha=1):
-
-        def term1(input_, param_, output_):
-            grad_p = self.grad(output_['p'], input_)
-            gradgrad_p_x1 = self.grad(grad_p['x1'], input_)
-            gradgrad_p_x2 = self.grad(grad_p['x2'], input_)
-            #print('mu', input_['mu'])
-            return output_['y'] - input_['mu'] - (gradgrad_p_x1['x1'] + gradgrad_p_x2['x2'])
-
-        def term2(input_, param_, output_):
-            grad_y = self.grad(output_['y'], input_)
-            gradgrad_y_x1 = self.grad(grad_y['x1'], input_)
-            gradgrad_y_x2 = self.grad(grad_y['x2'], input_)
-            return - (gradgrad_y_x1['x1'] + gradgrad_y_x2['x2']) - output_['u_param']
-
-        def term3(input_, param_, output_):
-            #print('a', input_['alpha'], output_['p'], output_['u_param'])
-            return output_['p'] - output_['u_param']*input_['alpha']
+from pina import Span, Condition
+from pina.problem import SpatialProblem, ParametricProblem
+from pina.operators import grad, nabla
 
 
-        def nil_dirichlet(input_, param_, output_):
-            y_value = 0.0
-            p_value = 0.0
-            return torch.abs(output_['y'] - y_value) + torch.abs(output_['p'] - p_value)
+class ParametricEllipticOptimalControl(SpatialProblem, ParametricProblem):
 
-        self.conditions = {
-            'gamma1': {'location': Segment((xmin, ymin), (xmax, ymin)), 'func': nil_dirichlet},
-            'gamma2': {'location': Segment((xmax, ymin), (xmax, ymax)), 'func': nil_dirichlet},
-            'gamma3': {'location': Segment((xmax, ymax), (xmin, ymax)), 'func': nil_dirichlet},
-            'gamma4': {'location': Segment((xmin, ymax), (xmin, ymin)), 'func': nil_dirichlet},
-            'D1': {'location': Cube([[xmin, xmax], [ymin, ymax]]), 'func': [term1, term2]},
-            #'D2': {'location': Cube([[0, 1], [0, 1]]), 'func': term2},
-            #'D3': {'location': Cube([[0, 1], [0, 1]]), 'func': term3}
-        }
+    xmin, xmax, ymin, ymax = -1, 1, -1, 1
+    amin, amax = 0.0001, 1
+    mumin, mumax = 0.5, 3
+    mu_range = [mumin, mumax]
+    a_range = [amin, amax]
+    x_range = [xmin, xmax]
+    y_range = [ymin, ymax]
 
-        self.input_variables = ['x1', 'x2']
-        self.output_variables = ['u', 'p', 'y']
-        self.parameters = ['mu', 'alpha']
-        self.spatial_domain = Cube([[xmin, xmax], [xmin, xmax]])
-        self.parameter_domain = np.array([[0.5, 3], [0.0001, 1]])
+    spatial_variables = ['x1', 'x2']
+    parameters = ['mu', 'alpha']
+    output_variables = ['u', 'p', 'y']
+    domain = Span({
+        'x1': x_range, 'x2': y_range, 'mu': mu_range, 'alpha': a_range})
 
+
+    def term1(input_, output_):
+        laplace_p = nabla(output_, input_, components=['p'], d=['x1', 'x2'])
+        return output_.extract(['y']) - input_.extract(['mu']) - laplace_p
+
+    def term2(input_, output_):
+        laplace_y = nabla(output_, input_, components=['y'], d=['x1', 'x2'])
+        return - laplace_y - output_.extract(['u_param'])
+
+    def state_dirichlet(input_, output_):
+        y_exp = 0.0
+        return output_.extract(['y']) - y_exp
+
+    def adj_dirichlet(input_, output_):
+        p_exp = 0.0
+        return output_.extract(['p']) - p_exp
+
+    conditions = {
+        'gamma1': Condition(
+            Span({'x1': x_range, 'x2':  1, 'mu': mu_range, 'alpha': a_range}),
+            [state_dirichlet, adj_dirichlet]),
+        'gamma2': Condition(
+            Span({'x1': x_range, 'x2': -1, 'mu': mu_range, 'alpha': a_range}),
+            [state_dirichlet, adj_dirichlet]),
+        'gamma3': Condition(
+            Span({'x1':  1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
+            [state_dirichlet, adj_dirichlet]),
+        'gamma4': Condition(
+            Span({'x1': -1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
+            [state_dirichlet, adj_dirichlet]),
+        'D': Condition(
+            Span({'x1': x_range, 'x2': y_range,
+                  'mu': mu_range, 'alpha': a_range}),
+            [term1, term2]),
+    }

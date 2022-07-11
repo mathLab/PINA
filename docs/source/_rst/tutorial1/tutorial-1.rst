@@ -12,7 +12,8 @@ The problem is written as: :raw-latex:`\begin{equation}
 \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
 u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
 \end{cases}
-\end{equation}` where :math:`D` is a square domain :math:`[0,1]^2`, and
+\end{equation}`
+where :math:`D` is a square domain :math:`[0,1]^2`, and
 :math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
 square.
 
@@ -56,11 +57,16 @@ be compared with the predicted one.
             return output_['u'] - value
     
         conditions = {
-            'gamma1': Condition(Span({'x': bounds_x, 'y':  bounds_y[-1]}), nil_dirichlet),
-            'gamma2': Condition(Span({'x': bounds_x, 'y': bounds_y[0]}), nil_dirichlet),
-            'gamma3': Condition(Span({'x':  bounds_x[-1], 'y': bounds_y}), nil_dirichlet),
-            'gamma4': Condition(Span({'x': bounds_x[0], 'y': bounds_y}), nil_dirichlet),
-        'D': Condition(Span({'x': bounds_x, 'y': bounds_y}), laplace_equation),
+            'gamma1': Condition(
+                Span({'x': bounds_x, 'y':  bounds_y[-1]}), nil_dirichlet),
+            'gamma2': Condition(
+                Span({'x': bounds_x, 'y': bounds_y[0]}), nil_dirichlet),
+            'gamma3': Condition(
+                Span({'x':  bounds_x[-1], 'y': bounds_y}), nil_dirichlet),
+            'gamma4': Condition(
+                Span({'x': bounds_x[0], 'y': bounds_y}), nil_dirichlet),
+            'D': Condition(
+                Span({'x': bounds_x, 'y': bounds_y}), laplace_equation),
         }
         def poisson_sol(self, x, y):
             return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
@@ -91,16 +97,10 @@ training phase of the PINN.
                         input_variables=poisson_problem.input_variables)
     
     pinn = PINN(poisson_problem, model, lr=0.003, regularizer=1e-8)
-    pinn.span_pts(20, 'grid', ['D'])
-    pinn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    pinn.span_pts(20, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    pinn.span_pts(20, 'grid', locations=['D'])
     pinn.train(5000, 100)
 
-
-
-
-.. parsed-literal::
-
-    2.384537034558816e-05
 
 
 
@@ -160,8 +160,8 @@ the cell below is also in this case the final loss of PINN.
             super(myFeature, self).__init__()
     
         def forward(self, x):
-            return (torch.sin(x['x']*torch.pi) *
-                    torch.sin(x['y']*torch.pi))
+            return LabelTensor(torch.sin(x.extract(['x'])*torch.pi) *
+                    torch.sin(x.extract(['y'])*torch.pi), 'k')
         
     feat = [myFeature()]
     model_feat = FeedForward(layers=[10, 10],
@@ -170,16 +170,11 @@ the cell below is also in this case the final loss of PINN.
                         extra_features=feat)
     
     pinn_feat = PINN(poisson_problem, model_feat, lr=0.003, regularizer=1e-8)
-    pinn_feat.span_pts(20, 'grid', ['D'])
-    pinn_feat.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    pinn_feat.span_pts(20, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    pinn.feat_span_pts(20, 'grid', locations=['D'])
     pinn_feat.train(5000, 100)
 
 
-
-
-.. parsed-literal::
-
-    7.93498870023341e-07
 
 
 
@@ -208,8 +203,8 @@ represented below.
 The problem solution with learnable extra-features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Another way to predict the solution is to add a parametric forcing term
-of the Laplace equation as an extra-feature. The parameters added in the
+Another way to predict the solution is to add a parametric extra-feature.
+The parameters added in the
 expression of the extra-feature are learned during the training phase of
 the neural network. For example, considering two parameters, the
 parameteric extra-feature is written as:
@@ -218,75 +213,26 @@ parameteric extra-feature is written as:
 \mathbf{k}(\mathbf{x}, \mathbf{y}) = \beta \sin{(\alpha \mathbf{x})} \sin{(\alpha \mathbf{y})}
 \end{equation}`
 
-The new Poisson problem is defined in the dedicated class
-*ParametricPoisson*, where the domain is no more only spatial, but
-includes the parameters’ space. In our case, the parameters’ bounds are
-0 and 30.
-
-.. code:: ipython3
-
-    from pina.problem import ParametricProblem
-    
-    class ParametricPoisson(SpatialProblem, ParametricProblem):
-        bounds_x = [0, 1]
-        bounds_y = [0, 1]
-        bounds_alpha = [0, 30]
-        bounds_beta = [0, 30]
-        spatial_variables = ['x', 'y']
-        parameters = ['alpha', 'beta']
-        output_variables = ['u']
-        domain = Span({'x': bounds_x, 'y': bounds_y})
-    
-        def laplace_equation(input_, output_):
-            force_term = (torch.sin(input_['x']*torch.pi) *
-                          torch.sin(input_['y']*torch.pi))
-            return nabla(output_['u'], input_).flatten() - force_term
-    
-        def nil_dirichlet(input_, output_):
-            value = 0.0
-            return output_['u'] - value
-    
-        conditions = {
-            'gamma1': Condition(
-                Span({'x': bounds_x, 'y': bounds_y[1], 'alpha': bounds_alpha, 'beta': bounds_beta}),
-                nil_dirichlet),
-            'gamma2': Condition(
-                Span({'x': bounds_x, 'y': bounds_y[0], 'alpha': bounds_alpha, 'beta': bounds_beta}),
-                nil_dirichlet),
-            'gamma3': Condition(
-                Span({'x': bounds_x[1], 'y': bounds_y, 'alpha': bounds_alpha, 'beta': bounds_beta}),
-                nil_dirichlet),
-            'gamma4': Condition(
-                Span({'x': bounds_x[0], 'y': bounds_y, 'alpha': bounds_alpha, 'beta': bounds_beta}),
-                nil_dirichlet),
-            'D': Condition(
-                Span({'x': bounds_x, 'y': bounds_y, 'alpha': bounds_alpha, 'beta': bounds_beta}),
-                laplace_equation),
-        }
-        
-        def poisson_sol(self, x, y):
-            return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
-
-
 Here, as done for the other cases, the new parametric feature is defined
-and the neural network is re-initialized and trained, considering as two
-additional parameters :math:`\alpha` and :math:`\beta`.
+and the neural network is re-initialized and trained.
 
 .. code:: ipython3
 
-    param_poisson_problem = ParametricPoisson()
-    
-    class myFeature(torch.nn.Module):
+    class LearnableFeature(torch.nn.Module):
         """
         """
         def __init__(self):
             super(myFeature, self).__init__()
+            self.beta = torch.nn.Parameter(torch.Tensor([1.0]))
+            self.alpha = torch.nn.Parameter(torch.Tensor([1.0]))
     
         def forward(self, x):
-            return (x['beta']*torch.sin(x['alpha']*x['x']*torch.pi)*
-                   torch.sin(x['alpha']*x['y']*torch.pi))
+            return LabelTensor(
+                self.beta*torch.sin(self.alpha*x.extract(['x'])*torch.pi)*
+                          torch.sin(self.alpha*x.extract(['y'])*torch.pi),
+                'k')
     
-    feat = [myFeature()]
+    feat = [LearnableFeature()]
     model_learn = FeedForward(layers=[10, 10],
                         output_variables=param_poisson_problem.output_variables,
                         input_variables=param_poisson_problem.input_variables,
@@ -300,12 +246,6 @@ additional parameters :math:`\alpha` and :math:`\beta`.
 
 
 
-.. parsed-literal::
-
-    3.265163986679126e-06
-
-
-
 The losses are saved as for the other two cases trained above.
 
 .. code:: ipython3
@@ -316,7 +256,7 @@ The losses are saved as for the other two cases trained above.
     pinn_learn.save_state('tutorial1_files/pina.poisson_learn_feat')
 
 Here the plots for the prediction error (below on the right) shows that
-the prediction coming from the **parametric PINN** is more accurate than
+the prediction coming from the latter version is more accurate than
 the one of the basic version of PINN.
 
 .. code:: ipython3
