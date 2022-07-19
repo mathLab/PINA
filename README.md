@@ -1,4 +1,9 @@
 <p align="center">
+    <a href="http://mathlab.github.io/PINA/" target="_blank" >
+    <img alt="Physics-Informed Neural networks for Advance modeling" src="readme/pina_logo.png" width="200" />
+    </a>
+</p>
+<p align="center">
     <a href="https://github.com/mathLab/PINA/blob/master/LICENSE" target="_blank">
         <img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square">
     </a>
