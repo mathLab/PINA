@@ -119,7 +119,6 @@ class PINN(object):
 
         return self
 
-
     def span_pts(self, *args, **kwargs):
         """
         >>> pinn.span_pts(n=10, mode='grid')
@@ -141,8 +140,11 @@ class PINN(object):
                     tensor2.repeat_interleave(n1, dim=0),
                     labels=tensor2.labels)
                 return tensor1.append(tensor2)
-            elif len(tensors):
+            elif len(tensors) == 1:
                 return tensors[0]
+            else:
+                recursive_result = merge_tensors(tensors[1:])
+                return merge_tensors([tensors[0], recursive_result])
 
         if isinstance(args[0], int) and isinstance(args[1], str):
             argument = {}

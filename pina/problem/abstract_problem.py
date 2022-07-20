@@ -18,9 +18,32 @@ class AbstractProblem(metaclass=ABCMeta):
 
         return variables
 
+    @property
+    def domain(self):
+
+        domains = [
+            getattr(self, f'{t}_domain')
+            for t in ['spatial', 'temporal', 'parameter']
+            if hasattr(self, f'{t}_domain')
+        ]
+
+        if len(domains) == 1:
+            return domains[0]
+        elif len(domains) == 0:
+            raise RuntimeError
+
+        if len(set(map(type, domains))) == 1:
+            domain = domains[0].__class__({})
+            [domain.update(d) for d in domains]
+            return domain
+        else:
+            raise RuntimeError('different domains')
+
+
+
     @input_variables.setter
     def input_variables(self, variables):
-        raise NotImplementedError
+        raise RuntimeError
 
     @property
     @abstractmethod

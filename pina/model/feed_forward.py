@@ -90,13 +90,16 @@ class FeedForward(torch.nn.Module):
         :return: the output computed by the model.
         :rtype: LabelTensor
         """
+
         if self.input_variables:
             x = x.extract(self.input_variables)
 
         for i, feature in enumerate(self.extra_features):
             x = x.append(feature(x))
 
+        output = self.model(x)
+
         if self.output_variables:
-            return LabelTensor(self.model(x), self.output_variables)
+            return LabelTensor(output, self.output_variables)
         else:
-            return self.model(x)
+            return output
