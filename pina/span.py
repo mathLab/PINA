@@ -20,72 +20,55 @@ class Span(Location):
             else:
                 raise TypeError
 
+    @property
+    def variables(self):
+        return list(self.fixed_.keys()) + list(self.range_.keys())
+
+    def update(self, new_span):
+        self.fixed_.update(new_span.fixed_)
+        self.range_.update(new_span.range_)
+
+    def _sample_range(self, n, mode, bounds):
+        """
+        """
+        if mode == 'random':
+            pts = np.random.uniform(size=(n, 1))
+        elif mode == 'chebyshev':
+            pts = np.array([chebyshev_roots(n) * .5 + .5]).reshape(-1, 1)
+        elif mode == 'grid':
+            pts = np.linspace(0, 1, n).reshape(-1, 1)
+        elif mode == 'lh' or mode == 'latin':
+            from scipy.stats import qmc
+            sampler = qmc.LatinHypercube(d=1)
+            pts = sampler.random(n)
+
+        pts *= bounds[1] - bounds[0]
+        pts += bounds[0]
+
+        pts = pts.astype(np.float32)
+        return pts
+
     def sample(self, n, mode='random', variables='all'):
 
         if variables == 'all':
-            spatial_range_ = list(self.range_.keys())
-            spatial_fixed_ = list(self.fixed_.keys())
-            bounds = np.array(list(self.range_.values()))
-            fixed = np.array(list(self.fixed_.values()))
-        else:
-            bounds = []
-            spatial_range_ = []
-            spatial_fixed_ = []
-            fixed = []
-            for variable in variables:
-                if variable in self.range_.keys():
-                    spatial_range_.append(variable)
-                    bounds.append(list(self.range_[variable]))
-                elif variable in self.fixed_.keys():
-                    spatial_fixed_.append(variable)
-                    fixed.append(int(self.fixed_[variable]))
-            fixed = torch.Tensor(fixed)
-            bounds = np.array(bounds)
+            variables = list(self.range_.keys()) + list(self.fixed_.keys())
 
-        if mode == 'random':
-            pts = np.random.uniform(size=(n, bounds.shape[0]))
-        elif mode == 'chebyshev':
-            pts = np.array([
-                chebyshev_roots(n) * .5 + .5
-                for _ in range(bounds.shape[0])])
-            grids = np.meshgrid(*pts)
-            pts = np.hstack([grid.reshape(-1, 1) for grid in grids])
-        elif mode == 'grid':
-            pts = np.array([
-                np.linspace(0, 1, n)
-                for _ in range(bounds.shape[0])])
-            grids = np.meshgrid(*pts)
-            pts = np.hstack([grid.reshape(-1, 1) for grid in grids])
-        elif mode == 'lh' or mode == 'latin':
-            from scipy.stats import qmc
-            sampler = qmc.LatinHypercube(d=bounds.shape[0])
-            pts = sampler.random(n)
+        result = None
+        for variable in variables:
+            if variable in self.range_.keys():
+                bound = np.asarray(self.range_[variable])
+                pts_variable = self._sample_range(n, mode, bound)
+                pts_variable = LabelTensor(
+                    torch.from_numpy(pts_variable), [variable])
 
-        # Scale pts
-        pts *= bounds[:, 1] - bounds[:, 0]
-        pts += bounds[:, 0]
+            elif variable in self.fixed_.keys():
+                value = self.fixed_[variable]
+                pts_variable = LabelTensor(torch.ones(n, 1)*value, [variable])
 
-        pts = pts.astype(np.float32)
-        pts = torch.from_numpy(pts)
+            if result is None:
+                result = pts_variable
+            else:
+                intersect = 'std' if mode == 'random' else 'cross'
+                result = result.append(pts_variable, intersect)
 
-        pts_range_ = LabelTensor(pts, spatial_range_)
-
-        if not len(spatial_fixed_)==0:
-            pts_fixed_ = torch.ones(pts.shape[0], len(spatial_fixed_),
-                                dtype=pts.dtype) * fixed
-            pts_fixed_ = pts_fixed_.float()
-            pts_fixed_ = LabelTensor(pts_fixed_, spatial_fixed_)
-            pts_range_ = pts_range_.append(pts_fixed_)
-
-        return pts_range_
-
-
-    def meshgrid(self, n):
-        pts = np.array([
-            np.linspace(0, 1, n)
-            for _ in range(self.bound.shape[0])])
-
-        pts *= self.bound[:, 1] - self.bound[:, 0]
-        pts += self.bound[:, 0]
-
-        return np.meshgrid(*pts)
+        return result
