@@ -33,9 +33,9 @@ def test_grad_vector_output():
 
 def test_div_vector_output():
     grad_tensor_v = div(tensor_v, inp)
-    assert grad_tensor_v.shape == (20, 3)
+    assert grad_tensor_v.shape == (20, 1)
     grad_tensor_v = div(tensor_v, inp, components=['a', 'b'], d=['x', 'mu'])
-    assert grad_tensor_v.shape == (inp.shape[0], 2)
+    assert grad_tensor_v.shape == (inp.shape[0], 1)
 
 def test_nabla_scalar_output():
     laplace_tensor_v = nabla(tensor_s, inp, components=['a'], d=['x', 'y'])
