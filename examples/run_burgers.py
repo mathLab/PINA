@@ -4,7 +4,7 @@ from torch.nn import Softplus
 
 from pina import PINN, Plotter, LabelTensor
 from pina.model import FeedForward
-from burger2 import Burgers1D
+from problems.burgers import Burgers1D
 
 
 class myFeature(torch.nn.Module):
@@ -49,8 +49,8 @@ if __name__ == "__main__":
 
     if args.s:
         pinn.span_pts(
-            {'n': 200, 'mode': 'random', 'variables': 't'},
-            {'n': 20, 'mode': 'random', 'variables': 'x'},
+            {'n': 200, 'mode': 'grid', 'variables': 't'},
+            {'n': 20, 'mode': 'grid', 'variables': 'x'},
             locations=['D'])
         pinn.span_pts(150, 'random', location=['gamma1', 'gamma2', 't0'])
         pinn.train(5000, 100)

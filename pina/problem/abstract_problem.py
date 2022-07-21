@@ -39,8 +39,6 @@ class AbstractProblem(metaclass=ABCMeta):
         else:
             raise RuntimeError('different domains')
 
-
-
     @input_variables.setter
     def input_variables(self, variables):
         raise RuntimeError
