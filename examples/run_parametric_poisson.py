@@ -2,8 +2,8 @@ import argparse
 import torch
 from torch.nn import Softplus
 from pina import Plotter, LabelTensor, PINN
-from parametric_poisson2 import ParametricPoisson
 from pina.model import FeedForward
+from problems.parametric_poisson import ParametricPoisson
 
 
 class myFeature(torch.nn.Module):
@@ -43,11 +43,7 @@ if __name__ == "__main__":
         extra_features=feat
     )
 
-    pinn = PINN(
-        poisson_problem,
-        model,
-        lr=0.006,
-        regularizer=1e-6)
+    pinn = PINN(poisson_problem, model, lr=0.006, regularizer=1e-6)
 
     if args.s:
 
@@ -65,4 +61,5 @@ if __name__ == "__main__":
     else:
         pinn.load_state('pina.poisson_param')
         plotter = Plotter()
-        plotter.plot(pinn, component='u', parametric=True, params_value=0)
+        plotter.plot(pinn, fixed_variables={'mu1': 0, 'mu2': 1}, levels=21)
+        plotter.plot(pinn, fixed_variables={'mu1': 1, 'mu2': -1}, levels=21)

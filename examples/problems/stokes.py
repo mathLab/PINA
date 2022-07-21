@@ -8,9 +8,8 @@ from pina import Condition, Span, LabelTensor
 
 class Stokes(SpatialProblem):
 
-    spatial_variables = ['x', 'y']
     output_variables = ['ux', 'uy', 'p']
-    domain = Span({'x': [-2, 2], 'y': [-1, 1]})
+    spatial_domain = Span({'x': [-2, 2], 'y': [-1, 1]})
 
     def momentum(input_, output_):
         nabla_ = torch.hstack((LabelTensor(nabla(output_.extract(['ux']), input_), ['x']),

@@ -8,9 +8,8 @@ from pina import Condition, Span
 
 class Poisson(SpatialProblem):
 
-    spatial_variables = ['x', 'y']
     output_variables = ['u']
-    domain = Span({'x': [0, 1], 'y': [0, 1]})
+    spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
 
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
@@ -30,7 +29,11 @@ class Poisson(SpatialProblem):
         'D': Condition(Span({'x': [0, 1], 'y': [0, 1]}), laplace_equation),
     }
 
-    def poisson_sol(self, x, y):
-        return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
+    def poisson_sol(self, pts):
+        return -(
+            torch.sin(pts.extract(['x'])*torch.pi)*
+            torch.sin(pts.extract(['y'])*torch.pi)
+        )/(2*torch.pi**2)
+        #return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
 
     truth_solution = poisson_sol

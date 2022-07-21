@@ -16,11 +16,9 @@ class ParametricEllipticOptimalControl(SpatialProblem, ParametricProblem):
     x_range = [xmin, xmax]
     y_range = [ymin, ymax]
 
-    spatial_variables = ['x1', 'x2']
-    parameters = ['mu', 'alpha']
     output_variables = ['u', 'p', 'y']
-    domain = Span({
-        'x1': x_range, 'x2': y_range, 'mu': mu_range, 'alpha': a_range})
+    spatial_domain = Span({'x1': x_range, 'x2': y_range})
+    parameter_domain = Span({'mu': mu_range, 'alpha': a_range})
 
 
     def term1(input_, output_):

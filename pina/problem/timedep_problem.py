@@ -10,5 +10,5 @@ class TimeDependentProblem(AbstractProblem):
         pass
 
     @property
-    def temporal_variables(self):
+    def temporal_variable(self):
         return self.temporal_domain.variables

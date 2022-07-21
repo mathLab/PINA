@@ -8,10 +8,9 @@ from pina.span import Span
 
 class Burgers1D(TimeDependentProblem, SpatialProblem):
 
-    spatial_variables = ['x']
-    temporal_variable = ['t']
     output_variables = ['u']
-    domain = Span({'x': [-1, 1], 't': [0, 1]})
+    spatial_domain = Span({'x': [-1, 1]})
+    temporal_domain = Span({'t': [0, 1]})
 
     def burger_equation(input_, output_):
         du = grad(output_, input_)

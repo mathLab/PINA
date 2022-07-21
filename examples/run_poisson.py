@@ -7,7 +7,7 @@ from torch.nn import ReLU, Tanh, Softplus
 from pina import PINN, LabelTensor, Plotter
 from pina.model import FeedForward
 from pina.adaptive_functions import AdaptiveSin, AdaptiveCos, AdaptiveTanh
-from poisson2 import Poisson
+from problems.poisson import Poisson
 
 
 class myFeature(torch.nn.Module):
@@ -61,6 +61,4 @@ if __name__ == "__main__":
     else:
         pinn.load_state('pina.poisson')
         plotter = Plotter()
-        plotter.plot(pinn, component='u')
-
-
+        plotter.plot(pinn)

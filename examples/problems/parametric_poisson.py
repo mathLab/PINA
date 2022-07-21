@@ -7,10 +7,9 @@ from pina import Span, Condition
 
 class ParametricPoisson(SpatialProblem, ParametricProblem):
 
-    spatial_variables = ['x', 'y']
-    parameters = ['mu1', 'mu2']
     output_variables = ['u']
-    domain = Span({'x': [-1, 1], 'y': [-1, 1]})
+    spatial_domain = Span({'x': [-1, 1], 'y': [-1, 1]})
+    parameter_domain = Span({'mu1': [-1, 1], 'mu2': [-1, 1]})
 
     def laplace_equation(input_, output_):
         force_term = torch.exp(

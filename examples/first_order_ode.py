@@ -1,15 +1,12 @@
 import argparse
 import torch
 
-from torch.nn import ReLU, Tanh, Softplus, PReLU
+from torch.nn import Softplus
 
-from pina.problem import SpatialProblem, ParametricProblem
-from pina.operators import nabla, grad, div
-from pina.model import FeedForward, DeepONet
-from pina import Condition, Span, LabelTensor, Plotter, PINN
-
-import matplotlib
-matplotlib.use('Qt5Agg')
+from pina.problem import SpatialProblem
+from pina.operators import grad
+from pina.model import FeedForward
+from pina import Condition, Span, Plotter, PINN
 
 
 class FirstOrderODE(SpatialProblem):
