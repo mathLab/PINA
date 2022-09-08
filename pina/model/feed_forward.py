@@ -97,9 +97,9 @@ class FeedForward(torch.nn.Module):
         for i, feature in enumerate(self.extra_features):
             x = x.append(feature(x))
 
-        output = self.model(x)
+        output = self.model(x).as_subclass(LabelTensor)
 
         if self.output_variables:
-            return LabelTensor(output, self.output_variables)
-        else:
-            return output
+            output.labels = self.output_variables
+
+        return output
