@@ -1,7 +1,7 @@
 import torch
 
 
-def chebyshev_roots_torch(n):
+def chebyshev_roots(n):
     """ Return the roots of *n* Chebyshev polynomials (between [-1, 1]) """
     pi = torch.acos(torch.zeros(1)).item() * 2
     k = torch.arange(n)
