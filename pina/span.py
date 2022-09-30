@@ -55,7 +55,7 @@ class Span(Location):
         result = None
         for variable in variables:
             if variable in self.range_.keys():
-                bound = np.asarray(self.range_[variable])
+                bound = torch.tensor(self.range_[variable])
                 pts_variable = self._sample_range(n, mode, bound)
                 pts_variable = LabelTensor(pts_variable, [variable])
 
