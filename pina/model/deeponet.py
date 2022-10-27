@@ -29,7 +29,7 @@ class DeepONet(torch.nn.Module):
         :param list(str) output_variables: the list containing the labels
             corresponding to the components of the output computed by the
             model.
-        :param int inner_size: the output dimension of the branch and trunk 
+        :param int inner_size: the output dimension of the branch and trunk
             networks. Default is 10.
 
         :Example:
@@ -101,5 +101,5 @@ class DeepONet(torch.nn.Module):
 
         output_ = output_.as_subclass(LabelTensor)
         output_.labels = self.output_variables
-        
+
         return output_
