@@ -66,7 +66,33 @@ class LabelTensor(torch.Tensor):
                 'the tensor has not the same number of columns of '
                 'the passed labels.'
             )
-        self.labels = labels
+        self._labels = labels
+
+    def _exist_labels(self):
+        """Check the existence of labels in a label tensor
+
+        :return: Returns True if the tensor has already
+        a label, False otherwise
+        :rtype: bool
+        """
+        if hasattr(self, 'labels'):
+            return True
+        else:
+            return False
+
+    @property
+    def labels(self):
+        return self._labels
+
+    @labels.setter
+    def labels(self, labels):
+        if not self._exist_labels():  # if a label does not exist for current tensor
+            if len(labels) != self.shape[1]:
+                raise ValueError(
+                    'the tensor has not the same number of columns of '
+                    'the passed labels.')
+
+            self._labels = labels   # assign the label
 
     def clone(self, *args, **kwargs):
         """
@@ -115,11 +141,10 @@ class LabelTensor(torch.Tensor):
                 raise ValueError(f'`{f}` not in the labels list')
 
         new_data = self[:, indeces].float()
-        new_labels = [self.labels[idx] for idx in indeces]
+        labelss = [self.labels[idx] for idx in indeces]
 
         extracted_tensor = new_data.as_subclass(LabelTensor)
-        extracted_tensor.labels = new_labels
-
+        extracted_tensor.labels = labelss
 
         return extracted_tensor
 
@@ -135,7 +160,7 @@ class LabelTensor(torch.Tensor):
         if set(self.labels).intersection(lt.labels):
             raise RuntimeError('The tensors to merge have common labels')
 
-        new_labels = self.labels + lt.labels
+        labelss = self.labels + lt.labels
         if mode == 'std':
             new_tensor = torch.cat((self, lt), dim=1)
         elif mode == 'first':
@@ -155,7 +180,7 @@ class LabelTensor(torch.Tensor):
             new_tensor = torch.cat((tensor1, tensor2), dim=1)
 
         new_tensor = new_tensor.as_subclass(LabelTensor)
-        new_tensor.labels = new_labels
+        new_tensor.labels = labelss
         return new_tensor
 
     def __str__(self):
