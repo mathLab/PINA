@@ -92,7 +92,7 @@ class LabelTensor(torch.Tensor):
                     'the tensor has not the same number of columns of '
                     'the passed labels.')
 
-            self._labels = labels   # assign the label
+        self._labels = labels   # assign the label
 
     def clone(self, *args, **kwargs):
         """
