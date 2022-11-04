@@ -75,18 +75,21 @@ class LabelTensor(torch.Tensor):
         a label, False otherwise
         :rtype: bool
         """
-        if hasattr(self, 'labels'):
-            return True
-        else:
-            return False
+        test = hasattr(self, 'labels')
+        return bool(test)
 
     @property
     def labels(self):
+        """Property decorator for labels
+
+        :return: labels of self
+        :rtype: list
+        """
         return self._labels
 
     @labels.setter
     def labels(self, labels):
-        if not self._exist_labels():  # if a label does not exist for current tensor
+        if not self._exist_labels():  # if labels dont not exist for self
             if len(labels) != self.shape[1]:
                 raise ValueError(
                     'the tensor has not the same number of columns of '
@@ -141,10 +144,10 @@ class LabelTensor(torch.Tensor):
                 raise ValueError(f'`{f}` not in the labels list')
 
         new_data = self[:, indeces].float()
-        labelss = [self.labels[idx] for idx in indeces]
+        new_labels = [self.labels[idx] for idx in indeces]
 
         extracted_tensor = new_data.as_subclass(LabelTensor)
-        extracted_tensor.labels = labelss
+        extracted_tensor.labels = new_labels
 
         return extracted_tensor
 
@@ -160,7 +163,7 @@ class LabelTensor(torch.Tensor):
         if set(self.labels).intersection(lt.labels):
             raise RuntimeError('The tensors to merge have common labels')
 
-        labelss = self.labels + lt.labels
+        new_labels = self.labels + lt.labels
         if mode == 'std':
             new_tensor = torch.cat((self, lt), dim=1)
         elif mode == 'first':
@@ -180,7 +183,7 @@ class LabelTensor(torch.Tensor):
             new_tensor = torch.cat((tensor1, tensor2), dim=1)
 
         new_tensor = new_tensor.as_subclass(LabelTensor)
-        new_tensor.labels = labelss
+        new_tensor.labels = new_labels
         return new_tensor
 
     def __str__(self):
