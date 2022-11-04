@@ -20,6 +20,8 @@ def test_labels():
     tensor = LabelTensor(data, labels)
     assert isinstance(tensor, torch.Tensor)
     assert tensor.labels == labels
+    with pytest.raises(ValueError):
+        tensor.labels = labels[:-1]
 
 
 def test_extract():

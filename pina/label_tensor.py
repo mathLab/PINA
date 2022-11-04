@@ -66,7 +66,25 @@ class LabelTensor(torch.Tensor):
                 'the tensor has not the same number of columns of '
                 'the passed labels.'
             )
-        self.labels = labels
+        self._labels = labels
+
+    @property
+    def labels(self):
+        """Property decorator for labels
+
+        :return: labels of self
+        :rtype: list
+        """
+        return self._labels
+
+    @labels.setter
+    def labels(self, labels):
+        if len(labels) != self.shape[1]: # small check
+            raise ValueError(
+                'the tensor has not the same number of columns of '
+                'the passed labels.')
+
+        self._labels = labels   # assign the label
 
     def clone(self, *args, **kwargs):
         """
@@ -119,7 +137,6 @@ class LabelTensor(torch.Tensor):
 
         extracted_tensor = new_data.as_subclass(LabelTensor)
         extracted_tensor.labels = new_labels
-
 
         return extracted_tensor
 
