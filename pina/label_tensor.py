@@ -68,15 +68,6 @@ class LabelTensor(torch.Tensor):
             )
         self._labels = labels
 
-    def _exist_labels(self):
-        """Check the existence of labels in a label tensor
-
-        :return: True if the tensor label exists, False otherwise
-        :rtype: bool
-        """
-        test = hasattr(self, 'labels')
-        return bool(test)
-
     @property
     def labels(self):
         """Property decorator for labels
@@ -88,11 +79,10 @@ class LabelTensor(torch.Tensor):
 
     @labels.setter
     def labels(self, labels):
-        if not self._exist_labels():  # if labels dont not exist for self
-            if len(labels) != self.shape[1]:
-                raise ValueError(
-                    'the tensor has not the same number of columns of '
-                    'the passed labels.')
+        if len(labels) != self.shape[1]: # small check
+            raise ValueError(
+                'the tensor has not the same number of columns of '
+                'the passed labels.')
 
         self._labels = labels   # assign the label
 
