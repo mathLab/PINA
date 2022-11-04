@@ -71,8 +71,7 @@ class LabelTensor(torch.Tensor):
     def _exist_labels(self):
         """Check the existence of labels in a label tensor
 
-        :return: Returns True if the tensor has already
-        a label, False otherwise
+        :return: True if the tensor label exists, False otherwise
         :rtype: bool
         """
         test = hasattr(self, 'labels')
