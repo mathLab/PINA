@@ -12,7 +12,7 @@ class Network(nn.Module):
     :param list(str) output_variables: the list containing the labels
         corresponding to the components of the output computed by the model.
     :param iterable(torch.nn.Module) extra_features: the additional input
-        features to use ad augmented input.
+        features to use as augmented input.
 
     :Example:
             >>> class SimpleNet(nn.Module):
@@ -45,11 +45,11 @@ class Network(nn.Module):
 
         if extra_features is None:
             extra_features = []
-        self.extra_features = nn.Sequential(*extra_features)
 
-        self.model = model
-        self.input_variables = input_variables
-        self.output_variables = output_variables
+        self._extra_features = nn.Sequential(*extra_features)
+        self._model = model
+        self._input_variables = input_variables
+        self._output_variables = output_variables
 
         try:
             tmp = torch.rand((10, len(input_variables)))
@@ -67,13 +67,29 @@ class Network(nn.Module):
         :param torch.tensor x: input of the network
         :return torch.tensor: output of the network
         """
-        if self.input_variables:
-            x = x.extract(self.input_variables)
 
-        for feature in self.extra_features:
+        x = x.extract(self._input_variables)
+
+        for feature in self._extra_features:
             x = x.append(feature(x))
 
         output = self.model(x).as_subclass(LabelTensor)
-        output.labels = self.output_variables
+        output.labels = self._output_variables
 
         return output
+
+    @property
+    def input_variables(self):
+        return self._input_variables
+
+    @property
+    def output_variables(self):
+        return self._output_variables
+
+    @property
+    def extra_features(self):
+        return self._extra_features
+
+    @property
+    def model(self):
+        return self._model
