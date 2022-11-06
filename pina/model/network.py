@@ -53,7 +53,7 @@ class Network(nn.Module):
 
         try:
             tmp = torch.rand((10, len(input_variables)))
-            self.model(tmp)
+            self._model(tmp)
         except:
             raise ValueError('Error in constructing the PINA network.'
                              ' Check compatibility of input/output'
@@ -73,7 +73,7 @@ class Network(nn.Module):
         for feature in self._extra_features:
             x = x.append(feature(x))
 
-        output = self.model(x).as_subclass(LabelTensor)
+        output = self._model(x).as_subclass(LabelTensor)
         output.labels = self._output_variables
 
         return output
