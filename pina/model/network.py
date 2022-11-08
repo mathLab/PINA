@@ -61,7 +61,8 @@ class Network(torch.nn.Module):
         try:
             tmp = torch.rand((10, len(self._input_variables)))
             tmp = LabelTensor(tmp, self._input_variables)
-            self.forward(tmp)  # trying a forward pass
+            tmp = self.forward(tmp)  # trying a forward pass
+            tmp = LabelTensor(tmp, self._output_variables)
         except:
             raise ValueError('Error in constructing the PINA network.'
                              ' Check compatibility of input/output'
