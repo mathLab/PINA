@@ -1,17 +1,16 @@
-import torch.nn as nn
 import torch
 from pina.label_tensor import LabelTensor
 
 
-class Network(nn.Module):
+class Network(torch.nn.Module):
     """The PINA implementation of any neural network.
 
-    :param iterable(torch.nn.Module) model: the torch model of the network
+    :param torch.nn.Module model: the torch model of the network
     :param list(str) input_variables: the list containing the labels
         corresponding to the input components of the model.
     :param list(str) output_variables: the list containing the labels
         corresponding to the components of the output computed by the model.
-    :param iterable(torch.nn.Module) extra_features: the additional input
+    :param torch.nn.Module extra_features: the additional input
         features to use as augmented input.
 
     :Example:
@@ -46,14 +45,23 @@ class Network(nn.Module):
         if extra_features is None:
             extra_features = []
 
-        self._extra_features = nn.Sequential(*extra_features)
+        self._extra_features = torch.nn.Sequential(*extra_features)
         self._model = model
         self._input_variables = input_variables
         self._output_variables = output_variables
 
+        # check model and input/output
+        self._check_consistency()
+
+    def _check_consistency(self):
+        """Checking the consistency of model with input and output variables
+
+        :raises ValueError: Error in constructing the PINA network
+        """
         try:
-            tmp = torch.rand((10, len(input_variables)))
-            self._model(tmp)
+            tmp = torch.rand((10, len(self._input_variables)))
+            tmp = LabelTensor(tmp, self._input_variables)
+            self.forward(tmp)  # trying a forward pass
         except:
             raise ValueError('Error in constructing the PINA network.'
                              ' Check compatibility of input/output'
