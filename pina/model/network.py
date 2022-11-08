@@ -5,7 +5,7 @@ from pina.label_tensor import LabelTensor
 class Network(torch.nn.Module):
     """The PINA implementation of any neural network.
 
-    :param torch.nn.Module model: the torch model of the network
+    :param torch.nn.Module model: the torch model of the network.
     :param list(str) input_variables: the list containing the labels
         corresponding to the input components of the model.
     :param list(str) output_variables: the list containing the labels
