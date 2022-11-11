@@ -217,7 +217,7 @@ model_learn = FeedForward(layers=[10, 10],
                     input_variables=param_poisson_problem.input_variables,
                     extra_features=feat)
 
-pinn_learn = PINN(poisson_problem, model_feat, lr=0.003, regularizer=1e-8)
+pinn_learn = PINN(param_poisson_problem, model_learn, lr=0.003, regularizer=1e-8)
 pinn_learn.span_pts(20, 'grid', ['D'])
 pinn_learn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 pinn_learn.train(5000, 100)
