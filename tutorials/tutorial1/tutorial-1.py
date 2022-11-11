@@ -66,7 +66,7 @@ pinn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 pinn.train(5000, 100)
 
 
-# The loss trend is saved in a dedicated txt file located in 'tutorial1_files'.
+# # The loss trend is saved in a dedicated txt file located in 'tutorial1_files'.
 
 os.mkdir('tutorial1_files')
 with open('tutorial1_files/poisson_history.txt', 'w') as file_:
@@ -75,8 +75,8 @@ with open('tutorial1_files/poisson_history.txt', 'w') as file_:
 pinn.save_state('tutorial1_files/pina.poisson')
 
 
-# Now the Plotter class is used to plot the results.
-# The solution predicted by the neural network is plotted on the left, the exact one is represented at the center and on the right the error between the exact and the predicted solutions is showed. 
+# # Now the Plotter class is used to plot the results.
+# # The solution predicted by the neural network is plotted on the left, the exact one is represented at the center and on the right the error between the exact and the predicted solutions is showed. 
 
 
 plotter = Plotter()
