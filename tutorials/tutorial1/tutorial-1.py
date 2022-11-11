@@ -156,16 +156,18 @@ class ParametricPoisson(SpatialProblem, ParametricProblem):
     spatial_variables = ['x', 'y']
     parameters = ['alpha', 'beta']
     output_variables = ['u']
-    domain = Span({'x': bounds_x, 'y': bounds_y})
+    spatial_domain = Span({'x': bounds_x, 'y': bounds_y})
+    parameter_domain = Span({'alpha': bounds_alpha, 'beta': bounds_beta})
 
     def laplace_equation(input_, output_):
-        force_term = (torch.sin(input_['x']*torch.pi) *
-                      torch.sin(input_['y']*torch.pi))
-        return nabla(output_['u'], input_).flatten() - force_term
+        force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
+                      torch.sin(input_.extract(['y'])*torch.pi))
+        nabla_u = nabla(output_.extract(['u']), input_)
+        return nabla_u - force_term
 
     def nil_dirichlet(input_, output_):
         value = 0.0
-        return output_['u'] - value
+        return output_.extract(['u']) - value
 
     conditions = {
         'gamma1': Condition(
@@ -185,14 +187,18 @@ class ParametricPoisson(SpatialProblem, ParametricProblem):
             laplace_equation),
     }
 
-    def poisson_sol(self, x, y):
-        return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
+    def poisson_sol(self, pts):
+        return -(
+            torch.sin(pts.extract(['x'])*torch.pi)*
+            torch.sin(pts.extract(['y'])*torch.pi)
+        )/(2*torch.pi**2)
 
 
-# Here, as done for the other cases, the new parametric feature is defined and the neural network is re-initialized and trained, considering as two additional parameters alpha and beta. 
+# # Here, as done for the other cases, the new parametric feature is defined and the neural network is re-initialized and trained, considering as two additional parameters alpha and beta. 
 
 
 param_poisson_problem = ParametricPoisson()
+
 
 class myFeature(torch.nn.Module):
     """
@@ -201,8 +207,9 @@ class myFeature(torch.nn.Module):
         super(myFeature, self).__init__()
 
     def forward(self, x):
-        return (x['beta']*torch.sin(x['alpha']*x['x']*torch.pi)*
-               torch.sin(x['alpha']*x['y']*torch.pi))
+        t =  (x.extract(['beta'])*torch.sin(x.extract(['alpha'])*x.extract(['x'])*torch.pi)*
+               torch.sin(x.extract(['alpha'])*x.extract(['y'])*torch.pi))
+        return LabelTensor(t, ['b*sin(a*x)sin(a*y)'])
 
 feat = [myFeature()]
 model_learn = FeedForward(layers=[10, 10],
@@ -210,7 +217,7 @@ model_learn = FeedForward(layers=[10, 10],
                     input_variables=param_poisson_problem.input_variables,
                     extra_features=feat)
 
-pinn_learn = PINN(poisson_problem, model_feat, lr=0.003, regularizer=1e-8)
+pinn_learn = PINN(param_poisson_problem, model_learn, lr=0.003, regularizer=1e-8)
 pinn_learn.span_pts(20, 'grid', ['D'])
 pinn_learn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 pinn_learn.train(5000, 100)
