@@ -20,30 +20,33 @@ from pina import Condition, Span, PINN, LabelTensor, Plotter
 # Now, the Poisson problem is written in PINA code as a class. The equations are written as that should be satisfied in the corresponding domains. truth_solution is the exact solution which will be compared with the predicted one.
 
 class Poisson(SpatialProblem):
-    spatial_variables = ['x', 'y']
-    bounds_x = [0, 1]
-    bounds_y = [0, 1]
     output_variables = ['u']
-    domain = Span({'x': bounds_x, 'y': bounds_y})
+    spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
 
     def laplace_equation(input_, output_):
-        force_term = (torch.sin(input_['x']*torch.pi) *
-                      torch.sin(input_['y']*torch.pi))
-        return nabla(output_['u'], input_).flatten() - force_term
+        force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
+                      torch.sin(input_.extract(['y'])*torch.pi))
+        nabla_u = nabla(output_.extract(['u']), input_)
+        return nabla_u - force_term
 
     def nil_dirichlet(input_, output_):
         value = 0.0
-        return output_['u'] - value
+        return output_.extract(['u']) - value
 
     conditions = {
-        'gamma1': Condition(Span({'x': bounds_x, 'y':  bounds_y[-1]}), nil_dirichlet),
-        'gamma2': Condition(Span({'x': bounds_x, 'y': bounds_y[0]}), nil_dirichlet),
-        'gamma3': Condition(Span({'x':  bounds_x[-1], 'y': bounds_y}), nil_dirichlet),
-        'gamma4': Condition(Span({'x': bounds_x[0], 'y': bounds_y}), nil_dirichlet),
-    'D': Condition(Span({'x': bounds_x, 'y': bounds_y}), laplace_equation),
+        'gamma1': Condition(Span({'x': [0, 1], 'y':  1}), nil_dirichlet),
+        'gamma2': Condition(Span({'x': [0, 1], 'y': 0}), nil_dirichlet),
+        'gamma3': Condition(Span({'x':  1, 'y': [0, 1]}), nil_dirichlet),
+        'gamma4': Condition(Span({'x': 0, 'y': [0, 1]}), nil_dirichlet),
+        'D': Condition(Span({'x': [0, 1], 'y': [0, 1]}), laplace_equation),
     }
-    def poisson_sol(self, x, y):
-        return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
+
+    def poisson_sol(self, pts):
+        return -(
+            torch.sin(pts.extract(['x'])*torch.pi)*
+            torch.sin(pts.extract(['y'])*torch.pi)
+        )/(2*torch.pi**2)
+        #return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
 
     truth_solution = poisson_sol
 
