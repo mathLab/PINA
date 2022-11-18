@@ -26,7 +26,7 @@ class Poisson(SpatialProblem):
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                       torch.sin(input_.extract(['y'])*torch.pi))
-        nabla_u = nabla(output_.extract(['u']), input_)
+        nabla_u = nabla(output_, input_, components=['u'], d=['x', 'y'])
         return nabla_u - force_term
 
     def nil_dirichlet(input_, output_):
@@ -66,7 +66,7 @@ pinn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 pinn.train(5000, 100)
 
 
-# # The loss trend is saved in a dedicated txt file located in 'tutorial1_files'.
+# The loss trend is saved in a dedicated txt file located in 'tutorial1_files'.
 
 os.mkdir('tutorial1_files')
 with open('tutorial1_files/poisson_history.txt', 'w') as file_:
@@ -75,8 +75,8 @@ with open('tutorial1_files/poisson_history.txt', 'w') as file_:
 pinn.save_state('tutorial1_files/pina.poisson')
 
 
-# # Now the Plotter class is used to plot the results.
-# # The solution predicted by the neural network is plotted on the left, the exact one is represented at the center and on the right the error between the exact and the predicted solutions is showed. 
+# Now the Plotter class is used to plot the results.
+# The solution predicted by the neural network is plotted on the left, the exact one is represented at the center and on the right the error between the exact and the predicted solutions is showed. 
 
 
 plotter = Plotter()
@@ -162,7 +162,7 @@ class ParametricPoisson(SpatialProblem, ParametricProblem):
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                       torch.sin(input_.extract(['y'])*torch.pi))
-        nabla_u = nabla(output_.extract(['u']), input_)
+        nabla_u = nabla(output_, input_, components=['u'], d=['x', 'y'])
         return nabla_u - force_term
 
     def nil_dirichlet(input_, output_):
@@ -194,7 +194,7 @@ class ParametricPoisson(SpatialProblem, ParametricProblem):
         )/(2*torch.pi**2)
 
 
-# # Here, as done for the other cases, the new parametric feature is defined and the neural network is re-initialized and trained, considering as two additional parameters alpha and beta. 
+# Here, as done for the other cases, the new parametric feature is defined and the neural network is re-initialized and trained, considering as two additional parameters alpha and beta. 
 
 
 param_poisson_problem = ParametricPoisson()
