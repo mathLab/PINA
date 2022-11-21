@@ -50,31 +50,33 @@ PINN is a novel approach that involves neural networks to solve supervised learn
 #### Problem definition
 First step is formalization of the problem in the PINA framework. We take as example here a simple Poisson problem, but PINA is already able to deal with **multi-dimensional**, **parametric**, **time-dependent** problems.
 Consider:
-$$\begin{cases}\Delta u = \sin(\pi x)\sin(\pi y)\quad& \text{in}\\,D,\\\\u = 0& \text{on}\\,\partial D,\end{cases}$$
-where $D = [0, 1]^2$ is a square domain and $u$ the unknown field. The translation in PINA code becomes a new class containing all the information about the domain, about the `conditions` and nothing more:
+
+$$\begin{cases} \Delta u = \sin(\pi x)\sin(\pi y)\quad& \text{in} \\ D \\\\ u = 0& \text{on} \\ \partial D \end{cases}$$
+
+where $D = [0, 1]^2$ is a square domain, $u$ the unknown field, and $\partial D  = \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4$, where $\Gamma_i$ are the boundaries of the square for $i=1,\cdots,4$. The translation in PINA code becomes a new class containing all the information about the domain, about the `conditions` and nothing more:
 
 ```python
 class Poisson(SpatialProblem):
-	spatial_variables = ['x', 'y']
-	output_variables = ['u']
-	domain = Span({'x': [0, 1], 'y': [0, 1]})
+    output_variables = ['u']
+    spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
 
-	def laplace_equation(input_, output_):
-		force_term = (torch.sin(input_['x']*torch.pi) *
-		              torch.sin(input_['y']*torch.pi))
-		return nabla(output_['u'], input_).flatten() - force_term
+    def laplace_equation(input_, output_):
+        force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
+                      torch.sin(input_.extract(['y'])*torch.pi))
+        nabla_u = nabla(output_.extract(['u']), input_)
+        return nabla_u - force_term
 
-	def nil_dirichlet(input_, output_):
-		value = 0.0
-		return output_['u'] - value
+    def nil_dirichlet(input_, output_):
+      	value = 0.0
+      	return output_.extract(['u']) - value
 
-	conditions = {
-		'gamma1': Condition(Span({'x': [-1, 1], 'y':  1}), nil_dirichlet),
-		'gamma2': Condition(Span({'x': [-1, 1], 'y': -1}), nil_dirichlet),
-		'gamma3': Condition(Span({'x':  1, 'y': [-1, 1]}), nil_dirichlet),
-		'gamma4': Condition(Span({'x': -1, 'y': [-1, 1]}), nil_dirichlet),
-		'D': Condition(Span({'x': [-1, 1], 'y': [-1, 1]}), laplace_equation),
-	}
+    conditions = {
+        'gamma1': Condition(Span({'x': [-1, 1], 'y':  1}), nil_dirichlet),
+        'gamma2': Condition(Span({'x': [-1, 1], 'y': -1}), nil_dirichlet),
+        'gamma3': Condition(Span({'x':  1, 'y': [-1, 1]}), nil_dirichlet),
+        'gamma4': Condition(Span({'x': -1, 'y': [-1, 1]}), nil_dirichlet),
+        'D': Condition(Span({'x': [-1, 1], 'y': [-1, 1]}), laplace_equation),
+    }
 ```
 
 #### Problem solution
