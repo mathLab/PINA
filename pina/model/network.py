@@ -18,7 +18,7 @@ class Network(torch.nn.Module):
             >>>    def __init__(self):
             >>>        super().__init__()
             >>>        self.layers = nn.Sequential(
-            >>>        nn.Linear(3, 20),
+            >>>        nn.Linear(2, 20),
             >>>        nn.Tanh(),
             >>>        nn.Linear(20, 1)
             >>>        )
