@@ -1,8 +1,9 @@
-from .problem import AbstractProblem
+""" Module for PINN """
 import torch
-import matplotlib.pyplot as plt
-import numpy as np
-from pina.label_tensor import LabelTensor
+
+from .problem import AbstractProblem
+from .label_tensor import LabelTensor
+
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 
 
