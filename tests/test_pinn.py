@@ -38,8 +38,8 @@ class Poisson(SpatialProblem):
     truth_solution = poisson_sol
 
 problem = Poisson()
-model = FeedForward(problem.input_variables, problem.output_variables)
 
+model = FeedForward(problem.input_variables, problem.output_variables)
 
 def test_constructor():
     PINN(problem, model)
