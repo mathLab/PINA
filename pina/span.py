@@ -56,7 +56,6 @@ class Span(Location):
     def sample(self, n, mode='random', variables='all'):
         """TODO
         """
-
         def _1d_sampler(n, mode, variables):
             """ Sample independentely the variables and cross the results"""
             tmp = []
