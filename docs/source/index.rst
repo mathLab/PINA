@@ -35,7 +35,7 @@ solve problems in a continuous and nonlinear settings.
     :numbered:
     :caption: Tutorials:
 
-    Poisson problem <_rst/tutorial1/tutorial-1.rst>
+    Poisson problem <_rst/tutorial2/tutorial.rst>
 
 .. ........................................................................................
 
