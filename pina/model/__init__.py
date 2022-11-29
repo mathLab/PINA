@@ -1,8 +1,8 @@
 __all__ = [
     'FeedForward',
-    'MultiFeedForward'
+    'MultiFeedForward',
     'DeepONet',
-    'Network'
+    'Network',
 ]
 
 from .feed_forward import FeedForward

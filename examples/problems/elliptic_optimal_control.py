@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 from pina.problem import Problem
 from pina.segment import Segment
@@ -39,11 +38,8 @@ class EllipticOptimalControl(Problem2D):
             'gamma3': {'location': Segment((xmax, ymax), (xmin, ymax)), 'func': nil_dirichlet},
             'gamma4': {'location': Segment((xmin, ymax), (xmin, ymin)), 'func': nil_dirichlet},
             'D1': {'location': Cube([[xmin, xmax], [ymin, ymax]]), 'func': [term1, term2, term3]},
-            #'D2': {'location': Cube([[0, 1], [0, 1]]), 'func': term2},
-            #'D3': {'location': Cube([[0, 1], [0, 1]]), 'func': term3}
         }
 
         self.input_variables = ['x1', 'x2']
         self.output_variables = ['u', 'p', 'y']
         self.spatial_domain = Cube([[xmin, xmax], [xmin, xmax]])
-
