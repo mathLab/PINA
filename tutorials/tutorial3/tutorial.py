@@ -78,7 +78,7 @@ class Wave(TimeDependentProblem, SpatialProblem):
 problem = Wave()
 
 
-# After the problem, a **torch** model is needed to solve the PINN. With the `Network` class the users can convert any **torch** model in a **PINA** model which uses label tensors with a single line of code. We will write a simple residual network using linear layers.
+# After the problem, a **torch** model is needed to solve the PINN. With the `Network` class the users can convert any **torch** model in a **PINA** model which uses label tensors with a single line of code. We will write a simple residual network using linear layers. Here we implement a simple residual network composed by linear torch layers.
 # 
 # This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unkwown field of the Wave problem. The residual of the equations are evaluated at several sampling points (which the user can manipulate using the method `span_pts`) and the loss minimized by the neural network is the sum of the residuals.
 
@@ -93,7 +93,7 @@ class TorchNet(torch.nn.Module):
         self.residual = torch.nn.Sequential(torch.nn.Linear(3, 16),
                                             torch.nn.Tanh(),
                                             torch.nn.Linear(16, 3),
-                                            torch.nn.Tanh())  
+                                            torch.nn.Tanh())
         
         self.mlp = torch.nn.Sequential(torch.nn.Linear(3, 24),
                                        torch.nn.Tanh(),
@@ -127,7 +127,7 @@ pinn = generate_samples_and_train(model, problem)
 
 # After the training is completed one can now plot some results using the `Plotter` class of **PINA**.
 
-# In[5]:
+# In[7]:
 
 
 plotter = Plotter()
@@ -138,7 +138,7 @@ plotter.plot(pinn, fixed_variables={'t' : 0.5})
 
 # We can also plot the pinn loss during the training to see the decrease.
 
-# In[6]:
+# In[8]:
 
 
 import matplotlib.pyplot as plt

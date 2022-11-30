@@ -85,7 +85,8 @@ predicted one.
 After the problem, a **torch** model is needed to solve the PINN. With
 the ``Network`` class the users can convert any **torch** model in a
 **PINA** model which uses label tensors with a single line of code. We
-will write a simple residual network using linear layers.
+will write a simple residual network using linear layers. Here we
+implement a simple residual network composed by linear torch layers.
 
 This neural network takes as input the coordinates (in this case
 :math:`x`, :math:`y` and :math:`t`) and provides the unkwown field of
@@ -104,7 +105,7 @@ the residuals.
             self.residual = torch.nn.Sequential(torch.nn.Linear(3, 16),
                                                 torch.nn.Tanh(),
                                                 torch.nn.Linear(16, 3),
-                                                torch.nn.Tanh())  
+                                                torch.nn.Tanh())
             
             self.mlp = torch.nn.Sequential(torch.nn.Linear(3, 24),
                                            torch.nn.Tanh(),
@@ -141,20 +142,20 @@ is not mandatory in the **PINA** framework.
 .. parsed-literal::
 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00000] 3.696696e-01 2.948399e-02 1.348359e-01 1.414441e-01 2.550657e-02 2.666699e-02 1.173203e-02 
+    [epoch 00000] 1.949634e-01 3.005680e-02 6.441724e-02 3.294255e-02 6.325603e-02 3.027226e-03 1.263581e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00001] 1.295608e-01 7.026880e-03 4.988546e-02 4.242127e-02 8.680532e-03 1.438522e-02 7.161420e-03 
+    [epoch 00001] 7.217254e-02 6.137958e-03 1.786630e-02 6.951613e-03 1.774752e-02 2.276723e-02 7.019176e-04 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00250] 4.090840e-03 2.548697e-04 1.971033e-04 3.415658e-04 1.860978e-04 3.089011e-03 2.219297e-05 
+    [epoch 00250] 4.112188e-03 2.494386e-04 1.979993e-04 2.449287e-04 2.625131e-04 3.139852e-03 1.745588e-05 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00500] 3.994201e-03 2.137229e-04 2.208564e-04 2.831228e-04 2.112072e-04 3.043587e-03 2.170474e-05 
+    [epoch 00500] 4.039850e-03 2.451004e-04 2.015663e-04 2.523335e-04 2.407064e-04 3.083990e-03 1.615283e-05 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00750] 3.892737e-03 1.960989e-04 2.171265e-04 2.855759e-04 2.186773e-04 2.940620e-03 3.463851e-05 
+    [epoch 00750] 3.942152e-03 2.204387e-04 2.094181e-04 2.657159e-04 2.246564e-04 2.996444e-03 2.547864e-05 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 01000] 3.608999e-03 1.350552e-04 2.278226e-04 3.551233e-04 2.776817e-04 2.564327e-03 4.898960e-05 
+    [epoch 01000] 3.697490e-03 1.549838e-04 2.196791e-04 3.028835e-04 2.695825e-04 2.719009e-03 3.135128e-05 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 01250] 3.472723e-03 1.203779e-04 2.665457e-04 3.634643e-04 3.228022e-04 2.377785e-03 2.174835e-05 
-    [epoch 01500] 3.349001e-03 1.410526e-04 2.640025e-04 3.414921e-04 3.039106e-04 2.271722e-03 2.682119e-05 
+    [epoch 01250] 3.240117e-03 1.137412e-04 1.829536e-04 3.278378e-04 3.354096e-04 2.235723e-03 4.445175e-05 
+    [epoch 01500] 2.537301e-03 1.627188e-04 2.738914e-04 2.418139e-04 2.438446e-04 1.509327e-03 1.057045e-04 
 
 
 After the training is completed one can now plot some results using the

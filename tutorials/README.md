@@ -7,5 +7,6 @@ In this folder we collect useful tutorials in order to understand the principles
 |-------|---------------|-------------------|
 | Tutorial1&#160;[[.ipynb](),&#160;[.py](),&#160;[.html]()]| Coming soon |  |
 | Tutorial2&#160;[[.ipynb](tutorial2/tutorial.ipynb),&#160;[.py](tutorial2/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial1/tutorial-1.html)]| Poisson problem on regular domain using extra features | `SpatialProblem` |
+| Tutorial3&#160;[[.ipynb](tutorial3/tutorial.ipynb),&#160;[.py](tutorial3/tutorial.py),&#160;[.html]()]| Wave problem on regular domain using custom pytorch networks. | `SpatialProblem`, `TimeDependentProblem` |
 
 
