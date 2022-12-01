@@ -118,7 +118,7 @@ the residuals.
                     extra_features=None)
 
 In this tutorial, the neural network is trained for 2000 epochs with a
-learning rate of 0.0008. These parameters can be modified as desired. We
+learning rate of 0.001. These parameters can be modified as desired. We
 highlight that the generation of the sampling points and the train is
 here encapsulated within the function ``generate_samples_and_train``,
 but only for saving some lines of code in the next cells; that function
