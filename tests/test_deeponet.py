@@ -17,6 +17,12 @@ def test_constructor():
     onet = DeepONet(trunk_net=trunk, branch_net=branch,
                     output_variables=output_vars)
 
+def test_constructor_fails_when_invalid_inner_layer_size():
+    branch = FFN(input_variables=['a', 'c'], output_variables=20)
+    trunk = FFN(input_variables=['b'], output_variables=19)
+    with pytest.raises(ValueError):
+        DeepONet(trunk_net=trunk, branch_net=branch, output_variables=output_vars)
+
 def test_forward():
     branch = FFN(input_variables=['a', 'c'], output_variables=10)
     trunk = FFN(input_variables=['b'], output_variables=10)
