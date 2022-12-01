@@ -21,7 +21,7 @@
 
 # First of all, some useful imports.
 
-# In[1]:
+# In[2]:
 
 
 import torch
@@ -34,7 +34,7 @@ from pina import Condition, Span, PINN, Plotter
 
 # Now, the wave problem is written in PINA code as a class, inheriting from `SpatialProblem` and `TimeDependentProblem` since we deal with spatial, and time dependent variables. The equations are written as `conditions` that should be satisfied in the corresponding domains. `truth_solution` is the exact solution which will be compared with the predicted one.
 
-# In[2]:
+# In[3]:
 
 
 class Wave(TimeDependentProblem, SpatialProblem):
@@ -51,11 +51,10 @@ class Wave(TimeDependentProblem, SpatialProblem):
     def nil_dirichlet(input_, output_):
         value = 0.0
         return output_.extract(['u']) - value
-    
+
     def initial_condition(input_, output_):
         u_expected = (torch.sin(torch.pi*input_.extract(['x'])) *
-                      torch.sin(torch.pi*input_.extract(['y'])) *
-                      torch.cos(torch.sqrt(torch.tensor(2.))))
+                      torch.sin(torch.pi*input_.extract(['y'])))
         return output_.extract(['u']) - u_expected
 
     conditions = {
@@ -71,10 +70,9 @@ class Wave(TimeDependentProblem, SpatialProblem):
         return (torch.sin(torch.pi*pts.extract(['x'])) *
                 torch.sin(torch.pi*pts.extract(['y'])) *
                 torch.cos(torch.sqrt(torch.tensor(2.))*torch.pi*pts.extract(['t'])))
-    
+
     truth_solution = wave_sol
 
-# defining the problem
 problem = Wave()
 
 
@@ -82,43 +80,44 @@ problem = Wave()
 # 
 # This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unkwown field of the Wave problem. The residual of the equations are evaluated at several sampling points (which the user can manipulate using the method `span_pts`) and the loss minimized by the neural network is the sum of the residuals.
 
-# In[3]:
+# In[4]:
 
 
 class TorchNet(torch.nn.Module):
     
     def __init__(self):
         super().__init__()
-        
-        self.residual = torch.nn.Sequential(torch.nn.Linear(3, 16),
+         
+        self.residual = torch.nn.Sequential(torch.nn.Linear(3, 24),
                                             torch.nn.Tanh(),
-                                            torch.nn.Linear(16, 3),
-                                            torch.nn.Tanh())
+                                            torch.nn.Linear(24, 3))
         
-        self.mlp = torch.nn.Sequential(torch.nn.Linear(3, 24),
+        self.mlp = torch.nn.Sequential(torch.nn.Linear(3, 64),
                                        torch.nn.Tanh(),
-                                        torch.nn.Linear(24, 1))
+                                       torch.nn.Linear(64, 1))
     def forward(self, x):
         residual_x = self.residual(x)
-        return self.mlp(x+residual_x)
-    
-model = Network(model=TorchNet(),
-                input_variables=problem.input_variables, 
-                output_variables=problem.output_variables)
+        return self.mlp(x + residual_x)
+
+# model definition
+model = Network(model = TorchNet(),
+                input_variables=problem.input_variables,
+                output_variables=problem.output_variables,
+                extra_features=None)
 
 
-# In this tutorial, the neural network is trained for 1500 epochs with a learning rate of 0.008. These parameters can be modified as desired.
-# We highlight that the generation of the sampling points and the train is here encapsulated within the function `generate_samples_and_train`, but only for saving some lines of code in the next cells; that function is not mandatory in the **PINA** framework. 
+# In this tutorial, the neural network is trained for 2000 epochs with a learning rate of 0.0008. These parameters can be modified as desired.
+# We highlight that the generation of the sampling points and the train is here encapsulated within the function `generate_samples_and_train`, but only for saving some lines of code in the next cells; that function is not mandatory in the **PINA** framework. The training takes approximately one minute.
 
-# In[4]:
+# In[5]:
 
 
 def generate_samples_and_train(model, problem):
-    pinn = PINN(problem, model, lr=0.008)
-    pinn.span_pts(15, 'grid', locations=['D'])
-    pinn.span_pts(20, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-    pinn.span_pts(80, 'grid', locations=['t0'])
-    pinn.train(1500, 250)
+    # generate pinn object
+    pinn = PINN(problem, model, lr=0.001)
+
+    pinn.span_pts(1000, 'random', locations=['D','t0', 'gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    pinn.train(1500, 150)
     return pinn
 
 
@@ -127,18 +126,18 @@ pinn = generate_samples_and_train(model, problem)
 
 # After the training is completed one can now plot some results using the `Plotter` class of **PINA**.
 
-# In[7]:
+# In[11]:
 
 
 plotter = Plotter()
 
-# plotting at fixed time t = 0.5
-plotter.plot(pinn, fixed_variables={'t' : 0.5})
+# plotting at fixed time t = 0.6
+plotter.plot(pinn, fixed_variables={'t': 0.6})
 
 
 # We can also plot the pinn loss during the training to see the decrease.
 
-# In[8]:
+# In[12]:
 
 
 import matplotlib.pyplot as plt
@@ -150,3 +149,5 @@ plt.grid()
 plt.legend()
 plt.show()
 
+
+# You can now trying improving the training by changing network, optimizer and its parameters, changin the sampling points,or adding extra features!
