@@ -84,7 +84,7 @@ class Span(Location):
 
         def _Nd_sampler(n, mode, variables):
             """ Sample ll the variables together """
-            pairs = [(k,v) for k, v in self.range_.items() if k in variables]
+            pairs = [(k, v) for k, v in self.range_.items() if k in variables]
             keys, values = map(list, zip(*pairs))
             bounds = torch.tensor(values)
             result = self._sample_range(n, mode, bounds)
