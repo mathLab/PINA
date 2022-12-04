@@ -1,10 +1,10 @@
 """ Module for PINN """
+from functools import reduce
+
 import torch
 
 from .problem import AbstractProblem
 from .label_tensor import LabelTensor
-
-from functools import reduce
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 
@@ -169,9 +169,9 @@ class PINN(object):
 
     @staticmethod
     def merge_tensors(tensors):  # name to be changed
-        if len(tensors) == 0:
-            raise ValueError("Expected at least one tensor")
-        return reduce(PINN.merge_two_tensors, tensors[1:], tensors[0])
+        if tensors:
+            return reduce(PINN.merge_two_tensors, tensors[1:], tensors[0])
+        raise ValueError("Expected at least one tensor")
 
     @staticmethod
     def merge_two_tensors(tensor1, tensor2):
