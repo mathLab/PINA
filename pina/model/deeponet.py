@@ -18,7 +18,7 @@ class DeepONet(torch.nn.Module):
         <https://doi.org/10.1038/s42256-021-00302-5>`_
 
     """
-    def __init__(self, branch_net, trunk_net, output_variables, inner_size=10):
+    def __init__(self, branch_net, trunk_net, output_variables):
         """
         :param torch.nn.Module branch_net: the neural network to use as branch
             model. It has to take as input a :class:`LabelTensor`. The number
@@ -29,8 +29,6 @@ class DeepONet(torch.nn.Module):
         :param list(str) output_variables: the list containing the labels
             corresponding to the components of the output computed by the
             model.
-        :param int inner_size: the output dimension of the branch and trunk
-            networks. Default is 10.
 
         :Example:
             >>> branch = FFN(input_variables=['a', 'c'], output_variables=20)
