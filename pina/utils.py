@@ -31,7 +31,7 @@ def number_parameters(model, aggregate=True, only_trainable=True): #TODO: check
 
 def merge_tensors(tensors):  # name to be changed
     if tensors:
-        return reduce(PINN.merge_two_tensors, tensors[1:], tensors[0])
+        return reduce(merge_two_tensors, tensors[1:], tensors[0])
     raise ValueError("Expected at least one tensor")
 
 
