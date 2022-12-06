@@ -1,8 +1,9 @@
 """Utils module"""
 from functools import reduce
+import torch
 
 
-def number_parameters(model, aggregate=True, only_trainable=True): #TODO: check
+def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
     """
     Return the number of parameters of a given `model`.
 
@@ -41,5 +42,20 @@ def merge_two_tensors(tensor1, tensor2):
 
     tensor1 = LabelTensor(tensor1.repeat(n2, 1), labels=tensor1.labels)
     tensor2 = LabelTensor(tensor2.repeat_interleave(n1, dim=0),
-                            labels=tensor2.labels)
+                          labels=tensor2.labels)
     return tensor1.append(tensor2)
+
+
+class MyDataSet(torch.utils.data.Dataset):
+
+    def __init__(self, location, tensor):
+        self._tensor = tensor
+        self._location = location
+        self._len = len(tensor)
+
+    def __getitem__(self, index):
+        tensor = self._tensor.select(0, index)
+        return {self._location: tensor}
+
+    def __len__(self):
+        return self._len
