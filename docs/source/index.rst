@@ -36,6 +36,7 @@ solve problems in a continuous and nonlinear settings.
     :caption: Tutorials:
 
     Poisson problem <_rst/tutorial2/tutorial.rst>
+    Wave equation <_rst/tutorial3/tutorial.rst>
 
 .. ........................................................................................
 
