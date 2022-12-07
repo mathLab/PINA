@@ -3,9 +3,8 @@ import torch
 
 from .problem import AbstractProblem
 from .label_tensor import LabelTensor
-from .utils import merge_tensors
-from .utils import MyDataSet
-from torch.utils.data import DataLoader, default_collate, ConcatDataset
+from .utils import merge_tensors, PinaDataset
+
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
@@ -72,6 +71,7 @@ class PINN(object):
             self.model.parameters(), lr=lr, weight_decay=regularizer)
 
         self.batch_size = batch_size
+        self.data_set = PinaDataset(self)
 
     @property
     def problem(self):
@@ -211,8 +211,7 @@ class PINN(object):
     def train(self, stop=100, frequency_print=2, save_loss=1, trial=None):
 
         epoch = 0
-        data_loader = self._create_dataloader()
-        data_loader_loop = data_loader
+        data_loader = self.data_set.dataloader
 
         header = []
         for condition_name in self.problem.conditions:
@@ -234,10 +233,8 @@ class PINN(object):
             for condition_name in self.problem.conditions:
                 condition = self.problem.conditions[condition_name]
 
-                if self.batch_size:
-                    data_loader_loop = data_loader[condition_name]
+                for batch in data_loader[condition_name]:
 
-                for batch in data_loader_loop:
                     single_loss = []
 
                     if hasattr(condition, 'function'):
