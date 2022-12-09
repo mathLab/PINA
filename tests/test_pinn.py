@@ -31,18 +31,21 @@ class Poisson(SpatialProblem):
 
     def poisson_sol(self, pts):
         return -(
-            torch.sin(pts.extract(['x'])*torch.pi)*
+            torch.sin(pts.extract(['x'])*torch.pi) *
             torch.sin(pts.extract(['y'])*torch.pi)
         )/(2*torch.pi**2)
 
     truth_solution = poisson_sol
 
+
 problem = Poisson()
 
 model = FeedForward(problem.input_variables, problem.output_variables)
 
+
 def test_constructor():
     PINN(problem, model)
+
 
 def test_span_pts():
     pinn = PINN(problem, model)
@@ -60,6 +63,13 @@ def test_span_pts():
     pinn.span_pts(n, 'random', locations=['D'])
     assert pinn.input_pts['D'].shape[0] == n
 
+    pinn.span_pts(n, 'latin', locations=['D'])
+    assert pinn.input_pts['D'].shape[0] == n
+
+    pinn.span_pts(n, 'lh', locations=['D'])
+    assert pinn.input_pts['D'].shape[0] == n
+
+
 def test_train():
     pinn = PINN(problem, model)
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
@@ -67,6 +77,7 @@ def test_train():
     pinn.span_pts(n, 'grid', boundaries)
     pinn.span_pts(n, 'grid', locations=['D'])
     pinn.train(5)
+
 
 def test_train():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
