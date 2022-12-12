@@ -90,3 +90,44 @@ def test_train():
         pinn.span_pts(n, 'grid', locations=['D'])
         pinn.train(50, save_loss=i)
         assert list(pinn.history_loss.keys()) == truth_key
+
+
+def test_train_batch():
+    pinn = PINN(problem, model, batch_size=6)
+    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+    n = 10
+    pinn.span_pts(n, 'grid', boundaries)
+    pinn.span_pts(n, 'grid', locations=['D'])
+    pinn.train(5)
+
+
+def test_train_batch():
+    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+    n = 10
+    expected_keys = [[], list(range(0, 50, 3))]
+    param = [0, 3]
+    for i, truth_key in zip(param, expected_keys):
+        pinn = PINN(problem, model, batch_size=6)
+        pinn.span_pts(n, 'grid', boundaries)
+        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.train(50, save_loss=i)
+        assert list(pinn.history_loss.keys()) == truth_key
+
+
+if torch.cuda.is_available():
+
+    def test_gpu_train():
+        pinn = PINN(problem, model, batch_size=20, device='cuda')
+        boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+        n = 100
+        pinn.span_pts(n, 'grid', boundaries)
+        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.train(5)
+
+    def test_gpu_train_nobatch():
+        pinn = PINN(problem, model, batch_size=None, device='cuda')
+        boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+        n = 100
+        pinn.span_pts(n, 'grid', boundaries)
+        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.train(5)
