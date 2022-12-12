@@ -63,6 +63,12 @@ def test_span_pts():
     pinn.span_pts(n, 'random', locations=['D'])
     assert pinn.input_pts['D'].shape[0] == n
 
+    pinn.span_pts(n, 'latin', locations=['D'])
+    assert pinn.input_pts['D'].shape[0] == n
+
+    pinn.span_pts(n, 'lh', locations=['D'])
+    assert pinn.input_pts['D'].shape[0] == n
+
 
 def test_train():
     pinn = PINN(problem, model)

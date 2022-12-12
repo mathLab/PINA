@@ -5,6 +5,8 @@ from torch.utils.data import DataLoader, default_collate, ConcatDataset
 
 from .label_tensor import LabelTensor
 
+import torch
+
 
 def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
     """
@@ -47,6 +49,40 @@ def merge_two_tensors(tensor1, tensor2):
     tensor2 = LabelTensor(tensor2.repeat_interleave(n1, dim=0),
                           labels=tensor2.labels)
     return tensor1.append(tensor2)
+
+
+def torch_lhs(n, dim):
+    """Latin Hypercube Sampling torch routine.
+    Sampling in range $[0, 1)^d$.
+
+    :param int n: number of samples
+    :param int dim: dimensions of latin hypercube
+    :return: samples
+    :rtype: torch.tensor
+    """
+
+    if not isinstance(n, int):
+        raise TypeError('number of point n must be int')
+
+    if not isinstance(dim, int):
+        raise TypeError('dim must be int')
+
+    if dim < 1:
+        raise ValueError('dim must be greater than one')
+
+    samples = torch.rand(size=(n, dim))
+
+    perms = torch.tile(torch.arange(1, n + 1), (dim, 1))
+
+    for row in range(dim):
+        idx_perm = torch.randperm(perms.shape[-1])
+        perms[row, :] = perms[row, idx_perm]
+
+    perms = perms.T
+
+    samples = (perms - samples) / n
+
+    return samples
 
 
 class PinaDataset():
