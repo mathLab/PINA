@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FeedForward &mdash; PINA 0.0.2 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>FeedForward &mdash; PINA 0.0.2.post2212 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="../index.html" class="icon icon-home"> PINA
           </a>
               <div class="version">
-                0.0.2
+                0.0.2.post2212
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -55,7 +55,8 @@
 </ul>
 <p class="caption"><span class="caption-text">Tutorials:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial-1.html">1. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">1. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">2. Wave equation</a></li>
 </ul>
 
         </div>
@@ -71,9 +72,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="code.html">Code Documentation</a> &raquo;</li>
-      <li>FeedForward</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">FeedForward</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/_rst/fnn.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -89,7 +90,7 @@
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="sig-name descname">FeedForward</code><span class="sig-paren">(</span><em class="sig-param">input_variables</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">inner_size=20</em>, <em class="sig-param">n_layers=2</em>, <em class="sig-param">func=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em>, <em class="sig-param">layers=None</em>, <em class="sig-param">extra_features=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/feed_forward.html#FeedForward"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of feedforward network, also refered as multilayer
 perceptron.</p>
 <dl class="field-list simple">
@@ -103,20 +104,70 @@ corresponding to the components of the output computed by the model.</p></li>
 20.</p></li>
 <li><p><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – number of hidden layers. Default is 2.</p></li>
 <li><p><strong>func</strong> – the activation function to use. If a single
-<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a> is passed, this is used as activation function
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a> is passed, this is used as activation function
 after any layers, except the last one. If a list of Modules is passed,
 they are used as activation functions at any layers, in order.</p></li>
 <li><p><strong>layers</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>)</em>) – a list containing the number of neurons for
 any hidden layers. If specified, the parameters <cite>n_layers</cite> e
 <cite>inner_size</cite> are not considered.</p></li>
-<li><p><strong>extra_features</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.12)"><em>torch.nn.Module</em></a><em>)</em>) – the additional input
+<li><p><strong>extra_features</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><em>torch.nn.Module</em></a><em>)</em>) – the additional input
 features to use ad augmented input.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="attribute">
 <dt>
+<code class="sig-name descname">_backward_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_buffers</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_forward_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_forward_pre_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
 <code class="sig-name descname">_is_full_backward_hook</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_load_state_dict_post_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_load_state_dict_pre_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_modules</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_non_persistent_buffers_set</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_parameters</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_state_dict_hooks</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -157,7 +208,7 @@ features to use ad augmented input.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Jul 11, 2022.
+      <span class="lastupdated">Last updated on Dec 13, 2022.
       </span></p>
   </div>
 

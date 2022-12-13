@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Tutorial 3: resolution of wave equation with custom Network &mdash; PINA 0.0.2.post2212 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="1. Tutorial 2: resolution of Poisson problem and usage of extra-features" href="../tutorial2/tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> PINA
+          </a>
+              <div class="version">
+                0.0.2.post2212
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../LICENSE.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial2/tutorial.html">1. Poisson problem</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Wave equation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-problem-solution">2.1. The problem solution</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Tutorial 3: resolution of wave equation with custom Network</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/_rst/tutorial3/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tutorial-3-resolution-of-wave-equation-with-custom-network">
+<h1><span class="section-number">2. </span>Tutorial 3: resolution of wave equation with custom Network<a class="headerlink" href="#tutorial-3-resolution-of-wave-equation-with-custom-network" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-problem-solution">
+<h2><span class="section-number">2.1. </span>The problem solution<a class="headerlink" href="#the-problem-solution" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial we present how to solve the wave equation using the
+<code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> and <code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code> class, and the
+<code class="docutils literal notranslate"><span class="pre">Network</span></code> class for building custom <strong>torch</strong> networks.</p>
+<p>The problem is written in the following form:</p>
+<p><a href="#id1"><span class="problematic" id="id2">:raw-latex:`\begin{equation}
+\begin{cases}
+\Delta u(x,y,t) = \frac{\partial^2}{\partial t^2} u(x,y,t) \quad \text{in } D, \\\\
+u(x, y, t=0) = \sin(\pi x)\sin(\pi y)\cos(\sqrt{2}\pi), \\\\
+u(x, y, t) = 0 \quad \text{on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+\end{cases}
+\end{equation}`</span></a></p>
+<p>where <span class="math notranslate nohighlight">\(D\)</span> is a square domain <span class="math notranslate nohighlight">\([0,1]^2\)</span>, and
+<span class="math notranslate nohighlight">\(\Gamma_i\)</span>, with <span class="math notranslate nohighlight">\(i=1,...,4\)</span>, are the boundaries of the
+square, and the velocity in the standard wave equation is fixed to one.</p>
+<p>First of all, some useful imports.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import torch
+
+from pina.problem import SpatialProblem, TimeDependentProblem
+from pina.operators import nabla, grad
+from pina.model import Network
+from pina import Condition, Span, PINN, Plotter
+</pre></div>
+</div>
+<p>Now, the wave problem is written in PINA code as a class, inheriting
+from <code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> and <code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code> since we deal with
+spatial, and time dependent variables. The equations are written as
+<code class="docutils literal notranslate"><span class="pre">conditions</span></code> that should be satisfied in the corresponding domains.
+<code class="docutils literal notranslate"><span class="pre">truth_solution</span></code> is the exact solution which will be compared with the
+predicted one.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class Wave(TimeDependentProblem, SpatialProblem):
+    output_variables = [&#39;u&#39;]
+    spatial_domain = Span({&#39;x&#39;: [0, 1], &#39;y&#39;: [0, 1]})
+    temporal_domain = Span({&#39;t&#39;: [0, 1]})
+
+    def wave_equation(input_, output_):
+        u_t = grad(output_, input_, components=[&#39;u&#39;], d=[&#39;t&#39;])
+        u_tt = grad(u_t, input_, components=[&#39;dudt&#39;], d=[&#39;t&#39;])
+        nabla_u = nabla(output_, input_, components=[&#39;u&#39;], d=[&#39;x&#39;, &#39;y&#39;])
+        return nabla_u - u_tt
+
+    def nil_dirichlet(input_, output_):
+        value = 0.0
+        return output_.extract([&#39;u&#39;]) - value
+
+    def initial_condition(input_, output_):
+        u_expected = (torch.sin(torch.pi*input_.extract([&#39;x&#39;])) *
+                      torch.sin(torch.pi*input_.extract([&#39;y&#39;])))
+        return output_.extract([&#39;u&#39;]) - u_expected
+
+    conditions = {
+        &#39;gamma1&#39;: Condition(Span({&#39;x&#39;: [0, 1], &#39;y&#39;:  1, &#39;t&#39;: [0, 1]}), nil_dirichlet),
+        &#39;gamma2&#39;: Condition(Span({&#39;x&#39;: [0, 1], &#39;y&#39;: 0, &#39;t&#39;: [0, 1]}), nil_dirichlet),
+        &#39;gamma3&#39;: Condition(Span({&#39;x&#39;:  1, &#39;y&#39;: [0, 1], &#39;t&#39;: [0, 1]}), nil_dirichlet),
+        &#39;gamma4&#39;: Condition(Span({&#39;x&#39;: 0, &#39;y&#39;: [0, 1], &#39;t&#39;: [0, 1]}), nil_dirichlet),
+        &#39;t0&#39;: Condition(Span({&#39;x&#39;: [0, 1], &#39;y&#39;: [0, 1], &#39;t&#39;: 0}), initial_condition),
+        &#39;D&#39;: Condition(Span({&#39;x&#39;: [0, 1], &#39;y&#39;: [0, 1], &#39;t&#39;: [0, 1]}), wave_equation),
+    }
+
+    def wave_sol(self, pts):
+        return (torch.sin(torch.pi*pts.extract([&#39;x&#39;])) *
+                torch.sin(torch.pi*pts.extract([&#39;y&#39;])) *
+                torch.cos(torch.sqrt(torch.tensor(2.))*torch.pi*pts.extract([&#39;t&#39;])))
+
+    truth_solution = wave_sol
+
+problem = Wave()
+</pre></div>
+</div>
+<p>After the problem, a <strong>torch</strong> model is needed to solve the PINN. With
+the <code class="docutils literal notranslate"><span class="pre">Network</span></code> class the users can convert any <strong>torch</strong> model in a
+<strong>PINA</strong> model which uses label tensors with a single line of code. We
+will write a simple residual network using linear layers. Here we
+implement a simple residual network composed by linear torch layers.</p>
+<p>This neural network takes as input the coordinates (in this case
+<span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(t\)</span>) and provides the unkwown field of
+the Wave problem. The residual of the equations are evaluated at several
+sampling points (which the user can manipulate using the method
+<code class="docutils literal notranslate"><span class="pre">span_pts</span></code>) and the loss minimized by the neural network is the sum of
+the residuals.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class TorchNet(torch.nn.Module):
+
+    def __init__(self):
+        super().__init__()
+
+        self.residual = torch.nn.Sequential(torch.nn.Linear(3, 24),
+                                            torch.nn.Tanh(),
+                                            torch.nn.Linear(24, 3))
+
+        self.mlp = torch.nn.Sequential(torch.nn.Linear(3, 64),
+                                       torch.nn.Tanh(),
+                                       torch.nn.Linear(64, 1))
+    def forward(self, x):
+        residual_x = self.residual(x)
+        return self.mlp(x + residual_x)
+
+# model definition
+model = Network(model = TorchNet(),
+                input_variables=problem.input_variables,
+                output_variables=problem.output_variables,
+                extra_features=None)
+</pre></div>
+</div>
+<p>In this tutorial, the neural network is trained for 2000 epochs with a
+learning rate of 0.001. These parameters can be modified as desired. We
+highlight that the generation of the sampling points and the train is
+here encapsulated within the function <code class="docutils literal notranslate"><span class="pre">generate_samples_and_train</span></code>,
+but only for saving some lines of code in the next cells; that function
+is not mandatory in the <strong>PINA</strong> framework. The training takes
+approximately one minute.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def generate_samples_and_train(model, problem):
+    # generate pinn object
+    pinn = PINN(problem, model, lr=0.001)
+
+    pinn.span_pts(1000, &#39;random&#39;, locations=[&#39;D&#39;,&#39;t0&#39;, &#39;gamma1&#39;, &#39;gamma2&#39;, &#39;gamma3&#39;, &#39;gamma4&#39;])
+    pinn.train(1500, 150)
+    return pinn
+
+
+pinn = generate_samples_and_train(model, problem)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">00000</span><span class="p">]</span> <span class="mf">4.567502e-01</span> <span class="mf">2.847714e-02</span> <span class="mf">1.962997e-02</span> <span class="mf">9.094939e-03</span> <span class="mf">1.247287e-02</span> <span class="mf">3.838658e-01</span> <span class="mf">3.209481e-03</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">00001</span><span class="p">]</span> <span class="mf">4.184132e-01</span> <span class="mf">1.914901e-02</span> <span class="mf">2.436301e-02</span> <span class="mf">8.384322e-03</span> <span class="mf">1.077990e-02</span> <span class="mf">3.530422e-01</span> <span class="mf">2.694697e-03</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">00150</span><span class="p">]</span> <span class="mf">1.694410e-01</span> <span class="mf">9.840883e-03</span> <span class="mf">1.117415e-02</span> <span class="mf">1.140828e-02</span> <span class="mf">1.003646e-02</span> <span class="mf">1.260622e-01</span> <span class="mf">9.190784e-04</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">00300</span><span class="p">]</span> <span class="mf">1.666860e-01</span> <span class="mf">9.847926e-03</span> <span class="mf">1.122043e-02</span> <span class="mf">1.142906e-02</span> <span class="mf">9.706282e-03</span> <span class="mf">1.237589e-01</span> <span class="mf">7.233715e-04</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">00450</span><span class="p">]</span> <span class="mf">1.564735e-01</span> <span class="mf">8.579318e-03</span> <span class="mf">1.203290e-02</span> <span class="mf">1.264551e-02</span> <span class="mf">8.249855e-03</span> <span class="mf">1.136869e-01</span> <span class="mf">1.279038e-03</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">00600</span><span class="p">]</span> <span class="mf">1.281068e-01</span> <span class="mf">5.976059e-03</span> <span class="mf">1.463099e-02</span> <span class="mf">1.191054e-02</span> <span class="mf">7.087692e-03</span> <span class="mf">8.658079e-02</span> <span class="mf">1.920737e-03</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">00750</span><span class="p">]</span> <span class="mf">7.482838e-02</span> <span class="mf">5.880896e-03</span> <span class="mf">1.912235e-02</span> <span class="mf">5.754319e-03</span> <span class="mf">4.252454e-03</span> <span class="mf">3.697925e-02</span> <span class="mf">2.839110e-03</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">00900</span><span class="p">]</span> <span class="mf">3.109156e-02</span> <span class="mf">2.877797e-03</span> <span class="mf">5.560369e-03</span> <span class="mf">3.611543e-03</span> <span class="mf">3.818088e-03</span> <span class="mf">1.117986e-02</span> <span class="mf">4.043903e-03</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">01050</span><span class="p">]</span> <span class="mf">1.969596e-02</span> <span class="mf">2.598281e-03</span> <span class="mf">3.658714e-03</span> <span class="mf">3.426491e-03</span> <span class="mf">3.696677e-03</span> <span class="mf">4.037755e-03</span> <span class="mf">2.278043e-03</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">01200</span><span class="p">]</span> <span class="mf">1.625224e-02</span> <span class="mf">2.496960e-03</span> <span class="mf">3.069649e-03</span> <span class="mf">3.198287e-03</span> <span class="mf">3.420298e-03</span> <span class="mf">2.728654e-03</span> <span class="mf">1.338392e-03</span>
+              <span class="nb">sum</span>          <span class="n">gamma1nil_di</span> <span class="n">gamma2nil_di</span> <span class="n">gamma3nil_di</span> <span class="n">gamma4nil_di</span> <span class="n">t0initial_co</span> <span class="n">Dwave_equati</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">01350</span><span class="p">]</span> <span class="mf">1.430180e-02</span> <span class="mf">2.350929e-03</span> <span class="mf">2.700139e-03</span> <span class="mf">2.961276e-03</span> <span class="mf">3.141905e-03</span> <span class="mf">2.189825e-03</span> <span class="mf">9.577314e-04</span>
+<span class="p">[</span><span class="n">epoch</span> <span class="mi">01500</span><span class="p">]</span> <span class="mf">1.293717e-02</span> <span class="mf">2.182199e-03</span> <span class="mf">2.440975e-03</span> <span class="mf">2.706538e-03</span> <span class="mf">2.904802e-03</span> <span class="mf">1.891113e-03</span> <span class="mf">8.115429e-04</span>
+</pre></div>
+</div>
+<p>After the training is completed one can now plot some results using the
+<code class="docutils literal notranslate"><span class="pre">Plotter</span></code> class of <strong>PINA</strong>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plotter = Plotter()
+
+# plotting at fixed time t = 0.6
+plotter.plot(pinn, fixed_variables={&#39;t&#39;: 0.6})
+</pre></div>
+</div>
+<img alt="../../_images/tutorial_12_0.png" src="../../_images/tutorial_12_0.png" />
+<p>We can also plot the pinn loss during the training to see the decrease.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
+
+plt.figure(figsize=(16, 6))
+plotter.plot_loss(pinn, label=&#39;Loss&#39;)
+
+plt.grid()
+plt.legend()
+plt.show()
+</pre></div>
+</div>
+<img alt="../../_images/tutorial_14_0.png" src="../../_images/tutorial_14_0.png" />
+<p>You can now trying improving the training by changing network, optimizer
+and its parameters, changin the sampling points,or adding extra
+features!</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial2/tutorial.html" class="btn btn-neutral float-left" title="1. Tutorial 2: resolution of Poisson problem and usage of extra-features" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
+      <span class="lastupdated">Last updated on Dec 13, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

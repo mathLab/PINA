@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DeepONet &mdash; PINA 0.0.2 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>DeepONet &mdash; PINA 0.0.2.post2212 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="../index.html" class="icon icon-home"> PINA
           </a>
               <div class="version">
-                0.0.2
+                0.0.2.post2212
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -55,7 +55,8 @@
 </ul>
 <p class="caption"><span class="caption-text">Tutorials:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial-1.html">1. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">1. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">2. Wave equation</a></li>
 </ul>
 
         </div>
@@ -71,9 +72,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="code.html">Code Documentation</a> &raquo;</li>
-      <li>DeepONet</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">DeepONet</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/_rst/deeponet.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -88,8 +89,8 @@
 <p>Module for DeepONet model</p>
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">branch_net</em>, <em class="sig-param">trunk_net</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">inner_size=10</em>, <em class="sig-param">features=None</em>, <em class="sig-param">features_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">branch_net</em>, <em class="sig-param">trunk_net</em>, <em class="sig-param">output_variables</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of DeepONet network.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -101,10 +102,10 @@ DOI: <a class="reference external" href="https://doi.org/10.1038/s42256-021-0030
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>branch_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.12)"><em>torch.nn.Module</em></a>) – the neural network to use as branch
+<li><p><strong>branch_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><em>torch.nn.Module</em></a>) – the neural network to use as branch
 model. It has to take as input a <code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code>. The number
 of dimension of the output has to be the same of the <cite>trunk_net</cite>.</p></li>
-<li><p><strong>trunk_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.12)"><em>torch.nn.Module</em></a>) – the neural network to use as trunk
+<li><p><strong>trunk_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><em>torch.nn.Module</em></a>) – the neural network to use as trunk
 model. It has to take as input a <code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code>. The number
 of dimension of the output has to be the same of the <cite>branch_net</cite>.</p></li>
 <li><p><strong>output_variables</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – the list containing the labels
@@ -145,7 +146,57 @@ model.</p></li>
 </dl>
 <dl class="attribute">
 <dt>
+<code class="sig-name descname">_backward_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_buffers</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_forward_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_forward_pre_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
 <code class="sig-name descname">_is_full_backward_hook</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_load_state_dict_post_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_load_state_dict_pre_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_modules</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_non_persistent_buffers_set</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_parameters</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_state_dict_hooks</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -192,7 +243,7 @@ model.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Jul 11, 2022.
+      <span class="lastupdated">Last updated on Dec 13, 2022.
       </span></p>
   </div>
 

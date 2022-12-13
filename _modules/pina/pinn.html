@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.pinn &mdash; PINA 0.0.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>pina.pinn &mdash; PINA 0.0.2.post2212 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> PINA
           </a>
               <div class="version">
-                0.0.2
+                0.0.2.post2212
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -47,7 +47,8 @@
 </ul>
 <p class="caption"><span class="caption-text">Tutorials:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial1/tutorial-1.html">1. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial2/tutorial.html">1. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial3/tutorial.html">2. Wave equation</a></li>
 </ul>
 
         </div>
@@ -63,9 +64,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>pina.pinn</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pina.pinn</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -75,33 +76,46 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pina.pinn</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.problem</span> <span class="kn">import</span> <span class="n">AbstractProblem</span>
+<span></span><span class="sd">&quot;&quot;&quot; Module for PINN &quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pina.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span> <span class="c1"># which is 3.1415927410125732</span>
+
+<span class="kn">from</span> <span class="nn">.problem</span> <span class="kn">import</span> <span class="n">AbstractProblem</span>
+<span class="kn">from</span> <span class="nn">.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">merge_tensors</span><span class="p">,</span> <span class="n">PinaDataset</span>
+
+
+<span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span>  <span class="c1"># which is 3.1415927410125732</span>
 
 
 <div class="viewcode-block" id="PINN"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN">[docs]</a><span class="k">class</span> <span class="nc">PINN</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-            <span class="n">problem</span><span class="p">,</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">optimizer</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
-            <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
-            <span class="n">regularizer</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
-            <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
-            <span class="n">error_norm</span><span class="o">=</span><span class="s1">&#39;mse&#39;</span><span class="p">):</span>
+                 <span class="n">problem</span><span class="p">,</span>
+                 <span class="n">model</span><span class="p">,</span>
+                 <span class="n">optimizer</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+                 <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+                 <span class="n">regularizer</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>
+                 <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                 <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
+                 <span class="n">error_norm</span><span class="o">=</span><span class="s1">&#39;mse&#39;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        :param Problem problem: the formualation of the problem.</span>
 <span class="sd">        :param torch.nn.Module model: the neural network model to use.</span>
+<span class="sd">        :param torch.optim optimizer: the neural network optimizer to use;</span>
+<span class="sd">            default is `torch.optim.Adam`.</span>
 <span class="sd">        :param float lr: the learning rate; default is 0.001.</span>
 <span class="sd">        :param float regularizer: the coefficient for L2 regularizer term.</span>
 <span class="sd">        :param type dtype: the data type to use for the model. Valid option are</span>
 <span class="sd">            `torch.float32` and `torch.float64` (`torch.float16` only on GPU);</span>
 <span class="sd">            default is `torch.float64`.</span>
+<span class="sd">        :param string device: the device used for training; default &#39;cpu&#39;</span>
+<span class="sd">            option include &#39;cuda&#39; if cuda is available.</span>
+<span class="sd">        :param string/int error_norm: the loss function used as minimizer,</span>
+<span class="sd">            default mean square error &#39;mse&#39;. If string options include mean</span>
+<span class="sd">            error &#39;me&#39; and mean square error &#39;mse&#39;. If int, the p-norm is</span>
+<span class="sd">            calculated where p is specifined by the int input.</span>
+<span class="sd">        :param int batch_size: batch size for the dataloader; default 5.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
@@ -113,7 +127,7 @@
         <span class="c1"># self._architecture[&#39;input_dimension&#39;] = self.problem.domain_bound.shape[0]</span>
         <span class="c1"># self._architecture[&#39;output_dimension&#39;] = len(self.problem.variables)</span>
         <span class="c1"># if hasattr(self.problem, &#39;params_domain&#39;):</span>
-            <span class="c1"># self._architecture[&#39;input_dimension&#39;] += self.problem.params_domain.shape[0]</span>
+        <span class="c1"># self._architecture[&#39;input_dimension&#39;] += self.problem.params_domain.shape[0]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">error_norm</span> <span class="o">=</span> <span class="n">error_norm</span>
 
@@ -122,7 +136,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_loss</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -133,6 +147,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">regularizer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_set</span> <span class="o">=</span> <span class="n">PinaDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -154,9 +171,9 @@
 <span class="sd">        :param vec torch.tensor: the tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_norm</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vec</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">error_norm</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">error_norm</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">vector_norm</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">error_norm</span><span class="p">,</span>  <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dytpe</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_norm</span> <span class="o">==</span> <span class="s1">&#39;mse&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vec</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vec</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_norm</span> <span class="o">==</span> <span class="s1">&#39;me&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vec</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -165,16 +182,16 @@
 <div class="viewcode-block" id="PINN.save_state"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN.save_state">[docs]</a>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span><span class="p">,</span>
-                <span class="s1">&#39;model_state&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
-                <span class="s1">&#39;optimizer_state&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
-                <span class="s1">&#39;optimizer_class&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
-                <span class="s1">&#39;history&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">,</span>
-                <span class="s1">&#39;input_points_dict&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">,</span>
+            <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span><span class="p">,</span>
+            <span class="s1">&#39;model_state&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+            <span class="s1">&#39;optimizer_state&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+            <span class="s1">&#39;optimizer_class&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
+            <span class="s1">&#39;history&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_loss</span><span class="p">,</span>
+            <span class="s1">&#39;input_points_dict&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="c1"># TODO save also architecture param?</span>
-        <span class="c1">#if isinstance(self.model, DeepFeedForward):</span>
+        <span class="c1"># if isinstance(self.model, DeepFeedForward):</span>
         <span class="c1">#    checkpoint[&#39;model_class&#39;] = self.model.__class__</span>
         <span class="c1">#    checkpoint[&#39;model_structure&#39;] = {</span>
         <span class="c1">#    }</span>
@@ -185,17 +202,48 @@
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;model_state&#39;</span><span class="p">])</span>
 
-
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;optimizer_class&#39;</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;optimizer_state&#39;</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_loss</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;input_points_dict&#39;</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
+<div class="viewcode-block" id="PINN._create_dataloader"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN._create_dataloader">[docs]</a>    <span class="k">def</span> <span class="nf">_create_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Private method for creating dataloader</span>
+
+<span class="sd">        :return: dataloader</span>
+<span class="sd">        :rtype: torch.utils.data.DataLoader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">custom_collate</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+            <span class="c1"># extracting pts labels</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">pts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">labels</span>
+            <span class="c1"># calling default torch collate</span>
+            <span class="n">collate_res</span> <span class="o">=</span> <span class="n">default_collate</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="c1"># save collate result in dict</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">collate_res</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">val</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">return</span> <span class="n">res</span>
+
+        <span class="c1"># creating dataset, list of dataset for each location</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyDataSet</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="c1"># creating dataloader</span>
+        <span class="n">dataloaders</span> <span class="o">=</span> <span class="p">[</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dat</span><span class="p">,</span>
+                                  <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                  <span class="n">collate_fn</span><span class="o">=</span><span class="n">custom_collate</span><span class="p">)</span>
+                       <span class="k">for</span> <span class="n">dat</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">dataloaders</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="PINN.span_pts"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN.span_pts">[docs]</a>    <span class="k">def</span> <span class="nf">span_pts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -203,24 +251,6 @@
 <span class="sd">        &gt;&gt;&gt; pinn.span_pts(n=10, mode=&#39;grid&#39;, location=[&#39;bound1&#39;])</span>
 <span class="sd">        &gt;&gt;&gt; pinn.span_pts(n=10, mode=&#39;grid&#39;, variables=[&#39;x&#39;])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">def</span> <span class="nf">merge_tensors</span><span class="p">(</span><span class="n">tensors</span><span class="p">):</span>  <span class="c1"># name to be changed</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">tensor1</span> <span class="o">=</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">tensor2</span> <span class="o">=</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">n1</span> <span class="o">=</span> <span class="n">tensor1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">n2</span> <span class="o">=</span> <span class="n">tensor2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-                <span class="n">tensor1</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
-                    <span class="n">tensor1</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-                    <span class="n">labels</span><span class="o">=</span><span class="n">tensor1</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
-                <span class="n">tensor2</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
-                    <span class="n">tensor2</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-                    <span class="n">labels</span><span class="o">=</span><span class="n">tensor2</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">tensor1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tensor2</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensors</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">argument</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -245,23 +275,21 @@
         <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
             <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">location</span><span class="p">]</span>
 
-            <span class="n">pts</span> <span class="o">=</span> <span class="n">merge_tensors</span><span class="p">([</span>
-                <span class="n">condition</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
-                    <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span>
-                    <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span>
-                    <span class="n">variables</span><span class="o">=</span><span class="n">argument</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">])</span>
-                <span class="k">for</span> <span class="n">argument</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">])</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                            <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span>
+                            <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span>
+                            <span class="n">variables</span><span class="o">=</span><span class="n">argument</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">])</span>
+                            <span class="k">for</span> <span class="n">argument</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">)</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="n">merge_tensors</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="n">pts</span>  <span class="c1">#.double()  # TODO</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-                                            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span></div>
+            <span class="c1"># TODO</span>
+            <span class="c1"># pts = pts.double()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="n">pts</span></div>
 
-<div class="viewcode-block" id="PINN.train"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">frequency_print</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">trial</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PINN.train"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">frequency_print</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">save_loss</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">trial</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">data_loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="o">.</span><span class="n">dataloader</span>
 
         <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">condition_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">:</span>
@@ -283,32 +311,41 @@
             <span class="k">for</span> <span class="n">condition_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">:</span>
                 <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">):</span>
-                    <span class="n">pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span>
-                    <span class="n">predicted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">condition</span><span class="o">.</span><span class="n">function</span><span class="p">:</span>
-                        <span class="n">residuals</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">predicted</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">data_loader</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]:</span>
+
+                    <span class="n">single_loss</span> <span class="o">=</span> <span class="p">[]</span>
+
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">):</span>
+                        <span class="n">pts</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span>
+                        <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                        <span class="n">pts</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="n">pts</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
+
+                        <span class="n">predicted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">condition</span><span class="o">.</span><span class="n">function</span><span class="p">:</span>
+                            <span class="n">residuals</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">predicted</span><span class="p">)</span>
+                            <span class="n">local_loss</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="n">condition</span><span class="o">.</span><span class="n">data_weight</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_compute_norm</span><span class="p">(</span>
+                                    <span class="n">residuals</span><span class="p">))</span>
+                            <span class="n">single_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_loss</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s1">&#39;output_points&#39;</span><span class="p">):</span>
+                        <span class="n">pts</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">input_points</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+                            <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                        <span class="n">predicted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+                        <span class="n">residuals</span> <span class="o">=</span> <span class="n">predicted</span> <span class="o">-</span> <span class="n">condition</span><span class="o">.</span><span class="n">output_points</span>
                         <span class="n">local_loss</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">condition</span><span class="o">.</span><span class="n">data_weight</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_compute_norm</span><span class="p">(</span>
-                                <span class="n">residuals</span><span class="p">))</span>
-                        <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_loss</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s1">&#39;output_points&#39;</span><span class="p">):</span>
-                    <span class="n">pts</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">input_points</span>
-                    <span class="n">predicted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
-                    <span class="n">residuals</span> <span class="o">=</span> <span class="n">predicted</span> <span class="o">-</span> <span class="n">condition</span><span class="o">.</span><span class="n">output_points</span>
-                    <span class="n">local_loss</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">condition</span><span class="o">.</span><span class="n">data_weight</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_compute_norm</span><span class="p">(</span><span class="n">residuals</span><span class="p">))</span>
-                    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_loss</span><span class="p">)</span>
+                            <span class="n">condition</span><span class="o">.</span><span class="n">data_weight</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_compute_norm</span><span class="p">(</span><span class="n">residuals</span><span class="p">))</span>
+                        <span class="n">single_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">local_loss</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                    <span class="nb">sum</span><span class="p">(</span><span class="n">single_loss</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
-            <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">single_loss</span><span class="p">))</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="p">])</span>
-            <span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">save_loss</span> <span class="ow">and</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">%</span> <span class="n">save_loss</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">history_loss</span><span class="p">[</span><span class="n">epoch</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">trial</span><span class="p">:</span>
                 <span class="kn">import</span> <span class="nn">optuna</span>
@@ -318,9 +355,10 @@
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">epoch</span> <span class="o">==</span> <span class="n">stop</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[epoch </span><span class="si">{:05d}</span><span class="s1">] </span><span class="si">{:.6e}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[epoch </span><span class="si">{:05d}</span><span class="s1">] </span><span class="si">{:.6e}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.6e}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.6e}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                     <span class="nb">print</span><span class="p">()</span>
                     <span class="k">break</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
@@ -333,13 +371,16 @@
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:12.12s}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">()</span>
 
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[epoch </span><span class="si">{:05d}</span><span class="s1">] </span><span class="si">{:.6e}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[epoch </span><span class="si">{:05d}</span><span class="s1">] </span><span class="si">{:.6e}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.6e}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.6e}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
 
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="PINN.error"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;l2&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 
@@ -355,7 +396,8 @@
             <span class="n">grids_container</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">data_solution</span><span class="p">[</span><span class="s1">&#39;grid&#39;</span><span class="p">]</span>
             <span class="n">Z_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">data_solution</span><span class="p">[</span><span class="s1">&#39;grid_solution&#39;</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">unrolled_pts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">grids_container</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">unrolled_pts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">grids_container</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
             <span class="n">Z_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">unrolled_pts</span><span class="p">)</span>
             <span class="n">Z_pred</span> <span class="o">=</span> <span class="n">Z_pred</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">grids_container</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
@@ -367,7 +409,8 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Something went wrong...&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not able to compute the error. Please pass a data solution or a true solution&quot;</span><span class="p">)</span></div></div>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Not able to compute the error. Please pass a data solution or a true solution&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -378,7 +421,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Jul 11, 2022.
+      <span class="lastupdated">Last updated on Dec 13, 2022.
       </span></p>
   </div>
 
