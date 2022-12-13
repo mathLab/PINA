@@ -3,7 +3,7 @@ import os
 import argparse
 
 
-module = 'ezyrb'
+module = 'pina'
 meta_file = os.path.join(module, 'meta.py')
 version_line = r'__version__.*=.*"(.+?)"'
 
