@@ -200,7 +200,6 @@ class PINN(object):
         for location in locations:
             condition = self.problem.conditions[location]
 
-            print(arguments)
             samples = tuple(condition.location.sample(
                             argument['n'],
                             argument['mode'],
