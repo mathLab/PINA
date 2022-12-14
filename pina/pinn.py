@@ -173,7 +173,16 @@ class PINN(object):
         >>> pinn.span_pts(n=10, mode='grid', location=['bound1'])
         >>> pinn.span_pts(n=10, mode='grid', variables=['x'])
         """
-        if isinstance(args[0], int) and isinstance(args[1], str):
+
+        if all(key in kwargs for key in ['n', 'mode']):
+            argument = {}
+            argument['n'] = kwargs['n']
+            argument['mode'] = kwargs['mode']
+            argument['variables'] = self.problem.input_variables
+            arguments = [argument]
+        elif any(key in kwargs for key in ['n', 'mode']) and args:
+            raise ValueError("Don't mix args and kwargs")
+        elif isinstance(args[0], int) and isinstance(args[1], str):
             argument = {}
             argument['n'] = int(args[0])
             argument['mode'] = args[1]
@@ -181,12 +190,6 @@ class PINN(object):
             arguments = [argument]
         elif all(isinstance(arg, dict) for arg in args):
             arguments = args
-        elif all(key in kwargs for key in ['n', 'mode']):
-            argument = {}
-            argument['n'] = kwargs['n']
-            argument['mode'] = kwargs['mode']
-            argument['variables'] = self.problem.input_variables
-            arguments = [argument]
         else:
             raise RuntimeError
 
@@ -197,6 +200,7 @@ class PINN(object):
         for location in locations:
             condition = self.problem.conditions[location]
 
+            print(arguments)
             samples = tuple(condition.location.sample(
                             argument['n'],
                             argument['mode'],
