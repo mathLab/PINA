@@ -100,6 +100,25 @@ class Span(Location):
                     result = result.append(pts_variable, mode='std')
             return result
 
+        def _single_points_sample(n, variables):
+            tmp = []
+            for variable in variables:
+                if variable in self.fixed_.keys():
+                    value = self.fixed_[variable]
+                    pts_variable = torch.tensor([[value]]).repeat(n, 1)
+                    pts_variable = pts_variable.as_subclass(LabelTensor)
+                    pts_variable.labels = [variable]
+                    tmp.append(pts_variable)
+
+            result = tmp[0]
+            for i in tmp[1:]:
+                result = result.append(i, mode='std')
+
+            return result
+
+        if self.fixed_ and (not self.range_):
+            return _single_points_sample(n, variables)
+
         if variables == 'all':
             variables = list(self.range_.keys()) + list(self.fixed_.keys())
 
