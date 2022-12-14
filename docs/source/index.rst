@@ -35,6 +35,7 @@ solve problems in a continuous and nonlinear settings.
     :numbered:
     :caption: Tutorials:
 
+    Getting start with PINA <_rst/tutorial1/tutorial.rst>
     Poisson problem <_rst/tutorial2/tutorial.rst>
     Wave equation <_rst/tutorial3/tutorial.rst>
 
