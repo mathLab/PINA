@@ -26,9 +26,12 @@ class FeedForward(torch.nn.Module):
         `inner_size` are not considered.
     :param iterable(torch.nn.Module) extra_features: the additional input
         features to use ad augmented input.
+    :param dict **kwargs: Additional keyword parameters to be passed to the
+        :class:`torch.nn.Linear` constructor.
     """
     def __init__(self, input_variables, output_variables, inner_size=20,
-                 n_layers=2, func=nn.Tanh, layers=None, extra_features=None):
+                 n_layers=2, func=nn.Tanh, layers=None, extra_features=None,
+                 **kwargs):
         """
         """
         super().__init__()
@@ -62,7 +65,9 @@ class FeedForward(torch.nn.Module):
 
         self.layers = []
         for i in range(len(tmp_layers)-1):
-            self.layers.append(nn.Linear(tmp_layers[i], tmp_layers[i+1]))
+            self.layers.append(  #
+                nn.Linear(tmp_layers[i], tmp_layers[i + 1], **kwargs)  #
+            )
 
         if isinstance(func, list):
             self.functions = func
