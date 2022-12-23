@@ -1,4 +1,3 @@
-import argparse
 import numpy as np
 import torch
 from torch.nn import Softplus
@@ -7,6 +6,8 @@ from pina import PINN, LabelTensor, Plotter
 from pina.model import MultiFeedForward
 from problems.parametric_elliptic_optimal_control_alpha_variable import (
     ParametricEllipticOptimalControl)
+
+from utils import setup_generic_run_parser, setup_extra_features_parser
 
 
 class myFeature(torch.nn.Module):
@@ -34,12 +35,13 @@ class CustomMultiDFF(MultiFeedForward):
 
 
 if __name__ == "__main__":
+    # fmt: off
+    args = setup_extra_features_parser(
+        setup_generic_run_parser()
+    ).parse_args()
+    # fmt: on
 
-    parser = argparse.ArgumentParser(description="Run PINA")
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-s", "-save", action="store_true")
-    group.add_argument("-l", "-load", action="store_true")
-    args = parser.parse_args()
+    feat = [myFeature()] if args.extra else []
 
     opc = ParametricEllipticOptimalControl()
     model = CustomMultiDFF(
@@ -49,7 +51,7 @@ if __name__ == "__main__":
                 'output_variables': ['u_param', 'y'],
                 'layers': [40, 40, 20],
                 'func': Softplus,
-                'extra_features': [myFeature()],
+                'extra_features': feat,
             },
         }
     )
@@ -61,8 +63,7 @@ if __name__ == "__main__":
         error_norm='mse',
         regularizer=1e-8)
 
-    if args.s:
-
+    if args.save:
         pinn.span_pts(
             {'variables': ['x1', 'x2'], 'mode': 'random', 'n': 100},
             {'variables': ['mu', 'alpha'], 'mode': 'grid', 'n': 5},
@@ -71,12 +72,10 @@ if __name__ == "__main__":
             {'variables': ['x1', 'x2'], 'mode': 'grid', 'n': 20},
             {'variables': ['mu', 'alpha'], 'mode': 'grid', 'n': 5},
             locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-
         pinn.train(1000, 20)
-        pinn.save_state('pina.ocp')
-
-    else:
-        pinn.load_state('pina.ocp')
+        pinn.save_state(f'pina.ocp{args.id_run}')
+    if args.load:
+        pinn.load_state(f'pina.ocp{args.id_run}')
         plotter = Plotter()
         plotter.plot(pinn, components='y', fixed_variables={'alpha': 0.01, 'mu': 1.0})
         plotter.plot(pinn, components='u_param', fixed_variables={'alpha': 0.01, 'mu': 1.0})

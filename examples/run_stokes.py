@@ -1,4 +1,3 @@
-import argparse
 import sys
 import numpy as np
 import torch
@@ -9,15 +8,11 @@ from pina.model import FeedForward
 from pina.adaptive_functions import AdaptiveSin, AdaptiveCos, AdaptiveTanh
 from problems.stokes import Stokes
 
+from utils import setup_generic_run_parser
+
+
 if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(description="Run PINA")
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-s", "-save", action="store_true")
-    group.add_argument("-l", "-load", action="store_true")
-    parser.add_argument("id_run", help="number of run", type=int)
-    args = parser.parse_args()
-
+    args = setup_generic_run_parser().parse_args()
 
     stokes_problem = Stokes()
     model = FeedForward(
@@ -34,18 +29,16 @@ if __name__ == "__main__":
         error_norm='mse',
         regularizer=1e-8)
 
-    if args.s:
-
+    if args.save:
         pinn.span_pts(200, 'grid', locations=['gamma_top', 'gamma_bot', 'gamma_in', 'gamma_out'])
         pinn.span_pts(2000, 'random', locations=['D'])
         pinn.train(10000, 100)
         with open('stokes_history_{}.txt'.format(args.id_run), 'w') as file_:
             for i, losses in enumerate(pinn.history):
                 file_.write('{} {}\n'.format(i, sum(losses)))
-        pinn.save_state('pina.stokes')
-
-    else:
-        pinn.load_state('pina.stokes')
+        pinn.save_state(f'pina.stokes{args.id_run}')
+    if args.load:
+        pinn.load_state(f'pina.stokes{args.id_run}')
         plotter = Plotter()
         plotter.plot(pinn, components='ux')
         plotter.plot(pinn, components='uy')
