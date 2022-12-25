@@ -225,6 +225,7 @@ class PINN(object):
 
     def train(self, stop=100, frequency_print=2, save_loss=1, trial=None):
 
+        self.model.train()
         epoch = 0
         data_loader = self.data_set.dataloader
 
@@ -318,6 +319,8 @@ class PINN(object):
 
             self.trained_epoch += 1
             epoch += 1
+
+        self.model.eval()
 
         return sum(losses).item()
 
