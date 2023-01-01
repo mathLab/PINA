@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1. Tutorial 2: resolution of Poisson problem and usage of extra-features &mdash; PINA 0.0.2.post2212 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>2. Tutorial 2: resolution of Poisson problem and usage of extra-features &mdash; PINA 0.0.2.post2301 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,8 +18,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="2. Tutorial 3: resolution of wave equation with custom Network" href="../tutorial3/tutorial.html" />
-    <link rel="prev" title="License" href="../../LICENSE.html" /> 
+    <link rel="next" title="3. Tutorial 3: resolution of wave equation with custom Network" href="../tutorial3/tutorial.html" />
+    <link rel="prev" title="1. Tutorial 1: Physics Informed Neural Networks on PINA" href="../tutorial1/tutorial.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -30,7 +30,7 @@
             <a href="../../index.html" class="icon icon-home"> PINA
           </a>
               <div class="version">
-                0.0.2.post2212
+                0.0.2.post2301
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -49,14 +49,15 @@
 </ul>
 <p class="caption"><span class="caption-text">Tutorials:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Poisson problem</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#the-problem-definition">1.1. The problem definition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#the-problem-solution">1.2. The problem solution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#the-problem-solution-with-extra-features">1.3. The problem solution with extra-features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#the-problem-solution-with-learnable-extra-features">1.4. The problem solution with learnable extra-features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial1/tutorial.html">1. Getting start with PINA</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Poisson problem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-problem-definition">2.1. The problem definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-problem-solution">2.2. The problem solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-problem-solution-with-extra-features">2.3. The problem solution with extra-features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-problem-solution-with-learnable-extra-features">2.4. The problem solution with learnable extra-features</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial3/tutorial.html">2. Wave equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial3/tutorial.html">3. Wave equation</a></li>
 </ul>
 
         </div>
@@ -73,7 +74,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">1. </span>Tutorial 2: resolution of Poisson problem and usage of extra-features</li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Tutorial 2: resolution of Poisson problem and usage of extra-features</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/_rst/tutorial2/tutorial.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,9 +85,9 @@
            <div itemprop="articleBody">
              
   <div class="section" id="tutorial-2-resolution-of-poisson-problem-and-usage-of-extra-features">
-<h1><span class="section-number">1. </span>Tutorial 2: resolution of Poisson problem and usage of extra-features<a class="headerlink" href="#tutorial-2-resolution-of-poisson-problem-and-usage-of-extra-features" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">2. </span>Tutorial 2: resolution of Poisson problem and usage of extra-features<a class="headerlink" href="#tutorial-2-resolution-of-poisson-problem-and-usage-of-extra-features" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="the-problem-definition">
-<h2><span class="section-number">1.1. </span>The problem definition<a class="headerlink" href="#the-problem-definition" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.1. </span>The problem definition<a class="headerlink" href="#the-problem-definition" title="Permalink to this headline">¶</a></h2>
 <p>This tutorial presents how to solve with Physics-Informed Neural
 Networks a 2D Poisson problem with Dirichlet boundary conditions.</p>
 <p>The problem is written as: <a href="#id1"><span class="problematic" id="id2">:raw-latex:`\begin{equation}
@@ -144,7 +145,7 @@ be compared with the predicted one.</p>
 </div>
 </div>
 <div class="section" id="the-problem-solution">
-<h2><span class="section-number">1.2. </span>The problem solution<a class="headerlink" href="#the-problem-solution" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.2. </span>The problem solution<a class="headerlink" href="#the-problem-solution" title="Permalink to this headline">¶</a></h2>
 <p>After the problem, the feed-forward neural network is defined, through
 the class <code class="docutils literal notranslate"><span class="pre">FeedForward</span></code>. This neural network takes as input the
 coordinates (in this case <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>) and provides the
@@ -221,7 +222,7 @@ plotter.plot(pinn)
 <img alt="../../_images/output_13_0.png" src="../../_images/output_13_0.png" />
 </div>
 <div class="section" id="the-problem-solution-with-extra-features">
-<h2><span class="section-number">1.3. </span>The problem solution with extra-features<a class="headerlink" href="#the-problem-solution-with-extra-features" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.3. </span>The problem solution with extra-features<a class="headerlink" href="#the-problem-solution-with-extra-features" title="Permalink to this headline">¶</a></h2>
 <p>Now, the same problem is solved in a different way. A new neural network
 is now defined, with an additional input variable, named extra-feature,
 which coincides with the forcing term in the Laplace equation. The set
@@ -297,7 +298,7 @@ order of magnitude in accuracy.</p>
 <img alt="../../_images/output_18_0.png" src="../../_images/output_18_0.png" />
 </div>
 <div class="section" id="the-problem-solution-with-learnable-extra-features">
-<h2><span class="section-number">1.4. </span>The problem solution with learnable extra-features<a class="headerlink" href="#the-problem-solution-with-learnable-extra-features" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.4. </span>The problem solution with learnable extra-features<a class="headerlink" href="#the-problem-solution-with-learnable-extra-features" title="Permalink to this headline">¶</a></h2>
 <p>We can still do better!</p>
 <p>Another way to exploit the extra features is the addition of learnable
 parameter inside them. In this way, the added parameters are learned
@@ -439,15 +440,15 @@ plt.show()
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../../LICENSE.html" class="btn btn-neutral float-left" title="License" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../tutorial3/tutorial.html" class="btn btn-neutral float-right" title="2. Tutorial 3: resolution of wave equation with custom Network" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../tutorial1/tutorial.html" class="btn btn-neutral float-left" title="1. Tutorial 1: Physics Informed Neural Networks on PINA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial3/tutorial.html" class="btn btn-neutral float-right" title="3. Tutorial 3: resolution of wave equation with custom Network" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Dec 13, 2022.
+      <span class="lastupdated">Last updated on Jan 01, 2023.
       </span></p>
   </div>
 

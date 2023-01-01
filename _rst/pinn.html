@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PINN &mdash; PINA 0.0.2.post2212 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>PINN &mdash; PINA 0.0.2.post2301 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="../index.html" class="icon icon-home"> PINA
           </a>
               <div class="version">
-                0.0.2.post2212
+                0.0.2.post2301
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -55,8 +55,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Tutorials:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">1. Poisson problem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">2. Wave equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial.html">1. Getting start with PINA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">2. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">3. Wave equation</a></li>
 </ul>
 
         </div>
@@ -89,7 +90,7 @@
 <p>Module for PINN</p>
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="sig-name descname">PINN</code><span class="sig-paren">(</span><em class="sig-param">problem</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">regularizer=1e-05</em>, <em class="sig-param">batch_size=None</em>, <em class="sig-param">dtype=torch.float32</em>, <em class="sig-param">device='cpu'</em>, <em class="sig-param">error_norm='mse'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/pinn.html#PINN"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="sig-name descname">PINN</code><span class="sig-paren">(</span><em class="sig-param">problem</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optimizer_kwargs=None</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">lr_scheduler_type=&lt;class 'torch.optim.lr_scheduler.ConstantLR'&gt;</em>, <em class="sig-param">lr_scheduler_kwargs={'factor': 1</em>, <em class="sig-param">'total_iters': 0}</em>, <em class="sig-param">regularizer=1e-05</em>, <em class="sig-param">batch_size=None</em>, <em class="sig-param">dtype=torch.float32</em>, <em class="sig-param">device='cpu'</em>, <em class="sig-param">error_norm='mse'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/pinn.html#PINN"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -98,7 +99,10 @@
 <li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><em>torch.nn.Module</em></a>) – the neural network model to use.</p></li>
 <li><p><strong>optimizer</strong> (<em>torch.optim</em>) – the neural network optimizer to use;
 default is <cite>torch.optim.Adam</cite>.</p></li>
+<li><p><strong>optimizer_kwargs</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Optimizer constructor keyword args.</p></li>
 <li><p><strong>lr</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – the learning rate; default is 0.001.</p></li>
+<li><p><strong>lr_scheduler_type</strong> (<em>torch.optim.lr_scheduler._LRScheduler</em>) – Learning rate scheduler.</p></li>
+<li><p><strong>lr_scheduler_kwargs</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – LR scheduler constructor keyword args.</p></li>
 <li><p><strong>regularizer</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – the coefficient for L2 regularizer term.</p></li>
 <li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#type" title="(in Python v2.7)"><em>type</em></a>) – the data type to use for the model. Valid option are
 <cite>torch.float32</cite> and <cite>torch.float64</cite> (<cite>torch.float16</cite> only on GPU);
@@ -190,7 +194,7 @@ calculated where p is specifined by the int input.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Dec 13, 2022.
+      <span class="lastupdated">Last updated on Jan 01, 2023.
       </span></p>
   </div>
 

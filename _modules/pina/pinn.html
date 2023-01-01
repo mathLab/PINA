@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.pinn &mdash; PINA 0.0.2.post2212 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>pina.pinn &mdash; PINA 0.0.2.post2301 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> PINA
           </a>
               <div class="version">
-                0.0.2.post2212
+                0.0.2.post2301
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -47,8 +47,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Tutorials:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial2/tutorial.html">1. Poisson problem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial3/tutorial.html">2. Wave equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial1/tutorial.html">1. Getting start with PINA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial2/tutorial.html">2. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial3/tutorial.html">3. Wave equation</a></li>
 </ul>
 
         </div>
@@ -78,6 +79,7 @@
   <h1>Source code for pina.pinn</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Module for PINN &quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="k">as</span> <span class="nn">lrs</span>
 
 <span class="kn">from</span> <span class="nn">.problem</span> <span class="kn">import</span> <span class="n">AbstractProblem</span>
 <span class="kn">from</span> <span class="nn">.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
@@ -93,7 +95,10 @@
                  <span class="n">problem</span><span class="p">,</span>
                  <span class="n">model</span><span class="p">,</span>
                  <span class="n">optimizer</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+                 <span class="n">optimizer_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+                 <span class="n">lr_scheduler_type</span><span class="o">=</span><span class="n">lrs</span><span class="o">.</span><span class="n">ConstantLR</span><span class="p">,</span>
+                 <span class="n">lr_scheduler_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;factor&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;total_iters&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
                  <span class="n">regularizer</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>
                  <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
@@ -104,7 +109,10 @@
 <span class="sd">        :param torch.nn.Module model: the neural network model to use.</span>
 <span class="sd">        :param torch.optim optimizer: the neural network optimizer to use;</span>
 <span class="sd">            default is `torch.optim.Adam`.</span>
+<span class="sd">        :param dict optimizer_kwargs: Optimizer constructor keyword args.</span>
 <span class="sd">        :param float lr: the learning rate; default is 0.001.</span>
+<span class="sd">        :param torch.optim.lr_scheduler._LRScheduler lr_scheduler_type: Learning rate scheduler.</span>
+<span class="sd">        :param dict lr_scheduler_kwargs: LR scheduler constructor keyword args.</span>
 <span class="sd">        :param float regularizer: the coefficient for L2 regularizer term.</span>
 <span class="sd">        :param type dtype: the data type to use for the model. Valid option are</span>
 <span class="sd">            `torch.float32` and `torch.float64` (`torch.float16` only on GPU);</span>
@@ -145,8 +153,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">optimizer_kwargs</span><span class="p">:</span>
+            <span class="n">optimizer_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">optimizer_kwargs</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">regularizer</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">regularizer</span><span class="p">,</span> <span class="o">**</span><span class="n">optimizer_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">lr_scheduler_kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_set</span> <span class="o">=</span> <span class="n">PinaDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -251,7 +264,16 @@
 <span class="sd">        &gt;&gt;&gt; pinn.span_pts(n=10, mode=&#39;grid&#39;, location=[&#39;bound1&#39;])</span>
 <span class="sd">        &gt;&gt;&gt; pinn.span_pts(n=10, mode=&#39;grid&#39;, variables=[&#39;x&#39;])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">]):</span>
+            <span class="n">argument</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+            <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span>
+            <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="n">argument</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Don&#39;t mix args and kwargs&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">argument</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -259,12 +281,6 @@
             <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="n">argument</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">):</span>
             <span class="n">arguments</span> <span class="o">=</span> <span class="n">args</span>
-        <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">]):</span>
-            <span class="n">argument</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
-            <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span>
-            <span class="n">argument</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span>
-            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="n">argument</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span>
 
@@ -288,6 +304,7 @@
 
 <div class="viewcode-block" id="PINN.train"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">frequency_print</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">save_loss</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">trial</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
         <span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">data_loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="o">.</span><span class="n">dataloader</span>
 
@@ -343,6 +360,8 @@
 
                 <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">single_loss</span><span class="p">))</span>
 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
             <span class="k">if</span> <span class="n">save_loss</span> <span class="ow">and</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">%</span> <span class="n">save_loss</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">history_loss</span><span class="p">[</span><span class="n">epoch</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="p">]</span>
@@ -379,6 +398,8 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">trained_epoch</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
 
@@ -421,7 +442,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Dec 13, 2022.
+      <span class="lastupdated">Last updated on Jan 01, 2023.
       </span></p>
   </div>
 
