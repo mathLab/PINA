@@ -12,7 +12,7 @@
 # \begin{equation}
 # \begin{cases}
 # \Delta u(x,y,t) = \frac{\partial^2}{\partial t^2} u(x,y,t) \quad \text{in } D, \\\\
-# u(x, y, t=0) = \sin(\pi x)\sin(\pi y)\cos(\sqrt{2}\pi), \\\\
+# u(x, y, t=0) = \sin(\pi x)\sin(\pi y), \\\\
 # u(x, y, t) = 0 \quad \text{on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
 # \end{cases}
 # \end{equation}
