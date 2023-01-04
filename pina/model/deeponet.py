@@ -11,6 +11,13 @@ from pina.utils import is_function
 
 
 def check_combos(combos, variables):
+    """
+    Check that the given combinations are subsets (overlapping 
+    is allowed) of the given set of variables.
+
+    :param iterable(iterable(str)) combos: Combinations of variables.
+    :param iterable(str) variables: Variables.
+    """
     for combo in combos:
         for variable in combo:
             if variable not in variables:
@@ -22,7 +29,17 @@ def check_combos(combos, variables):
 def spawn_combo_networks(
     combos, layers, output_dimension, func, extra_feature, bias=True
 ):
-    if not is_function(extra_feature):
+    """
+    Spawn internal networks for DeepONet based on the given combos.
+
+    :param iterable(iterable(str)) combos: Combinations of variables.
+    :param iterable(int) layers: Size of hidden layers.
+    :param int output_dimension: Size of the output layer of the networks.
+    :param func: Nonlinearity. 
+    :param extra_feature: Extra feature to be considered by the networks.
+    :param bool bias: Whether to consider bias or not.
+    """
+    if is_function(extra_feature):
         extra_feature_func = lambda _: extra_feature
     else:
         extra_feature_func = extra_feature
@@ -151,7 +168,7 @@ class DeepONet(torch.nn.Module):
         elif reduction == "linear":
             reduction_func = nn.Linear(hidden_size, len(self.output_variables))
         else:
-            raise ValueError("Unsupported reduction: %s", str(reduction))
+            raise ValueError(f"Unsupported reduction: {reduction}")
 
         self._reduction = reduction_func
         logging.info("Selected reduction: %s", str(reduction))
@@ -159,9 +176,8 @@ class DeepONet(torch.nn.Module):
         # test the reduction
         test = self._reduction(torch.ones((20, 3, hidden_size)))
         if test.ndim < 2 or tuple(test.shape)[:2] != (20, 3):
-            raise ValueError(
-                f"Invalid reduction output shape: {(20, 3, hidden_size)} -> {test.shape}"
-            )
+            msg = f"Invalid reduction output shape: {(20, 3, hidden_size)} -> {test.shape}"
+            raise ValueError(msg)
 
     @staticmethod
     def _all_nets_same_output_layer_size(nets):

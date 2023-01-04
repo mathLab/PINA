@@ -93,7 +93,7 @@ def is_function(f):
 
     :param object f: The object to be checked.
     :return: `True` if `f` is a function, `False` otherwise.
-    :rtype: bool 
+    :rtype: bool
     """
     return type(f) == types.FunctionType or type(f) == types.LambdaType
 
