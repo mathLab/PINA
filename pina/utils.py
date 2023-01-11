@@ -1,5 +1,7 @@
 """Utils module"""
 from functools import reduce
+import types
+
 import torch
 from torch.utils.data import DataLoader, default_collate, ConcatDataset
 
@@ -83,6 +85,17 @@ def torch_lhs(n, dim):
     samples = (perms - samples) / n
 
     return samples
+
+
+def is_function(f):
+    """
+    Checks whether the given object `f` is a function or lambda.
+
+    :param object f: The object to be checked.
+    :return: `True` if `f` is a function, `False` otherwise.
+    :rtype: bool
+    """
+    return type(f) == types.FunctionType or type(f) == types.LambdaType
 
 
 class PinaDataset():
