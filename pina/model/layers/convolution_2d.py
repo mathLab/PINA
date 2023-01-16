@@ -96,6 +96,7 @@ class ContinuousConv2D(BaseContinuousConv):
             self._input_numb_field * self._output_numb_field))
 
         self._stride = create_stride(self._stride)
+        self._opt = True
 
     def _make_grid(self, batch_dim):
         # filter dimension + number of points in output grid
@@ -111,7 +112,7 @@ class ContinuousConv2D(BaseContinuousConv):
 
         return grid.detach()
 
-    def _extract_mapped_points(self, x):
+    def _extract_mapped_points(self, batch_idx, index, x):
         """Priviate method to extract mapped points in the filter
 
         :param x: input tensor [channel x N x dim]
@@ -122,9 +123,9 @@ class ContinuousConv2D(BaseContinuousConv):
         mapped_points = []
         indeces_channels = []
 
-        for current_stride in self._stride:
+        for stride_idx, current_stride in enumerate(self._stride):
             # indeces of points falling into filter range
-            indeces = check_point(x, current_stride, self._dim)
+            indeces = index[stride_idx][batch_idx]
 
             # how many points for each channel fall into the filter?
             numb_points_insiede = torch.sum(indeces, dim=-1).tolist()
@@ -150,6 +151,20 @@ class ContinuousConv2D(BaseContinuousConv):
 
         return stacked_input, indeces_channels
 
+    def _find_index(self, X):
+        """Private method to extract indeces for convolution
+
+        :param X: input tensor, as in ContinuousConv2D docstring
+        :type X: torch.tensor
+        """
+        index = []
+        for _, current_stride in enumerate(self._stride):
+
+            tmp = check_point(X, current_stride, self._dim)
+            index.append(tmp)
+
+        self.index = index
+
     def forward(self, X):
         """Forward pass in the FFConv layer
 
@@ -162,10 +177,18 @@ class ContinuousConv2D(BaseContinuousConv):
         batch_dim = X.shape[0]
         conv = self._make_grid(batch_dim)
 
-        for batch, x in enumerate(X):
+        # extracting indeces for convolution on batches
+        # TODO: if we want to optimize and we know that
+        # the grid is the same for all samples in the
+        # training set, we can do something like call this
+        # function just once when we are in .train() mode
+        self._find_index(X)
+
+        for batch_idx, x in enumerate(X):
 
             # extract mapped points
-            stacked_input, indeces_channels = self._extract_mapped_points(x)
+            stacked_input, indeces_channels = self._extract_mapped_points(
+                batch_idx, self.index, x)
 
             # for each output numb field
             idx_net = 0
@@ -187,7 +210,8 @@ class ContinuousConv2D(BaseContinuousConv):
                     res_tmp.append(integral)
 
                 # stacking integral results and summing over channels
-                conv[batch, out_idx, :, -1] = torch.stack(res_tmp).sum(dim=0)
+                conv[batch_idx,
+                     out_idx, :, -1] = torch.stack(res_tmp).sum(dim=0)
 
         return conv
 
@@ -196,10 +220,18 @@ class ContinuousConv2D(BaseContinuousConv):
         X = grid.clone().detach()
         conv_transposed = X.clone()
 
-        for batch, x in enumerate(X):
+        # extracting indeces for convolution on batches
+        # TODO: if we want to optimize and we know that
+        # the grid is the same for all samples in the
+        # training set, we can do something like call this
+        # function just once when we are in .train() mode
+        self._find_index(X)
+
+        for batch_idx, x in enumerate(X):
 
             # extract mapped points
-            stacked_input, indeces_channels = self._extract_mapped_points(x)
+            stacked_input, indeces_channels = self._extract_mapped_points(
+                batch_idx, self.index, x)
 
             # for each output numb field
             idx_net = 0
@@ -211,7 +243,7 @@ class ContinuousConv2D(BaseContinuousConv):
                     single_channel_input = stacked_input[idx]
                     rep_idx = torch.tensor(indeces_channels[0])
 
-                    integral = integrals[batch, idx,
+                    integral = integrals[batch_idx, idx,
                                          :].repeat_interleave(rep_idx)
 
                     # extract filter
@@ -224,7 +256,7 @@ class ContinuousConv2D(BaseContinuousConv):
                     res_tmp.append(integral)
 
                 # stacking integral results and summing over channels
-                conv_transposed[batch,
+                conv_transposed[batch_idx,
                                 idx, :, -1] = torch.stack(res_tmp).sum(dim=0)
 
         return conv_transposed
