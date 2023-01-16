@@ -111,6 +111,45 @@ class ContinuousConv2D(BaseContinuousConv):
 
         return grid.detach()
 
+    def _extract_mapped_points(self, x):
+        """Priviate method to extract mapped points in the filter
+
+        :param x: input tensor [channel x N x dim]
+        :type x: torch.tensor
+        :return: mapped points and indeces for each channel
+        :rtype: tuple(torch.tensor, list)
+        """
+        mapped_points = []
+        indeces_channels = []
+
+        for current_stride in self._stride:
+            # indeces of points falling into filter range
+            indeces = check_point(x, current_stride, self._dim)
+
+            # how many points for each channel fall into the filter?
+            numb_points_insiede = torch.sum(indeces, dim=-1).tolist()
+
+            # extracting points for each channel
+            # shape: [sum(numb_points_insiede), filter_dim + 1]
+            point_stride = x[indeces]
+
+            # mapping points in filter domain
+            map_points_(point_stride[..., :-1], current_stride)
+
+            # extracting points for each channel
+            point_stride_channel = point_stride.split(numb_points_insiede)
+
+            # appending in list for later use
+            mapped_points.append(point_stride_channel)
+            indeces_channels.append(numb_points_insiede)
+
+        # stacking input for passing to neural net
+        mapping = map(torch.cat, zip(*mapped_points))
+        stacked_input = tuple(mapping)
+        indeces_channels = tuple(zip(*indeces_channels))
+
+        return stacked_input, indeces_channels
+
     def forward(self, X):
         """Forward pass in the FFConv layer
 
@@ -125,35 +164,8 @@ class ContinuousConv2D(BaseContinuousConv):
 
         for batch, x in enumerate(X):
 
-            mapped_points = []
-            indeces_channels = []
-
-            for current_stride in self._stride:
-
-                # indeces of points falling into filter range
-                indeces = check_point(x, current_stride, self._dim)
-
-                # how many points for each channel fall into the filter?
-                numb_points_insiede = torch.sum(indeces, dim=-1).tolist()
-
-                # extracting points for each channel
-                # shape: [sum(numb_points_insiede), filter_dim + 1]
-                point_stride = x[indeces]
-
-                # mapping points in filter domain
-                map_points_(point_stride[..., :-1], current_stride)
-
-                # extracting points for each channel
-                point_stride_channel = point_stride.split(numb_points_insiede)
-
-                # appending in list for later use
-                mapped_points.append(point_stride_channel)
-                indeces_channels.append(numb_points_insiede)
-
-            # stacking input for passing to neural net
-            mapping = map(torch.cat, zip(*mapped_points))
-            stacked_input = tuple(mapping)
-            indeces_channels = tuple(zip(*indeces_channels))
+            # extract mapped points
+            stacked_input, indeces_channels = self._extract_mapped_points(x)
 
             # for each output numb field
             idx_net = 0
@@ -186,35 +198,8 @@ class ContinuousConv2D(BaseContinuousConv):
 
         for batch, x in enumerate(X):
 
-            mapped_points = []
-            indeces_channels = []
-
-            for current_stride in self._stride:
-
-                # indeces of points falling into filter range
-                indeces = check_point(x, current_stride, self._dim)
-
-                # how many points for each channel fall into the filter?
-                numb_points_insiede = torch.sum(indeces, dim=-1).tolist()
-
-                # extracting points for each channel
-                # shape: [sum(numb_points_insiede), filter_dim + 1]
-                point_stride = x[indeces]
-
-                # mapping points in filter domain
-                map_points_(point_stride[..., :-1], current_stride)
-
-                # extracting points for each channel
-                point_stride_channel = point_stride.split(numb_points_insiede)
-
-                # appending in list for later use
-                mapped_points.append(point_stride_channel)
-                indeces_channels.append(numb_points_insiede)
-
-            # stacking input for passing to neural net
-            mapping = map(torch.cat, zip(*mapped_points))
-            stacked_input = tuple(mapping)
-            indeces_channels = tuple(zip(*indeces_channels))
+            # extract mapped points
+            stacked_input, indeces_channels = self._extract_mapped_points(x)
 
             # for each output numb field
             idx_net = 0

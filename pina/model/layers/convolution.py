@@ -1,4 +1,4 @@
-"""Module for Continuous Convolution class."""
+"""Module for Base Continuous Convolution class."""
 
 from abc import ABCMeta, abstractmethod
 import torch
