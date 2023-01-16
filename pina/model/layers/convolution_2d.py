@@ -1,5 +1,6 @@
 """Module for Continuous Convolution class."""
 
+import copy
 from convolution import BaseContinuousConv
 from utils import Integral, NeuralNet, create_stride, check_point, map_points_
 import torch
@@ -50,31 +51,42 @@ class ContinuousConv2D(BaseContinuousConv):
 
 
         :Example:
+            >>> class MLP(torch.nn.Module):
+                    def __init__(self) -> None:
+                        super().__init__()
+                        self. model = torch.nn.Sequential(torch.nn.Linear(2, 8),
+                                                        torch.nn.ReLU(),
+                                                        torch.nn.Linear(8, 8),
+                                                        torch.nn.ReLU(),
+                                                        torch.nn.Linear(8, 1))
+
+                    def forward(self, x):
+                        return self.model(x)
             >>> dim = [3, 3]
             >>> stride = {"domain": [10, 10],
                           "start": [0, 0],
                           "jumps": [3, 3],
                           "direction": [1, 1.]}
-            >>> conv = ContinuousConv2D(1, 2, dim, stride)
+            >>> conv = ContinuousConv2D(1, 2, dim, stride, MLP)
             >>> conv
-            ContinuousConv2D(
+                ContinuousConv2D(
                 (_net): ModuleList(
-                    (0): NeuralNet(
+                    (0): MLP(
                     (model): Sequential(
-                        (0): Linear(in_features=2, out_features=20, bias=True)
-                        (1): Tanh()
-                        (2): Linear(in_features=20, out_features=20, bias=True)
-                        (3): Tanh()
-                        (4): Linear(in_features=20, out_features=1, bias=True)
+                        (0): Linear(in_features=2, out_features=8, bias=True)
+                        (1): ReLU()
+                        (2): Linear(in_features=8, out_features=8, bias=True)
+                        (3): ReLU()
+                        (4): Linear(in_features=8, out_features=1, bias=True)
                     )
                     )
-                    (1): NeuralNet(
+                    (1): MLP(
                     (model): Sequential(
-                        (0): Linear(in_features=2, out_features=20, bias=True)
-                        (1): Tanh()
-                        (2): Linear(in_features=20, out_features=20, bias=True)
-                        (3): Tanh()
-                        (4): Linear(in_features=20, out_features=1, bias=True)
+                        (0): Linear(in_features=2, out_features=8, bias=True)
+                        (1): ReLU()
+                        (2): Linear(in_features=8, out_features=8, bias=True)
+                        (3): ReLU()
+                        (4): Linear(in_features=8, out_features=1, bias=True)
                     )
                     )
                 )
@@ -89,14 +101,32 @@ class ContinuousConv2D(BaseContinuousConv):
 
         self._integral = Integral('discrete')
 
-        if self._net is None:
-            model = NeuralNet(len(self._dim), 1)
+        # create the network
+        self._net = self._spawn_networks(model)
 
-        self._net = torch.nn.ModuleList(model for _ in range(
-            self._input_numb_field * self._output_numb_field))
-
+        # create the stride list of points
         self._stride = create_stride(self._stride)
-        self._opt = True
+
+    def _spawn_networks(self, model):
+        nets = []
+        if self._net is None:
+            for _ in range(self._input_numb_field * self._output_numb_field):
+                tmp = NeuralNet(len(self._dim), 1)
+                nets.append(tmp)
+        else:
+            if not isinstance(model, object):
+                raise ValueError("Expected a python class inheriting"
+                                 " from torch.nn.Module")
+
+            for _ in range(self._input_numb_field * self._output_numb_field):
+                tmp = model()
+                if not isinstance(tmp, torch.nn.Module):
+                    raise ValueError("The python class must be inherited from"
+                                     " torch.nn.Module. See the docstring for"
+                                     " an example.")
+                nets.append(tmp)
+
+        return torch.nn.ModuleList(nets)
 
     def _make_grid(self, batch_dim):
         # filter dimension + number of points in output grid
@@ -206,7 +236,7 @@ class ContinuousConv2D(BaseContinuousConv):
                     # perform integral for all strides in one channel
                     integral = self._integral(staked_output,
                                               single_channel_input[..., -1],
-                                              indeces_channels[0])
+                                              indeces_channels[idx])
                     res_tmp.append(integral)
 
                 # stacking integral results and summing over channels
@@ -241,11 +271,9 @@ class ContinuousConv2D(BaseContinuousConv):
                 for idx in range(self._input_numb_field):
                     # extract input for each channel
                     single_channel_input = stacked_input[idx]
-                    rep_idx = torch.tensor(indeces_channels[0])
-
-                    integral = integrals[batch_idx, idx,
-                                         :].repeat_interleave(rep_idx)
-
+                    rep_idx = torch.tensor(indeces_channels[idx])
+                    integral = integrals[batch_idx,
+                                         idx, :].repeat_interleave(rep_idx)
                     # extract filter
                     net = self._net[idx_net]
                     idx_net += 1

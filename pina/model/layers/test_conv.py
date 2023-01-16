@@ -30,6 +30,20 @@ def make_grid(x):
     return torch.stack(output).to(x.device)
 
 
+class MLP(torch.nn.Module):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self. model = torch.nn.Sequential(torch.nn.Linear(2, 8),
+                                          torch.nn.ReLU(),
+                                          torch.nn.Linear(8, 8),
+                                          torch.nn.ReLU(),
+                                          torch.nn.Linear(8, 1))
+
+    def forward(self, x):
+        return self.model(x)
+
+
 # INPUTS
 channel_input = 2
 channel_output = 6
@@ -48,11 +62,7 @@ x = make_grid(x)
 
 
 def test_constructor():
-    model = torch.nn.Sequential(torch.nn.Linear(dim_filter, 10),
-                                torch.nn.ReLU(),
-                                torch.nn.Linear(10, 10),
-                                torch.nn.ReLU(),
-                                torch.nn.Linear(10, 1))
+    model = MLP
 
     conv = ContinuousConv2D(channel_input,
                             channel_output,
@@ -67,11 +77,7 @@ def test_constructor():
 
 
 def test_forward():
-    model = torch.nn.Sequential(torch.nn.Linear(dim_filter, 10),
-                                torch.nn.ReLU(),
-                                torch.nn.Linear(10, 10),
-                                torch.nn.ReLU(),
-                                torch.nn.Linear(10, 1))
+    model = MLP
 
     conv = ContinuousConv2D(channel_input,
                             channel_output,
@@ -82,11 +88,7 @@ def test_forward():
 
 
 def test_transpose():
-    model = torch.nn.Sequential(torch.nn.Linear(dim_filter, 10),
-                                torch.nn.ReLU(),
-                                torch.nn.Linear(10, 10),
-                                torch.nn.ReLU(),
-                                torch.nn.Linear(10, 1))
+    model = MLP
 
     conv = ContinuousConv2D(channel_input,
                             channel_output,
