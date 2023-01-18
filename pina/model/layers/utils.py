@@ -110,14 +110,15 @@ class Integral(object):
     def __call__(self, *args, **kwds):
         return self.make_integral(*args, **kwds)
 
-    def integral_param_disc(self, x, y, idx):
-        product = x.flatten() * y.flatten()
-        split = torch.split(product, idx)
-        summing = [torch.sum(tmp) for tmp in split]
-        return torch.stack(summing)
-        # return torch.einsum('ij,ij->i', x, y)  # torch.dot(x, y)
+    def _prepend_zero(self, x):
+        return torch.cat((torch.zeros(1, dtype=x.dtype, device=x.device), x))
 
-    def integral_param_cont(self, x, y):
+    def integral_param_disc(self, x, y, idx):
+        cs_idxes = self._prepend_zero(torch.cumsum(torch.tensor(idx), 0))
+        cs = self._prepend_zero(torch.cumsum(x.flatten()*y.flatten(), 0))
+        return cs[cs_idxes[1:]] - cs[cs_idxes[:-1]]
+
+    def integral_param_cont(self, x, y, idx):
         raise NotImplementedError
 
 
