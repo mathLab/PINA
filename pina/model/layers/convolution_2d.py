@@ -221,27 +221,28 @@ class ContinuousConv2D(BaseContinuousConv):
                 batch_idx, self.index, x)
 
             # for each output numb field
-            idx_net = 0
-            for out_idx in range(self._output_numb_field):
+            tot_dim = self._output_numb_field * self._input_numb_field
+            res_tmp = []
+            for idx_conv in range(tot_dim):
                 # compute convolution
-                res_tmp = []
-                for idx in range(self._input_numb_field):
-                    # extract input for each channel
-                    single_channel_input = stacked_input[idx]
-                    # extract filter
-                    net = self._net[idx_net]
-                    idx_net += 1
-                    # caculate filter value
-                    staked_output = net(single_channel_input[..., :-1])
-                    # perform integral for all strides in one channel
-                    integral = self._integral(staked_output,
-                                              single_channel_input[..., -1],
-                                              indeces_channels[idx])
-                    res_tmp.append(integral)
+                idx = idx_conv % self._input_numb_field
+                # extract input for each channel
+                single_channel_input = stacked_input[idx]
+                # extract filter
+                net = self._net[idx_conv]
+                # caculate filter value
+                staked_output = net(single_channel_input[..., :-1])
+                # perform integral for all strides in one channel
+                integral = self._integral(staked_output,
+                                          single_channel_input[..., -1],
+                                          indeces_channels[idx])
+                res_tmp.append(integral)
 
-                # stacking integral results and summing over channels
-                conv[batch_idx,
-                     out_idx, :, -1] = torch.stack(res_tmp).sum(dim=0)
+            # stacking integral results and summing over channels
+            res_tmp = torch.stack(res_tmp)
+            conv[batch_idx, ..., -1] = res_tmp.reshape(self._output_numb_field,
+                                                       self._input_numb_field,
+                                                       -1).sum(1)
 
         return conv
 
@@ -264,27 +265,28 @@ class ContinuousConv2D(BaseContinuousConv):
                 batch_idx, self.index, x)
 
             # for each output numb field
-            idx_net = 0
-            for _ in range(self._output_numb_field):
+            res_tmp = []
+            tot_dim = self._output_numb_field * self._input_numb_field
+            for idx_conv in range(tot_dim):
                 # compute convolution
-                res_tmp = []
-                for idx in range(self._input_numb_field):
-                    # extract input for each channel
-                    single_channel_input = stacked_input[idx]
-                    rep_idx = torch.tensor(indeces_channels[idx])
-                    integral = integrals[batch_idx,
-                                         idx, :].repeat_interleave(rep_idx)
-                    # extract filter
-                    net = self._net[idx_net]
-                    idx_net += 1
-                    # caculate filter value
-                    staked_output = net(
-                        single_channel_input[..., :-1]).flatten()
-                    integral = staked_output * integral
-                    res_tmp.append(integral)
+                idx = idx_conv % self._input_numb_field
+                # extract input for each channel
+                single_channel_input = stacked_input[idx]
+                rep_idx = torch.tensor(indeces_channels[idx])
+                integral = integrals[batch_idx,
+                                     idx, :].repeat_interleave(rep_idx)
+                # extract filter
+                net = self._net[idx_conv]
 
-                # stacking integral results and summing over channels
-                conv_transposed[batch_idx,
-                                idx, :, -1] = torch.stack(res_tmp).sum(dim=0)
+                # caculate filter value
+                staked_output = net(single_channel_input[..., :-1]).flatten()
+                integral = staked_output * integral
+                res_tmp.append(integral)
+
+            # stacking integral results and summing over channels
+            res_tmp = torch.stack(res_tmp).reshape(self._input_numb_field,
+                                                   self._output_numb_field,
+                                                   -1).sum(1)
+            conv_transposed[batch_idx, ..., -1] = res_tmp
 
         return conv_transposed
