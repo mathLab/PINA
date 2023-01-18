@@ -193,7 +193,7 @@ class ContinuousConv2D(BaseContinuousConv):
             tmp = check_point(X, current_stride, self._dim)
             index.append(tmp)
 
-        self.index = index
+        self._index = index
 
     def forward(self, X):
         """Forward pass in the FFConv layer
@@ -218,7 +218,7 @@ class ContinuousConv2D(BaseContinuousConv):
 
             # extract mapped points
             stacked_input, indeces_channels = self._extract_mapped_points(
-                batch_idx, self.index, x)
+                batch_idx, self._index, x)
 
             # for each output numb field
             tot_dim = self._output_numb_field * self._input_numb_field
@@ -262,7 +262,7 @@ class ContinuousConv2D(BaseContinuousConv):
 
             # extract mapped points
             stacked_input, indeces_channels = self._extract_mapped_points(
-                batch_idx, self.index, x)
+                batch_idx, self._index, x)
 
             # for each output numb field
             res_tmp = []
