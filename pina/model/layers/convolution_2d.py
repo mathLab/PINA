@@ -1,8 +1,8 @@
 """Module for Continuous Convolution class."""
 
-import copy
 from convolution import BaseContinuousConv
-from utils import Integral, NeuralNet, create_stride, check_point, map_points_
+from utils import NeuralNet, check_point, map_points_
+from integral import Integral
 import torch
 
 
@@ -99,13 +99,14 @@ class ContinuousConv2D(BaseContinuousConv):
                          stride=stride,
                          model=model)
 
+        # integral routine
         self._integral = Integral('discrete')
 
         # create the network
         self._net = self._spawn_networks(model)
 
-        # create the stride list of points
-        self._stride = create_stride(self._stride)
+        # stride for continuous convolution overridden
+        self._stride = self._stride._stride_discrete
 
     def _spawn_networks(self, model):
         nets = []
@@ -220,26 +221,32 @@ class ContinuousConv2D(BaseContinuousConv):
             stacked_input, indeces_channels = self._extract_mapped_points(
                 batch_idx, self._index, x)
 
-            # for each output numb field
+            # compute the convolution
+
+            # total number of fields
             tot_dim = self._output_numb_field * self._input_numb_field
             res_tmp = []
+            # for each field
             for idx_conv in range(tot_dim):
-                # compute convolution
+                # index for each input field
                 idx = idx_conv % self._input_numb_field
                 # extract input for each channel
                 single_channel_input = stacked_input[idx]
                 # extract filter
                 net = self._net[idx_conv]
-                # caculate filter value
+                # calculate filter value
                 staked_output = net(single_channel_input[..., :-1])
-                # perform integral for all strides in one channel
+                # perform integral for all strides in one field
                 integral = self._integral(staked_output,
                                           single_channel_input[..., -1],
                                           indeces_channels[idx])
                 res_tmp.append(integral)
 
-            # stacking integral results and summing over channels
+            # stacking integral results
             res_tmp = torch.stack(res_tmp)
+
+            # sum filters (for each input fields) in groups
+            # for different ouput fields
             conv[batch_idx, ..., -1] = res_tmp.reshape(self._output_numb_field,
                                                        self._input_numb_field,
                                                        -1).sum(1)
@@ -264,26 +271,30 @@ class ContinuousConv2D(BaseContinuousConv):
             stacked_input, indeces_channels = self._extract_mapped_points(
                 batch_idx, self._index, x)
 
-            # for each output numb field
+            # compute the transpose convolution
+
+            # total number of fields
             res_tmp = []
             tot_dim = self._output_numb_field * self._input_numb_field
+            # for each field
             for idx_conv in range(tot_dim):
-                # compute convolution
+                # index for each input field
                 idx = idx_conv % self._input_numb_field
-                # extract input for each channel
+                # extract input for each field
                 single_channel_input = stacked_input[idx]
                 rep_idx = torch.tensor(indeces_channels[idx])
                 integral = integrals[batch_idx,
                                      idx, :].repeat_interleave(rep_idx)
                 # extract filter
                 net = self._net[idx_conv]
-
-                # caculate filter value
+                # perform integral for all strides in one field
                 staked_output = net(single_channel_input[..., :-1]).flatten()
                 integral = staked_output * integral
                 res_tmp.append(integral)
 
-            # stacking integral results and summing over channels
+            # stacking integral results and sum
+            # filters (for each input fields) in groups
+            # for different ouput fields
             res_tmp = torch.stack(res_tmp).reshape(self._input_numb_field,
                                                    self._output_numb_field,
                                                    -1).sum(1)

@@ -2,6 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 import torch
+from stride import Stride
 
 
 class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
@@ -57,7 +58,7 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
         self.register_buffer("_dim", vect, persistent=False)
 
         if isinstance(stride, dict):
-            self._stride = stride
+            self._stride = Stride(stride)
         else:
             raise ValueError('stride must be dictionary.')
 

@@ -1,6 +1,12 @@
 from convolution_2d import ContinuousConv2D
 import torch
-from utils import prod
+
+
+def prod(iterable):
+    p = 1
+    for n in iterable:
+        p *= n
+    return p
 
 
 def make_grid(x):

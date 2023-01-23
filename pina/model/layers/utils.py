@@ -2,13 +2,6 @@ import torch
 import torch.nn as nn
 
 
-def prod(iterable):
-    p = 1
-    for n in iterable:
-        p *= n
-    return p
-
-
 class NeuralNet(torch.nn.Module):
 
     def __init__(self, input_channel, output_channel, inner_size=20,
@@ -94,98 +87,6 @@ class NeuralNet(torch.nn.Module):
     @property
     def layers(self):
         return self._layers
-
-
-class Integral(object):
-
-    def __init__(self, param):
-
-        if param == 'discrete':
-            self.make_integral = self.integral_param_disc
-        elif param == 'continuous':
-            self.make_integral = self.integral_param_cont
-        else:
-            raise TypeError
-
-    def __call__(self, *args, **kwds):
-        return self.make_integral(*args, **kwds)
-
-    def _prepend_zero(self, x):
-        return torch.cat((torch.zeros(1, dtype=x.dtype, device=x.device), x))
-
-    def integral_param_disc(self, x, y, idx):
-        cs_idxes = self._prepend_zero(torch.cumsum(torch.tensor(idx), 0))
-        cs = self._prepend_zero(torch.cumsum(x.flatten()*y.flatten(), 0))
-        return cs[cs_idxes[1:]] - cs[cs_idxes[:-1]]
-
-    def integral_param_cont(self, x, y, idx):
-        raise NotImplementedError
-
-
-def create_stride(my_dict):
-    """Creating the list for applying the filter
-
-    :param my_dict: Dictionary with the following arguments:
-    domain size, starting position of the filter, jump size
-    for the filter and direction of the filter
-    :type my_dict: dict
-    :raises IndexError: Values in the dict must have all same length
-    :raises ValueError: Domain values must be greater than 0
-    :raises ValueError: Direction must be either equal to 1, -1 or 0
-    :raises IndexError: Direction and jumps must have zero in the same index
-    :return: list of positions for the filter
-    :rtype: list
-    :Example:
-
-
-            >>> stride = {"domain": [4, 4],
-                          "start": [-4, 2],
-                          "jump": [2, 2],
-                          "direction": [1, 1],
-                          }
-            >>> create_stride(stride)
-            [[-4.0, 2.0], [-4.0, 4.0], [-2.0, 2.0], [-2.0, 4.0]]
-    """
-
-    # we must check boundaries of the input as well
-
-    domain, start, jumps, direction = my_dict.values()
-
-    # checking
-
-    if not all([len(s) == len(domain) for s in my_dict.values()]):
-        raise IndexError("values in the dict must have all same length")
-
-    if not all(v >= 0 for v in domain):
-        raise ValueError("domain values must be greater than 0")
-
-    if not all(v == 1 or v == -1 or v == 0 for v in direction):
-        raise ValueError("direction must be either equal to 1, -1 or 0")
-
-    seq_jumps = [i for i, e in enumerate(jumps) if e == 0]
-    seq_direction = [i for i, e in enumerate(direction) if e == 0]
-
-    if seq_direction != seq_jumps:
-        raise IndexError(
-            "direction and jumps must have zero in the same index")
-
-    if seq_jumps:
-        for i in seq_jumps:
-            jumps[i] = domain[i]
-            direction[i] = 1
-
-    # creating the stride grid
-    values_mesh = [torch.arange(0, i, step).float()
-                   for i, step in zip(domain, jumps)]
-
-    values_mesh = [single * dim for single, dim in zip(values_mesh, direction)]
-
-    mesh = torch.meshgrid(values_mesh)
-    coordinates_mesh = [x.reshape(-1, 1) for x in mesh]
-
-    stride = torch.cat(coordinates_mesh, dim=1) + torch.tensor(start)
-
-    return stride
 
 
 def check_point(x, current_stride, dim):
