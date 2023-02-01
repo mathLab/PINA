@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DeepONet &mdash; PINA 0.0.2.post2301 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>DeepONet &mdash; PINA 0.0.2.post2302 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
             <a href="../index.html" class="icon icon-home"> PINA
           </a>
               <div class="version">
-                0.0.2.post2301
+                0.0.2.post2302
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -90,7 +90,7 @@
 <p>Module for DeepONet model</p>
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">branch_net</em>, <em class="sig-param">trunk_net</em>, <em class="sig-param">output_variables</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">nets</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">aggregator='*'</em>, <em class="sig-param">reduction='+'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of DeepONet network.</p>
 <div class="admonition seealso">
@@ -103,22 +103,25 @@ DOI: <a class="reference external" href="https://doi.org/10.1038/s42256-021-0030
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>branch_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><em>torch.nn.Module</em></a>) – the neural network to use as branch
-model. It has to take as input a <code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code>. The number
-of dimension of the output has to be the same of the <cite>trunk_net</cite>.</p></li>
-<li><p><strong>trunk_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><em>torch.nn.Module</em></a>) – the neural network to use as trunk
-model. It has to take as input a <code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code>. The number
-of dimension of the output has to be the same of the <cite>branch_net</cite>.</p></li>
+<li><p><strong>nets</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><em>torch.nn.Module</em></a><em>)</em>) – Internal DeepONet networks
+(branch and trunk in the original DeepONet).</p></li>
 <li><p><strong>output_variables</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – the list containing the labels
 corresponding to the components of the output computed by the
 model.</p></li>
+<li><p><strong>| callable aggregator</strong> (<em>string</em>) – Aggregator to be used to aggregate
+partial results from the modules in <cite>nets</cite>. Partial results are
+aggregated component-wise. See <code class="xref py py-func docutils literal notranslate"><span class="pre">_symbol_functions()</span></code> for the
+available default aggregators.</p></li>
+<li><p><strong>| callable reduction</strong> (<em>string</em>) – Reduction to be used to reduce
+the aggregated result of the modules in <cite>nets</cite> to the desired output
+dimension. See <code class="xref py py-func docutils literal notranslate"><span class="pre">_symbol_functions()</span></code> for the available default
+reductions.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Example</dt>
 <dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">branch</span> <span class="o">=</span> <span class="n">FFN</span><span class="p">(</span><span class="n">input_variables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span> <span class="n">output_variables</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">trunk</span> <span class="o">=</span> <span class="n">FFN</span><span class="p">(</span><span class="n">input_variables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">],</span> <span class="n">output_variables</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">onet</span> <span class="o">=</span> <span class="n">DeepONet</span><span class="p">(</span><span class="n">trunk_net</span><span class="o">=</span><span class="n">trunk</span><span class="p">,</span> <span class="n">branch_net</span><span class="o">=</span><span class="n">branch</span>
-<span class="gp">&gt;&gt;&gt; </span>                <span class="n">output_variables</span><span class="o">=</span><span class="n">output_vars</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">onet</span> <span class="o">=</span> <span class="n">DeepONet</span><span class="p">(</span><span class="n">nets</span><span class="o">=</span><span class="p">[</span><span class="n">trunk</span><span class="p">,</span> <span class="n">branch</span><span class="p">],</span> <span class="n">output_variables</span><span class="o">=</span><span class="n">output_vars</span><span class="p">)</span>
 <span class="go">DeepONet(</span>
 <span class="go">  (trunk_net): FeedForward(</span>
 <span class="go">    (extra_features): Sequential()</span>
@@ -145,6 +148,11 @@ model.</p></li>
 </div>
 </dd>
 </dl>
+<dl class="method">
+<dt>
+<em class="property">static </em><code class="sig-name descname">_all_nets_same_output_layer_size</code><span class="sig-paren">(</span><em class="sig-param">nets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._all_nets_same_output_layer_size"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">_backward_hooks</code><em class="property"> = None</em></dt>
@@ -163,6 +171,16 @@ model.</p></li>
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">_forward_pre_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">_init_aggregator</code><span class="sig-paren">(</span><em class="sig-param">aggregator</em>, <em class="sig-param">n_nets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._init_aggregator"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">_init_reduction</code><span class="sig-paren">(</span><em class="sig-param">reduction</em>, <em class="sig-param">hidden_size</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._init_reduction"><span class="viewcode-link">[source]</span></a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -198,6 +216,11 @@ model.</p></li>
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">_state_dict_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">static </em><code class="sig-name descname">_symbol_functions</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._symbol_functions"><span class="viewcode-link">[source]</span></a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -244,7 +267,7 @@ model.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Jan 01, 2023.
+      <span class="lastupdated">Last updated on Feb 01, 2023.
       </span></p>
   </div>
 
