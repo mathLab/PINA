@@ -1,7 +1,7 @@
 """Module for Continuous Convolution class."""
 
 from .convolution import BaseContinuousConv
-from .utils_convolution import NeuralNet, check_point, map_points_
+from .utils_convolution import check_point, map_points_
 from .integral import Integral
 from ..feed_forward import FeedForward
 import torch
