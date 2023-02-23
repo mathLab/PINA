@@ -2,7 +2,8 @@
 
 from abc import ABCMeta, abstractmethod
 import torch
-from stride import Stride
+from .stride import Stride
+from .utils_convolution import optimizing
 
 
 class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
@@ -11,7 +12,8 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
     """
 
     def __init__(self, input_numb_field, output_numb_field,
-                 filter_dim, stride, model=None):
+                 filter_dim, stride, model=None, optimize=False,
+                 no_overlap=False):
         """Base Class for Continuous Convolution.
 
         The algorithm expects input to be in the form:
@@ -37,6 +39,17 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
         :param model: neural network for inner parametrization,
         defaults to None
         :type model: torch.nn.Module, optional
+        :param optimize: flag for performing optimization on the continuous
+            filter, defaults to False. The flag `optimize=True` should be
+            used only when the scatter datapoints are fixed through the
+            training. If torch model is in `.eval()` mode, the flag is
+            automatically set to False always.
+        :type optimize: bool, optional
+        :param no_overlap: flag for performing optimization on the transpose
+            continuous filter, defaults to False. The flag set to `True` should
+            be used only when the filter positions do not overlap for different
+            strides. RuntimeError will raise in case of non-compatible strides.
+        :type no_overlap: bool, optional
         """
         super().__init__()
 
@@ -64,6 +77,29 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
 
         self._net = model
 
+        if isinstance(optimize, bool):
+            self._optimize = optimize
+        else:
+            raise ValueError('optimize must be bool.')
+
+        # choosing how to initialize based on optimization
+        if self._optimize:
+            # optimizing decorator ensure the function is called
+            # just once
+            self._choose_initialization = optimizing(
+                self._initialize_convolution)
+        else:
+            self._choose_initialization = self._initialize_convolution
+
+        if not isinstance(no_overlap, bool):
+            raise ValueError('no_overlap must be bool.')
+
+        if no_overlap:
+            raise NotImplementedError
+            self.transpose = self.transpose_no_overlap
+        else:
+            self.transpose = self.transpose_overlap
+
     @ property
     def net(self):
         return self._net
@@ -86,5 +122,20 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def forward(self, x):
+    def forward(self, X):
+        pass
+
+    @property
+    @abstractmethod
+    def transpose_overlap(self, X):
+        pass
+
+    @property
+    @abstractmethod
+    def transpose_no_overlap(self, X):
+        pass
+
+    @property
+    @abstractmethod
+    def _initialize_convolution(self, X, type):
         pass
