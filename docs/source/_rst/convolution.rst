@@ -1,8 +1,8 @@
 ContinuousConv
 ==============
-.. currentmodule:: pina.model.layers.ContinuousConv
+.. currentmodule:: pina.model.layers.convolution_2d
 
-.. automodule:: pina.model.layers.ContinuousConv
+.. automodule:: pina.model.layers.convolution_2d
 
 .. autoclass:: ContinuousConv
     :members:
