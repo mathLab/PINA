@@ -20,7 +20,21 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
         $$[B \times N_{in} \times N \times D]$$
         where $B$ is the batch_size, $N_{in}$ is the number of input
         fields, $N$ the number of points in the mesh, $D$ the dimension
-        of the problem.
+        of the problem. In particular:
+        * $D$ is the number of spatial variables + 1. The last column must
+            contain the field value. For example for 2D problems $D=3$ and
+            the tensor will be something like `[first coordinate, second
+            coordinate, field value]`.
+        * $N_{in}$ represents the number of vectorial function presented.
+            For example a vectorial function $f = [f_1, f_2]$ will have
+            $N_{in}=2$.
+
+        :Note
+            A 2-dimensional vectorial function $N_{in}=2$ of 3-dimensional
+            input $D=3+1=4$ with 100 points input mesh and batch size of 8
+            is represented as a tensor `[8, 2, 100, 4]`, where the columns
+            `[:, 0, :, -1]` and `[:, 1, :, -1]` represent the first and
+            second filed value respectively
 
         The algorithm returns a tensor of shape:
         $$[B \times N_{out} \times N' \times D]$$
