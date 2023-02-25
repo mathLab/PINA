@@ -1,5 +1,4 @@
 """Module for Base Continuous Convolution class."""
-
 from abc import ABCMeta, abstractmethod
 import torch
 from .stride import Stride

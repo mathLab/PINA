@@ -1,5 +1,4 @@
-"""Module for Continuous Convolution class."""
-
+"""Module for Continuous Convolution class"""
 from .convolution import BaseContinuousConv
 from .utils_convolution import check_point, map_points_
 from .integral import Integral
@@ -13,24 +12,26 @@ class ContinuousConv(BaseContinuousConv):
 
     .. seealso::
 
-    **Original reference**: Coscia, D., Meneghetti, L., Demo, N.,
-    Stabile, G., & Rozza, G.. (2022). A Continuous Convolutional Trainable
-    Filter for Modelling Unstructured Data.
-    DOI: `10.48550/arXiv.2210.13416
-    <https://doi.org/10.48550/arXiv.2210.13416>`_
+        **Original reference**: Coscia, D., Meneghetti, L., Demo, N.,
+        Stabile, G., & Rozza, G.. (2022). A Continuous Convolutional Trainable
+        Filter for Modelling Unstructured Data.
+        DOI: `10.48550/arXiv.2210.13416
+        <https://doi.org/10.48550/arXiv.2210.13416>`_.
 
     """
 
     def __init__(self, input_numb_field, output_numb_field,
                  filter_dim, stride, model=None, optimize=False,
                  no_overlap=False):
-        """Continuous Convolution 2D implementation
+        """
+        Continuous Convolution 2D implementation
 
         The algorithm expects input to be in the form:
         $$[B \times N_{in} \times N \times D]$$
         where $B$ is the batch_size, $N_{in}$ is the number of input
         fields, $N$ the number of points in the mesh, $D$ the dimension
         of the problem. In particular:
+
         * $D$ is the number of spatial variables + 1. The last column must
             contain the field value. For example for 2D problems $D=3$ and
             the tensor will be something like `[first coordinate, second
@@ -39,12 +40,12 @@ class ContinuousConv(BaseContinuousConv):
             For example a vectorial function $f = [f_1, f_2]$ will have
             $N_{in}=2$.
 
-        :Note
+        .. note::
             A 2-dimensional vectorial function $N_{in}=2$ of 3-dimensional
             input $D=3+1=4$ with 100 points input mesh and batch size of 8
             is represented as a tensor `[8, 2, 100, 4]`, where the columns
             `[:, 0, :, -1]` and `[:, 1, :, -1]` represent the first and
-            second filed value respectively
+            second filed value respectively.
 
         The algorithm returns a tensor of shape:
         $$[B \times N_{out} \times N' \times D]$$
@@ -122,7 +123,6 @@ class ContinuousConv(BaseContinuousConv):
                     )
                 )
                 )
-
         """
 
         super().__init__(input_numb_field=input_numb_field,
