@@ -8,3 +8,4 @@ Code Documentation
     FeedForward <fnn.rst>
     DeepONet <deeponet.rst>
     PINN <pinn.rst>
+    ContinuousConv <convolution.rst>

@@ -38,6 +38,7 @@ solve problems in a continuous and nonlinear settings.
     Getting start with PINA <_rst/tutorial1/tutorial.rst>
     Poisson problem <_rst/tutorial2/tutorial.rst>
     Wave equation <_rst/tutorial3/tutorial.rst>
+    Continuous Convolutional Filter <_rst/tutorial4/tutorial.rst>
 
 .. ........................................................................................
 
