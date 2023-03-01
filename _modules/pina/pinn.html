@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.pinn &mdash; PINA 0.0.2.post2302 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>pina.pinn &mdash; PINA 0.0.2.post2303 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> PINA
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PINA
           </a>
               <div class="version">
-                0.0.2.post2302
+                0.0.2.post2303
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -50,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial1/tutorial.html">1. Getting start with PINA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial2/tutorial.html">2. Poisson problem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial3/tutorial.html">3. Wave equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
 </ul>
 
         </div>
@@ -65,7 +70,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">pina.pinn</li>
       <li class="wy-breadcrumbs-aside">
@@ -225,39 +230,6 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PINN._create_dataloader"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN._create_dataloader">[docs]</a>    <span class="k">def</span> <span class="nf">_create_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Private method for creating dataloader</span>
-
-<span class="sd">        :return: dataloader</span>
-<span class="sd">        :rtype: torch.utils.data.DataLoader</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">]</span>
-
-        <span class="k">def</span> <span class="nf">custom_collate</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-            <span class="c1"># extracting pts labels</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">pts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">labels</span>
-            <span class="c1"># calling default torch collate</span>
-            <span class="n">collate_res</span> <span class="o">=</span> <span class="n">default_collate</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-            <span class="c1"># save collate result in dict</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">collate_res</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">val</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
-                <span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-            <span class="k">return</span> <span class="n">res</span>
-
-        <span class="c1"># creating dataset, list of dataset for each location</span>
-        <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyDataSet</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-        <span class="c1"># creating dataloader</span>
-        <span class="n">dataloaders</span> <span class="o">=</span> <span class="p">[</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dat</span><span class="p">,</span>
-                                  <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-                                  <span class="n">collate_fn</span><span class="o">=</span><span class="n">custom_collate</span><span class="p">)</span>
-                       <span class="k">for</span> <span class="n">dat</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">dataloaders</span><span class="p">))</span></div>
-
 <div class="viewcode-block" id="PINN.span_pts"><a class="viewcode-back" href="../../_rst/pinn.html#pina.pinn.PINN.span_pts">[docs]</a>    <span class="k">def</span> <span class="nf">span_pts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &gt;&gt;&gt; pinn.span_pts(n=10, mode=&#39;grid&#39;)</span>
@@ -306,6 +278,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
         <span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Add all condition with `input_points` to dataloader</span>
+        <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span>
+
         <span class="n">data_loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="o">.</span><span class="n">dataloader</span>
 
         <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
@@ -442,7 +418,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Feb 01, 2023.
+      <span class="lastupdated">Last updated on Mar 01, 2023.
       </span></p>
   </div>
 
