@@ -40,7 +40,7 @@ if __name__ == "__main__":
         pinn.span_pts(2000, 'random', locations=['D'])
         pinn.train(10000, 100)
         with open('stokes_history_{}.txt'.format(args.id_run), 'w') as file_:
-            for i, losses in enumerate(pinn.history):
+            for i, losses in pinn.history_loss.items():
                 file_.write('{} {}\n'.format(i, sum(losses)))
         pinn.save_state('pina.stokes')
 
