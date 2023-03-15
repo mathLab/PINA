@@ -122,7 +122,7 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
         return self._stride
 
     @ property
-    def dim(self):
+    def filter_dim(self):
         return self._dim
 
     @ property
