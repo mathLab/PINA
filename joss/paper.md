@@ -42,7 +42,7 @@ However, the amount of data required to analyze complex systems is often insuffi
 
 \begin{equation}
     \theta^* = \text{argmin}_\theta \mathcal{L} = 
-    \text{argmin}_\theta (\mathcal{L}_\mathcal{F} + \mathcal{L}_\mathcal{B} + \mathcal{L}_{\text{data}}).
+    \text{argmin}_\theta (\mathcal{L}_{\mathcal{F}} + \mathcal{L}_{\mathcal{B}} + \mathcal{L}_{\text{data}}).
 \end{equation}
 
 The PINNs framework is completely general and applicable to different types of ordinary differential equations (ODEs), or partial differential equations (PDEs). Nevertheless, the loss function strictly depends on the problem chosen to be solved, since different operators or boundary conditions lead to different losses, increasing the difficulty to write a general and portable code for different problems. \textbf{PINA}, \emph{Physics-Informed Neural networks for Advance modeling}, is a Python library built using PyTorch that provides a user-friendly API to formalize a large variety of physical problems and solve it using PINNs easily
