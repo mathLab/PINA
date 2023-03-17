@@ -39,11 +39,7 @@ However, the amount of data required to analyze complex systems is often insuffi
     \mathcal{B}(\pmb{u}(\pmb{z}))&=\pmb{g}(\pmb{z}) \quad \pmb{z} \in \partial\Omega,   
 \end{split}
 \end{equation}
-where $\Omega\subset\mathbb{R}^d$ is the domain and $\partial\Omega$ the boundaries of the latter. In particular, $\pmb{z}$ indicates the spatio-temporal coordinates vector, $\pmb{u}$ the unknown field, $\alpha$ the physical parameters, $\pmb{f}$ the forcing term, and $\mathcal{F}$ the differential operator. In addition, $\mathcal{B}$ identifies the operator indicating arbitrary initial or boundary conditions and $\pmb{g}$ the boundary function. The PINN's objective is to find a solution to the problem, which is done by approximating the true solution $\pmb{u}$ with a neural network $\hat{\pmb{u}}_\theta : \Omega \rightarrow \mathbb{R}$, with $\theta$ that defines the parameters of the network. Such a model is trained to find the optimal parameters $\theta^*$ whose minimizing the physical loss function depending on the physical conditions $\mathcal{L}_\mathcal{F}$, boundary conditions $\mathcal{L}_\mathcal{B}$ and, if available, real data $\mathcal{L}_{\text{data}}$:
-\begin{equation}
-    \theta^* = \argmin_\theta \mathcal{L} = 
-    \argmin_\theta (\mathcal{L}_\mathcal{F} + \mathcal{L}_\mathcal{B} + \mathcal{L}_{\text{data}}).
-\end{equation}
+
 The PINNs framework is completely general and applicable to different types of ordinary differential equations (ODEs), or partial differential equations (PDEs). Nevertheless, the loss function strictly depends on the problem chosen to be solved, since different operators or boundary conditions lead to different losses, increasing the difficulty to write a general and portable code for different problems. \textbf{PINA}, \emph{Physics-Informed Neural networks for Advance modeling}, is a Python library built using PyTorch that provides a user-friendly API to formalize a large variety of physical problems and solve it using PINNs easily
 
 # Description
