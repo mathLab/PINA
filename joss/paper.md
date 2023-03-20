@@ -54,7 +54,8 @@ The PINNs framework is completely general and applicable to different types of o
 PINA is an open-source Python library that provides an intuitive interface for the approximated resolution of Ordinary Differential Equations and Partial Differential Equations using  a deep learning paradigm, in particular via PINNs.
 The gain of popularity for PINNs in recent years, and the evolution of open-source frameworks, such as TensorFlow, Keras, and PyTorch, led to the development of several libraries, whose focus is the exploitation of PINNs to approximately solve ODEs and PDEs.
 We here mention some PyTorch-based libraries, \verb+NeuroDiffEq+ [@chen2020neurodiffeq], \verb+IDRLNet+ [@peng2021idrlnet], and some TensorFlow-based libraries, such as \verb+DeepXDE+ [@lu2021deepxde], \verb+TensorDiffEq+ [@mcclenny2021tensordiffeq], \verb+SciANN+ [@haghighat2021sciann] (which is both TensorFlow and Keras-based), \verb+PyDEns+ [@koryagin2019pydens], \verb+Elvet+ [@araz2021elvet], \verb+NVIDIA SimNet+ [@hennigh2021nvidia].
-Among all these frameworks, PINA wants to emerge for its easiness of usage, allowing the users to quickly formulate the problem at hand and solve it, resulting in an intuitive frameworks designed by researchers for researchers. We have decided to build it on top of PyTorch in order to exploit the \verb+autograd+ module, as well as all the other features implemented in this framework. The final outcome is then a library with incremental complexity, capable of being used by the new users to perform the first investigation using PINNs, but also as a core framework to actively develop new features to improve the discussed methodology.
+Among all these frameworks, PINA wants to emerge for its easiness of usage, allowing the users to quickly formulate the problem at hand and solve it, resulting in an intuitive frameworks designed by researchers for researchers.
+We have decided to build it on top of PyTorch in order to exploit the \verb+autograd+ module, as well as all the other features implemented in this framework. The final outcome is then a library with incremental complexity, capable of being used by the new users to perform the first investigation using PINNs, but also as a core framework to actively develop new features to improve the discussed methodology.
 
 The high-level structure of the package is illustrated in Figure \ref{API_visual}; the approximated solution of a differential equation can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly interface.
 Besides the user-friendly interface, PINA also offers several examples and tutorials, aiming to guide new users toward an easy exploration of the software features. The online documentation is released at \url{https://mathlab.github.io/PINA/}, while the robustness of the package is continuously monitored by unit tests. 
@@ -66,7 +67,7 @@ The API visualization in Figure \autoref{API_visual} shows that a complete workf
 ## Problem definition
 The first step is the formalization of the problem. 
 The problem definition in the PINA framework is inherited from one or more problem classes (at the moment the available classes are \verb+SpatialProblem+, \verb+TimeDependentProblem+, \verb+ParametricProblem+), depending on the nature of the problem treated.
-As reported in Figure \ref{API_visual}, the user has to include in the problem formulation the following components:
+The user has to include in the problem formulation the following components:
 \begin{itemize}
     \item the information about the domain, i.e. the spatial and temporal variables, the parameters of the problem (if any), with the corresponding range of variation;
     \item the output variables, i.e. the unknowns of the problem;
