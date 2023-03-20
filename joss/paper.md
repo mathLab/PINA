@@ -62,7 +62,7 @@ Besides the user-friendly interface, PINA also offers several examples and tutor
 
 The API visualization in Figure \autoref{API_visual} shows that a complete workflow in PINA is characterized by 3 main steps: the problem formulation, the model definition, i.e. the structure of the neural network used, and the PINN training, eventually followed by the data visualization.
 
-<img src="API_color.png" alt="High-level structure of the library.\label{API_visual}" width="60%" height="60%">
+![High-level structure of the library.\label{API_visual}](API_color.png)
 
 ## Problem definition
 The first step is the formalization of the problem. 
