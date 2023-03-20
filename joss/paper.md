@@ -30,9 +30,7 @@ date: 15 March 2023
 bibliography: paper.bib
 ---
 
-<p align="center">
-  <img src="pina_logo.png" alt="PINA logo.\label{logo}" width="15%" height="15%">
-</p>
+<img src="pina_logo.png" alt="PINA logo.\label{logo}" width="15%" height="15%">
 
 # Introduction
 Artificial Intelligence (AI) strategies are massively emerging in several fields of academia and industrial research [@deng2014deep, @Wang_2005] due to the growing disposal of data, as well as the great improvement in computational resources. In the area of applied mathematics and simulations, AI strategies are being used to solve problems where classical methods fail [@pinns].
@@ -64,9 +62,7 @@ Besides the user-friendly interface, PINA also offers several examples and tutor
 
 The API visualization in Figure \autoref{API_visual} shows that a complete workflow in PINA is characterized by 3 main steps: the problem formulation, the model definition, i.e. the structure of the neural network used, and the PINN training, eventually followed by the data visualization.
 
-<p align="center">
-  <img src="API_color.png" alt="High-level structure of the library.\label{API_visual}" width="60%" height="60%">
-</p>
+<img src="API_color.png" alt="High-level structure of the library.\label{API_visual}" width="60%" height="60%">
 
 ## Problem definition
 The first step is the formalization of the problem. 
