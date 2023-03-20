@@ -60,7 +60,7 @@ The high-level structure of the package is illustrated in Figure \ref{API_visual
 Besides the user-friendly interface, PINA also offers several examples and tutorials, aiming to guide new users toward an easy exploration of the software features. The online documentation is released at \url{https://mathlab.github.io/PINA/}, while the robustness of the package is continuously monitored by unit tests. 
 
 The API visualization in Figure \autoref{API_visual} shows that a complete workflow in PINA is characterized by 3 main steps: the problem formulation, the model definition, i.e. the structure of the neural network used, and the PINN training, eventually followed by the data visualization.
-![High-level structure of the library.\label{API_visual}](API_color.pdf)
+![High-level structure of the library.\label{API_visual}](API_color.png)
 
 
 ## Problem definition
