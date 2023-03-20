@@ -30,8 +30,6 @@ date: 15 March 2023
 bibliography: paper.bib
 ---
 
-![PINA logo.\label{logo}](pina_logo.png){ width=20% }
-
 # Introduction
 Artificial Intelligence (AI) strategies are massively emerging in several fields of academia and industrial research [@deng2014deep, @Wang_2005] due to the growing disposal of data, as well as the great improvement in computational resources. In the area of applied mathematics and simulations, AI strategies are being used to solve problems where classical methods fail [@pinns].
 However, the amount of data required to analyze complex systems is often insufficient to make AI predictions reliable and robust. Physics-informed neural networks (PINNs) have been formulated in [@RAISSI2019686] to overcome the issues of missing data, by incorporating the physical knowledge into the neural network training. Thus, PINNs aim to approximate any equation by solving a minimization problem in an unsupervised learning setting, learning the unknown field in order to preserve the imposed constraints (boundaries and physical residuals). Formally, we consider the general form of a differential equation, which typically presents the most challenging issues from a numerical point of view:
@@ -48,6 +46,8 @@ where $\Omega\subset\mathbb{R}^d$ is the domain and $\partial\Omega$ the boundar
     \underset{\theta}{\mathrm{argmin}} (\mathcal{L}_{\mathcal{F}} + \mathcal{L}_{\mathcal{B}} + \mathcal{L}_{\text{data}}).
 \end{equation}
 
+![PINA logo.\label{logo}](pina_logo.png){ width=20% }
+
 The PINNs framework is completely general and applicable to different types of ordinary differential equations (ODEs), or partial differential equations (PDEs). Nevertheless, the loss function strictly depends on the problem chosen to be solved, since different operators or boundary conditions lead to different losses, increasing the difficulty to write a general and portable code for different problems. \textbf{PINA}, \emph{Physics-Informed Neural networks for Advance modeling}, is a Python library built using PyTorch that provides a user-friendly API to formalize a large variety of physical problems and solve it using PINNs easily.
 
 # Description
@@ -60,9 +60,9 @@ We have decided to build it on top of PyTorch in order to exploit the \verb+auto
 The high-level structure of the package is illustrated in Figure \ref{API_visual}; the approximated solution of a differential equation can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly interface.
 Besides the user-friendly interface, PINA also offers several examples and tutorials, aiming to guide new users toward an easy exploration of the software features. The online documentation is released at \url{https://mathlab.github.io/PINA/}, while the robustness of the package is continuously monitored by unit tests. 
 
-The API visualization in Figure \autoref{API_visual} shows that a complete workflow in PINA is characterized by 3 main steps: the problem formulation, the model definition, i.e. the structure of the neural network used, and the PINN training, eventually followed by the data visualization.
+The API visualization in Figure \ref{API_visual} shows that a complete workflow in PINA is characterized by 3 main steps: the problem formulation, the model definition, i.e. the structure of the neural network used, and the PINN training, eventually followed by the data visualization.
 
-![High-level structure of the library.\label{API_visual}](API_color.png){ width=50% }
+![High-level structure of the library.\label{API_visual}](API_color.png){ width=70% }
 
 ## Problem definition
 The first step is the formalization of the problem. 
