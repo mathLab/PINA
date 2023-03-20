@@ -30,7 +30,7 @@ date: 15 March 2023
 bibliography: paper.bib
 ---
 
-<img src="pina_logo.png" alt="PINA logo.\label{logo}" width="15%" height="15%">
+![PINA logo.\label{logo}](pina_logo.png)
 
 # Introduction
 Artificial Intelligence (AI) strategies are massively emerging in several fields of academia and industrial research [@deng2014deep, @Wang_2005] due to the growing disposal of data, as well as the great improvement in computational resources. In the area of applied mathematics and simulations, AI strategies are being used to solve problems where classical methods fail [@pinns].
