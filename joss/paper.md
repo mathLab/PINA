@@ -46,11 +46,14 @@ where $\Omega\subset\mathbb{R}^d$ is the domain and $\partial\Omega$ the boundar
     \underset{\theta}{\mathrm{argmin}} (\mathcal{L}_{\mathcal{F}} + \mathcal{L}_{\mathcal{B}} + \mathcal{L}_{\text{data}}).
 \end{equation}
 
+
+The PINNs framework is completely general and applicable to different types of ordinary differential equations (ODEs), or partial differential equations (PDEs). Nevertheless, the loss function strictly depends on the problem chosen to be solved, since different operators or boundary conditions lead to different losses, increasing the difficulty to write a general and portable code for different problems. 
+
 ![PINA logo.\label{logo}](pina_logo.png){ width=20% }
 
-The PINNs framework is completely general and applicable to different types of ordinary differential equations (ODEs), or partial differential equations (PDEs). Nevertheless, the loss function strictly depends on the problem chosen to be solved, since different operators or boundary conditions lead to different losses, increasing the difficulty to write a general and portable code for different problems. \textbf{PINA}, \emph{Physics-Informed Neural networks for Advance modeling}, is a Python library built using PyTorch that provides a user-friendly API to formalize a large variety of physical problems and solve it using PINNs easily.
+\textbf{PINA}, \emph{Physics-Informed Neural networks for Advance modeling}, is a Python library built using PyTorch that provides a user-friendly API to formalize a large variety of physical problems and solve it using PINNs easily.
 
-# Description
+# Statement of need
 PINA is an open-source Python library that provides an intuitive interface for the approximated resolution of Ordinary Differential Equations and Partial Differential Equations using  a deep learning paradigm, in particular via PINNs.
 The gain of popularity for PINNs in recent years, and the evolution of open-source frameworks, such as TensorFlow, Keras, and PyTorch, led to the development of several libraries, whose focus is the exploitation of PINNs to approximately solve ODEs and PDEs.
 We here mention some PyTorch-based libraries, \verb+NeuroDiffEq+ [@chen2020neurodiffeq], \verb+IDRLNet+ [@peng2021idrlnet], and some TensorFlow-based libraries, such as \verb+DeepXDE+ [@lu2021deepxde], \verb+TensorDiffEq+ [@mcclenny2021tensordiffeq], \verb+SciANN+ [@haghighat2021sciann] (which is both TensorFlow and Keras-based), \verb+PyDEns+ [@koryagin2019pydens], \verb+Elvet+ [@araz2021elvet], \verb+NVIDIA SimNet+ [@hennigh2021nvidia].
@@ -64,7 +67,7 @@ The API visualization in Figure \ref{API_visual} shows that a complete workflow 
 
 ![High-level structure of the library.\label{API_visual}](API_color.png){ width=70% }
 
-## Problem definition
+## Problem definition in PINA
 The first step is the formalization of the problem. 
 The problem definition in the PINA framework is inherited from one or more problem classes (at the moment the available classes are \verb+SpatialProblem+, \verb+TimeDependentProblem+, \verb+ParametricProblem+), depending on the nature of the problem treated.
 The user has to include in the problem formulation the following components:
@@ -75,7 +78,7 @@ The user has to include in the problem formulation the following components:
 \end{itemize}
 We highlight that in PINA we abandoned the classical division between physical loss, boundary loss, and data loss: all these terms are encapsulated within the \verb+Condition+ class, in order to keep the framework as general as possible. The users can indeed define all the constraints the unknown field needs to satisfy, avoiding any forced structure in the formulation and allowing them to mix heterogeneous constraints --- e.g. data values, differential boundary conditions.
 
-## Model definition
+## Model definition in PINA
 The second fundamental step is the definition of the model of the neural network employed to find the approximated solution to the differential problem in question.
 In PINA, the user has the possibility to use either a custom \verb+torch+ network model and translate it to a PINA model (with the class \verb+Network+), or to exploit one of the built-in models such as \verb+FeedForward+, \verb+MultiFeedForward+ and \verb+DeepONet+, defining their characteristics during instantiation --- i.e. number of layers, number of neurons, activation functions. The list of the built-in models will be extended in the next release of the library.
 
