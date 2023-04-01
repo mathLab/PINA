@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DeepONet &mdash; PINA 0.0.2.post2303 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>DeepONet &mdash; PINA 0.0.2.post2304 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -34,7 +34,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.2.post2303
+                0.0.2.post2304
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -97,7 +97,7 @@
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">nets</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">aggregator='*'</em>, <em class="sig-param">reduction='+'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of DeepONet network.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -109,7 +109,7 @@ DOI: <a class="reference external" href="https://doi.org/10.1038/s42256-021-0030
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nets</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><em>torch.nn.Module</em></a><em>)</em>) – Internal DeepONet networks
+<li><p><strong>nets</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><em>torch.nn.Module</em></a><em>)</em>) – Internal DeepONet networks
 (branch and trunk in the original DeepONet).</p></li>
 <li><p><strong>output_variables</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – the list containing the labels
 corresponding to the components of the output computed by the
@@ -166,6 +166,11 @@ reductions.</p></li>
 
 <dl class="attribute">
 <dt>
+<code class="sig-name descname">_backward_pre_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
 <code class="sig-name descname">_buffers</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
@@ -176,7 +181,17 @@ reductions.</p></li>
 
 <dl class="attribute">
 <dt>
+<code class="sig-name descname">_forward_hooks_with_kwargs</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
 <code class="sig-name descname">_forward_pre_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_forward_pre_hooks_with_kwargs</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -222,6 +237,11 @@ reductions.</p></li>
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">_state_dict_hooks</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">_state_dict_pre_hooks</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -273,7 +293,7 @@ reductions.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Mar 01, 2023.
+      <span class="lastupdated">Last updated on Apr 01, 2023.
       </span></p>
   </div>
 

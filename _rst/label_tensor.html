@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabelTensor &mdash; PINA 0.0.2.post2303 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>LabelTensor &mdash; PINA 0.0.2.post2304 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -34,7 +34,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.2.post2303
+                0.0.2.post2304
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -97,7 +97,7 @@
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="sig-name descname">LabelTensor</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">labels</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a></p>
 <p>Torch tensor with a label for any column.</p>
 <p>Construct a <cite>LabelTensor</cite> by passing a tensor and a list of column
 labels. Such labels uniquely identify the columns of the tensor,
@@ -105,7 +105,7 @@ allowing for an easier manipulation.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><em>torch.Tensor</em></a>) – the data tensor.</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.0)"><em>torch.Tensor</em></a>) – the data tensor.</p></li>
 <li><p><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em> or </em><em>iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – the labels of the columns.</p></li>
 </ul>
 </dd>
@@ -172,7 +172,7 @@ allowing for an easier manipulation.</p>
 <dt>
 <code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.clone"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Clone the LabelTensor. For more details, see
-<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.clone.html#torch.Tensor.clone" title="(in PyTorch v1.13)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.clone()</span></code></a>.</p>
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.clone.html#torch.Tensor.clone" title="(in PyTorch v2.0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.clone()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>a copy of the tensor</p>
@@ -218,14 +218,14 @@ corresponding to the passed <cite>label_to_extract</cite>.</p>
 <dl class="method">
 <dt>
 <code class="sig-name descname">select</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.select"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Performs Tensor selection. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.select.html#torch.Tensor.select" title="(in PyTorch v1.13)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.select()</span></code></a>.</p>
+<dd><p>Performs Tensor selection. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.select.html#torch.Tensor.select" title="(in PyTorch v2.0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.select()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="sig-name descname">to</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.to"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Performs Tensor dtype and/or device conversion. For more details, see
-<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch.Tensor.to" title="(in PyTorch v1.13)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.to()</span></code></a>.</p>
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch.Tensor.to" title="(in PyTorch v2.0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.to()</span></code></a>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -244,7 +244,7 @@ corresponding to the passed <cite>label_to_extract</cite>.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Mar 01, 2023.
+      <span class="lastupdated">Last updated on Apr 01, 2023.
       </span></p>
   </div>
 
