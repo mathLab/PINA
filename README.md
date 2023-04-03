@@ -1,6 +1,6 @@
 <p align="center">
     <a href="http://mathlab.github.io/PINA/" target="_blank" >
-    <img alt="Physics-Informed Neural networks for Advance modeling" src="readme/pina_logo.png" width="200" />
+    <img alt="Physics-Informed Neural networks for Advanced modeling" src="readme/pina_logo.png" width="200" />
     </a>
 </p>
 <p align="center">
@@ -22,7 +22,7 @@
 </p>
 
 
-**PINA**: Physics-Informed Neural networks for Advance modeling
+**PINA**: Physics-Informed Neural networks for Advanced modeling
 
 ## Table of contents
 * [Description](#description)
