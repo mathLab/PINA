@@ -1,5 +1,5 @@
 ---
-title: 'Physics-Informed Neural networks for Advance modeling'
+title: 'Physics-Informed Neural networks for Advanced modeling'
 tags:
   - python
   - deep learning
@@ -51,7 +51,7 @@ The PINNs framework is completely general and applicable to different types of o
 
 ![PINA logo.\label{logo}](pina_logo.png){ width=20% }
 
-\textbf{PINA}, \emph{Physics-Informed Neural networks for Advance modeling}, is a Python library built using PyTorch that provides a user-friendly API to formalize a large variety of physical problems and solve it using PINNs easily.
+\textbf{PINA}, \emph{Physics-Informed Neural networks for Advanced modeling}, is a Python library built using PyTorch that provides a user-friendly API to formalize a large variety of physical problems and solve it using PINNs easily.
 
 # Statement of need
 PINA is an open-source Python library that provides an intuitive interface for the approximated resolution of Ordinary Differential Equations and Partial Differential Equations using  a deep learning paradigm, in particular via PINNs.
