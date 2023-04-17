@@ -1,10 +1,26 @@
+""" Module for AbstractProblem class """
 from abc import ABCMeta, abstractmethod
 
 
 class AbstractProblem(metaclass=ABCMeta):
+    """
+    The abstract `AbstractProblem` class. All the class defining a PINA Problem
+    should be inheritied from this class.
 
+    In the definition of a PINA problem, the fundamental elements are:
+    the output variables, the condition(s), and the domain(s) where the
+    conditions are applied.
+    """
     @property
     def input_variables(self):
+        """
+        The input variables of the AbstractProblem, whose type depends on the
+        type of domain (spatial, temporal, and parameter).
+
+        :return: the input variables of self
+        :rtype: list
+
+        """
         variables = []
 
         if hasattr(self, 'spatial_variables'):
@@ -20,7 +36,13 @@ class AbstractProblem(metaclass=ABCMeta):
 
     @property
     def domain(self):
+        """
+        The domain(s) where the conditions of the AbstractProblem are valid.
 
+        :return: the domain(s) of self
+        :rtype: list (if more than one domain are defined),
+            `Span` domain (of only one domain is defined)
+        """
         domains = [
             getattr(self, f'{t}_domain')
             for t in ['spatial', 'temporal', 'parameter']
@@ -46,9 +68,15 @@ class AbstractProblem(metaclass=ABCMeta):
     @property
     @abstractmethod
     def output_variables(self):
+        """
+        The output variables of the problem.
+        """
         pass
 
     @property
     @abstractmethod
     def conditions(self):
+        """
+        The conditions of the problem.
+        """
         pass
