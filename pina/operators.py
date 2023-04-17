@@ -6,17 +6,43 @@ from pina.label_tensor import LabelTensor
 
 def grad(output_, input_, components=None, d=None):
     """
-    TODO
+        Perform gradient operation. The operator works for
+        vectorial and scalar functions, with multiple input
+        coordinates.
+
+    :param output_: output of the PINN, i.e. function values.
+    :type output_: LabelTensor
+    :param input_: input of the PINN, i.e. function coordinates.
+    :type input_: LabelTensor
+    :param components: function components to apply the operator,
+        defaults to None.
+    :type components: list(str), optional
+    :param d: coordinates of function components to be differentiated,
+        defaults to None.
+    :type d: list(str), optional
     """
 
     def grad_scalar_output(output_, input_, d):
         """
+            Perform gradient operation for a scalar function.
+
+        :param output_: output of the PINN, i.e. function values.
+        :type output_: LabelTensor
+        :param input_: input of the PINN, i.e. function coordinates.
+        :type input_: LabelTensor
+        :param d: coordinates of function components to be differentiated,
+            defaults to None.
+        :type d: list(str), optional
+        :raises RuntimeError: a vectorial function is passed.
+        :raises RuntimeError: missing derivative labels.
+        :return: function gradients.
+        :rtype: LabelTensor
         """
 
         if len(output_.labels) != 1:
-            raise RuntimeError
+            raise RuntimeError('only scalar function can be differentiated')
         if not all([di in input_.labels for di in d]):
-            raise RuntimeError
+            raise RuntimeError('derivative labels missing from input tensor')
 
         output_fieldname = output_.labels[0]
         gradients = torch.autograd.grad(
@@ -67,7 +93,25 @@ def grad(output_, input_, components=None, d=None):
 
 def div(output_, input_, components=None, d=None):
     """
-    TODO
+        Perform divergence operation. The operator works for
+        vectorial functions, with multiple input coordinates.
+
+    :param output_: output of the PINN, i.e. function values.
+    :type output_: LabelTensor
+    :param input_: input of the PINN, i.e. function coordinates.
+    :type input_: LabelTensor
+    :param components: function components to apply the operator,
+        defaults to None.
+    :type components: list(str), optional
+    :param d: coordinates of function components to be differentiated,
+        defaults to None.
+    :type d: list(str), optional
+    :raises TypeError: div operator works only for LabelTensor.
+    :raises ValueError: div operator works only for vector fields.
+    :raises ValueError: div operator must derive all components with
+        respect to all coordinates.
+    :return: Function divergence.
+    :rtype: LabelTensor
     """
     if not isinstance(input_, LabelTensor):
         raise TypeError
@@ -79,7 +123,7 @@ def div(output_, input_, components=None, d=None):
         components = output_.labels
 
     if output_.shape[1] < 2 or len(components) < 2:
-        raise ValueError('div supported only for vector field')
+        raise ValueError('div supported only for vector fields')
 
     if len(components) != len(d):
         raise ValueError
@@ -99,7 +143,28 @@ def div(output_, input_, components=None, d=None):
 
 def nabla(output_, input_, components=None, d=None, method='std'):
     """
-    TODO
+        Perform nabla (laplace) operation. The operator works for
+        vectorial and scalar functions, with multiple input
+        coordinates.
+
+    :param output_: output of the PINN, i.e. function values.
+    :type output_: LabelTensor
+    :param input_: input of the PINN, i.e. function coordinates.
+    :type input_: LabelTensor
+    :param components: function components to apply the operator,
+        defaults to None.
+    :type components: list(str), optional
+    :param d: coordinates of function components to be differentiated,
+        defaults to None.
+    :type d: list(str), optional
+    :param method: used method to calculate nabla, defaults to 'std'.
+    :type method: str, optional including 'divgrad' where first gradient
+        and later divergece operator are applied.
+    :raises ValueError: for vectorial field derivative with respect to
+        all coordinates must be performed.
+    :raises NotImplementedError: 'divgrad' not implemented as method.
+    :return: Function nabla.
+    :rtype: LabelTensor
     """
     if d is None:
         d = input_.labels
@@ -111,7 +176,7 @@ def nabla(output_, input_, components=None, d=None, method='std'):
         raise ValueError
 
     if method == 'divgrad':
-        raise NotImplementedError
+        raise NotImplementedError('divgrad not implemented as method')
         # TODO fix
         # grad_output = grad(output_, input_, components, d)
         # result = div(grad_output, input_, d=d)
@@ -146,6 +211,25 @@ def nabla(output_, input_, components=None, d=None, method='std'):
 
 
 def advection(output_, input_, velocity_field, components=None, d=None):
+    """
+        Perform advection operation. The operator works for
+        vectorial functions, with multiple input coordinates.
+
+    :param output_: output of the PINN, i.e. function values.
+    :type output_: LabelTensor
+    :param input_: input of the PINN, i.e. function coordinates.
+    :type input_: LabelTensor
+    :param velocity_field: field used for multiplying the gradient.
+    :type velocity_field: str
+    :param components: function components to apply the operator,
+        defaults to None.
+    :type components: list(str), optional
+    :param d: coordinates of function components to be differentiated,
+        defaults to None.
+    :type d: list(str), optional
+    :return: Function advection.
+    :rtype: LabelTensor
+    """
     if d is None:
         d = input_.labels
 
