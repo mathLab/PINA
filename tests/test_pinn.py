@@ -24,12 +24,24 @@ class Poisson(SpatialProblem):
         return output_.extract(['u']) - value
 
     conditions = {
-        'gamma1': Condition(Span({'x': [0, 1], 'y':  1}), nil_dirichlet),
-        'gamma2': Condition(Span({'x': [0, 1], 'y': 0}), nil_dirichlet),
-        'gamma3': Condition(Span({'x':  1, 'y': [0, 1]}), nil_dirichlet),
-        'gamma4': Condition(Span({'x': 0, 'y': [0, 1]}), nil_dirichlet),
-        'D': Condition(Span({'x': [0, 1], 'y': [0, 1]}), laplace_equation),
-        'data': Condition(in_, out_)
+        'gamma1': Condition(
+            location=Span({'x': [0, 1], 'y':  1}),
+            function=nil_dirichlet),
+        'gamma2': Condition(
+            location=Span({'x': [0, 1], 'y': 0}),
+            function=nil_dirichlet),
+        'gamma3': Condition(
+            location=Span({'x':  1, 'y': [0, 1]}),
+            function=nil_dirichlet),
+        'gamma4': Condition(
+            location=Span({'x': 0, 'y': [0, 1]}),
+            function=nil_dirichlet),
+        'D': Condition(
+            location=Span({'x': [0, 1], 'y': [0, 1]}),
+            function=laplace_equation),
+        'data': Condition(
+            input_points=in_,
+            output_points=out_)
     }
 
     def poisson_sol(self, pts):
