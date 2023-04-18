@@ -5,8 +5,6 @@ DeepONet
 .. automodule:: pina.model.deeponet
 
 .. autoclass:: DeepONet
-    :members:
-    :private-members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
+   :members:
+   :private-members:
+   :show-inheritance:

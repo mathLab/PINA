@@ -14,11 +14,11 @@ learning tasks while respecting any given law of physics described by general
 nonlinear differential equations. Proposed in "Physics-informed neural
 networks: A deep learning framework for solving forward and inverse problems
 involving nonlinear partial differential equations", such framework aims to
-solve problems in a continuous and nonlinear settings.
+solve problems in a continuous and nonlinear settings. :py:class:`pina.pinn.PINN`
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Package Documentation:
 
    Installation <_rst/installation>

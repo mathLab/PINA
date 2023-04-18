@@ -9,8 +9,9 @@ class MultiFeedForward(torch.nn.Module):
     :param dict dff_dict: dictionary of FeedForward networks.
     """
     def __init__(self, dff_dict):
-        """
-        """
+        '''
+        dff_dict: dict of FeedForward objects
+        '''
         super().__init__()
 
         if not isinstance(dff_dict, dict):

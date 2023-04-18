@@ -5,8 +5,6 @@ LabelTensor
 .. automodule:: pina.label_tensor
 
 .. autoclass:: LabelTensor
-    :members:
-    :private-members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
+   :members:
+   :private-members:
+   :show-inheritance:

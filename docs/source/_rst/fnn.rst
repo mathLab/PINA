@@ -5,8 +5,6 @@ FeedForward
 .. automodule:: pina.model.feed_forward
 
 .. autoclass:: FeedForward
-    :members:
-    :private-members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
+   :members:
+   :private-members:
+   :show-inheritance:

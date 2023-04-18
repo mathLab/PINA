@@ -36,28 +36,28 @@ import pina
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.coverage',
-    'sphinx.ext.graphviz',
-    'sphinx.ext.doctest',
+    #'sphinx.ext.autosummary',
+    #'sphinx.ext.coverage',
+    #'sphinx.ext.graphviz',
+    #'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
-    'sphinx.ext.coverage',
+    #'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
-    'sphinx.ext.ifconfig',
+    #'sphinx.ext.ifconfig',
     'sphinx.ext.mathjax',
 ]
-autosummary_generate = True
+#autosummary_generate = True
 
 intersphinx_mapping = {
-    'python': ('http://docs.python.org/2', None),
+    'python': ('http://docs.python.org/3', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('http://matplotlib.sourceforge.net/', None),
     'torch': ('https://pytorch.org/docs/stable/', None),
-    'pina': ('https://mathlab.github.io/PINA/', None)
 }
 
+nitpicky = True
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

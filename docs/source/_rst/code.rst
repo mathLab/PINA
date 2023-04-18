@@ -16,3 +16,5 @@ Code Documentation
     TimeDependentProblem <timedepproblem.rst>
     Operators <operators.rst>
     Plotter <plotter.rst>
+    PINN <pinn.rst>
+    Condition <condition.rst>

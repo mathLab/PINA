@@ -89,8 +89,8 @@ class FeedForward(torch.nn.Module):
         """
         Defines the computation performed at every call.
 
-        :param x: the input tensor.
-        :type x:  :class:`pina.LabelTensor`
+        :param x: .
+        :type x: :class:`pina.LabelTensor`
         :return: the output computed by the model.
         :rtype: LabelTensor
         """
