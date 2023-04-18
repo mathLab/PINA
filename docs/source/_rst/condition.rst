@@ -7,6 +7,4 @@ Condition
 .. autoclass:: Condition
     :members:
     :private-members:
-    :undoc-members:
     :show-inheritance:
-    :noindex:

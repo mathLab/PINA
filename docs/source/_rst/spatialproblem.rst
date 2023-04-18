@@ -1,5 +1,5 @@
 SpatialProblem
-===========
+==============
 .. currentmodule:: pina.problem.spatial_problem
 
 .. automodule:: pina.problem.spatial_problem
@@ -9,4 +9,3 @@ SpatialProblem
     :private-members:
     :undoc-members:
     :show-inheritance:
-    :noindex:
