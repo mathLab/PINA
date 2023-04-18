@@ -87,7 +87,8 @@ class Condition:
 
             for i, func in enumerate(kwargs['function']):
                 if not callable(func):
-                    raise TypeError(f'`function[{i}]` must be a callable function.')
+                    raise TypeError(
+                        f'`function[{i}]` must be a callable function.')
 
         for key, value in kwargs.items():
             setattr(self, key, value)

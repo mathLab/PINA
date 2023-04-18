@@ -6,7 +6,9 @@ from .feed_forward import FeedForward
 
 class MultiFeedForward(torch.nn.Module):
     """
-    This model allows to create a network with multiple FeedForward combined together. The user has to define the `forward` method choosing how to combine the different FeedForward networks.
+    This model allows to create a network with multiple FeedForward combined
+    together. The user has to define the `forward` method choosing how to
+    combine the different FeedForward networks.
 
     :param dict dff_dict: dictionary of FeedForward networks.
     """
