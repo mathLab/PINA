@@ -19,7 +19,7 @@ class PINN(object):
                  optimizer_kwargs=None,
                  lr=0.001,
                  lr_scheduler_type=lrs.ConstantLR,
-                 lr_scheduler_kwargs={"factor" : 1, "total_iters" : 0},
+                 lr_scheduler_kwargs={"factor": 1, "total_iters": 0},
                  regularizer=0.00001,
                  batch_size=None,
                  dtype=torch.float32,
@@ -80,7 +80,8 @@ class PINN(object):
         optimizer_kwargs['lr'] = lr
         self.optimizer = optimizer(
             self.model.parameters(), weight_decay=regularizer, **optimizer_kwargs)
-        self._lr_scheduler = lr_scheduler_type(self.optimizer, **lr_scheduler_kwargs)
+        self._lr_scheduler = lr_scheduler_type(
+            self.optimizer, **lr_scheduler_kwargs)
 
         self.batch_size = batch_size
         self.data_set = PinaDataset(self)
@@ -241,7 +242,9 @@ class PINN(object):
                         pts = condition.input_points.to(
                             dtype=self.dtype, device=self.device)
                         predicted = self.model(pts)
-                        residuals = predicted - condition.output_points.to(device=self.device, dtype=self.dtype) # TODO fix
+                        residuals = predicted - \
+                            condition.output_points.to(
+                                device=self.device, dtype=self.dtype)  # TODO fix
                         local_loss = (
                             condition.data_weight*self._compute_norm(residuals))
                         single_loss.append(local_loss)
