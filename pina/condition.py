@@ -82,5 +82,13 @@ class Condition:
         if not self._dictvalue_isinstance(kwargs, 'location', Location):
             raise TypeError('`location` must be a Location.')
 
+        if 'function' in kwargs:
+            kwargs['function'] = [kwargs['function']]
+
+            for i, func in enumerate(kwargs['function']):
+                if not callable(func):
+                    raise TypeError(
+                        f'`function[{i}]` must be a callable function.')
+
         for key, value in kwargs.items():
             setattr(self, key, value)

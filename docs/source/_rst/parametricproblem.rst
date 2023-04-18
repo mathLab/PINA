@@ -1,5 +1,5 @@
 ParametricProblem
-===========
+=================
 .. currentmodule:: pina.problem.parametric_problem
 
 .. automodule:: pina.problem.parametric_problem
@@ -7,6 +7,4 @@ ParametricProblem
 .. autoclass:: ParametricProblem
     :members:
     :private-members:
-    :undoc-members:
     :show-inheritance:
-    :noindex:

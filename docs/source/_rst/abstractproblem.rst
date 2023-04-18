@@ -1,5 +1,5 @@
 AbstractProblem
-===========
+===============
 .. currentmodule:: pina.problem.abstract_problem
 
 .. automodule:: pina.problem.abstract_problem
@@ -9,4 +9,3 @@ AbstractProblem
     :private-members:
     :undoc-members:
     :show-inheritance:
-    :noindex:

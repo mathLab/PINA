@@ -6,36 +6,39 @@ from pina.label_tensor import LabelTensor
 
 def grad(output_, input_, components=None, d=None):
     """
-        Perform gradient operation. The operator works for
-        vectorial and scalar functions, with multiple input
-        coordinates.
+    Perform gradient operation. The operator works for vectorial and scalar
+    functions, with multiple input coordinates.
 
-    :param output_: output of the PINN, i.e. function values.
-    :type output_: LabelTensor
-    :param input_: input of the PINN, i.e. function coordinates.
-    :type input_: LabelTensor
-    :param components: function components to apply the operator,
-        defaults to None.
-    :type components: list(str), optional
-    :param d: coordinates of function components to be differentiated,
-        defaults to None.
-    :type d: list(str), optional
+    :param LabelTensor output_: the output tensor onto which computing the
+        gradient.
+    :param LabelTensor input_: the input tensor with respect to which computing
+        the gradient.
+    :param list(str) components: the name of the output variables to calculate
+        the gradient for. It should be a subset of the output labels. If None,
+        all the output variables are considered. Default is None.
+    :param list(str) d: the name of the input variables on which the gradient is
+        calculated. d should be a subset of the input labels. If None, all the
+        input variables are considered. Default is None.
+
+    :return: the gradient tensor.
+    :rtype: LabelTensor
     """
 
     def grad_scalar_output(output_, input_, d):
         """
-            Perform gradient operation for a scalar function.
+        Perform gradient operation for a scalar output.
 
-        :param output_: output of the PINN, i.e. function values.
-        :type output_: LabelTensor
-        :param input_: input of the PINN, i.e. function coordinates.
-        :type input_: LabelTensor
-        :param d: coordinates of function components to be differentiated,
-            defaults to None.
-        :type d: list(str), optional
+        :param LabelTensor output_: the output tensor onto which computing the
+            gradient. It has to be a column tensor.
+        :param LabelTensor input_: the input tensor with respect to which
+            computing the gradient.
+        :param list(str) d: the name of the input variables on which the
+            gradient is calculated. d should be a subset of the input labels. If
+            None, all the input variables are considered. Default is None.
+
         :raises RuntimeError: a vectorial function is passed.
         :raises RuntimeError: missing derivative labels.
-        :return: function gradients.
+        :return: the gradient tensor.
         :rtype: LabelTensor
         """
 
@@ -93,24 +96,25 @@ def grad(output_, input_, components=None, d=None):
 
 def div(output_, input_, components=None, d=None):
     """
-        Perform divergence operation. The operator works for
-        vectorial functions, with multiple input coordinates.
+    Perform divergence operation. The operator works for vectorial functions,
+    with multiple input coordinates.
 
-    :param output_: output of the PINN, i.e. function values.
-    :type output_: LabelTensor
-    :param input_: input of the PINN, i.e. function coordinates.
-    :type input_: LabelTensor
-    :param components: function components to apply the operator,
-        defaults to None.
-    :type components: list(str), optional
-    :param d: coordinates of function components to be differentiated,
-        defaults to None.
-    :type d: list(str), optional
+    :param LabelTensor output_: the output tensor onto which computing the
+        divergence.
+    :param LabelTensor input_: the input tensor with respect to which computing
+        the divergence.
+    :param list(str) components: the name of the output variables to calculate
+        the divergence for. It should be a subset of the output labels. If None,
+        all the output variables are considered. Default is None.
+    :param list(str) d: the name of the input variables on which the divergence
+        is calculated. d should be a subset of the input labels. If None, all
+        the input variables are considered. Default is None.
+
     :raises TypeError: div operator works only for LabelTensor.
     :raises ValueError: div operator works only for vector fields.
     :raises ValueError: div operator must derive all components with
         respect to all coordinates.
-    :return: Function divergence.
+    :return: the divergenge tensor.
     :rtype: LabelTensor
     """
     if not isinstance(input_, LabelTensor):
@@ -143,27 +147,24 @@ def div(output_, input_, components=None, d=None):
 
 def nabla(output_, input_, components=None, d=None, method='std'):
     """
-        Perform nabla (laplace) operation. The operator works for
-        vectorial and scalar functions, with multiple input
-        coordinates.
+    Perform nabla (laplace) operator. The operator works for vectorial and
+    scalar functions, with multiple input coordinates.
 
-    :param output_: output of the PINN, i.e. function values.
-    :type output_: LabelTensor
-    :param input_: input of the PINN, i.e. function coordinates.
-    :type input_: LabelTensor
-    :param components: function components to apply the operator,
-        defaults to None.
-    :type components: list(str), optional
-    :param d: coordinates of function components to be differentiated,
-        defaults to None.
-    :type d: list(str), optional
-    :param method: used method to calculate nabla, defaults to 'std'.
-    :type method: str, optional including 'divgrad' where first gradient
-        and later divergece operator are applied.
+    :param LabelTensor output_: the output tensor onto which computing the
+        nabla.
+    :param LabelTensor input_: the input tensor with respect to which computing
+        the nabla.
+    :param list(str) components: the name of the output variables to calculate
+        the nabla for. It should be a subset of the output labels. If None,
+        all the output variables are considered. Default is None.
+    :param list(str) d: the name of the input variables on which the nabla
+        is calculated. d should be a subset of the input labels. If None, all
+        the input variables are considered. Default is None.
+    :param str method: used method to calculate nabla, defaults to 'std'.
     :raises ValueError: for vectorial field derivative with respect to
         all coordinates must be performed.
     :raises NotImplementedError: 'divgrad' not implemented as method.
-    :return: Function nabla.
+    :return: The tensor containing the result of the nabla operator.
     :rtype: LabelTensor
     """
     if d is None:
@@ -212,22 +213,22 @@ def nabla(output_, input_, components=None, d=None, method='std'):
 
 def advection(output_, input_, velocity_field, components=None, d=None):
     """
-        Perform advection operation. The operator works for
-        vectorial functions, with multiple input coordinates.
+    Perform advection operation. The operator works for vectorial functions,
+    with multiple input coordinates.
 
-    :param output_: output of the PINN, i.e. function values.
-    :type output_: LabelTensor
-    :param input_: input of the PINN, i.e. function coordinates.
-    :type input_: LabelTensor
-    :param velocity_field: field used for multiplying the gradient.
-    :type velocity_field: str
-    :param components: function components to apply the operator,
-        defaults to None.
-    :type components: list(str), optional
-    :param d: coordinates of function components to be differentiated,
-        defaults to None.
-    :type d: list(str), optional
-    :return: Function advection.
+    :param LabelTensor output_: the output tensor onto which computing the
+        nabla.
+    :param LabelTensor input_: the input tensor with respect to which computing
+        the nabla.
+    :param str velocity_field: the name of the output variables which is used
+        as velocity field. It should be a subset of the output labels.
+    :param list(str) components: the name of the output variables to calculate
+        the nabla for. It should be a subset of the output labels. If None,
+        all the output variables are considered. Default is None.
+    :param list(str) d: the name of the input variables on which the nabla
+        is calculated. d should be a subset of the input labels. If None, all
+        the input variables are considered. Default is None.
+    :return: the tensor containing the result of the advection operator.
     :rtype: LabelTensor
     """
     if d is None:

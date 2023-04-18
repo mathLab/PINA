@@ -7,14 +7,36 @@ Code Documentation
     PINN <pinn.rst>
     LabelTensor <label_tensor.rst>
     Span <span.rst>
+    Operators <operators.rst>
+    Plotter <plotter.rst>
+    Condition <condition.rst>
+    Location <location.rst>
+
+Model
+-----
+
+.. toctree::
+    :maxdepth: 3
+
     FeedForward <fnn.rst>
     DeepONet <deeponet.rst>
-    ContinuousConv <convolution.rst>
     MultiFeedForward <multifeedforward.rst>
+
+Layers
+------
+
+.. toctree::
+    :maxdepth: 3
+
+    ContinuousConv <convolution.rst>
+
+Problem
+-------
+
+.. toctree::
+    :maxdepth: 3
+
     AbstractProblem <abstractproblem.rst>
     SpatialProblem <spatialproblem.rst>
     TimeDependentProblem <timedepproblem.rst>
-    Operators <operators.rst>
-    Plotter <plotter.rst>
-    PINN <pinn.rst>
-    Condition <condition.rst>
+    ParametricProblem <parametricproblem.rst>

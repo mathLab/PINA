@@ -39,4 +39,4 @@ def test_init_inputfunc():
     with pytest.raises(TypeError):
         Condition(input_points=3., function='example')
     with pytest.raises(TypeError):
-        Condition(input_points=example_domain, funtion=example_output_pts)
+        Condition(input_points=example_domain, function=example_output_pts)

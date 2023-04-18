@@ -1,5 +1,5 @@
 TimeDependentProblem
-===========
+====================
 .. currentmodule:: pina.problem.timedep_problem
 
 .. automodule:: pina.problem.timedep_problem
@@ -9,4 +9,3 @@ TimeDependentProblem
     :private-members:
     :undoc-members:
     :show-inheritance:
-    :noindex:
