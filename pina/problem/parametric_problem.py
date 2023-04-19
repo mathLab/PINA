@@ -23,7 +23,7 @@ class ParametricProblem(AbstractProblem):
         >>>
         >>>     output_variables = ['u']
         >>>     spatial_domain = Span({'x': [0, 1]})
-        >>>     parameter_domain = Span({'alpha': {1, 10}})
+        >>>     parameter_domain = Span({'alpha': [1, 10]})
         >>>
         >>>     def ode_equation(input_, output_):
         >>>         u_x = grad(output_, input_, components=['u'], d=['x'])
@@ -43,8 +43,14 @@ class ParametricProblem(AbstractProblem):
 
     @abstractmethod
     def parameter_domain(self):
+        """
+        The parameters' domain of the problem.
+        """
         pass
 
     @property
     def parameters(self):
+        """
+        The parameters' variables of the problem.
+        """
         return self.parameter_domain.variables
