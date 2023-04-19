@@ -24,7 +24,11 @@ EXTRAS = {
 }
 
 LDESCRIPTION = (
-    ""
+    "PINA is a Python package providing an easy interface to deal with "
+    "physics-informed neural networks (PINN) for the approximation of "
+    "(differential, nonlinear, ...) functions. Based on Pytorch, PINA offers a "
+    "simple and intuitive way to formalize a specific problem and solve it "
+    "using PINN."
 )
 
 setup(
