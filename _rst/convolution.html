@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ContinuousConv &mdash; PINA 0.0.2.post2304 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>ContinuousConv &mdash; PINA 0.0.2.dev0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -18,8 +17,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="How to contribute" href="contributing.html" />
-    <link rel="prev" title="PINN" href="pinn.html" /> 
+    <link rel="next" title="AbstractProblem" href="abstractproblem.html" />
+    <link rel="prev" title="MultiFeedForward" href="multifeedforward.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -34,7 +33,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.2.post2304
+                0.0.2.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -48,11 +47,19 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fnn.html">FeedForward</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">ContinuousConv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="span.html">Span</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operators.html">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotter.html">Plotter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="condition.html">Condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="location.html">Location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#model">Model</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="code.html#layers">Layers</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ContinuousConv</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#problem">Problem</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -109,19 +116,19 @@ DOI: <a class="reference external" href="https://doi.org/10.48550/arXiv.2210.134
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_numb_field</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of fields N_in in the input.</p></li>
-<li><p><strong>output_numb_field</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Number of fields N_out  in the output.</p></li>
+<li><p><strong>input_numb_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Number of fields N_in in the input.</p></li>
+<li><p><strong>output_numb_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Number of fields N_out  in the output.</p></li>
 <li><p><strong>filter_dim</strong> (<em>tuple/ list</em>) – Dimension of the filter.</p></li>
-<li><p><strong>stride</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Stride for the filter.</p></li>
+<li><p><strong>stride</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – Stride for the filter.</p></li>
 <li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><em>torch.nn.Module</em></a><em>, </em><em>optional</em>) – Neural network for inner parametrization,
 defaults to None. If None, pina.FeedForward is used, more
 on <a class="reference external" href="https://mathlab.github.io/PINA/_rst/fnn.html">https://mathlab.github.io/PINA/_rst/fnn.html</a>.</p></li>
-<li><p><strong>optimize</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag for performing optimization on the continuous
+<li><p><strong>optimize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag for performing optimization on the continuous
 filter, defaults to False. The flag <cite>optimize=True</cite> should be
 used only when the scatter datapoints are fixed through the
 training. If torch model is in <cite>.eval()</cite> mode, the flag is
 automatically set to False always.</p></li>
-<li><p><strong>no_overlap</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag for performing optimization on the transpose
+<li><p><strong>no_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag for performing optimization on the transpose
 continuous filter, defaults to False. The flag set to <cite>True</cite> should
 be used only when the filter positions do not overlap for different
 strides. RuntimeError will raise in case of non-compatible strides.</p></li>
@@ -237,7 +244,7 @@ second filed value respectively.</p>
 <dd class="field-even"><p>mapped points and indeces for each channel</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple(torch.tensor, list)</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>(torch.tensor, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -485,15 +492,15 @@ method is used and <cite>no_overlap=False</cite></p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pinn.html" class="btn btn-neutral float-left" title="PINN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="contributing.html" class="btn btn-neutral float-right" title="How to contribute" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="multifeedforward.html" class="btn btn-neutral float-left" title="MultiFeedForward" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="abstractproblem.html" class="btn btn-neutral float-right" title="AbstractProblem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Apr 01, 2023.
+      <span class="lastupdated">Last updated on Apr 19, 2023.
       </span></p>
   </div>
 

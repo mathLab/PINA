@@ -5,8 +5,6 @@ PINN
 .. automodule:: pina.pinn
 
 .. autoclass:: PINN
-    :members:
-    :private-members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
+   :members:
+   :private-members:
+   :show-inheritance:

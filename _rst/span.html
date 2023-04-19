@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Span &mdash; PINA 0.0.2.dev0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Operators" href="operators.html" />
+    <link rel="prev" title="LabelTensor" href="label_tensor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PINA
+          </a>
+              <div class="version">
+                0.0.2.dev0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Span</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operators.html">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotter.html">Plotter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="condition.html">Condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="location.html">Location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#problem">Problem</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial.html">1. Getting start with PINA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">2. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">3. Wave equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">Span</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_rst/span.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-pina.span">
+<span id="span"></span><h1>Span<a class="headerlink" href="#module-pina.span" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="sig-name descname">Span</code><span class="sig-paren">(</span><em class="sig-param">span_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/span.html#Span"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="location.html#pina.location.Location" title="pina.location.Location"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.location.Location</span></code></a></p>
+<p>PINA implementation of Hypercube domain.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>span_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – A dictionary with dict-key a string representing
+the input variables for the pinn, and dict-value a list with
+the domain extrema.</p>
+</dd>
+<dt class="field-even">Example</dt>
+<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">Span</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="method">
+<dt>
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">mode='random'</em>, <em class="sig-param">variables='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/span.html#Span.sample"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sample routine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Number of points to sample, see Note below
+for reference.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – Mode for sampling, defaults to ‘random’.
+Available modes include: random sampling, ‘random’;
+latin hypercube sampling, ‘latin’ or ‘lh’;
+chebyshev sampling, ‘chebyshev’; grid sampling ‘grid’.</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>]</em><em>, </em><em>optional</em>) – pinn variable to be sampled, defaults to ‘all’.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The total number of points sampled in case of multiple variables
+is not ‘n’, and it depends on the chosen ‘mode’. If ‘mode’ is
+‘grid’ or ‘chebyshev’, the points are sampled independentely
+across the variables and the results crossed together, i.e. the
+final number of points is ‘n’ to the power of the number of
+variables. If ‘mode’ is ‘random’, ‘lh’ or ‘latin’, the variables
+are sampled all together, and the final number of points</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The extrema values of Span are always sampled only for ‘grid’ mode.</p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">Span</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;random&#39;</span><span class="p">)</span>
+<span class="go">    tensor([[0.0108, 0.7643],</span>
+<span class="go">            [0.4477, 0.8015],</span>
+<span class="go">            [0.2063, 0.8087],</span>
+<span class="go">            [0.8735, 0.6349]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;grid&#39;</span><span class="p">)</span>
+<span class="go">    tensor([[0.0000, 0.0000],</span>
+<span class="go">            [0.3333, 0.0000],</span>
+<span class="go">            [0.6667, 0.0000],</span>
+<span class="go">            [1.0000, 0.0000],</span>
+<span class="go">            [0.0000, 0.3333],</span>
+<span class="go">            [0.3333, 0.3333],</span>
+<span class="go">            [0.6667, 0.3333],</span>
+<span class="go">            [1.0000, 0.3333],</span>
+<span class="go">            [0.0000, 0.6667],</span>
+<span class="go">            [0.3333, 0.6667],</span>
+<span class="go">            [0.6667, 0.6667],</span>
+<span class="go">            [1.0000, 0.6667],</span>
+<span class="go">            [0.0000, 1.0000],</span>
+<span class="go">            [0.3333, 1.0000],</span>
+<span class="go">            [0.6667, 1.0000],</span>
+<span class="go">            [1.0000, 1.0000]])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">new_span</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/span.html#Span.update"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Adding new dimensions on the span</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_span</strong> (<em>Span</em>) – A new span object to merge</p>
+</dd>
+<dt class="field-even">Example</dt>
+<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">Span</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span><span class="o">.</span><span class="n">variables</span>
+<span class="go">[&#39;x&#39;, &#39;y&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain_2</span> <span class="o">=</span> <span class="n">Span</span><span class="p">({</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">spatial_domain_2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span><span class="o">.</span><span class="n">variables</span>
+<span class="go">[&#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;w&#39;]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">property </em><code class="sig-name descname">variables</code></dt>
+<dd><p>Spatial variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Spatial variables defined in ‘__init__()’</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="label_tensor.html" class="btn btn-neutral float-left" title="LabelTensor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="operators.html" class="btn btn-neutral float-right" title="Operators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
+      <span class="lastupdated">Last updated on Apr 19, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

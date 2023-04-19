@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DeepONet &mdash; PINA 0.0.2.post2304 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>DeepONet &mdash; PINA 0.0.2.dev0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -18,7 +17,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="PINN" href="pinn.html" />
+    <link rel="next" title="MultiFeedForward" href="multifeedforward.html" />
     <link rel="prev" title="FeedForward" href="fnn.html" /> 
 </head>
 
@@ -34,7 +33,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.2.post2304
+                0.0.2.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -48,11 +47,21 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fnn.html">FeedForward</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">DeepONet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="convolution.html">ContinuousConv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="span.html">Span</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operators.html">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotter.html">Plotter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="condition.html">Condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="location.html">Location</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="code.html#model">Model</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fnn.html">FeedForward</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">DeepONet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multifeedforward.html">MultiFeedForward</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#problem">Problem</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -95,8 +104,8 @@
 <span id="deeponet"></span><h1>DeepONet<a class="headerlink" href="#module-pina.model.deeponet" title="Permalink to this headline">¶</a></h1>
 <p>Module for DeepONet model</p>
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">nets</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">aggregator='*'</em>, <em class="sig-param">reduction='+'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="pina.model.deeponet.DeepONet">
+<em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">nets</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">aggregator='*'</em>, <em class="sig-param">reduction='+'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.deeponet.DeepONet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of DeepONet network.</p>
 <div class="admonition seealso">
@@ -111,16 +120,17 @@ DOI: <a class="reference external" href="https://doi.org/10.1038/s42256-021-0030
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nets</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><em>torch.nn.Module</em></a><em>)</em>) – Internal DeepONet networks
 (branch and trunk in the original DeepONet).</p></li>
-<li><p><strong>output_variables</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – the list containing the labels
+<li><p><strong>output_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the list containing the labels
 corresponding to the components of the output computed by the
 model.</p></li>
-<li><p><strong>| callable aggregator</strong> (<em>string</em>) – Aggregator to be used to aggregate
+<li><p><strong>| callable aggregator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Aggregator to be used to aggregate
 partial results from the modules in <cite>nets</cite>. Partial results are
-aggregated component-wise. See <code class="xref py py-func docutils literal notranslate"><span class="pre">_symbol_functions()</span></code> for the
+aggregated component-wise. See
+<a class="reference internal" href="#pina.model.deeponet.DeepONet._symbol_functions" title="pina.model.deeponet.DeepONet._symbol_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">pina.model.deeponet.DeepONet._symbol_functions()</span></code></a> for the
 available default aggregators.</p></li>
-<li><p><strong>| callable reduction</strong> (<em>string</em>) – Reduction to be used to reduce
+<li><p><strong>| callable reduction</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Reduction to be used to reduce
 the aggregated result of the modules in <cite>nets</cite> to the desired output
-dimension. See <code class="xref py py-func docutils literal notranslate"><span class="pre">_symbol_functions()</span></code> for the available default
+dimension. See <a class="reference internal" href="#pina.model.deeponet.DeepONet._symbol_functions" title="pina.model.deeponet.DeepONet._symbol_functions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.model.deeponet.DeepONet._symbol_functions</span></code></a> for the available default
 reductions.</p></li>
 </ul>
 </dd>
@@ -155,127 +165,34 @@ reductions.</p></li>
 </dd>
 </dl>
 <dl class="method">
-<dt>
-<em class="property">static </em><code class="sig-name descname">_all_nets_same_output_layer_size</code><span class="sig-paren">(</span><em class="sig-param">nets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._all_nets_same_output_layer_size"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_backward_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_backward_pre_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_buffers</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_forward_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_forward_hooks_with_kwargs</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_forward_pre_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_forward_pre_hooks_with_kwargs</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
+<dt id="pina.model.deeponet.DeepONet._symbol_functions">
+<em class="property">static </em><code class="sig-name descname">_symbol_functions</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._symbol_functions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.deeponet.DeepONet._symbol_functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary of functions that can be used as aggregators or
+reductions.</p>
+</dd></dl>
 
 <dl class="method">
-<dt>
-<code class="sig-name descname">_init_aggregator</code><span class="sig-paren">(</span><em class="sig-param">aggregator</em>, <em class="sig-param">n_nets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._init_aggregator"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">_init_reduction</code><span class="sig-paren">(</span><em class="sig-param">reduction</em>, <em class="sig-param">hidden_size</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._init_reduction"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_is_full_backward_hook</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_load_state_dict_post_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_load_state_dict_pre_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_modules</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_non_persistent_buffers_set</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_parameters</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_state_dict_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_state_dict_pre_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">static </em><code class="sig-name descname">_symbol_functions</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet._symbol_functions"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet.forward"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="pina.model.deeponet.DeepONet.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.deeponet.DeepONet.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>LabelTensor</em>) – the input tensor.</p>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the output computed by the model.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>LabelTensor</p>
+<dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">input_variables</code></dt>
+<dt id="pina.model.deeponet.DeepONet.input_variables">
+<em class="property">property </em><code class="sig-name descname">input_variables</code><a class="headerlink" href="#pina.model.deeponet.DeepONet.input_variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>The input variables of the model</p>
 </dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">training</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -286,14 +203,14 @@ reductions.</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="fnn.html" class="btn btn-neutral float-left" title="FeedForward" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pinn.html" class="btn btn-neutral float-right" title="PINN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="multifeedforward.html" class="btn btn-neutral float-right" title="MultiFeedForward" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Apr 01, 2023.
+      <span class="lastupdated">Last updated on Apr 19, 2023.
       </span></p>
   </div>
 

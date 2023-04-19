@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FeedForward &mdash; PINA 0.0.2.post2304 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>FeedForward &mdash; PINA 0.0.2.dev0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -19,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DeepONet" href="deeponet.html" />
-    <link rel="prev" title="LabelTensor" href="label_tensor.html" /> 
+    <link rel="prev" title="Location" href="location.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -34,7 +33,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.2.post2304
+                0.0.2.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -48,11 +47,21 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">FeedForward</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="convolution.html">ContinuousConv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="span.html">Span</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operators.html">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotter.html">Plotter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="condition.html">Condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="location.html">Location</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="code.html#model">Model</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">FeedForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multifeedforward.html">MultiFeedForward</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#problem">Problem</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -95,130 +104,51 @@
 <span id="feedforward"></span><h1>FeedForward<a class="headerlink" href="#module-pina.model.feed_forward" title="Permalink to this headline">¶</a></h1>
 <p>Module for FeedForward model</p>
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-name descname">FeedForward</code><span class="sig-paren">(</span><em class="sig-param">input_variables</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">inner_size=20</em>, <em class="sig-param">n_layers=2</em>, <em class="sig-param">func=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em>, <em class="sig-param">layers=None</em>, <em class="sig-param">extra_features=None</em>, <em class="sig-param">bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/feed_forward.html#FeedForward"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="pina.model.feed_forward.FeedForward">
+<em class="property">class </em><code class="sig-name descname">FeedForward</code><span class="sig-paren">(</span><em class="sig-param">input_variables</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">inner_size=20</em>, <em class="sig-param">n_layers=2</em>, <em class="sig-param">func=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em>, <em class="sig-param">layers=None</em>, <em class="sig-param">extra_features=None</em>, <em class="sig-param">bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/feed_forward.html#FeedForward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.feed_forward.FeedForward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of feedforward network, also refered as multilayer
 perceptron.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_variables</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – the list containing the labels
+<li><p><strong>input_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the list containing the labels
 corresponding to the input components of the model.</p></li>
-<li><p><strong>output_variables</strong> (<em>list</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>)</em>) – the list containing the labels
+<li><p><strong>output_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the list containing the labels
 corresponding to the components of the output computed by the model.</p></li>
-<li><p><strong>inner_size</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – number of neurons in the hidden layer(s). Default is
+<li><p><strong>inner_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – number of neurons in the hidden layer(s). Default is
 20.</p></li>
-<li><p><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – number of hidden layers. Default is 2.</p></li>
+<li><p><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – number of hidden layers. Default is 2.</p></li>
 <li><p><strong>func</strong> – the activation function to use. If a single
 <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a> is passed, this is used as activation function
 after any layers, except the last one. If a list of Modules is passed,
 they are used as activation functions at any layers, in order.</p></li>
-<li><p><strong>layers</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>)</em>) – a list containing the number of neurons for
+<li><p><strong>layers</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>)</em>) – a list containing the number of neurons for
 any hidden layers. If specified, the parameters <cite>n_layers</cite> e
 <cite>inner_size</cite> are not considered.</p></li>
 <li><p><strong>extra_features</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><em>torch.nn.Module</em></a><em>)</em>) – the additional input
 features to use ad augmented input.</p></li>
-<li><p><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If <cite>True</cite> the MLP will consider some bias.</p></li>
+<li><p><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If <cite>True</cite> the MLP will consider some bias.</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_backward_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_backward_pre_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_buffers</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_forward_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_forward_hooks_with_kwargs</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_forward_pre_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_forward_pre_hooks_with_kwargs</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_is_full_backward_hook</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_load_state_dict_post_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_load_state_dict_pre_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_modules</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_non_persistent_buffers_set</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_parameters</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_state_dict_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">_state_dict_pre_hooks</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt>
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/feed_forward.html#FeedForward.forward"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="pina.model.feed_forward.FeedForward.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/feed_forward.html#FeedForward.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.feed_forward.FeedForward.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pina.LabelTensor</span></code>) – the input tensor.</p>
+<dd class="field-odd"><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pina.LabelTensor</span></code>) – <p>.</p>
+</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the output computed by the model.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>LabelTensor</p>
+<dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">training</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -228,7 +158,7 @@ features to use ad augmented input.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="label_tensor.html" class="btn btn-neutral float-left" title="LabelTensor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="location.html" class="btn btn-neutral float-left" title="Location" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="deeponet.html" class="btn btn-neutral float-right" title="DeepONet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
@@ -236,7 +166,7 @@ features to use ad augmented input.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Apr 01, 2023.
+      <span class="lastupdated">Last updated on Apr 19, 2023.
       </span></p>
   </div>
 

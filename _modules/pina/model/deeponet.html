@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.model.deeponet &mdash; PINA 0.0.2.post2304 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.model.deeponet &mdash; PINA 0.0.2.dev0 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -32,7 +31,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.2.post2304
+                0.0.2.dev0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -96,7 +95,7 @@
 
 <span class="k">def</span> <span class="nf">check_combos</span><span class="p">(</span><span class="n">combos</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check that the given combinations are subsets (overlapping </span>
+<span class="sd">    Check that the given combinations are subsets (overlapping</span>
 <span class="sd">    is allowed) of the given set of variables.</span>
 
 <span class="sd">    :param iterable(iterable(str)) combos: Combinations of variables.</span>
@@ -119,7 +118,7 @@
 <span class="sd">    :param iterable(iterable(str)) combos: Combinations of variables.</span>
 <span class="sd">    :param iterable(int) layers: Size of hidden layers.</span>
 <span class="sd">    :param int output_dimension: Size of the output layer of the networks.</span>
-<span class="sd">    :param func: Nonlinearity. </span>
+<span class="sd">    :param func: Nonlinearity.</span>
 <span class="sd">    :param extra_feature: Extra feature to be considered by the networks.</span>
 <span class="sd">    :param bool bias: Whether to consider bias or not.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -162,15 +161,16 @@
 <span class="sd">        :param list(str) output_variables: the list containing the labels</span>
 <span class="sd">            corresponding to the components of the output computed by the</span>
 <span class="sd">            model.</span>
-<span class="sd">        :param string | callable aggregator: Aggregator to be used to aggregate</span>
+<span class="sd">        :param str | callable aggregator: Aggregator to be used to aggregate</span>
 <span class="sd">            partial results from the modules in `nets`. Partial results are</span>
-<span class="sd">            aggregated component-wise. See :func:`_symbol_functions` for the</span>
+<span class="sd">            aggregated component-wise. See</span>
+<span class="sd">            :func:`pina.model.deeponet.DeepONet._symbol_functions` for the</span>
 <span class="sd">            available default aggregators.</span>
-<span class="sd">        :param string | callable reduction: Reduction to be used to reduce</span>
+<span class="sd">        :param str | callable reduction: Reduction to be used to reduce</span>
 <span class="sd">            the aggregated result of the modules in `nets` to the desired output</span>
-<span class="sd">            dimension. See :func:`_symbol_functions` for the available default</span>
-<span class="sd">            reductions.</span>
-
+<span class="sd">            dimension. See :py:obj:`pina.model.deeponet.DeepONet._symbol_functions` for the available default</span>
+<span class="sd">            reductions. </span>
+<span class="sd">            </span>
 <span class="sd">        :Example:</span>
 <span class="sd">            &gt;&gt;&gt; branch = FFN(input_variables=[&#39;a&#39;, &#39;c&#39;], output_variables=20)</span>
 <span class="sd">            &gt;&gt;&gt; trunk = FFN(input_variables=[&#39;b&#39;], output_variables=20)</span>
@@ -211,9 +211,15 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All networks should have the same output size&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">nets</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Combo DeepONet children: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trasl</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
 
 <div class="viewcode-block" id="DeepONet._symbol_functions"><a class="viewcode-back" href="../../../_rst/deeponet.html#pina.model.deeponet.DeepONet._symbol_functions">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_symbol_functions</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a dictionary of functions that can be used as aggregators or</span>
+<span class="sd">        reductions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;+&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
             <span class="s2">&quot;*&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
@@ -222,7 +228,7 @@
             <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="DeepONet._init_aggregator"><a class="viewcode-back" href="../../../_rst/deeponet.html#pina.model.deeponet.DeepONet._init_aggregator">[docs]</a>    <span class="k">def</span> <span class="nf">_init_aggregator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregator</span><span class="p">,</span> <span class="n">n_nets</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init_aggregator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregator</span><span class="p">,</span> <span class="n">n_nets</span><span class="p">):</span>
         <span class="n">aggregator_funcs</span> <span class="o">=</span> <span class="n">DeepONet</span><span class="o">.</span><span class="n">_symbol_functions</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">aggregator</span> <span class="ow">in</span> <span class="n">aggregator_funcs</span><span class="p">:</span>
             <span class="n">aggregator_func</span> <span class="o">=</span> <span class="n">aggregator_funcs</span><span class="p">[</span><span class="n">aggregator</span><span class="p">]</span>
@@ -241,9 +247,9 @@
         <span class="k">if</span> <span class="n">test</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">shape</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Invalid aggregator output shape: {(20, 3, n_nets)} -&gt; </span><span class="si">{test.shape}</span><span class="s2">&quot;</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
 
-<div class="viewcode-block" id="DeepONet._init_reduction"><a class="viewcode-back" href="../../../_rst/deeponet.html#pina.model.deeponet.DeepONet._init_reduction">[docs]</a>    <span class="k">def</span> <span class="nf">_init_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">):</span>
         <span class="n">reduction_funcs</span> <span class="o">=</span> <span class="n">DeepONet</span><span class="o">.</span><span class="n">_symbol_functions</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">reduction</span> <span class="ow">in</span> <span class="n">reduction_funcs</span><span class="p">:</span>
             <span class="n">reduction_func</span> <span class="o">=</span> <span class="n">reduction_funcs</span><span class="p">[</span><span class="n">reduction</span><span class="p">]</span>
@@ -261,12 +267,12 @@
         <span class="n">test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)))</span>
         <span class="k">if</span> <span class="n">test</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">shape</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid reduction output shape: {(20, 3, hidden_size)} -&gt; </span><span class="si">{test.shape}</span><span class="s2">&quot;</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DeepONet._all_nets_same_output_layer_size"><a class="viewcode-back" href="../../../_rst/deeponet.html#pina.model.deeponet.DeepONet._all_nets_same_output_layer_size">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_all_nets_same_output_layer_size</span><span class="p">(</span><span class="n">nets</span><span class="p">):</span>
         <span class="n">size</span> <span class="o">=</span> <span class="n">nets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">out_features</span>
-        <span class="k">return</span> <span class="nb">all</span><span class="p">((</span><span class="n">net</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">out_features</span> <span class="o">==</span> <span class="n">size</span> <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">nets</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span></div>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">((</span><span class="n">net</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">out_features</span> <span class="o">==</span> <span class="n">size</span> <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">nets</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">input_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -299,6 +305,9 @@
 
         <span class="n">output_</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
         <span class="n">output_</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_variables</span>
+
+        <span class="n">output_</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span>
+        <span class="n">output_</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trasl</span>
         <span class="k">return</span> <span class="n">output_</span></div></div>
 </pre></div>
 
@@ -310,7 +319,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Apr 01, 2023.
+      <span class="lastupdated">Last updated on Apr 19, 2023.
       </span></p>
   </div>
 

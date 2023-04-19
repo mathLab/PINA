@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pina.condition &mdash; PINA 0.0.2.dev0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PINA
+          </a>
+              <div class="version">
+                0.0.2.dev0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/code.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../LICENSE.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial1/tutorial.html">1. Getting start with PINA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial2/tutorial.html">2. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial3/tutorial.html">3. Wave equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pina.condition</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pina.condition</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Condition module. &quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="kn">from</span> <span class="nn">.location</span> <span class="kn">import</span> <span class="n">Location</span>
+
+<span class="k">def</span> <span class="nf">dummy</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dummy function for testing purposes.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Condition"><a class="viewcode-back" href="../../_rst/condition.html#pina.condition.Condition">[docs]</a><span class="k">class</span> <span class="nc">Condition</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The class `Condition` is used to represent the constraints (physical</span>
+<span class="sd">    equations, boundary conditions, etc.) that should be satisfied in the</span>
+<span class="sd">    problem at hand. Condition objects are used to formulate the PINA :obj:`pina.problem.abstract_problem.Abstract_Problem` object.</span>
+<span class="sd">    Conditions can be specified in three ways:</span>
+
+<span class="sd">        1. By specifying the input and output points of the condition; in such a</span>
+<span class="sd">        case, the model is trained to produce the output points given the input</span>
+<span class="sd">        points.</span>
+
+<span class="sd">        2. By specifying the location and the function of the condition; in such</span>
+<span class="sd">        a case, the model is trained to minimize that function by evaluating it</span>
+<span class="sd">        at some samples of the location.</span>
+
+<span class="sd">        3. By specifying the input points and the function of the condition; in</span>
+<span class="sd">        such a case, the model is trained to minimize that function by</span>
+<span class="sd">        evaluating it at the input points.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">    &gt;&gt;&gt; example_domain = Span({&#39;x&#39;: [0, 1], &#39;y&#39;: [0, 1]})</span>
+<span class="sd">    &gt;&gt;&gt; def example_dirichlet(input_, output_):</span>
+<span class="sd">    &gt;&gt;&gt;     value = 0.0</span>
+<span class="sd">    &gt;&gt;&gt;     return output_.extract([&#39;u&#39;]) - value</span>
+<span class="sd">    &gt;&gt;&gt; example_input_pts = LabelTensor(</span>
+<span class="sd">    &gt;&gt;&gt;     torch.tensor([[0, 0, 0]]), [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; example_output_pts = LabelTensor(torch.tensor([[1, 2]]), [&#39;a&#39;, &#39;b&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; Condition(</span>
+<span class="sd">    &gt;&gt;&gt;     input_points=example_input_pts,</span>
+<span class="sd">    &gt;&gt;&gt;     output_points=example_output_pts)</span>
+<span class="sd">    &gt;&gt;&gt; Condition(</span>
+<span class="sd">    &gt;&gt;&gt;     location=example_domain,</span>
+<span class="sd">    &gt;&gt;&gt;     function=example_dirichlet)</span>
+<span class="sd">    &gt;&gt;&gt; Condition(</span>
+<span class="sd">    &gt;&gt;&gt;     input_points=example_input_pts,</span>
+<span class="sd">    &gt;&gt;&gt;     function=example_dirichlet)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;input_points&#39;</span><span class="p">,</span> <span class="s1">&#39;output_points&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;data_weight&#39;</span>
+    <span class="p">]</span>
+
+<div class="viewcode-block" id="Condition._dictvalue_isinstance"><a class="viewcode-back" href="../../_rst/condition.html#pina.condition.Condition._dictvalue_isinstance">[docs]</a>    <span class="k">def</span> <span class="nf">_dictvalue_isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_</span><span class="p">,</span> <span class="n">key_</span><span class="p">,</span> <span class="n">class_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if the value of a dictionary corresponding to `key` is an instance of `class_`.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="n">key_</span><span class="p">],</span> <span class="n">class_</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the `Condition` class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_weight</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;data_weight&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Condition takes only the following keyword arguments: {`input_points`, `output_points`, `location`, `function`, `data_weight`}.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">([</span><span class="s1">&#39;input_points&#39;</span><span class="p">,</span> <span class="s1">&#39;output_points&#39;</span><span class="p">])</span> <span class="ow">and</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">([</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">])</span> <span class="ow">and</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">([</span><span class="s1">&#39;input_points&#39;</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">])</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid keyword arguments {kwargs.keys()}.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictvalue_isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;input_points&#39;</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`input_points` must be a torch.Tensor.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictvalue_isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;output_points&#39;</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`output_points` must be a torch.Tensor.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictvalue_isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="n">Location</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`location` must be a Location.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;function&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">]]</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;`function[</span><span class="si">{i}</span><span class="s1">]` must be a callable function.&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
+      <span class="lastupdated">Last updated on Apr 19, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
