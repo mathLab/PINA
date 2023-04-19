@@ -162,14 +162,13 @@ To implement the package we follow these works:
 
 
 ## Authors and contributors
-**PINA** is currently developed and mantained at [SISSA mathLab](http://mathlab.sissa.it/) by
-* [Nicola Demo](mailto:demo.nicola@gmail.com)
-* [Maria Strazzullo](mailto:mstrazzu@gmail.com)
+We warmly thank all the contributors that have supported PINA!
 
+<a href="https://github.com/mathLab/PINA/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mathLab/PINA" />
+</a>
 
-under the supervision of [Prof. Gianluigi Rozza](mailto:gianluigi.rozza@sissa.it).
-
-Contact us by email for further information or questions about **PINA**, or suggest pull requests. Contributions improving either the code or the documentation are welcome!
+Made with [contrib.rocks](https://contrib.rocks).
 
 
 ## How to contribute
