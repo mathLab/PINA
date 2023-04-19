@@ -18,6 +18,7 @@ Model
 .. toctree::
     :maxdepth: 3
 
+    Network <network.rst>
     FeedForward <fnn.rst>
     DeepONet <deeponet.rst>
     MultiFeedForward <multifeedforward.rst>
