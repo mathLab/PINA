@@ -6,7 +6,7 @@ from .label_tensor import LabelTensor
 from .utils import torch_lhs
 
 
-class Span(Location):
+class CartesianDomain(Location):
     """PINA implementation of Hypercube domain."""
 
     def __init__(self, span_dict):
