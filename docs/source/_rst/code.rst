@@ -6,11 +6,20 @@ Code Documentation
 
     PINN <pinn.rst>
     LabelTensor <label_tensor.rst>
-    Span <span.rst>
-    Operators <operators.rst>
-    Plotter <plotter.rst>
     Condition <condition.rst>
     Location <location.rst>
+    Operators <operators.rst>
+    Plotter <plotter.rst>
+
+Geometries
+----------
+
+.. toctree::
+    :maxdepth: 3
+
+    Span <span.rst>
+    Ellipsoid <ellipsoid.rst>
+
 
 Model
 -----
