@@ -1,9 +1,9 @@
 import torch
 import pytest
 
-from pina import LabelTensor, Condition, Span, PINN
+from pina import LabelTensor, Condition, CartesianDomain, PINN
 from pina.problem import SpatialProblem
-from pina.model import FeedForward
+from pina.model import FeedForward, Network
 from pina.operators import nabla
 
 in_ = LabelTensor(torch.tensor([[0., 1.]]), ['x', 'y'])
@@ -11,7 +11,7 @@ out_ = LabelTensor(torch.tensor([[0.]]), ['u'])
 
 class Poisson(SpatialProblem):
     output_variables = ['u']
-    spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+    spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
@@ -25,19 +25,19 @@ class Poisson(SpatialProblem):
 
     conditions = {
         'gamma1': Condition(
-            location=Span({'x': [0, 1], 'y':  1}),
+            location=CartesianDomain({'x': [0, 1], 'y':  1}),
             function=nil_dirichlet),
         'gamma2': Condition(
-            location=Span({'x': [0, 1], 'y': 0}),
+            location=CartesianDomain({'x': [0, 1], 'y': 0}),
             function=nil_dirichlet),
         'gamma3': Condition(
-            location=Span({'x':  1, 'y': [0, 1]}),
+            location=CartesianDomain({'x':  1, 'y': [0, 1]}),
             function=nil_dirichlet),
         'gamma4': Condition(
-            location=Span({'x': 0, 'y': [0, 1]}),
+            location=CartesianDomain({'x': 0, 'y': [0, 1]}),
             function=nil_dirichlet),
         'D': Condition(
-            location=Span({'x': [0, 1], 'y': [0, 1]}),
+            location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}),
             function=laplace_equation),
         'data': Condition(
             input_points=in_,
@@ -55,7 +55,10 @@ class Poisson(SpatialProblem):
 
 problem = Poisson()
 
-model = FeedForward(problem.input_variables, problem.output_variables)
+# TODO
+# to be fixed, PINN object should take a torch model,
+#  Network is applied insiede.
+model = FeedForward(len(problem.input_variables),len(problem.output_variables))
 
 
 def test_constructor():
