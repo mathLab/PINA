@@ -3,7 +3,7 @@ import pytest
 
 from pina import LabelTensor, Condition, CartesianDomain, PINN
 from pina.problem import SpatialProblem
-from pina.model import FeedForward, Network
+from pina.model import FeedForward
 from pina.operators import nabla
 
 in_ = LabelTensor(torch.tensor([[0., 1.]]), ['x', 'y'])
@@ -53,16 +53,31 @@ class Poisson(SpatialProblem):
     truth_solution = poisson_sol
 
 
-problem = Poisson()
+class myFeature(torch.nn.Module):
+    """
+    Feature: sin(x)
+    """
 
-# TODO
-# to be fixed, PINN object should take a torch model,
-#  Network is applied insiede.
+    def __init__(self):
+        super(myFeature, self).__init__()
+
+    def forward(self, x):
+        t = (torch.sin(x.extract(['x'])*torch.pi) *
+             torch.sin(x.extract(['y'])*torch.pi))
+        return LabelTensor(t, ['sin(x)sin(y)'])
+
+
+problem = Poisson()
 model = FeedForward(len(problem.input_variables),len(problem.output_variables))
+model_extra_feat =  FeedForward(len(problem.input_variables) + 1,len(problem.output_variables))
 
 
 def test_constructor():
     PINN(problem, model)
+
+
+def test_constructor_extra_feats():
+    PINN(problem, model_extra_feat, [myFeature()])
 
 
 def test_span_pts():
@@ -130,6 +145,28 @@ def test_train_2():
     param = [0, 3]
     for i, truth_key in zip(param, expected_keys):
         pinn = PINN(problem, model)
+        pinn.span_pts(n, 'grid', locations=boundaries)
+        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.train(50, save_loss=i)
+        assert list(pinn.history_loss.keys()) == truth_key
+
+
+def test_train_extra_feats():
+    pinn = PINN(problem, model_extra_feat, [myFeature()])
+    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+    n = 10
+    pinn.span_pts(n, 'grid', locations=boundaries)
+    pinn.span_pts(n, 'grid', locations=['D'])
+    pinn.train(5)
+
+
+def test_train_2_extra_feats():
+    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+    n = 10
+    expected_keys = [[], list(range(0, 50, 3))]
+    param = [0, 3]
+    for i, truth_key in zip(param, expected_keys):
+        pinn = PINN(problem, model_extra_feat, [myFeature()])
         pinn.span_pts(n, 'grid', locations=boundaries)
         pinn.span_pts(n, 'grid', locations=['D'])
         pinn.train(50, save_loss=i)
