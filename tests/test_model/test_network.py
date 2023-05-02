@@ -1,36 +1,8 @@
 import torch
 import torch.nn as nn
 import pytest
-from pina.model import Network
+from pina.model import Network, FeedForward
 from pina import LabelTensor
-
-
-class SimpleNet(nn.Module):
-
-    def __init__(self):
-        super().__init__()
-        self.layers = nn.Sequential(
-            nn.Linear(2, 20),
-            nn.Tanh(),
-            nn.Linear(20, 1)
-        )
-
-    def forward(self, x):
-        return self.layers(x)
-
-
-class SimpleNetExtraFeat(nn.Module):
-
-    def __init__(self):
-        super().__init__()
-        self.layers = nn.Sequential(
-            nn.Linear(3, 20),
-            nn.Tanh(),
-            nn.Linear(20, 1)
-        )
-
-    def forward(self, x):
-        return self.layers(x)
 
 
 class myFeature(torch.nn.Module):
@@ -54,13 +26,13 @@ input_ = LabelTensor(data, input_variables)
 
 
 def test_constructor():
-    net = SimpleNet()
+    net = FeedForward(2, 1)
     pina_net = Network(model=net, input_variables=input_variables,
                        output_variables=output_variables)
 
 
 def test_forward():
-    net = SimpleNet()
+    net = FeedForward(2, 1)
     pina_net = Network(model=net, input_variables=input_variables,
                        output_variables=output_variables)
     output_ = pina_net(input_)
@@ -68,14 +40,14 @@ def test_forward():
 
 
 def test_constructor_extrafeat():
-    net = SimpleNetExtraFeat()
+    net = FeedForward(3, 1)
     feat = [myFeature()]
     pina_net = Network(model=net, input_variables=input_variables,
                        output_variables=output_variables, extra_features=feat)
 
 
 def test_forward_extrafeat():
-    net = SimpleNetExtraFeat()
+    net = FeedForward(3, 1)
     feat = [myFeature()]
     pina_net = Network(model=net, input_variables=input_variables,
                        output_variables=output_variables, extra_features=feat)
