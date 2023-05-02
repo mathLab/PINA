@@ -1,13 +1,13 @@
 import torch
 import pytest
 
-from pina import LabelTensor, Condition, Span, PINN
+from pina import LabelTensor, Condition, CartesianDomain, PINN
 from pina.problem import SpatialProblem
 from pina.model import FeedForward
 from pina.operators import nabla
 
 
-example_domain = Span({'x': [0, 1], 'y': [0, 1]})
+example_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 def example_dirichlet(input_, output_):
     value = 0.0
     return output_.extract(['u']) - value
