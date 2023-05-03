@@ -216,8 +216,41 @@ class PINN(object):
             # pts = pts.double()
             self.input_pts[location] = pts
 
+    def _residual_loss(self, input_pts, equation):
+        """
+        Compute the residual loss for a given condition.
+
+        :param torch.Tensor pts: the points to evaluate the residual at.
+        :param Equation equation: the equation to evaluate the residual with.
+        """
+
+        input_pts = input_pts.to(dtype=self.dtype, device=self.device)
+        input_pts.requires_grad_(True)
+        input_pts.retain_grad()
+
+        predicted = self.model(input_pts)
+        residuals = equation.residual(input_pts, predicted)
+        return self._compute_norm(residuals)
+
+    def _data_loss(self, input_pts, output_pts):
+        """
+        Compute the residual loss for a given condition.
+
+        :param torch.Tensor pts: the points to evaluate the residual at.
+        :param Equation equation: the equation to evaluate the residual with.
+        """
+        input_pts = input_pts.to(dtype=self.dtype, device=self.device)
+        output_pts = output_pts.to(dtype=self.dtype, device=self.device)
+        predicted = self.model(pts)
+        residuals = predicted - output_pts
+        return self._compute_norm(residuals)
+ 
+
     def train(self, stop=100, frequency_print=2, save_loss=1, trial=None):
 
+        # from .utils import MyDataset
+        # print(self.input_pts)
+        # ttttt
         self.model.train()
         epoch = 0
         # Add all condition with `input_points` to dataloader
@@ -241,50 +274,36 @@ class PINN(object):
 
         while True:
 
-            losses = []
 
+            condition_losses = []
             for condition_name in self.problem.conditions:
                 condition = self.problem.conditions[condition_name]
 
+                batch_losses = []
                 for batch in data_loader[condition_name]:
 
-                    single_loss = []
-
-                    if hasattr(condition, 'function'):
-                        pts = batch[condition_name]
-                        pts = pts.to(dtype=self.dtype, device=self.device)
-                        pts.requires_grad_(True)
-                        pts.retain_grad()
-
-                        predicted = self.model(pts)
-                        for function in condition.function:
-                            residuals = function(pts, predicted)
-                            local_loss = (
-                                condition.data_weight*self._compute_norm(
-                                    residuals))
-                            single_loss.append(local_loss)
+                    if hasattr(condition, 'equation'):
+                        loss = self._residual_loss(
+                            batch[condition_name], condition.equation)
                     elif hasattr(condition, 'output_points'):
-                        pts = condition.input_points.to(
-                            dtype=self.dtype, device=self.device)
-                        predicted = self.model(pts)
-                        residuals = predicted - \
-                            condition.output_points.to(
-                                device=self.device, dtype=self.dtype)  # TODO fix
-                        local_loss = (
-                            condition.data_weight*self._compute_norm(residuals))
-                        single_loss.append(local_loss)
+                        loss = self._data_loss(
+                            batch[condition_name], condition.output_points)
 
-                    self.optimizer.zero_grad()
-                    sum(single_loss).backward()
-                    self.optimizer.step()
+                    batch_losses.append(loss * condition.data_weight)
 
-                losses.append(sum(single_loss))
+                condition_losses.append(sum(batch_losses))
+
+            self.optimizer.zero_grad()
+            sum(condition_losses).backward()
+            self.optimizer.step()
+
+                # losses.append(sum(single_loss))
 
             self._lr_scheduler.step()
 
             if save_loss and (epoch % save_loss == 0 or epoch == 0):
                 self.history_loss[epoch] = [
-                    loss.detach().item() for loss in losses]
+                    loss.detach().item() for loss in condition_losses]
 
             if trial:
                 import optuna
@@ -295,13 +314,13 @@ class PINN(object):
             if isinstance(stop, int):
                 if epoch == stop:
                     print('[epoch {:05d}] {:.6e} '.format(
-                        self.trained_epoch, sum(losses).item()), end='')
-                    for loss in losses:
+                        self.trained_epoch, sum(condition_losses).item()), end='')
+                    for loss in condition_losses:
                         print('{:.6e} '.format(loss.item()), end='')
                     print()
                     break
             elif isinstance(stop, float):
-                if sum(losses) < stop:
+                if sum(condition_losses) < stop:
                     break
 
             if epoch % frequency_print == 0 or epoch == 1:
@@ -311,8 +330,8 @@ class PINN(object):
                 print()
 
                 print('[epoch {:05d}] {:.6e} '.format(
-                    self.trained_epoch, sum(losses).item()), end='')
-                for loss in losses:
+                    self.trained_epoch, sum(condition_losses).item()), end='')
+                for loss in condition_losses:
                     print('{:.6e} '.format(loss.item()), end='')
                 print()
 
@@ -321,7 +340,7 @@ class PINN(object):
 
         self.model.eval()
 
-        return sum(losses).item()
+        return sum(condition_losses).item()
 
     # def error(self, dtype='l2', res=100):
 

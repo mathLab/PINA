@@ -98,6 +98,19 @@ def is_function(f):
     return type(f) == types.FunctionType or type(f) == types.LambdaType
 
 
+def chebyshev_roots(n):
+    """
+    Return the roots of *n* Chebyshev polynomials (between [-1, 1]).
+
+    :param int n: number of roots
+    :return: roots
+    :rtype: torch.tensor
+    """
+    pi = torch.acos(torch.zeros(1)).item() * 2
+    k = torch.arange(n)
+    nodes = torch.sort(torch.cos(pi * (k + 0.5) / n))[0]
+    return nodes
+
 class PinaDataset():
 
     def __init__(self, pinn) -> None:
@@ -158,3 +171,27 @@ class PinaDataset():
 
         def __len__(self):
             return self._len
+
+# from torch.utils.data import Dataset
+# class MyDataset(Dataset):
+#     def __init__(self, d):
+#         for k, v in d.items():
+#             setattr(self, k, v)
+#         self.labels = list(d.keys())
+        
+#     def __getitem__(self, index):
+#         result = {}
+#         for label in self.labels:
+#             result[label] = getattr(self, label)[index]
+        
+#         return result
+    
+#     def __len__(self):
+#         return len(self.)
+
+# dataset = MyDataset()
+# loader = DataLoader(
+#     dataset,
+#     batch_size=2,
+#     num_workers=2
+# )

@@ -1,10 +1,10 @@
 import torch
 
 from .location import Location
-from .label_tensor import LabelTensor
+from ..label_tensor import LabelTensor
 
 
-class Ellipsoid(Location):
+class EllypsoidDomain(Location):
     """PINA implementation of Ellipsoid domain."""
 
     def __init__(self, ellipsoid_dict, sample_surface=False):
@@ -98,7 +98,7 @@ class Ellipsoid(Location):
         # get axis ellipse
         list_dict_vals = list(self._axis.values())
         tmp = torch.tensor(list_dict_vals, dtype=torch.float)
-        ax_sq = LabelTensor(tmp.reshape(1, -1), list(self._axis.keys()))
+        ax_sq = LabelTensor(tmp.reshape(1, -1)**2, list(self._axis.keys()))
 
         if not all([i in ax_sq.labels for i in point.labels]):
             raise ValueError('point labels different from constructor'
