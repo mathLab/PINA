@@ -82,11 +82,12 @@ time domain where we want the solution.
 Summarizing, in PINA we can initialize a problem with a class which is
 inherited from three base classes: ``SpatialProblem``,
 ``TimeDependentProblem``, ``ParametricProblem``, depending on the type
-of problem we are considering. For reference:
-
-* ``SpatialProblem`` :math:`\rightarrow` spatial variable(s) presented in the differential equation 
-* ``TimeDependentProblem`` :math:`\rightarrow` time variable(s) presented in the differential equation 
-* ``ParametricProblem`` :math:`\rightarrow` parameter(s) presented in the differential equation
+of problem we are considering. For reference: \* ``SpatialProblem``
+:math:`\rightarrow` spatial variable(s) presented in the differential
+equation \* ``TimeDependentProblem`` :math:`\rightarrow` time
+variable(s) presented in the differential equation \*
+``ParametricProblem`` :math:`\rightarrow` parameter(s) presented in the
+differential equation
 
 Write the problem class
 ~~~~~~~~~~~~~~~~~~~~~~~
