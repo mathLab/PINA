@@ -21,7 +21,7 @@ First of all, some useful imports.
 .. code:: ipython3
 
     import torch
-    from torch.nn import ReLU, Tanh, Softplus
+    from torch.nn import Softplus
     
     from pina.problem import SpatialProblem
     from pina.operators import nabla
@@ -50,11 +50,11 @@ be compared with the predicted one.
             return output_.extract(['u']) - value
     
         conditions = {
-            'gamma1': Condition(Span({'x': [0, 1], 'y':  1}), nil_dirichlet),
-            'gamma2': Condition(Span({'x': [0, 1], 'y': 0}), nil_dirichlet),
-            'gamma3': Condition(Span({'x':  1, 'y': [0, 1]}), nil_dirichlet),
-            'gamma4': Condition(Span({'x': 0, 'y': [0, 1]}), nil_dirichlet),
-            'D': Condition(Span({'x': [0, 1], 'y': [0, 1]}), laplace_equation),
+            'gamma1': Condition(location=Span({'x': [0, 1], 'y':  1}), function=nil_dirichlet),
+            'gamma2': Condition(location=Span({'x': [0, 1], 'y': 0}), function=nil_dirichlet),
+            'gamma3': Condition(location=Span({'x':  1, 'y': [0, 1]}), function=nil_dirichlet),
+            'gamma4': Condition(location=Span({'x': 0, 'y': [0, 1]}), function=nil_dirichlet),
+            'D': Condition(location=Span({'x': [0, 1], 'y': [0, 1]}), function=laplace_equation),
         }
     
         def poisson_sol(self, pts):
@@ -108,28 +108,28 @@ is not mandatory in the **PINA** framework.
 .. parsed-literal::
 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00000] 4.821361e-01 7.271265e-02 5.749976e-02 7.188050e-02 5.793815e-02 2.221050e-01 
+    [epoch 00000] 4.879922e-01 1.557781e-01 7.685463e-02 2.743466e-02 2.047883e-02 2.074460e-01 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00001] 3.231621e-01 2.852444e-02 1.981721e-02 2.768876e-02 2.037603e-02 2.267557e-01 
+    [epoch 00001] 2.610107e-01 1.067532e-03 8.390929e-03 2.391219e-02 1.467707e-02 2.129630e-01 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00100] 1.015092e-01 5.198789e-04 2.826267e-03 3.158009e-03 2.300746e-03 9.270430e-02 
+    [epoch 00100] 8.640952e-02 1.038323e-04 9.709063e-05 6.688796e-05 6.651071e-05 8.607519e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00200] 8.891604e-02 4.115215e-04 5.373723e-04 5.063288e-04 5.177262e-04 8.694309e-02 
+    [epoch 00200] 2.996790e-02 4.977722e-04 6.639907e-04 5.634258e-04 7.204801e-04 2.752223e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00300] 8.620024e-02 3.734426e-04 4.014817e-04 3.966301e-04 4.261272e-04 8.460256e-02 
+    [epoch 00300] 2.896983e-03 1.864277e-04 2.020803e-05 2.418693e-04 3.052877e-05 2.417949e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00400] 8.090379e-02 3.381128e-04 2.724089e-04 2.855197e-04 3.383889e-04 7.966936e-02 
+    [epoch 00400] 1.865673e-03 1.250375e-04 2.438288e-05 1.595948e-04 6.709602e-06 1.549948e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00500] 7.000037e-02 2.501736e-04 7.233566e-05 1.258494e-04 1.898462e-04 6.936217e-02 
+    [epoch 00500] 2.874877e-03 2.077810e-04 1.149128e-04 1.273361e-04 3.024802e-06 2.421822e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00600] 2.645028e-02 9.258305e-05 2.108825e-04 1.832870e-04 7.366277e-05 2.588986e-02 
+    [epoch 00600] 1.310072e-03 1.081258e-04 3.365631e-05 1.059794e-04 3.468987e-06 1.058841e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00700] 2.599242e-03 5.990163e-05 9.679930e-05 1.735135e-04 3.957247e-05 2.229455e-03 
+    [epoch 00700] 2.694587e-03 1.267468e-04 6.266955e-05 9.891923e-05 8.897325e-06 2.397354e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00800] 1.343722e-03 6.899313e-05 4.569854e-05 1.231751e-04 1.892484e-05 1.086931e-03 
+    [epoch 00800] 5.028690e-03 1.435707e-04 5.986574e-06 9.517078e-05 4.583780e-05 4.738124e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00900] 8.533830e-04 6.269138e-05 2.274475e-05 8.422977e-05 1.782445e-05 6.658927e-04 
-    [epoch 01000] 6.219158e-04 5.753698e-05 1.195975e-05 6.105051e-05 1.724382e-05 4.741247e-04 
+    [epoch 00900] 9.997603e-04 9.684711e-05 9.155992e-06 8.875966e-05 1.261154e-05 7.923861e-04 
+    [epoch 01000] 2.362966e-02 1.157872e-04 7.812096e-06 8.004917e-05 9.947084e-05 2.332654e-02 
 
 
 The neural network of course can be saved in a file. In such a way, we
@@ -153,7 +153,7 @@ and the predicted solutions is showed.
 
 
 
-.. image:: output_13_0.png
+.. image:: tutorial_files/tutorial_13_0.png
 
 
 The problem solution with extra-features
@@ -209,28 +209,28 @@ new extra feature.
 .. parsed-literal::
 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00000] 8.334048e-02 1.480584e-02 1.326940e-02 1.505190e-02 1.282023e-02 2.739312e-02 
+    [epoch 00000] 1.309440e-01 2.335824e-02 3.823499e-03 1.878588e-05 2.002613e-03 1.017409e-01 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00001] 2.369340e-02 1.785535e-03 1.441936e-03 1.978278e-03 1.193302e-03 1.729435e-02 
+    [epoch 00001] 5.053994e-02 6.420787e-03 6.924602e-03 4.746807e-03 1.751946e-03 3.069580e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00100] 4.190661e-05 5.259407e-06 2.207154e-06 1.740728e-06 1.258537e-06 3.144078e-05 
+    [epoch 00100] 7.484706e-06 1.889349e-07 4.289622e-07 3.610726e-07 3.611258e-07 6.144610e-06 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00200] 2.964181e-06 3.873027e-08 3.952280e-08 6.926503e-08 4.859637e-08 2.768067e-06 
+    [epoch 00200] 6.941436e-06 4.738185e-07 4.590637e-07 5.098815e-07 5.365398e-07 4.962133e-06 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00300] 2.477657e-06 3.019578e-08 3.888974e-08 5.290904e-08 4.751930e-08 2.308143e-06 
+    [epoch 00300] 6.147081e-06 6.213511e-07 5.576677e-07 6.256337e-07 6.572442e-07 3.685184e-06 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00400] 2.054579e-06 2.595518e-08 3.504910e-08 4.605295e-08 4.163064e-08 1.905891e-06 
+    [epoch 00400] 6.056770e-06 7.646217e-07 6.377599e-07 7.242416e-07 7.616553e-07 3.168491e-06 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00500] 1.716277e-06 2.342572e-08 3.247192e-08 4.101565e-08 3.697489e-08 1.582388e-06 
+    [epoch 00500] 6.751128e-06 8.011474e-07 6.283512e-07 7.652199e-07 7.226305e-07 3.833779e-06 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00600] 1.461072e-06 2.217194e-08 3.119703e-08 3.734558e-08 3.372288e-08 1.336635e-06 
+    [epoch 00600] 2.839740e-05 5.422368e-06 4.058312e-06 4.664194e-06 4.984503e-06 9.268020e-06 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00700] 1.275204e-06 2.180191e-08 3.080508e-08 3.476259e-08 3.154803e-08 1.156287e-06 
+    [epoch 00700] 1.221099e-05 3.654685e-06 3.195583e-07 2.717753e-06 2.381476e-06 3.137519e-06 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00800] 1.141423e-06 2.190318e-08 3.084367e-08 3.297679e-08 3.010750e-08 1.025592e-06 
+    [epoch 00800] 5.423951e-06 6.111856e-07 4.348901e-07 5.353588e-07 5.398895e-07 3.302627e-06 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00900] 1.043816e-06 2.220373e-08 3.104670e-08 3.163695e-08 2.905372e-08 9.298745e-07 
-    [epoch 01000] 9.697858e-07 2.242846e-08 3.111799e-08 3.060282e-08 2.824710e-08 8.573894e-07 
+    [epoch 00900] 6.777007e-06 3.749606e-07 1.421852e-06 4.068826e-08 1.292241e-06 3.647265e-06 
+    [epoch 01000] 6.803403e-05 2.302543e-07 3.886034e-05 4.901193e-06 2.005441e-05 3.987827e-06 
 
 
 The predicted and exact solutions and the error between them are
@@ -244,7 +244,7 @@ order of magnitude in accuracy.
 
 
 
-.. image:: output_18_0.png
+.. image:: tutorial_files/tutorial_18_0.png
 
 
 The problem solution with learnable extra-features
@@ -296,28 +296,28 @@ need, and they are managed by ``autograd`` module!
 .. parsed-literal::
 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00000] 3.918677e-01 2.501913e-02 1.278682e-02 1.963722e-02 1.756839e-02 3.168561e-01 
+    [epoch 00000] 7.147130e-02 1.942330e-03 7.350697e-03 2.868338e-03 1.184232e-03 5.812570e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00001] 1.345929e-01 1.696471e-02 9.475741e-03 1.432935e-02 1.169397e-02 8.212914e-02 
+    [epoch 00001] 2.814954e-01 7.300152e-03 5.510583e-04 2.262258e-03 7.287678e-04 2.706531e-01 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00100] 4.500092e-04 1.441140e-05 9.839978e-06 2.283052e-05 4.087769e-06 3.988396e-04 
+    [epoch 00100] 1.961870e-04 3.066778e-06 5.342949e-07 2.670689e-06 9.807675e-07 1.889345e-04 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00200] 2.102947e-04 1.462936e-05 2.168394e-06 4.655578e-06 4.340448e-07 1.884074e-04 
+    [epoch 00200] 1.208203e-04 3.096610e-06 1.253595e-06 2.603416e-06 1.962141e-06 1.119046e-04 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00300] 1.371512e-04 1.072066e-05 1.284032e-06 2.897264e-06 1.126986e-06 1.211222e-04 
+    [epoch 00300] 3.992990e-05 3.451424e-06 6.415143e-07 1.576505e-06 1.244609e-06 3.301585e-05 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00400] 9.371716e-05 7.952534e-06 1.115802e-06 2.099921e-06 1.375253e-06 8.117365e-05 
+    [epoch 00400] 3.466437e-04 1.722332e-06 1.461791e-05 3.052185e-06 8.755493e-06 3.184958e-04 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00500] 6.719316e-05 5.919826e-06 9.837649e-07 1.510521e-06 1.423588e-06 5.735546e-05 
+    [epoch 00500] 5.242374e-03 3.230991e-05 1.387528e-05 5.379211e-06 3.145076e-06 5.187664e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00600] 5.042886e-05 4.428994e-06 8.414617e-07 1.083298e-06 1.338001e-06 4.273711e-05 
+    [epoch 00600] 1.027368e-03 1.448758e-06 2.165510e-05 5.197179e-05 3.823021e-05 9.140619e-04 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00700] 3.907475e-05 3.327482e-06 7.004838e-07 7.866622e-07 1.162936e-06 3.309719e-05 
+    [epoch 00700] 1.141694e-03 6.998039e-06 2.446730e-05 3.083524e-05 1.376935e-05 1.065624e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00800] 3.086757e-05 2.501366e-06 5.700428e-07 5.815515e-07 9.500203e-07 2.626459e-05 
+    [epoch 00800] 3.619534e-04 3.120772e-06 1.223103e-05 2.211869e-05 9.567964e-06 3.149150e-04 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00900] 2.470110e-05 1.874311e-06 4.546698e-07 4.359081e-07 7.396913e-07 2.119652e-05 
-    [epoch 01000] 1.999130e-05 1.396229e-06 3.562134e-07 3.291411e-07 5.548665e-07 1.735485e-05 
+    [epoch 00900] 3.287693e-04 2.432459e-06 7.569996e-06 1.101516e-05 4.546776e-06 3.032049e-04 
+    [epoch 01000] 5.432598e-04 8.919213e-06 1.991732e-05 2.632461e-05 7.365395e-06 4.807333e-04 
 
 
 Umh, the final loss is not appreciabily better than previous model (with
@@ -346,28 +346,28 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
 .. parsed-literal::
 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00000] 1.974945e+00 2.002993e-03 7.012323e-02 2.755559e-02 1.584911e-02 1.859414e+00 
+    [epoch 00000] 1.907039e+01 5.862396e-02 5.423664e-01 4.624593e-01 7.118504e-02 1.793576e+01 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00001] 1.761779e+00 3.188374e-03 6.539153e-02 2.452723e-02 1.474262e-02 1.653930e+00 
+    [epoch 00001] 1.698682e+01 3.348809e-02 4.943427e-01 3.972439e-01 6.141453e-02 1.600033e+01 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00100] 4.036187e-03 1.676370e-05 2.384196e-05 1.675912e-05 2.528631e-05 3.953536e-03 
+    [epoch 00100] 8.010766e-02 1.765875e-04 6.100491e-04 1.604862e-04 5.841496e-04 7.857639e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00200] 3.638973e-06 9.148435e-09 5.011525e-09 8.995231e-09 5.055353e-09 3.610763e-06 
+    [epoch 00200] 5.057434e-02 6.479959e-05 6.590948e-05 6.376287e-05 5.975253e-05 5.032011e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00300] 7.258809e-11 2.040413e-13 1.323202e-13 1.966580e-13 1.385408e-13 7.191653e-11 
+    [epoch 00300] 1.974927e-02 3.145394e-05 1.531348e-05 3.037518e-05 1.363940e-05 1.965849e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00400] 1.095777e-13 2.320287e-16 3.792855e-17 2.308433e-16 3.710536e-17 1.090398e-13 
+    [epoch 00400] 1.763019e-03 3.408035e-06 8.902280e-07 3.228933e-06 7.512407e-07 1.754741e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00500] 1.095686e-13 2.238822e-16 4.053546e-17 2.238880e-16 4.054121e-17 1.090398e-13 
+    [epoch 00500] 2.604023e-05 5.248935e-08 1.091775e-08 4.940254e-08 9.077334e-09 2.591834e-05 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00600] 1.095686e-13 2.238991e-16 4.052415e-17 2.238992e-16 4.052421e-17 1.090398e-13 
+    [epoch 00600] 7.279636e-08 1.490485e-10 3.004504e-11 1.392443e-10 2.490262e-11 7.245312e-08 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00700] 1.095686e-13 2.238992e-16 4.052411e-17 2.238992e-16 4.052410e-17 1.090398e-13 
+    [epoch 00700] 2.307051e-11 5.051121e-14 1.083412e-14 4.412749e-14 8.684963e-15 2.295635e-11 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00800] 1.095686e-13 2.238992e-16 4.052411e-17 2.238992e-16 4.052410e-17 1.090398e-13 
+    [epoch 00800] 9.755044e-12 1.745244e-14 3.232219e-15 1.735542e-14 3.347362e-15 9.713657e-12 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00900] 1.095686e-13 2.238992e-16 4.052411e-17 2.238992e-16 4.052410e-17 1.090398e-13 
-    [epoch 01000] 1.095686e-13 2.238992e-16 4.052411e-17 2.238992e-16 4.052410e-17 1.090398e-13 
+    [epoch 00900] 5.909113e-12 1.112281e-14 2.037945e-15 1.107687e-14 2.124603e-15 5.882751e-12 
+    [epoch 01000] 3.220371e-12 5.622761e-15 1.002551e-15 5.519723e-15 9.455284e-16 3.207280e-12 
 
 
 In such a way, the model is able to reach a very high accuracy! Of
@@ -388,7 +388,7 @@ features.
 
 
 
-.. image:: output_25_0.png
+.. image:: tutorial_files/tutorial_25_0.png
 
 
 .. code:: ipython3
@@ -406,5 +406,5 @@ features.
 
 
 
-.. image:: output_26_0.png
+.. image:: tutorial_files/tutorial_26_0.png
 

@@ -18,11 +18,11 @@
 
 # First of all, some useful imports.
 
-# In[1]:
+# In[ ]:
 
 
 import torch
-from torch.nn import ReLU, Tanh, Softplus
+from torch.nn import Softplus
 
 from pina.problem import SpatialProblem
 from pina.operators import nabla
@@ -33,7 +33,7 @@ from pina import Condition, Span, PINN, LabelTensor, Plotter
 # Now, the Poisson problem is written in PINA code as a class. The equations are written as *conditions* that should be satisfied in the corresponding domains. *truth_solution*
 # is the exact solution which will be compared with the predicted one.
 
-# In[2]:
+# In[ ]:
 
 
 class Poisson(SpatialProblem):
@@ -51,11 +51,11 @@ class Poisson(SpatialProblem):
         return output_.extract(['u']) - value
 
     conditions = {
-        'gamma1': Condition(Span({'x': [0, 1], 'y':  1}), nil_dirichlet),
-        'gamma2': Condition(Span({'x': [0, 1], 'y': 0}), nil_dirichlet),
-        'gamma3': Condition(Span({'x':  1, 'y': [0, 1]}), nil_dirichlet),
-        'gamma4': Condition(Span({'x': 0, 'y': [0, 1]}), nil_dirichlet),
-        'D': Condition(Span({'x': [0, 1], 'y': [0, 1]}), laplace_equation),
+        'gamma1': Condition(location=Span({'x': [0, 1], 'y':  1}), function=nil_dirichlet),
+        'gamma2': Condition(location=Span({'x': [0, 1], 'y': 0}), function=nil_dirichlet),
+        'gamma3': Condition(location=Span({'x':  1, 'y': [0, 1]}), function=nil_dirichlet),
+        'gamma4': Condition(location=Span({'x': 0, 'y': [0, 1]}), function=nil_dirichlet),
+        'D': Condition(location=Span({'x': [0, 1], 'y': [0, 1]}), function=laplace_equation),
     }
 
     def poisson_sol(self, pts):
@@ -75,7 +75,7 @@ class Poisson(SpatialProblem):
 # The output of the cell below is the final loss of the training phase of the PINN.
 # We highlight that the generation of the sampling points and the train is here encapsulated within the function `generate_samples_and_train`, but only for saving some lines of code in the next cells; that function is not mandatory in the **PINA** framework. 
 
-# In[3]:
+# In[ ]:
 
 
 def generate_samples_and_train(model, problem):
@@ -98,7 +98,7 @@ pinn = generate_samples_and_train(model, problem)
 
 # The neural network of course can be saved in a file. In such a way, we can store it after the train, and load it just to infer the field. Here we don't store the model, but for demonstrative purposes  we put in the next cell the commented line of code.
 
-# In[4]:
+# In[ ]:
 
 
 # pinn.save_state('pina.poisson')
@@ -107,7 +107,7 @@ pinn = generate_samples_and_train(model, problem)
 # Now the *Plotter* class is used to plot the results.
 # The solution predicted by the neural network is plotted on the left, the exact one is represented at the center and on the right the error between the exact and the predicted solutions is showed. 
 
-# In[5]:
+# In[ ]:
 
 
 plotter = Plotter()
@@ -131,7 +131,7 @@ plotter.plot(pinn)
 # 
 # Finally, we perform the same training as before: the problem is `Poisson`, the network is composed by the same number of neurons and optimizer parameters are equal to previous test, the only change is the new extra feature.
 
-# In[6]:
+# In[ ]:
 
 
 class SinSin(torch.nn.Module):
@@ -158,7 +158,7 @@ pinn_feat = generate_samples_and_train(model_feat, problem)
 # The predicted and exact solutions and the error between them are represented below.
 # We can easily note that now our network, having almost the same condition as before, is able to reach an additional order of magnitude in accuracy.
 
-# In[7]:
+# In[ ]:
 
 
 plotter.plot(pinn_feat)
@@ -178,7 +178,7 @@ plotter.plot(pinn_feat)
 # where $\alpha$ and $\beta$ are the abovementioned parameters.
 # Their implementation is quite trivial: by using the class `torch.nn.Parameter` we cam define all the learnable parameters we need, and they are managed by `autograd` module!
 
-# In[8]:
+# In[ ]:
 
 
 class SinSinAB(torch.nn.Module):
@@ -209,7 +209,7 @@ pinn_learn = generate_samples_and_train(model_learn, problem)
 
 # Umh, the final loss is not appreciabily better than previous model (with static extra features), despite the usage of learnable parameters. This is mainly due to the over-parametrization of the network: there are many parameter to optimize during the training, and the model in unable to understand automatically that only the parameters of the extra feature (and not the weights/bias of the FFN) should be tuned in order to fit our problem. A longer training can be helpful, but in this case the faster way to reach machine precision for solving the Poisson problem is removing all the hidden layers in the `FeedForward`, keeping only the $\alpha$ and $\beta$ parameters of the extra feature.
 
-# In[9]:
+# In[ ]:
 
 
 model_learn = FeedForward(
@@ -227,13 +227,13 @@ pinn_learn = generate_samples_and_train(model_learn, problem)
 # 
 # We conclude here by showing the graphical comparison of the unknown field and the loss trend for all the test cases presented here: the standard PINN, PINN with extra features, and PINN with learnable extra features.
 
-# In[10]:
+# In[ ]:
 
 
 plotter.plot(pinn_learn)
 
 
-# In[11]:
+# In[ ]:
 
 
 import matplotlib.pyplot as plt

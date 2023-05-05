@@ -63,12 +63,12 @@ predicted one.
             return output_.extract(['u']) - u_expected
     
         conditions = {
-            'gamma1': Condition(Span({'x': [0, 1], 'y':  1, 't': [0, 1]}), nil_dirichlet),
-            'gamma2': Condition(Span({'x': [0, 1], 'y': 0, 't': [0, 1]}), nil_dirichlet),
-            'gamma3': Condition(Span({'x':  1, 'y': [0, 1], 't': [0, 1]}), nil_dirichlet),
-            'gamma4': Condition(Span({'x': 0, 'y': [0, 1], 't': [0, 1]}), nil_dirichlet),
-            't0': Condition(Span({'x': [0, 1], 'y': [0, 1], 't': 0}), initial_condition),
-            'D': Condition(Span({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}), wave_equation),
+            'gamma1': Condition(location=Span({'x': [0, 1], 'y':  1, 't': [0, 1]}), function=nil_dirichlet),
+            'gamma2': Condition(location=Span({'x': [0, 1], 'y': 0, 't': [0, 1]}), function=nil_dirichlet),
+            'gamma3': Condition(location=Span({'x':  1, 'y': [0, 1], 't': [0, 1]}), function=nil_dirichlet),
+            'gamma4': Condition(location=Span({'x': 0, 'y': [0, 1], 't': [0, 1]}), function=nil_dirichlet),
+            't0': Condition(location=Span({'x': [0, 1], 'y': [0, 1], 't': 0}), function=initial_condition),
+            'D': Condition(location=Span({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}), function=wave_equation),
         }
     
         def wave_sol(self, pts):
@@ -142,28 +142,28 @@ approximately one minute.
 .. parsed-literal::
 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00000] 4.567502e-01 2.847714e-02 1.962997e-02 9.094939e-03 1.247287e-02 3.838658e-01 3.209481e-03 
+    [epoch 00000] 1.021557e-01 1.350026e-02 4.368403e-03 6.463497e-03 1.698729e-03 5.513944e-02 2.098533e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00001] 4.184132e-01 1.914901e-02 2.436301e-02 8.384322e-03 1.077990e-02 3.530422e-01 2.694697e-03 
+    [epoch 00001] 8.096325e-02 7.543423e-03 2.978407e-03 7.128799e-03 2.084145e-03 3.967418e-02 2.155431e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00150] 1.694410e-01 9.840883e-03 1.117415e-02 1.140828e-02 1.003646e-02 1.260622e-01 9.190784e-04 
+    [epoch 00150] 4.684930e-02 9.609548e-03 3.093602e-03 7.733506e-03 2.570329e-03 1.896760e-02 4.874712e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00300] 1.666860e-01 9.847926e-03 1.122043e-02 1.142906e-02 9.706282e-03 1.237589e-01 7.233715e-04 
+    [epoch 00300] 3.519089e-02 6.642059e-03 2.865276e-03 6.399740e-03 2.900236e-03 1.244203e-02 3.941551e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00450] 1.564735e-01 8.579318e-03 1.203290e-02 1.264551e-02 8.249855e-03 1.136869e-01 1.279038e-03 
+    [epoch 00450] 2.766160e-02 5.089254e-03 2.789679e-03 5.370538e-03 3.071685e-03 7.834940e-03 3.505504e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00600] 1.281068e-01 5.976059e-03 1.463099e-02 1.191054e-02 7.087692e-03 8.658079e-02 1.920737e-03 
+    [epoch 00600] 2.361075e-02 4.279066e-03 2.785937e-03 4.689044e-03 3.101575e-03 5.907214e-03 2.847910e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00750] 7.482838e-02 5.880896e-03 1.912235e-02 5.754319e-03 4.252454e-03 3.697925e-02 2.839110e-03 
+    [epoch 00750] 8.005206e-02 3.891625e-03 2.690672e-03 3.808867e-03 3.402538e-03 6.042966e-03 6.021538e-02 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 00900] 3.109156e-02 2.877797e-03 5.560369e-03 3.611543e-03 3.818088e-03 1.117986e-02 4.043903e-03 
+    [epoch 00900] 1.892301e-02 3.592897e-03 2.639081e-03 3.797543e-03 2.988781e-03 3.860098e-03 2.044612e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 01050] 1.969596e-02 2.598281e-03 3.658714e-03 3.426491e-03 3.696677e-03 4.037755e-03 2.278043e-03 
+    [epoch 01050] 1.739456e-02 3.420912e-03 2.557583e-03 3.532733e-03 2.910482e-03 3.114843e-03 1.858010e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 01200] 1.625224e-02 2.496960e-03 3.069649e-03 3.198287e-03 3.420298e-03 2.728654e-03 1.338392e-03 
+    [epoch 01200] 1.663617e-02 3.213567e-03 2.571464e-03 3.355495e-03 2.749454e-03 3.247283e-03 1.498912e-03 
                   sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di t0initial_co Dwave_equati 
-    [epoch 01350] 1.430180e-02 2.350929e-03 2.700139e-03 2.961276e-03 3.141905e-03 2.189825e-03 9.577314e-04 
-    [epoch 01500] 1.293717e-02 2.182199e-03 2.440975e-03 2.706538e-03 2.904802e-03 1.891113e-03 8.115429e-04 
+    [epoch 01350] 1.551488e-02 3.121611e-03 2.481438e-03 3.141828e-03 2.706321e-03 2.636140e-03 1.427544e-03 
+    [epoch 01500] 1.497287e-02 2.974171e-03 2.475442e-03 2.979754e-03 2.593079e-03 2.723322e-03 1.227099e-03 
 
 
 After the training is completed one can now plot some results using the
