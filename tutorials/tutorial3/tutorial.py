@@ -21,7 +21,7 @@
 
 # First of all, some useful imports.
 
-# In[2]:
+# In[1]:
 
 
 import torch
@@ -34,7 +34,7 @@ from pina import Condition, Span, PINN, Plotter
 
 # Now, the wave problem is written in PINA code as a class, inheriting from `SpatialProblem` and `TimeDependentProblem` since we deal with spatial, and time dependent variables. The equations are written as `conditions` that should be satisfied in the corresponding domains. `truth_solution` is the exact solution which will be compared with the predicted one.
 
-# In[3]:
+# In[2]:
 
 
 class Wave(TimeDependentProblem, SpatialProblem):
@@ -58,12 +58,12 @@ class Wave(TimeDependentProblem, SpatialProblem):
         return output_.extract(['u']) - u_expected
 
     conditions = {
-        'gamma1': Condition(Span({'x': [0, 1], 'y':  1, 't': [0, 1]}), nil_dirichlet),
-        'gamma2': Condition(Span({'x': [0, 1], 'y': 0, 't': [0, 1]}), nil_dirichlet),
-        'gamma3': Condition(Span({'x':  1, 'y': [0, 1], 't': [0, 1]}), nil_dirichlet),
-        'gamma4': Condition(Span({'x': 0, 'y': [0, 1], 't': [0, 1]}), nil_dirichlet),
-        't0': Condition(Span({'x': [0, 1], 'y': [0, 1], 't': 0}), initial_condition),
-        'D': Condition(Span({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}), wave_equation),
+        'gamma1': Condition(location=Span({'x': [0, 1], 'y':  1, 't': [0, 1]}), function=nil_dirichlet),
+        'gamma2': Condition(location=Span({'x': [0, 1], 'y': 0, 't': [0, 1]}), function=nil_dirichlet),
+        'gamma3': Condition(location=Span({'x':  1, 'y': [0, 1], 't': [0, 1]}), function=nil_dirichlet),
+        'gamma4': Condition(location=Span({'x': 0, 'y': [0, 1], 't': [0, 1]}), function=nil_dirichlet),
+        't0': Condition(location=Span({'x': [0, 1], 'y': [0, 1], 't': 0}), function=initial_condition),
+        'D': Condition(location=Span({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}), function=wave_equation),
     }
 
     def wave_sol(self, pts):
@@ -80,7 +80,7 @@ problem = Wave()
 # 
 # This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unkwown field of the Wave problem. The residual of the equations are evaluated at several sampling points (which the user can manipulate using the method `span_pts`) and the loss minimized by the neural network is the sum of the residuals.
 
-# In[4]:
+# In[3]:
 
 
 class TorchNet(torch.nn.Module):
@@ -109,7 +109,7 @@ model = Network(model = TorchNet(),
 # In this tutorial, the neural network is trained for 2000 epochs with a learning rate of 0.001. These parameters can be modified as desired.
 # We highlight that the generation of the sampling points and the train is here encapsulated within the function `generate_samples_and_train`, but only for saving some lines of code in the next cells; that function is not mandatory in the **PINA** framework. The training takes approximately one minute.
 
-# In[5]:
+# In[7]:
 
 
 def generate_samples_and_train(model, problem):
@@ -126,7 +126,7 @@ pinn = generate_samples_and_train(model, problem)
 
 # After the training is completed one can now plot some results using the `Plotter` class of **PINA**.
 
-# In[11]:
+# In[8]:
 
 
 plotter = Plotter()
@@ -137,7 +137,7 @@ plotter.plot(pinn, fixed_variables={'t': 0.6})
 
 # We can also plot the pinn loss during the training to see the decrease.
 
-# In[12]:
+# In[9]:
 
 
 import matplotlib.pyplot as plt

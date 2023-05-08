@@ -69,7 +69,7 @@
 # 
 # Once the problem class is initialized we need to write the differential equation in PINA language. For doing this we need to load the pina operators found in `pina.operators` module. Let's again consider the Equation (1) and try to write the PINA model class:
 
-# In[14]:
+# In[ ]:
 
 
 from pina.problem import SpatialProblem
@@ -110,8 +110,8 @@ class SimpleODE(SpatialProblem):
 
     # Conditions to hold
     conditions = {
-        'x0': Condition(Span({'x': 0.}), initial_condition),
-        'D': Condition(Span({'x': [0, 1]}), ode_equation),
+        'x0': Condition(location=Span({'x': 0.}), function=initial_condition),
+        'D': Condition(location=Span({'x': [0, 1]}), function=ode_equation),
     }
 
     # defining true solution
@@ -129,7 +129,7 @@ class SimpleODE(SpatialProblem):
 
 # The basics requirements for building a PINN model are a problem and a model. We have already covered the problem definition. For the model one can use the default models provided in PINA or use a custom model. We will not go into the details of model definition, Tutorial2 and Tutorial3 treat the topic in detail.
 
-# In[31]:
+# In[ ]:
 
 
 from pina.model import FeedForward
@@ -157,7 +157,7 @@ pinn = PINN(problem, model)
 # Once the `pinn` object is created, we need to generate the points for starting the optimization. For doing this we use the `span_pts` method of the `PINN` class.
 # Let's see some methods to sample in $(0,1 )$.
 
-# In[32]:
+# In[ ]:
 
 
 # sampling 20 points in (0, 1) with discrite step
@@ -172,7 +172,7 @@ pinn.span_pts(20, 'random', locations=['D'])
 
 # We can also use a dictionary for specific variables:
 
-# In[33]:
+# In[ ]:
 
 
 pinn.span_pts({'variables': ['x'], 'mode': 'grid', 'n': 20}, locations=['D'])
@@ -180,7 +180,7 @@ pinn.span_pts({'variables': ['x'], 'mode': 'grid', 'n': 20}, locations=['D'])
 
 # We are going to use equispaced points for sampling. We need to sample in all the conditions domains. In our case we sample in `D` and `x0`.
 
-# In[34]:
+# In[ ]:
 
 
 # sampling for training
@@ -192,7 +192,7 @@ pinn.span_pts(20, 'grid', locations=['D'])
 # 
 # Once we have defined the PINA model, created a network and sampled points in the domain, we have everything that is necessary for training a PINN. Here we show a very short training and some method for plotting the results.
 
-# In[35]:
+# In[ ]:
 
 
 # simple training 
@@ -201,7 +201,7 @@ final_loss = pinn.train(stop=3000, frequency_print=1000)
 
 # After the training we have saved the final loss in `final_loss`, which we can inspect. By default PINA uses mean square error loss.
 
-# In[36]:
+# In[ ]:
 
 
 # inspecting final loss
@@ -210,7 +210,7 @@ final_loss
 
 # By using the `Plotter` class from PINA we can also do some quatitative plots of the loss function. 
 
-# In[37]:
+# In[ ]:
 
 
 from pina.plotter import Plotter

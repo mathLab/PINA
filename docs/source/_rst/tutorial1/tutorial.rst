@@ -136,8 +136,8 @@ Equation (1) and try to write the PINA model class:
     
         # Conditions to hold
         conditions = {
-            'x0': Condition(Span({'x': 0.}), initial_condition),
-            'D': Condition(Span({'x': [0, 1]}), ode_equation),
+            'x0': Condition(location=Span({'x': 0.}), function=initial_condition),
+            'D': Condition(location=Span({'x': [0, 1]}), function=ode_equation),
         }
     
         # defining true solution
@@ -261,6 +261,7 @@ the results.
                   sum          x0initial_co Dode_equatio 
     [epoch 02000] 1.099083e-03 3.420736e-05 1.064875e-03 
     [epoch 03000] 4.049759e-04 2.937766e-06 4.020381e-04 
+
 
 
 After the training we have saved the final loss in ``final_loss``, which
