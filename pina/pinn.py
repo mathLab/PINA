@@ -246,6 +246,95 @@ class PINN(object):
         return self._compute_norm(residuals)
  
 
+    def closure(self):
+        """
+        """
+        self.optimizer.zero_grad()
+
+        condition_losses = []
+        from torch.utils.data import DataLoader
+        from .utils import MyDataset
+        loader = DataLoader(
+            MyDataset(self.input_pts),
+            batch_size=self.batch_size,
+            num_workers=1
+        )
+        for condition_name in self.problem.conditions:
+            condition = self.problem.conditions[condition_name]
+
+            batch_losses = []
+            for batch in data_loader[condition_name]:
+
+                if hasattr(condition, 'equation'):
+                    loss = self._residual_loss(
+                        batch[condition_name], condition.equation)
+                elif hasattr(condition, 'output_points'):
+                    loss = self._data_loss(
+                        batch[condition_name], condition.output_points)
+
+                batch_losses.append(loss * condition.data_weight)
+
+            condition_losses.append(sum(batch_losses))
+
+        loss = sum(condition_losses)
+        loss.backward()
+        return loss
+
+    def closure(self):
+        """
+        """
+        self.optimizer.zero_grad()
+
+        losses = []
+        for i, batch in enumerate(self.loader):
+
+            condition_losses = []
+
+            for condition_name, samples in batch.items():
+
+                if condition_name not in self.problem.conditions:
+                    raise RuntimeError('Something wrong happened.')
+
+                if samples.nelement() == 0:
+                    continue
+
+                condition = self.problem.conditions[condition_name]
+                print(samples)
+
+                if hasattr(condition, 'equation'):
+                    loss = self._residual_loss(samples, condition.equation)
+                elif hasattr(condition, 'output_points'):
+                    loss = self._data_loss(samples, condition.output_points)
+
+                condition_losses.append(loss * condition.data_weight)
+
+            losses.append(sum(condition_losses))
+
+        loss = sum(losses)
+        loss.backward()
+        return loss
+
+
+        # for condition_name in self.problem.conditions:
+        #     condition = self.problem.conditions[condition_name]
+
+        #     batch_losses = []
+
+        #         if hasattr(condition, 'equation'):
+        #             loss = self._residual_loss(
+        #                 batch[condition_name], condition.equation)
+        #         elif hasattr(condition, 'output_points'):
+        #             loss = self._data_loss(
+        #                 batch[condition_name], condition.output_points)
+
+        #         batch_losses.append(loss * condition.data_weight)
+
+        #     condition_losses.append(sum(batch_losses))
+
+        # loss = sum(condition_losses)
+        # loss.backward()
+        # return loss
+
     def train(self, stop=100, frequency_print=2, save_loss=1, trial=None):
 
         # from .utils import MyDataset
@@ -257,8 +346,15 @@ class PINN(object):
         for condition in list(set(self.problem.conditions.keys()) - set(self.input_pts.keys())):
             self.input_pts[condition] = self.problem.conditions[condition]
 
-        data_loader = self.data_set.dataloader
+        #data_loader = self.data_set.dataloader
 
+        from torch.utils.data import DataLoader
+        from .utils import MyDataset
+        self.loader = DataLoader(
+            MyDataset(self.input_pts),
+            batch_size=self.batch_size,
+            num_workers=1
+        )
         header = []
         for condition_name in self.problem.conditions:
             condition = self.problem.conditions[condition_name]
@@ -275,29 +371,29 @@ class PINN(object):
         while True:
 
 
-            condition_losses = []
-            for condition_name in self.problem.conditions:
-                condition = self.problem.conditions[condition_name]
+            # condition_losses = []
+            # for condition_name in self.problem.conditions:
+            #     condition = self.problem.conditions[condition_name]
 
-                batch_losses = []
-                for batch in data_loader[condition_name]:
+            #     batch_losses = []
+            #     for batch in data_loader[condition_name]:
 
-                    if hasattr(condition, 'equation'):
-                        loss = self._residual_loss(
-                            batch[condition_name], condition.equation)
-                    elif hasattr(condition, 'output_points'):
-                        loss = self._data_loss(
-                            batch[condition_name], condition.output_points)
+            #         if hasattr(condition, 'equation'):
+            #             loss = self._residual_loss(
+            #                 batch[condition_name], condition.equation)
+            #         elif hasattr(condition, 'output_points'):
+            #             loss = self._data_loss(
+            #                 batch[condition_name], condition.output_points)
 
-                    batch_losses.append(loss * condition.data_weight)
+            #         batch_losses.append(loss * condition.data_weight)
 
-                condition_losses.append(sum(batch_losses))
+            #     condition_losses.append(sum(batch_losses))
 
-            self.optimizer.zero_grad()
-            sum(condition_losses).backward()
-            self.optimizer.step()
+            # self.optimizer.zero_grad()
+            # sum(condition_losses).backward()
+            # self.optimizer.step()
+            self.optimizer.step(closure=self.closure)
 
-                # losses.append(sum(single_loss))
 
             self._lr_scheduler.step()
 

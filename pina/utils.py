@@ -172,26 +172,23 @@ class PinaDataset():
         def __len__(self):
             return self._len
 
-# from torch.utils.data import Dataset
-# class MyDataset(Dataset):
-#     def __init__(self, d):
-#         for k, v in d.items():
-#             setattr(self, k, v)
-#         self.labels = list(d.keys())
+from torch.utils.data import Dataset
+class MyDataset(Dataset):
+    def __init__(self, d):
+        for k, v in d.items():
+            setattr(self, k, v)
+        self.labels = list(d.keys())
         
-#     def __getitem__(self, index):
-#         result = {}
-#         for label in self.labels:
-#             result[label] = getattr(self, label)[index]
+    def __getitem__(self, index):
+        result = {}
+        for label in self.labels:
+            sample_tensor = getattr(self, label)
+            try:
+                result[label] = sample_tensor[index]
+            except IndexError:
+                result[label] = torch.tensor([])
         
-#         return result
+        return result
     
-#     def __len__(self):
-#         return len(self.)
-
-# dataset = MyDataset()
-# loader = DataLoader(
-#     dataset,
-#     batch_size=2,
-#     num_workers=2
-# )
+    def __len__(self):
+        return max([len(getattr(self, label)) for label in self.labels])
