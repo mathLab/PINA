@@ -83,7 +83,9 @@ class Condition:
             raise TypeError('`location` must be a Location.')
 
         if 'function' in kwargs:
-            kwargs['function'] = [kwargs['function']]
+            if not isinstance(kwargs['function'], list):                        
+                kwargs['function'] = [kwargs['function']]
+
 
             for i, func in enumerate(kwargs['function']):
                 if not callable(func):
