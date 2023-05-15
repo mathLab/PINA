@@ -3,14 +3,14 @@ __all__ = [
     'LabelTensor',
     'Plotter',
     'Condition',
-    'CartesianDomain',
     'Location',
+    'CartesianDomain'
 ]
 
 from .meta import *
 from .label_tensor import LabelTensor
 from .pinn import PINN
 from .plotter import Plotter
-from .cartesian import CartesianDomain
 from .condition import Condition
-from .location import Location
+from .geometry import Location
+from .geometry import CartesianDomain

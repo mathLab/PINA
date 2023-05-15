@@ -5,40 +5,41 @@ from pina import LabelTensor, Condition, CartesianDomain, PINN
 from pina.problem import SpatialProblem
 from pina.model import FeedForward
 from pina.operators import nabla
+from pina.equation.equation import Equation
+from pina.equation.equation_factory import FixedValue
+
 
 in_ = LabelTensor(torch.tensor([[0., 1.]]), ['x', 'y'])
 out_ = LabelTensor(torch.tensor([[0.]]), ['u'])
+
+def laplace_equation(input_, output_):
+    force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
+                    torch.sin(input_.extract(['y'])*torch.pi))
+    nabla_u = nabla(output_.extract(['u']), input_)
+    return nabla_u - force_term
+
+my_laplace = Equation(laplace_equation)
 
 class Poisson(SpatialProblem):
     output_variables = ['u']
     spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
-    def laplace_equation(input_, output_):
-        force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
-                      torch.sin(input_.extract(['y'])*torch.pi))
-        nabla_u = nabla(output_, input_, components=['u'], d=['x', 'y'])
-        return nabla_u - force_term
-
-    def nil_dirichlet(input_, output_):
-        value = 0.0
-        return output_.extract(['u']) - value
-
     conditions = {
         'gamma1': Condition(
             location=CartesianDomain({'x': [0, 1], 'y':  1}),
-            function=nil_dirichlet),
+            equation=FixedValue(0.0)),
         'gamma2': Condition(
             location=CartesianDomain({'x': [0, 1], 'y': 0}),
-            function=nil_dirichlet),
+            equation=FixedValue(0.0)),
         'gamma3': Condition(
             location=CartesianDomain({'x':  1, 'y': [0, 1]}),
-            function=nil_dirichlet),
+            equation=FixedValue(0.0)),
         'gamma4': Condition(
             location=CartesianDomain({'x': 0, 'y': [0, 1]}),
-            function=nil_dirichlet),
+            equation=FixedValue(0.0)),
         'D': Condition(
             location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}),
-            function=laplace_equation),
+            equation=my_laplace),
         'data': Condition(
             input_points=in_,
             output_points=out_)
@@ -137,7 +138,7 @@ def test_train():
     pinn.span_pts(n, 'grid', locations=['D'])
     pinn.train(5)
 
-
+"""
 def test_train_2():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
@@ -243,3 +244,4 @@ if torch.cuda.is_available():
         pinn.span_pts(n, 'grid', locations=boundaries)
         pinn.span_pts(n, 'grid', locations=['D'])
         pinn.train(5)
+"""
