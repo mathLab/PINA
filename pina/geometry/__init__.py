@@ -1,10 +1,10 @@
 __all__ = [
     'Location',
     'CartesianDomain',
-    'EllypsoidDomain',
+    'EllipsoidDomain',
 ]
 
 from .location import Location
 from .cartesian import CartesianDomain
-from .ellypsoid import EllypsoidDomain
+from .ellipsoid import EllipsoidDomain
 from .difference_domain import Difference

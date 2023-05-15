@@ -42,6 +42,7 @@ class Network(torch.nn.Module):
                  output_variables, extra_features=None):
         super().__init__()
 
+        print('HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
         if extra_features is None:
             extra_features = []
 
@@ -49,6 +50,7 @@ class Network(torch.nn.Module):
         self._model = model
         self._input_variables = input_variables
         self._output_variables = output_variables
+        print(output_variables)
 
         # check model and input/output
         self._check_consistency()

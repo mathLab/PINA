@@ -8,7 +8,11 @@ def func_vec(x):
     return x**2
 
 def func_scalar(x):
-    return x[:, 0]**2 + x[:, 1]**2 + x[:, 2]**3
+    print('X')
+    x_ = x.extract(['x'])
+    y_ = x.extract(['y'])
+    mu_ = x.extract(['mu'])
+    return x_**2 + y_**2 + mu_**3
 
 data = torch.rand((20, 3), requires_grad=True)
 inp = LabelTensor(data, ['x', 'y', 'mu'])

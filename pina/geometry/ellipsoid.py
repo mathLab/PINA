@@ -4,7 +4,7 @@ from .location import Location
 from ..label_tensor import LabelTensor
 
 
-class EllypsoidDomain(Location):
+class EllipsoidDomain(Location):
     """PINA implementation of Ellipsoid domain."""
 
     def __init__(self, ellipsoid_dict, sample_surface=False):
