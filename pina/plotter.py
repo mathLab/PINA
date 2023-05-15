@@ -182,11 +182,12 @@ class Plotter:
         if filename:
             plt.title('Output {} with parameter {}'.format(components,
                                                            fixed_variables))
+            plt.show()
             plt.savefig(filename)
         else:
             plt.show()
 
-    def plot_loss(self, pinn, label=None, log_scale=True):
+    def plot_loss(self, pinn, label=None, log_scale=True, filename=None):
         """
         Plot the loss function values during traininig.
 
@@ -194,6 +195,8 @@ class Plotter:
         :param str label: the label to use in the legend, defaults to None.
         :param bool log_scale: If True, the y axis is in log scale. Default is
             True.
+        :param str filename: the file name to save the plot. If None, the plot
+            is not saved. Default is None.
         """
 
         if not label:
@@ -211,3 +214,11 @@ class Plotter:
         plt.legend()
         if log_scale:
             plt.yscale('log')
+        plt.title('Loss function')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.show()
+
+        # save plot
+        if filename:
+            plt.savefig(filename)
