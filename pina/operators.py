@@ -64,9 +64,8 @@ def grad(output_, input_, components=None, d=None):
 
         return gradients
 
-   # if not isinstance(input_, LabelTensor):
-   #     print(input_.type())
-   #    raise TypeError
+    if not isinstance(input_, LabelTensor):
+        raise TypeError
 
     if d is None:
         d = input_.labels
