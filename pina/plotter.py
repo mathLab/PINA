@@ -202,7 +202,7 @@ class Plotter:
         epochs = list(pinn.history_loss.keys())
         loss = np.array(list(pinn.history_loss.values()))
         if loss.ndim != 1:
-            loss = loss[:, 0]
+            loss = np.sum(loss, axis=1)
 
         plt.plot(epochs, loss, label=label)
         if log_scale:
