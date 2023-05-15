@@ -5,7 +5,8 @@ import torch.optim.lr_scheduler as lrs
 from .problem import AbstractProblem
 from .model import Network
 from .label_tensor import LabelTensor
-from .utils import merge_tensors, PinaDataset
+from .utils import merge_tensors
+from .dataset import DummyLoader
 
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
@@ -26,6 +27,7 @@ class PINN(object):
                  batch_size=None,
                  dtype=torch.float32,
                  device='cpu',
+                 writer=None,
                  error_norm='mse'):
         '''
         :param AbstractProblem problem: the formualation of the problem.
@@ -84,17 +86,22 @@ class PINN(object):
         self.input_pts = {}
 
         self.trained_epoch = 0
+    
+        from .writer import Writer
+        if writer is None:
+            writer = Writer()
+        self.writer = writer
 
         if not optimizer_kwargs:
             optimizer_kwargs = {}
         optimizer_kwargs['lr'] = lr
         self.optimizer = optimizer(
-            self.model.parameters(), weight_decay=regularizer, **optimizer_kwargs)
-        self._lr_scheduler = lr_scheduler_type(
-            self.optimizer, **lr_scheduler_kwargs)
+            self.model.parameters())#, weight_decay=regularizer, **optimizer_kwargs)
+        #self._lr_scheduler = lr_scheduler_type(
+        #    self.optimizer, **lr_scheduler_kwargs)
 
         self.batch_size = batch_size
-        self.data_set = PinaDataset(self)
+        # self.data_set = PinaDataset(self)
 
     @property
     def problem(self):
@@ -216,139 +223,131 @@ class PINN(object):
             # pts = pts.double()
             self.input_pts[location] = pts
 
-    def train(self, stop=100, frequency_print=2, save_loss=1, trial=None):
+    def _residual_loss(self, input_pts, equation):
+        """
+        Compute the residual loss for a given condition.
 
-        self.model.train()
-        epoch = 0
-        # Add all condition with `input_points` to dataloader
-        for condition in list(set(self.problem.conditions.keys()) - set(self.input_pts.keys())):
-            self.input_pts[condition] = self.problem.conditions[condition]
+        :param torch.Tensor pts: the points to evaluate the residual at.
+        :param Equation equation: the equation to evaluate the residual with.
+        """
 
-        data_loader = self.data_set.dataloader
+        input_pts = input_pts.to(dtype=self.dtype, device=self.device)
+        input_pts.requires_grad_(True)
+        input_pts.retain_grad()
 
-        header = []
-        for condition_name in self.problem.conditions:
-            condition = self.problem.conditions[condition_name]
+        predicted = self.model(input_pts)
+        residuals = equation.residual(input_pts, predicted)
+        return self._compute_norm(residuals)
 
-            if hasattr(condition, 'function'):
-                if isinstance(condition.function, list):
-                    for function in condition.function:
-                        header.append(f'{condition_name}{function.__name__}')
+    def _data_loss(self, input_pts, output_pts):
+        """
+        Compute the residual loss for a given condition.
 
+        :param torch.Tensor pts: the points to evaluate the residual at.
+        :param Equation equation: the equation to evaluate the residual with.
+        """
+        input_pts = input_pts.to(dtype=self.dtype, device=self.device)
+        output_pts = output_pts.to(dtype=self.dtype, device=self.device)
+        predicted = self.model(input_pts)
+        residuals = predicted - output_pts
+        return self._compute_norm(residuals)
+ 
+
+    # def closure(self):
+    #     """
+    #     """
+    #     self.optimizer.zero_grad()
+
+    #     condition_losses = []
+    #     from torch.utils.data import DataLoader
+    #     from .utils import MyDataset
+    #     loader = DataLoader(
+    #         MyDataset(self.input_pts),
+    #         batch_size=self.batch_size,
+    #         num_workers=1
+    #     )
+    #     for condition_name in self.problem.conditions:
+    #         condition = self.problem.conditions[condition_name]
+
+    #         batch_losses = []
+    #         for batch in data_loader[condition_name]:
+
+    #             if hasattr(condition, 'equation'):
+    #                 loss = self._residual_loss(
+    #                     batch[condition_name], condition.equation)
+    #             elif hasattr(condition, 'output_points'):
+    #                 loss = self._data_loss(
+    #                     batch[condition_name], condition.output_points)
+
+    #             batch_losses.append(loss * condition.data_weight)
+
+    #         condition_losses.append(sum(batch_losses))
+
+    #     loss = sum(condition_losses)
+    #     loss.backward()
+    #     return loss
+
+    def closure(self):
+        """
+        """
+        self.optimizer.zero_grad()
+
+        losses = []
+        for i, batch in enumerate(self.loader):
+
+            condition_losses = []
+
+            for condition_name, samples in batch.items():
+
+                if condition_name not in self.problem.conditions:
+                    raise RuntimeError('Something wrong happened.')
+
+                if samples is None or samples.nelement() == 0:
                     continue
 
-            header.append(f'{condition_name}')
+                condition = self.problem.conditions[condition_name]
+
+                if hasattr(condition, 'equation'):
+                    loss = self._residual_loss(samples, condition.equation)
+                elif hasattr(condition, 'output_points'):
+                    loss = self._data_loss(samples, condition.output_points)
+
+                condition_losses.append(loss * condition.data_weight)
+
+            losses.append(sum(condition_losses))
+
+        loss = sum(losses)
+        loss.backward()
+        return losses[0]
+
+    def train(self, stop=100):
+
+        self.model.train()
+
+        ############################################################
+        ## TODO: move to problem class
+        for condition in list(set(self.problem.conditions.keys()) - set(self.input_pts.keys())):
+            self.input_pts[condition] = self.problem.conditions[condition].input_points
+
+        mydata = self.input_pts
+
+        self.loader = DummyLoader(mydata)
 
         while True:
 
-            losses = []
+            loss = self.optimizer.step(closure=self.closure)
 
-            for condition_name in self.problem.conditions:
-                condition = self.problem.conditions[condition_name]
+            self.writer.write_loss_in_loop(self, loss)
 
-                for batch in data_loader[condition_name]:
-
-                    single_loss = []
-
-                    if hasattr(condition, 'function'):
-                        pts = batch[condition_name]
-                        pts = pts.to(dtype=self.dtype, device=self.device)
-                        pts.requires_grad_(True)
-                        pts.retain_grad()
-
-                        predicted = self.model(pts)
-                        for function in condition.function:
-                            residuals = function(pts, predicted)
-                            local_loss = (
-                                condition.data_weight*self._compute_norm(
-                                    residuals))
-                            single_loss.append(local_loss)
-                    elif hasattr(condition, 'output_points'):
-                        pts = condition.input_points.to(
-                            dtype=self.dtype, device=self.device)
-                        predicted = self.model(pts)
-                        residuals = predicted - \
-                            condition.output_points.to(
-                                device=self.device, dtype=self.dtype)  # TODO fix
-                        local_loss = (
-                            condition.data_weight*self._compute_norm(residuals))
-                        single_loss.append(local_loss)
-
-                    self.optimizer.zero_grad()
-                    sum(single_loss).backward()
-                    self.optimizer.step()
-
-                losses.append(sum(single_loss))
-
-            self._lr_scheduler.step()
-
-            if save_loss and (epoch % save_loss == 0 or epoch == 0):
-                self.history_loss[epoch] = [
-                    loss.detach().item() for loss in losses]
-
-            if trial:
-                import optuna
-                trial.report(sum(losses), epoch)
-                if trial.should_prune():
-                    raise optuna.exceptions.TrialPruned()
+            #self._lr_scheduler.step()
 
             if isinstance(stop, int):
-                if epoch == stop:
-                    print('[epoch {:05d}] {:.6e} '.format(
-                        self.trained_epoch, sum(losses).item()), end='')
-                    for loss in losses:
-                        print('{:.6e} '.format(loss.item()), end='')
-                    print()
+                if self.trained_epoch == stop:
                     break
             elif isinstance(stop, float):
-                if sum(losses) < stop:
+                if loss.item() < stop:
                     break
 
-            if epoch % frequency_print == 0 or epoch == 1:
-                print('       {:5s}  {:12s} '.format('', 'sum'),  end='')
-                for name in header:
-                    print('{:12.12s} '.format(name), end='')
-                print()
-
-                print('[epoch {:05d}] {:.6e} '.format(
-                    self.trained_epoch, sum(losses).item()), end='')
-                for loss in losses:
-                    print('{:.6e} '.format(loss.item()), end='')
-                print()
-
             self.trained_epoch += 1
-            epoch += 1
 
         self.model.eval()
-
-        return sum(losses).item()
-
-    # def error(self, dtype='l2', res=100):
-
-    #     import numpy as np
-    #     if hasattr(self.problem, 'truth_solution') and self.problem.truth_solution is not None:
-    #         pts_container = []
-    #         for mn, mx in self.problem.domain_bound:
-    #             pts_container.append(np.linspace(mn, mx, res))
-    #         grids_container = np.meshgrid(*pts_container)
-    #         Z_true = self.problem.truth_solution(*grids_container)
-
-    #     elif hasattr(self.problem, 'data_solution') and self.problem.data_solution is not None:
-    #         grids_container = self.problem.data_solution['grid']
-    #         Z_true = self.problem.data_solution['grid_solution']
-    #     try:
-    #         unrolled_pts = torch.tensor([t.flatten() for t in grids_container]).T.to(
-    #             dtype=self.dtype, device=self.device)
-    #         Z_pred = self.model(unrolled_pts)
-    #         Z_pred = Z_pred.detach().numpy().reshape(grids_container[0].shape)
-
-    #         if dtype == 'l2':
-    #             return np.linalg.norm(Z_pred - Z_true)/np.linalg.norm(Z_true)
-    #         else:
-    #             # TODO H1
-    #             pass
-    #     except:
-    #         print("")
-    #         print("Something went wrong...")
-    #         print(
-    #             "Not able to compute the error. Please pass a data solution or a true solution")
