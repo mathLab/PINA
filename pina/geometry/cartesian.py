@@ -1,9 +1,8 @@
-from .chebyshev import chebyshev_roots
 import torch
 
 from .location import Location
-from .label_tensor import LabelTensor
-from .utils import torch_lhs
+from ..label_tensor import LabelTensor
+from ..utils import torch_lhs, chebyshev_roots
 
 
 class CartesianDomain(Location):
@@ -240,3 +239,31 @@ class CartesianDomain(Location):
             return _Nd_sampler(n, mode, variables)
         else:
             raise ValueError(f'mode={mode} is not valid.')
+
+    
+    def is_inside(self, point, check_border=False):
+        """Check if a point is inside the ellipsoid.
+
+        :param point: Point to be checked
+        :type point: LabelTensor
+        :param check_border: Check if the point is also on the frontier
+            of the ellipsoid, default False.
+        :type check_border: bool
+        :return: Returning True if the point is inside, False otherwise.
+        :rtype: bool
+        """
+        is_inside = []
+        for variable, bound in self.range_.items():
+            if variable in point.labels:
+                if bound[0] <= point.extract([variable]) <= bound[1]:
+                    is_inside.append(True)
+                else:
+                    is_inside.append(False)
+
+        return all(is_inside)
+
+        # TODO check the fixed_ dimensions
+        # for variable, value in self.fixed_.items():
+        #     if variable in point.labels:
+        #         if not (point.extract[variable] == value):
+        #             return False
