@@ -217,7 +217,6 @@ class Plotter:
         plt.title('Loss function')
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
-        plt.show()
 
         # save plot
         if filename:
