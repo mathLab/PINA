@@ -53,7 +53,7 @@ class LabelTensor(torch.Tensor):
                     [0.8207, 0.9239],
                     [0.5545, 0.8927],
                     ...,
-                    [0.9427, 0.5819],
+                    [0.9427, 0.5819]
                     [0.9518, 0.1025],
                     [0.8066, 0.9615]])
         '''
@@ -88,6 +88,7 @@ class LabelTensor(torch.Tensor):
 
         self._labels = labels   # assign the label
 
+    # TODO remove try/ except thing IMPORTANT
     def clone(self, *args, **kwargs):
         """
         Clone the LabelTensor. For more details, see
@@ -96,7 +97,12 @@ class LabelTensor(torch.Tensor):
         :return: a copy of the tensor
         :rtype: LabelTensor
         """
-        return LabelTensor(super().clone(*args, **kwargs), self.labels)
+        try:
+            out = LabelTensor(super().clone(*args, **kwargs), self.labels)
+        except:
+            out = super().clone(*args, **kwargs)
+
+        return out
 
     def to(self, *args, **kwargs):
         """

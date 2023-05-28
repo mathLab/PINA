@@ -2,352 +2,118 @@
 import torch
 import torch.optim.lr_scheduler as lrs
 
-from .problem import AbstractProblem
-from .model import Network
+
+from .solver import SolverInterface
 from .label_tensor import LabelTensor
-from .utils import merge_tensors
-from .dataset import DummyLoader
+from .utils import check_consistency
+from .writer import Writer
 
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
 
-class PINN(object):
+class PINN(SolverInterface):
 
     def __init__(self,
                  problem,
                  model,
                  extra_features=None,
+                 loss = torch.nn.MSELoss,  # TODO to be changed in LossInstance
                  optimizer=torch.optim.Adam,
-                 optimizer_kwargs=None,
-                 lr=0.001,
-                 lr_scheduler_type=lrs.ConstantLR,
-                 lr_scheduler_kwargs={"factor": 1, "total_iters": 0},
-                 regularizer=0.00001,
-                 batch_size=None,
-                 dtype=torch.float32,
-                 device='cpu',
-                 writer=None,
-                 error_norm='mse'):
+                 optimizer_kwargs={'lr' : 0.001},
+                 scheduler=lrs.ConstantLR,
+                 scheduler_kwargs={"factor": 1, "total_iters": 0},
+                 ):
         '''
         :param AbstractProblem problem: the formualation of the problem.
         :param torch.nn.Module model: the neural network model to use.
+        :param torch.nn.Module loss: the loss function used as minimizer,
+            default torch.nn.MSELoss.
         :param torch.nn.Module extra_features: the additional input
             features to use as augmented input.
         :param torch.optim.Optimizer optimizer: the neural network optimizer to
             use; default is `torch.optim.Adam`.
         :param dict optimizer_kwargs: Optimizer constructor keyword args.
         :param float lr: the learning rate; default is 0.001.
-        :param torch.optim.LRScheduler lr_scheduler_type: Learning
+        :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
-        :param dict lr_scheduler_kwargs: LR scheduler constructor keyword args.
-        :param float regularizer: the coefficient for L2 regularizer term.
-        :param type dtype: the data type to use for the model. Valid option are
-            `torch.float32` and `torch.float64` (`torch.float16` only on GPU);
-            default is `torch.float64`.
-        :param str device: the device used for training; default 'cpu'
-            option include 'cuda' if cuda is available.
-        :param (str, int) error_norm: the loss function used as minimizer,
-            default mean square error 'mse'. If string options include mean
-            error 'me' and mean square error 'mse'. If int, the p-norm is
-            calculated where p is specifined by the int input.
-        :param int batch_size: batch size for the dataloader; default 5.
+        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         '''
-
-        if dtype == torch.float64:
-            raise NotImplementedError('only float for now')
-
-        self.problem = problem
-
-        # self._architecture = architecture if architecture else dict()
-        # self._architecture['input_dimension'] = self.problem.domain_bound.shape[0]
-        # self._architecture['output_dimension'] = len(self.problem.variables)
-        # if hasattr(self.problem, 'params_domain'):
-        # self._architecture['input_dimension'] += self.problem.params_domain.shape[0]
-
-        self.error_norm = error_norm
-
-        if device == 'cuda' and not torch.cuda.is_available():
-            raise RuntimeError
-        self.device = torch.device(device)
-
-        self.dtype = dtype
-        self.history_loss = {}
-
-
-        self.model = Network(model=model,
-                             input_variables=problem.input_variables,
-                             output_variables=problem.output_variables,
-                             extra_features=extra_features)
-
-        self.model.to(dtype=self.dtype, device=self.device)
-
-        self.truth_values = {}
-        self.input_pts = {}
-
-        self.trained_epoch = 0
-    
-        from .writer import Writer
-        if writer is None:
-            writer = Writer()
-        self.writer = writer
-
-        if not optimizer_kwargs:
-            optimizer_kwargs = {}
-        optimizer_kwargs['lr'] = lr
-        self.optimizer = optimizer(
-            self.model.parameters())#, weight_decay=regularizer, **optimizer_kwargs)
-        #self._lr_scheduler = lr_scheduler_type(
-        #    self.optimizer, **lr_scheduler_kwargs)
-
-        self.batch_size = batch_size
-        # self.data_set = PinaDataset(self)
-
-    @property
-    def problem(self):
-        """ The problem formulation."""
-        return self._problem
-
-    @problem.setter
-    def problem(self, problem):
-        """
-        Set the problem formulation."""
-        if not isinstance(problem, AbstractProblem):
-            raise TypeError
-        self._problem = problem
-
-    def _compute_norm(self, vec):
-        """
-        Compute the norm of the `vec` one-dimensional tensor based on the
-        `self.error_norm` attribute.     
-
-        .. todo: complete
-
-        :param torch.Tensor vec: the tensor
-        """
-        if isinstance(self.error_norm, int):
-            return torch.linalg.vector_norm(vec, ord=self.error_norm,  dtype=self.dytpe)
-        elif self.error_norm == 'mse':
-            return torch.mean(vec.pow(2))
-        elif self.error_norm == 'me':
-            return torch.mean(torch.abs(vec))
-        else:
-            raise RuntimeError
-
-    def save_state(self, filename):
-        """
-        Save the state of the model.
-
-        :param str filename: the filename to save the state to.
-        """
-        checkpoint = {
-            'epoch': self.trained_epoch,
-            'model_state': self.model.state_dict(),
-            'optimizer_state': self.optimizer.state_dict(),
-            'optimizer_class': self.optimizer.__class__,
-            'history': self.history_loss,
-            'input_points_dict': self.input_pts,
-        }
-
-        # TODO save also architecture param?
-        # if isinstance(self.model, DeepFeedForward):
-        #    checkpoint['model_class'] = self.model.__class__
-        #    checkpoint['model_structure'] = {
-        #    }
-        torch.save(checkpoint, filename)
-
-    def load_state(self, filename):
-        """
-        Load the state of the model.
+        super().__init__(model=model, problem=problem, extra_features=extra_features)
         
-        :param str filename: the filename to load the state from.
+        # check consistency 
+        check_consistency(optimizer, torch.optim.Optimizer, 'optimizer', subclass=True)
+        check_consistency(optimizer_kwargs, dict, 'optimizer_kwargs')
+        check_consistency(scheduler, lrs.LRScheduler, 'scheduler', subclass=True)
+        check_consistency(scheduler_kwargs, dict, 'scheduler_kwargs')
+        # TODO check consistency loss
+
+        # assign variables
+        self._optimizer = optimizer(self.model.parameters(), **optimizer_kwargs)
+        self._scheduler = scheduler(self._optimizer, **scheduler_kwargs)
+        self._loss = loss()
+        self._writer = Writer()
+
+
+    def forward(self, x):
+        """ Forward pass implementation for the PINN
+            solver.
+
+        :param torch.tensor x: Input data. 
+        :return: PINN solution.
+        :rtype: torch.tensor
+        """
+        x = x.extract(self.problem.input_variables)
+
+        for feature in self._extra_features:
+            x = x.append(feature(x))
+
+        output = self.model(x).as_subclass(LabelTensor)
+        output.labels = self.problem.output_variables
+
+        return output
+
+    def configure_optimizers(self):
+        """Optimizer configuration for the PINN
+           solver.
+
+        :return: The optimizers and the schedulers
+        :rtype: tuple(list, list)
+        """
+        return [self._optimizer], [self._scheduler]
+    
+    def training_step(self, batch, batch_idx):
+        """PINN solver training step.
+
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
+        :param batch_idx: The batch index.
+        :type batch_idx: int
+        :return: The sum of the loss functions.
+        :rtype: LabelTensor
         """
 
-        checkpoint = torch.load(filename)
-        self.model.load_state_dict(checkpoint['model_state'])
+        condition_losses = []
 
-        self.optimizer = checkpoint['optimizer_class'](self.model.parameters())
-        self.optimizer.load_state_dict(checkpoint['optimizer_state'])
+        for condition_name, samples in batch.items():
 
-        self.trained_epoch = checkpoint['epoch']
-        self.history_loss = checkpoint['history']
+            if condition_name not in self.problem.conditions:
+                raise RuntimeError('Something wrong happened.')
 
-        self.input_pts = checkpoint['input_points_dict']
+            if samples is None or samples.nelement() == 0:
+                continue
 
-        return self
+            condition = self.problem.conditions[condition_name]
 
-    def span_pts(self, *args, **kwargs):
-        """
-        Generate a set of points to span the `Location` of all the conditions of
-        the problem.
+            if hasattr(condition, 'equation'): # TODO FIX for any loss
+                target = condition.equation.residual(samples, self.forward(samples))
+                loss = self._loss(torch.zeros_like(target), target)
+            elif hasattr(condition, 'output_points'):
+                loss = self._loss(samples, condition.output_points)
 
-        >>> pinn.span_pts(n=10, mode='grid')
-        >>> pinn.span_pts(n=10, mode='grid', location=['bound1'])
-        >>> pinn.span_pts(n=10, mode='grid', variables=['x'])
-        """
+            condition_losses.append(loss * condition.data_weight)
 
-        if all(key in kwargs for key in ['n', 'mode']):
-            argument = {}
-            argument['n'] = kwargs['n']
-            argument['mode'] = kwargs['mode']
-            argument['variables'] = self.problem.input_variables
-            arguments = [argument]
-        elif any(key in kwargs for key in ['n', 'mode']) and args:
-            raise ValueError("Don't mix args and kwargs")
-        elif isinstance(args[0], int) and isinstance(args[1], str):
-            argument = {}
-            argument['n'] = int(args[0])
-            argument['mode'] = args[1]
-            argument['variables'] = self.problem.input_variables
-            arguments = [argument]
-        elif all(isinstance(arg, dict) for arg in args):
-            arguments = args
-        else:
-            raise RuntimeError
-
-        locations = kwargs.get('locations', 'all')
-
-        if locations == 'all':
-            locations = [condition for condition in self.problem.conditions]
-        for location in locations:
-            condition = self.problem.conditions[location]
-
-            samples = tuple(condition.location.sample(
-                            argument['n'],
-                            argument['mode'],
-                            variables=argument['variables'])
-                            for argument in arguments)
-            pts = merge_tensors(samples)
-
-            # TODO
-            # pts = pts.double()
-            self.input_pts[location] = pts
-
-    def _residual_loss(self, input_pts, equation):
-        """
-        Compute the residual loss for a given condition.
-
-        :param torch.Tensor pts: the points to evaluate the residual at.
-        :param Equation equation: the equation to evaluate the residual with.
-        """
-
-        input_pts = input_pts.to(dtype=self.dtype, device=self.device)
-        input_pts.requires_grad_(True)
-        input_pts.retain_grad()
-
-        predicted = self.model(input_pts)
-        residuals = equation.residual(input_pts, predicted)
-        return self._compute_norm(residuals)
-
-    def _data_loss(self, input_pts, output_pts):
-        """
-        Compute the residual loss for a given condition.
-
-        :param torch.Tensor pts: the points to evaluate the residual at.
-        :param Equation equation: the equation to evaluate the residual with.
-        """
-        input_pts = input_pts.to(dtype=self.dtype, device=self.device)
-        output_pts = output_pts.to(dtype=self.dtype, device=self.device)
-        predicted = self.model(input_pts)
-        residuals = predicted - output_pts
-        return self._compute_norm(residuals)
- 
-
-    # def closure(self):
-    #     """
-    #     """
-    #     self.optimizer.zero_grad()
-
-    #     condition_losses = []
-    #     from torch.utils.data import DataLoader
-    #     from .utils import MyDataset
-    #     loader = DataLoader(
-    #         MyDataset(self.input_pts),
-    #         batch_size=self.batch_size,
-    #         num_workers=1
-    #     )
-    #     for condition_name in self.problem.conditions:
-    #         condition = self.problem.conditions[condition_name]
-
-    #         batch_losses = []
-    #         for batch in data_loader[condition_name]:
-
-    #             if hasattr(condition, 'equation'):
-    #                 loss = self._residual_loss(
-    #                     batch[condition_name], condition.equation)
-    #             elif hasattr(condition, 'output_points'):
-    #                 loss = self._data_loss(
-    #                     batch[condition_name], condition.output_points)
-
-    #             batch_losses.append(loss * condition.data_weight)
-
-    #         condition_losses.append(sum(batch_losses))
-
-    #     loss = sum(condition_losses)
-    #     loss.backward()
-    #     return loss
-
-    def closure(self):
-        """
-        """
-        self.optimizer.zero_grad()
-
-        losses = []
-        for i, batch in enumerate(self.loader):
-
-            condition_losses = []
-
-            for condition_name, samples in batch.items():
-
-                if condition_name not in self.problem.conditions:
-                    raise RuntimeError('Something wrong happened.')
-
-                if samples is None or samples.nelement() == 0:
-                    continue
-
-                condition = self.problem.conditions[condition_name]
-
-                if hasattr(condition, 'equation'):
-                    loss = self._residual_loss(samples, condition.equation)
-                elif hasattr(condition, 'output_points'):
-                    loss = self._data_loss(samples, condition.output_points)
-
-                condition_losses.append(loss * condition.data_weight)
-
-            losses.append(sum(condition_losses))
-
-        loss = sum(losses)
-        loss.backward()
-        return losses[0]
-
-    def train(self, stop=100):
-
-        self.model.train()
-
-        ############################################################
-        ## TODO: move to problem class
-        for condition in list(set(self.problem.conditions.keys()) - set(self.input_pts.keys())):
-            self.input_pts[condition] = self.problem.conditions[condition].input_points
-
-        mydata = self.input_pts
-
-        self.loader = DummyLoader(mydata)
-
-        while True:
-
-            loss = self.optimizer.step(closure=self.closure)
-
-            self.writer.write_loss_in_loop(self, loss)
-
-            #self._lr_scheduler.step()
-
-            if isinstance(stop, int):
-                if self.trained_epoch == stop:
-                    break
-            elif isinstance(stop, float):
-                if loss.item() < stop:
-                    break
-
-            self.trained_epoch += 1
-
-        self.model.eval()
+        # TODO Fix the bug, tot_loss is a label tensor without labels
+        # we need to pass it as a torch tensor to make everything work
+        total_loss = sum(condition_losses)
+        return total_loss

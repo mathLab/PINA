@@ -10,6 +10,29 @@ from .label_tensor import LabelTensor
 import torch
 
 
+def check_consistency(object, object_instance, object_name, subclass=False):
+    """Helper function to check object inheritance consistency.
+
+    :param object: The object to check the inheritance 
+    :type object: Object
+    :param object_instance: The parent class from where the object
+        is expected to inherit
+    :type object_instance: Object
+    :param object_name: The name of the object
+    :type object_name: str
+    :param subclass: Check if is a subclass and not instance
+    :type subclass: bool
+    :raises ValueError: If the object does not inherit from the
+        specified class
+    """
+    if not subclass:
+        if not isinstance(object, object_instance):
+            raise ValueError(f"{object_name} must be {object_instance}")
+    else:
+        if not issubclass(object, object_instance):
+            raise ValueError(f"{object_name} must be {object_instance}")
+
+
 def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
     """
     Return the number of parameters of a given `model`.
@@ -189,8 +212,7 @@ class LabelTensorDataset(Dataset):
 class LabelTensorDataLoader(DataLoader):
 
     def collate_fn(self, data):
-        print(data)
-        gggggggggg
+        pass
 #         return dict(zip(self.pinn.input_pts.keys(), dataloaders))
 
 #     class SampleDataset(torch.utils.data.Dataset):
@@ -239,5 +261,4 @@ class LabelTensorDataset(Dataset):
 class LabelTensorDataLoader(DataLoader):
 
     def collate_fn(self, data):
-        print(data)
-        gggggggggg
+        pass
