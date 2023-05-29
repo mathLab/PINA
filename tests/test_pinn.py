@@ -1,16 +1,16 @@
 import torch
 import pytest
 
-from pina import LabelTensor, Condition, CartesianDomain, PINN
 from pina.problem import SpatialProblem
-from pina.model import FeedForward
 from pina.operators import nabla
+from pina.geometry import CartesianDomain
+from pina import Condition, LabelTensor, PINN
+from pina.trainer import Trainer
+from pina.model import FeedForward
 from pina.equation.equation import Equation
 from pina.equation.equation_factory import FixedValue
+from pina.plotter import Plotter
 
-
-in_ = LabelTensor(torch.tensor([[0., 1.]]), ['x', 'y'])
-out_ = LabelTensor(torch.tensor([[0.]]), ['u'])
 
 def laplace_equation(input_, output_):
     force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
@@ -19,6 +19,8 @@ def laplace_equation(input_, output_):
     return nabla_u - force_term
 
 my_laplace = Equation(laplace_equation)
+in_ = LabelTensor(torch.tensor([[0., 1.]], requires_grad=True), ['x', 'y'])
+out_ = LabelTensor(torch.tensor([[0.]], requires_grad=True), ['u'])
 
 class Poisson(SpatialProblem):
     output_variables = ['u']
@@ -68,75 +70,75 @@ class myFeature(torch.nn.Module):
         return LabelTensor(t, ['sin(x)sin(y)'])
 
 
-problem = Poisson()
-model = FeedForward(len(problem.input_variables),len(problem.output_variables))
-model_extra_feat =  FeedForward(len(problem.input_variables) + 1,len(problem.output_variables))
+# make the problem
+poisson_problem = Poisson()
+model = FeedForward(len(poisson_problem.input_variables),len(poisson_problem.output_variables))
+model_extra_feats = FeedForward(len(poisson_problem.input_variables)+1,len(poisson_problem.output_variables))
+extra_feats = [myFeature()]
 
 
 def test_constructor():
-    PINN(problem, model)
+    PINN(problem = poisson_problem, model=model, extra_features=None)
 
 
 def test_constructor_extra_feats():
-    PINN(problem, model_extra_feat, [myFeature()])
+    model = FeedForward(len(poisson_problem.input_variables)+1,len(poisson_problem.output_variables))
+    PINN(problem = poisson_problem, model=model_extra_feats, extra_features=extra_feats)
 
-
-def test_span_pts():
-    pinn = PINN(problem, model)
+# TODO move in test_problem
+def test_discretise_domain():
     n = 10
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-    pinn.span_pts(n, 'grid', locations=boundaries)
+    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     for b in boundaries:
-        assert pinn.input_pts[b].shape[0] == n
-    pinn.span_pts(n, 'random', locations=boundaries)
+        assert poisson_problem.input_pts[b].shape[0] == n
+    poisson_problem.discretise_domain(n, 'random', locations=boundaries)
     for b in boundaries:
-        assert pinn.input_pts[b].shape[0] == n
+        assert poisson_problem.input_pts[b].shape[0] == n
 
-    pinn.span_pts(n, 'grid', locations=['D'])
-    assert pinn.input_pts['D'].shape[0] == n**2
-    pinn.span_pts(n, 'random', locations=['D'])
-    assert pinn.input_pts['D'].shape[0] == n
+    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
+    assert poisson_problem.input_pts['D'].shape[0] == n**2
+    poisson_problem.discretise_domain(n, 'random', locations=['D'])
+    assert poisson_problem.input_pts['D'].shape[0] == n
 
-    pinn.span_pts(n, 'latin', locations=['D'])
-    assert pinn.input_pts['D'].shape[0] == n
+    poisson_problem.discretise_domain(n, 'latin', locations=['D'])
+    assert poisson_problem.input_pts['D'].shape[0] == n
 
-    pinn.span_pts(n, 'lh', locations=['D'])
-    assert pinn.input_pts['D'].shape[0] == n
+    poisson_problem.discretise_domain(n, 'lh', locations=['D'])
+    assert poisson_problem.input_pts['D'].shape[0] == n
 
-
+# TODO move in test_problem
 def test_sampling_all_args():
-    pinn = PINN(problem, model)
     n = 10
-    pinn.span_pts(n, 'grid', locations=['D'])
+    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
 
-
+# TODO move in test_problem
 def test_sampling_all_kwargs():
-    pinn = PINN(problem, model)
     n = 10
-    pinn.span_pts(n=n, mode='latin', locations=['D'])
+    poisson_problem.discretise_domain(n=n, mode='latin', locations=['D'])
 
-
+# TODO move in test_problem
 def test_sampling_dict():
-    pinn = PINN(problem, model)
     n = 10
-    pinn.span_pts(
+    poisson_problem.discretise_domain(
         {'variables': ['x', 'y'], 'mode': 'grid', 'n': n}, locations=['D'])
 
-
+# TODO move in test_problem
 def test_sampling_mixed_args_kwargs():
-    pinn = PINN(problem, model)
     n = 10
     with pytest.raises(ValueError):
-        pinn.span_pts(n, mode='latin', locations=['D'])
+        poisson_problem.discretise_domain(n, mode='latin', locations=['D'])
 
-
+# TODO test_trainer
 def test_train():
-    pinn = PINN(problem, model)
+    poisson_problem = Poisson()
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
-    pinn.span_pts(n, 'grid', locations=boundaries)
-    pinn.span_pts(n, 'grid', locations=['D'])
-    pinn.train(5)
+    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
+    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
+    pinn = PINN(problem = poisson_problem, model=model, extra_features=None)
+    trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5})
+    trainer.train()
 
 """
 def test_train_2():
@@ -146,8 +148,8 @@ def test_train_2():
     param = [0, 3]
     for i, truth_key in zip(param, expected_keys):
         pinn = PINN(problem, model)
-        pinn.span_pts(n, 'grid', locations=boundaries)
-        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.discretise_domain(n, 'grid', locations=boundaries)
+        pinn.discretise_domain(n, 'grid', locations=['D'])
         pinn.train(50, save_loss=i)
         assert list(pinn.history_loss.keys()) == truth_key
 
@@ -156,8 +158,8 @@ def test_train_extra_feats():
     pinn = PINN(problem, model_extra_feat, [myFeature()])
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
-    pinn.span_pts(n, 'grid', locations=boundaries)
-    pinn.span_pts(n, 'grid', locations=['D'])
+    pinn.discretise_domain(n, 'grid', locations=boundaries)
+    pinn.discretise_domain(n, 'grid', locations=['D'])
     pinn.train(5)
 
 
@@ -168,8 +170,8 @@ def test_train_2_extra_feats():
     param = [0, 3]
     for i, truth_key in zip(param, expected_keys):
         pinn = PINN(problem, model_extra_feat, [myFeature()])
-        pinn.span_pts(n, 'grid', locations=boundaries)
-        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.discretise_domain(n, 'grid', locations=boundaries)
+        pinn.discretise_domain(n, 'grid', locations=['D'])
         pinn.train(50, save_loss=i)
         assert list(pinn.history_loss.keys()) == truth_key
 
@@ -181,8 +183,8 @@ def test_train_with_optimizer_kwargs():
     param = [0, 3]
     for i, truth_key in zip(param, expected_keys):
         pinn = PINN(problem, model, optimizer_kwargs={'lr' : 0.3})
-        pinn.span_pts(n, 'grid', locations=boundaries)
-        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.discretise_domain(n, 'grid', locations=boundaries)
+        pinn.discretise_domain(n, 'grid', locations=['D'])
         pinn.train(50, save_loss=i)
         assert list(pinn.history_loss.keys()) == truth_key
 
@@ -199,8 +201,8 @@ def test_train_with_lr_scheduler():
             lr_scheduler_type=torch.optim.lr_scheduler.CyclicLR,
             lr_scheduler_kwargs={'base_lr' : 0.1, 'max_lr' : 0.3, 'cycle_momentum': False}
         )
-        pinn.span_pts(n, 'grid', locations=boundaries)
-        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.discretise_domain(n, 'grid', locations=boundaries)
+        pinn.discretise_domain(n, 'grid', locations=['D'])
         pinn.train(50, save_loss=i)
         assert list(pinn.history_loss.keys()) == truth_key
 
@@ -209,8 +211,8 @@ def test_train_with_lr_scheduler():
 #     pinn = PINN(problem, model, batch_size=6)
 #     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
 #     n = 10
-#     pinn.span_pts(n, 'grid', locations=boundaries)
-#     pinn.span_pts(n, 'grid', locations=['D'])
+#     pinn.discretise_domain(n, 'grid', locations=boundaries)
+#     pinn.discretise_domain(n, 'grid', locations=['D'])
 #     pinn.train(5)
 
 
@@ -221,8 +223,8 @@ def test_train_with_lr_scheduler():
 #     param = [0, 3]
 #     for i, truth_key in zip(param, expected_keys):
 #         pinn = PINN(problem, model, batch_size=6)
-#         pinn.span_pts(n, 'grid', locations=boundaries)
-#         pinn.span_pts(n, 'grid', locations=['D'])
+#         pinn.discretise_domain(n, 'grid', locations=boundaries)
+#         pinn.discretise_domain(n, 'grid', locations=['D'])
 #         pinn.train(50, save_loss=i)
 #         assert list(pinn.history_loss.keys()) == truth_key
 
@@ -233,15 +235,15 @@ if torch.cuda.is_available():
     #     pinn = PINN(problem, model, batch_size=20, device='cuda')
     #     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     #     n = 100
-    #     pinn.span_pts(n, 'grid', locations=boundaries)
-    #     pinn.span_pts(n, 'grid', locations=['D'])
+    #     pinn.discretise_domain(n, 'grid', locations=boundaries)
+    #     pinn.discretise_domain(n, 'grid', locations=['D'])
     #     pinn.train(5)
 
     def test_gpu_train_nobatch():
         pinn = PINN(problem, model, batch_size=None, device='cuda')
         boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
         n = 100
-        pinn.span_pts(n, 'grid', locations=boundaries)
-        pinn.span_pts(n, 'grid', locations=['D'])
+        pinn.discretise_domain(n, 'grid', locations=boundaries)
+        pinn.discretise_domain(n, 'grid', locations=['D'])
         pinn.train(5)
 """

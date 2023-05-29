@@ -7,6 +7,8 @@ from .solver import SolverInterface
 from .label_tensor import LabelTensor
 from .utils import check_consistency
 from .writer import Writer
+from .loss import LossInterface
+from torch.nn.modules.loss import _Loss
 
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
@@ -46,7 +48,7 @@ class PINN(SolverInterface):
         check_consistency(optimizer_kwargs, dict, 'optimizer_kwargs')
         check_consistency(scheduler, lrs.LRScheduler, 'scheduler', subclass=True)
         check_consistency(scheduler_kwargs, dict, 'scheduler_kwargs')
-        # TODO check consistency loss
+        check_consistency(loss, (LossInterface, _Loss), 'loss', subclass=True)
 
         # assign variables
         self._optimizer = optimizer(self.model.parameters(), **optimizer_kwargs)
