@@ -82,54 +82,9 @@ def test_constructor():
 
 
 def test_constructor_extra_feats():
-    model = FeedForward(len(poisson_problem.input_variables)+1,len(poisson_problem.output_variables))
+    model_extra_feats = FeedForward(len(poisson_problem.input_variables)+1,len(poisson_problem.output_variables))
     PINN(problem = poisson_problem, model=model_extra_feats, extra_features=extra_feats)
 
-# TODO move in test_problem
-def test_discretise_domain():
-    n = 10
-    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    for b in boundaries:
-        assert poisson_problem.input_pts[b].shape[0] == n
-    poisson_problem.discretise_domain(n, 'random', locations=boundaries)
-    for b in boundaries:
-        assert poisson_problem.input_pts[b].shape[0] == n
-
-    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n**2
-    poisson_problem.discretise_domain(n, 'random', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n
-
-    poisson_problem.discretise_domain(n, 'latin', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n
-
-    poisson_problem.discretise_domain(n, 'lh', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n
-
-# TODO move in test_problem
-def test_sampling_all_args():
-    n = 10
-    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
-
-# TODO move in test_problem
-def test_sampling_all_kwargs():
-    n = 10
-    poisson_problem.discretise_domain(n=n, mode='latin', locations=['D'])
-
-# TODO move in test_problem
-def test_sampling_dict():
-    n = 10
-    poisson_problem.discretise_domain(
-        {'variables': ['x', 'y'], 'mode': 'grid', 'n': n}, locations=['D'])
-
-# TODO move in test_problem
-def test_sampling_mixed_args_kwargs():
-    n = 10
-    with pytest.raises(ValueError):
-        poisson_problem.discretise_domain(n, mode='latin', locations=['D'])
-
-# TODO test_trainer
 def test_train():
     poisson_problem = Poisson()
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
@@ -137,6 +92,16 @@ def test_train():
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     poisson_problem.discretise_domain(n, 'grid', locations=['D'])
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None)
+    trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5})
+    trainer.train()
+
+def test_train_extra_feats():
+    poisson_problem = Poisson()
+    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+    n = 10
+    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
+    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
+    pinn = PINN(problem = poisson_problem, model=model_extra_feats, extra_features=extra_feats)
     trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5})
     trainer.train()
 
