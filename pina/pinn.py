@@ -104,18 +104,14 @@ class PINN(SolverInterface):
 
             condition = self.problem.conditions[condition_name]
 
-            # PINN loss: equation evaluated on location
-            if hasattr(condition, 'equation') and hasattr(condition, 'location'):
-                target = condition.equation.residual(samples, self.forward(samples))
-                loss = self._loss(torch.zeros_like(target), target)
-            # PINN loss: equation evaluated on input points
-            elif hasattr(condition, 'equation') and hasattr(condition, 'input_points'):
-                samples = condition.input_points
+            # PINN loss: equation evaluated on location or input_points
+            if hasattr(condition, 'equation'):
                 target = condition.equation.residual(samples, self.forward(samples))
                 loss = self._loss(torch.zeros_like(target), target)
             # PINN loss: evaluate model(input_points) vs output_points
-            elif hasattr(condition, 'output_points') and hasattr(condition, 'input_points'):
-                loss = self._loss(self.forward(condition.input_points), condition.output_points)
+            elif hasattr(condition, 'output_points'):
+                input_pts, output_pts = samples
+                loss = self._loss(self.forward(input_pts), output_pts)
 
             condition_losses.append(loss * condition.data_weight)
 
