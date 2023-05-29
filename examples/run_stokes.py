@@ -37,7 +37,9 @@ if __name__ == "__main__":
     if args.s:
 
         pinn.span_pts(200, 'grid', locations=['gamma_top', 'gamma_bot', 'gamma_in', 'gamma_out'])
-        pinn.span_pts(2000, 'random', locations=['D'])
+        # pinn.span_pts(2000, 'random', locations=['D'])
+        pinn.span_pts(2000, 'random', locations=['D1'])
+        pinn.span_pts(2000, 'random', locations=['D2'])
         pinn.train(10000, 100)
         with open('stokes_history_{}.txt'.format(args.id_run), 'w') as file_:
             for i, losses in pinn.history_loss.items():

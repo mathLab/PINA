@@ -1,38 +1,10 @@
 import argparse
-import torch
 
 from torch.nn import Softplus
 
-from pina.problem import SpatialProblem
-from pina.operators import grad
 from pina.model import FeedForward
-from pina import Condition, Span, Plotter, PINN
-
-
-class FirstOrderODE(SpatialProblem):
-
-    x_rng = [0, 5]
-    output_variables = ['y']
-    spatial_domain = Span({'x': x_rng})
-
-    def ode(input_, output_):
-        y = output_
-        x = input_
-        return grad(y, x) + y - x
-
-    def fixed(input_, output_):
-        exp_value = 1.
-        return output_ - exp_value
-
-    def solution(self, input_):
-        x = input_
-        return x - 1.0 + 2*torch.exp(-x)
-
-    conditions = {
-        'bc': Condition(Span({'x': x_rng[0]}), fixed),
-        'dd': Condition(Span({'x': x_rng}), ode),
-    }
-    truth_solution = solution
+from pina import Plotter, PINN
+from problems.first_order_ode import FirstOrderODE
 
 
 if __name__ == "__main__":
@@ -44,6 +16,7 @@ if __name__ == "__main__":
     parser.add_argument("id_run", help="number of run", type=int)
     args = parser.parse_args()
 
+    # define Problem + Model + PINN
     problem = FirstOrderODE()
     model = FeedForward(
         layers=[4]*2,
@@ -51,7 +24,6 @@ if __name__ == "__main__":
         input_variables=problem.input_variables,
         func=Softplus,
     )
-
     pinn = PINN(problem, model, lr=0.03, error_norm='mse', regularizer=0)
 
     if args.s:
