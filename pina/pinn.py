@@ -102,16 +102,20 @@ class PINN(SolverInterface):
             if condition_name not in self.problem.conditions:
                 raise RuntimeError('Something wrong happened.')
 
-            if samples is None or samples.nelement() == 0:
-                continue
-
             condition = self.problem.conditions[condition_name]
 
-            if hasattr(condition, 'equation'): # TODO FIX for any loss
+            # PINN loss: equation evaluated on location
+            if hasattr(condition, 'equation') and hasattr(condition, 'location'):
                 target = condition.equation.residual(samples, self.forward(samples))
                 loss = self._loss(torch.zeros_like(target), target)
-            elif hasattr(condition, 'output_points'):
-                loss = self._loss(samples, condition.output_points)
+            # PINN loss: equation evaluated on input points
+            elif hasattr(condition, 'equation') and hasattr(condition, 'input_points'):
+                samples = condition.input_points
+                target = condition.equation.residual(samples, self.forward(samples))
+                loss = self._loss(torch.zeros_like(target), target)
+            # PINN loss: evaluate model(input_points) vs output_points
+            elif hasattr(condition, 'output_points') and hasattr(condition, 'input_points'):
+                loss = self._loss(self.forward(condition.input_points), condition.output_points)
 
             condition_losses.append(loss * condition.data_weight)
 

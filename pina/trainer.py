@@ -19,12 +19,9 @@ class Trainer(pl.Trainer):
             raise RuntimeError('Input points for training is None. Please '
                                'sample points in your problem by calling '
                                'discretise_domain function before train.')
-        mydata = solver.problem.input_pts
-        # TODO
-        # this works only for sampled points
-        # we need to add the capability to get input/output points
-        # from problem.
-        self._loader = DummyLoader(mydata) 
+        
+        # TODO: make a better dataloader for train
+        self._loader = DummyLoader(solver.problem.input_pts) 
 
 
     def train(self): # TODO add kwargs and lightining capabilities
