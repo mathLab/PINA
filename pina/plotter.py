@@ -182,7 +182,6 @@ class Plotter:
         if filename:
             plt.title('Output {} with parameter {}'.format(components,
                                                            fixed_variables))
-            plt.show()
             plt.savefig(filename)
         else:
             plt.show()
