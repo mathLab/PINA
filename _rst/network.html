@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network &mdash; PINA 0.0.2.dev0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="FeedForward" href="fnn.html" />
+    <link rel="prev" title="Location" href="location.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PINA
+          </a>
+              <div class="version">
+                0.0.2.dev0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="span.html">Span</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operators.html">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotter.html">Plotter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="condition.html">Condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="location.html">Location</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="code.html#model">Model</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fnn.html">FeedForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multifeedforward.html">MultiFeedForward</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#problem">Problem</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial.html">1. Getting start with PINA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">2. Poisson problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">3. Wave equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">Network</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_rst/network.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-pina.model.network">
+<span id="network"></span><h1>Network<a class="headerlink" href="#module-pina.model.network" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pina.model.network.Network">
+<em class="property">class </em><code class="sig-name descname">Network</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">input_variables</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">extra_features=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/network.html#Network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.network.Network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<p>The PINA implementation of any neural network.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><em>torch.nn.Module</em></a>) – the torch model of the network.</p></li>
+<li><p><strong>input_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the list containing the labels
+corresponding to the input components of the model.</p></li>
+<li><p><strong>output_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the list containing the labels
+corresponding to the components of the output computed by the model.</p></li>
+<li><p><strong>extra_features</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><em>torch.nn.Module</em></a>) – the additional input
+features to use as augmented input.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Example</dt>
+<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">SimpleNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">SimpleNet</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output_variables</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model_feat</span> <span class="o">=</span> <span class="n">Network</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">,</span> <span class="n">output_variables</span><span class="p">)</span>
+<span class="go">Network(</span>
+<span class="go">    (extra_features): Sequential()</span>
+<span class="go">    (model): Sequential(</span>
+<span class="go">        (0): Linear(in_features=2, out_features=20, bias=True)</span>
+<span class="go">        (1): Tanh()</span>
+<span class="go">        (2): Linear(in_features=20, out_features=1, bias=True)</span>
+<span class="go">    )</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+<dl class="method">
+<dt id="pina.model.network.Network._check_consistency">
+<code class="sig-name descname">_check_consistency</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/network.html#Network._check_consistency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.network.Network._check_consistency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checking the consistency of model with input and output variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – Error in constructing the PINA network</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.model.network.Network.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/network.html#Network.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.network.Network.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward method for Network class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>torch.tensor</em>) – input of the network</p>
+</dd>
+<dt class="field-even">Return torch.tensor</dt>
+<dd class="field-even"><p>output of the network</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="location.html" class="btn btn-neutral float-left" title="Location" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fnn.html" class="btn btn-neutral float-right" title="FeedForward" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
+      <span class="lastupdated">Last updated on Jun 02, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

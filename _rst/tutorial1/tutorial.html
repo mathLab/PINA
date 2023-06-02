@@ -215,8 +215,8 @@ class SimpleODE(SpatialProblem):
 
     # Conditions to hold
     conditions = {
-        &#39;x0&#39;: Condition(Span({&#39;x&#39;: 0.}), initial_condition),
-        &#39;D&#39;: Condition(Span({&#39;x&#39;: [0, 1]}), ode_equation),
+        &#39;x0&#39;: Condition(location=Span({&#39;x&#39;: 0.}), function=initial_condition),
+        &#39;D&#39;: Condition(location=Span({&#39;x&#39;: [0, 1]}), function=ode_equation),
     }
 
     # defining true solution
@@ -357,7 +357,7 @@ plotter.plot_loss(pinn)
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Apr 19, 2023.
+      <span class="lastupdated">Last updated on Jun 02, 2023.
       </span></p>
   </div>
 
