@@ -117,6 +117,7 @@ class LabelTensorDataset(Dataset):
     def __len__(self):
         return max([len(getattr(self, label)) for label in self.labels])
 
+# TODO: working also for datapoints
 class DummyLoader:
 
     def __init__(self, data) -> None:
