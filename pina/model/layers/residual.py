@@ -6,11 +6,12 @@ from ...utils import check_consistency
 class ResidualBlock(nn.Module):
     """Residual block base class. Implementation of a residual block.
 
-        .. seealso::
+    .. seealso::
 
-        **Original reference**: Coscia, D., Meneghetti, L., Demo, N.,
-        Stabile, G., & Rozza, G.. (2022). A Continuous Convolutional Trainable
-        Filter for Modelling Unstructured Data.
+        **Original reference**: He, Kaiming, et al.
+        "Deep residual learning for image recognition."
+        Proceedings of the IEEE conference on computer vision
+        and pattern recognition. 2016..
         <https://arxiv.org/pdf/1512.03385.pdf>`_.
 
     """
