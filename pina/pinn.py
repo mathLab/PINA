@@ -20,23 +20,23 @@ class PINN(SolverInterface):
                  problem,
                  model,
                  extra_features=None,
-                 loss = torch.nn.MSELoss,  # TODO to be changed in LossInstance
+                 loss = torch.nn.MSELoss(),
                  optimizer=torch.optim.Adam,
                  optimizer_kwargs={'lr' : 0.001},
                  scheduler=lrs.ConstantLR,
                  scheduler_kwargs={"factor": 1, "total_iters": 0},
                  ):
         '''
-        :param AbstractProblem problem: the formualation of the problem.
-        :param torch.nn.Module model: the neural network model to use.
-        :param torch.nn.Module loss: the loss function used as minimizer,
-            default torch.nn.MSELoss.
-        :param torch.nn.Module extra_features: the additional input
+        :param AbstractProblem problem: The formualation of the problem.
+        :param torch.nn.Module model: The neural network model to use.
+        :param torch.nn.Module loss: The loss function used as minimizer,
+            default torch.nn.MSELoss().
+        :param torch.nn.Module extra_features: The additional input
             features to use as augmented input.
-        :param torch.optim.Optimizer optimizer: the neural network optimizer to
+        :param torch.optim.Optimizer optimizer: The neural network optimizer to
             use; default is `torch.optim.Adam`.
         :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param float lr: the learning rate; default is 0.001.
+        :param float lr: The learning rate; default is 0.001.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
@@ -48,31 +48,29 @@ class PINN(SolverInterface):
         check_consistency(optimizer_kwargs, dict, 'optimizer_kwargs')
         check_consistency(scheduler, lrs.LRScheduler, 'scheduler', subclass=True)
         check_consistency(scheduler_kwargs, dict, 'scheduler_kwargs')
-        check_consistency(loss, (LossInterface, _Loss), 'loss', subclass=True)
+        check_consistency(loss, (LossInterface, _Loss), 'loss', subclass=False)
 
         # assign variables
         self._optimizer = optimizer(self.model.parameters(), **optimizer_kwargs)
         self._scheduler = scheduler(self._optimizer, **scheduler_kwargs)
-        self._loss = loss()
+        self._loss = loss
         self._writer = Writer()
 
 
     def forward(self, x):
-        """ Forward pass implementation for the PINN
-            solver.
+        """Forward pass implementation for the PINN
+           solver.
 
         :param torch.tensor x: Input data. 
         :return: PINN solution.
         :rtype: torch.tensor
         """
+        # extract labels
         x = x.extract(self.problem.input_variables)
-
-        for feature in self._extra_features:
-            x = x.append(feature(x))
-
+        # perform forward pass
         output = self.model(x).as_subclass(LabelTensor)
+        # set the labels
         output.labels = self.problem.output_variables
-
         return output
 
     def configure_optimizers(self):

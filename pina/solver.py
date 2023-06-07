@@ -1,8 +1,7 @@
 """ Solver module. """
 
 from abc import ABCMeta, abstractmethod
-from typing import Any
-import torch.nn as nn
+from .model.network import Network
 import lightning.pytorch as pl
 from .utils import check_consistency
 from .problem import AbstractProblem
@@ -20,23 +19,12 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
         """
         super().__init__()
         
-        # check inheritance consistency for model and pina problem
-        check_consistency(model, nn.Module, 'torch model')
+        # check inheritance for pina problem
         check_consistency(problem, AbstractProblem, 'pina problem')
 
-        # assigning class variables
-        self._model = model
+        # assigning class variables (check consistency inside Network class)
+        self._pina_model = Network(model=model, extra_features=extra_features)
         self._problem = problem
-
-        # check consistency and assign extra fatures 
-        if extra_features is None:
-            self._extra_features = []
-        else:
-            for feat in extra_features:
-                check_consistency(feat, nn.Module, 'extra features')
-            self._extra_features = nn.Sequential(*extra_features)
-
-        # check model works with inputs TODO
 
     @abstractmethod
     def forward(self):
@@ -54,7 +42,7 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
     def model(self):
         """
         The torch model."""
-        return self._model
+        return self._pina_model
 
     @property
     def problem(self):

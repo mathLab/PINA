@@ -10,6 +10,7 @@ from pina.model import FeedForward
 from pina.equation.equation import Equation
 from pina.equation.equation_factory import FixedValue
 from pina.plotter import Plotter
+from pina.loss import LpLoss
 
 
 def laplace_equation(input_, output_):
@@ -91,7 +92,7 @@ def test_train():
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     poisson_problem.discretise_domain(n, 'grid', locations=['D'])
-    pinn = PINN(problem = poisson_problem, model=model, extra_features=None)
+    pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
     trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5})
     trainer.train()
 

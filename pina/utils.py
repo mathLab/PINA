@@ -11,17 +11,17 @@ import torch
 
 
 def check_consistency(object, object_instance, object_name, subclass=False):
-    """Helper function to check object inheritance consistency.
+    """Helper function to check object inheritance consistency. 
+       Given a specific ``'object'`` we check if the object is
+       instance of a specific ``'object_instance'``, or in case
+       ``'subclass=True'`` we check if the object is subclass
+       if the ``'object_instance'``.
 
-    :param object: The object to check the inheritance 
-    :type object: Object
-    :param object_instance: The parent class from where the object
+    :param Object object: The object to check the inheritance 
+    :param Object object_instance: The parent class from where the object
         is expected to inherit
-    :type object_instance: Object
-    :param object_name: The name of the object
-    :type object_name: str
-    :param subclass: Check if is a subclass and not instance
-    :type subclass: bool
+    :param str object_name: The name of the object
+    :param bool subclass: Check if is a subclass and not instance
     :raises ValueError: If the object does not inherit from the
         specified class
     """

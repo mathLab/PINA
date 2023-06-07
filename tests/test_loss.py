@@ -29,18 +29,18 @@ def test_LpLoss_forward():
 def test_LpRelativeLoss_constructor():
     # test reduction
     for reduction in available_reductions:
-        LpRelativeLoss(reduction=reduction)
+        LpLoss(reduction=reduction, relative=True)
     # test p
     for p in [float('inf'), -float('inf'), 1, 10, -8]:
-        LpRelativeLoss(p=p)
+        LpLoss(p=p,relative=True)
 
 def test_LpRelativeLoss_forward():
     # l2 relative loss
-    loss = LpRelativeLoss(p=2, reduction='mean')
+    loss = LpLoss(p=2, reduction='mean',relative=True)
     l2_loss = torch.sqrt((input-target).pow(2))/torch.sqrt(input.pow(2))
     assert loss(input, target) == torch.mean(l2_loss)
     # l1 relative loss
-    loss = LpRelativeLoss(p=1, reduction='sum')
+    loss = LpLoss(p=1, reduction='sum',relative=True)
     l1_loss = torch.abs(input-target)/torch.abs(input)
     assert loss(input, target) == torch.sum(l1_loss)
 
