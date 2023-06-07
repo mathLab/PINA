@@ -20,7 +20,7 @@ class AbstractProblem(metaclass=ABCMeta):
 
         # varible to check if sampling is done. If no location
         # element is presented in Condition this variable is set to true
-        self.have_sampled_points = True
+        self._have_sampled_points = {}
 
         # put in self.input_pts all the points that we don't need to sample
         self._span_condition_points()
@@ -107,7 +107,7 @@ class AbstractProblem(metaclass=ABCMeta):
                 samples = (condition.input_points, condition.output_points)
             # skip if we need to sample
             elif hasattr(condition, 'location'):
-                self.have_sampled_points = False
+                self._have_sampled_points[condition_name] = False
                 continue
             self.input_pts[condition_name] = samples
 
@@ -156,6 +156,29 @@ class AbstractProblem(metaclass=ABCMeta):
             # setting the grad
             self.input_pts[location].requires_grad_(True)
             self.input_pts[location].retain_grad()
+            # the condition is sampled
+            self._have_sampled_points[location] = True
 
-        # all points have been sampled
-        self.have_sampled_points = True
+    @property
+    def have_sampled_points(self):
+        """
+        Check if all points for 
+        ``'Location'`` are sampled.
+        """ 
+        return all(self._have_sampled_points.values())
+    
+    @property
+    def not_sampled_points(self):
+        """Check which points are 
+        not sampled.
+        """
+        # variables which are not sampled
+        not_sampled = None
+        if self.have_sampled_points is False:
+            # check which one are not sampled:
+            not_sampled = []
+            for condition_name, is_sample in self._have_sampled_points.items():
+                if not is_sample:
+                    not_sampled.append(condition_name)
+        return not_sampled
+            

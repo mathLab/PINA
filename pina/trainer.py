@@ -16,9 +16,11 @@ class Trainer(pl.Trainer):
 
         # create dataloader
         if solver.problem.have_sampled_points is False:
-            raise RuntimeError('Input points for training is None. Please '
+            raise RuntimeError(f'Input points in {solver.problem.not_sampled_points} '
+                               'training are None. Please '
                                'sample points in your problem by calling '
-                               'discretise_domain function before train.')
+                               'discretise_domain function before train '
+                               'in the provided locations.')
         
         # TODO: make a better dataloader for train
         self._loader = DummyLoader(solver.problem.input_pts) 
