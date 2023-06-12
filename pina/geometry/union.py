@@ -1,7 +1,8 @@
 import torch
 from location import Location
 
-class GeometryUnion(Location):
+
+class Union(Location):
     """ PINA implementation of Unions of Domains."""
 
     def __init__(self, geometries):
@@ -34,7 +35,7 @@ class GeometryUnion(Location):
         for geometry in self.geometries:
             all_variables.update(geometry.variables)
         return list(all_variables)
-    
+
     def is_inside(self, point, check_border=False):
         """Check if a point is inside the union domain.
 
@@ -50,7 +51,7 @@ class GeometryUnion(Location):
             if geometry.is_inside(point, check_border):
                 return True
         return False
-    
+
     def sample(self, n, mode='random', variables='all'):
         """Sample routine.
 
@@ -69,7 +70,7 @@ class GeometryUnion(Location):
 
             # Create a union of the ellipsoid domains
             >>> union = GeometryUnion([ellipsoid1, ellipsoid2])
-            
+
             >>> union.sample(n=1000)
                 LabelTensor([[-0.2025,  0.0072],
                     [ 0.0358,  0.5748],
