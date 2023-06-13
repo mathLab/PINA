@@ -86,24 +86,24 @@ def test_constructor_extra_feats():
     model_extra_feats = FeedForward(len(poisson_problem.input_variables)+1,len(poisson_problem.output_variables))
     PINN(problem = poisson_problem, model=model_extra_feats, extra_features=extra_feats)
 
-def test_train():
+def test_train_cpu():
     poisson_problem = Poisson()
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     poisson_problem.discretise_domain(n, 'grid', locations=['D'])
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
-    trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5})
+    trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'cpu'})
     trainer.train()
 
-def test_train_extra_feats():
+def test_train_extra_feats_cpu():
     poisson_problem = Poisson()
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     poisson_problem.discretise_domain(n, 'grid', locations=['D'])
     pinn = PINN(problem = poisson_problem, model=model_extra_feats, extra_features=extra_feats)
-    trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5})
+    trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'cpu'})
     trainer.train()
 
 """
