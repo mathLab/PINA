@@ -8,7 +8,7 @@ class Union(Location):
     def __init__(self, geometries):
         """ PINA implementation of Unions of Domains.
 
-        :param geometries: A list of shapes from pina.geometry such as 
+        :param list geometries: A list of shapes from pina.geometry such as 
                 EllipsoidDomain or TriangleDomain
 
         :Example:
