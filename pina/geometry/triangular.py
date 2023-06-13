@@ -2,12 +2,12 @@ import torch
 import numpy as np
 import math
 
-#from .location import Location
-#from ..label_tensor import LabelTensor
-#from ..utils import torch_lhs, chebyshev_roots
+from .location import Location
+from ..label_tensor import LabelTensor
+from ..utils import torch_lhs, chebyshev_roots
 
 
-class TriangularDomain:#(Location):
+class TriangularDomain(Location):
     """PINA implementation of a Triangle."""
 
     def __init__(self, span_dict):
@@ -115,3 +115,6 @@ class TriangularDomain:#(Location):
             return False
 
         return sum(barycentric_coords) - _afg(_gramian(self.vectors)) <= 1e-6
+    
+    def sample(self):
+        raise NotImplementedError
