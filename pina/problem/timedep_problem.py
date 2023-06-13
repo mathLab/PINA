@@ -46,7 +46,7 @@ class TimeDependentProblem(AbstractProblem):
         >>>         'D': Condition(Span({'x': [0, 3], 't':[0, 1]}), wave_equation)}
 
     """
-
+    
     @abstractmethod
     def temporal_domain(self):
         """
