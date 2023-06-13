@@ -1,5 +1,7 @@
 import torch
 from .location import Location
+from ..utils import check_consistency
+from ..label_tensor import LabelTensor
 
 
 class Union(Location):
@@ -8,8 +10,8 @@ class Union(Location):
     def __init__(self, geometries):
         """ PINA implementation of Unions of Domains.
 
-        :param list geometries: A list of shapes from pina.geometry such as 
-                EllipsoidDomain or TriangleDomain
+        :param list geometries: A list of geometries from 'pina.geometry' 
+            such as 'EllipsoidDomain' or 'CartesianDomain'
 
         :Example:
             # Create two ellipsoid domains
@@ -20,10 +22,12 @@ class Union(Location):
             >>> union = GeometryUnion([ellipsoid1, ellipsoid2])
 
         """
+        for geometry in geometries:
+            check_consistency(geometry, Location, type(geometry))
+
         super().__init__()
         self.geometries = geometries
 
-    @property
     def varibles(self):
         """
         Spatial variables.
@@ -91,4 +95,4 @@ class Union(Location):
 
         combined_points = torch.cat(sampled_points)
 
-        return combined_points
+        return LabelTensor(combined_points.clone().detach(), labels=[f'x{i}' for i in range(len(self.geometries[0].variables))])
