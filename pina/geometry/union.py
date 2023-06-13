@@ -1,5 +1,5 @@
 import torch
-from location import Location
+from .location import Location
 
 
 class Union(Location):
@@ -8,7 +8,7 @@ class Union(Location):
     def __init__(self, geometries):
         """ PINA implementation of Unions of Domains.
 
-        :param geometries: A list of shapes such as 
+        :param geometries: A list of shapes from pina.geometry such as 
                 EllipsoidDomain or TriangleDomain
 
         :Example:
@@ -81,12 +81,12 @@ class Union(Location):
                     [ 0.7650,  1.0469]])
 
             >>> len(union.sample(n=1000)
-                2000 
-                #because we have two ellipsoids each sampling 1000 points
+                1000
         """
         sampled_points = []
         for geometry in self.geometries:
-            points = geometry.sample(n, mode, variables)
+            points = geometry.sample(
+                int(n/len(self.geometries)), mode, variables)
             sampled_points.append(points)
 
         combined_points = torch.cat(sampled_points)
