@@ -95,4 +95,4 @@ class Union(Location):
 
         combined_points = torch.cat(sampled_points)
 
-        return LabelTensor(combined_points.clone().detach(), labels=[f'x{i}' for i in range(len(self.geometries[0].variables))])
+        return LabelTensor(combined_points.clone().detach(), labels=[f'{i}' for i in self.geometries[0].variables])
