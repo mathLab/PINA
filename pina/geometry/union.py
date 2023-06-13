@@ -28,7 +28,7 @@ class Union(Location):
         super().__init__()
         self.geometries = geometries
 
-    def varibles(self):
+    def variables(self):
         """
         Spatial variables.
 
