@@ -1,7 +1,11 @@
 """ Module for PINN """
 import torch
-import torch.optim.lr_scheduler as lrs
+try:
+    from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
+except ImportError:
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler # torch < 2.0
 
+from torch.optim.lr_scheduler import ConstantLR
 
 from .solver import SolverInterface
 from .label_tensor import LabelTensor
@@ -23,7 +27,7 @@ class PINN(SolverInterface):
                  loss = torch.nn.MSELoss(),
                  optimizer=torch.optim.Adam,
                  optimizer_kwargs={'lr' : 0.001},
-                 scheduler=lrs.ConstantLR,
+                 scheduler=ConstantLR,
                  scheduler_kwargs={"factor": 1, "total_iters": 0},
                  ):
         '''
@@ -46,7 +50,7 @@ class PINN(SolverInterface):
         # check consistency 
         check_consistency(optimizer, torch.optim.Optimizer, 'optimizer', subclass=True)
         check_consistency(optimizer_kwargs, dict, 'optimizer_kwargs')
-        check_consistency(scheduler, lrs.LRScheduler, 'scheduler', subclass=True)
+        check_consistency(scheduler, LRScheduler, 'scheduler', subclass=True)
         check_consistency(scheduler_kwargs, dict, 'scheduler_kwargs')
         check_consistency(loss, (LossInterface, _Loss), 'loss', subclass=False)
 
