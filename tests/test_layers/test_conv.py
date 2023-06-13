@@ -1,4 +1,4 @@
-from pina.model.layers import ContinuousConv
+from pina.model.layers import ContinuousConvBlock
 import torch
 
 
@@ -70,12 +70,12 @@ x = make_grid(x)
 def test_constructor():
     model = MLP
 
-    conv = ContinuousConv(channel_input,
+    conv = ContinuousConvBlock(channel_input,
                           channel_output,
                           dim,
                           stride,
                           model=model)
-    conv = ContinuousConv(channel_input,
+    conv = ContinuousConvBlock(channel_input,
                           channel_output,
                           dim,
                           stride,
@@ -86,7 +86,7 @@ def test_forward():
     model = MLP
 
     # simple forward
-    conv = ContinuousConv(channel_input,
+    conv = ContinuousConvBlock(channel_input,
                           channel_output,
                           dim,
                           stride,
@@ -94,7 +94,7 @@ def test_forward():
     conv(x)
 
     # simple forward with optimization
-    conv = ContinuousConv(channel_input,
+    conv = ContinuousConvBlock(channel_input,
                           channel_output,
                           dim,
                           stride,
@@ -107,13 +107,13 @@ def test_transpose():
     model = MLP
 
     # simple transpose
-    conv = ContinuousConv(channel_input,
+    conv = ContinuousConvBlock(channel_input,
                           channel_output,
                           dim,
                           stride,
                           model=model)
 
-    conv2 = ContinuousConv(channel_output,
+    conv2 = ContinuousConvBlock(channel_output,
                            channel_input,
                            dim,
                            stride,
@@ -128,7 +128,7 @@ def test_transpose():
                          "direction": [1, 1.]}
 
     # simple transpose with optimization
-    # conv = ContinuousConv(channel_input,
+    # conv = ContinuousConvBlock(channel_input,
     #                       channel_output,
     #                       dim,
     #                       stride_no_overlap,
