@@ -4,8 +4,7 @@ try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
     from torch.optim.lr_scheduler import _LRScheduler as LRScheduler # torch < 2.0
-else:
-    raise ImportError
+
 from torch.optim.lr_scheduler import ConstantLR
 
 from .solver import SolverInterface
