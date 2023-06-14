@@ -65,6 +65,13 @@ class ResidualBlock(nn.Module):
         return y + x
 
     def _spect_norm(self, x):
+        """Perform spectral norm on the layers.
+
+        :param x: A torch.nn.Module Linear layer
+        :type x: torch.nn.Module
+        :return: The spectral norm of the layer
+        :rtype: torch.nn.Module
+        """
         return nn.utils.spectral_norm(x) if self._spectral_norm else x
 
     @ property
