@@ -11,7 +11,7 @@ class Union(Location):
         """ PINA implementation of Unions of Domains.
 
         :param list geometries: A list of geometries from 'pina.geometry' 
-            such as 'EllipsoidDomain' or 'CartesianDomain'
+            such as 'EllipsoidDomain' or 'CartesianDomain'.
 
         :Example:
             # Create two ellipsoid domains
