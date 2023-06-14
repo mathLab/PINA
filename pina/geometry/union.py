@@ -22,12 +22,12 @@ class Union(Location):
             >>> union = GeometryUnion([ellipsoid1, ellipsoid2])
 
         """
-        for idx, geometry in enumerate(geometries):
-            check_consistency(geometry, Location, f'geometry[{idx}]')
+        super().__init__()
 
+        # union checks
+        self._check_union_inheritance(geometries)
         self._check_union_consistency(geometries)
 
-        super().__init__()
         self.geometries = geometries
 
     @property
@@ -95,17 +95,19 @@ class Union(Location):
                 1000
         """
         sampled_points = []
-        remainder = n % len(self.geometries)
 
+        # calculate the number of points to sample for each geometry and the remainder
+        remainder = n % len(self.geometries)
+        num_points = n // len(self.geometries)
+
+        # sample the points
         for i, geometry in enumerate(self.geometries):
-            num_points = n // len(self.geometries)
+            # add to sample total if remainder is not 0
             if i < remainder:
                 num_points += 1
-            points = geometry.sample(num_points, mode, variables)
-            sampled_points.append(points)
+            sampled_points.append(geometry.sample(num_points, mode, variables))
 
-        combined_points = torch.cat(sampled_points)
-        return LabelTensor(torch.tensor(combined_points), labels=[f'{i}' for i in self.variables])
+        return LabelTensor(torch.cat(sampled_points), labels=[f'{i}' for i in self.variables])
 
     def _check_union_consistency(self, geometries):
         """Check if the dimensions of the geometries are consistent.
@@ -117,3 +119,12 @@ class Union(Location):
             if geometry.variables != geometries[0].variables:
                 raise NotImplementedError(
                     f'The geometries need to be the same dimensions. {geometry.variables} is not equal to {geometries[0].variables}')
+
+    def _check_union_inheritance(self, geometries):
+        """Check if the geometries are inherited from 'pina.geometry.Location'.
+
+        param geometries: Geometries to be checked.
+        :type geometries: list[Location]
+        """
+        for idx, geometry in enumerate(geometries):
+            check_consistency(geometry, Location, f'geometry[{idx}]')
