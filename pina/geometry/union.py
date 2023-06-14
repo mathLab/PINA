@@ -35,7 +35,7 @@ class Union(Location):
         """
         Spatial variables.
 
-        :return: All the spatial variables defined in '__init__()' in order
+        :return: All the spatial variables defined in '__init__()' in order.
         :rtype: list[str]
         """
         all_variables = []
@@ -50,7 +50,7 @@ class Union(Location):
     def is_inside(self, point, check_border=False):
         """Check if a point is inside the union domain.
 
-        :param point: Point to be checked
+        :param point: Point to be checked.
         :type point: LabelTensor
         :param check_border: Check if the point is also on the frontier
             of the ellipsoid, default False.
