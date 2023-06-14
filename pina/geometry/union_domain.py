@@ -27,9 +27,16 @@ class Union(Location):
         # union checks
         self._check_union_inheritance(geometries)
         self._check_union_consistency(geometries)
+        
+        # assign geometries
+        self._geometries = geometries
 
-        self.geometries = geometries
-
+    @property
+    def geometries(self):
+        """ 
+        The geometries."""
+        return self._geometries
+        
     @property
     def variables(self):
         """
@@ -84,12 +91,12 @@ class Union(Location):
 
             >>> union.sample(n=1000)
                 LabelTensor([[-0.2025,  0.0072],
-                    [ 0.0358,  0.5748],
-                    [ 0.5083,  0.0482],
-                    ...,
-                    [ 0.5857,  0.9279],
-                    [ 1.1496,  1.7339],
-                    [ 0.7650,  1.0469]])
+                            [ 0.0358,  0.5748],
+                            [ 0.5083,  0.0482],
+                            ...,
+                            [ 0.5857,  0.9279],
+                            [ 1.1496,  1.7339],
+                            [ 0.7650,  1.0469]])
 
             >>> len(union.sample(n=1000)
                 1000
