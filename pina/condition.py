@@ -67,7 +67,7 @@ class Condition:
         self.data_weight = kwargs.pop('data_weight', 1.0)
 
         if len(args) != 0:
-            raise ValueError('Condition takes only the following keyword arguments: {`input_points`, `output_points`, `location`, `function`, `data_weight`}.')
+            raise ValueError('Condition takes only the following keyword arguments: {`input_points`, `output_points`, `location`, `equation`, `data_weight`}.')
 
         if (
             sorted(kwargs.keys()) != sorted(['input_points', 'output_points']) and

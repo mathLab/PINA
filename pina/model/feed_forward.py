@@ -34,7 +34,6 @@ class FeedForward(torch.nn.Module):
         """
         super().__init__()
 
-
         if not isinstance(input_variables, int):
             raise ValueError('input_variables expected to be int.')
         self.input_dimension = input_variables
@@ -42,6 +41,7 @@ class FeedForward(torch.nn.Module):
         if not isinstance(output_variables, int):
             raise ValueError('output_variables expected to be int.')
         self.output_dimension = output_variables
+
         if layers is None:
             layers = [inner_size] * n_layers
 

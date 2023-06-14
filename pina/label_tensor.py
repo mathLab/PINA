@@ -83,8 +83,8 @@ class LabelTensor(torch.Tensor):
     def labels(self, labels):
         if len(labels) != self.shape[self.ndim - 1]:  # small check
             raise ValueError(
-                'the tensor has not the same number of columns of '
-                'the passed labels.')
+                'the tensor does not have the same number of columns of '
+                f'the passed labels.{len(labels)}, {self.shape[self.ndim - 1]}')
 
         self._labels = labels   # assign the label
 
@@ -167,7 +167,7 @@ class LabelTensor(torch.Tensor):
         :rtype: LabelTensor
         """
         if set(self.labels).intersection(lt.labels):
-            raise RuntimeError('The tensors to merge have common labels')
+            raise RuntimeError('The tensors that are to be merged have common labels')
 
         new_labels = self.labels + lt.labels
         if mode == 'std':

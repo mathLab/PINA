@@ -116,9 +116,9 @@ class AbstractProblem(metaclass=ABCMeta):
         Generate a set of points to span the `Location` of all the conditions of
         the problem.
 
-        >>> pinn.span_pts(n=10, mode='grid')
-        >>> pinn.span_pts(n=10, mode='grid', location=['bound1'])
-        >>> pinn.span_pts(n=10, mode='grid', variables=['x'])
+        >>> pinn.discretise_domain(n=10, mode='grid')
+        >>> pinn.discretise_domain(n=10, mode='grid', location=['bound1'])
+        >>> pinn.discretise_domain(n=10, mode='grid', variables=['x'])
         """
         if all(key in kwargs for key in ['n', 'mode']):
             argument = {}
