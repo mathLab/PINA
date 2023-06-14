@@ -9,7 +9,7 @@ def test_constructor_two_CartesianDomains():
            CartesianDomain({'x': [0.5, 2], 'y': [-1, 0.1]})])
 
 
-def test_constructor2_two_EllipsoidDomains():
+def test_constructor_two_EllipsoidDomains():
     Union([EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1], 'z': [-1, 1]}),
            EllipsoidDomain({'x': [-0.5, 0.5], 'y': [-0.5, 0.5], 'z': [-0.5, 0.5]})])
 

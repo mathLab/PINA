@@ -22,23 +22,30 @@ class Union(Location):
             >>> union = GeometryUnion([ellipsoid1, ellipsoid2])
 
         """
-        for geometry in geometries:
-            check_consistency(geometry, Location, type(geometry))
+        for idx, geometry in enumerate(geometries):
+            check_consistency(geometry, Location, f'geometry[{idx}]')
+
+        self._check_union_consistency(geometries)
 
         super().__init__()
         self.geometries = geometries
 
+    @property
     def variables(self):
         """
         Spatial variables.
 
-        :return: All the spatial variables defined in '__init__()'
+        :return: All the spatial variables defined in '__init__()' in order
         :rtype: list[str]
         """
-        all_variables = set()
+        all_variables = []
+        seen_variables = set()
         for geometry in self.geometries:
-            all_variables.update(geometry.variables)
-        return list(all_variables)
+            for variable in geometry.variables:
+                if variable not in seen_variables:
+                    all_variables.append(variable)
+                    seen_variables.add(variable)
+        return all_variables
 
     def is_inside(self, point, check_border=False):
         """Check if a point is inside the union domain.
@@ -88,11 +95,25 @@ class Union(Location):
                 1000
         """
         sampled_points = []
-        for geometry in self.geometries:
-            points = geometry.sample(
-                int(n/len(self.geometries)), mode, variables)
+        remainder = n % len(self.geometries)
+
+        for i, geometry in enumerate(self.geometries):
+            num_points = n // len(self.geometries)
+            if i < remainder:
+                num_points += 1
+            points = geometry.sample(num_points, mode, variables)
             sampled_points.append(points)
 
         combined_points = torch.cat(sampled_points)
+        return LabelTensor(torch.tensor(combined_points), labels=[f'{i}' for i in self.variables])
 
-        return LabelTensor(combined_points.clone().detach(), labels=[f'{i}' for i in self.geometries[0].variables])
+    def _check_union_consistency(self, geometries):
+        """Check if the dimensions of the geometries are consistent.
+
+        :param geometries: Geometries to be checked.
+        :type geometries: list[Location]
+        """
+        for geometry in geometries:
+            if geometry.variables != geometries[0].variables:
+                raise NotImplementedError(
+                    f'The geometries need to be the same dimensions. {geometry.variables} is not equal to {geometries[0].variables}')
