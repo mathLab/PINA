@@ -112,8 +112,7 @@ class Union(Location):
             # add to sample total if remainder is not 0
             if i < remainder:
                 num_points += 1
-            points = geometry.sample(num_points, mode, variables)
-            sampled_points.append(points)
+            sampled_points.append(geometry.sample(num_points, mode, variables))
 
         return LabelTensor(torch.cat(sampled_points), labels=[f'{i}' for i in self.variables])
 
