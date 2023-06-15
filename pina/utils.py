@@ -1,4 +1,5 @@
 """Utils module"""
+from torch.utils.data import Dataset, DataLoader
 from functools import reduce
 import types
 
@@ -10,7 +11,7 @@ from .label_tensor import LabelTensor
 import torch
 
 
-def check_consistency(object, object_instance, object_name, subclass=False):
+def check_consistency(objects, object_instance, object_name=None, subclass=False):
     """Helper function to check object inheritance consistency. 
        Given a specific ``'object'`` we check if the object is
        instance of a specific ``'object_instance'``, or in case
@@ -25,12 +26,16 @@ def check_consistency(object, object_instance, object_name, subclass=False):
     :raises ValueError: If the object does not inherit from the
         specified class
     """
-    if not subclass:
-        if not isinstance(object, object_instance):
-            raise ValueError(f"{object_name} must be {object_instance}")
-    else:
-        if not issubclass(object, object_instance):
-            raise ValueError(f"{object_name} must be {object_instance}")
+
+    for object in objects:
+        if not subclass:
+            if not isinstance(object, object_instance):
+                raise ValueError(
+                    f"{type(object).__name__} must be {object_instance}")
+        else:
+            if not issubclass(object, object_instance):
+                raise ValueError(
+                    f"{type(object).__name__} must be {object_instance}")
 
 
 def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
@@ -180,13 +185,13 @@ def chebyshev_roots(n):
 #         def __len__(self):
 #             return self._len
 
-from torch.utils.data import Dataset, DataLoader
+
 class LabelTensorDataset(Dataset):
     def __init__(self, d):
         for k, v in d.items():
             setattr(self, k, v)
         self.labels = list(d.keys())
-        
+
     def __getitem__(self, index):
         print(index)
         result = {}
@@ -201,7 +206,7 @@ class LabelTensorDataset(Dataset):
                 result[label] = sample_tensor[index]
             except IndexError:
                 result[label] = torch.tensor([])
-        
+
         print(result)
         return result
 
@@ -229,13 +234,13 @@ class LabelTensorDataLoader(DataLoader):
 #         def __len__(self):
 #             return self._len
 
-from torch.utils.data import Dataset, DataLoader
+
 class LabelTensorDataset(Dataset):
     def __init__(self, d):
         for k, v in d.items():
             setattr(self, k, v)
         self.labels = list(d.keys())
-        
+
     def __getitem__(self, index):
         print(index)
         result = {}
@@ -250,7 +255,7 @@ class LabelTensorDataset(Dataset):
                 result[label] = sample_tensor[index]
             except IndexError:
                 result[label] = torch.tensor([])
-        
+
         print(result)
         return result
 

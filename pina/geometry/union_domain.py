@@ -1,5 +1,6 @@
 import torch
 from .location import Location
+from .ellipsoid import EllipsoidDomain
 from ..utils import check_consistency
 from ..label_tensor import LabelTensor
 
@@ -25,9 +26,9 @@ class Union(Location):
         super().__init__()
 
         # union checks
-        self._check_union_inheritance(geometries)
-        self._check_union_consistency(geometries)
-        
+        check_consistency(geometries, Location)
+        self._check_union_dimensions(geometries)
+
         # assign geometries
         self._geometries = geometries
 
@@ -36,7 +37,7 @@ class Union(Location):
         """ 
         The geometries."""
         return self._geometries
-        
+
     @property
     def variables(self):
         """
@@ -112,11 +113,45 @@ class Union(Location):
             # add to sample total if remainder is not 0
             if i < remainder:
                 num_points += 1
-            sampled_points.append(geometry.sample(num_points, mode, variables))
+            points = geometry.sample(num_points, mode, variables)
+            sampled_points.append(points)
 
         return LabelTensor(torch.cat(sampled_points), labels=[f'{i}' for i in self.variables])
+    
 
-    def _check_union_consistency(self, geometries):
+    def combine_domains(self):
+        """Compute the union of the ellipsoids while preserving the outline."""
+        # Extract the ellipsoid domains from the geometries
+        ellipsoid_domains = [geometry for geometry in self.geometries if isinstance(
+            geometry, EllipsoidDomain)]
+
+        # Combine the ellipsoid domains
+        if len(ellipsoid_domains) < 2:
+            raise ValueError(
+                "At least two EllipsoidDomain geometries are required for the union.")
+
+        combined_domain = ellipsoid_domains[0]
+        for domain in ellipsoid_domains[1:]:
+            combined_domain = self._combine_ellipsoids(combined_domain, domain)
+
+        return combined_domain
+
+    def _combine_ellipsoids(self, domain1, domain2):
+        """Combine two ellipsoid domains into a single domain."""
+        # Compute the union of the fixed variables
+        combined_fixed = {**domain1.fixed_, **domain2.fixed_}
+
+        # Compute the union of the range variables
+        combined_range = {**domain1.range_, **domain2.range_}
+
+        # Create a new instance of the EllipsoidDomain class with the combined fixed and range variables
+        union_domain = EllipsoidDomain({})
+        union_domain.fixed_ = combined_fixed
+        union_domain.range_ = combined_range
+
+        return union_domain
+
+    def _check_union_dimensions(self, geometries):
         """Check if the dimensions of the geometries are consistent.
 
         :param geometries: Geometries to be checked.
@@ -126,12 +161,3 @@ class Union(Location):
             if geometry.variables != geometries[0].variables:
                 raise NotImplementedError(
                     f'The geometries need to be the same dimensions. {geometry.variables} is not equal to {geometries[0].variables}')
-
-    def _check_union_inheritance(self, geometries):
-        """Check if the geometries are inherited from 'pina.geometry.Location'.
-
-        param geometries: Geometries to be checked.
-        :type geometries: list[Location]
-        """
-        for idx, geometry in enumerate(geometries):
-            check_consistency(geometry, Location, f'geometry[{idx}]')
