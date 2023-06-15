@@ -11,7 +11,7 @@ from .label_tensor import LabelTensor
 import torch
 
 
-def check_consistency(objects, object_instance, object_name=None, subclass=False):
+def check_consistency(object, object_instance, object_name=None, subclass=False):
     """Helper function to check object inheritance consistency. 
        Given a specific ``'object'`` we check if the object is
        instance of a specific ``'object_instance'``, or in case
@@ -26,16 +26,21 @@ def check_consistency(objects, object_instance, object_name=None, subclass=False
     :raises ValueError: If the object does not inherit from the
         specified class
     """
-
-    for object in objects:
+    def check_inheritance(obj):
         if not subclass:
-            if not isinstance(object, object_instance):
+            if not isinstance(obj, object_instance):
                 raise ValueError(
-                    f"{type(object).__name__} must be {object_instance}")
+                    f"{type(obj).__name__} must be {object_instance}")
         else:
-            if not issubclass(object, object_instance):
+            if not issubclass(obj, object_instance):
                 raise ValueError(
-                    f"{type(object).__name__} must be {object_instance}")
+                    f"{type(obj).__name__} must be {object_instance}")
+
+    if isinstance(object, list):
+        for obj in object:
+            check_inheritance(obj)
+    else:
+        check_inheritance(object)
 
 
 def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
