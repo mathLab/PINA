@@ -1,6 +1,5 @@
 import torch
 from .location import Location
-from .ellipsoid import EllipsoidDomain
 from ..utils import check_consistency
 from ..label_tensor import LabelTensor
 
@@ -117,39 +116,6 @@ class Union(Location):
             sampled_points.append(points)
 
         return LabelTensor(torch.cat(sampled_points), labels=[f'{i}' for i in self.variables])
-    
-
-    def combine_domains(self):
-        """Compute the union of the ellipsoids while preserving the outline."""
-        # Extract the ellipsoid domains from the geometries
-        ellipsoid_domains = [geometry for geometry in self.geometries if isinstance(
-            geometry, EllipsoidDomain)]
-
-        # Combine the ellipsoid domains
-        if len(ellipsoid_domains) < 2:
-            raise ValueError(
-                "At least two EllipsoidDomain geometries are required for the union.")
-
-        combined_domain = ellipsoid_domains[0]
-        for domain in ellipsoid_domains[1:]:
-            combined_domain = self._combine_ellipsoids(combined_domain, domain)
-
-        return combined_domain
-
-    def _combine_ellipsoids(self, domain1, domain2):
-        """Combine two ellipsoid domains into a single domain."""
-        # Compute the union of the fixed variables
-        combined_fixed = {**domain1.fixed_, **domain2.fixed_}
-
-        # Compute the union of the range variables
-        combined_range = {**domain1.range_, **domain2.range_}
-
-        # Create a new instance of the EllipsoidDomain class with the combined fixed and range variables
-        union_domain = EllipsoidDomain({})
-        union_domain.fixed_ = combined_fixed
-        union_domain.range_ = combined_range
-
-        return union_domain
 
     def _check_union_dimensions(self, geometries):
         """Check if the dimensions of the geometries are consistent.
