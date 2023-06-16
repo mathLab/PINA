@@ -26,7 +26,10 @@ def check_consistency(object, object_instance, object_name=None, subclass=False)
     :raises ValueError: If the object does not inherit from the
         specified class
     """
-    def check_inheritance(obj):
+    if not isinstance(object, (list, set, tuple)):
+        object = [object]
+
+    for obj in object:
         if not subclass:
             if not isinstance(obj, object_instance):
                 raise ValueError(
@@ -36,11 +39,11 @@ def check_consistency(object, object_instance, object_name=None, subclass=False)
                 raise ValueError(
                     f"{type(obj).__name__} must be {object_instance}")
 
-    if isinstance(object, (list, set, tuple)):
-        for obj in object:
-            check_inheritance(obj)
-    else:
-        check_inheritance(object)
+    # if isinstance(object, (list, set, tuple)):
+    #     for obj in object:
+    #         check_inheritance(obj)
+    # else:
+    #     check_inheritance(object)
 
 
 def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
