@@ -18,7 +18,7 @@ def check_consistency(object, object_instance, object_name=None, subclass=False)
        ``'subclass=True'`` we check if the object is subclass
        if the ``'object_instance'``.
 
-    :param Object object: The object to check the inheritance 
+    :param (iterable or class object )Object object: The object to check the inheritance 
     :param Object object_instance: The parent class from where the object
         is expected to inherit
     :param str object_name: The name of the object
@@ -28,15 +28,11 @@ def check_consistency(object, object_instance, object_name=None, subclass=False)
     """
     def check_inheritance(obj):
         if not subclass:
-            if not isinstance(obj, object_instance):
-                raise ValueError(
-                    f"{type(obj).__name__} must be {object_instance}")
-        else:
-            if not issubclass(obj, object_instance):
+            if not isinstance(obj, object_instance) or not issubclass(obj, object_instance):
                 raise ValueError(
                     f"{type(obj).__name__} must be {object_instance}")
 
-    if isinstance(object, list):
+    if isinstance(object, (list, set, tuple)):
         for obj in object:
             check_inheritance(obj)
     else:
