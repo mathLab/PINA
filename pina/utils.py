@@ -28,7 +28,11 @@ def check_consistency(object, object_instance, object_name=None, subclass=False)
     """
     def check_inheritance(obj):
         if not subclass:
-            if not isinstance(obj, object_instance) or not issubclass(obj, object_instance):
+            if not isinstance(obj, object_instance):
+                raise ValueError(
+                    f"{type(obj).__name__} must be {object_instance}")
+        else:
+            if not issubclass(obj, object_instance):
                 raise ValueError(
                     f"{type(obj).__name__} must be {object_instance}")
 
