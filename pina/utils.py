@@ -30,20 +30,13 @@ def check_consistency(object, object_instance, object_name=None, subclass=False)
         object = [object]
 
     for obj in object:
-        if not subclass:
-            if not isinstance(obj, object_instance):
-                raise ValueError(
-                    f"{type(obj).__name__} must be {object_instance}")
-        else:
-            if not issubclass(obj, object_instance):
-                raise ValueError(
-                    f"{type(obj).__name__} must be {object_instance}")
-
-    # if isinstance(object, (list, set, tuple)):
-    #     for obj in object:
-    #         check_inheritance(obj)
-    # else:
-    #     check_inheritance(object)
+        try:
+            if not subclass:
+                assert isinstance(obj, object_instance)
+            else:
+                assert issubclass(obj, object_instance)
+        except AssertionError:
+            raise ValueError(f"{type(obj).__name__} must be {object_instance}")
 
 
 def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
