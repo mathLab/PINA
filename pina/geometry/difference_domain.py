@@ -25,7 +25,7 @@ class Difference(Location):
         super().__init__()
 
         # difference checks
-        check_consistency(geometries, Location, "test")
+        check_consistency(geometries, Location)
         self._check_difference_dimesions(geometries)
 
         # assign geometries
