@@ -20,7 +20,7 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
         super().__init__()
         
         # check inheritance for pina problem
-        check_consistency(problem, AbstractProblem, 'pina problem')
+        check_consistency(problem, AbstractProblem)
 
         # assigning class variables (check consistency inside Network class)
         self._pina_model = Network(model=model, extra_features=extra_features)
