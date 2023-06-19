@@ -41,7 +41,7 @@ class EllipsoidDomain(Location):
         self._axis = None
 
         # checking consistency
-        check_consistency(sample_surface, bool, 'sample_surface')
+        check_consistency(sample_surface, bool)
         self._sample_surface = sample_surface
 
         for k, v in ellipsoid_dict.items():
@@ -98,7 +98,7 @@ class EllipsoidDomain(Location):
         """
 
         # small check that point is labeltensor
-        check_consistency(point, LabelTensor, 'point')
+        check_consistency(point, LabelTensor)
         
         # get axis ellipse as tensors
         list_dict_vals = list(self._axis.values())
