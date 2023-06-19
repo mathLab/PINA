@@ -114,11 +114,10 @@ class Union(Location):
         # up sampling only from the first geometry.
         iter_ = random.sample(self.geometries, len(self.geometries))
         for i, geometry in enumerate(iter_):
-            # add to sample total if remainder is not 0
-            if i < remainder:
-                num_points += 1
-            # sampling
-            sampled_points.append(geometry.sample(num_points, mode, variables))
+            # int(i < remainder) is one only if we have a remainder
+            # different than zero. Notice that len(geometries) is
+            # always smaller than remaider.
+            sampled_points.append(geometry.sample(num_points + int(i < remainder), mode, variables))
             # in case number of sampled points is smaller than the number of geometries
             if len(sampled_points) >= n:
                 break
