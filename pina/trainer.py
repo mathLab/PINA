@@ -11,7 +11,7 @@ class Trainer(pl.Trainer):
         super().__init__(**kwargs)
         
         # check inheritance consistency for solver
-        check_consistency(solver, SolverInterface, 'Solver model')
+        check_consistency(solver, SolverInterface)
         self._model = solver
 
         # create dataloader

@@ -3,16 +3,17 @@
 from .location import Location
 from ..label_tensor import LabelTensor
 
+
 class Difference(Location):
     """
     """
-    def __init__(self, first, second):
 
+    def __init__(self, first, second):
 
         self.first = first
         self.second = second
 
-    def sample(self, n, mode ='random', variables='all'):
+    def sample(self, n, mode='random', variables='all'):
         """
         """
         assert mode is 'random', 'Only random mode is implemented'
