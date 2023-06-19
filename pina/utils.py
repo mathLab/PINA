@@ -11,7 +11,7 @@ from .label_tensor import LabelTensor
 import torch
 
 
-def check_consistency(object, object_instance, object_name=None, subclass=False):
+def check_consistency(object, object_instance, subclass=False):
     """Helper function to check object inheritance consistency. 
        Given a specific ``'object'`` we check if the object is
        instance of a specific ``'object_instance'``, or in case

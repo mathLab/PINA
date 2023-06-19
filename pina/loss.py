@@ -108,9 +108,9 @@ class LpLoss(LossInterface):
         super().__init__(reduction=reduction)
 
         # check consistency
-        check_consistency(p, (str,int,float), 'degree p')
+        check_consistency(p, (str,int,float))
         self.p = p
-        check_consistency(relative, bool, 'relative')
+        check_consistency(relative, bool,)
         self.relative = relative
 
     def forward(self, input, target):
