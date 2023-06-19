@@ -38,6 +38,6 @@ def test_check_consistency_incorrect():
     with pytest.raises(ValueError):
         check_consistency(example_input_pts, Location)
     with pytest.raises(ValueError):
-        check_consistency(ellipsoid1, Location, subclass=True)
+        check_consistency(torch.Tensor, Location, subclass=True)
     with pytest.raises(ValueError):
         check_consistency(ellipsoid1, torch.Tensor)
