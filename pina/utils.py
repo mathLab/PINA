@@ -36,7 +36,7 @@ def check_consistency(object, object_instance, subclass=False):
             else:
                 assert issubclass(obj, object_instance)
         except AssertionError:
-            raise ValueError(f"{type(obj).__name__} must be {object_instance}")
+            raise ValueError(f"{type(obj).__name__} must be {object_instance}.")
 
 
 def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
