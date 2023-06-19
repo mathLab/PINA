@@ -116,8 +116,13 @@ class PINN(SolverInterface):
                 loss = self._loss(self.forward(input_pts), output_pts)
 
             condition_losses.append(loss * condition.data_weight)
-
         # TODO Fix the bug, tot_loss is a label tensor without labels
         # we need to pass it as a torch tensor to make everything work
         total_loss = sum(condition_losses)
+
+        #condition_loss_info = [f'{condition_name}: {loss.item():.6f}' for condition_name, loss in
+        #                       zip(batch.keys(), condition_losses)]
+        #print(f'\nTotal Loss: {total_loss.item():.6f}')
+        #print(f'Condition Losses: {", ".join(condition_loss_info)}\n')
+
         return total_loss
