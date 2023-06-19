@@ -110,7 +110,7 @@ class LpLoss(LossInterface):
         # check consistency
         check_consistency(p, (str,int,float))
         self.p = p
-        check_consistency(relative, bool,)
+        check_consistency(relative, bool)
         self.relative = relative
 
     def forward(self, input, target):
