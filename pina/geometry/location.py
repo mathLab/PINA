@@ -15,3 +15,11 @@ class Location(metaclass=ABCMeta):
         implemented in the child class.
         """
         pass
+
+    @abstractmethod
+    def is_inside(self):
+        """
+        Abstract method for checking if a point is inside the location. To be
+        implemented in the child class.
+        """
+        pass
