@@ -3,6 +3,7 @@ import torch
 from .location import Location
 from ..utils import check_consistency
 from ..label_tensor import LabelTensor
+import random
 
 
 class Difference(Location):
@@ -103,27 +104,29 @@ class Difference(Location):
         """
         sampled = []
 
-        # calculate the number of points to sample for each geometry and the remainder
+        # calculate the number of points to sample for each geometry and the remainder.
         remainder = n % len(self.geometries)
         num_points = n // len(self.geometries)
 
         # sample the points
-        for i, geometry in enumerate(self.geometries):
-            if i < remainder:
-                num_points += 1
+        # NB. geometries as shuffled since if we sample
+        # multiple times just one point, we would end
+        # up sampling only from the first geometry.
+        iter_ = random.sample(self.geometries, len(self.geometries))
+        for i, geometry in enumerate(iter_):
             sampled_points = []
-            # makes sure point is uniquely inside 1 shape
-            while len(sampled_points) < num_points:
+            # int(i < remainder) is one only if we have a remainder
+            # different than zero. Notice that len(geometries) is
+            # always smaller than remaider.
+            # makes sure point is uniquely inside 1 shape.
+            while len(sampled_points) < (num_points + int(i < remainder)):
                 sample = geometry.sample(1, 'random')
                 # if not self.is_inside(sample) --> will be the intersection
                 if self.is_inside(sample):
                     sampled_points.append(sample)
             sampled.extend(sampled_points)
 
-        tensors = [point.data for point in sampled]
-        concatenated_tensor = torch.cat(tensors, dim=0)
-
-        return LabelTensor(concatenated_tensor, labels=[f'{i}' for i in self.variables])
+        return LabelTensor(torch.cat(sampled), labels=[f'{i}' for i in self.variables])
 
     def _check_difference_dimesions(self, geometries):
         """Check if the dimensions of the geometries are consistent.
@@ -146,3 +149,4 @@ class Difference(Location):
                 raise NotImplementedError(
                     f'The geometries need to be the same dimensions. {geometry.variables}' 
                     f'is not equal to {geometries[0].variables}.')
+    
