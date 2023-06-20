@@ -2,7 +2,8 @@ __all__ = [
     'Location',
     'CartesianDomain',
     'EllipsoidDomain',
-    'Union'
+    'Union', 
+    'TriangleDomain'
 ]
 
 from .location import Location
