@@ -25,4 +25,4 @@ class Difference(Location):
                 samples.append(sample)
 
         import torch
-        return LabelTensor(torch.tensor(samples), labels=['x', 'y'])
+        return LabelTensor(torch.cat(samples), labels=['x', 'y'])
