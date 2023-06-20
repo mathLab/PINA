@@ -6,7 +6,8 @@ __all__ = [
     'Intersection',
     'Exclusion',
     'Difference',
-    'OperationInterface'
+    'OperationInterface',
+    ''
 ]
 
 from .location import Location
