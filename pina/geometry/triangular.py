@@ -1,10 +1,8 @@
 import torch
 import numpy as np
-import math
 
+from pina.geometry import CartesianDomain
 from .location import Location
-from ..label_tensor import LabelTensor
-from ..utils import torch_lhs, chebyshev_roots
 
 
 class TriangularDomain(Location):
@@ -21,12 +19,32 @@ class TriangularDomain(Location):
             >>> spatial_domain = TriangularDomain({'vertex1': [0, 0], 'vertex2': [1, 1], 'vertex3': [0, 2]})
         """
 
+        if len(span_dict) <= 2:
+            raise ValueError("Too few vertices for a triangular domain")
+
+        if len(span_dict) == 3:  # 2D
+            self.dimension = 2
+
+            if not all(len(vertex) == 2 for vertex in span_dict.values()):
+                raise ValueError("Unsupported dimensions")
+
+        if len(span_dict) == 4:  # 3D
+            self.dimension = 3
+
+            if not all(len(vertex) == 3 for vertex in span_dict.values()):
+                raise ValueError("Unsupported dimensions")
+
+        if len(span_dict) >= 5:  # Won't handle greater than 3 dimensions
+            raise ValueError("Too many vertices for a triangular domain")
+
         self.fixed_, self.range_ = {}, {}
 
         for k, v in span_dict.items():
             if isinstance(v, (int, float)):
                 self.fixed_[k] = v
-            elif isinstance(v, (list, tuple)) and len(v) >= 2: # length might be able to be > 2
+            elif (
+                isinstance(v, (list, tuple)) and len(v) >= 2
+            ):  # length might be able to be > 2
                 self.range_[k] = v
             else:
                 raise TypeError
@@ -41,18 +59,18 @@ class TriangularDomain(Location):
         """
 
         return list(self.fixed_.keys()) + list(self.range_.keys())
-    
+
     @property
     def vertices(self):
         """
         Vertices of triangle.
 
         :return: Vectors defined in '__init__()'
-        :rtype: list[list]
+        :rtype: tuple[list]
         """
 
-        return list(self.fixed_.values()) + list(self.range_.values())
-    
+        return tuple(self.fixed_.values()) + tuple(self.range_.values())
+
     @property
     def vectors(self):
         """
@@ -62,10 +80,11 @@ class TriangularDomain(Location):
         :rtype: list[tuple]
         """
 
-        vertices = self.vertices
-            
-        return [[vertices[i+1][j]-vertices[i][j] for j in range(len(vertices[0]))] for i in range(len(vertices) - 1)] + [[vertices[-1][j]-vertices[0][j] for j in range(len(vertices[0]))]]
-    
+        return [
+            [self.vertices[i][j] - self.vertices[0][j] for j in range(self.dimension)]
+            for i in range(1, self.dimension + 1)
+        ]
+
     def is_inside(self, point, check_border=False):
         """
         Check if a point is inside the triangle.
@@ -79,42 +98,129 @@ class TriangularDomain(Location):
         :rtype: bool
         """
 
-        def _gramian(vector1, vector2):
+        def _area(vertices):
             """
-            Computes Gramian from vectors for sake of finding area.
+            Given vertices of triangle, calculates area
 
-            :param vector1: a vector
-            :type vector1: a list
-            :param vector2: a vector
-            :type vector2: a list
-            :return: Returns the Gramian of two vectors
-            :rtype: np matrix
-            """
-
-            x = [vector1, vector2]
-
-            return np.matmul(x, np.transpose(x))
-        
-        def _afg(gramian):
-            """
-            Area from Gramian.
-            
-            :param gramian: a Gramian matrix
-            :type gramian: np matrix
-            :return: Returns the area derived from Gramian
+            :param vertices: Vertices of triangle
+            :type vertices: tuple
+            :return Returns area of triangle
             :rtype: float
             """
+            vertex1, vertex2, vertex3 = vertices
 
-            return math.sqrt(abs(np.exp(np.linalg.slogdet(gramian)[1]))) / 2
-        
-        vertices, vectors = self.vertices, self.vectors
-        vectors_to_point = [[point[i] - vertex[i] for i in range(len(vectors[0]))] for vertex in vertices]
-        barycentric_coords = [_afg(_gramian([vector, vector_to_point])) for vector, vector_to_point in zip(vectors, vectors_to_point)]
-        
-        if not check_border and 0 in barycentric_coords:
-            return False
+            return (
+                abs(
+                    (
+                        vertex1[0] * (vertex2[1] - vertex3[1])
+                        + vertex2[0] * (vertex3[1] - vertex1[1])
+                        + vertex3[0] * (vertex1[1] - vertex2[1])
+                    )
+                )
+                / 2.0
+            )
 
-        return sum(barycentric_coords) - _afg(_gramian(self.vectors)) <= 1e-6
-    
-    def sample(self):
-        raise NotImplementedError
+        def _volume(vertices):
+            """
+            Given vertices of tetrahedron, calculates volume
+
+            :param vertices: Vertices of tetrahedron
+            :type vertices: tuple
+            :return Returns area of tetrahedron
+            :rtype: float
+            """
+            vertex1, vertex2, vertex3, vertex4 = vertices
+
+            return (
+                abs(
+                    np.dot(
+                        (np.array(vertex1) - np.array(vertex4)),
+                        np.cross(
+                            (np.array(vertex2) - np.array(vertex4)),
+                            (np.array(vertex3) - np.array(vertex4)),
+                        ),
+                    )
+                )
+                / 6.0
+            )
+
+        pt = [point.extract([variable]) for variable in point.labels]
+
+        if not check_border:
+            if pt in self.vertices:
+                return False
+
+            vec = np.array(pt) - np.array(self.vertices[0])
+            vector_to_point = list(vec / np.linalg.norm(vec))
+
+            for vector in self.vectors:
+                if list(np.array(vector) / np.linalg.norm(vector)) == vector_to_point:
+                    return False
+
+        if self.dimension == 2:
+            vertex1, vertex2, vertex3 = self.vertices
+
+            # subareas
+            area1 = _area([pt, vertex2, vertex3])
+            area2 = _area([vertex1, pt, vertex3])
+            area3 = _area([vertex1, vertex2, pt])
+
+            return _area(self.vertices) == area1 + area2 + area3
+
+        # otherwise, dimension is 3
+        else:
+            vertex1, vertex2, vertex3, vertex4 = self.vertices
+
+            # subvolumes
+            volume1 = _volume([pt, vertex2, vertex3, vertex4])
+            volume2 = _volume([vertex1, pt, vertex3, vertex4])
+            volume3 = _volume([vertex1, vertex2, pt, vertex4])
+            volume4 = _volume([vertex1, vertex2, vertex3, pt])
+
+            return _volume(self.vertices) == volume1 + volume2 + volume3 + volume4
+
+    def sample(self, n, mode="random", variables="all"):
+        if mode != "random":
+            raise ValueError("Mode can only be random")
+
+        # for 2D
+
+        # Construct CartesianDomain that contains triangle
+        vertices_by_x = sorted(self.vertices, lambda vertex: vertex[0])
+        vertices_by_y = sorted(self.vertices, lambda vertex: vertex[1])
+
+        if self.dimension == 3:
+            vertices_by_z = sorted(self.vertices, lambda vertex: vertex[2])
+
+            circumscribing_domain = CartesianDomain(
+                {
+                    "x": [vertices_by_x[0], vertices_by_x[-1]],
+                    "y": [vertices_by_y[0], vertices_by_y[-1]],
+                    "z": [vertices_by_z[0], vertices_by_z[-1]],
+                }
+            )
+
+        else:
+            circumscribing_domain = CartesianDomain(
+                {
+                    "x": [vertices_by_x[0], vertices_by_x[-1]],
+                    "y": [vertices_by_y[0], vertices_by_y[-1]],
+                }
+            )
+
+        # Sample points on the domain
+        sampled_points = []
+        for _ in range(n):
+            sampled_point = circumscribing_domain.sample(
+                n=1, mode="random", variables=variables
+            )
+
+            # Keep sampling until you get a point that is inside
+            while not self.is_inside(sampled_point):
+                sampled_point = circumscribing_domain.sample(
+                    n=1, mode="random", variables=variables
+                )
+
+            sampled_points.append(sampled_point)
+
+        return sampled_points
