@@ -125,63 +125,6 @@ class Difference(Location):
 
         return LabelTensor(concatenated_tensor, labels=[f'{i}' for i in self.variables])
 
-    # def sample(self, n, mode='random', variables='all'):
-    #     """Sample routine.
-
-    #     :param n: Number of points to sample in the shape.
-    #     :type n: int
-    #     :param mode: Mode for sampling, defaults to 'random'.
-    #         Available modes include: random sampling, 'random'.
-    #     :type mode: str, optional
-    #     :param variables: pinn variable to be sampled, defaults to 'all'.
-    #     :type variables: str or list[str], optional
-
-    #     :Example:
-    #     """
-    #     sampled_points = []
-    #     remainder = n % len(self.geometries)
-    #     num_points = n // len(self.geometries)
-
-    #     for i, geometry in enumerate(self.geometries):
-    #         if i < remainder:
-    #             num_points += 1
-    #         points = geometry.sample(num_points, mode, variables)
-
-    #         for point in points:
-    #             point.labels = [f'{i}' for i in self.variables]
-    #             if self.is_inside(point):
-    #                 sampled_points.append(point)
-
-    #     tensors = [point.data for point in sampled_points]
-    #     concatenated_tensor = torch.cat(tensors, dim=0)
-    #     return LabelTensor(concatenated_tensor, labels=[f'{i}' for i in self.variables])
-
-    #     # return LabelTensor(torch.cat(sampled_points), labels=[f'{i}' for i in self.variables])
-
-    # def og_sample(self, n, mode='random', variables='all'):
-    #     """Sample routine.
-
-    #     :param n: Number of points to sample in the shape.
-    #     :type n: int
-    #     :param mode: Mode for sampling, defaults to 'random'.
-    #         Available modes include: random sampling, 'random'.
-    #     :type mode: str, optional
-    #     :param variables: pinn variable to be sampled, defaults to 'all'.
-    #     :type variables: str or list[str], optional
-
-    #     :Example:
-    #     """
-    #     # assert mode is 'random', 'Only random mode is implemented'
-
-    #     samples = []
-    #     while len(samples) < n:
-    #         sample = self.first.sample(1, 'random')
-    #         if not self.second.is_inside(sample):
-    #             samples.append(sample)
-
-    #     import torch
-    #     return LabelTensor(torch.tensor(samples), labels=['x', 'y'])
-
     def _check_difference_dimesions(self, geometries):
         """Check if the dimensions of the geometries are consistent.
 

@@ -25,9 +25,9 @@ class Union(Location):
         super().__init__()
 
         # union checks
-        self._check_union_inheritance(geometries)
-        self._check_union_consistency(geometries)
-        
+        check_consistency(geometries, Location)
+        self._check_union_dimensions(geometries)
+
         # assign geometries
         self._geometries = geometries
 
@@ -36,7 +36,7 @@ class Union(Location):
         """ 
         The geometries."""
         return self._geometries
-        
+
     @property
     def variables(self):
         """
@@ -116,7 +116,7 @@ class Union(Location):
 
         return LabelTensor(torch.cat(sampled_points), labels=[f'{i}' for i in self.variables])
 
-    def _check_union_consistency(self, geometries):
+    def _check_union_dimensions(self, geometries):
         """Check if the dimensions of the geometries are consistent.
 
         :param geometries: Geometries to be checked.
@@ -126,12 +126,3 @@ class Union(Location):
             if geometry.variables != geometries[0].variables:
                 raise NotImplementedError(
                     f'The geometries need to be the same dimensions. {geometry.variables} is not equal to {geometries[0].variables}')
-
-    def _check_union_inheritance(self, geometries):
-        """Check if the geometries are inherited from 'pina.geometry.Location'.
-
-        param geometries: Geometries to be checked.
-        :type geometries: list[Location]
-        """
-        for idx, geometry in enumerate(geometries):
-            check_consistency(geometry, Location, f'geometry[{idx}]')
