@@ -2,12 +2,17 @@ __all__ = [
     'Location',
     'CartesianDomain',
     'EllipsoidDomain',
+<<<<<<< HEAD
     'Union',
     'Intersection',
     'Exclusion',
     'Difference',
     'OperationInterface',
     'SimplexDomain'
+=======
+    'Union', 
+    'TriangleDomain'
+>>>>>>> ff5cd4d (fixed __init__.py)
 ]
 
 from .location import Location
