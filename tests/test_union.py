@@ -44,3 +44,16 @@ def test_is_inside_EllipsoidDomain_CartesianDomain():
                     CartesianDomain({'x': [0.6, 1.5], 'y': [-2, 0]})])
     assert domain.is_inside(pt_1) == True
     assert domain.is_inside(pt_2) == False
+
+def test_sample():
+    n = 100
+    domain = Union([EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1]}),
+                    CartesianDomain({'x': [-0.5, 0.5], 'y': [-0.5, 0.5]})])
+    pts = domain.sample(n)
+    assert isinstance(pts, LabelTensor)
+    assert pts.shape[0] == n
+
+    n = 105
+    pts = domain.sample(n)
+    assert isinstance(pts, LabelTensor)
+    assert pts.shape[0] == n
