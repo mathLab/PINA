@@ -6,11 +6,11 @@ from ..label_tensor import LabelTensor
 import random
 
 
-class Difference(Location):
-    """ PINA implementation of Difference of Domains."""
+class Exclusion(Location):
+    """ PINA implementation of Exclusion of Domains."""
 
     def __init__(self, geometries):
-        """ PINA implementation of Difference of Domains.
+        """ PINA implementation of Exclusion of Domains.
 
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'.
@@ -20,14 +20,14 @@ class Difference(Location):
             >>> ellipsoid1 = EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1]})
             >>> ellipsoid2 = EllipsoidDomain({'x': [0, 2], 'y': [0, 2]})
 
-            # Create a difference of the ellipsoid domains
-            >>> difference = Difference([ellipsoid1, ellipsoid2])
+            # Create a Exclusion of the ellipsoid domains
+            >>> exclusion = Exclusion([ellipsoid1, ellipsoid2])
         """
         super().__init__()
 
-        # difference checks
+        # Exclusion checks
         check_consistency(geometries, Location)
-        self._check_difference_dimesions(geometries)
+        self._check_exclusion_dimesions(geometries)
 
         # assign geometries
         self._geometries = geometries
@@ -56,12 +56,12 @@ class Difference(Location):
         return all_variables
 
     def is_inside(self, point, check_border=False):
-        """Check if a point is inside the difference domain.
+        """Check if a point is inside the Exclusion domain.
 
         :param point: Point to be checked.
         :type point: torch.Tensor   
         :param bool check_border: If True, the border is considered inside.
-        :return: True if the point is inside the difference domain, False otherwise.
+        :return: True if the point is inside the Exclusion domain, False otherwise.
         :rtype: bool
         """
         flag = 0
@@ -86,10 +86,10 @@ class Difference(Location):
             >>> cartesian1 = CartesianDomain({'x': [0, 2], 'y': [0, 2]})
             >>> cartesian2 = CartesianDomain({'x': [1, 3], 'y': [1, 3]})
 
-            # Create a difference of the ellipsoid domains
-            >>> difference = Difference([cartesian1, cartesian2])
+            # Create a Exclusion of the ellipsoid domains
+            >>> Exclusion = Exclusion([cartesian1, cartesian2])
 
-            >>> difference.sample(n=1000)
+            >>> Exclusion.sample(n=1000)
                 LabelTensor([[1.6802, 0.7723],
                     [1.8872, 0.9972],
                     [0.3166, 0.1213],
@@ -98,7 +98,7 @@ class Difference(Location):
                     [1.0655, 2.7711],
                     [1.6751, 2.3695]])
 
-            >>> len(difference.sample(n=1000)
+            >>> len(Exclusion.sample(n=1000)
                 1000
 
         """
@@ -131,7 +131,7 @@ class Difference(Location):
 
         return LabelTensor(torch.cat(sampled), labels=[f'{i}' for i in self.variables])
 
-    def _check_difference_dimesions(self, geometries):
+    def _check_exclusion_dimesions(self, geometries):
         """Check if the dimensions of the geometries are consistent.
 
         :param geometries: Geometries to be checked.

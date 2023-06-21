@@ -8,5 +8,5 @@ __all__ = [
 from .location import Location
 from .cartesian import CartesianDomain
 from .ellipsoid import EllipsoidDomain
-from .difference_domain import Difference
+from .exclusion_domain import Difference
 from .union_domain import Union
