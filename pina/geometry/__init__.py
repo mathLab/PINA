@@ -2,11 +2,14 @@ __all__ = [
     'Location',
     'CartesianDomain',
     'EllipsoidDomain',
-    'Union'
+    'Union',
+    'Intersection',
+    'Exclusion',
 ]
 
 from .location import Location
 from .cartesian import CartesianDomain
 from .ellipsoid import EllipsoidDomain
-from .exclusion_domain import Difference
+from .exclusion_domain import Exclusion
+from .intersection_domain import Intersection
 from .union_domain import Union
