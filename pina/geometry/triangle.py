@@ -1,8 +1,8 @@
 import torch
-import numpy as np
 
 from pina.geometry import CartesianDomain
 from .location import Location
+from pina import LabelTensor
 
 
 class TriangleDomain(Location):
@@ -129,32 +129,41 @@ class TriangleDomain(Location):
             :return Returns area of tetrahedron
             :rtype: float
             """
-            vertex1, vertex2, vertex3, vertex4 = vertices
+            vertex1 = torch.FloatTensor(vertices[0])
+            vertex2 = torch.FloatTensor(vertices[1])
+            vertex3 = torch.FloatTensor(vertices[2])
+            vertex4 = torch.FloatTensor(vertices[3])
 
             return (
                 abs(
-                    np.dot(
-                        (np.array(vertex1) - np.array(vertex4)),
-                        np.cross(
-                            (np.array(vertex2) - np.array(vertex4)),
-                            (np.array(vertex3) - np.array(vertex4)),
+                    torch.dot(
+                        (torch.subtract(vertex1, vertex4)),
+                        torch.linalg.cross(
+                            torch.subtract(vertex2, vertex4),
+                            torch.subtract(vertex3, vertex4),
                         ),
                     )
                 )
                 / 6.0
             )
 
-        pt = [point.extract([variable]) for variable in point.labels]
+        pt = [float(point.extract([variable])) for variable in point.labels]
 
         if not check_border:
             if pt in self.vertices:
                 return False
 
-            vec = np.array(pt) - np.array(self.vertices[0])
-            vector_to_point = list(vec / np.linalg.norm(vec))
+            vector_to_point = torch.subtract(
+                torch.FloatTensor(pt), torch.FloatTensor(self.vertices[0])
+            )
+            unit_vector = list(
+                torch.divide(vector_to_point, torch.linalg.norm(vector_to_point))
+            )
 
             for vector in self.vectors:
-                if list(np.array(vector) / np.linalg.norm(vector)) == vector_to_point:
+                vector = torch.FloatTensor(vector)
+
+                if list(torch.divide(vector, torch.linalg.norm(vector))) == unit_vector:
                     return False
 
         if self.dimension == 2:
