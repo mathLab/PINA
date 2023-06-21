@@ -3,12 +3,15 @@ import torch
 from pina.geometry import CartesianDomain
 from .location import Location
 from pina import LabelTensor
+from ..utils import check_consistency
+
 
 
 class TriangleDomain(Location):
     """PINA implementation of a Triangle."""
 
-    def __init__(self, span_dict):
+
+    def __init__(self, span_dict, labels, sample_surface=False):
         """
         :param span_dict: A dictionary with dict-key a string representing
             the input variables for the pinn, and dict-value a list
@@ -16,6 +19,27 @@ class TriangleDomain(Location):
         :type span_dict: dict
 
         :Example:
+
+            >>> spatial_domain = TriangleDomain({'vertex1': [0, 0], 'vertex2': [1, 1], 'vertex3': [0, 2]})
+        """
+
+        # check consistency labels
+        check_consistency(labels, list)
+        for lab in labels:
+            check_consistency(lab, str)
+
+        self._labels = lables
+
+        # check consistency sample_surface
+        check_consistency(sample_surface, bool)
+        self._sample_surface = lables
+
+
+        # checks
+        # 1. check the span, also number entries = numb labels
+
+        # TODO lets condense
+
             >>> spatial_domain = TriangularDomain({'vertex1': [0, 0], 'vertex2': [1, 1], 'vertex3': [0, 2]})
         """
 
@@ -50,15 +74,17 @@ class TriangleDomain(Location):
                 raise TypeError
 
     @property
+
+    def check_border(self):
+        return self._check_border
+
+    @property
     def variables(self):
         """
-        Spatial variables.
-
-        :return: Spatial variables defined in '__init__()'
-        :rtype: list[str]
+        TODO
         """
+        return self._labels
 
-        return list(self.fixed_.keys()) + list(self.range_.keys())
 
     @property
     def vertices(self):
@@ -69,7 +95,8 @@ class TriangleDomain(Location):
         :rtype: tuple[list]
         """
 
-        return tuple(self.fixed_.values()) + tuple(self.range_.values())
+        return list(self.fixed_.values()) + list(self.range_.values())
+
 
     @property
     def vectors(self):
@@ -79,6 +106,7 @@ class TriangleDomain(Location):
         :return: Vertices
         :rtype: list[tuple]
         """
+        # have tensors in a matrix form numb_dim x numb_dim - 1 
 
         return [
             [self.vertices[i][j] - self.vertices[0][j] for j in range(self.dimension)]
@@ -195,25 +223,29 @@ class TriangleDomain(Location):
         # for 2D
 
         # Construct CartesianDomain that contains triangle
-        vertices_by_x = sorted(self.vertices, lambda vertex: vertex[0])
-        vertices_by_y = sorted(self.vertices, lambda vertex: vertex[1])
+
+        vertices_by_x = sorted(self.vertices, key = lambda vertex: vertex[0])
+        vertices_by_y = sorted(self.vertices, key = lambda vertex: vertex[1])
 
         if self.dimension == 3:
-            vertices_by_z = sorted(self.vertices, lambda vertex: vertex[2])
+            vertices_by_z = sorted(self.vertices, key = lambda vertex: vertex[2])
 
             circumscribing_domain = CartesianDomain(
                 {
-                    "x": [vertices_by_x[0], vertices_by_x[-1]],
-                    "y": [vertices_by_y[0], vertices_by_y[-1]],
-                    "z": [vertices_by_z[0], vertices_by_z[-1]],
+                    "x": [vertices_by_x[0][0], vertices_by_x[-1][0]],
+                    "y": [vertices_by_y[0][1], vertices_by_y[-1][1]],
+                    "z": [vertices_by_z[0][2], vertices_by_z[-1][2]],
+
                 }
             )
 
         else:
             circumscribing_domain = CartesianDomain(
                 {
-                    "x": [vertices_by_x[0], vertices_by_x[-1]],
-                    "y": [vertices_by_y[0], vertices_by_y[-1]],
+
+                    "x": [vertices_by_x[0][0], vertices_by_x[-1][0]],
+                    "y": [vertices_by_y[0][1], vertices_by_y[-1][1]],
+
                 }
             )
 
@@ -229,7 +261,6 @@ class TriangleDomain(Location):
                 sampled_point = circumscribing_domain.sample(
                     n=1, mode="random", variables=variables
                 )
-
             sampled_points.append(sampled_point)
-
-        return sampled_points
+        
+        return LabelTensor(torch.cat(sampled_points, dim=0), labels=['x', 'y'])
