@@ -16,7 +16,7 @@ class CartesianDomain(Location):
         :type span_dict: dict
 
         :Example:
-            >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+            >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
         """
         self.fixed_ = {}
         self.range_ = {}
