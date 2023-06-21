@@ -102,6 +102,9 @@ class Difference(Location):
                 1000
 
         """
+        if mode != 'random':
+            raise NotImplementedError(f'{mode} is not a valid mode for sampling.')
+        
         sampled = []
 
         # calculate the number of points to sample for each geometry and the remainder.
