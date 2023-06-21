@@ -17,7 +17,7 @@ class Location(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def is_inside(self):
+    def is_inside(self, point, check_border=False):
         """
         Abstract method for checking if a point is inside the location. To be
         implemented in the child class.

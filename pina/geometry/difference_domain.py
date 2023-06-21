@@ -120,11 +120,11 @@ class Difference(Location):
             # always smaller than remaider.
             # makes sure point is uniquely inside 1 shape.
             while len(sampled_points) < (num_points + int(i < remainder)):
-                sample = geometry.sample(1, 'random')
+                sample = geometry.sample(1, mode, variables)
                 # if not self.is_inside(sample) --> will be the intersection
                 if self.is_inside(sample):
                     sampled_points.append(sample)
-            sampled.extend(sampled_points)
+                sampled += sampled_points
 
         return LabelTensor(torch.cat(sampled), labels=[f'{i}' for i in self.variables])
 
