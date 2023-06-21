@@ -140,6 +140,7 @@ class AbstractProblem(metaclass=ABCMeta):
             raise RuntimeError
 
         locations = kwargs.get('locations', 'all')
+        device = kwargs.get('device', None)
 
         if locations == 'all':
             locations = [condition for condition in self.conditions]
@@ -153,6 +154,10 @@ class AbstractProblem(metaclass=ABCMeta):
                             for argument in arguments)
             pts = merge_tensors(samples)
             self.input_pts[location] = pts
+
+            if device:
+                self.input_pts[location] = self.input_pts[location].to(device=device) #TODO better fix
+                
             # setting the grad
             self.input_pts[location].requires_grad_(True)
             self.input_pts[location].retain_grad()
