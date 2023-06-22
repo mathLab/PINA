@@ -21,5 +21,10 @@ class Location(metaclass=ABCMeta):
         """
         Abstract method for checking if a point is inside the location. To be
         implemented in the child class.
+
+        :param tensor point: A tensor point to be checked.
+        :param bool check_border: a boolean that determines whether the border
+            of the location is considered checked to be considered inside or
+            not. Defaults to False.
         """
         pass
