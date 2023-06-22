@@ -29,6 +29,7 @@ class GAROM(SolverInterface):
                  problem,
                  generator,
                  discriminator,
+                 extra_features=None,
                  loss = LpLoss(p=1),
                  optimizer_generator=torch.optim.Adam,
                  optimizer_generator_kwargs={'lr' : 0.001},
@@ -40,7 +41,7 @@ class GAROM(SolverInterface):
                  scheduler_discriminator_kwargs={"factor": 1, "total_iters": 0},
                  gamma = 0.3,
                  lambda_k = 0.001,
-                 regularizer = False
+                 regularizer = False,
                  ):
         """
         :param AbstractProblem problem: The formualation of the problem.
@@ -48,6 +49,13 @@ class GAROM(SolverInterface):
             for the generator.
         :param torch.nn.Module discriminator: The neural network model to use
             for the discriminator.
+        :param torch.nn.Module extra_features: The additional input
+            features to use as augmented input. It should either be a
+            list of torch.nn.Module, or a dictionary. If a list it is 
+            passed the extra features are passed to both network. If a 
+            dictionary is passed, the keys must be ``generator`` and
+            ``discriminator`` and the values a list of torch.nn.Module
+            extra features for each.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default ``LpLoss(p=1)`` as in the original paper.
         :param torch.optim.Optimizer optimizer_generator: The neural
@@ -79,8 +87,12 @@ class GAROM(SolverInterface):
             parameters), and ``output_points``.
         """
 
+        if isinstance(extra_features, dict):
+            extra_features = [extra_features['generator'], extra_features['discriminator']]
+
         super().__init__(models=[generator, discriminator],
                          problem=problem,
+                         extra_features=extra_features,
                          optimizers=[optimizer_generator, optimizer_discriminator],
                          optimizers_kwargs=[optimizer_generator_kwargs, optimizer_discriminator_kwargs])
         
