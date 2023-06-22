@@ -14,7 +14,10 @@ class Difference(Exclusion):
         """ PINA implementation of Difference of Domains.
 
         :param list geometries: A list of geometries from 'pina.geometry' 
-            such as 'EllipsoidDomain' or 'CartesianDomain'.
+            such as 'EllipsoidDomain' or 'CartesianDomain'. The first 
+            geometry in the list is the geometry from which points are
+            sampled. The rest of the geometries are the geometries that
+            are excluded from the first geometry to find the difference.
 
         :Example:
             # Create two ellipsoid domains
