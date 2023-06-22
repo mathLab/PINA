@@ -29,8 +29,9 @@ class Difference(Exclusion):
         """
         super().__init__(geometries)
 
-        # assign geometries
+        # self.first is the geometry from which points are sampled
         self.first = geometries[0]
+        # self.rest is the list of geometries that are excluded from the first
         self.rest = geometries[1:]
 
     def sample(self, n, mode='random', variables='all'):
