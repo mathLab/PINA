@@ -46,15 +46,17 @@ class Intersection(Exclusion):
             >>> intersection = Intersection([cartesian1, cartesian2])
 
             >>> intersection.sample(n=1000)
-                LabelTensor([[1.5562, 1.8656],
-                            [1.1060, 1.2712],
-                            [1.3909, 1.5579],
+                LabelTensor([[1.2389, 1.4923],
+                            [1.7237, 1.8469],
+                            [1.5058, 1.4860],
                             ...,
-                            [1.5350, 1.7613],
-                            [1.1835, 1.5107],
-                            [1.1986, 1.6461]])
+                            [1.4470, 1.4379],
+                            [1.0176, 1.9371],
+                            [1.4728, 1.8302]])
 
-            >>> len(Intersection.sample(n=1000)
+
+
+            >>> len(intersection.sample(n=1000)
                 1000
 
         """
@@ -81,7 +83,6 @@ class Intersection(Exclusion):
             # makes sure point is uniquely inside 1 shape.
             while len(sampled_points) < (num_points + int(i < remainder)):
                 sample = geometry.sample(1, mode, variables)
-                # if not self.is_inside(sample) --> will be the intersection
                 if not self.is_inside(sample):
                     sampled_points.append(sample)
             sampled += sampled_points

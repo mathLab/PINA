@@ -50,13 +50,14 @@ class Difference(Exclusion):
             >>> difference = Difference([cartesian1, cartesian2])
 
             >>> difference.sample(n=1000)
-                LabelTensor([[1.5562, 1.8656],
-                            [1.1060, 1.2712],
-                            [1.3909, 1.5579],
+                LabelTensor([[1.4429, 0.7778],
+                            [0.5299, 1.2449],
+                            [1.6973, 0.4337],
                             ...,
-                            [1.5350, 1.7613],
-                            [1.1835, 1.5107],
-                            [1.1986, 1.6461]])
+                            [1.6118, 0.0589],
+                            [1.6185, 0.6523],
+                            [0.3597, 0.1120]])
+
 
             >>> len(difference.sample(n=1000)
                 1000
