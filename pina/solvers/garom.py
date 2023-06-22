@@ -101,7 +101,7 @@ class GAROM(SolverInterface):
         # assign schedulers
         self._schedulers = [scheduler_generator(self.optimizers[0], 
                                                   **scheduler_generator_kwargs),
-                               scheduler_generator(self.optimizers[1],
+                            scheduler_discriminator(self.optimizers[1],
                                                     **scheduler_discriminator_kwargs)]
         # loss and writer 
         self._loss = loss
