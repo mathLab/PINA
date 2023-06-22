@@ -103,8 +103,9 @@ class Exclusion(Location):
 
         """
         if mode != 'random':
-            raise NotImplementedError(f'{mode} is not a valid mode for sampling.')
-        
+            raise NotImplementedError(
+                f'{mode} is not a valid mode for sampling.')
+
         sampled = []
 
         # calculate the number of points to sample for each geometry and the remainder.
@@ -140,6 +141,5 @@ class Exclusion(Location):
         for geometry in geometries:
             if geometry.variables != geometries[0].variables:
                 raise NotImplementedError(
-                    f'The geometries need to be the same dimensions. {geometry.variables}' 
+                    f'The geometries need to be the same dimensions. {geometry.variables}'
                     f'is not equal to {geometries[0].variables}.')
-    

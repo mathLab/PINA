@@ -29,7 +29,7 @@ class Difference(Exclusion):
         # assign geometries
         self.first = geometries[0]
         self.rest = geometries[1:]
-    
+
     def sample(self, n, mode='random', variables='all'):
         """Sample routine.
 
@@ -63,10 +63,11 @@ class Difference(Exclusion):
 
         """
         if mode != 'random':
-            raise NotImplementedError(f'{mode} is not a valid mode for sampling.')
-        
+            raise NotImplementedError(
+                f'{mode} is not a valid mode for sampling.')
+
         sampled = []
-        
+
         # sample the points
         while len(sampled) < n:
             # get sample point from first geometry

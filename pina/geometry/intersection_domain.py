@@ -59,8 +59,9 @@ class Intersection(Exclusion):
 
         """
         if mode != 'random':
-            raise NotImplementedError(f'{mode} is not a valid mode for sampling.')
-        
+            raise NotImplementedError(
+                f'{mode} is not a valid mode for sampling.')
+
         sampled = []
 
         # calculate the number of points to sample for each geometry and the remainder.
