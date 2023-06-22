@@ -15,7 +15,8 @@ class Intersection(Exclusion):
 
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'. The intersection
-            is the region that is common to all the geometries in the list.
+            will be taken between all the geometries in the list. The resulting
+            geometry will be the intersection of all the geometries in the list.
 
         :Example:
             # Create two ellipsoid domains
