@@ -5,7 +5,8 @@ __all__ = [
     'Plotter',
     'Condition',
     'Location',
-    'CartesianDomain'
+    'CartesianDomain',
+    'SimplexDomain'
 ]
 
 from .meta import *
@@ -16,3 +17,4 @@ from .plotter import Plotter
 from .condition import Condition
 from .geometry import Location
 from .geometry import CartesianDomain
+from .geometry import SimplexDomain
