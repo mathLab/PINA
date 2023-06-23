@@ -1,8 +1,6 @@
 """Module for Location class."""
 import torch
-from .location import Location
 from .exclusion_domain import Exclusion
-from ..utils import check_consistency
 from ..label_tensor import LabelTensor
 import random
 
@@ -27,6 +25,21 @@ class Intersection(Exclusion):
             >>> intersection = Intersection([ellipsoid1, ellipsoid2])
         """
         super().__init__(geometries)
+
+    def is_inside(self, point, check_border=False):
+        """Check if a point is inside the Exclusion domain.
+
+        :param point: Point to be checked.
+        :type point: torch.Tensor   
+        :param bool check_border: If True, the border is considered inside.
+        :return: True if the point is inside the Exclusion domain, False otherwise.
+        :rtype: bool
+        """
+        flag = 0
+        for geometry in self.geometries:
+            if geometry.is_inside(point, check_border):
+                flag += 1
+        return flag == len(self.geometries)
 
     def sample(self, n, mode='random', variables='all'):
         """Sample routine.
@@ -56,8 +69,6 @@ class Intersection(Exclusion):
                             [1.0176, 1.9371],
                             [1.4728, 1.8302]])
 
-
-
             >>> len(intersection.sample(n=1000)
                 1000
 
@@ -85,7 +96,7 @@ class Intersection(Exclusion):
             # makes sure point is uniquely inside 1 shape.
             while len(sampled_points) < (num_points + int(i < remainder)):
                 sample = geometry.sample(1, mode, variables)
-                if not self.is_inside(sample):
+                if self.is_inside(sample):
                     sampled_points.append(sample)
             sampled += sampled_points
 

@@ -1,10 +1,7 @@
 """Module for Location class."""
 import torch
-from .location import Location
 from .exclusion_domain import Exclusion
-from ..utils import check_consistency
 from ..label_tensor import LabelTensor
-import random
 
 
 class Difference(Exclusion):
