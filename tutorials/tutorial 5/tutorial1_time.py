@@ -2,10 +2,17 @@ import torch
 from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.operators import grad
 from pina.geometry import CartesianDomain
-from pina import Condition, PINN
+from pina import Condition, PINN, LabelTensor
 from pina.trainer import Trainer
 from pina.equation.system_equation import SystemEquation
 from pina.plotter import Plotter
+
+size1, size2, size3 = 50, 50, 10
+tensor1, tensor2 = torch.rand(size1), torch.rand(size2)
+tensor3 = torch.linspace(0, 1, size3)
+inp_points = torch.cartesian_prod(tensor1, tensor2, tensor3)
+inp_points.requires_grad = True
+print(inp_points)
 
 # Define material
 E = 7
@@ -59,8 +66,11 @@ class Mechanics(SpatialProblem, TimeDependentProblem):
     temporal_domain = CartesianDomain({'t': [0, 1]})
 
     conditions = {
+        #'D': Condition(
+        #    location=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}),
+        #    equation=SystemEquation([equilibrium]))
         'D': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}),
+            input_points=LabelTensor(inp_points, ['x', 'y', 't']),
             equation=SystemEquation([equilibrium]))
     }
 
@@ -86,7 +96,8 @@ class HardMLP(torch.nn.Module):
         return modified_output
 
 model = HardMLP(len(bvp_problem.input_variables), len(bvp_problem.output_variables))
-bvp_problem.discretise_domain(10, 'grid', locations=['D'])
+#bvp_problem.discretise_domain(15, 'grid', locations=['D'], variables=['x', 'y'])
+#bvp_problem.discretise_domain(2, 'grid', locations=['D'], variables=['t'])
 
 # make the solver
 solver = PINN(problem=bvp_problem, model=model, optimizer=torch.optim.LBFGS)
