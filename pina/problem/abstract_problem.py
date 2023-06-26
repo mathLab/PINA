@@ -1,6 +1,6 @@
 """ Module for AbstractProblem class """
 from abc import ABCMeta, abstractmethod
-from ..utils import merge_tensors
+from ..utils import merge_tensors, check_consistency
 
 
 class AbstractProblem(metaclass=ABCMeta):
@@ -111,7 +111,7 @@ class AbstractProblem(metaclass=ABCMeta):
                 continue
             self.input_pts[condition_name] = samples
 
-    def discretise_domain(self, *args, **kwargs):
+    def discretise_domain(self, n, mode = 'random', variables = 'all', locations = 'all'):
         """
         Generate a set of points to span the `Location` of all the conditions of
         the problem.
@@ -120,44 +120,57 @@ class AbstractProblem(metaclass=ABCMeta):
         >>> pinn.span_pts(n=10, mode='grid', location=['bound1'])
         >>> pinn.span_pts(n=10, mode='grid', variables=['x'])
         """
-        if all(key in kwargs for key in ['n', 'mode']):
-            argument = {}
-            argument['n'] = kwargs['n']
-            argument['mode'] = kwargs['mode']
-            argument['variables'] = self.input_variables
-            arguments = [argument]
-        elif any(key in kwargs for key in ['n', 'mode']) and args:
-            raise ValueError("Don't mix args and kwargs")
-        elif isinstance(args[0], int) and isinstance(args[1], str):
-            argument = {}
-            argument['n'] = int(args[0])
-            argument['mode'] = args[1]
-            argument['variables'] = self.input_variables
-            arguments = [argument]
-        elif all(isinstance(arg, dict) for arg in args):
-            arguments = args
+
+        # check consistecy n
+        check_consistency(n, int)
+
+        # check consistency mode
+        check_consistency(mode, str)
+        if mode not in ['random', 'grid', 'lh', 'chebyshev', 'latin']:
+            raise TypeError(f'mode {mode} not valid.')
+        
+        # check consistency variables
+        if variables == 'all':
+            variables = self.input_variables
         else:
-            raise RuntimeError
-
-        locations = kwargs.get('locations', 'all')
-
+            check_consistency(variables, str)
+        
+        if sorted(variables) !=  sorted(self.input_variables):
+            TypeError(f'Wrong variables for sampling. Variables ',
+                      f'should be in {self.input_variables}.')
+            
+        # check consistency location
         if locations == 'all':
             locations = [condition for condition in self.conditions]
+        else:
+            check_consistency(locations, str)
+
+        if sorted(locations) !=  sorted(self.conditions):
+            TypeError(f'Wrong locations for sampling. Location ',
+                      f'should be in {self.conditions}.')
+
+        # sampling
         for location in locations:
             condition = self.conditions[location]
-
-            samples = tuple(condition.location.sample(
-                            argument['n'],
-                            argument['mode'],
-                            variables=argument['variables'])
-                            for argument in arguments)
+            # we try to check if we have already sampled
+            try:
+                already_sampled = [self.input_pts[location]]
+            except KeyError:
+                already_sampled = []
+            # build samples
+            samples = [condition.location.sample(
+                            n=n,
+                            mode=mode,
+                            variables=variables)
+                        ] + already_sampled
             pts = merge_tensors(samples)
             self.input_pts[location] = pts
             # setting the grad
             self.input_pts[location].requires_grad_(True)
             self.input_pts[location].retain_grad()
             # the condition is sampled
-            self._have_sampled_points[location] = True
+            if sorted(self.input_pts[location].labels) ==  sorted(self.input_variables): 
+                self._have_sampled_points[location] = True
 
     @property
     def have_sampled_points(self):
