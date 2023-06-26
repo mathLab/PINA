@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from pina.problem import SpatialProblem
+from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.operators import grad
 from pina.geometry import CartesianDomain
 from pina import Condition, PINN
@@ -53,6 +53,10 @@ def material(input_, output_):
     Gex = (2 * mu + lmbda) * u1_xx + mu * u1_yy + mu * u2_xy + lmbda * u2_yx
     Gey = (2 * mu + lmbda) * u2_yy + mu * u2_xx + mu * u1_yx + lmbda * u1_xy
 
+    # sxx_x = lmbda * (u1_xx + u2_yx) + 2 * mu * u1_xx
+    # sxy_y = mu * (u1_yy + u2_xy)
+    # syy_y = lmbda * (u1_xy + u2_yy) + 2 * mu * u2_yy
+    # syx_x = mu * (u2_xx + u1_yx)
     return e11, e22, e12, s11, s22, s12, Gex, Gey
 
 
@@ -68,7 +72,8 @@ def gamma_left(input_, output_):
 
 def gamma_right(input_, output_):
     _, _, _, s11, _, s12, _, _ = material(input_, output_)
-    return torch.stack([s11 -torch.cos(torch.pi * input_.extract(['y']) / 2), s12], dim=1).squeeze()
+    t_ = input_.extract(['t'])
+    return torch.stack([s11 - t_*torch.cos(torch.pi * input_.extract(['y']) / 2), s12], dim=1).squeeze()
 
 
 def gamma_bottom(input_, output_):
@@ -81,25 +86,26 @@ def gamma_top(input_, output_):
     return torch.stack([s22, s12], dim=1).squeeze()
 
 
-class Mechanics(SpatialProblem):
+class Mechanics(SpatialProblem, TimeDependentProblem):
     output_variables = ['u1', 'u2']
     spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
+    temporal_domain = CartesianDomain({'t': [0, 1]})
 
     conditions = {
         'gamma_left': Condition(
-            location=CartesianDomain({'x': 0, 'y': [0, 1]}),
+            location=CartesianDomain({'x': 0, 'y': [0, 1], 't': [0, 1]}),
             equation=Equation(gamma_left)),
         'gamma_right': Condition(
-            location=CartesianDomain({'x': 1, 'y': [0, 1]}),
+            location=CartesianDomain({'x': 1, 'y': [0, 1], 't': [0, 1]}),
             equation=Equation(gamma_right)),
         'gamma_bottom': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': 0}),
+            location=CartesianDomain({'x': [0, 1], 'y': 0, 't': [0, 1]}),
             equation=Equation(gamma_bottom)),
         'gamma_top': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': 1}),
+            location=CartesianDomain({'x': [0, 1], 'y': 1, 't': [0, 1]}),
             equation=Equation(gamma_top)),
         'D': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}),
+            location=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}),
             equation=SystemEquation([equilibrium]))
     }
 
@@ -139,8 +145,10 @@ trainer.train()
 
 # plotter
 plotter = Plotter()
-plotter.plot(solver=solver, components='u1')
-plotter.plot(solver=solver, components='u1')
+plotter.plot(solver=solver, components='u1', fixed_variables={'t': 0.0})
+plotter.plot(solver=solver, components='u1', fixed_variables={'t': 1.0})
+plotter.plot(solver=solver, components='u2', fixed_variables={'t': 0.0})
+plotter.plot(solver=solver, components='u2', fixed_variables={'t': 1.0})
 
 # get components ui on pts
 v = [var for var in solver.problem.input_variables]

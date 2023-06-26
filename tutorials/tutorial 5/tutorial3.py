@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from pina.problem import SpatialProblem
+from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.operators import grad
 from pina.geometry import CartesianDomain
 from pina import Condition, PINN
@@ -10,8 +10,6 @@ from pina.equation.equation import Equation
 from pina.equation.system_equation import SystemEquation
 from pina.plotter import Plotter
 from lightning.pytorch import seed_everything
-
-seed_everything(42, workers=True)
 
 # Define material
 E = 7
@@ -62,46 +60,48 @@ def equilibrium(input_, output_):
 
 
 def gamma_left(input_, output_):
-    _, _, _, _, s11, s12, _, _ = material(input_, output_)
-    return torch.stack([s11, s12], dim=1).squeeze()
+    _, _, _, s11, _, _, _, _ = material(input_, output_)
+    return s11
 
 
 def gamma_right(input_, output_):
-    _, _, _, s11, _, s12, _, _ = material(input_, output_)
-    return torch.stack([s11 -torch.cos(torch.pi * input_.extract(['y']) / 2), s12], dim=1).squeeze()
+    _, _, _, s11, _, _, _, _ = material(input_, output_)
+    return s11
 
 
 def gamma_bottom(input_, output_):
-    _, _, _, _, s22, s12, _, _ = material(input_, output_)
-    return torch.stack([s22, s12], dim=1).squeeze()
+    u1 = output_.extract(['u1'])
+    u2 = output_.extract(['u2'])
+    return torch.stack([u1, u2], dim=1).squeeze()
 
 
 def gamma_top(input_, output_):
-    _, _, _, _, s22, s12, _, _ = material(input_, output_)
-    return torch.stack([s22, s12], dim=1).squeeze()
+    u2 = output_.extract(['u2'])
+    return u2 - torch.sin(0.5 * torch.pi * input_.extract(['x']))*0.04
 
 
 class Mechanics(SpatialProblem):
     output_variables = ['u1', 'u2']
-    spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
+    spatial_domain = CartesianDomain({'x': [-1, 1], 'y': [-1, 1]})
 
     conditions = {
         'gamma_left': Condition(
-            location=CartesianDomain({'x': 0, 'y': [0, 1]}),
+            location=CartesianDomain({'x': -1, 'y': [-1, 1]}),
             equation=Equation(gamma_left)),
         'gamma_right': Condition(
-            location=CartesianDomain({'x': 1, 'y': [0, 1]}),
+            location=CartesianDomain({'x': 1, 'y': [-1, 1]}),
             equation=Equation(gamma_right)),
-        'gamma_bottom': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': 0}),
-            equation=Equation(gamma_bottom)),
+        # 'gamma_bottom': Condition(
+        #    location=CartesianDomain({'x':[-0.5, 0.5], 'y': -0.5}),
+        #    equation=Equation(gamma_bottom)),
         'gamma_top': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': 1}),
+            location=CartesianDomain({'x': [-1, 1], 'y': 1}),
             equation=Equation(gamma_top)),
         'D': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}),
+            location=CartesianDomain({'x': [-1, 1], 'y': [-1, 1]}),
             equation=SystemEquation([equilibrium]))
     }
+
 
 # make the problem
 bvp_problem = Mechanics()
@@ -111,23 +111,23 @@ class HardMLP(torch.nn.Module):
     def __init__(self, input_dim, output_dim):
         super().__init__()
 
-        self.layers = torch.nn.Sequential(torch.nn.Linear(input_dim, 20),
+        self.layers = torch.nn.Sequential(torch.nn.Linear(input_dim, 16),
                                           torch.nn.Tanh(),
-                                          torch.nn.Linear(20, 20),
+                                          torch.nn.Linear(16, 16),
                                           torch.nn.Tanh(),
-                                          torch.nn.Linear(20, output_dim))
+                                          torch.nn.Linear(16, output_dim))
 
     # here in the foward we implement the hard constraints
     def forward(self, x):
         output = self.layers(x)
-        u1_hard = x.extract(['x']) * output[:, 0][:, None]
-        u2_hard = x.extract(['y']) * output[:, 1][:, None]
+        u1_hard = (1 - x.extract(['y'])) * (1 + x.extract(['y'])) * output[:, 0][:, None]
+        u2_hard = (1 + x.extract(['x'])) * (1 - x.extract(['x'])) * (1 + x.extract(['y'])) * output[:, 1][:, None]
         modified_output = torch.hstack([u1_hard, u2_hard])
         return modified_output
 
 
 model = HardMLP(len(bvp_problem.input_variables), len(bvp_problem.output_variables))
-bvp_problem.discretise_domain(10, 'grid', locations=['gamma_left', 'gamma_right', 'gamma_bottom', 'gamma_top'])
+bvp_problem.discretise_domain(10, 'grid', locations=['gamma_left', 'gamma_right', 'gamma_top'])
 bvp_problem.discretise_domain(20, 'grid', locations=['D'])
 
 # make the solver
@@ -140,7 +140,7 @@ trainer.train()
 # plotter
 plotter = Plotter()
 plotter.plot(solver=solver, components='u1')
-plotter.plot(solver=solver, components='u1')
+plotter.plot(solver=solver, components='u2')
 
 # get components ui on pts
 v = [var for var in solver.problem.input_variables]
@@ -155,8 +155,8 @@ cmap = 'jet'
 plt.figure()
 plt.scatter(pts.detach().numpy()[:, 0], pts.detach().numpy()[:, 1], s=5, c=u1.detach().numpy(), cmap=cmap)
 plt.colorbar()
-plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/results/u1")
+plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/u1")
 plt.figure()
 plt.scatter(pts.detach().numpy()[:, 0], pts.detach().numpy()[:, 1], s=5, c=u2.detach().numpy(), cmap=cmap)
 plt.colorbar()
-plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/results/u2")
+plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/u2")

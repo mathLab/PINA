@@ -59,7 +59,7 @@ class PINN(SolverInterface):
         self._scheduler = scheduler(self._optimizer, **scheduler_kwargs)
         self._loss = loss
         self._writer = Writer()
-
+        self.loss_list = []
 
     def forward(self, x):
         """Forward pass implementation for the PINN
@@ -120,9 +120,9 @@ class PINN(SolverInterface):
         # we need to pass it as a torch tensor to make everything work
         total_loss = sum(condition_losses)
 
-        #condition_loss_info = [f'{condition_name}: {loss.item():.6f}' for condition_name, loss in
-        #                       zip(batch.keys(), condition_losses)]
-        #print(f'\nTotal Loss: {total_loss.item():.6f}')
-        #print(f'Condition Losses: {", ".join(condition_loss_info)}\n')
-
+        condition_loss_info = [f'{condition_name}: {loss.item():.6f}' for condition_name, loss in
+                               zip(batch.keys(), condition_losses)]
+        print(f'\nTotal Loss: {total_loss.item():.6f}')
+        print(f'Condition Losses: {", ".join(condition_loss_info)}\n')
+        self.loss_list.append(total_loss.item())
         return total_loss

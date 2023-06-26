@@ -1,17 +1,11 @@
 import torch
-import torch.nn as nn
-
-from pina.problem import SpatialProblem
+from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.operators import grad
 from pina.geometry import CartesianDomain
 from pina import Condition, PINN
 from pina.trainer import Trainer
-from pina.equation.equation import Equation
 from pina.equation.system_equation import SystemEquation
 from pina.plotter import Plotter
-from lightning.pytorch import seed_everything
-
-seed_everything(42, workers=True)
 
 # Define material
 E = 7
@@ -25,10 +19,8 @@ elif p == 'plain_stress':  ### plain stress
     lmbda = E * nu / (1 + nu) / (1 - nu)
     mu = E / (1 + nu) / 2
 
-
 def material(input_, output_):
     u_grad = grad(output_, input_)
-
     u1_xx = grad(u_grad, input_, components=['du1dx'], d=['x'])
     u1_xy = grad(u_grad, input_, components=['du1dx'], d=['y'])
     u1_yx = grad(u_grad, input_, components=['du1dy'], d=['x'])
@@ -58,54 +50,22 @@ def material(input_, output_):
 
 def equilibrium(input_, output_):
     _, _, _, _, _, _, Gex, Gey = material(input_, output_)
-    return torch.stack([Gex, Gey], dim=1).squeeze()
+    return torch.stack([Gex, Gey], dim=1)
 
 
-def gamma_left(input_, output_):
-    _, _, _, _, s11, s12, _, _ = material(input_, output_)
-    return torch.stack([s11, s12], dim=1).squeeze()
-
-
-def gamma_right(input_, output_):
-    _, _, _, s11, _, s12, _, _ = material(input_, output_)
-    return torch.stack([s11 -torch.cos(torch.pi * input_.extract(['y']) / 2), s12], dim=1).squeeze()
-
-
-def gamma_bottom(input_, output_):
-    _, _, _, _, s22, s12, _, _ = material(input_, output_)
-    return torch.stack([s22, s12], dim=1).squeeze()
-
-
-def gamma_top(input_, output_):
-    _, _, _, _, s22, s12, _, _ = material(input_, output_)
-    return torch.stack([s22, s12], dim=1).squeeze()
-
-
-class Mechanics(SpatialProblem):
+class Mechanics(SpatialProblem, TimeDependentProblem):
     output_variables = ['u1', 'u2']
     spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
+    temporal_domain = CartesianDomain({'t': [0, 1]})
 
     conditions = {
-        'gamma_left': Condition(
-            location=CartesianDomain({'x': 0, 'y': [0, 1]}),
-            equation=Equation(gamma_left)),
-        'gamma_right': Condition(
-            location=CartesianDomain({'x': 1, 'y': [0, 1]}),
-            equation=Equation(gamma_right)),
-        'gamma_bottom': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': 0}),
-            equation=Equation(gamma_bottom)),
-        'gamma_top': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': 1}),
-            equation=Equation(gamma_top)),
         'D': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}),
+            location=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}),
             equation=SystemEquation([equilibrium]))
     }
 
 # make the problem
 bvp_problem = Mechanics()
-
 
 class HardMLP(torch.nn.Module):
     def __init__(self, input_dim, output_dim):
@@ -117,30 +77,30 @@ class HardMLP(torch.nn.Module):
                                           torch.nn.Tanh(),
                                           torch.nn.Linear(20, output_dim))
 
-    # here in the foward we implement the hard constraints
     def forward(self, x):
         output = self.layers(x)
-        u1_hard = x.extract(['x']) * output[:, 0][:, None]
+        delta = 0.05
+        u1_hard = x.extract(['t'])*delta * x.extract(['x']) + (1 - x.extract(['x'])) * x.extract(['x']) * output[:, 0][:, None]
         u2_hard = x.extract(['y']) * output[:, 1][:, None]
         modified_output = torch.hstack([u1_hard, u2_hard])
         return modified_output
 
-
 model = HardMLP(len(bvp_problem.input_variables), len(bvp_problem.output_variables))
-bvp_problem.discretise_domain(10, 'grid', locations=['gamma_left', 'gamma_right', 'gamma_bottom', 'gamma_top'])
-bvp_problem.discretise_domain(20, 'grid', locations=['D'])
+bvp_problem.discretise_domain(10, 'grid', locations=['D'])
 
 # make the solver
 solver = PINN(problem=bvp_problem, model=model, optimizer=torch.optim.LBFGS)
 
 # train the model (ONLY CPU for now, all other devises in the official release)
-trainer = Trainer(solver=solver, kwargs={'max_epochs': 5, 'accelerator': 'cpu', 'deterministic': True})
+trainer = Trainer(solver=solver, kwargs={'max_epochs': 5000, 'accelerator': 'cpu', 'deterministic': True})
 trainer.train()
 
 # plotter
 plotter = Plotter()
-plotter.plot(solver=solver, components='u1')
-plotter.plot(solver=solver, components='u1')
+plotter.plot(solver=solver, components='u1', fixed_variables={'t': 0.0})
+plotter.plot(solver=solver, components='u1', fixed_variables={'t': 1.0})
+plotter.plot(solver=solver, components='u2', fixed_variables={'t': 0.0})
+plotter.plot(solver=solver, components='u2', fixed_variables={'t': 1.0})
 
 # get components ui on pts
 v = [var for var in solver.problem.input_variables]
@@ -160,3 +120,8 @@ plt.figure()
 plt.scatter(pts.detach().numpy()[:, 0], pts.detach().numpy()[:, 1], s=5, c=u2.detach().numpy(), cmap=cmap)
 plt.colorbar()
 plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/results/u2")
+
+
+plt.figure()
+plt.plot(solver.loss_list)
+plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/results/loss")
