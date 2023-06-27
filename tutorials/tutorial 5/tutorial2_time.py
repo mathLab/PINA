@@ -13,6 +13,12 @@ from lightning.pytorch import seed_everything
 
 seed_everything(42, workers=True)
 
+size1, size2, size3 = 20, 20, 10
+tensor1, tensor2 = torch.rand(size1), torch.rand(size2)
+tensor3 = torch.linspace(0, 1, size3)
+inp_points = torch.cartesian_prod(tensor1, tensor2, tensor3)
+inp_points.requires_grad = True
+
 # Define material
 E = 7
 nu = 0.3

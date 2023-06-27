@@ -7,7 +7,7 @@ from pina.trainer import Trainer
 from pina.equation.system_equation import SystemEquation
 from pina.plotter import Plotter
 
-size1, size2, size3 = 50, 50, 10
+size1, size2, size3 = 20, 20, 10
 tensor1, tensor2 = torch.rand(size1), torch.rand(size2)
 tensor3 = torch.linspace(0, 1, size3)
 inp_points = torch.cartesian_prod(tensor1, tensor2, tensor3)

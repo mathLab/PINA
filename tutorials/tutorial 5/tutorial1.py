@@ -93,7 +93,7 @@ solver = PINN(problem=bvp_problem, model=model, optimizer=torch.optim.LBFGS)
 # train the model (ONLY CPU for now, all other devises in the official release)
 #logger = pl_loggers.TensorBoardLogger(name=f'ssl-{0.01}-{1}', save_dir='runs')
 
-trainer = Trainer(solver=solver, kwargs={'max_epochs': 5, 'accelerator': 'cpu', 'deterministic': True})
+trainer = Trainer(solver=solver, kwargs={'max_epochs': 1, 'accelerator': 'cpu', 'deterministic': True})
 trainer.train()
 
 # plotter
@@ -104,22 +104,23 @@ plotter.plot(solver=solver, components='u2')
 # get components ui on pts
 v = [var for var in solver.problem.input_variables]
 pts = solver.problem.domain.sample(256, 'grid', variables=v)
+pts.requires_grad = True
 predicted_output = solver.forward(pts)
 u1 = predicted_output.extract('u1')
 u2 = predicted_output.extract('u2')
+
+e11, e22, e12, s11, s22, s12, _, _ = material(pts, solver.forward(pts))
 
 import matplotlib.pyplot as plt
 cmap = 'jet'
 plt.figure()
 plt.scatter(pts.detach().numpy()[:, 0], pts.detach().numpy()[:, 1], s=5, c=u1.detach().numpy(), cmap=cmap)
 plt.colorbar()
-plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/results/u1")
+plt.savefig("results/u1")
 plt.figure()
 plt.scatter(pts.detach().numpy()[:, 0], pts.detach().numpy()[:, 1], s=5, c=u2.detach().numpy(), cmap=cmap)
 plt.colorbar()
-plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/results/u2")
-
-
+plt.savefig("results/u2")
 plt.figure()
 plt.plot(solver.loss_list)
-plt.savefig("C:/Users/Kerem/PycharmProjects/PINA/tutorials/tutorial 5/results/loss")
+plt.savefig("results/loss")
