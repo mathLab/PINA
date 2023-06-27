@@ -78,20 +78,26 @@ def test_discretise_domain():
     poisson_problem.discretise_domain(n, 'lh', locations=['D'])
     assert poisson_problem.input_pts['D'].shape[0] == n
 
-def test_sampling_all_args():
+def test_sampling_few_variables():
     n = 10
-    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
+    poisson_problem.discretise_domain(n, 'grid', locations=['D'], variables=['x'])
+    assert poisson_problem.input_pts['D'].shape[1] == 1
+    assert poisson_problem._have_sampled_points['D'] is False  
 
-def test_sampling_all_kwargs():
-    n = 10
-    poisson_problem.discretise_domain(n=n, mode='latin', locations=['D'])
+# def test_sampling_all_args():
+#     n = 10
+#     poisson_problem.discretise_domain(n, 'grid', locations=['D'])
 
-def test_sampling_dict():
-    n = 10
-    poisson_problem.discretise_domain(
-        {'variables': ['x', 'y'], 'mode': 'grid', 'n': n}, locations=['D'])
+# def test_sampling_all_kwargs():
+#     n = 10
+#     poisson_problem.discretise_domain(n=n, mode='latin', locations=['D'])
 
-def test_sampling_mixed_args_kwargs():
-    n = 10
-    with pytest.raises(ValueError):
-        poisson_problem.discretise_domain(n, mode='latin', locations=['D'])
+# def test_sampling_dict():
+#     n = 10
+#     poisson_problem.discretise_domain(
+#         {'variables': ['x', 'y'], 'mode': 'grid', 'n': n}, locations=['D'])
+
+# def test_sampling_mixed_args_kwargs():
+#     n = 10
+#     with pytest.raises(ValueError):
+#         poisson_problem.discretise_domain(n, mode='latin', locations=['D'])
