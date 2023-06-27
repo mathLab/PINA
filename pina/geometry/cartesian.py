@@ -16,7 +16,7 @@ class CartesianDomain(Location):
         :type span_dict: dict
 
         :Example:
-            >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+            >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
         """
         self.fixed_ = {}
         self.range_ = {}
@@ -247,23 +247,27 @@ class CartesianDomain(Location):
         :param point: Point to be checked
         :type point: LabelTensor
         :param check_border: Check if the point is also on the frontier
-            of the ellipsoid, default False.
+            of the hypercube, default False.
         :type check_border: bool
         :return: Returning True if the point is inside, False otherwise.
         :rtype: bool
         """
         is_inside = []
+
+        # check fixed variables
+        for variable, value in self.fixed_.items():
+            if variable in point.labels:
+                is_inside.append(point.extract([variable]) == value)
+
+        # check not fixed variables
         for variable, bound in self.range_.items():
             if variable in point.labels:
-                if bound[0] <= point.extract([variable]) <= bound[1]:
-                    is_inside.append(True)
+
+                if check_border:
+                    check = bound[0] <= point.extract([variable]) <= bound[1]
                 else:
-                    is_inside.append(False)
+                    check = bound[0] < point.extract([variable]) < bound[1]
+            
+                is_inside.append(check)
 
         return all(is_inside)
-
-        # TODO check the fixed_ dimensions
-        # for variable, value in self.fixed_.items():
-        #     if variable in point.labels:
-        #         if not (point.extract[variable] == value):
-        #             return False
