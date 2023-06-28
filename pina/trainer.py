@@ -3,7 +3,7 @@
 import lightning.pytorch as pl
 from .utils import check_consistency
 from .dataset import DummyLoader
-from .solver import SolverInterface
+from .solvers.solver import SolverInterface
 
 class Trainer(pl.Trainer):
 
