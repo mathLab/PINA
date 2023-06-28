@@ -57,7 +57,9 @@ The PINNs framework is completely general and applicable to different types of o
 PINA is an open-source Python library that provides an intuitive interface for the approximated resolution of Ordinary Differential Equations and Partial Differential Equations using  a deep learning paradigm, in particular via PINNs.
 The gain of popularity for PINNs in recent years, and the evolution of open-source frameworks, such as TensorFlow, Keras, and PyTorch, led to the development of several libraries, whose focus is the exploitation of PINNs to approximately solve ODEs and PDEs.
 We here mention some PyTorch-based libraries, \verb+NeuroDiffEq+ [@chen2020neurodiffeq], \verb+IDRLNet+ [@peng2021idrlnet], NVIDIA \verb+modulus-sym+ [@modulussym], and some TensorFlow-based libraries, such as \verb+DeepXDE+ [@lu2021deepxde], \verb+TensorDiffEq+ [@mcclenny2021tensordiffeq], \verb+SciANN+ [@haghighat2021sciann] (which is both TensorFlow and Keras-based), \verb+PyDEns+ [@koryagin2019pydens], \verb+Elvet+ [@araz2021elvet], \verb+NVIDIA SimNet+ [@hennigh2021nvidia].
-Among all these frameworks, PINA wants to emerge for its easiness of usage, allowing the users to quickly formulate the problem at hand and solve it, resulting in an intuitive framework designed by researchers for researchers. Built over PyTorch --- in order to inherit the \verb+autograd+ module and all the other features already implemented --- PINA provides indeed documented API to explain usage and capabilities of the different classes. We have built several abstract interfaces not only for better structure of the source code but especially to give the final user an easy entry point to implement their own extensions, like new loss functions, and new training procedures. This aspect, together with the capability to use all the PyTorch models, makes it possible to incorporate almost any existing architecture into the PINA framework.
+Among all these frameworks, PINA wants to emerge for its easiness of usage, allowing the users to quickly formulate the problem at hand and solve it, resulting in an intuitive framework designed by researchers for researchers.
+
+Built over PyTorch --- in order to inherit the \verb+autograd+ module and all the other features already implemented --- PINA provides indeed documented API to explain usage and capabilities of the different classes. We have built several abstract interfaces not only for better structure of the source code but especially to give the final user an easy entry point to implement their own extensions, like new loss functions, new training procedures, and so on. This aspect, together with the capability to use all the PyTorch models, makes it possible to incorporate almost any existing architecture into the PINA framework.
 We have decided to build it on top of PyTorch in order to exploit the \verb+autograd+ module, as well as all the other features implemented in this framework. The final outcome is then a library with incremental complexity, capable of being used by the new users to perform the first investigation using PINNs, but also as a core framework to actively develop new features to improve the discussed methodology.
 
 The high-level structure of the package is illustrated in Figure \ref{API_visual}; the approximated solution of a differential equation can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly interface.
@@ -76,21 +78,17 @@ The user has to include in the problem formulation the following components:
     \item the output variables, i.e. the unknowns of the problem;
     \item the conditions that the neural network has to satisfy, i.e. the differential equations, the boundary and initial conditions.
 \end{itemize}
-We highlight that in PINA we abandoned the classical division between physical loss, boundary loss, and data loss: all these terms are encapsulated within the \verb+Condition+ class, in order to keep the framework as general as possible. The users can indeed define all the constraints the unknown field needs to satisfy, avoiding any forced structure in the formulation and allowing them to mix heterogeneous constraints --- e.g. data values, differential boundary conditions.
+We highlight that in PINA we abandoned the classical division between physical loss, boundary loss, and data loss: all these terms are encapsulated within the \verb+Condition+ class, in order to keep the framework as general as possible. The users can indeed define all the constraints the unknown field needs to satisfy, avoiding any forced structure in the formulation and allowing them to mix heterogeneous constraints --- e.g. data values, differential boundary conditions. Moreover PINA already implements functions to easily compute the diffential operations (gradient, divergence, laplacian) over the output(s) of interest, aiming to make the problem definition an easy task for the users.
 
 ## Model definition in PINA
 The second fundamental step is the definition of the model of the neural network employed to find the approximated solution to the differential problem in question.
 In PINA, the user has the possibility to use either a custom \verb+torch+ network model and translate it to a PINA model (with the class \verb+Network+), or to exploit one of the built-in models such as \verb+FeedForward+, \verb+MultiFeedForward+ and \verb+DeepONet+, defining their characteristics during instantiation --- i.e. number of layers, number of neurons, activation functions. The list of the built-in models will be extended in the next release of the library.
 
-## PINN definition and results' visualization in PINA
-In the last step, the above-mentioned problem and model definitions are then used to build a PINN object. The PINN training
-stage is composed of two fundamental steps:
-\begin{itemize}
-	\item the definition of the sampling points where the physical loss will minimized, using the \verb+span+$\_$\verb+pts+ attribute of the defined PINN object;
-	\item the training of the model, where the stopping criteria are user-defined into the \verb+train+ attribute.
-\end{itemize}
-The loss behaviour across the epochs and the results at the end of the training can be then visualized exploiting the
-\verb+Plotter+ class.
+## PINN training
+In the last step, the actual training of the model in order to solve the problem at hand is computed. In this phase, the residuals of the conditions (expressed in the problem) are minimized in order to provide the target approximation. The sampling points where the physical residuals are evaluated can be passed by the user, or automatically sampled from the original domain using one of the available sampling techniques.
+The training is then computed for a certain amount of epochs, or until reaching the user-defined loss threshold.
+Once the model is ready to be inferred, the user can save it onto a binary file for future reusing, by inheriting the PyTorch functionality. The user can also evaluate the (trained) model for any new input, or just use it together with the \verb+Plotter+ in order to render the predicted output variables.
+
 
 # Acknowledgements
 
