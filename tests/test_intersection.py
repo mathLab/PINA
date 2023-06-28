@@ -46,11 +46,11 @@ def test_sample():
     n = 100
     domain = Intersection([EllipsoidDomain(
         {'x': [-1, 1], 'y': [-1, 1]}), CartesianDomain({'x': [-0.5, 0.5], 'y': [-0.5, 0.5]})])
-    pts = domain.sample(n)
+    pts = domain.sample(n, type="intersection")
     assert isinstance(pts, LabelTensor)
     assert pts.shape[0] == n
 
     n = 105
-    pts = domain.sample(n)
+    pts = domain.sample(n, type="intersection")
     assert isinstance(pts, LabelTensor)
     assert pts.shape[0] == n

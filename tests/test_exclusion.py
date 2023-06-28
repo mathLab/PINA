@@ -41,11 +41,11 @@ def test_sample():
     n = 100
     domain = Exclusion([EllipsoidDomain(
         {'x': [-1, 1], 'y': [-1, 1]}), CartesianDomain({'x': [0.3, 1.5], 'y': [0.3, 1.5]})])
-    pts = domain.sample(n)
+    pts = domain.sample(n, type="exclusion")
     assert isinstance(pts, LabelTensor)
     assert pts.shape[0] == n
 
     n = 105
-    pts = domain.sample(n)
+    pts = domain.sample(n, type="exclusion")
     assert isinstance(pts, LabelTensor)
     assert pts.shape[0] == n
