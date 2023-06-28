@@ -30,7 +30,7 @@ class GAROM(SolverInterface):
                  generator,
                  discriminator,
                  extra_features=None,
-                 loss = LpLoss(p=1),
+                 loss = None,
                  optimizer_generator=torch.optim.Adam,
                  optimizer_generator_kwargs={'lr' : 0.001},
                  optimizer_discriminator=torch.optim.Adam,
@@ -57,7 +57,8 @@ class GAROM(SolverInterface):
             ``discriminator`` and the values a list of torch.nn.Module
             extra features for each.
         :param torch.nn.Module loss: The loss function used as minimizer,
-            default ``LpLoss(p=1)`` as in the original paper.
+            default ``None``. If ``loss`` is ``None`` the defualt
+            ``LpLoss(p=1)`` is used, as in the original paper.
         :param torch.optim.Optimizer optimizer_generator: The neural
             network optimizer to use for the generator network
             , default is `torch.optim.Adam`.
@@ -98,6 +99,10 @@ class GAROM(SolverInterface):
         
         # set automatic optimization for GANs
         self.automatic_optimization = False
+
+        # set loss
+        if loss is None:
+            loss = LpLoss(p=1)
         
         # check consistency 
         check_consistency(scheduler_generator, LRScheduler, subclass=True)
