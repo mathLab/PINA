@@ -111,7 +111,7 @@ class AbstractProblem(metaclass=ABCMeta):
                 continue
             self.input_pts[condition_name] = samples
 
-    def discretise_domain(self, n, mode = 'random', variables = 'all', locations = 'all'):
+    def discretise_domain(self, n, mode = 'random', variables = 'all', locations = 'all', device=None):
         """
         Generate a set of points to span the `Location` of all the conditions of
         the problem.
@@ -196,6 +196,10 @@ class AbstractProblem(metaclass=ABCMeta):
                         ] + already_sampled
             pts = merge_tensors(samples)
             self.input_pts[location] = pts
+
+            if device:
+                self.input_pts[location] = self.input_pts[location].to(device=device) #TODO better fix
+                
             # setting the grad
             self.input_pts[location].requires_grad_(True)
             self.input_pts[location].retain_grad()
