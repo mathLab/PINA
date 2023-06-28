@@ -27,69 +27,62 @@ class Difference(OperationInterface):
         """
         super().__init__(geometries)
 
-        # self.first is the geometry from which points are sampled
-        self.first = geometries[0]
-        # self.rest is the list of geometries that are excluded from the first
-        self.rest = geometries[1:]
-
     def is_inside(self, point, check_border=False):
-        for geometry in self.rest:
+        for geometry in self.geometries[1:]:
             if geometry.is_inside(point):
                 return False
-        return self.first.is_inside(point, check_border)
+        return self.geometries[0].is_inside(point, check_border)
     
-    # def sample(self, n, mode='random', variables='all'):
-    #     """Sample routine.
+    def sample(self, n, mode='random', variables='all'):
+        """Sample routine for difference domain.
 
-    #     :param n: Number of points to sample in the shape.
-    #     :type n: int
-    #     :param mode: Mode for sampling, defaults to 'random'.
-    #         Available modes include: random sampling, 'random'.
-    #     :type mode: str, optional
-    #     :param variables: pinn variable to be sampled, defaults to 'all'.
-    #     :type variables: str or list[str], optional
+        :param n: Number of points to sample in the shape.
+        :type n: int
+        :param mode: Mode for sampling, defaults to 'random'.
+            Available modes include: random sampling, 'random'.
+        :type mode: str, optional
+        :param variables: pinn variable to be sampled, defaults to 'all'.
+        :type variables: str or list[str], optional
 
-    #     :Example:
-    #         # Create two Cartesian domains
-    #         >>> cartesian1 = CartesianDomain({'x': [0, 2], 'y': [0, 2]})
-    #         >>> cartesian2 = CartesianDomain({'x': [1, 3], 'y': [1, 3]})
+        :Example:
+            # Create two Cartesian domains
+            >>> cartesian1 = CartesianDomain({'x': [0, 2], 'y': [0, 2]})
+            >>> cartesian2 = CartesianDomain({'x': [1, 3], 'y': [1, 3]})
 
-    #         # Create a Difference of the ellipsoid domains
-    #         >>> difference = Difference([cartesian1, cartesian2])
+            # Create a Difference of the ellipsoid domains
+            >>> difference = Difference([cartesian1, cartesian2])
 
-    #         >>> difference.sample(n=1000)
-    #             LabelTensor([[1.4429, 0.7778],
-    #                         [0.5299, 1.2449],
-    #                         [1.6973, 0.4337],
-    #                         ...,
-    #                         [1.6118, 0.0589],
-    #                         [1.6185, 0.6523],
-    #                         [0.3597, 0.1120]])
+            >>> difference.sample(n=5)
+                LabelTensor([[0.8400, 0.9179],
+                            [0.9154, 0.5769],
+                            [1.7403, 0.4835],
+                            [0.9545, 1.2851],
+                            [1.3726, 0.9831]])
 
-    #         >>> len(difference.sample(n=1000)
-    #             1000
+            >>> len(difference.sample(n=5)
+                5
 
-    #     """
-    #     if mode != 'random':
-    #         raise NotImplementedError(
-    #             f'{mode} is not a valid mode for sampling.')
+        """
+        if mode != 'random':
+            raise NotImplementedError(
+                f'{mode} is not a valid mode for sampling.')
 
-    #     sampled = []
+        sampled = []
 
-    #     # sample the points
-    #     while len(sampled) < n:
-    #         # get sample point from first geometry
-    #         point = self.first.sample(1, mode, variables)
-    #         is_inside = False
+        # sample the points
+        while len(sampled) < n:
+            # get sample point from first geometry
+            point = self.geometries[0].sample(1, mode, variables)
+            is_inside = False
 
-    #         # check if point is inside any other geometry
-    #         for geometry in self.rest:
-    #             # if point is inside any other geometry, break
-    #             if geometry.is_inside(point):
-    #                 is_inside = True
-    #                 break
-    #         # if point is not inside any other geometry, add to sampled
-    #         if not is_inside:
-    #             sampled.append(point)
+            # check if point is inside any other geometry
+            for geometry in self.geometries[1:]:
+                # if point is inside any other geometry, break
+                if geometry.is_inside(point):
+                    is_inside = True
+                    break
+            # if point is not inside any other geometry, add to sampled
+            if not is_inside:
+                sampled.append(point)
 
-    #     return LabelTensor(torch.cat(sampled), labels=[f'{i}' for i in self.variables])
+        return LabelTensor(torch.cat(sampled), labels=self.variables)
