@@ -7,6 +7,6 @@ __all__ = [
     'Laplace',
 ]
 
-from .equation import *
-from .equation_factory import *
-from .system_equation import *
+from .equation import Equation
+from .equation_factory import FixedFlux, FixedGradient, Laplace, FixedValue
+from .system_equation import SystemEquation
