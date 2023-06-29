@@ -110,7 +110,7 @@ class SimplexDomain(Location):
             raise ValueError(
                 "Point labels different from constructor"
                 f" dictionary labels. Got {point.labels},"
-                f" expected {self.variables}."
+                f" expected {self._labels}."
             )
 
         # shift point
