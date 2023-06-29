@@ -5,6 +5,7 @@ from .location import Location
 from pina import LabelTensor
 from ..utils import check_consistency
 
+
 class SimplexDomain(Location):
     """PINA implementation of a Simplex."""
 
@@ -21,7 +22,13 @@ class SimplexDomain(Location):
             frontier are taken. If `sample_surface=False`, no such criteria
             is followed.
         :type sample_surface: bool
-        
+
+        .. warning::
+            Sampling for dimensions greater or equal to 10 could result
+            in a shrinking of the simplex, which degrades the quality
+            of the samples. For dimensions higher than 10, other algorithms
+            for sampling should be used.
+
         :Example:
 
             >>> spatial_domain = SimplexDomain({'vertex1': [0, 0], 'vertex2': [1, 1], 'vertex3': [0, 2]}, ['x', 'y'])
@@ -30,10 +37,9 @@ class SimplexDomain(Location):
         # check consistency of labels
         if not isinstance(labels, list):
             raise ValueError(f"{type(labels).__name__} must be {list}.")
-        for lab in labels:
-            check_consistency(lab, str)
+        check_consistency(labels, str)
         self._coordinate_labels = labels
-        
+
         # check consistency of sample_surface
         check_consistency(sample_surface, bool)
         self._sample_surface = sample_surface
@@ -43,17 +49,18 @@ class SimplexDomain(Location):
         for vertex in simplex_dict.values():
             if not isinstance(vertex, list):
                 raise ValueError(f"{type(vertex).__name__} must be {list}.")
-        
 
-        # vertices, vectors, dimension 
-        self._vertices = {label: LabelTensor(torch.tensor([vertex]), self.variables) for label, vertex in simplex_dict.items()}
-        self._vectors = self._basis_vectors(self._vertices_list)
-        self._dimension = len(simplex_dict)-1
-
+        # vertices, vectors, dimension
+        self._vertices = simplex_dict
+        self._vert_list = torch.tensor(list(simplex_dict.values())).T
+        self._vectors = (
+            self._vertices_list[:, :-1] - self._vertices_list[:, None, -1]
+        ).type(torch.FloatTensor)
 
         # build cartesian_bound
-        self._cartesian_bound = self._build_cartesian(list(simplex_dict.values()), labels)
-
+        self._cartesian_bound = self._build_cartesian(
+            list(simplex_dict.values()), labels
+        )
 
     @property
     def variables(self):
@@ -66,7 +73,6 @@ class SimplexDomain(Location):
 
         return self._coordinate_labels
 
-
     @property
     def vertices(self):
         """
@@ -77,7 +83,6 @@ class SimplexDomain(Location):
         """
 
         return self._vertices
-    
 
     @property
     def vectors(self):
@@ -88,7 +93,6 @@ class SimplexDomain(Location):
         :rtype: dict(LabelTensor)
         """
         return self._vectors
-    
 
     @property
     def _vertices_list(self):
@@ -98,8 +102,7 @@ class SimplexDomain(Location):
         :return: List of vectors
         :rtype: list[LabelTensor]
         """
-        return list(self.vertices.values())
-    
+        return self._vert_list
 
     @property
     def cartesian_bound(self):
@@ -111,19 +114,6 @@ class SimplexDomain(Location):
         """
 
         return self._cartesian_bound
-    
-
-    @property
-    def dimension(self):
-        """
-        Dimension of Simplex domain.
-        
-        :return: dimension
-        :rtype: int
-        """
-
-        return self._dimension
-    
 
     @property
     def sample_surface(self):
@@ -135,25 +125,6 @@ class SimplexDomain(Location):
         """
 
         return self._sample_surface
-    
-
-    def _basis_vectors(self, vertices):
-        """
-        Basis vectors for simplex.
-
-        :return: Basis vectors
-        :rtype: dict(LabelTensor)
-        """
-        
-        vectors = {}
-        origin = vertices[0]
-        num_vertices = len(self.vertices)
-
-        for i in range(1, num_vertices):
-            vectors[f'vector{i}'] = LabelTensor(torch.subtract(vertices[i], origin), self.variables)
-
-        return vectors
-
 
     def _build_cartesian(self, vertices, labels):
         """
@@ -174,75 +145,12 @@ class SimplexDomain(Location):
             span_dict[coord] = [sorted_vertices[0][i], sorted_vertices[-1][i]]
 
         return CartesianDomain(span_dict)
-    
-
-    def _volume(self, vectors):
-        """
-        Volume of Simplex spanned by vectors. Uses the determinant of the Grammian matrix
-        to calculate the volume. See link below for formula.
-        Formula: https://en.wikipedia.org/wiki/Simplex#Geometric_properties
-
-        :param vectors: list of vectors
-        :type vectors: list(LabelTensor)
-        :return: Returns volume of Simplex spanned by vectors
-        :rtype: float
-        """
-
-        gram_matrix = torch.matmul(torch.transpose(vectors, 0, -1), vectors).type(torch.FloatTensor)
-        sqrt_det = torch.sqrt(torch.det(gram_matrix))
-        
-        return float(1/torch.jit._builtins.math.factorial(len(vectors[0])) * sqrt_det)
-    
-
-    def _on_border(self, point):
-        """
-        Whether a point is on Simplex domain border or not.
-
-        :param point: a point
-        :type point: LabelTensor
-        :return: Whether a point is on border or not
-        :rtype: bool
-        """
-
-        def _normalize_and_label(vector, labels):
-            """
-            Normalize vector and label.
-
-            :param vector: a vector
-            :type vector: LabelTensor
-            :param labels: a list of labels
-            :type labels: list[str]
-            :return: Normalized vector with labels
-            :rtype: LabelTensor
-            """
-
-            vector = vector.type(torch.FloatTensor)
-            normalized_vector = torch.divide(vector, torch.linalg.norm(vector))
-            normalized_vector.labels = labels
-
-            return normalized_vector
-        
-        vectors_list = list(self._vectors.values()) + [LabelTensor(torch.subtract(self._vertices_list[self.dimension], self._vertices_list[self.dimension-1]), self.variables)]
-
-        normalized_vectors_to_point, normalized_simplex_vectors = [], []
-        for vertex, vector in zip(self._vertices_list, vectors_list):
-            normalized_vectors_to_point.append(_normalize_and_label(torch.subtract(point, vertex), point.labels))
-            normalized_simplex_vectors.append(_normalize_and_label(vector, point.labels))
-
-        for vector1 in normalized_vectors_to_point:
-            for vector2 in normalized_simplex_vectors:
-                v1 = [vector1.extract(label) for label in vector1.labels]
-                v2 = [vector2.extract(label) for label in vector2.labels]
-
-                if v1 == v2:
-                    return True
-        
-        return False
-
 
     def is_inside(self, point, check_border=False):
         """
         Check if a point is inside the simplex.
+        Uses the algorithm described here: 
+        https://math.stackexchange.com/questions/1226707/how-to-check-if-point-x-in-mathbbrn-is-in-a-n-simplex
 
         :param point: Point to be checked
         :type point: LabelTensor
@@ -254,34 +162,25 @@ class SimplexDomain(Location):
         """
 
         if not all([label in self.variables for label in point.labels]):
-            raise ValueError('Point labels different from constructor'
-                             f' dictionary labels. Got {point.labels},'
-                             f' expected {self.variables}.')
-        
-        if not check_border and self._on_border(point):
-            return False
-            
-        if check_border and not self._on_border(point):
-            return False
-        
-        vector_to_point = torch.subtract(point, self._vertices_list[0])
-        matrix = list(self.vectors.values())
-        sum_of_sub_volumes = 0
-        tot_volume = self._volume(torch.cat(matrix, dim=0))
+            raise ValueError(
+                "Point labels different from constructor"
+                f" dictionary labels. Got {point.labels},"
+                f" expected {self.variables}."
+            )
 
-        for i in range(self.dimension):
-            vectors = matrix[:i] + [vector_to_point] + matrix[i+1:]
-            subvolume = self._volume(torch.cat(vectors, dim=0))
+        point_shift = (point.T - self._vertices_list[:, None, -1]).type(
+            torch.FloatTensor
+        )
+        lambda_ = torch.linalg.solve(self.vectors, point_shift)
+        lambda_1 = 1.0 - torch.sum(lambda_)
+        lambdas = torch.vstack([lambda_, lambda_1])
 
-            if not check_border and subvolume == 0:
-                return False
-            
-            sum_of_sub_volumes += subvolume
-            if sum_of_sub_volumes > tot_volume:
-                return False
-        
-        return tot_volume >= sum_of_sub_volumes
+        if not check_border:
+            return all(torch.gt(lambdas, 0)) and all(torch.lt(lambdas, 1))
 
+        return all(torch.ge(lambdas, 0)) and (
+            any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
+        )
 
     def sample(self, n, mode="random", variables="all"):
         """
@@ -308,14 +207,12 @@ class SimplexDomain(Location):
                 n=1, mode="random", variables=variables
             )
 
-            #check = self._on_border if self.sample_surface else self.is_inside
-
             # Keep sampling until you get a point that is inside
             while not self.is_inside(sampled_point, self.sample_surface):
                 sampled_point = self.cartesian_bound.sample(
                     n=1, mode=mode, variables=variables
                 )
-                
+
             sampled_points.append(sampled_point)
-        
+
         return LabelTensor(torch.cat(sampled_points, dim=0), labels=self.variables)
