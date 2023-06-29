@@ -1,7 +1,6 @@
 import torch
-
-from pina.geometry import CartesianDomain
 from .location import Location
+from pina.geometry import CartesianDomain
 from pina import LabelTensor
 from ..utils import check_consistency
 
@@ -12,10 +11,11 @@ class SimplexDomain(Location):
     def __init__(self, simplex_dict, labels, sample_surface=False):
         """
         :param simplex_dict: A dictionary with dict-key a string representing
-            the input variables for the pinn, and dict-value a list
+            the input variables for the problem, and dict-value a list
             representing vertices of the simplex.
         :type simplex_dict: dict
-        :param labels: A list of labels for vertex components
+        :param labels: A list of labels for vertex components. Represents the
+            order in which points should list coordinates.
         :type labels: list[str]
         :param sample_surface: A variable for choosing sample strategies. If
             `sample_surface=True` only samples on the Simplex surface
@@ -38,7 +38,7 @@ class SimplexDomain(Location):
         if not isinstance(labels, list):
             raise ValueError(f"{type(labels).__name__} must be {list}.")
         check_consistency(labels, str)
-        self._coordinate_labels = labels
+        self._labels = labels
 
         # check consistency of sample_surface
         check_consistency(sample_surface, bool)
@@ -52,9 +52,9 @@ class SimplexDomain(Location):
 
         # vertices, vectors, dimension
         self._vertices = simplex_dict
-        self._vert_list = torch.tensor(list(simplex_dict.values())).T
+        self._vertices_matrix = torch.tensor(list(simplex_dict.values())).T
         self._vectors = (
-            self._vertices_list[:, :-1] - self._vertices_list[:, None, -1]
+            self._vertices_matrix[:, :-1] - self._vertices_matrix[:, None, -1]
         ).type(torch.FloatTensor)
 
         # build cartesian_bound
@@ -64,67 +64,7 @@ class SimplexDomain(Location):
 
     @property
     def variables(self):
-        """
-        Coordinate labels of simplex.
-
-        :return: Coordinate labels
-        :rtype: list[str]
-        """
-
-        return self._coordinate_labels
-
-    @property
-    def vertices(self):
-        """
-        Vertices of simplex.
-
-        :return: Vectors
-        :rtype: list[list]
-        """
-
         return self._vertices
-
-    @property
-    def vectors(self):
-        """
-        Vectors.
-
-        :return: Vectors
-        :rtype: dict(LabelTensor)
-        """
-        return self._vectors
-
-    @property
-    def _vertices_list(self):
-        """
-        List of vectors.
-
-        :return: List of vectors
-        :rtype: list[LabelTensor]
-        """
-        return self._vert_list
-
-    @property
-    def cartesian_bound(self):
-        """
-        Cartesian border for Simplex domain.
-
-        :return: Cartesian border for Simplex domain
-        :rtype: CartesianDomain
-        """
-
-        return self._cartesian_bound
-
-    @property
-    def sample_surface(self):
-        """
-        Whether the surface should be sampled or not.
-
-        :return: Whether the surface should be sampled or not
-        :rtype: bool
-        """
-
-        return self._sample_surface
 
     def _build_cartesian(self, vertices, labels):
         """
@@ -149,8 +89,11 @@ class SimplexDomain(Location):
     def is_inside(self, point, check_border=False):
         """
         Check if a point is inside the simplex.
-        Uses the algorithm described here: 
+        Uses the algorithm described here:
         https://math.stackexchange.com/questions/1226707/how-to-check-if-point-x-in-mathbbrn-is-in-a-n-simplex
+
+        Barycentric coordinates are also useful:
+        https://en.wikipedia.org/wiki/Barycentric_coordinate_system
 
         :param point: Point to be checked
         :type point: LabelTensor
@@ -161,17 +104,17 @@ class SimplexDomain(Location):
         :rtype: bool
         """
 
-        if not all([label in self.variables for label in point.labels]):
+        if not all([label in self._labels for label in point.labels]):
             raise ValueError(
                 "Point labels different from constructor"
                 f" dictionary labels. Got {point.labels},"
-                f" expected {self.variables}."
+                f" expected {self._labels}."
             )
 
-        point_shift = (point.T - self._vertices_list[:, None, -1]).type(
+        point_shift = (point.T - self._vertices_matrix[:, None, -1]).type(
             torch.FloatTensor
         )
-        lambda_ = torch.linalg.solve(self.vectors, point_shift)
+        lambda_ = torch.linalg.solve(self._vectors, point_shift)
         lambda_1 = 1.0 - torch.sum(lambda_)
         lambdas = torch.vstack([lambda_, lambda_1])
 
@@ -197,22 +140,18 @@ class SimplexDomain(Location):
         :rtype: LabelTensor(tensor)
         """
 
-        if mode != "random":
-            raise ValueError("Mode can only be random")
-
-        # Sample points on the domain
-        sampled_points = []
-        for _ in range(n):
-            sampled_point = self.cartesian_bound.sample(
-                n=1, mode="random", variables=variables
-            )
-
-            # Keep sampling until you get a point that is inside
-            while not self.is_inside(sampled_point, self.sample_surface):
-                sampled_point = self.cartesian_bound.sample(
-                    n=1, mode=mode, variables=variables
+        if mode in ["random"]:
+            # Sample points on the domain
+            sampled_points = []
+            
+            while len(sampled_points) < n:
+                sampled_point = self._cartesian_bound.sample(
+                    n=1, mode="random", variables=variables
                 )
 
-            sampled_points.append(sampled_point)
+                if self.is_inside(sampled_point, self._sample_surface):
+                    sampled_points.append(sampled_point)
 
-        return LabelTensor(torch.cat(sampled_points, dim=0), labels=self.variables)
+            return LabelTensor(torch.cat(sampled_points, dim=0), labels=self.variables)
+
+        raise NotImplementedError(f"mode={mode} is not implemented.")
