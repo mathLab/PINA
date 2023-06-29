@@ -65,7 +65,7 @@ We have decided to build it on top of PyTorch in order to exploit the \verb+auto
 The high-level structure of the package is illustrated in Figure \ref{API_visual}; the approximated solution of a differential equation can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly interface.
 Besides the user-friendly interface, PINA also offers several examples and tutorials, aiming to guide new users toward an easy exploration of the software features. The online documentation is released at \url{https://mathlab.github.io/PINA/}, while the robustness of the package is continuously monitored by unit tests.
 
-The API visualization in Figure \ref{API_visual} shows that a complete workflow in PINA is characterized by 3 main steps: the problem formulation, the model definition, i.e. the structure of the neural network used, and the PINN training, eventually followed by the data visualization.
+The API visualization in Figure \ref{API_visual} shows that a complete workflow in PINA is characterized by 3 main steps: the problem formulation, the model definition, i.e. the structure of the neural network used, and the training, eventually followed by the data visualization.
 
 ![High-level structure of the library.\label{API_visual}](API_color.png){ width=70% }
 
@@ -82,9 +82,9 @@ We highlight that in PINA we abandoned the classical division between physical l
 
 ## Model definition in PINA
 The second fundamental step is the definition of the model of the neural network employed to find the approximated solution to the differential problem in question.
-In PINA, the user has the possibility to use either a custom \verb+torch+ network model and translate it to a PINA model (with the class \verb+Network+), or to exploit one of the built-in models such as \verb+FeedForward+, \verb+MultiFeedForward+ and \verb+DeepONet+, defining their characteristics during instantiation --- i.e. number of layers, number of neurons, activation functions. The list of the built-in models will be extended in the next release of the library.
+In PINA, the user has the possibility to use either a custom \verb+torch+ network model, or to exploit one of the built-in models such as \verb+FeedForward+, \verb+MultiFeedForward+ and \verb+DeepONet+, defining their characteristics during instantiation --- i.e. number of layers, number of neurons, activation functions. The list of the built-in models will be extended in the next release of the library.
 
-## PINN training
+## Training in PINA
 In the last step, the actual training of the model in order to solve the problem at hand is computed. In this phase, the residuals of the conditions (expressed in the problem) are minimized in order to provide the target approximation. The sampling points where the physical residuals are evaluated can be passed by the user, or automatically sampled from the original domain using one of the available sampling techniques.
 The training is then computed for a certain amount of epochs, or until reaching the user-defined loss threshold.
 Once the model is ready to be inferred, the user can save it onto a binary file for future reusing, by inheriting the PyTorch functionality. The user can also evaluate the (trained) model for any new input, or just use it together with the \verb+Plotter+ in order to render the predicted output variables.
