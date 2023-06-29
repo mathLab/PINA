@@ -31,14 +31,17 @@ class SimplexDomain(Location):
 
         :Example:
 
-            >>> spatial_domain = SimplexDomain({'vertex1': [0, 0], 'vertex2': [1, 1], 'vertex3': [0, 2]}, ['x', 'y'])
+            >>> spatial_domain = SimplexDomain({'vertex1': [0, 0], 
+                                                'vertex2': [1, 1], 
+                                                'vertex3': [0, 2]}, 
+                                                ['x', 'y'])
         """
 
         # check consistency of labels
         if not isinstance(labels, list):
             raise ValueError(f"{type(labels).__name__} must be {list}.")
         check_consistency(labels, str)
-        self._labels = labels
+        self._variables = labels
 
         # check consistency of sample_surface
         check_consistency(sample_surface, bool)
@@ -51,22 +54,19 @@ class SimplexDomain(Location):
                 raise ValueError(f"{type(vertex).__name__} must be {list}.")
 
         # vertices, vectors, dimension
-        self._vertices = simplex_dict
-        self._vertices_matrix = torch.tensor(list(simplex_dict.values())).T
-        self._vectors = (
-            self._vertices_matrix[:, :-1] - self._vertices_matrix[:, None, -1]
-        ).type(torch.FloatTensor)
+        self._vertices_matrix = torch.tensor(list(simplex_dict.values()), dtype=torch.float).T
+        self._vectors_shifted = self._vertices_matrix[:, :-1] - self._vertices_matrix[:, None, -1]
 
         # build cartesian_bound
         self._cartesian_bound = self._build_cartesian(
-            list(simplex_dict.values()), labels
+            list(simplex_dict.values())
         )
 
     @property
     def variables(self):
-        return self._vertices
+        return self._variables
 
-    def _build_cartesian(self, vertices, labels):
+    def _build_cartesian(self, vertices):
         """
         Build Cartesian border for Simplex domain to be used in sampling.
 
@@ -78,7 +78,7 @@ class SimplexDomain(Location):
 
         span_dict = {}
 
-        for i, coord in enumerate(labels):
+        for i, coord in enumerate(self.variables):
             sorted_vertices = sorted(vertices, key=lambda vertex: vertex[i])
 
             # respective coord bounded by the lowest and highest values
@@ -89,13 +89,15 @@ class SimplexDomain(Location):
     def is_inside(self, point, check_border=False):
         """
         Check if a point is inside the simplex.
-        Uses the algorithm described here:
-        https://math.stackexchange.com/questions/1226707/how-to-check-if-point-x-in-mathbbrn-is-in-a-n-simplex
-
-        Barycentric coordinates are also useful:
+        Uses the algorithm described involving barycentric coordinates:
         https://en.wikipedia.org/wiki/Barycentric_coordinate_system
 
-        :param point: Point to be checked
+        .. note::
+            When ```'sample_surface'``` in the ```'__init()__'```
+            is set to ```'True'```, then the method only checks 
+            points on the surface, and not inside the domain.
+
+        :param point: Point to be checked.
         :type point: LabelTensor
         :param check_border: Check if the point is also on the frontier
             of the simplex, default False.
@@ -104,22 +106,24 @@ class SimplexDomain(Location):
         :rtype: bool
         """
 
-        if not all([label in self._labels for label in point.labels]):
+        if not all([label in self.variables for label in point.labels]):
             raise ValueError(
                 "Point labels different from constructor"
                 f" dictionary labels. Got {point.labels},"
-                f" expected {self._labels}."
+                f" expected {self.variables}."
             )
 
-        point_shift = (point.T - self._vertices_matrix[:, None, -1]).type(
-            torch.FloatTensor
-        )
-        lambda_ = torch.linalg.solve(self._vectors, point_shift)
+        # shift point
+        point_shift = point.T - self._vertices_matrix[:, None, -1]
+
+        # compute barycentric coordinates
+        lambda_ = torch.linalg.solve(self._vectors_shifted, point_shift)
         lambda_1 = 1.0 - torch.sum(lambda_)
         lambdas = torch.vstack([lambda_, lambda_1])
 
+        # perform checks
         if not check_border:
-            return all(torch.gt(lambdas, 0)) and all(torch.lt(lambdas, 1))
+            return all(torch.gt(lambdas, 0.)) and all(torch.lt(lambdas, 1.))
 
         return all(torch.ge(lambdas, 0)) and (
             any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
@@ -151,7 +155,8 @@ class SimplexDomain(Location):
 
                 if self.is_inside(sampled_point, self._sample_surface):
                     sampled_points.append(sampled_point)
+        
+        else:
+            raise NotImplementedError(f'mode={mode} is not implemented.')
 
-            return LabelTensor(torch.cat(sampled_points, dim=0), labels=self.variables)
-
-        raise NotImplementedError(f"mode={mode} is not implemented.")
+        return LabelTensor(torch.cat(sampled_points, dim=0), labels=self.variables)
