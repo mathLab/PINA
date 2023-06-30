@@ -151,7 +151,6 @@ class SimplexDomain(Location):
         # =============================================== #
 
         sampled_points = []
-
         while len(sampled_points) < n:
             sampled_point = self._cartesian_bound.sample(
                 n=1, mode="random", variables=variables
@@ -159,7 +158,6 @@ class SimplexDomain(Location):
 
             if self.is_inside(sampled_point, self._sample_surface):
                 sampled_points.append(sampled_point)
-
         return torch.cat(sampled_points, dim=0)
 
     def _sample_boundary_randomly(self, n):
