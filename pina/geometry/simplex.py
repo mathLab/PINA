@@ -129,34 +129,104 @@ class SimplexDomain(Location):
             any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
         )
 
+    def _sample_interior_randomly(self, n, variables):
+        """
+        Randomly sample points inside a simplex of arbitrary 
+        dimension, without the boundary.
+
+        :param int n: Number of points to sample in the shape.
+        :param variables: pinn variable to be sampled, defaults to 'all'.
+        :type variables: str or list[str], optional
+        :return: Returns tensor of n sampled points
+        :rtype: torch.Tensor
+        """
+
+        # =============== For Developers ================ #
+        #
+        # The sampling startegy used is fairly simple.
+        # First we sample a random vector from the hypercube 
+        # which contains the simplex. Then, if the point
+        # sampled is inside the simplex, we add it as a valid
+        # one.
+        #
+        # =============================================== #
+
+        sampled_points = []
+        
+        while len(sampled_points) < n:
+            sampled_point = self._cartesian_bound.sample(
+                n=1, mode="random", variables=variables
+            )
+
+            if self.is_inside(sampled_point, self._sample_surface):
+                sampled_points.append(sampled_point)
+        
+        return torch.cat(sampled_points, dim=0)
+
+    def _sample_boundary_randomly(self, n):
+        """
+        Randomly sample points on the boundary of a simplex
+        of arbitrary dimensions.
+
+        :param int n: Number of points to sample in the shape.
+        :return: Returns tensor of n sampled points
+        :rtype: torch.Tensor
+        """
+
+        # =============== For Developers ================ #
+        #
+        # The sampling startegy used is fairly simple.
+        # We first sample the lambdas in [0, 1] domain,
+        # we then set to zero only one lambda, and normalize.
+        # Finally, we compute the matrix product between the
+        # lamdas and the vertices matrix. 
+        #
+        # =============================================== #
+        sampled_points = []
+        
+        while len(sampled_points) < n:
+            # extract number of vertices
+            number_of_vertices = self._vertices_matrix.shape[1]
+            # extract idx lambda to set to zero randomly
+            idx_lambda = torch.randint(low=0, high = number_of_vertices, size=(1,))
+            # build lambda vector
+            # 1. sampling [1, 2)
+            lambdas = torch.rand((number_of_vertices,1))
+            # 2. setting to 0 lambdas[idx_lambda]
+            lambdas[idx_lambda] = 0
+            # 3. normalize
+            lambdas /= lambdas.sum()
+            # 4. compute dot product
+            sampled_points.append(self._vertices_matrix @ lambdas)
+
+        return torch.cat(sampled_points, dim=1).T
+
     def sample(self, n, mode="random", variables="all"):
         """
         Sample n points from Simplex domain.
 
-        :param n: Number of points to sample in the shape.
-        :type n: int
-        :param mode: Mode for sampling, defaults to 'random'.
+        :param int n: Number of points to sample in the shape.
+        :param str mode: Mode for sampling, defaults to 'random'.
             Available modes include: 'random'.
-        :type mode: str, optional
         :param variables: pinn variable to be sampled, defaults to 'all'.
         :type variables: str or list[str], optional
         :return: Returns LabelTensor of n sampled points
         :rtype: LabelTensor(tensor)
+
+        .. warning::
+            When ``sample_surface = True`` in the initialization, all
+            the variables are sampled, despite passing different once
+            in ``variables``.
         """
 
         if mode in ["random"]:
-            # Sample points on the domain
-            sampled_points = []
-            
-            while len(sampled_points) < n:
-                sampled_point = self._cartesian_bound.sample(
-                    n=1, mode="random", variables=variables
-                )
 
-                if self.is_inside(sampled_point, self._sample_surface):
-                    sampled_points.append(sampled_point)
+            if self._sample_surface:
+                sample_pts = self._sample_boundary_randomly(n)
+            else:
+                sample_pts = self._sample_interior_randomly(n, variables)
         
         else:
             raise NotImplementedError(f'mode={mode} is not implemented.')
 
-        return LabelTensor(torch.cat(sampled_points, dim=0), labels=self.variables)
+        return LabelTensor(sample_pts, labels=self.variables)
