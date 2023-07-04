@@ -15,7 +15,7 @@ VERSION = meta['__version__']
 KEYWORDS = 'physics-informed neural-network'
 
 REQUIRED = [
-    'future', 'numpy', 'matplotlib', 'torch'
+    'numpy', 'matplotlib', 'torch'
 ]
 
 EXTRAS = {
@@ -24,7 +24,13 @@ EXTRAS = {
 }
 
 LDESCRIPTION = (
-    ""
+    "PINA is a Python package providing an easy interface to deal with "
+    "physics-informed neural networks (PINN) for the approximation of "
+    "(differential, nonlinear, ...) functions. Based on Pytorch, PINA "
+    "offers a simple and intuitive way to formalize a specific problem "
+    "and solve it using PINN. The approximated solution of a differential "
+    "equation can be implemented using PINA in a few lines of code thanks "
+    "to the intuitive and user-friendly interface."
 )
 
 setup(
