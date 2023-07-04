@@ -1,10 +1,27 @@
 Welcome to PINA's documentation!
 ===================================================
 
+.. figure:: index_files/pina_logo.png
+    :align: center
+    :width: 150
+
+|
+
+
 PINA is a Python package providing an easy interface to deal with
 physics-informed neural networks (PINN) for the approximation of (differential,
 nonlinear, ...) functions. Based on Pytorch, PINA offers a simple and intuitive
-way to formalize a specific problem and solve it using PINN.
+way to formalize a specific problem and solve it using PINN. The approximated
+solution of a differential equation can be implemented using PINA in a few lines
+of code thanks to the intuitive and user-friendly interface.
+
+
+.. figure:: index_files/API_color.png
+    :alt: PINA application program interface
+    :align: center
+    :width: 500
+
+|
 
 Physics-informed neural network
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
