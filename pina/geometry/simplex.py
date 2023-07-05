@@ -8,15 +8,12 @@ from ..utils import check_consistency
 class SimplexDomain(Location):
     """PINA implementation of a Simplex."""
 
-    def __init__(self, simplex_dict, labels, sample_surface=False):
+    def __init__(self, simplex_matrix, sample_surface=False):
         """
-        :param simplex_dict: A dictionary with dict-key a string representing
-            the input variables for the problem, and dict-value a list
-            representing vertices of the simplex.
-        :type simplex_dict: dict
-        :param labels: A list of labels for vertex components. Represents the
-            order in which points should list coordinates.
-        :type labels: list[str]
+        :param simplex_matrix: A matrix of LabelTensor objects representing
+            a vertex of the simplex (a tensor), and the coordinates of the
+            point (a list of labels).
+        :type simplex_matrix: list[LabelTensor]
         :param sample_surface: A variable for choosing sample strategies. If
             `sample_surface=True` only samples on the Simplex surface
             frontier are taken. If `sample_surface=False`, no such criteria
@@ -31,46 +28,63 @@ class SimplexDomain(Location):
 
         :Example:
 
-            >>> spatial_domain = SimplexDomain({'vertex1': [0, 0], 
-                                                'vertex2': [1, 1], 
-                                                'vertex3': [0, 2]}, 
-                                                ['x', 'y'])
+            >>> spatial_domain = SimplexDomain(
+                    [
+                        LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
+                        LabelTensor(torch.tensor([[1, 1]]), labels=["x", "y"]),
+                        LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
+                    ], sample_surface = True
+                )
         """
-
-        # check consistency of labels
-        if not isinstance(labels, list):
-            raise ValueError(f"{type(labels).__name__} must be {list}.")
-        check_consistency(labels, str)
-        self._variables = labels
 
         # check consistency of sample_surface
         check_consistency(sample_surface, bool)
         self._sample_surface = sample_surface
 
         # check consistency of simplex_dict
-        check_consistency(simplex_dict, dict)
-        for vertex in simplex_dict.values():
-            if not isinstance(vertex, list):
-                raise ValueError(f"{type(vertex).__name__} must be {list}.")
+        if not isinstance(simplex_matrix, list):
+            raise ValueError(f"{type(vertex).__name__} must be {list}.")
+        try:
+            _labels = simplex_matrix[0].labels
+        except:
+            raise ValueError(
+                f"{type(simplex_matrix[0]).__name__} must be {LabelTensor}."
+            )
 
-        # vertices, vectors, dimension
-        self._vertices_matrix = torch.tensor(list(simplex_dict.values()), dtype=torch.float).T
-        self._vectors_shifted = self._vertices_matrix[:, :-1] - self._vertices_matrix[:, None, -1]
+        for vertex in simplex_matrix:
+            if not isinstance(vertex, LabelTensor):
+                raise ValueError(f"{type(vertex).__name__} must be {LabelTensor}.")
+            if vertex.labels != _labels:
+                raise ValueError(f"Labels don't match.")
+
+        # vertices, vectors, coordinates
+        self._vertices_matrix = torch.tensor(
+            [
+                [float(vertex.extract(label)) for label in vertex.labels]
+                for vertex in simplex_matrix
+            ]
+        ).T
+        self._vectors_shifted = (
+            self._vertices_matrix[:, :-1] - self._vertices_matrix[:, None, -1]
+        )
+        self._coordinates = simplex_matrix[0].labels
 
         # build cartesian_bound
-        self._cartesian_bound = self._build_cartesian(
-            list(simplex_dict.values())
-        )
+        self._cartesian_bound = self._build_cartesian(self.variables)
+
+    @property
+    def coordinates(self):
+        return self._coordinates
 
     @property
     def variables(self):
-        return self._variables
+        return self._vertices_matrix
 
     def _build_cartesian(self, vertices):
         """
         Build Cartesian border for Simplex domain to be used in sampling.
 
-        :param vertices: list of Simplex domain's vertices
+        :param vertex_matrix: matrix of vertices
         :type vertices: list[list]
         :return: Cartesian border for triangular domain
         :rtype: CartesianDomain
@@ -78,7 +92,7 @@ class SimplexDomain(Location):
 
         span_dict = {}
 
-        for i, coord in enumerate(self.variables):
+        for i, coord in enumerate(self._coordinates):
             sorted_vertices = sorted(vertices, key=lambda vertex: vertex[i])
 
             # respective coord bounded by the lowest and highest values
@@ -94,7 +108,7 @@ class SimplexDomain(Location):
 
         .. note::
             When ```'sample_surface'``` in the ```'__init()__'```
-            is set to ```'True'```, then the method only checks 
+            is set to ```'True'```, then the method only checks
             points on the surface, and not inside the domain.
 
         :param point: Point to be checked.
@@ -106,7 +120,7 @@ class SimplexDomain(Location):
         :rtype: bool
         """
 
-        if not all([label in self.variables for label in point.labels]):
+        if not all([label in self.coordinates for label in point.labels]):
             raise ValueError(
                 "Point labels different from constructor"
                 f" dictionary labels. Got {point.labels},"
@@ -123,7 +137,7 @@ class SimplexDomain(Location):
 
         # perform checks
         if not check_border:
-            return all(torch.gt(lambdas, 0.)) and all(torch.lt(lambdas, 1.))
+            return all(torch.gt(lambdas, 0.0)) and all(torch.lt(lambdas, 1.0))
 
         return all(torch.ge(lambdas, 0)) and (
             any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
@@ -131,7 +145,7 @@ class SimplexDomain(Location):
 
     def _sample_interior_randomly(self, n, variables):
         """
-        Randomly sample points inside a simplex of arbitrary 
+        Randomly sample points inside a simplex of arbitrary
         dimension, without the boundary.
 
         :param int n: Number of points to sample in the shape.
@@ -144,7 +158,7 @@ class SimplexDomain(Location):
         # =============== For Developers ================ #
         #
         # The sampling startegy used is fairly simple.
-        # First we sample a random vector from the hypercube 
+        # First we sample a random vector from the hypercube
         # which contains the simplex. Then, if the point
         # sampled is inside the simplex, we add it as a valid
         # one.
@@ -152,7 +166,7 @@ class SimplexDomain(Location):
         # =============================================== #
 
         sampled_points = []
-        
+
         while len(sampled_points) < n:
             sampled_point = self._cartesian_bound.sample(
                 n=1, mode="random", variables=variables
@@ -160,7 +174,7 @@ class SimplexDomain(Location):
 
             if self.is_inside(sampled_point, self._sample_surface):
                 sampled_points.append(sampled_point)
-        
+
         return torch.cat(sampled_points, dim=0)
 
     def _sample_boundary_randomly(self, n):
@@ -179,19 +193,20 @@ class SimplexDomain(Location):
         # We first sample the lambdas in [0, 1] domain,
         # we then set to zero only one lambda, and normalize.
         # Finally, we compute the matrix product between the
-        # lamdas and the vertices matrix. 
+        # lamdas and the vertices matrix.
         #
         # =============================================== #
+
         sampled_points = []
-        
+
         while len(sampled_points) < n:
             # extract number of vertices
             number_of_vertices = self._vertices_matrix.shape[1]
             # extract idx lambda to set to zero randomly
-            idx_lambda = torch.randint(low=0, high = number_of_vertices, size=(1,))
+            idx_lambda = torch.randint(low=0, high=number_of_vertices, size=(1,))
             # build lambda vector
             # 1. sampling [1, 2)
-            lambdas = torch.rand((number_of_vertices,1))
+            lambdas = torch.rand((number_of_vertices, 1))
             # 2. setting to 0 lambdas[idx_lambda]
             lambdas[idx_lambda] = 0
             # 3. normalize
@@ -220,13 +235,12 @@ class SimplexDomain(Location):
         """
 
         if mode in ["random"]:
-
             if self._sample_surface:
                 sample_pts = self._sample_boundary_randomly(n)
             else:
                 sample_pts = self._sample_interior_randomly(n, variables)
-        
+
         else:
-            raise NotImplementedError(f'mode={mode} is not implemented.')
+            raise NotImplementedError(f"mode={mode} is not implemented.")
 
         return LabelTensor(sample_pts, labels=self.variables)
