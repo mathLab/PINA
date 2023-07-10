@@ -45,6 +45,7 @@ def test_is_inside_EllipsoidDomain_CartesianDomain():
     assert domain.is_inside(pt_1) == True
     assert domain.is_inside(pt_2) == False
 
+
 def test_sample():
     n = 100
     domain = Union([EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1]}),
