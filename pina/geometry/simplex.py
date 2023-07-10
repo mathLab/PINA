@@ -18,22 +18,12 @@ class SimplexDomain(Location):
             frontier are taken. If `sample_surface=False`, no such criteria
             is followed.
         :type sample_surface: bool
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         .. warning::
             Sampling for dimensions greater or equal to 10 could result
             in a shrinking of the simplex, which degrades the quality
             of the samples. For dimensions higher than 10, other algorithms
             for sampling should be used.
-<<<<<<< HEAD
         :Example:
-=======
-
-        :Example:
-
->>>>>>> origin/v0.1-triangle
             >>> spatial_domain = SimplexDomain(
                     [
                         LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
@@ -55,13 +45,10 @@ class SimplexDomain(Location):
         # check consistency of labels
         if simplex_matrix[0].labels != simplex_matrix[1].labels:
             raise ValueError(f"Labels don't match.")
-<<<<<<< HEAD
 
         # check consistency of labels
         if simplex_matrix[0].labels != simplex_matrix[1].labels:
             raise ValueError(f"Labels don't match.")
-=======
->>>>>>> origin/v0.1-triangle
         
         # vertices, vectors, coordinates
         self._vertices_matrix = torch.tensor(
@@ -89,10 +76,6 @@ class SimplexDomain(Location):
     def _build_cartesian(self, vertices):
         """
         Build Cartesian border for Simplex domain to be used in sampling.
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         :param vertex_matrix: matrix of vertices
         :type vertices: list[list]
         :return: Cartesian border for triangular domain
@@ -114,18 +97,10 @@ class SimplexDomain(Location):
         Check if a point is inside the simplex.
         Uses the algorithm described involving barycentric coordinates:
         https://en.wikipedia.org/wiki/Barycentric_coordinate_system
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         .. note::
             When ```'sample_surface'``` in the ```'__init()__'```
             is set to ```'True'```, then the method only checks
             points on the surface, and not inside the domain.
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         :param point: Point to be checked.
         :type point: LabelTensor
         :param check_border: Check if the point is also on the frontier
@@ -162,10 +137,6 @@ class SimplexDomain(Location):
         """
         Randomly sample points inside a simplex of arbitrary
         dimension, without the boundary.
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         :param int n: Number of points to sample in the shape.
         :param variables: pinn variable to be sampled, defaults to 'all'.
         :type variables: str or list[str], optional
@@ -184,10 +155,6 @@ class SimplexDomain(Location):
         # =============================================== #
 
         sampled_points = []
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         while len(sampled_points) < n:
             sampled_point = self._cartesian_bound.sample(
                 n=1, mode="random", variables=variables
@@ -195,20 +162,12 @@ class SimplexDomain(Location):
 
             if self.is_inside(sampled_point, self._sample_surface):
                 sampled_points.append(sampled_point)
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         return torch.cat(sampled_points, dim=0)
 
     def _sample_boundary_randomly(self, n):
         """
         Randomly sample points on the boundary of a simplex
         of arbitrary dimensions.
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         :param int n: Number of points to sample in the shape.
         :return: Returns tensor of n sampled points
         :rtype: torch.Tensor
@@ -246,10 +205,6 @@ class SimplexDomain(Location):
     def sample(self, n, mode="random", variables="all"):
         """
         Sample n points from Simplex domain.
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         :param int n: Number of points to sample in the shape.
         :param str mode: Mode for sampling, defaults to 'random'.
             Available modes include: 'random'.
@@ -257,10 +212,6 @@ class SimplexDomain(Location):
         :type variables: str or list[str], optional
         :return: Returns LabelTensor of n sampled points
         :rtype: LabelTensor(tensor)
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/v0.1-triangle
         .. warning::
             When ``sample_surface = True`` in the initialization, all
             the variables are sampled, despite passing different once
