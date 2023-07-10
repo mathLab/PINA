@@ -10,7 +10,7 @@ class SimplexDomain(Location):
     def __init__(self, simplex_matrix, sample_surface=False):
         """
         :param simplex_matrix: A matrix of LabelTensor objects representing
-            a vertex of the simplex (a tensor), and the coordinates of the
+            a vertex of the simplex (a tengsor), and the coordinates of the
             point (a list of labels).
         :type simplex_matrix: list[LabelTensor]
         :param sample_surface: A variable for choosing sample strategies. If
