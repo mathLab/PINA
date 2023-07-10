@@ -2,17 +2,12 @@ __all__ = [
     'Location',
     'CartesianDomain',
     'EllipsoidDomain',
-<<<<<<< HEAD
     'Union',
     'Intersection',
     'Exclusion',
     'Difference',
     'OperationInterface',
-    'SimplexDomain'
-=======
-    'Union', 
-    'TriangleDomain'
->>>>>>> ff5cd4d (fixed __init__.py)
+    'SimplexDomain',
 ]
 
 from .location import Location
@@ -21,10 +16,6 @@ from .ellipsoid import EllipsoidDomain
 from .exclusion_domain import Exclusion
 from .intersection_domain import Intersection
 from .union_domain import Union
-<<<<<<< HEAD
 from .difference_domain import Difference
 from .operation_interface import OperationInterface
 from .simplex import SimplexDomain
-=======
-from .triangle import TriangleDomain
->>>>>>> 053d570 (Triangle geometry)
