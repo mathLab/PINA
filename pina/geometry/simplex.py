@@ -47,12 +47,13 @@ class SimplexDomain(Location):
             raise ValueError(f"Labels don't match.")
         
         # vertices, vectors, coordinates
-        self._vertices_matrix = torch.tensor(
+        '''self._vertices_matrix = torch.tensor(
             [
                 [float(vertex.extract(label)) for label in vertex.labels]
                 for vertex in simplex_matrix
             ]
-        ).T
+        ).T'''
+        self._vertices_matrix = torch.cat([vertex.type(torch.FloatTensor) for vertex in simplex_matrix]).T
         self._vectors_shifted = (
             self._vertices_matrix[:, :-1] - self._vertices_matrix[:, None, -1]
         )
