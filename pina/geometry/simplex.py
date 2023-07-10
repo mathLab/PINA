@@ -4,6 +4,7 @@ from pina.geometry import CartesianDomain
 from pina import LabelTensor
 from ..utils import check_consistency
 
+
 class SimplexDomain(Location):
     """PINA implementation of a Simplex."""
 
@@ -45,15 +46,17 @@ class SimplexDomain(Location):
         # check consistency of labels
         if simplex_matrix[0].labels != simplex_matrix[1].labels:
             raise ValueError(f"Labels don't match.")
-        
+
         # vertices, vectors, coordinates
-        '''self._vertices_matrix = torch.tensor(
+        """self._vertices_matrix = torch.tensor(
             [
                 [float(vertex.extract(label)) for label in vertex.labels]
                 for vertex in simplex_matrix
             ]
-        ).T'''
-        self._vertices_matrix = torch.cat([vertex.type(torch.FloatTensor) for vertex in simplex_matrix]).T
+        ).T"""
+        self._vertices_matrix = torch.cat(
+            [vertex.type(torch.FloatTensor) for vertex in simplex_matrix]
+        ).T
         self._vectors_shifted = (
             self._vertices_matrix[:, :-1] - self._vertices_matrix[:, None, -1]
         )
@@ -225,5 +228,3 @@ class SimplexDomain(Location):
             raise NotImplementedError(f"mode={mode} is not implemented.")
 
         return LabelTensor(sample_pts, labels=self.variables)
-
-
