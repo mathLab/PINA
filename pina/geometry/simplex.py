@@ -4,7 +4,6 @@ from pina.geometry import CartesianDomain
 from pina import LabelTensor
 from ..utils import check_consistency
 
-
 class SimplexDomain(Location):
     """PINA implementation of a Simplex."""
 
@@ -43,20 +42,13 @@ class SimplexDomain(Location):
 
         # check consistency of simplex_dict
         if not isinstance(simplex_matrix, list):
-            raise ValueError(f"{type(vertex).__name__} must be {list}.")
-        try:
-            _labels = simplex_matrix[0].labels
-        except:
-            raise ValueError(
-                f"{type(simplex_matrix[0]).__name__} must be {LabelTensor}."
-            )
+            raise ValueError(f"{type(simplex_matrix).__name__} must be {list}.")
+        check_consistency(simplex_matrix, LabelTensor)
 
-        for vertex in simplex_matrix:
-            if not isinstance(vertex, LabelTensor):
-                raise ValueError(f"{type(vertex).__name__} must be {LabelTensor}.")
-            if vertex.labels != _labels:
-                raise ValueError(f"Labels don't match.")
-
+        # check consistency of labels
+        if simplex_matrix[0].labels != simplex_matrix[1].labels:
+            raise ValueError(f"Labels don't match.")
+        
         # vertices, vectors, coordinates
         self._vertices_matrix = torch.tensor(
             [
@@ -244,3 +236,5 @@ class SimplexDomain(Location):
             raise NotImplementedError(f"mode={mode} is not implemented.")
 
         return LabelTensor(sample_pts, labels=self.variables)
+
+
