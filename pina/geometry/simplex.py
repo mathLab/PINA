@@ -46,6 +46,10 @@ class SimplexDomain(Location):
         if simplex_matrix[0].labels != simplex_matrix[1].labels:
             raise ValueError(f"Labels don't match.")
 
+        # check consistency of labels
+        if simplex_matrix[0].labels != simplex_matrix[1].labels:
+            raise ValueError(f"Labels don't match.")
+        
         # vertices, vectors, coordinates
         self._vertices_matrix = torch.tensor(
             [
@@ -224,3 +228,5 @@ class SimplexDomain(Location):
             raise NotImplementedError(f"mode={mode} is not implemented.")
 
         return LabelTensor(sample_pts, labels=self.variables)
+
+
