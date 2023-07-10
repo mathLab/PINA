@@ -45,10 +45,6 @@ class SimplexDomain(Location):
         # check consistency of labels
         if simplex_matrix[0].labels != simplex_matrix[1].labels:
             raise ValueError(f"Labels don't match.")
-
-        # check consistency of labels
-        if simplex_matrix[0].labels != simplex_matrix[1].labels:
-            raise ValueError(f"Labels don't match.")
         
         # vertices, vectors, coordinates
         self._vertices_matrix = torch.tensor(
