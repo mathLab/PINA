@@ -10,7 +10,16 @@ class Union(OperationInterface):
     """ PINA implementation of Unions of Domains."""
 
     def __init__(self, geometries):
-        """ PINA implementation of Unions of Domains.
+        """
+        PINA implementation of Unions of Domains.
+        Given two sets :math:`A` and :math:`B` then the
+        domain difference is defined as:
+
+        ..:math:
+        A \cup B = \{x \mid x \in A \text{ or } x \in B\},
+
+        with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
+        the dimension of the geometry space.
 
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'.
@@ -86,7 +95,8 @@ class Union(OperationInterface):
             # int(i < remainder) is one only if we have a remainder
             # different than zero. Notice that len(geometries) is
             # always smaller than remaider.
-            sampled_points.append(geometry.sample(num_points + int(i < remainder), mode, variables))
+            sampled_points.append(geometry.sample(
+                num_points + int(i < remainder), mode, variables))
             # in case number of sampled points is smaller than the number of geometries
             if len(sampled_points) >= n:
                 break
