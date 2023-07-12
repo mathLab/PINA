@@ -12,11 +12,12 @@ class OperationInterface(Location, metaclass=ABCMeta):
     def __init__(self, geometries):
         """
         Abstract Operation class.
-        Any geometry operation entity (Difference, Union, Intersection, and Exclusion)
-        must inherit from this class.
+        Any geometry operation entity must inherit from this class.
 
-        WARNING: The sample_surface=True option is not implemented yet for Difference,
-        Intersection, and Exclusion.
+        .. warning::
+            The ``sample_surface=True`` option is not implemented yet
+            for Difference, Intersection, and Exclusion. The usage will
+            result in unwanted behaviour.
 
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'.
