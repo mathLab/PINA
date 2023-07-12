@@ -38,6 +38,20 @@ def test_constructor():
         )
 
 
+def test_is_inside_faulty_point():
+    domain = SimplexDomain(
+        [
+            LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
+            LabelTensor(torch.tensor([[2, 2]]), labels=["x", "y"]),
+            LabelTensor(torch.tensor([[4, 0]]), labels=["x", "y"]),
+        ],
+        sample_surface=True,
+    )
+    pt = LabelTensor(torch.tensor([[2, 1]]), ["x", "z"])
+    with pytest.raises(ValueError):
+        assert domain.is_inside(point=pt, check_border=False) == True
+
+
 def test_is_inside_2D_check_border_true():
     domain = SimplexDomain(
         [
