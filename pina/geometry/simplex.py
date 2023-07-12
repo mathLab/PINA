@@ -82,7 +82,6 @@ class SimplexDomain(Location):
 
         for i, coord in enumerate(self._coordinates):
             sorted_vertices = sorted(vertices, key=lambda vertex: vertex[i])
-
             # respective coord bounded by the lowest and highest values
             span_dict[coord] = [sorted_vertices[0][i], sorted_vertices[-1][i]]
 
@@ -92,7 +91,7 @@ class SimplexDomain(Location):
         """
         Check if a point is inside the simplex.
         Uses the algorithm described involving barycentric coordinates:
-        https://en.wikipedia.org/wiki/Barycentric_coordinate_system
+        https://en.wikipedia.org/wiki/Barycentric_coordinate_system.
         .. note::
             When ```'sample_surface'``` in the ```'__init()__'```
             is set to ```'True'```, then the method only checks
@@ -136,7 +135,7 @@ class SimplexDomain(Location):
         :param int n: Number of points to sample in the shape.
         :param variables: pinn variable to be sampled, defaults to 'all'.
         :type variables: str or list[str], optional
-        :return: Returns tensor of n sampled points
+        :return: Returns tensor of n sampled points.
         :rtype: torch.Tensor
         """
 
