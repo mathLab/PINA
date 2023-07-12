@@ -13,6 +13,9 @@ class Exclusion(OperationInterface):
     def __init__(self, geometries):
         """ PINA implementation of Exclusion of Domains.
 
+        ..:math:
+        A \setminus B = \{x \mid x \in A \text{ and } x \in B\ \text{ and } x \not\in (A \text{ or } B)}
+
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'.
 

@@ -12,6 +12,9 @@ class Union(OperationInterface):
     def __init__(self, geometries):
         """ PINA implementation of Unions of Domains.
 
+        ..:math:
+        A \cup B = \{x \mid x \in A \text{ or } x \in B\}
+
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'.
 
@@ -86,7 +89,8 @@ class Union(OperationInterface):
             # int(i < remainder) is one only if we have a remainder
             # different than zero. Notice that len(geometries) is
             # always smaller than remaider.
-            sampled_points.append(geometry.sample(num_points + int(i < remainder), mode, variables))
+            sampled_points.append(geometry.sample(
+                num_points + int(i < remainder), mode, variables))
             # in case number of sampled points is smaller than the number of geometries
             if len(sampled_points) >= n:
                 break

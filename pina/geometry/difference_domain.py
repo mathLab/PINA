@@ -11,6 +11,9 @@ class Difference(OperationInterface):
     def __init__(self, geometries):
         """ PINA implementation of Difference of Domains.
 
+        ..:math:
+        A \setminus B = \{x \mid x \in A \text{ and } x \not\in B\}
+
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'. The first 
             geometry in the list is the geometry from which points are
@@ -32,7 +35,7 @@ class Difference(OperationInterface):
             if geometry.is_inside(point):
                 return False
         return self.geometries[0].is_inside(point, check_border)
-    
+
     def sample(self, n, mode='random', variables='all'):
         """Sample routine for difference domain.
 

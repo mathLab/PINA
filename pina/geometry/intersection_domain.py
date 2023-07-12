@@ -12,6 +12,9 @@ class Intersection(OperationInterface):
     def __init__(self, geometries):
         """ PINA implementation of Intersection of Domains.
 
+        ..:math:
+        A \cap B = \{x \mid x \in A \text{ and } x \in B\}
+
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'. The intersection
             will be taken between all the geometries in the list. The resulting
