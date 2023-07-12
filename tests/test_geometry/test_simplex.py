@@ -26,7 +26,7 @@ def test_constructor():
             [
                 LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
                 LabelTensor(torch.tensor([[1, 1]]), labels=["x", "z"]),
-                LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
+                LabelTensor(torch.tensor([[0, 2]]), labels=["x", "a"]),
             ]
         )
         SimplexDomain(

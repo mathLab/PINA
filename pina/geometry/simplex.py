@@ -34,33 +34,29 @@ class SimplexDomain(Location):
                 )
         """
 
-        # check consistency of sample_surface
+        # check consistency of sample_surface as bool
         check_consistency(sample_surface, bool)
         self._sample_surface = sample_surface
 
-        # check consistency of simplex_dict
-        if not isinstance(simplex_matrix, list):
-            raise ValueError(f"{type(simplex_matrix).__name__} must be {list}.")
+        # check consistency of simplex_matrix as list or tuple
+        check_consistency([simplex_matrix], (list, tuple))
+
+        # check everything within simplex_matrix is a LabelTensor
         check_consistency(simplex_matrix, LabelTensor)
 
         # check consistency of labels
-        if simplex_matrix[0].labels != simplex_matrix[1].labels:
+        self._coordinates = simplex_matrix[0].labels
+        if not all(vertex.labels == self._coordinates for vertex in simplex_matrix):
             raise ValueError(f"Labels don't match.")
 
-        # vertices, vectors, coordinates
-        """self._vertices_matrix = torch.tensor(
-            [
-                [float(vertex.extract(label)) for label in vertex.labels]
-                for vertex in simplex_matrix
-            ]
-        ).T"""
-        self._vertices_matrix = torch.cat(
-            [vertex.type(torch.FloatTensor) for vertex in simplex_matrix]
-        ).T
+        # creating vertices matrix
+        self._vertices_matrix = torch.cat(simplex_matrix)
+        self._vertices_matrix.labels = self._coordinates
+
+        # creating basis vectors for simplex
         self._vectors_shifted = (
-            self._vertices_matrix[:, :-1] - self._vertices_matrix[:, None, -1]
+            (self._vertices_matrix.T)[:, :-1] - (self._vertices_matrix.T)[:, None, -1]
         )
-        self._coordinates = simplex_matrix[0].labels
 
         # build cartesian_bound
         self._cartesian_bound = self._build_cartesian(self.variables)
@@ -118,10 +114,10 @@ class SimplexDomain(Location):
             )
 
         # shift point
-        point_shift = point.T - self._vertices_matrix[:, None, -1]
+        point_shift = point.T - (self._vertices_matrix.T)[:, None, -1]
 
         # compute barycentric coordinates
-        lambda_ = torch.linalg.solve(self._vectors_shifted, point_shift)
+        lambda_ = torch.linalg.solve(self._vectors_shifted * 1.0, point_shift * 1.0)
         lambda_1 = 1.0 - torch.sum(lambda_)
         lambdas = torch.vstack([lambda_, lambda_1])
 
@@ -193,7 +189,7 @@ class SimplexDomain(Location):
             # build lambda vector
             # 1. sampling [1, 2)
             lambdas = torch.rand((number_of_vertices, 1))
-            # 2. setting to 0 lambdas[idx_lambda]
+            # 2. setting lambdas[idx_lambda] to 0
             lambdas[idx_lambda] = 0
             # 3. normalize
             lambdas /= lambdas.sum()
