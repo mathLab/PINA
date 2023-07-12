@@ -7,10 +7,17 @@ import random
 
 
 class OperationInterface(Location, metaclass=ABCMeta):
+    """PINA Operation Interface"""
+
     def __init__(self, geometries):
         """
         Abstract Operation class.
         Any geometry operation entity must inherit from this class.
+
+        .. warning::
+            The ``sample_surface=True`` option is not implemented yet
+            for Difference, Intersection, and Exclusion. The usage will
+            result in unwanted behaviour.
 
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'.
@@ -18,10 +25,10 @@ class OperationInterface(Location, metaclass=ABCMeta):
         # check consistency geometries
         check_consistency(geometries, Location)
 
-        # check we are passing always different 
+        # check we are passing always different
         # geometries with the same labels.
         self._check_dimensions(geometries)
-        
+
         # assign geometries
         self._geometries = geometries
 
