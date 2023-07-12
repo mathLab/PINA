@@ -11,7 +11,16 @@ class Exclusion(OperationInterface):
     """ PINA implementation of Exclusion of Domains."""
 
     def __init__(self, geometries):
-        """ PINA implementation of Exclusion of Domains.
+        """
+        PINA implementation of Exclusion of Domains.
+        Given two sets :math:`A` and :math:`B` then the
+        domain difference is defined as:
+
+        ..:math:
+        A \setminus B = \{x \mid x \in A \text{ and } x \in B\ \text{ and } x \not\in (A \text{ or } B)},
+
+        with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
+        the dimension of the geometry space.
 
         :param list geometries: A list of geometries from 'pina.geometry' 
             such as 'EllipsoidDomain' or 'CartesianDomain'.
