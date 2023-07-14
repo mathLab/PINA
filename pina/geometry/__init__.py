@@ -6,7 +6,8 @@ __all__ = [
     'Intersection',
     'Exclusion',
     'Difference',
-    'OperationInterface'
+    'OperationInterface',
+    'SimplexDomain'
 ]
 
 from .location import Location
@@ -17,3 +18,4 @@ from .intersection_domain import Intersection
 from .union_domain import Union
 from .difference_domain import Difference
 from .operation_interface import OperationInterface
+from .simplex import SimplexDomain
