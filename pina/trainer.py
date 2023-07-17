@@ -4,8 +4,6 @@ import lightning.pytorch as pl
 from .utils import check_consistency
 from .dataset import DummyLoader
 from .solvers.solver import SolverInterface
-from .loggers import PinaLogger
-
 
 class Trainer(pl.Trainer):
 
@@ -30,11 +28,7 @@ class Trainer(pl.Trainer):
         # TODO: make a better dataloader for train
         self._loader = DummyLoader(solver.problem.input_pts, device) 
 
-        # Initalize logger using PinaLogger
-        self._pina_logger = PinaLogger(self.loggers)
-        # self._pina_logger.pina_log_graph(model=self._model)
 
-    def train(self):  # TODO add kwargs and lightining capabilities
-        self._pina_logger.pina_log_graph(model=self._model)
-
-        super().fit(self._model, self._loader)
+    def train(self): # TODO add kwargs and lightining capabilities
+        return super().fit(self._model, self._loader)
+    
