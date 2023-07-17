@@ -3,7 +3,7 @@ import torch
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
-    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler # torch < 2.0
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler  # torch < 2.0
 
 from torch.optim.lr_scheduler import ConstantLR
 
@@ -30,13 +30,14 @@ class PINN(SolverInterface):
         Physics-informed machine learning. Nature Reviews Physics, 3(6), 422-440.
         <https://doi.org/10.1038/s42254-021-00314-5>`_.
     """
+
     def __init__(self,
                  problem,
                  model,
                  extra_features=None,
-                 loss = torch.nn.MSELoss(),
+                 loss=torch.nn.MSELoss(),
                  optimizer=torch.optim.Adam,
-                 optimizer_kwargs={'lr' : 0.001},
+                 optimizer_kwargs={'lr': 0.001},
                  scheduler=ConstantLR,
                  scheduler_kwargs={"factor": 1, "total_iters": 0},
                  ):
@@ -60,8 +61,8 @@ class PINN(SolverInterface):
                          optimizers=[optimizer],
                          optimizers_kwargs=[optimizer_kwargs],
                          extra_features=extra_features)
-        
-        # check consistency 
+
+        # check consistency
         check_consistency(scheduler, LRScheduler, subclass=True)
         check_consistency(scheduler_kwargs, dict)
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
@@ -70,7 +71,6 @@ class PINN(SolverInterface):
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self._loss = loss
         self._neural_net = self.models[0]
-
 
     def forward(self, x):
         """Forward pass implementation for the PINN
@@ -96,7 +96,7 @@ class PINN(SolverInterface):
         :rtype: tuple(list, list)
         """
         return self.optimizers, [self.scheduler]
-    
+
     def training_step(self, batch, batch_idx):
         """PINN solver training step.
 
@@ -119,7 +119,8 @@ class PINN(SolverInterface):
 
             # PINN loss: equation evaluated on location or input_points
             if hasattr(condition, 'equation'):
-                target = condition.equation.residual(samples, self.forward(samples))
+                target = condition.equation.residual(
+                    samples, self.forward(samples))
                 loss = self.loss(torch.zeros_like(target), target)
             # PINN loss: evaluate model(input_points) vs output_points
             elif hasattr(condition, 'output_points'):
@@ -143,14 +144,14 @@ class PINN(SolverInterface):
         Scheduler for the PINN training.
         """
         return self._scheduler
-    
+
     @property
     def neural_net(self):
         """
         Neural network for the PINN training.
         """
         return self._neural_net
-    
+
     @property
     def loss(self):
         """
