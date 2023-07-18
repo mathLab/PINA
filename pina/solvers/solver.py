@@ -1,6 +1,8 @@
 """ Solver module. """
 
 from abc import ABCMeta, abstractmethod
+
+from pina.loggers import PinaLogger
 from ..model.network import Network
 import lightning.pytorch as pl
 from ..utils import check_consistency
@@ -10,11 +12,12 @@ import torch
 
 class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
     """ Solver base class. """
+
     def __init__(self,
                  models,
                  problem,
-                 optimizers, 
-                 optimizers_kwargs, 
+                 optimizers,
+                 optimizers_kwargs,
                  extra_features=None):
         """
         :param models: A torch neural network model instance.
@@ -52,22 +55,22 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
             raise ValueError('You must define one optimizer for each model.'
                              f'Got {len_model} models, and {len_optimizer}'
                              ' optimizers.')
-        
+
         # check length consistency optimizers kwargs
         if len_optimizer_kwargs != len_optimizer:
             raise ValueError('You must define one dictionary of keyword'
                              ' arguments for each optimizers.'
                              f'Got {len_optimizer} optimizers, and'
                              f' {len_optimizer_kwargs} dicitionaries')
-        
+
         # extra features handling
-        if extra_features is  None:
+        if extra_features is None:
             extra_features = [None] * len_model
         else:
             # if we only have a list of extra features
             if not isinstance(extra_features[0], (tuple, list)):
                 extra_features = [extra_features] * len_model
-            else: # if we have a list of list extra features
+            else:  # if we have a list of list extra features
                 if len(extra_features) != len_model:
                     raise ValueError('You passed a list of extrafeatures list with len'
                                      f'different of models len. Expected {len_model} '
@@ -75,14 +78,16 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
                                      'the same list of extra features for all models, '
                                      'just pass a list of extrafeatures and not a list '
                                      'of list of extra features.')
-            
+
         # assigning model and optimizers
         self._pina_models = []
         self._pina_optimizers = []
 
         for idx in range(len_model):
-            model_ = Network(model=models[idx], extra_features=extra_features[idx])
-            optim_ = optimizers[idx](model_.parameters(), **optimizers_kwargs[idx])
+            model_ = Network(model=models[idx],
+                             extra_features=extra_features[idx])
+            optim_ = optimizers[idx](
+                model_.parameters(), **optimizers_kwargs[idx])
             self._pina_models.append(model_)
             self._pina_optimizers.append(optim_)
 
@@ -92,7 +97,7 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
     @abstractmethod
     def forward(self):
         pass
-    
+
     @abstractmethod
     def training_step(self):
         pass
@@ -118,6 +123,27 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
         """
         The problem formulation."""
         return self._pina_problem
+
+    def _solver_logging(self, batch_idx, condition_losses):
+        """Logging Stuff for the solver."""
+
+        total_loss = sum(condition_losses)
+
+        # pina_logger = PinaLogger(self.loggers)
+
+        # pina_logger.log('mean_loss', float(total_loss / len(condition_losses)),
+        #                 prog_bar=True, logger=True)
+
+        # for condition_loss, loss in zip(self.problem.conditions, condition_losses):
+        #     pina_logger.log(condition_loss + '_loss', float(loss),
+        #                     prog_bar=True, logger=True)
+
+        self.log('mean_loss', float(total_loss / len(condition_losses)),
+                 prog_bar=True, logger=True)
+
+        for condition_loss, loss in zip(self.problem.conditions, condition_losses):
+            self.log(condition_loss + '_loss', float(loss),
+                     prog_bar=True, logger=True)
 
     # @model.setter
     # def model(self, new_model):

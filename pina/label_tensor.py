@@ -218,7 +218,7 @@ class LabelTensor(torch.Tensor):
 
     def __len__(self) -> int:
         return super().__len__()
-        
+
     def __str__(self):
         if hasattr(self, 'labels'):
             s = f'labels({str(self.labels)})\n'

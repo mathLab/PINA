@@ -7,6 +7,7 @@ from pina.problem import SpatialProblem
 from pina.operators import grad
 from pina import Condition, CartesianDomain
 from pina.equation.equation import Equation
+from pytorch_lightning.loggers import TensorBoardLogger, CSVLogger
 
 import torch
 
@@ -79,8 +80,10 @@ pinn.problem.discretise_domain(n=20, mode='latin', variables=['x'])
 pinn.problem.discretise_domain(n=20, mode='random', variables=['x'])
 
 
-# initialize trainer
-trainer = Trainer(pinn)
+# initialize trainer with logger
+# trainer = Trainer(pinn)
+trainer = Trainer(
+    pinn, kwargs={'logger': TensorBoardLogger(save_dir='./ciao')})
 
 # train the model
 trainer.train()
