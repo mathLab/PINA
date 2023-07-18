@@ -124,19 +124,8 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
         The problem formulation."""
         return self._pina_problem
 
-    def _solver_logging(self, batch_idx, condition_losses):
-        """Logging Stuff for the solver."""
-
-        total_loss = sum(condition_losses)
-
-        # pina_logger = PinaLogger(self.loggers)
-
-        # pina_logger.log('mean_loss', float(total_loss / len(condition_losses)),
-        #                 prog_bar=True, logger=True)
-
-        # for condition_loss, loss in zip(self.problem.conditions, condition_losses):
-        #     pina_logger.log(condition_loss + '_loss', float(loss),
-        #                     prog_bar=True, logger=True)
+    def _solver_logging(self, batch_idx, condition_losses, total_loss):
+        """Logging function for the solver."""
 
         self.log('mean_loss', float(total_loss / len(condition_losses)),
                  prog_bar=True, logger=True)
