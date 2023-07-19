@@ -10,6 +10,9 @@ class Trainer(pl.Trainer):
     def __init__(self, solver, kwargs={}):
         super().__init__(**kwargs)
         
+        # get accellerator
+        device = self._accelerator_connector._accelerator_flag
+
         # check inheritance consistency for solver
         check_consistency(solver, SolverInterface)
         self._model = solver
@@ -23,7 +26,7 @@ class Trainer(pl.Trainer):
                                'in the provided locations.')
         
         # TODO: make a better dataloader for train
-        self._loader = DummyLoader(solver.problem.input_pts) 
+        self._loader = DummyLoader(solver.problem.input_pts, device) 
 
 
     def train(self): # TODO add kwargs and lightining capabilities
