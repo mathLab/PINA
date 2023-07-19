@@ -28,12 +28,12 @@ class FeedForward(torch.nn.Module):
         `inner_size` are not considered.
     :param bool bias: If `True` the MLP will consider some bias.
     """
+
     def __init__(self, input_variables, output_variables, inner_size=20,
                  n_layers=2, func=nn.Tanh, layers=None, bias=True):
         """
         """
         super().__init__()
-
 
         if not isinstance(input_variables, int):
             raise ValueError('input_variables expected to be int.')
