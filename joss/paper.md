@@ -65,7 +65,7 @@ We have decided to build it on top of PyTorch in order to exploit the \verb+auto
 The high-level structure of the package is depicted in our [API](https://github.com/mathLab/PINA/tree/master/readme/API_color.png); the approximated solution of a differential equation can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly interface.
 Besides the user-friendly interface, PINA also offers several examples and tutorials, aiming to guide new users toward an easy exploration of the software features. The online documentation is released at \url{https://mathlab.github.io/PINA/}, while the robustness of the package is continuously monitored by unit tests.
 
-PINA workflow is characterized by 3 main steps: the problem formulation, the model definition, i.e. the structure of the neural network used, and the training, eventually followed by the data visualization. 
+PINA workflow is characterized by 3 main steps: the problem formulation, the model definition, i.e., the structure of the neural network used, and the training, eventually followed by the data visualization. 
 
 
 ## Problem definition in PINA
@@ -73,15 +73,15 @@ The first step is the formalization of the problem.
 The problem definition in the PINA framework is inherited from one or more problem classes (at the moment the available classes are \verb+SpatialProblem+, \verb+TimeDependentProblem+, \verb+ParametricProblem+), depending on the nature of the problem treated.
 The user has to include in the problem formulation the following components:
 \begin{itemize}
-    \item the information about the domain, i.e. the spatial and temporal variables, the parameters of the problem (if any), with the corresponding range of variation;
-    \item the output variables, i.e. the unknowns of the problem;
-    \item the conditions that the neural network has to satisfy, i.e. the differential equations, the boundary and initial conditions.
+    \item the information about the domain, i.e., the spatial and temporal variables, the parameters of the problem (if any), with the corresponding range of variation;
+    \item the output variables, i.e., the unknowns of the problem;
+    \item the conditions that the neural network has to satisfy, i.e., the differential equations, the boundary and initial conditions.
 \end{itemize}
-We highlight that in PINA we abandoned the classical division between physical loss, boundary loss, and data loss: all these terms are encapsulated within the \verb+Condition+ class, in order to keep the framework as general as possible. The users can indeed define all the constraints the unknown field needs to satisfy, avoiding any forced structure in the formulation and allowing them to mix heterogeneous constraints --- e.g. data values, differential boundary conditions. Moreover PINA already implements functions to easily compute the diffential operations (gradient, divergence, laplacian) over the output(s) of interest, aiming to make the problem definition an easy task for the users.
+We highlight that in PINA we abandoned the classical division between physical loss, boundary loss, and data loss: all these terms are encapsulated within the \verb+Condition+ class, in order to keep the framework as general as possible. The users can indeed define all the constraints the unknown field needs to satisfy, avoiding any forced structure in the formulation and allowing them to mix heterogeneous constraints --- e.g., data values, differential boundary conditions. Moreover PINA already implements functions to easily compute the diffential operations (gradient, divergence, laplacian) over the output(s) of interest, aiming to make the problem definition an easy task for the users.
 
 ## Model definition in PINA
 The second fundamental step is the definition of the model of the neural network employed to find the approximated solution to the differential problem in question.
-In PINA, the user has the possibility to use either a custom \verb+torch+ network model, or to exploit one of the built-in models such as \verb+FeedForward+, \verb+MultiFeedForward+ and \verb+DeepONet+, defining their characteristics during instantiation --- i.e. number of layers, number of neurons, activation functions. The list of the built-in models will be extended in the next release of the library.
+In PINA, the user has the possibility to use either a custom \verb+torch+ network model, or to exploit one of the built-in models such as \verb+FeedForward+, \verb+MultiFeedForward+ and \verb+DeepONet+, defining their characteristics during instantiation --- i.e., number of layers, number of neurons, activation functions. The list of the built-in models will be extended in the next release of the library.
 
 ## Training in PINA
 In the last step, the actual training of the model in order to solve the problem at hand is computed. In this phase, the residuals of the conditions (expressed in the problem) are minimized in order to provide the target approximation. The sampling points where the physical residuals are evaluated can be passed by the user, or automatically sampled from the original domain using one of the available sampling techniques.
@@ -93,6 +93,6 @@ Once the model is ready to be inferred, the user can save it onto a binary file 
 
 We thank our colleagues and research partners who contributed in the
 former and current developments of PINA library.
-This work was partially funded by European Union Funding for Research and Innovation — Horizon 2020 Program — in the framework of European Research Council Executive Agency: H2020 ERC CoG 2015 AROMA-CFD project 681447 “Advanced Reduced Order Methods with Applications in Computational Fluid Dynamics” P.I. Professor Gianluigi Rozza.
+This work was partially funded by European Union Funding for Research and Innovation — Horizon 2020 Program — in the framework of European Research Council Executive Agency: H2020 ERC CoG 2015 AROMA-CFD project 681447, “Advanced Reduced Order Methods with Applications in Computational Fluid Dynamics,” P.I. Professor Gianluigi Rozza.
 
 # References
