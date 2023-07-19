@@ -82,3 +82,11 @@ class FeedForward(torch.nn.Module):
         :rtype: LabelTensor
         """
         return self.model(x)
+
+    def save_to(self, filename):
+        """
+        Maybe add ".pt" or ".pth"
+        """
+
+        torch.save(self.state_dict(), filename)
+        print(f"Model saved to {filename}")
