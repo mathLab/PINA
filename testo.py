@@ -6,8 +6,9 @@ from pina import PINN
 from pina.problem import SpatialProblem
 from pina.operators import grad
 from pina import Condition, CartesianDomain
-from pina.equation.equation import Equation
 from pytorch_lightning.loggers import TensorBoardLogger, CSVLogger
+from pina.equation.equation import Equation
+
 
 import torch
 
