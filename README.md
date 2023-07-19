@@ -30,7 +30,7 @@
 
 [downloads-shield]: https://img.shields.io/pypi/dm/pina-mathlab?style=for-the-badge
 
-[downloads-url]: https://pypi.org/project/zenml/
+[downloads-url]: https://pypi.org/project/pina-mathlab/
 
 [codecov-shield]: https://img.shields.io/codecov/c/gh/zenml-io/zenml?style=for-the-badge
 
