@@ -5,7 +5,7 @@ from lightning.pytorch.utilities import rank_zero_only
 
 
 class PINALogger(Logger, metaclass=ABCMeta):
-    """ Base class for all loggers in Lightning """
+    """ Base class wrapper for all loggers in Lightning """
 
     @abstractmethod
     def call(self, model):
