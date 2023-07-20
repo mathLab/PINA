@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from pina.problem import SpatialProblem
-from pina.operators import nabla, grad, div
+from pina.operators import laplacian, grad, div
 from pina import Condition, Span, LabelTensor
 
 
@@ -12,9 +12,9 @@ class Stokes(SpatialProblem):
     spatial_domain = Span({'x': [-2, 2], 'y': [-1, 1]})
 
     def momentum(input_, output_):
-        nabla_ = torch.hstack((LabelTensor(nabla(output_.extract(['ux']), input_), ['x']),
-            LabelTensor(nabla(output_.extract(['uy']), input_), ['y'])))
-        return - nabla_ + grad(output_.extract(['p']), input_)
+        delta_ = torch.hstack((LabelTensor(laplacian(output_.extract(['ux']), input_), ['x']),
+            LabelTensor(laplacian(output_.extract(['uy']), input_), ['y'])))
+        return - delta_ + grad(output_.extract(['p']), input_)
 
     def continuity(input_, output_):
         return div(output_.extract(['ux', 'uy']), input_)
