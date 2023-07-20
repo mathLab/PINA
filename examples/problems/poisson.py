@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from pina.problem import SpatialProblem
-from pina.operators import nabla
+from pina.operators import laplacian
 from pina import Condition, Span
 
 # ===================================================== #
@@ -26,8 +26,8 @@ class Poisson(SpatialProblem):
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                       torch.sin(input_.extract(['y'])*torch.pi))
-        nabla_u = nabla(output_.extract(['u']), input_)
-        return nabla_u - force_term
+        delta_u = laplacian(output_.extract(['u']), input_)
+        return delta_u - force_term
 
     # define nill dirichlet boundary conditions
     def nil_dirichlet(input_, output_):

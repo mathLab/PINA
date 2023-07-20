@@ -4,7 +4,7 @@ import pytest
 from pina import LabelTensor, Condition, CartesianDomain, PINN
 from pina.problem import SpatialProblem
 from pina.model import FeedForward
-from pina.operators import nabla
+from pina.operators import laplacian
 from pina.equation.equation_factory import FixedValue
 
 

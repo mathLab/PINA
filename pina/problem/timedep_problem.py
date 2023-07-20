@@ -13,7 +13,7 @@ class TimeDependentProblem(AbstractProblem):
 
     :Example:
         >>> from pina.problem import SpatialProblem, TimeDependentProblem
-        >>> from pina.operators import grad, nabla
+        >>> from pina.operators import grad, laplacian
         >>> from pina import Condition, Span
         >>> import torch
         >>>
@@ -26,8 +26,8 @@ class TimeDependentProblem(AbstractProblem):
         >>>     def wave_equation(input_, output_):
         >>>         u_t = grad(output_, input_, components=['u'], d=['t'])
         >>>         u_tt = grad(u_t, input_, components=['dudt'], d=['t'])
-        >>>         nabla_u = nabla(output_, input_, components=['u'], d=['x'])
-        >>>         return nabla_u - u_tt
+        >>>         delta_u = laplacian(output_, input_, components=['u'], d=['x'])
+        >>>         return delta_u - u_tt
         >>>
         >>>     def nil_dirichlet(input_, output_):
         >>>         value = 0.0
