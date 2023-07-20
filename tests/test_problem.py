@@ -2,7 +2,7 @@ import torch
 import pytest
 
 from pina.problem import SpatialProblem
-from pina.operators import nabla
+from pina.operators import laplacian
 from pina import LabelTensor, Condition
 from pina.geometry import CartesianDomain
 from pina.equation.equation import Equation
@@ -12,8 +12,8 @@ from pina.equation.equation_factory import FixedValue
 def laplace_equation(input_, output_):
     force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                     torch.sin(input_.extract(['y'])*torch.pi))
-    nabla_u = nabla(output_.extract(['u']), input_)
-    return nabla_u - force_term
+    delta_u = laplacian(output_.extract(['u']), input_)
+    return delta_u - force_term
 
 my_laplace = Equation(laplace_equation)
 in_ = LabelTensor(torch.tensor([[0., 1.]], requires_grad=True), ['x', 'y'])

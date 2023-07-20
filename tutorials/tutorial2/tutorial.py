@@ -25,7 +25,7 @@ import torch
 from torch.nn import Softplus
 
 from pina.problem import SpatialProblem
-from pina.operators import nabla
+from pina.operators import laplacian
 from pina.model import FeedForward
 from pina import Condition, Span, PINN, LabelTensor, Plotter
 
@@ -43,8 +43,8 @@ class Poisson(SpatialProblem):
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                       torch.sin(input_.extract(['y'])*torch.pi))
-        nabla_u = nabla(output_, input_, components=['u'], d=['x', 'y'])
-        return nabla_u - force_term
+        delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
+        return delta_u - force_term
 
     def nil_dirichlet(input_, output_):
         value = 0.0

@@ -1,5 +1,5 @@
 from pina.equation import SystemEquation
-from pina.operators import grad, nabla
+from pina.operators import grad, laplacian
 from pina import LabelTensor
 import torch
 import pytest
@@ -13,8 +13,8 @@ def eq1(input_, output_):
 def eq2(input_, output_):
     force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                     torch.sin(input_.extract(['y'])*torch.pi))
-    nabla_u = nabla(output_.extract(['u1']), input_)
-    return nabla_u - force_term
+    delta_u = laplacian(output_.extract(['u1']), input_)
+    return delta_u - force_term
 
 def foo():
     pass

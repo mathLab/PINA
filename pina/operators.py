@@ -145,26 +145,26 @@ def div(output_, input_, components=None, d=None):
     return div
 
 
-def nabla(output_, input_, components=None, d=None, method='std'):
+def laplacian(output_, input_, components=None, d=None, method='std'):
     """
-    Perform nabla (laplace) operator. The operator works for vectorial and
+    Compute Laplace operator. The operator works for vectorial and
     scalar functions, with multiple input coordinates.
 
     :param LabelTensor output_: the output tensor onto which computing the
-        nabla.
+        Laplacian.
     :param LabelTensor input_: the input tensor with respect to which computing
-        the nabla.
+        the Laplacian.
     :param list(str) components: the name of the output variables to calculate
-        the nabla for. It should be a subset of the output labels. If None,
+        the Laplacian for. It should be a subset of the output labels. If None,
         all the output variables are considered. Default is None.
-    :param list(str) d: the name of the input variables on which the nabla
+    :param list(str) d: the name of the input variables on which the Laplacian
         is calculated. d should be a subset of the input labels. If None, all
         the input variables are considered. Default is None.
-    :param str method: used method to calculate nabla, defaults to 'std'.
+    :param str method: used method to calculate Laplacian, defaults to 'std'.
     :raises ValueError: for vectorial field derivative with respect to
         all coordinates must be performed.
     :raises NotImplementedError: 'divgrad' not implemented as method.
-    :return: The tensor containing the result of the nabla operator.
+    :return: The tensor containing the result of the Laplacian operator.
     :rtype: LabelTensor
     """
     if d is None:
@@ -217,15 +217,15 @@ def advection(output_, input_, velocity_field, components=None, d=None):
     with multiple input coordinates.
 
     :param LabelTensor output_: the output tensor onto which computing the
-        nabla.
+        advection.
     :param LabelTensor input_: the input tensor with respect to which computing
-        the nabla.
+        the advection.
     :param str velocity_field: the name of the output variables which is used
         as velocity field. It should be a subset of the output labels.
     :param list(str) components: the name of the output variables to calculate
-        the nabla for. It should be a subset of the output labels. If None,
+        the Laplacian for. It should be a subset of the output labels. If None,
         all the output variables are considered. Default is None.
-    :param list(str) d: the name of the input variables on which the nabla
+    :param list(str) d: the name of the input variables on which the advection
         is calculated. d should be a subset of the input labels. If None, all
         the input variables are considered. Default is None.
     :return: the tensor containing the result of the advection operator.

@@ -1,7 +1,7 @@
 import torch
 
 from pina.problem import SpatialProblem, ParametricProblem
-from pina.operators import nabla
+from pina.operators import laplacian
 from pina import Span, Condition
 
 # ===================================================== #
@@ -28,7 +28,7 @@ class ParametricPoisson(SpatialProblem, ParametricProblem):
         force_term = torch.exp(
                 - 2*(input_.extract(['x']) - input_.extract(['mu1']))**2
                 - 2*(input_.extract(['y']) - input_.extract(['mu2']))**2)
-        return nabla(output_.extract(['u']), input_) - force_term
+        return laplacian(output_.extract(['u']), input_) - force_term
 
     # define nill dirichlet boundary conditions
     def nil_dirichlet(input_, output_):

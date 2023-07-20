@@ -27,7 +27,7 @@
 import torch
 
 from pina.problem import SpatialProblem, TimeDependentProblem
-from pina.operators import nabla, grad
+from pina.operators import laplacian, grad
 from pina.model import Network
 from pina import Condition, Span, PINN, Plotter
 
@@ -45,8 +45,8 @@ class Wave(TimeDependentProblem, SpatialProblem):
     def wave_equation(input_, output_):
         u_t = grad(output_, input_, components=['u'], d=['t'])
         u_tt = grad(u_t, input_, components=['dudt'], d=['t'])
-        nabla_u = nabla(output_, input_, components=['u'], d=['x', 'y'])
-        return nabla_u - u_tt
+        delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
+        return delta_u - u_tt
 
     def nil_dirichlet(input_, output_):
         value = 0.0
