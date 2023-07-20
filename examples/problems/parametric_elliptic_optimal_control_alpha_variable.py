@@ -3,7 +3,7 @@ import torch
 
 from pina import Span, Condition
 from pina.problem import SpatialProblem, ParametricProblem
-from pina.operators import grad, nabla
+from pina.operators import grad, laplacian
 
 
 class ParametricEllipticOptimalControl(SpatialProblem, ParametricProblem):
@@ -22,11 +22,11 @@ class ParametricEllipticOptimalControl(SpatialProblem, ParametricProblem):
 
 
     def term1(input_, output_):
-        laplace_p = nabla(output_, input_, components=['p'], d=['x1', 'x2'])
+        laplace_p = laplacian(output_, input_, components=['p'], d=['x1', 'x2'])
         return output_.extract(['y']) - input_.extract(['mu']) - laplace_p
 
     def term2(input_, output_):
-        laplace_y = nabla(output_, input_, components=['y'], d=['x1', 'x2'])
+        laplace_y = laplacian(output_, input_, components=['y'], d=['x1', 'x2'])
         return - laplace_y - output_.extract(['u_param'])
 
     def state_dirichlet(input_, output_):

@@ -2,7 +2,7 @@ import torch
 import pytest
 
 from pina import LabelTensor
-from pina.operators import grad, div, nabla
+from pina.operators import grad, div, laplacian
 
 def func_vec(x):
     return x**2
@@ -41,13 +41,13 @@ def test_div_vector_output():
     grad_tensor_v = div(tensor_v, inp, components=['a', 'b'], d=['x', 'mu'])
     assert grad_tensor_v.shape == (inp.shape[0], 1)
 
-def test_nabla_scalar_output():
-    laplace_tensor_v = nabla(tensor_s, inp, components=['a'], d=['x', 'y'])
+def test_laplacian_scalar_output():
+    laplace_tensor_v = laplacian(tensor_s, inp, components=['a'], d=['x', 'y'])
     assert laplace_tensor_v.shape == tensor_s.shape
 
-def test_nabla_vector_output():
-    laplace_tensor_v = nabla(tensor_v, inp)
+def test_laplacian_vector_output():
+    laplace_tensor_v = laplacian(tensor_v, inp)
     assert laplace_tensor_v.shape == tensor_v.shape
-    laplace_tensor_v = nabla(tensor_v, inp, components=['a', 'b'], d=['x', 'y'])
+    laplace_tensor_v = laplacian(tensor_v, inp, components=['a', 'b'], d=['x', 'y'])
     assert laplace_tensor_v.shape == tensor_v.extract(['a', 'b']).shape
 

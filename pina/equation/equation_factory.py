@@ -1,6 +1,6 @@
 """ Module """
 from .equation import Equation
-from ..operators import grad, div, nabla
+from ..operators import grad, div, laplacian
 
 
 class FixedValue(Equation):
@@ -92,5 +92,5 @@ class Laplace(Equation):
             are considered. Default is ``None``.
         """     
         def equation(input_, output_):
-            return nabla(output_, input_, components=components, d=d)
+            return laplacian(output_, input_, components=components, d=d)
         super().__init__(equation)
