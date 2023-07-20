@@ -197,8 +197,19 @@ class LabelTensor(torch.Tensor):
         Return a copy of the selected tensor.
         """
         selected_lt = super(Tensor, self).__getitem__(index)
-        if hasattr(self, 'labels'):
-            selected_lt.labels = self.labels
+
+        if selected_lt.ndim == 1:
+            selected_lt = selected_lt.reshape(-1, 1)
+
+        if isinstance(index, int) or len(index) == 1:
+            if hasattr(self, 'labels'):
+                selected_lt.labels = self.labels
+        elif len(index) == 2:
+            if hasattr(self, 'labels'):
+                selected_lt.labels = self.labels[index[1]]
+        else:
+            raise IndexError(
+                'LabelTensor supports only 1D or 2D indexing')
 
         return selected_lt
 
