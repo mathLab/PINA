@@ -198,13 +198,19 @@ class LabelTensor(torch.Tensor):
         """
         selected_lt = super(Tensor, self).__getitem__(index)
 
-        if selected_lt.ndim == 1:
-            selected_lt = selected_lt.reshape(-1, 1)
+        try:
+            len_index = len(index)
+        except TypeError:
+            len_index = 1
 
-        if isinstance(index, int) or len(index) == 1:
+        if isinstance(index, int) or len_index == 1:
+            if selected_lt.ndim == 1:
+                selected_lt = selected_lt.reshape(1, -1)
             if hasattr(self, 'labels'):
                 selected_lt.labels = self.labels
-        elif len(index) == 2:
+        elif len_index == 2:
+            if selected_lt.ndim == 1:
+                selected_lt = selected_lt.reshape(-1, 1)
             if hasattr(self, 'labels'):
                 selected_lt.labels = self.labels[index[1]]
         else:
