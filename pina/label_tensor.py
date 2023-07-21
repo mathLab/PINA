@@ -213,9 +213,6 @@ class LabelTensor(torch.Tensor):
                 selected_lt = selected_lt.reshape(-1, 1)
             if hasattr(self, 'labels'):
                 selected_lt.labels = self.labels[index[1]]
-        else:
-            raise IndexError(
-                'LabelTensor supports only 1D or 2D indexing')
 
         return selected_lt
 
