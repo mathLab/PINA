@@ -56,11 +56,11 @@ class Poisson(SpatialProblem):
 
     truth_solution = poisson_sol
 
-
 class myFeature(torch.nn.Module):
     """
     Feature: sin(x)
     """
+
 
     def __init__(self):
         super(myFeature, self).__init__()
@@ -92,8 +92,45 @@ def test_train_cpu():
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
-    trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'cpu'})
+    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu')
     trainer.train()
+
+def test_train_restore():
+    tmpdir = "tests/tmp_restore"
+    poisson_problem = Poisson()
+    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+    n = 10
+    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
+    pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
+    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu', default_root_dir=tmpdir)
+    trainer.train()
+    print('ggg')
+    ntrainer = Trainer(solver=pinn, max_epochs=15, accelerator='cpu')
+    t = ntrainer.train(
+        ckpt_path=f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt')
+    import shutil
+    shutil.rmtree(tmpdir)
+
+def test_train_load():
+    tmpdir = "tests/tmp_load"
+    poisson_problem = Poisson()
+    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
+    n = 10
+    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
+    pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
+    trainer = Trainer(solver=pinn, max_epochs=15, accelerator='cpu',
+                     default_root_dir=tmpdir)
+    trainer.train()
+    new_pinn = PINN.load_from_checkpoint(
+        f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=14-step=15.ckpt',
+        problem = poisson_problem, model=model)
+    test_pts = CartesianDomain({'x': [0, 1], 'y': [0, 1]}).sample(10)
+    assert new_pinn.forward(test_pts).extract(['u']).shape == (10, 1)
+    assert new_pinn.forward(test_pts).extract(['u']).shape == pinn.forward(test_pts).extract(['u']).shape
+    torch.testing.assert_close(new_pinn.forward(test_pts).extract(['u']), pinn.forward(test_pts).extract(['u']))
+    import shutil
+    shutil.rmtree(tmpdir)
+    
 
 # # TODO fix asap. Basically sampling few variables
 # # works only if both variables are in a range.
@@ -118,7 +155,7 @@ def test_train_extra_feats_cpu():
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     pinn = PINN(problem = poisson_problem, model=model_extra_feats, extra_features=extra_feats)
-    trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'cpu'})
+    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu')
     trainer.train()
 
 # TODO, fix GitHub actions to run also on GPU
