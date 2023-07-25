@@ -1,3 +1,4 @@
+"""Run PINA on Burgers equation"""
 import argparse
 import torch
 from torch.nn import Softplus
@@ -11,6 +12,7 @@ class myFeature(torch.nn.Module):
     """
     Feature: sin(pi*x)
     """
+
     def __init__(self, idx):
         super(myFeature, self).__init__()
         self.idx = idx

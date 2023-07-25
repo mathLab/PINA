@@ -1,6 +1,5 @@
 """ Module for plotting. """
 import matplotlib.pyplot as plt
-import numpy as np
 import torch
 
 from pina import LabelTensor
@@ -43,7 +42,8 @@ class Plotter:
         proj = '3d' if len(variables) == 3 else None
         ax = fig.add_subplot(projection=proj)
         for location in solver.problem.input_pts:
-            coords = solver.problem.input_pts[location].extract(variables).T.detach()
+            coords = solver.problem.input_pts[location].extract(
+                variables).T.detach()
             if coords.shape[0] == 1:  # 1D samples
                 ax.plot(coords[0], torch.zeros(coords[0].shape), '.',
                         label=location)

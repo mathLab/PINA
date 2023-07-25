@@ -1,7 +1,7 @@
 import torch
 from torch.nn.parameter import Parameter
 
-class AdaptiveReLU(torch.nn.Module):
+class AdaptiveReLU(torch.nn.Module, Parameter):
     '''
     Implementation of soft exponential activation.
     Shape:

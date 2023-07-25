@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-from pina.problem import Problem
 from pina.segment import Segment
 from pina.cube import Cube
 from pina.problem2d import Problem2D
