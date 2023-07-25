@@ -48,7 +48,10 @@ class myRBF(torch.nn.Module):
         result = self.a * torch.exp(-(x - self.b)**2/(self.c**2))
         return result
 
+
 class myModel(torch.nn.Module):
+    """ Model for the Poisson equation."""
+
     def __init__(self):
 
         super().__init__()
@@ -56,9 +59,10 @@ class myModel(torch.nn.Module):
         self.ffn_y = myRBF('y')
 
     def forward(self, x):
-        result =  self.ffn_x(x) * self.ffn_y(x)
+        result = self.ffn_x(x) * self.ffn_y(x)
         result.labels = ['u']
         return result
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run PINA")
@@ -97,7 +101,8 @@ if __name__ == "__main__":
             print(model.ffn_x.b)
             print(model.ffn_x.c)
 
-            xi = torch.linspace(0, 1, 64).reshape(-1, 1).as_subclass(LabelTensor)
+            xi = torch.linspace(0, 1, 64).reshape(-1,
+                                                  1).as_subclass(LabelTensor)
             xi.labels = ['x']
             yi = model.ffn_x(xi)
             y_truth = -torch.sin(xi*torch.pi)
