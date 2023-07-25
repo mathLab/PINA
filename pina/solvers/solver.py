@@ -2,7 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-from pina.loggers import PinaLogger
+#from pina.loggers import PinaLogger
 from ..model.network import Network
 import lightning.pytorch as pl
 from ..utils import check_consistency

@@ -31,11 +31,11 @@ class Trainer(pl.Trainer):
         self._loader = DummyLoader(solver.problem.input_pts, device) 
 
         # Initalize logger using PinaLogger
-        self._pina_logger = PinaLogger(self.loggers)
+        #self._pina_logger = PinaLogger(self.loggers)
         # self._pina_logger.pina_log_graph(model=self._model)
 
     def train(self):  # TODO add kwargs and lightining capabilities
-        self._pina_logger.pina_log_graph(model=self._model)
+        #self._pina_logger.pina_log_graph(model=self._model)
 
         super().fit(self._model, self._loader)
 
