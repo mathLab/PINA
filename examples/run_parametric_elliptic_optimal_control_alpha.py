@@ -29,7 +29,8 @@ class CustomMultiDFF(MultiFeedForward):
 
     def forward(self, x):
         out = self.uu(x)
-        p = LabelTensor((out.extract(['u_param']) * x.extract(['alpha'])), ['p'])
+        p = LabelTensor(
+            (out.extract(['u_param']) * x.extract(['alpha'])), ['p'])
         return out.append(p)
 
 
@@ -78,6 +79,9 @@ if __name__ == "__main__":
     else:
         pinn.load_state('pina.ocp')
         plotter = Plotter()
-        plotter.plot(pinn, components='y', fixed_variables={'alpha': 0.01, 'mu': 1.0})
-        plotter.plot(pinn, components='u_param', fixed_variables={'alpha': 0.01, 'mu': 1.0})
-        plotter.plot(pinn, components='p', fixed_variables={'alpha': 0.01, 'mu': 1.0})
+        plotter.plot(pinn, components='y',
+                     fixed_variables={'alpha': 0.01, 'mu': 1.0})
+        plotter.plot(pinn, components='u_param',
+                     fixed_variables={'alpha': 0.01, 'mu': 1.0})
+        plotter.plot(pinn, components='p', fixed_variables={
+                     'alpha': 0.01, 'mu': 1.0})

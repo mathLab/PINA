@@ -1,3 +1,4 @@
+""" Poisson equation example. """
 import numpy as np
 import torch
 
@@ -31,9 +32,9 @@ class Poisson(SpatialProblem):
 
     def poisson_sol(self, pts):
         return -(
-            torch.sin(pts.extract(['x'])*torch.pi)*
+            torch.sin(pts.extract(['x'])*torch.pi) *
             torch.sin(pts.extract(['y'])*torch.pi)
         )/(2*torch.pi**2)
-        #return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
+        # return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
 
     truth_solution = poisson_sol

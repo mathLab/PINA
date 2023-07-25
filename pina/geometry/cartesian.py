@@ -82,7 +82,8 @@ class CartesianDomain(Location):
             pts = chebyshev_roots(n).mul(.5).add(.5).reshape(-1, 1)
         elif mode == 'grid':
             pts = torch.linspace(0, 1, n).reshape(-1, 1)
-        elif mode == 'lh' or mode == 'latin':
+        # elif mode == 'lh' or mode == 'latin':
+        elif mode in ['lh', 'latin']:
             pts = torch_lhs(n, dim)
 
         pts *= bounds[:, 1] - bounds[:, 0]
