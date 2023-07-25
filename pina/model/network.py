@@ -4,6 +4,8 @@ from ..utils import check_consistency
 
 
 class Network(torch.nn.Module):
+    """ Network class with starndard forward method 
+    and possibility to pass extra features."""
 
     def __init__(self, model, extra_features=None):
         super().__init__()

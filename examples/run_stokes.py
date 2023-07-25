@@ -1,10 +1,9 @@
 import argparse
-import sys
 import numpy as np
 import torch
 from torch.nn import ReLU, Tanh, Softplus
 
-from pina import PINN, LabelTensor, Plotter
+from pina import PINN, Plotter
 from pina.model import FeedForward
 from pina.adaptive_functions import AdaptiveSin, AdaptiveCos, AdaptiveTanh
 from problems.stokes import Stokes

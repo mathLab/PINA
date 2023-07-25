@@ -1,3 +1,4 @@
+""" Implementation of adaptive linear layer. """
 import torch
 from torch.nn.parameter import Parameter
 
