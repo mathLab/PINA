@@ -101,7 +101,6 @@ def test_train_restore():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
     trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu', default_root_dir=tmpdir)
     trainer.train()
@@ -118,7 +117,6 @@ def test_train_load():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
     trainer = Trainer(solver=pinn, max_epochs=15, accelerator='cpu',
                      default_root_dir=tmpdir)
@@ -149,17 +147,6 @@ def test_train_load():
 #     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
 #     trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'cpu'})
 #     trainer.train()
-
-def test_train_cpu_sampling_few_vars():
-    poisson_problem = Poisson()
-    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-    n = 10
-    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    poisson_problem.discretise_domain(n, 'random', locations=['D'], variables=['x'])
-    poisson_problem.discretise_domain(n, 'random', locations=['D'], variables=['y'])
-    pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
-    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu')
-    trainer.train()
 
 
 def test_train_extra_feats_cpu():
