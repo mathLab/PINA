@@ -6,14 +6,14 @@ from torch.nn import Softplus
 from pina.problem import SpatialProblem
 from pina.operators import grad
 from pina.model import FeedForward
-from pina import Condition, Span, Plotter, PINN
+from pina import Condition, CartesianDomain, Plotter, PINN
 
 
 class FirstOrderODE(SpatialProblem):
 
     x_rng = [0, 5]
     output_variables = ['y']
-    spatial_domain = Span({'x': x_rng})
+    spatial_domain = CartesianDomain({'x': x_rng})
 
     def ode(input_, output_):
         y = output_
@@ -29,8 +29,8 @@ class FirstOrderODE(SpatialProblem):
         return x - 1.0 + 2*torch.exp(-x)
 
     conditions = {
-        'bc': Condition(Span({'x': x_rng[0]}), fixed),
-        'dd': Condition(Span({'x': x_rng}), ode),
+        'bc': Condition(CartesianDomain({'x': x_rng[0]}), fixed),
+        'dd': Condition(CartesianDomain({'x': x_rng}), ode),
     }
     truth_solution = solution
 
