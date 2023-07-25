@@ -3,8 +3,33 @@ import argparse
 from torch.nn import Softplus
 
 from pina.model import FeedForward
-from pina import Plotter, PINN
-from problems.first_order_ode import FirstOrderODE
+from pina import Condition, CartesianDomain, Plotter, PINN
+
+
+class FirstOrderODE(SpatialProblem):
+
+    x_rng = [0, 5]
+    output_variables = ['y']
+    spatial_domain = CartesianDomain({'x': x_rng})
+
+    def ode(input_, output_):
+        y = output_
+        x = input_
+        return grad(y, x) + y - x
+
+    def fixed(input_, output_):
+        exp_value = 1.
+        return output_ - exp_value
+
+    def solution(self, input_):
+        x = input_
+        return x - 1.0 + 2*torch.exp(-x)
+
+    conditions = {
+        'bc': Condition(CartesianDomain({'x': x_rng[0]}), fixed),
+        'dd': Condition(CartesianDomain({'x': x_rng}), ode),
+    }
+    truth_solution = solution
 
 
 if __name__ == "__main__":
