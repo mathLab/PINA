@@ -1,36 +1,44 @@
 """ Poisson equation example. """
-import numpy as np
 import torch
 
 from pina.problem import SpatialProblem
 from pina.operators import laplacian
-from pina import Condition, Span
+from pina import Condition, CartesianDomain
 
 
 class Poisson(SpatialProblem):
+    """ Poisson equation example."""
 
     output_variables = ['u']
-    spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+    spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
-    def laplace_equation(input_, output_):
+    def laplace_equation(self, input_, output_):
+        """ Poisson equation."""
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                       torch.sin(input_.extract(['y'])*torch.pi))
         delta_u = laplacian(output_.extract(['u']), input_)
         return delta_u - force_term
 
-    def nil_dirichlet(input_, output_):
+    def nil_dirichlet(self, input_, output_):
+        """ Dirichlet boundary condition."""
         value = 0.0
         return output_.extract(['u']) - value
 
     conditions = {
-        'gamma1': Condition(Span({'x': [0, 1], 'y':  1}), nil_dirichlet),
-        'gamma2': Condition(Span({'x': [0, 1], 'y': 0}), nil_dirichlet),
-        'gamma3': Condition(Span({'x':  1, 'y': [0, 1]}), nil_dirichlet),
-        'gamma4': Condition(Span({'x': 0, 'y': [0, 1]}), nil_dirichlet),
-        'D': Condition(Span({'x': [0, 1], 'y': [0, 1]}), laplace_equation),
+        'gamma1': Condition(CartesianDomain({'x': [0, 1], 'y':  1}),
+                            nil_dirichlet),
+        'gamma2': Condition(CartesianDomain({'x': [0, 1], 'y': 0}),
+                            nil_dirichlet),
+        'gamma3': Condition(CartesianDomain({'x':  1, 'y': [0, 1]}),
+                            nil_dirichlet),
+        'gamma4': Condition(CartesianDomain({'x': 0, 'y': [0, 1]}),
+                            nil_dirichlet),
+        'D': Condition(CartesianDomain({'x': [0, 1], 'y': [0, 1]}),
+                       laplace_equation),
     }
 
     def poisson_sol(self, pts):
+        """ Analytical solution."""
         return -(
             torch.sin(pts.extract(['x'])*torch.pi) *
             torch.sin(pts.extract(['y'])*torch.pi)
