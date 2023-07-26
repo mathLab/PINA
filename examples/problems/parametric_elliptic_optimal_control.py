@@ -1,3 +1,4 @@
+""" Example of a parametric elliptic optimal control problem. """
 import numpy as np
 import torch
 from pina.segment import Segment
@@ -6,7 +7,9 @@ from pina.problem2d import Problem2D
 
 xmin, xmax, ymin, ymax = -1, 1, -1, 1
 
+
 class ParametricEllipticOptimalControl(Problem2D):
+    """ Parametric elliptic optimal control problem."""
 
     def __init__(self, alpha=1):
 
@@ -25,9 +28,8 @@ class ParametricEllipticOptimalControl(Problem2D):
         def term3(input_, param_, output_):
             return output_['p'] - output_['u_param']*alpha
 
-
         def term(input_, param_, output_):
-            return term1( input_, param_, output_)  +term2( input_, param_, output_) + term3( input_, param_, output_)
+            return term1(input_, param_, output_) + term2(input_, param_, output_) + term3(input_, param_, output_)
 
         def nil_dirichlet(input_, param_, output_):
             y_value = 0.0
@@ -35,13 +37,18 @@ class ParametricEllipticOptimalControl(Problem2D):
             return torch.abs(output_['y'] - y_value) + torch.abs(output_['p'] - p_value)
 
         self.conditions = {
-            'gamma1': {'location': Segment((xmin, ymin), (xmax, ymin)), 'func': nil_dirichlet},
-            'gamma2': {'location': Segment((xmax, ymin), (xmax, ymax)), 'func': nil_dirichlet},
-            'gamma3': {'location': Segment((xmax, ymax), (xmin, ymax)), 'func': nil_dirichlet},
-            'gamma4': {'location': Segment((xmin, ymax), (xmin, ymin)), 'func': nil_dirichlet},
-            'D1': {'location': Cube([[xmin, xmax], [ymin, ymax]]), 'func': term},
-            #'D2': {'location': Cube([[0, 1], [0, 1]]), 'func': term2},
-            #'D3': {'location': Cube([[0, 1], [0, 1]]), 'func': term3}
+            'gamma1': {'location': Segment((xmin, ymin), (xmax, ymin)),
+                       'func': nil_dirichlet},
+            'gamma2': {'location': Segment((xmax, ymin), (xmax, ymax)),
+                       'func': nil_dirichlet},
+            'gamma3': {'location': Segment((xmax, ymax), (xmin, ymax)),
+                       'func': nil_dirichlet},
+            'gamma4': {'location': Segment((xmin, ymax), (xmin, ymin)),
+                       'func': nil_dirichlet},
+            'D1': {'location': Cube([[xmin, xmax], [ymin, ymax]]),
+                   'func': term},
+            # 'D2': {'location': Cube([[0, 1], [0, 1]]), 'func': term2},
+            # 'D3': {'location': Cube([[0, 1], [0, 1]]), 'func': term3}
         }
 
         self.input_variables = ['x1', 'x2']
@@ -49,4 +56,3 @@ class ParametricEllipticOptimalControl(Problem2D):
         self.parameters = ['mu']
         self.spatial_domain = Cube([[xmin, xmax], [xmin, xmax]])
         self.parameter_domain = np.array([[0.5, 3]])
-

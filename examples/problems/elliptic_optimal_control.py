@@ -1,12 +1,14 @@
+""" Elliptic optimal control problem"""
 import torch
-from pina.problem import Problem
 from pina.segment import Segment
 from pina.cube import Cube
 from pina.problem2d import Problem2D
 
 xmin, xmax, ymin, ymax = -1, 1, -1, 1
 
-class EllipticOptimalControl(Problem2D):
+
+class EllipticOptimalControl(Problem2D, SpatialProblem):
+    """ Elliptic optimal control problem"""
 
     def __init__(self, alpha=1):
 
@@ -26,18 +28,22 @@ class EllipticOptimalControl(Problem2D):
         def term3(input_, output_):
             return output_.extract(['p']) - output_.extract(['u'])*alpha
 
-
         def nil_dirichlet(input_, output_):
             y_value = 0.0
             p_value = 0.0
             return torch.abs(output_.extract(['y']) - y_value) + torch.abs(output_.extract(['p']) - p_value)
 
         self.conditions = {
-            'gamma1': {'location': Segment((xmin, ymin), (xmax, ymin)), 'func': nil_dirichlet},
-            'gamma2': {'location': Segment((xmax, ymin), (xmax, ymax)), 'func': nil_dirichlet},
-            'gamma3': {'location': Segment((xmax, ymax), (xmin, ymax)), 'func': nil_dirichlet},
-            'gamma4': {'location': Segment((xmin, ymax), (xmin, ymin)), 'func': nil_dirichlet},
-            'D1': {'location': Cube([[xmin, xmax], [ymin, ymax]]), 'func': [term1, term2, term3]},
+            'gamma1': {'location': Segment((xmin, ymin), (xmax, ymin)),
+                       'func': nil_dirichlet},
+            'gamma2': {'location': Segment((xmax, ymin), (xmax, ymax)),
+                       'func': nil_dirichlet},
+            'gamma3': {'location': Segment((xmax, ymax), (xmin, ymax)),
+                       'func': nil_dirichlet},
+            'gamma4': {'location': Segment((xmin, ymax), (xmin, ymin)),
+                       'func': nil_dirichlet},
+            'D1': {'location': Cube([[xmin, xmax], [ymin, ymax]]),
+                   'func': [term1, term2, term3]},
         }
 
         self.input_variables = ['x1', 'x2']

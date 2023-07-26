@@ -23,7 +23,8 @@ class PinaDataset():
         :rtype: torch.utils.data.DataLoader
         """
         if self.pinn.batch_size is None:
-            return {key: [{key: val}] for key, val in self.pinn.input_pts.items()}
+            return {key: [{key: val}] for
+                    key, val in self.pinn.input_pts.items()}
 
         def custom_collate(batch):
             # extracting pts labels
@@ -36,13 +37,13 @@ class PinaDataset():
             for key, val in collate_res.items():
                 val.labels = labels
                 res[key] = val
+
         def __getitem__(self, index):
             tensor = self._tensor.select(0, index)
             return {self._location: tensor}
 
         def __len__(self):
             return self._len
-
 
 
 # TODO: working also for datapoints
@@ -63,12 +64,13 @@ class DummyLoader:
 
         for location, pts in data.items():
             if isinstance(pts, (tuple, list)):
-                pts = tuple(map(functools.partial(convert_tensors, device=device),pts))
+                pts = tuple(map(functools.partial(convert_tensors,
+                                                  device=device), pts))
             else:
                 pts = pts.to(device)
                 pts = pts.requires_grad_(True)
                 pts.retain_grad()
-            
+
             data[location] = pts
 
         # iterator

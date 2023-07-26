@@ -1,3 +1,4 @@
+""" Example of PINA for a first order ODE."""
 import argparse
 import torch
 
@@ -10,21 +11,25 @@ from pina import Condition, CartesianDomain, Plotter, PINN
 
 
 class FirstOrderODE(SpatialProblem):
+    """ First order ODE problem."""
 
     x_rng = [0, 5]
     output_variables = ['y']
     spatial_domain = CartesianDomain({'x': x_rng})
 
-    def ode(input_, output_):
+    def ode(self, input_, output_):
+        """ ODE equation."""
         y = output_
         x = input_
         return grad(y, x) + y - x
 
-    def fixed(input_, output_):
+    def fixed(self, input_, output_):
+        """ Fixed value"""
         exp_value = 1.
         return output_ - exp_value
 
     def solution(self, input_):
+        """ Solution of the ODE."""
         x = input_
         return x - 1.0 + 2*torch.exp(-x)
 
