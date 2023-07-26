@@ -83,7 +83,7 @@ pinn.problem.discretise_domain(n=20, mode="random", variables=["x"])
 
 # initialize trainer with logger
 # trainer = Trainer(pinn)
-trainer = Trainer(solver=pinn, kwargs={"default_root_dir": "../checkpoints/"})
+trainer = Trainer(solver=pinn, default_root_dir = "../checkpoints/")
 
 # train the model
 trainer.train()
@@ -91,30 +91,21 @@ trainer.train()
 checkpoint = torch.load(
     "../checkpoints/lightning_logs/version_0/checkpoints/epoch=999-step=1000.ckpt"
 )
-print(checkpoint.keys())
 
-# FOR THIS TO WORK, NEED self.save_parameters() in __init__ of solver.py
-# print('hyperparams', checkpoint['hyper_parameters']) 
-
-classifier = "_neural_net._model.model."
+# classifier = "_neural_net._model.model."
 # state_dict = {
 #     key[len(classifier):] if key.startswith(classifier) else key: value
 #     for key, value in checkpoint["state_dict"].items()
 # }
-
 # checkpoint["state_dict"] = state_dict
 
 torch.save(checkpoint, "../checkpoints/path.ckpt")
 
-# HAVE TO MANUALLY EDIT CHECKPOINT FILES
-#checkpoint["state_dict"] = state_dict
-#model2 = pl.LightningModule.load_from_checkpoint("../checkpoints/lightning_logs/version_0/checkpoints/epoch=999-step=1000.ckpt")
-model2 = PINN.load_from_checkpoint(checkpoint_path="../checkpoints/path.ckpt", problem=problem, model=model)
-print(model2)
-# model2 = FeedForward(
-#     layers=[10, 10], func=torch.nn.Tanh, output_variables=1, input_variables=1
-# )
+loaded_model = PINN.load_from_checkpoint(checkpoint_path="../checkpoints/path.ckpt", problem=problem, model=model)
 
-# model2.load_state_dict(state_dict=state_dict)
+pinn2 = PINN(problem=problem, model=loaded_model)
+
+new_trainer = Trainer(solver=pinn2, default_root_dir = "../checkpoints/")
+new_trainer.train()
 
 print("Done!")
