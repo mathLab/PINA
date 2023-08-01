@@ -6,7 +6,7 @@ from ..feed_forward import FeedForward
 import torch
 
 
-class ContinuousConv(BaseContinuousConv):
+class ContinuousConvBlock(BaseContinuousConv):
     """
     Implementation of Continuous Convolutional operator.
 

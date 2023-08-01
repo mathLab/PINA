@@ -1,7 +1,7 @@
 __all__ = [
-    'BaseContinuousConv',
-    'ContinuousConv'
+    'ContinuousConvBlock',
+    'ResidualBlock'
 ]
 
-from .convolution import BaseContinuousConv
-from .convolution_2d import ContinuousConv
+from .convolution_2d import ContinuousConvBlock
+from .residual import ResidualBlock

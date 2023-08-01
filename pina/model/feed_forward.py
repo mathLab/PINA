@@ -2,19 +2,17 @@
 import torch
 import torch.nn as nn
 
-from pina.label_tensor import LabelTensor
-
 
 class FeedForward(torch.nn.Module):
     """
     The PINA implementation of feedforward network, also refered as multilayer
     perceptron.
 
-    :param int input_variables: The number of input components of the model.
-        Expected tensor shape of the form (*, input_variables), where *
+    :param int input_dimensons: The number of input components of the model.
+        Expected tensor shape of the form (*, input_dimensons), where *
         means any number of dimensions including none.
-    :param int output_variables: The number of output components of the model.
-        Expected tensor shape of the form (*, output_variables), where *
+    :param int output_dimensions: The number of output components of the model.
+        Expected tensor shape of the form (*, output_dimensions), where *
         means any number of dimensions including none.
     :param int inner_size: number of neurons in the hidden layer(s). Default is
         20.
@@ -28,20 +26,20 @@ class FeedForward(torch.nn.Module):
         `inner_size` are not considered.
     :param bool bias: If `True` the MLP will consider some bias.
     """
-    def __init__(self, input_variables, output_variables, inner_size=20,
+    def __init__(self, input_dimensons, output_dimensions, inner_size=20,
                  n_layers=2, func=nn.Tanh, layers=None, bias=True):
         """
         """
         super().__init__()
 
 
-        if not isinstance(input_variables, int):
-            raise ValueError('input_variables expected to be int.')
-        self.input_dimension = input_variables
+        if not isinstance(input_dimensons, int):
+            raise ValueError('input_dimensons expected to be int.')
+        self.input_dimension = input_dimensons
 
-        if not isinstance(output_variables, int):
-            raise ValueError('output_variables expected to be int.')
-        self.output_dimension = output_variables
+        if not isinstance(output_dimensions, int):
+            raise ValueError('output_dimensions expected to be int.')
+        self.output_dimension = output_dimensions
         if layers is None:
             layers = [inner_size] * n_layers
 
