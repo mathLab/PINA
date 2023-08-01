@@ -1,4 +1,3 @@
-""" Integral class for continous convolution"""
 import torch
 
 
