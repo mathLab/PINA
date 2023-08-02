@@ -104,7 +104,6 @@ def test_train_restore():
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
     trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu', default_root_dir=tmpdir)
     trainer.train()
-    print('ggg')
     ntrainer = Trainer(solver=pinn, max_epochs=15, accelerator='cpu')
     t = ntrainer.train(
         ckpt_path=f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt')
