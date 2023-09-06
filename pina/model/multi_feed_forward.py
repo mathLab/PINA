@@ -6,6 +6,8 @@ from .feed_forward import FeedForward
 
 class MultiFeedForward(torch.nn.Module):
     """
+    The PINA implementation of MultiFeedForward network. 
+
     This model allows to create a network with multiple FeedForward combined
     together. The user has to define the `forward` method choosing how to
     combine the different FeedForward networks.
