@@ -3,29 +3,53 @@ import torch
 
 from pina import LabelTensor
 from pina.model import DeepONet
-from pina.model import FeedForward as FFN
+from pina.model import FeedForward
 
 data = torch.rand((20, 3))
 input_vars = ['a', 'b', 'c']
-output_vars = ['d']
 input_ = LabelTensor(data, input_vars)
 
-# TODO
 
-# def test_constructor():
-#     branch = FFN(input_variables=['a', 'c'], output_variables=20)
-#     trunk = FFN(input_variables=['b'], output_variables=20)
-#     onet = DeepONet(nets=[trunk, branch], output_variables=output_vars)
+def test_constructor():
+    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensons=2, output_dimensions=10)
+    DeepONet(branch_net=branch_net,
+             trunk_net=trunk_net,
+             input_indeces_branch_net=['a'],
+             input_indeces_trunk_net=['b', 'c'],
+             reduction='+',
+             aggregator='*')
 
-# def test_constructor_fails_when_invalid_inner_layer_size():
-#     branch = FFN(input_variables=['a', 'c'], output_variables=20)
-#     trunk = FFN(input_variables=['b'], output_variables=19)
-#     with pytest.raises(ValueError):
-#         DeepONet(nets=[trunk, branch], output_variables=output_vars)
 
-# def test_forward():
-#     branch = FFN(input_variables=['a', 'c'], output_variables=10)
-#     trunk = FFN(input_variables=['b'], output_variables=10)
-#     onet = DeepONet(nets=[trunk, branch], output_variables=output_vars)
-#     output_ = onet(input_)
-#     assert output_.labels == output_vars
+def test_constructor_fails_when_invalid_inner_layer_size():
+    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensons=2, output_dimensions=8)
+    with pytest.raises(ValueError):
+        DeepONet(branch_net=branch_net,
+                 trunk_net=trunk_net,
+                 input_indeces_branch_net=['a'],
+                 input_indeces_trunk_net=['b', 'c'],
+                 reduction='+',
+                 aggregator='*')
+
+def test_forward_extract_str():
+    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensons=2, output_dimensions=10)
+    model = DeepONet(branch_net=branch_net,
+                    trunk_net=trunk_net,
+                    input_indeces_branch_net=['a'],
+                    input_indeces_trunk_net=['b', 'c'],
+                    reduction='+',
+                    aggregator='*')
+    model(input_)
+
+def test_forward_extract_int():
+    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensons=2, output_dimensions=10)
+    model = DeepONet(branch_net=branch_net,
+                    trunk_net=trunk_net,
+                    input_indeces_branch_net=[0],
+                    input_indeces_trunk_net=[1, 2],
+                    reduction='+',
+                    aggregator='*')
+    model(data)
