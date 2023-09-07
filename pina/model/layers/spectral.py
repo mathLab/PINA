@@ -12,14 +12,18 @@ class SpectralConvBlock1D(nn.Module):
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
         """
-        TODO
+        PINA implementation of spectral convolution. The module computes
+        the spectral convolution of the input with a linear kernel in the
+        fourier space, and then it maps the input back to the physical
+        space.
 
-        :param input_numb_fields: _description_
-        :type input_numb_fields: _type_
-        :param output_numb_fields: _description_
-        :type output_numb_fields: _type_
-        :param n_modes: _description_
-        :type n_modes: _type_
+        The block expects an input of size ``[batch, input_numb_fields, N]``
+        and returns an output of size ``[batch, output_numb_fields, N]``.
+
+        :param int input_numb_fields: The number of channels for the input.
+        :param int output_numb_fields: The number of channels for the output.
+        :param int n_modes: Number of modes to select, it must be at most equal
+            to the ``floor(N/2)+1``.
         """
         super().__init__()
 
@@ -69,9 +73,6 @@ class SpectralConvBlock1D(nn.Module):
         """
         batch_size = x.shape[0]
 
-        # if x.shape[-1] // 2 + 1 < self._modes:
-        #     raise RuntimeError('Number of modes is too high, decrease number of modes.')
-
         # Compute Fourier transform of the input
         x_ft = torch.fft.rfft(x)
 
@@ -95,6 +96,20 @@ class SpectralConvBlock2D(nn.Module):
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
+        """
+        PINA implementation of spectral convolution. The module computes
+        the spectral convolution of the input with a linear kernel in the
+        fourier space, and then it maps the input back to the physical
+        space.
+
+        The block expects an input of size ``[batch, input_numb_fields, Nx, Ny]``
+        and returns an output of size ``[batch, output_numb_fields, Nx, Ny]``.
+
+        :param int input_numb_fields: The number of channels for the input.
+        :param int output_numb_fields: The number of channels for the output.
+        :param list | tuple n_modes: Number of modes to select for each dimension.
+            It must be at most equal to the ``floor(Nx/2)+1`` and ``floor(Ny/2)+1``.
+        """
         super().__init__()
 
         # check type consistency
@@ -188,16 +203,19 @@ class SpectralConvBlock3D(nn.Module):
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
         """
-        TODO
+        PINA implementation of spectral convolution. The module computes
+        the spectral convolution of the input with a linear kernel in the
+        fourier space, and then it maps the input back to the physical
+        space.
 
-        :param input_numb_fields: _description_
-        :type input_numb_fields: _type_
-        :param output_numb_fields: _description_
-        :type output_numb_fields: _type_
-        :param n_modes: _description_
-        :type n_modes: _type_
-        :raises ValueError: _description_
-        :raises ValueError: _description_
+        The block expects an input of size ``[batch, input_numb_fields, Nx, Ny, Nz]``
+        and returns an output of size ``[batch, output_numb_fields, Nx, Ny, Nz]``.
+
+        :param int input_numb_fields: The number of channels for the input.
+        :param int output_numb_fields: The number of channels for the output.
+        :param list | tuple n_modes: Number of modes to select for each dimension.
+            It must be at most equal to the ``floor(Nx/2)+1``, ``floor(Ny/2)+1``
+            and ``floor(Nz/2)+1``.
         """
         super().__init__()
 
