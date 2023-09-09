@@ -115,15 +115,19 @@ class SpectralConvBlock2D(nn.Module):
         # check type consistency
         check_consistency(input_numb_fields, int)
         check_consistency(output_numb_fields, int)
-        if not isinstance(n_modes, (tuple, list)):
-            raise ValueError('expected n_modes to be a list or tuple of len two, '
-                             'with each entry corresponding to the number of modes '
-                             'for each dimension ')
-        if len(n_modes) != 2:
-            raise ValueError('expected n_modes to be a list or tuple of len two, '
-                             'with each entry corresponding to the number of modes '
-                             'for each dimension ')
         check_consistency(n_modes, int)
+        if isinstance(n_modes, (tuple, list)):
+            if len(n_modes) != 2:
+                raise ValueError('Expected n_modes to be a list or tuple of len two, '
+                             'with each entry corresponding to the number of modes '
+                             'for each dimension ')
+        elif isinstance(n_modes, int):
+            n_modes = [n_modes]*2
+        else:
+            raise ValueError('Expected n_modes to be a list or tuple of len two, '
+                             'with each entry corresponding to the number of modes '
+                             'for each dimension; or an int value representing the '
+                             'number of modes for all dimensions')
         
 
         # assign variables
@@ -222,15 +226,19 @@ class SpectralConvBlock3D(nn.Module):
         # check type consistency
         check_consistency(input_numb_fields, int)
         check_consistency(output_numb_fields, int)
-        if not isinstance(n_modes, (tuple, list)):
-            raise ValueError('expected n_modes to be a list or tuple of len three, '
-                             'with each entry corresponding to the number of modes '
-                             'for each dimension ')
-        if len(n_modes) != 3:
-            raise ValueError('expected n_modes to be a list or tuple of len three, '
-                             'with each entry corresponding to the number of modes '
-                             'for each dimension ')
         check_consistency(n_modes, int)
+        if isinstance(n_modes, (tuple, list)):
+            if len(n_modes) != 3:
+                raise ValueError('Expected n_modes to be a list or tuple of len three, '
+                             'with each entry corresponding to the number of modes '
+                             'for each dimension ')
+        elif isinstance(n_modes, int):
+            n_modes = [n_modes]*3
+        else:
+            raise ValueError('Expected n_modes to be a list or tuple of len three, '
+                             'with each entry corresponding to the number of modes '
+                             'for each dimension; or an int value representing the '
+                             'number of modes for all dimensions')
 
         # assign variables
         self._modes = n_modes
