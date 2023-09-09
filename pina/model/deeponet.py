@@ -108,8 +108,10 @@ class DeepONet(torch.nn.Module):
         check_consistency(trunk_net, torch.nn.Module)
 
         # check trunk branch nets consistency
-        trunk_out_dim = trunk_net.layers[-1].out_features
-        branch_out_dim = branch_net.layers[-1].out_features
+        input_trunk = torch.rand(10, len(input_indeces_trunk_net))
+        input_branch = torch.rand(10, len(input_indeces_branch_net))
+        trunk_out_dim = trunk_net(input_trunk).shape[-1]
+        branch_out_dim = branch_net(input_branch).shape[-1]
         if trunk_out_dim != branch_out_dim:
             raise ValueError('Branch and trunk networks have not the same '
                              'output dimension.')

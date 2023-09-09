@@ -20,7 +20,6 @@ class FourierBlock1D(nn.Module):
         <https://arxiv.org/abs/2010.08895.pdf>`_.
 
     """
-
     def __init__(self, input_numb_fields, output_numb_fields, n_modes, activation=torch.nn.Tanh):
         super().__init__()
         """
@@ -50,9 +49,19 @@ class FourierBlock1D(nn.Module):
         self._activation = activation()
         self._linear = nn.Conv1d(input_numb_fields, output_numb_fields, 1)
         
-
-
     def forward(self, x):
+        """
+        Forward computation for Fourier Block. It performs a spectral 
+        convolution and a linear transformation of the input and sum the
+        results.
+
+        :param x: The input tensor for fourier block, expect of size 
+            ``[batch, input_numb_fields, x]``.
+        :type x: torch.Tensor
+        :return: The output tensor obtained from the
+            fourier block of size ``[batch, output_numb_fields, x]``.
+        :rtype: torch.Tensor
+        """
         return self._activation(self._spectral_conv(x) + self._linear(x))
 
 
@@ -71,7 +80,6 @@ class FourierBlock2D(nn.Module):
         <https://arxiv.org/abs/2010.08895.pdf>`_.
 
     """
-
     def __init__(self, input_numb_fields, output_numb_fields, n_modes, activation=torch.nn.Tanh):
         """
         PINA implementation of Fourier block two dimensions. The module computes
@@ -100,13 +108,22 @@ class FourierBlock2D(nn.Module):
                                                   output_numb_fields=output_numb_fields,
                                                   n_modes=n_modes)
         self._activation = activation()
-        self._linear = nn.Conv1d(input_numb_fields, output_numb_fields, 1)
+        self._linear = nn.Conv2d(input_numb_fields, output_numb_fields, 1)
         
     def forward(self, x):
-        shape_x = x.shape
-        ln = self._linear(x.view(shape_x[0], shape_x[1], -1))
-        ln = ln.view(shape_x[0], -1, shape_x[2], shape_x[3])
-        return self._activation(self._spectral_conv(x) + ln)
+        """
+        Forward computation for Fourier Block. It performs a spectral 
+        convolution and a linear transformation of the input and sum the
+        results.
+
+        :param x: The input tensor for fourier block, expect of size 
+            ``[batch, input_numb_fields, x, y]``.
+        :type x: torch.Tensor
+        :return: The output tensor obtained from the
+            fourier block of size ``[batch, output_numb_fields, x, y, z]``.
+        :rtype: torch.Tensor
+        """
+        return self._activation(self._spectral_conv(x) + self._linear(x))
 
 
 class FourierBlock3D(nn.Module):
@@ -124,7 +141,6 @@ class FourierBlock3D(nn.Module):
         <https://arxiv.org/abs/2010.08895.pdf>`_.
 
     """
-
     def __init__(self, input_numb_fields, output_numb_fields, n_modes, activation=torch.nn.Tanh):
         """
         PINA implementation of Fourier block three dimensions. The module computes
@@ -154,10 +170,19 @@ class FourierBlock3D(nn.Module):
                                                   output_numb_fields=output_numb_fields,
                                                   n_modes=n_modes)
         self._activation = activation()
-        self._linear = nn.Conv1d(input_numb_fields, output_numb_fields, 1)
+        self._linear = nn.Conv3d(input_numb_fields, output_numb_fields, 1)
         
     def forward(self, x):
-        shape_x = x.shape
-        ln = self._linear(x.view(shape_x[0], shape_x[1], -1))
-        ln = ln.view(shape_x[0], -1, shape_x[2], shape_x[3], shape_x[4])
-        return self._activation(self._spectral_conv(x) + ln)
+        """
+        Forward computation for Fourier Block. It performs a spectral 
+        convolution and a linear transformation of the input and sum the
+        results.
+
+        :param x: The input tensor for fourier block, expect of size 
+            ``[batch, input_numb_fields, x, y, z]``.
+        :type x: torch.Tensor
+        :return: The output tensor obtained from the
+            fourier block of size ``[batch, output_numb_fields, x, y, z]``.
+        :rtype: torch.Tensor
+        """
+        return self._activation(self._spectral_conv(x) + self._linear(x))
