@@ -1,6 +1,7 @@
 __all__ = [
     'ContinuousConvBlock',
     'ResidualBlock',
+    'EnhancedLinear',
     'SpectralConvBlock1D',
     'SpectralConvBlock2D',
     'SpectralConvBlock3D',
@@ -10,6 +11,6 @@ __all__ = [
 ]
 
 from .convolution_2d import ContinuousConvBlock
-from .residual import ResidualBlock
+from .residual import ResidualBlock, EnhancedLinear
 from .spectral import SpectralConvBlock1D, SpectralConvBlock2D, SpectralConvBlock3D
 from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D

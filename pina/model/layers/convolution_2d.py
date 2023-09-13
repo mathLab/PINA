@@ -2,7 +2,6 @@
 from .convolution import BaseContinuousConv
 from .utils_convolution import check_point, map_points_
 from .integral import Integral
-from ..feed_forward import FeedForward
 import torch
 
 
@@ -34,8 +33,8 @@ class ContinuousConvBlock(BaseContinuousConv):
         :param stride: Stride for the filter.
         :type stride: dict
         :param model: Neural network for inner parametrization,
-            defaults to None. If None, pina.FeedForward is used, more
-            on https://mathlab.github.io/PINA/_rst/fnn.html.
+            defaults to None. If None, a default multilayer perceptron
+            is used, see BaseContinuousConv.DefaultKernel.
         :type model: torch.nn.Module, optional
         :param optimize: Flag for performing optimization on the continuous
             filter, defaults to False. The flag `optimize=True` should be
@@ -152,7 +151,7 @@ class ContinuousConvBlock(BaseContinuousConv):
         nets = []
         if self._net is None:
             for _ in range(self._input_numb_field * self._output_numb_field):
-                tmp = FeedForward(len(self._dim), 1)
+                tmp = ContinuousConvBlock.DefaultKernel(len(self._dim), 1)
                 nets.append(tmp)
         else:
             if not isinstance(model, object):

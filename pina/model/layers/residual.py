@@ -93,3 +93,38 @@ class ResidualBlock(nn.Module):
     @ property
     def activation(self):
         return self._activation
+    
+
+class EnhancedLinear(torch.nn.Module):
+    """
+    TODO
+    """
+    def __init__(self, layer, activation=None, dropout=None):
+        super().__init__()
+
+        # check consistency
+        check_consistency(layer, nn.Module)
+        if activation is not None:
+            check_consistency(activation, nn.Module)
+        if dropout is not None:
+            check_consistency(dropout, float)
+        
+        # assign forward
+        if (dropout is None) and (activation is None):
+            self._model = torch.nn.Sequential(layer)
+
+        elif (dropout is None) and (activation is not None):
+            self._model = torch.nn.Sequential(layer,
+                                              activation)
+            
+        elif (dropout is not None) and (activation is None):
+            self._model = torch.nn.Sequential(layer,
+                                              self._drop(dropout))
+            
+        elif (dropout is not None) and (activation is not None):
+            self._model = torch.nn.Sequential(layer,
+                                              activation,
+                                              self._drop(dropout))
+            
+    def forward(self, x):
+        return self._model(x)
