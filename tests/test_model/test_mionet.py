@@ -11,9 +11,9 @@ input_ = LabelTensor(data, input_vars)
 
 
 def test_constructor():
-    branch_net1 = FeedForward(input_dimensons=1, output_dimensions=10)
-    branch_net2 = FeedForward(input_dimensons=2, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=1, output_dimensions=10)
+    branch_net1 = FeedForward(input_dimensions=1, output_dimensions=10)
+    branch_net2 = FeedForward(input_dimensions=2, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=1, output_dimensions=10)
     networks = {branch_net1 : ['x'],
                 branch_net2 : ['x', 'y'],
                 trunk_net : ['z']}
@@ -23,9 +23,9 @@ def test_constructor():
 
 
 def test_constructor_fails_when_invalid_inner_layer_size():
-    branch_net1 = FeedForward(input_dimensons=1, output_dimensions=10)
-    branch_net2 = FeedForward(input_dimensons=2, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=1, output_dimensions=12)
+    branch_net1 = FeedForward(input_dimensions=1, output_dimensions=10)
+    branch_net2 = FeedForward(input_dimensions=2, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=1, output_dimensions=12)
     networks = {branch_net1 : ['x'],
                 branch_net2 : ['x', 'y'],
                 trunk_net : ['z']}
@@ -35,9 +35,9 @@ def test_constructor_fails_when_invalid_inner_layer_size():
                aggregator='*')
 
 def test_forward_extract_str():
-    branch_net1 = FeedForward(input_dimensons=1, output_dimensions=10)
-    branch_net2 = FeedForward(input_dimensons=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=1, output_dimensions=10)
+    branch_net1 = FeedForward(input_dimensions=1, output_dimensions=10)
+    branch_net2 = FeedForward(input_dimensions=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=1, output_dimensions=10)
     networks = {branch_net1 : ['a'],
                 branch_net2 : ['b'],
                 trunk_net : ['c']}
@@ -47,9 +47,9 @@ def test_forward_extract_str():
     model(input_)
 
 def test_forward_extract_int():
-    branch_net1 = FeedForward(input_dimensons=1, output_dimensions=10)
-    branch_net2 = FeedForward(input_dimensons=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=1, output_dimensions=10)
+    branch_net1 = FeedForward(input_dimensions=1, output_dimensions=10)
+    branch_net2 = FeedForward(input_dimensions=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=1, output_dimensions=10)
     networks = {branch_net1 : [0],
                 branch_net2 : [1],
                 trunk_net : [2]}
@@ -59,9 +59,9 @@ def test_forward_extract_int():
     model(data)
 
 def test_forward_extract_str_wrong():
-    branch_net1 = FeedForward(input_dimensons=1, output_dimensions=10)
-    branch_net2 = FeedForward(input_dimensons=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=1, output_dimensions=10)
+    branch_net1 = FeedForward(input_dimensions=1, output_dimensions=10)
+    branch_net2 = FeedForward(input_dimensions=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=1, output_dimensions=10)
     networks = {branch_net1 : ['a'],
                 branch_net2 : ['b'],
                 trunk_net : ['c']}
