@@ -11,8 +11,8 @@ input_ = LabelTensor(data, input_vars)
 
 
 def test_constructor():
-    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=2, output_dimensions=10)
+    branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=2, output_dimensions=10)
     DeepONet(branch_net=branch_net,
              trunk_net=trunk_net,
              input_indeces_branch_net=['a'],
@@ -22,8 +22,8 @@ def test_constructor():
 
 
 def test_constructor_fails_when_invalid_inner_layer_size():
-    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=2, output_dimensions=8)
+    branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=2, output_dimensions=8)
     with pytest.raises(ValueError):
         DeepONet(branch_net=branch_net,
                  trunk_net=trunk_net,
@@ -33,8 +33,8 @@ def test_constructor_fails_when_invalid_inner_layer_size():
                  aggregator='*')
 
 def test_forward_extract_str():
-    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=2, output_dimensions=10)
+    branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=2, output_dimensions=10)
     model = DeepONet(branch_net=branch_net,
                     trunk_net=trunk_net,
                     input_indeces_branch_net=['a'],
@@ -44,8 +44,8 @@ def test_forward_extract_str():
     model(input_)
 
 def test_forward_extract_int():
-    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=2, output_dimensions=10)
+    branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=2, output_dimensions=10)
     model = DeepONet(branch_net=branch_net,
                     trunk_net=trunk_net,
                     input_indeces_branch_net=[0],
@@ -55,8 +55,8 @@ def test_forward_extract_int():
     model(data)
 
 def test_forward_extract_str_wrong():
-    branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensons=2, output_dimensions=10)
+    branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
+    trunk_net = FeedForward(input_dimensions=2, output_dimensions=10)
     model = DeepONet(branch_net=branch_net,
                     trunk_net=trunk_net,
                     input_indeces_branch_net=['a'],
