@@ -113,6 +113,21 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
         else:
             self.transpose = self.transpose_overlap
 
+    class DefaultKernel(torch.nn.Module):
+        def __init__(self, input_dim, output_dim):
+            super().__init__()
+            assert isinstance(input_dim, int)
+            assert isinstance(output_dim, int)
+            self._model = torch.nn.Sequential(
+                                            torch.nn.Linear(input_dim, 20),
+                                            torch.nn.ReLU(),
+                                            torch.nn.Linear(20, 20),
+                                            torch.nn.ReLU(),
+                                            torch.nn.Linear(20, output_dim)
+                                            )
+        def forward(self, x):
+            return self._model(x)
+
     @ property
     def net(self):
         return self._net
