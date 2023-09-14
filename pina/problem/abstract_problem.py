@@ -1,6 +1,7 @@
 """ Module for AbstractProblem class """
 from abc import ABCMeta, abstractmethod
 from ..utils import merge_tensors, check_consistency
+import torch
 
 
 class AbstractProblem(metaclass=ABCMeta):
@@ -200,6 +201,36 @@ class AbstractProblem(metaclass=ABCMeta):
             # the condition is sampled if input_pts contains all labels
             if sorted(self.input_pts[location].labels) ==  sorted(self.input_variables): 
                 self._have_sampled_points[location] = True
+
+    def add_points(self, new_points):
+        """
+        Adding points to the already sampled points
+
+        :param dict new_points: a dictionary with key the location to add the points
+            and values the torch.Tensor points.
+        """
+
+        if sorted(new_points.keys()) !=  sorted(self.conditions):
+            TypeError(f'Wrong locations for new points. Location ',
+                      f'should be in {self.conditions}.')
+            
+        for location in new_points.keys():
+            # extract old and new points
+            old_pts = self.input_pts[location]
+            new_pts = new_points[location]
+
+            # if they don't have the same variables error
+            if sorted(old_pts.labels) !=  sorted(new_pts.labels):
+                TypeError(f'Not matching variables for old and new points '
+                          f'in condition {location}.')
+            if old_pts.labels != new_pts.labels:
+                new_pts = torch.hstack([new_pts.extract([i]) for i in old_pts.labels])
+                new_pts.labels = old_pts.labels
+
+            # merging
+            merged_pts = torch.vstack([old_pts, new_points[location]])
+            merged_pts.labels = old_pts.labels
+            self.input_pts[location] = merged_pts
 
     @property
     def have_sampled_points(self):
