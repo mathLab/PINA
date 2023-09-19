@@ -36,3 +36,9 @@ class Trainer(pl.Trainer):
     def train(self, **kwargs): # TODO add kwargs and lightining capabilities
         return super().fit(self._model, self._loader, **kwargs)
     
+    @property
+    def solver(self):
+        """
+        Returning trainer solver.
+        """
+        return self._model
