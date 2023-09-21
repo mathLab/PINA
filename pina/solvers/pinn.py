@@ -1,5 +1,6 @@
 """ Module for PINN """
 import torch
+import inspect
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
@@ -11,6 +12,8 @@ from .solver import SolverInterface
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 from ..loss import LossInterface
+from ..problem import InverseProblem
+from ..equation import ParametricEquation
 from torch.nn.modules.loss import _Loss
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
@@ -18,14 +21,14 @@ torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
 class PINN(SolverInterface):
     """
-    PINN solver class. This class implements Physics Informed Neural 
+    PINN solver class. This class implements Physics Informed Neural
     Network solvers, using a user specified ``model`` to solve a specific
-    ``problem``. 
+    ``problem``.
 
     .. seealso::
 
-        **Original reference**: Karniadakis, G. E., Kevrekidis, I. G., Lu, L., 
-        Perdikaris, P., Wang, S., & Yang, L. (2021). 
+        **Original reference**: Karniadakis, G. E., Kevrekidis, I. G., Lu, L.,
+        Perdikaris, P., Wang, S., & Yang, L. (2021).
         Physics-informed machine learning. Nature Reviews Physics, 3(6), 422-440.
         <https://doi.org/10.1038/s42254-021-00314-5>`_.
     """
@@ -79,7 +82,7 @@ class PINN(SolverInterface):
         Forward pass implementation for the PINN
         solver.
 
-        :param torch.Tensor x: Input tensor. 
+        :param torch.Tensor x: Input tensor.
         :return: PINN solution.
         :rtype: torch.Tensor
         """
@@ -93,12 +96,18 @@ class PINN(SolverInterface):
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
         """
+        # add the inferred parameters to the parameters that the optimizer
+        # will optimize
+        if isinstance(self.problem, InverseProblem):
+            self.optimizers[0].add_param_group(
+                {'params': self.problem.inferred_parameters}
+                )
         return self.optimizers, [self.scheduler]
-    
+
     def _loss_data(self, input, output):
         return self.loss(self.forward(input), output)
 
-    
+
     def _loss_phys(self, samples, equation):
         residual = equation.residual(samples, self.forward(samples))
         return self.loss(torch.zeros_like(residual, requires_grad=True), residual)
@@ -140,12 +149,40 @@ class PINN(SolverInterface):
             # TODO for users this us hard to remebeber when creating a new solver, to fix in a smarter way
             loss = loss.as_subclass(torch.Tensor)
 
-            # add condition losses and accumulate logging for each epoch
+#            # add condition losses and accumulate logging for each epoch
+#=======
+#
+#            # PINN loss: equation evaluated on location or input_points
+#            if hasattr(condition, 'equation'):
+#                if isinstance(condition.equation, ParametricEquation):
+#                    print('inferred_params', self.problem.inferred_parameters)
+#                    target = condition.equation.residual(samples,
+#                            self.forward(samples),
+#                            self.problem.inferred_parameters)
+#                else:
+#                    target = condition.equation.residual(samples,
+#                        self.forward(samples))
+#                loss = self.loss(torch.zeros_like(target), target)
+#            # PINN loss: evaluate model(input_points) vs output_points
+#            elif hasattr(condition, 'output_points'):
+#                input_pts, output_pts = samples
+#                loss = self.loss(self.forward(input_pts), output_pts)
+#
+#>>>>>>> inverse problem implementation
             condition_losses.append(loss * condition.data_weight)
             self.log(condition_name + '_loss', float(loss),
                      prog_bar=True, logger=True, on_epoch=True, on_step=False)
 
         # add to tot loss and accumulate logging for each epoch
+#        # clamp inferred parameters to their domain
+#        if isinstance(self.problem, InverseProblem):
+#            for i, p in enumerate(self.problem.inferred_variables):
+#                self.problem.inferred_parameters[i].data.clamp_(
+#                        self.problem.inferred_domain.range_[p][0],
+#                        self.problem.inferred_domain.range_[p][1])
+
+        # TODO Fix the bug, tot_loss is a label tensor without labels
+        # we need to pass it as a torch tensor to make everything work
         total_loss = sum(condition_losses)
         self.log('mean_loss', float(total_loss / len(condition_losses)),
                  prog_bar=True, logger=True, on_epoch=True, on_step=False)
