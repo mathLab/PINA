@@ -132,9 +132,9 @@ class PINN(SolverInterface):
         # we need to pass it as a torch tensor to make everything work
         total_loss = sum(condition_losses)
 
-        self.log('mean_loss', float(total_loss / len(condition_losses)), prog_bar=True, logger=False)
+        self.log('mean_loss', float(total_loss / len(condition_losses)), prog_bar=True, logger=True)
         for condition_loss, loss in zip(self.problem.conditions, condition_losses):
-            self.log(condition_loss + '_loss', float(loss), prog_bar=True, logger=False)
+            self.log(condition_loss + '_loss', float(loss), prog_bar=True, logger=True)
         return total_loss
 
     @property
