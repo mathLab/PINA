@@ -5,7 +5,7 @@
 
 # ### The problem definition
 
-# This tutorial presents how to solve with Physics-Informed Neural Networks a 2D Poisson problem with Dirichlet boundary conditions.
+# This tutorial presents how to solve with Physics-Informed Neural Networks a 2D Poisson problem with Dirichlet boundary conditions. Using extrafeatures.
 # 
 # The problem is written as:
 # \begin{equation}
@@ -18,7 +18,7 @@
 
 # First of all, some useful imports.
 
-# In[ ]:
+# In[1]:
 
 
 import torch
@@ -27,35 +27,37 @@ from torch.nn import Softplus
 from pina.problem import SpatialProblem
 from pina.operators import laplacian
 from pina.model import FeedForward
-from pina import Condition, Span, PINN, LabelTensor, Plotter
+from pina.solvers import PINN
+from pina.trainer import Trainer
+from pina.plotter import Plotter
+from pina.geometry import CartesianDomain
+from pina.equation import Equation, FixedValue
+from pina import Condition, LabelTensor
+from pina.callbacks import MetricTracker
 
 
 # Now, the Poisson problem is written in PINA code as a class. The equations are written as *conditions* that should be satisfied in the corresponding domains. *truth_solution*
 # is the exact solution which will be compared with the predicted one.
 
-# In[ ]:
+# In[2]:
 
 
 class Poisson(SpatialProblem):
     output_variables = ['u']
-    spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+    spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                       torch.sin(input_.extract(['y'])*torch.pi))
-        delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
-        return delta_u - force_term
-
-    def nil_dirichlet(input_, output_):
-        value = 0.0
-        return output_.extract(['u']) - value
+        laplacian_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
+        return laplacian_u - force_term
 
     conditions = {
-        'gamma1': Condition(location=Span({'x': [0, 1], 'y':  1}), function=nil_dirichlet),
-        'gamma2': Condition(location=Span({'x': [0, 1], 'y': 0}), function=nil_dirichlet),
-        'gamma3': Condition(location=Span({'x':  1, 'y': [0, 1]}), function=nil_dirichlet),
-        'gamma4': Condition(location=Span({'x': 0, 'y': [0, 1]}), function=nil_dirichlet),
-        'D': Condition(location=Span({'x': [0, 1], 'y': [0, 1]}), function=laplace_equation),
+        'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1}), equation=FixedValue(0.)),
+        'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0}), equation=FixedValue(0.)),
+        'gamma3': Condition(location=CartesianDomain({'x':  1, 'y': [0, 1]}), equation=FixedValue(0.)),
+        'gamma4': Condition(location=CartesianDomain({'x': 0, 'y': [0, 1]}), equation=FixedValue(0.)),
+        'D': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}), equation=Equation(laplace_equation)),
     }
 
     def poisson_sol(self, pts):
@@ -66,52 +68,44 @@ class Poisson(SpatialProblem):
     
     truth_solution = poisson_sol
 
+problem = Poisson()
+
+# let's discretise the domain
+problem.discretise_domain(25, 'grid', locations=['D'])
+problem.discretise_domain(25, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+
 
 # ### The problem solution 
 
-# After the problem, the feed-forward neural network is defined, through the class `FeedForward`. This neural network takes as input the coordinates (in this case $x$ and $y$) and provides the unkwown field of the Poisson problem. The residual of the equations are evaluated at several sampling points (which the user can manipulate using the method `span_pts`) and the loss minimized by the neural network is the sum of the residuals.
+# After the problem, the feed-forward neural network is defined, through the class `FeedForward`. This neural network takes as input the coordinates (in this case $x$ and $y$) and provides the unkwown field of the Poisson problem. The residual of the equations are evaluated at several sampling points (which the user can manipulate using the method `CartesianDomain_pts`) and the loss minimized by the neural network is the sum of the residuals.
 # 
 # In this tutorial, the neural network is composed by two hidden layers of 10 neurons each, and it is trained for 1000 epochs with a learning rate of 0.006. These parameters can be modified as desired.
-# The output of the cell below is the final loss of the training phase of the PINN.
-# We highlight that the generation of the sampling points and the train is here encapsulated within the function `generate_samples_and_train`, but only for saving some lines of code in the next cells; that function is not mandatory in the **PINA** framework. 
 
-# In[ ]:
+# In[3]:
 
 
-def generate_samples_and_train(model, problem):
-    pinn = PINN(problem, model, lr=0.006, regularizer=1e-8)
-    pinn.span_pts(20, 'grid', locations=['D'])
-    pinn.span_pts(20, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-    pinn.train(1000, 100)
-    return pinn
-
-problem = Poisson()
+# make model + solver + trainer
 model = FeedForward(
     layers=[10, 10],
     func=Softplus,
-    output_variables=problem.output_variables,
-    input_variables=problem.input_variables
+    output_dimensions=len(problem.output_variables),
+    input_dimensions=len(problem.input_variables)
 )
+pinn = PINN(problem, model, optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+trainer = Trainer(pinn, max_epochs=1000, callbacks=[MetricTracker()])
 
-pinn = generate_samples_and_train(model, problem)
-
-
-# The neural network of course can be saved in a file. In such a way, we can store it after the train, and load it just to infer the field. Here we don't store the model, but for demonstrative purposes  we put in the next cell the commented line of code.
-
-# In[ ]:
-
-
-# pinn.save_state('pina.poisson')
+# train
+trainer.train()
 
 
 # Now the *Plotter* class is used to plot the results.
 # The solution predicted by the neural network is plotted on the left, the exact one is represented at the center and on the right the error between the exact and the predicted solutions is showed. 
 
-# In[ ]:
+# In[4]:
 
 
 plotter = Plotter()
-plotter.plot(pinn)
+plotter.plot(trainer)
 
 
 # ### The problem solution with extra-features
@@ -131,7 +125,7 @@ plotter.plot(pinn)
 # 
 # Finally, we perform the same training as before: the problem is `Poisson`, the network is composed by the same number of neurons and optimizer parameters are equal to previous test, the only change is the new extra feature.
 
-# In[ ]:
+# In[5]:
 
 
 class SinSin(torch.nn.Module):
@@ -144,24 +138,28 @@ class SinSin(torch.nn.Module):
              torch.sin(x.extract(['y'])*torch.pi))
         return LabelTensor(t, ['sin(x)sin(y)'])
 
-model_feat = FeedForward(
-        layers=[10, 10],
-        output_variables=problem.output_variables,
-        input_variables=problem.input_variables,
-        func=Softplus,
-        extra_features=[SinSin()]
-    )
 
-pinn_feat = generate_samples_and_train(model_feat, problem)
+# make model + solver + trainer
+model_feat = FeedForward(
+    layers=[10, 10],
+    func=Softplus,
+    output_dimensions=len(problem.output_variables),
+    input_dimensions=len(problem.input_variables)+1
+)
+pinn_feat = PINN(problem, model_feat, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+trainer_feat = Trainer(pinn_feat, max_epochs=1000, callbacks=[MetricTracker()])
+
+# train
+trainer_feat.train()
 
 
 # The predicted and exact solutions and the error between them are represented below.
-# We can easily note that now our network, having almost the same condition as before, is able to reach an additional order of magnitude in accuracy.
+# We can easily note that now our network, having almost the same condition as before, is able to reach additional order of magnitudes in accuracy.
 
-# In[ ]:
+# In[6]:
 
 
-plotter.plot(pinn_feat)
+plotter.plot(trainer_feat)
 
 
 # ### The problem solution with learnable extra-features
@@ -178,7 +176,7 @@ plotter.plot(pinn_feat)
 # where $\alpha$ and $\beta$ are the abovementioned parameters.
 # Their implementation is quite trivial: by using the class `torch.nn.Parameter` we cam define all the learnable parameters we need, and they are managed by `autograd` module!
 
-# In[ ]:
+# In[7]:
 
 
 class SinSinAB(torch.nn.Module):
@@ -197,29 +195,37 @@ class SinSinAB(torch.nn.Module):
         return LabelTensor(t, ['b*sin(a*x)sin(a*y)'])
 
 
-model_learn = FeedForward(
+# make model + solver + trainer
+model_lean= FeedForward(
     layers=[10, 10],
-    output_variables=problem.output_variables,
-    input_variables=problem.input_variables,
-    extra_features=[SinSinAB()]
+    func=Softplus,
+    output_dimensions=len(problem.output_variables),
+    input_dimensions=len(problem.input_variables)+1
 )
+pinn_lean = PINN(problem, model_lean, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+trainer_learn = Trainer(pinn_lean, max_epochs=1000)
 
-pinn_learn = generate_samples_and_train(model_learn, problem)
+# train
+trainer_learn.train()
 
 
 # Umh, the final loss is not appreciabily better than previous model (with static extra features), despite the usage of learnable parameters. This is mainly due to the over-parametrization of the network: there are many parameter to optimize during the training, and the model in unable to understand automatically that only the parameters of the extra feature (and not the weights/bias of the FFN) should be tuned in order to fit our problem. A longer training can be helpful, but in this case the faster way to reach machine precision for solving the Poisson problem is removing all the hidden layers in the `FeedForward`, keeping only the $\alpha$ and $\beta$ parameters of the extra feature.
 
-# In[ ]:
+# In[8]:
 
 
-model_learn = FeedForward(
+# make model + solver + trainer
+model_lean= FeedForward(
     layers=[],
-    output_variables=problem.output_variables,
-    input_variables=problem.input_variables,
-    extra_features=[SinSinAB()]
+    func=Softplus,
+    output_dimensions=len(problem.output_variables),
+    input_dimensions=len(problem.input_variables)+1
 )
+pinn_learn = PINN(problem, model_lean, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()])
 
-pinn_learn = generate_samples_and_train(model_learn, problem)
+# train
+trainer_learn.train()
 
 
 # In such a way, the model is able to reach a very high accuracy!
@@ -227,21 +233,21 @@ pinn_learn = generate_samples_and_train(model_learn, problem)
 # 
 # We conclude here by showing the graphical comparison of the unknown field and the loss trend for all the test cases presented here: the standard PINN, PINN with extra features, and PINN with learnable extra features.
 
-# In[ ]:
+# In[9]:
 
 
-plotter.plot(pinn_learn)
+plotter.plot(trainer_learn)
 
 
-# In[ ]:
+# In[10]:
 
 
 import matplotlib.pyplot as plt
 
 plt.figure(figsize=(16, 6))
-plotter.plot_loss(pinn, label='Standard')
-plotter.plot_loss(pinn_feat, label='Static Features')
-plotter.plot_loss(pinn_learn, label='Learnable Features')
+plotter.plot_loss(trainer, label='Standard')
+plotter.plot_loss(trainer_feat, label='Static Features')
+plotter.plot_loss(trainer_learn, label='Learnable Features')
 
 plt.grid()
 plt.legend()

@@ -188,11 +188,12 @@ class Plotter:
         else:
             plt.show()
 
-    def plot_loss(self, trainer, label=None, log_scale=True):
+    def plot_loss(self, trainer, metric=None, label=None, log_scale=True):
         """
         Plot the loss function values during traininig.
 
         :param SolverInterface solver: the SolverInterface object.
+        :param str metric: the metric to use in the y axis.
         :param str label: the label to use in the legend, defaults to None.
         :param bool log_scale: If True, the y axis is in log scale. Default is
             True.
@@ -206,14 +207,19 @@ class Plotter:
 
         metrics = trainer.callbacks[list_[0]].metrics
 
-        if not label:
-            label = 'mean_loss'
+        if not metric:
+            metric = 'mean_loss'
 
-        loss = metrics[label]
+        loss = metrics[metric]
         epochs = range(len(loss))
 
-        plt.plot(epochs, loss)
+        if label is not None:
+            plt.plot(epochs, loss, label=label)
+            plt.legend()
+        else:
+            plt.plot(epochs, loss)
+
         if log_scale:
             plt.yscale('log')
         plt.xlabel('epoch')
-        plt.ylabel(label)
+        plt.ylabel(metric)

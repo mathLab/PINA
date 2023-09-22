@@ -336,7 +336,7 @@ plot easily the loss:
 
 .. code:: ipython3
 
-    plotter.plot_loss(trainer=trainer, label='mean_loss', log_scale=True)
+    plotter.plot_loss(trainer=trainer, metric='mean_loss', log_scale=True)
 
 
 
