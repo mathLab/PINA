@@ -63,7 +63,7 @@ class LabelTensor(torch.Tensor):
         if isinstance(labels, str):
             labels = [labels]
 
-        if len(labels) != x.shape[1]:
+        if len(labels) != x.shape[-1]:
             raise ValueError(
                 'the tensor has not the same number of columns of '
                 'the passed labels.'

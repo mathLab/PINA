@@ -5,7 +5,8 @@ The problem definition
 ~~~~~~~~~~~~~~~~~~~~~~
 
 This tutorial presents how to solve with Physics-Informed Neural
-Networks a 2D Poisson problem with Dirichlet boundary conditions.
+Networks a 2D Poisson problem with Dirichlet boundary conditions. Using
+extrafeatures.
 
 The problem is written as: :raw-latex:`\begin{equation}
 \begin{cases}
@@ -24,9 +25,15 @@ First of all, some useful imports.
     from torch.nn import Softplus
     
     from pina.problem import SpatialProblem
-    from pina.operators import nabla
+    from pina.operators import laplacian
     from pina.model import FeedForward
-    from pina import Condition, Span, PINN, LabelTensor, Plotter
+    from pina.solvers import PINN
+    from pina.trainer import Trainer
+    from pina.plotter import Plotter
+    from pina.geometry import CartesianDomain
+    from pina.equation import Equation, FixedValue
+    from pina import Condition, LabelTensor
+    from pina.callbacks import MetricTracker
 
 Now, the Poisson problem is written in PINA code as a class. The
 equations are written as *conditions* that should be satisfied in the
@@ -37,24 +44,20 @@ be compared with the predicted one.
 
     class Poisson(SpatialProblem):
         output_variables = ['u']
-        spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+        spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
     
         def laplace_equation(input_, output_):
             force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                           torch.sin(input_.extract(['y'])*torch.pi))
-            nabla_u = nabla(output_, input_, components=['u'], d=['x', 'y'])
-            return nabla_u - force_term
-    
-        def nil_dirichlet(input_, output_):
-            value = 0.0
-            return output_.extract(['u']) - value
+            laplacian_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
+            return laplacian_u - force_term
     
         conditions = {
-            'gamma1': Condition(location=Span({'x': [0, 1], 'y':  1}), function=nil_dirichlet),
-            'gamma2': Condition(location=Span({'x': [0, 1], 'y': 0}), function=nil_dirichlet),
-            'gamma3': Condition(location=Span({'x':  1, 'y': [0, 1]}), function=nil_dirichlet),
-            'gamma4': Condition(location=Span({'x': 0, 'y': [0, 1]}), function=nil_dirichlet),
-            'D': Condition(location=Span({'x': [0, 1], 'y': [0, 1]}), function=laplace_equation),
+            'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1}), equation=FixedValue(0.)),
+            'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0}), equation=FixedValue(0.)),
+            'gamma3': Condition(location=CartesianDomain({'x':  1, 'y': [0, 1]}), equation=FixedValue(0.)),
+            'gamma4': Condition(location=CartesianDomain({'x': 0, 'y': [0, 1]}), equation=FixedValue(0.)),
+            'D': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}), equation=Equation(laplace_equation)),
         }
     
         def poisson_sol(self, pts):
@@ -64,6 +67,12 @@ be compared with the predicted one.
             )/(2*torch.pi**2)
         
         truth_solution = poisson_sol
+    
+    problem = Poisson()
+    
+    # let's discretise the domain
+    problem.discretise_domain(25, 'grid', locations=['D'])
+    problem.discretise_domain(25, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 
 The problem solution
 ~~~~~~~~~~~~~~~~~~~~
@@ -73,73 +82,62 @@ the class ``FeedForward``. This neural network takes as input the
 coordinates (in this case :math:`x` and :math:`y`) and provides the
 unkwown field of the Poisson problem. The residual of the equations are
 evaluated at several sampling points (which the user can manipulate
-using the method ``span_pts``) and the loss minimized by the neural
-network is the sum of the residuals.
+using the method ``CartesianDomain_pts``) and the loss minimized by the
+neural network is the sum of the residuals.
 
 In this tutorial, the neural network is composed by two hidden layers of
 10 neurons each, and it is trained for 1000 epochs with a learning rate
-of 0.006. These parameters can be modified as desired. The output of the
-cell below is the final loss of the training phase of the PINN. We
-highlight that the generation of the sampling points and the train is
-here encapsulated within the function ``generate_samples_and_train``,
-but only for saving some lines of code in the next cells; that function
-is not mandatory in the **PINA** framework.
+of 0.006. These parameters can be modified as desired.
 
 .. code:: ipython3
 
-    def generate_samples_and_train(model, problem):
-        pinn = PINN(problem, model, lr=0.006, regularizer=1e-8)
-        pinn.span_pts(20, 'grid', locations=['D'])
-        pinn.span_pts(20, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-        pinn.train(1000, 100)
-        return pinn
-    
-    problem = Poisson()
+    # make model + solver + trainer
     model = FeedForward(
         layers=[10, 10],
         func=Softplus,
-        output_variables=problem.output_variables,
-        input_variables=problem.input_variables
+        output_dimensions=len(problem.output_variables),
+        input_dimensions=len(problem.input_variables)
     )
+    pinn = PINN(problem, model, optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+    trainer = Trainer(pinn, max_epochs=1000, callbacks=[MetricTracker()])
     
-    pinn = generate_samples_and_train(model, problem)
+    # train
+    trainer.train()
 
 
 .. parsed-literal::
 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00000] 4.879922e-01 1.557781e-01 7.685463e-02 2.743466e-02 2.047883e-02 2.074460e-01 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00001] 2.610107e-01 1.067532e-03 8.390929e-03 2.391219e-02 1.467707e-02 2.129630e-01 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00100] 8.640952e-02 1.038323e-04 9.709063e-05 6.688796e-05 6.651071e-05 8.607519e-02 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00200] 2.996790e-02 4.977722e-04 6.639907e-04 5.634258e-04 7.204801e-04 2.752223e-02 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00300] 2.896983e-03 1.864277e-04 2.020803e-05 2.418693e-04 3.052877e-05 2.417949e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00400] 1.865673e-03 1.250375e-04 2.438288e-05 1.595948e-04 6.709602e-06 1.549948e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00500] 2.874877e-03 2.077810e-04 1.149128e-04 1.273361e-04 3.024802e-06 2.421822e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00600] 1.310072e-03 1.081258e-04 3.365631e-05 1.059794e-04 3.468987e-06 1.058841e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00700] 2.694587e-03 1.267468e-04 6.266955e-05 9.891923e-05 8.897325e-06 2.397354e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00800] 5.028690e-03 1.435707e-04 5.986574e-06 9.517078e-05 4.583780e-05 4.738124e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00900] 9.997603e-04 9.684711e-05 9.155992e-06 8.875966e-05 1.261154e-05 7.923861e-04 
-    [epoch 01000] 2.362966e-02 1.157872e-04 7.812096e-06 8.004917e-05 9.947084e-05 2.332654e-02 
+    GPU available: False, used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    /Users/dariocoscia/anaconda3/envs/pina/lib/python3.9/site-packages/lightning/pytorch/trainer/connectors/logger_connector/logger_connector.py:67: UserWarning: Starting from v1.9.0, `tensorboardX` has been removed as a dependency of the `lightning.pytorch` package, due to potential conflicts with other packages in the ML ecosystem. For this reason, `logger=True` will use `CSVLogger` as the default logger, unless the `tensorboard` or `tensorboardX` packages are found. Please `pip install lightning[extra]` or one of them to enable TensorBoard support by default
+      warning_cache.warn(
+    
+      | Name        | Type    | Params
+    ----------------------------------------
+    0 | _loss       | MSELoss | 0     
+    1 | _neural_net | Network | 151   
+    ----------------------------------------
+    151       Trainable params
+    0         Non-trainable params
+    151       Total params
+    0.001     Total estimated model params size (MB)
 
 
-The neural network of course can be saved in a file. In such a way, we
-can store it after the train, and load it just to infer the field. Here
-we don’t store the model, but for demonstrative purposes we put in the
-next cell the commented line of code.
+.. parsed-literal::
 
-.. code:: ipython3
+    Epoch 999: : 1it [00:00, 129.50it/s, v_num=45, mean_loss=0.00196, gamma1_loss=0.0093, gamma2_loss=0.000146, gamma3_loss=8.16e-5, gamma4_loss=0.000201, D_loss=8.44e-5]  
 
-    # pinn.save_state('pina.poisson')
+.. parsed-literal::
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 101.25it/s, v_num=45, mean_loss=0.00196, gamma1_loss=0.0093, gamma2_loss=0.000146, gamma3_loss=8.16e-5, gamma4_loss=0.000201, D_loss=8.44e-5]
+
 
 Now the *Plotter* class is used to plot the results. The solution
 predicted by the neural network is plotted on the left, the exact one is
@@ -149,11 +147,11 @@ and the predicted solutions is showed.
 .. code:: ipython3
 
     plotter = Plotter()
-    plotter.plot(pinn)
+    plotter.plot(trainer)
 
 
 
-.. image:: tutorial_files/tutorial_13_0.png
+.. image:: tutorial_files/tutorial_11_0.png
 
 
 The problem solution with extra-features
@@ -195,56 +193,65 @@ new extra feature.
                  torch.sin(x.extract(['y'])*torch.pi))
             return LabelTensor(t, ['sin(x)sin(y)'])
     
-    model_feat = FeedForward(
-            layers=[10, 10],
-            output_variables=problem.output_variables,
-            input_variables=problem.input_variables,
-            func=Softplus,
-            extra_features=[SinSin()]
-        )
     
-    pinn_feat = generate_samples_and_train(model_feat, problem)
+    # make model + solver + trainer
+    model_feat = FeedForward(
+        layers=[10, 10],
+        func=Softplus,
+        output_dimensions=len(problem.output_variables),
+        input_dimensions=len(problem.input_variables)+1
+    )
+    pinn_feat = PINN(problem, model_feat, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+    trainer_feat = Trainer(pinn_feat, max_epochs=1000, callbacks=[MetricTracker()])
+    
+    # train
+    trainer_feat.train()
 
 
 .. parsed-literal::
 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00000] 1.309440e-01 2.335824e-02 3.823499e-03 1.878588e-05 2.002613e-03 1.017409e-01 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00001] 5.053994e-02 6.420787e-03 6.924602e-03 4.746807e-03 1.751946e-03 3.069580e-02 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00100] 7.484706e-06 1.889349e-07 4.289622e-07 3.610726e-07 3.611258e-07 6.144610e-06 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00200] 6.941436e-06 4.738185e-07 4.590637e-07 5.098815e-07 5.365398e-07 4.962133e-06 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00300] 6.147081e-06 6.213511e-07 5.576677e-07 6.256337e-07 6.572442e-07 3.685184e-06 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00400] 6.056770e-06 7.646217e-07 6.377599e-07 7.242416e-07 7.616553e-07 3.168491e-06 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00500] 6.751128e-06 8.011474e-07 6.283512e-07 7.652199e-07 7.226305e-07 3.833779e-06 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00600] 2.839740e-05 5.422368e-06 4.058312e-06 4.664194e-06 4.984503e-06 9.268020e-06 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00700] 1.221099e-05 3.654685e-06 3.195583e-07 2.717753e-06 2.381476e-06 3.137519e-06 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00800] 5.423951e-06 6.111856e-07 4.348901e-07 5.353588e-07 5.398895e-07 3.302627e-06 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00900] 6.777007e-06 3.749606e-07 1.421852e-06 4.068826e-08 1.292241e-06 3.647265e-06 
-    [epoch 01000] 6.803403e-05 2.302543e-07 3.886034e-05 4.901193e-06 2.005441e-05 3.987827e-06 
+    GPU available: False, used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    
+      | Name        | Type    | Params
+    ----------------------------------------
+    0 | _loss       | MSELoss | 0     
+    1 | _neural_net | Network | 161   
+    ----------------------------------------
+    161       Trainable params
+    0         Non-trainable params
+    161       Total params
+    0.001     Total estimated model params size (MB)
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 112.55it/s, v_num=46, mean_loss=2.73e-7, gamma1_loss=1.13e-6, gamma2_loss=7.1e-8, gamma3_loss=4.69e-8, gamma4_loss=6.81e-8, D_loss=4.65e-8]    
+
+.. parsed-literal::
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 92.69it/s, v_num=46, mean_loss=2.73e-7, gamma1_loss=1.13e-6, gamma2_loss=7.1e-8, gamma3_loss=4.69e-8, gamma4_loss=6.81e-8, D_loss=4.65e-8] 
 
 
 The predicted and exact solutions and the error between them are
 represented below. We can easily note that now our network, having
-almost the same condition as before, is able to reach an additional
-order of magnitude in accuracy.
+almost the same condition as before, is able to reach additional order
+of magnitudes in accuracy.
 
 .. code:: ipython3
 
-    plotter.plot(pinn_feat)
+    plotter.plot(trainer_feat)
 
 
 
-.. image:: tutorial_files/tutorial_18_0.png
+.. image:: tutorial_files/tutorial_16_0.png
 
 
 The problem solution with learnable extra-features
@@ -283,41 +290,50 @@ need, and they are managed by ``autograd`` module!
             return LabelTensor(t, ['b*sin(a*x)sin(a*y)'])
     
     
-    model_learn = FeedForward(
+    # make model + solver + trainer
+    model_lean= FeedForward(
         layers=[10, 10],
-        output_variables=problem.output_variables,
-        input_variables=problem.input_variables,
-        extra_features=[SinSinAB()]
+        func=Softplus,
+        output_dimensions=len(problem.output_variables),
+        input_dimensions=len(problem.input_variables)+1
     )
+    pinn_lean = PINN(problem, model_lean, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+    trainer_learn = Trainer(pinn_lean, max_epochs=1000)
     
-    pinn_learn = generate_samples_and_train(model_learn, problem)
+    # train
+    trainer_learn.train()
 
 
 .. parsed-literal::
 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00000] 7.147130e-02 1.942330e-03 7.350697e-03 2.868338e-03 1.184232e-03 5.812570e-02 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00001] 2.814954e-01 7.300152e-03 5.510583e-04 2.262258e-03 7.287678e-04 2.706531e-01 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00100] 1.961870e-04 3.066778e-06 5.342949e-07 2.670689e-06 9.807675e-07 1.889345e-04 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00200] 1.208203e-04 3.096610e-06 1.253595e-06 2.603416e-06 1.962141e-06 1.119046e-04 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00300] 3.992990e-05 3.451424e-06 6.415143e-07 1.576505e-06 1.244609e-06 3.301585e-05 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00400] 3.466437e-04 1.722332e-06 1.461791e-05 3.052185e-06 8.755493e-06 3.184958e-04 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00500] 5.242374e-03 3.230991e-05 1.387528e-05 5.379211e-06 3.145076e-06 5.187664e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00600] 1.027368e-03 1.448758e-06 2.165510e-05 5.197179e-05 3.823021e-05 9.140619e-04 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00700] 1.141694e-03 6.998039e-06 2.446730e-05 3.083524e-05 1.376935e-05 1.065624e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00800] 3.619534e-04 3.120772e-06 1.223103e-05 2.211869e-05 9.567964e-06 3.149150e-04 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00900] 3.287693e-04 2.432459e-06 7.569996e-06 1.101516e-05 4.546776e-06 3.032049e-04 
-    [epoch 01000] 5.432598e-04 8.919213e-06 1.991732e-05 2.632461e-05 7.365395e-06 4.807333e-04 
+    GPU available: False, used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    
+      | Name        | Type    | Params
+    ----------------------------------------
+    0 | _loss       | MSELoss | 0     
+    1 | _neural_net | Network | 161   
+    ----------------------------------------
+    161       Trainable params
+    0         Non-trainable params
+    161       Total params
+    0.001     Total estimated model params size (MB)
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 91.07it/s, v_num=47, mean_loss=2.11e-6, gamma1_loss=1.03e-5, gamma2_loss=4.17e-8, gamma3_loss=4.28e-8, gamma4_loss=5.65e-8, D_loss=6.21e-8]    
+
+.. parsed-literal::
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 76.19it/s, v_num=47, mean_loss=2.11e-6, gamma1_loss=1.03e-5, gamma2_loss=4.17e-8, gamma3_loss=4.28e-8, gamma4_loss=5.65e-8, D_loss=6.21e-8]
 
 
 Umh, the final loss is not appreciabily better than previous model (with
@@ -333,41 +349,50 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
 
 .. code:: ipython3
 
-    model_learn = FeedForward(
+    # make model + solver + trainer
+    model_lean= FeedForward(
         layers=[],
-        output_variables=problem.output_variables,
-        input_variables=problem.input_variables,
-        extra_features=[SinSinAB()]
+        func=Softplus,
+        output_dimensions=len(problem.output_variables),
+        input_dimensions=len(problem.input_variables)+1
     )
+    pinn_learn = PINN(problem, model_lean, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+    trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()])
     
-    pinn_learn = generate_samples_and_train(model_learn, problem)
+    # train
+    trainer_learn.train()
 
 
 .. parsed-literal::
 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00000] 1.907039e+01 5.862396e-02 5.423664e-01 4.624593e-01 7.118504e-02 1.793576e+01 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00001] 1.698682e+01 3.348809e-02 4.943427e-01 3.972439e-01 6.141453e-02 1.600033e+01 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00100] 8.010766e-02 1.765875e-04 6.100491e-04 1.604862e-04 5.841496e-04 7.857639e-02 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00200] 5.057434e-02 6.479959e-05 6.590948e-05 6.376287e-05 5.975253e-05 5.032011e-02 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00300] 1.974927e-02 3.145394e-05 1.531348e-05 3.037518e-05 1.363940e-05 1.965849e-02 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00400] 1.763019e-03 3.408035e-06 8.902280e-07 3.228933e-06 7.512407e-07 1.754741e-03 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00500] 2.604023e-05 5.248935e-08 1.091775e-08 4.940254e-08 9.077334e-09 2.591834e-05 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00600] 7.279636e-08 1.490485e-10 3.004504e-11 1.392443e-10 2.490262e-11 7.245312e-08 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00700] 2.307051e-11 5.051121e-14 1.083412e-14 4.412749e-14 8.684963e-15 2.295635e-11 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00800] 9.755044e-12 1.745244e-14 3.232219e-15 1.735542e-14 3.347362e-15 9.713657e-12 
-                  sum          gamma1nil_di gamma2nil_di gamma3nil_di gamma4nil_di Dlaplace_equ 
-    [epoch 00900] 5.909113e-12 1.112281e-14 2.037945e-15 1.107687e-14 2.124603e-15 5.882751e-12 
-    [epoch 01000] 3.220371e-12 5.622761e-15 1.002551e-15 5.519723e-15 9.455284e-16 3.207280e-12 
+    GPU available: False, used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+    
+      | Name        | Type    | Params
+    ----------------------------------------
+    0 | _loss       | MSELoss | 0     
+    1 | _neural_net | Network | 4     
+    ----------------------------------------
+    4         Trainable params
+    0         Non-trainable params
+    4         Total params
+    0.000     Total estimated model params size (MB)
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 149.45it/s, v_num=48, mean_loss=1.34e-16, gamma1_loss=6.66e-16, gamma2_loss=2.6e-18, gamma3_loss=4.84e-19, gamma4_loss=2.59e-18, D_loss=4.84e-19] 
+
+.. parsed-literal::
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 117.81it/s, v_num=48, mean_loss=1.34e-16, gamma1_loss=6.66e-16, gamma2_loss=2.6e-18, gamma3_loss=4.84e-19, gamma4_loss=2.59e-18, D_loss=4.84e-19]
 
 
 In such a way, the model is able to reach a very high accuracy! Of
@@ -384,11 +409,11 @@ features.
 
 .. code:: ipython3
 
-    plotter.plot(pinn_learn)
+    plotter.plot(trainer_learn)
 
 
 
-.. image:: tutorial_files/tutorial_25_0.png
+.. image:: tutorial_files/tutorial_23_0.png
 
 
 .. code:: ipython3
@@ -396,9 +421,9 @@ features.
     import matplotlib.pyplot as plt
     
     plt.figure(figsize=(16, 6))
-    plotter.plot_loss(pinn, label='Standard')
-    plotter.plot_loss(pinn_feat, label='Static Features')
-    plotter.plot_loss(pinn_learn, label='Learnable Features')
+    plotter.plot_loss(trainer, label='Standard')
+    plotter.plot_loss(trainer_feat, label='Static Features')
+    plotter.plot_loss(trainer_learn, label='Learnable Features')
     
     plt.grid()
     plt.legend()
@@ -406,5 +431,5 @@ features.
 
 
 
-.. image:: tutorial_files/tutorial_26_0.png
+.. image:: tutorial_files/tutorial_24_0.png
 

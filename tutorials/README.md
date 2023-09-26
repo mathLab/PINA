@@ -9,5 +9,6 @@ In this folder we collect useful tutorials in order to understand the principles
 | Tutorial2&#160;[[.ipynb](tutorial2/tutorial.ipynb),&#160;[.py](tutorial2/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial2/tutorial.html)]| Poisson problem on regular domain using extra features | `SpatialProblem` |
 | Tutorial3&#160;[[.ipynb](tutorial3/tutorial.ipynb),&#160;[.py](tutorial3/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial3/tutorial.html)]| Wave problem on regular domain using custom pytorch networks. | `SpatialProblem`, `TimeDependentProblem` |
 | Tutorial4&#160;[[.ipynb](tutorial4/tutorial.ipynb),&#160;[.py](tutorial4/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial4/tutorial.html)]| Continuous Convolutional Filter usage. | `None` |
+| Tutorial5&#160;[[.ipynb](tutorial5/tutorial.ipynb),&#160;[.py](tutorial5/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial5/tutorial.html)]| Fourier Neural Operator. | `AbstractProblem` |
 
 
