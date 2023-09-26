@@ -56,6 +56,7 @@ solve problems in a continuous and nonlinear settings. :py:class:`pina.pinn.PINN
     Poisson problem <_rst/tutorial2/tutorial.rst>
     Wave equation <_rst/tutorial3/tutorial.rst>
     Continuous Convolutional Filter <_rst/tutorial4/tutorial.rst>
+    Fourier Neural Operator <_rst/tutorial5/tutorial.rst>
 
 .. ........................................................................................
 
