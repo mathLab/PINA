@@ -5,3 +5,4 @@ __all__ = [
 
 from .garom import GAROM
 from .pinn import PINN
+from .supervised import SupervisedSolver

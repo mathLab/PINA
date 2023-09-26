@@ -94,7 +94,9 @@ class FNO(torch.nn.Module):
 
         # 4. Build the FNO network
         tmp_layers = layers.copy()
-        out_feats = lifting_net(torch.rand(10, dimensions)).shape[-1]
+        first_parameter = next(lifting_net.parameters())
+        input_shape = first_parameter.size()
+        out_feats = lifting_net(torch.rand(size=input_shape)).shape[-1]
         tmp_layers.insert(0, out_feats)
 
         self._layers = []
