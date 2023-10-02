@@ -101,7 +101,7 @@ class SimplexDomain(Location):
         :rtype: bool
         """
 
-        if not all([label in self.variables for label in point.labels]):
+        if not all(label in self.variables for label in point.labels):
             raise ValueError(
                 "Point labels different from constructor"
                 f" dictionary labels. Got {point.labels},"
