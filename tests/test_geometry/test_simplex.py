@@ -37,6 +37,33 @@ def test_constructor():
             ]
         )
 
+def test_sample():
+    # sampling inside
+    simplex = SimplexDomain(
+                            [
+                                LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
+                                LabelTensor(torch.tensor([[1, 1]]), labels=["x", "y"]),
+                                LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
+                            ]
+                        )
+    pts = simplex.sample(10)
+    assert isinstance(pts, LabelTensor)
+    assert pts.size() == torch.Size([10, 2])
+
+    # sampling border
+    SimplexDomain(
+        [
+            LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
+            LabelTensor(torch.tensor([[1, 1]]), labels=["x", "y"]),
+            LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
+        ],
+        sample_surface=True,
+    )
+
+    pts = simplex.sample(10)
+    assert isinstance(pts, LabelTensor)
+    assert pts.size() == torch.Size([10, 2])
+
 
 def test_is_inside_faulty_point():
     domain = SimplexDomain(
