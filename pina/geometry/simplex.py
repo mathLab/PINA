@@ -79,7 +79,8 @@ class SimplexDomain(Location):
         for i, coord in enumerate(self.variables):
             sorted_vertices = sorted(vertices, key=lambda vertex: vertex[i])
             # respective coord bounded by the lowest and highest values
-            span_dict[coord] = [float(sorted_vertices[0][i]), float(sorted_vertices[-1][i])]
+            span_dict[coord] = [float(sorted_vertices[0][i]),
+                                float(sorted_vertices[-1][i])]
 
         return CartesianDomain(span_dict)
 
