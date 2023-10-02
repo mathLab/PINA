@@ -5,7 +5,7 @@ from torch.nn import Softplus
 
 from pina import PINN, LabelTensor, Plotter
 from pina.model import MultiFeedForward
-from problems.parametric_elliptic_optimal_control_alpha_variable import (
+from problems.parametric_elliptic_optimal_control import (
     ParametricEllipticOptimalControl)
 
 

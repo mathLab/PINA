@@ -1,10 +1,5 @@
-""" Poisson equation example. """
-import numpy as np
-import torch
+""" Poisson problem. """
 
-from pina.problem import SpatialProblem
-from pina.operators import laplacian
-from pina import Condition, Span
 
 # ===================================================== #
 #                                                       #
@@ -17,39 +12,46 @@ from pina import Condition, Span
 # ===================================================== #
 
 
+import torch
+from pina.geometry import CartesianDomain
+from pina import Condition
+from pina.problem import SpatialProblem
+from pina.operators import laplacian
+from pina.equation import FixedValue, Equation
+
+
 class Poisson(SpatialProblem):
-
-    # assign output/ spatial variables
     output_variables = ['u']
-    spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+    spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
-    # define the laplace equation
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
-                      torch.sin(input_.extract(['y'])*torch.pi))
-        delta_u = laplacian(output_.extract(['u']), input_)
-        return delta_u - force_term
+                        torch.sin(input_.extract(['y'])*torch.pi))
+        nabla_u = laplacian(output_.extract(['u']), input_)
+        return nabla_u - force_term
 
-    # define nill dirichlet boundary conditions
-    def nil_dirichlet(input_, output_):
-        value = 0.0
-        return output_.extract(['u']) - value
-
-    # problem condition statement
     conditions = {
-        'gamma1': Condition(location=Span({'x': [0, 1], 'y':  1}), function=nil_dirichlet),
-        'gamma2': Condition(location=Span({'x': [0, 1], 'y': 0}), function=nil_dirichlet),
-        'gamma3': Condition(location=Span({'x':  1, 'y': [0, 1]}),function=nil_dirichlet),
-        'gamma4': Condition(location=Span({'x': 0, 'y': [0, 1]}), function=nil_dirichlet),
-        'D': Condition(location=Span({'x': [0, 1], 'y': [0, 1]}), function=laplace_equation),
+        'gamma1': Condition(
+            location=CartesianDomain({'x': [0, 1], 'y':  1}),
+            equation=FixedValue(0.0)),
+        'gamma2': Condition(
+            location=CartesianDomain({'x': [0, 1], 'y': 0}),
+            equation=FixedValue(0.0)),
+        'gamma3': Condition(
+            location=CartesianDomain({'x':  1, 'y': [0, 1]}),
+            equation=FixedValue(0.0)),
+        'gamma4': Condition(
+            location=CartesianDomain({'x': 0, 'y': [0, 1]}),
+            equation=FixedValue(0.0)),
+        'D': Condition(
+            location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}),
+            equation=Equation(laplace_equation)),
     }
 
-    # real poisson solution
     def poisson_sol(self, pts):
         return -(
             torch.sin(pts.extract(['x'])*torch.pi) *
             torch.sin(pts.extract(['y'])*torch.pi)
         )/(2*torch.pi**2)
-        # return -(np.sin(x*np.pi)*np.sin(y*np.pi))/(2*np.pi**2)
 
     truth_solution = poisson_sol

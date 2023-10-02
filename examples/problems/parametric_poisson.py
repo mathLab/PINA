@@ -1,8 +1,5 @@
-import torch
+""" Parametric Poisson problem. """
 
-from pina.problem import SpatialProblem, ParametricProblem
-from pina.operators import laplacian
-from pina import Span, Condition
 
 # ===================================================== #
 #                                                       #
@@ -16,12 +13,20 @@ from pina import Span, Condition
 #                                                       #
 # ===================================================== #
 
+
+from pina.geometry import CartesianDomain
+from pina.problem import SpatialProblem, ParametricProblem
+from pina.operators import laplacian
+from pina.equation import FixedValue, Equation
+from pina import Condition
+import torch
+
 class ParametricPoisson(SpatialProblem, ParametricProblem):
 
     # assign output/ spatial and parameter variables
     output_variables = ['u']
-    spatial_domain = Span({'x': [-1, 1], 'y': [-1, 1]})
-    parameter_domain = Span({'mu1': [-1, 1], 'mu2': [-1, 1]})
+    spatial_domain = CartesianDomain({'x': [-1, 1], 'y': [-1, 1]})
+    parameter_domain = CartesianDomain({'mu1': [-1, 1], 'mu2': [-1, 1]})
 
     # define the laplace equation
     def laplace_equation(input_, output_):
@@ -30,26 +35,21 @@ class ParametricPoisson(SpatialProblem, ParametricProblem):
                 - 2*(input_.extract(['y']) - input_.extract(['mu2']))**2)
         return laplacian(output_.extract(['u']), input_) - force_term
 
-    # define nill dirichlet boundary conditions
-    def nil_dirichlet(input_, output_):
-        value = 0.0
-        return output_.extract(['u']) - value
-
     # problem condition statement
     conditions = {
         'gamma1': Condition(
-            location=Span({'x': [-1, 1], 'y': 1, 'mu1': [-1, 1], 'mu2': [-1, 1]}),
-            function=nil_dirichlet),
+            location=CartesianDomain({'x': [-1, 1], 'y': 1, 'mu1': [-1, 1], 'mu2': [-1, 1]}),
+            equation=FixedValue(0.)),
         'gamma2': Condition(
-            location=Span({'x': [-1, 1], 'y': -1, 'mu1': [-1, 1], 'mu2': [-1, 1]}),
-            function=nil_dirichlet),
+            location=CartesianDomain({'x': [-1, 1], 'y': -1, 'mu1': [-1, 1], 'mu2': [-1, 1]}),
+            equation=FixedValue(0.)),
         'gamma3': Condition(
-            location=Span({'x': 1, 'y': [-1, 1], 'mu1': [-1, 1], 'mu2': [-1, 1]}),
-            function=nil_dirichlet),
+            location=CartesianDomain({'x': 1, 'y': [-1, 1], 'mu1': [-1, 1], 'mu2': [-1, 1]}),
+            equation=FixedValue(0.)),
         'gamma4': Condition(
-            location=Span({'x': -1, 'y': [-1, 1], 'mu1': [-1, 1], 'mu2': [-1, 1]}),
-            function=nil_dirichlet),
+            location=CartesianDomain({'x': -1, 'y': [-1, 1], 'mu1': [-1, 1], 'mu2': [-1, 1]}),
+            equation=FixedValue(0.)),
         'D': Condition(
-            location=Span({'x': [-1, 1], 'y': [-1, 1], 'mu1': [-1, 1], 'mu2': [-1, 1]}),
-            function=laplace_equation),
+            location=CartesianDomain({'x': [-1, 1], 'y': [-1, 1], 'mu1': [-1, 1], 'mu2': [-1, 1]}),
+            equation=Equation(laplace_equation)),
     }
