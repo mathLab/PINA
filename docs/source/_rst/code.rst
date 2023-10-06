@@ -40,6 +40,15 @@ Layers
 
     ContinuousConv <convolution.rst>
 
+Loss
+------
+
+.. toctree::
+    :maxdepth: 3
+
+    LpLoss <lploss.rst>
+    PowerLoss <powerloss.rst>
+
 Problem
 -------
 
