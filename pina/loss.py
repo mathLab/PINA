@@ -197,7 +197,7 @@ class PowerLoss(LossInterface):
         :return: Loss evaluation.
         :rtype: torch.Tensor
         """
-        loss = torch.linalg.norm((input-target), ord=self.p, dim=-1)
+        loss = torch.abs((input-target)).pow(self.p).mean(-1)
         if self.relative:
-            loss = loss / torch.linalg.norm(input, ord=self.p, dim=-1)          
+            loss = loss / torch.abs(input).pow(self.p).mean(-1)        
         return self._reduction(loss)
