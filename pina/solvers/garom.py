@@ -235,7 +235,7 @@ class GAROM(SolverInterface):
                 self.log('mean_loss', float(r_loss), prog_bar=True, logger=True)
                 self.log('d_loss', float(d_loss), prog_bar=True, logger=True)
                 self.log('g_loss', float(g_loss), prog_bar=True, logger=True)
-                self.log('stability_metric', float(diff), prog_bar=True, logger=True)
+                self.log('stability_metric', float(d_loss_real + torch.abs(diff)), prog_bar=True, logger=True)
 
             else:
                 raise NotImplementedError('GAROM works only in data-driven mode.')
