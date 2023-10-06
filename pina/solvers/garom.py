@@ -231,6 +231,12 @@ class GAROM(SolverInterface):
                 self.k += self.lambda_k * diff.item()
                 self.k = min(max(self.k, 0), 1)  # Constraint to interval [0, 1]
 
+                # logging
+                self.log('mean_loss', float(r_loss), prog_bar=True, logger=True)
+                self.log('d_loss', float(d_loss), prog_bar=True, logger=True)
+                self.log('g_loss', float(g_loss), prog_bar=True, logger=True)
+                self.log('stability_metric', float(d_loss_real + torch.abs(diff)), prog_bar=True, logger=True)
+
             else:
                 raise NotImplementedError('GAROM works only in data-driven mode.')
 
