@@ -1,8 +1,8 @@
 PINN
 ====
-.. currentmodule:: pina.pinn
+.. currentmodule:: pina.solvers.pinn
 
-.. automodule:: pina.pinn
+.. automodule:: pina.solvers.pinn
 
 .. autoclass:: PINN
    :members:
