@@ -3,7 +3,7 @@
 
 # # Tutorial 4: continuous convolutional filter
 
-# In this tutorial we will show how to use the Continouous Convolutional Filter, and how to build common Deep Learning architectures with it. The implementation of the filter follows the original work [**A Continuous Convolutional Trainable Filter for Modelling Unstructured Data**](https://arxiv.org/abs/2210.13416) of Coscia Dario, Laura Meneghetti, Nicola Demo, Giovanni Stabile, and Gianluigi Rozza.
+# In this tutorial, we will show how to use the Continuous Convolutional Filter, and how to build common Deep Learning architectures with it. The implementation of the filter follows the original work [**A Continuous Convolutional Trainable Filter for Modelling Unstructured Data**](https://arxiv.org/abs/2210.13416).
 
 # First of all we import the modules needed for the tutorial, which include:
 # 
@@ -116,7 +116,7 @@ print(f"Filter input data has shape: {data.shape}")
 # 
 # Suppose we would like to get an ouput with only one field, and let us fix the filter dimension to be $[0.1, 0.1]$.
 
-# In[4]:
+# In[3]:
 
 
 # filter dim
@@ -138,7 +138,7 @@ cConv = ContinuousConvBlock(input_numb_field=number_input_fileds,
 
 # That's it! In just one line of code we have created the continuous convolutional filter. By default the `pina.model.FeedForward` neural network is intitialised, more on the [documentation](https://mathlab.github.io/PINA/_rst/fnn.html). In case the mesh doesn't change during training we can set the `optimize` flag equals to `True`, to exploit optimizations for finding the points to convolve.
 
-# In[5]:
+# In[4]:
 
 
 # creating the filter + optimization
@@ -151,7 +151,7 @@ cConv = ContinuousConvBlock(input_numb_field=number_input_fileds,
 
 # Let's try to do a forward pass
 
-# In[6]:
+# In[5]:
 
 
 print(f"Filter input data has shape: {data.shape}")
@@ -165,7 +165,7 @@ print(f"Filter output data has shape: {output.shape}")
 # If we don't want to use the default `FeedForward` neural network, we can pass a specified torch model in the `model` keyword as follow: 
 # 
 
-# In[7]:
+# In[6]:
 
 
 class SimpleKernel(torch.nn.Module):
@@ -196,7 +196,7 @@ cConv = ContinuousConvBlock(input_numb_field=number_input_fileds,
 # 
 # Let's see how we can build a MNIST classifier using a continuous convolutional filter. We will use the MNIST dataset from PyTorch. In order to keep small training times we use only 6000 samples for training and 1000 samples for testing.
 
-# In[8]:
+# In[7]:
 
 
 from torch.utils.data import DataLoader, SubsetRandomSampler
@@ -233,7 +233,7 @@ test_loader = DataLoader(train_data, batch_size=batch_size,
 
 # Let's now build a simple classifier. The MNIST dataset is composed by vectors of shape `[batch, 1, 28, 28]`, but we can image them as one field functions where the pixels $ij$ are the coordinate $x=i, y=j$ in a $[0, 27]\times[0,27]$ domain, and the pixels value are the field values. We just need a function to transform the regular tensor in a tensor compatible for the continuous filter:
 
-# In[9]:
+# In[8]:
 
 
 def transform_input(x):
@@ -260,7 +260,7 @@ print(f"Transformed MNIST image shape: {image_transformed.shape}")
 
 # We can now build a simple classifier! We will use just one convolutional filter followed by a feedforward neural network
 
-# In[11]:
+# In[9]:
 
 
 # setting the seed
@@ -302,7 +302,7 @@ net = ContinuousClassifier()
 
 # Let's try to train it using a simple pytorch training loop. We train for juts 1 epoch using Adam optimizer with a $0.001$ learning rate.
 
-# In[14]:
+# In[10]:
 
 
 # setting the seed
@@ -338,7 +338,7 @@ for epoch in range(1):  # loop over the dataset multiple times
 
 # Let's see the performance on the train set!
 
-# In[15]:
+# In[11]:
 
 
 correct = 0
@@ -363,7 +363,7 @@ print(
 # 
 # Just as toy problem, we will now build an autoencoder for the following function $f(x,y)=\sin(\pi x)\sin(\pi y)$ on the unit circle domain centered in $(0.5, 0.5)$. We will also see the ability to up-sample (once trained) the results without retraining. Let's first create the input and visualize it, we will use firstly a mesh of $100$ points.
 
-# In[16]:
+# In[12]:
 
 
 # create inputs
@@ -406,7 +406,7 @@ plt.show()
 
 # Let's now build a simple autoencoder using the continuous convolutional filter. The data is clearly unstructured and a simple convolutional filter might not work without projecting or interpolating first. Let's first build and `Encoder` and `Decoder` class, and then a `Autoencoder` class that contains both.
 
-# In[19]:
+# In[13]:
 
 
 class Encoder(torch.nn.Module):
@@ -463,7 +463,7 @@ class Decoder(torch.nn.Module):
 
 # Very good! Notice that in the `Decoder` class in the `forward` pass we have used the `.transpose()` method of the `ContinuousConvolution` class. This method accepts the `weights` for upsampling and the `grid` on where to upsample. Let's now build the autoencoder! We set the hidden dimension in the `hidden_dimension` variable. We apply the sigmoid on the output since the field value is between $[0, 1]$. 
 
-# In[20]:
+# In[14]:
 
 
 class Autoencoder(torch.nn.Module):
@@ -488,7 +488,7 @@ net = Autoencoder()
 
 # Let's now train the autoencoder, minimizing the mean square error loss and optimizing using Adam.
 
-# In[21]:
+# In[15]:
 
 
 # setting the seed
@@ -517,7 +517,7 @@ for epoch in range(max_epochs):  # loop over the dataset multiple times
 
 # Let's visualize the two solutions side by side!
 
-# In[22]:
+# In[16]:
 
 
 net.eval()
@@ -540,7 +540,7 @@ plt.show()
 
 # As we can see the two are really similar! We can compute the $l_2$ error quite easily as well:
 
-# In[23]:
+# In[17]:
 
 
 def l2_error(input_, target):
@@ -556,7 +556,7 @@ print(f'l2 error: {l2_error(input_data[0, 0, :, -1], output[0, 0, :, -1]):.2%}')
 # 
 # Suppose we have already the hidden dimension and we want to upsample on a differen grid with more points. Let's see how to do it:
 
-# In[24]:
+# In[18]:
 
 
 # setting the seed
@@ -589,7 +589,7 @@ plt.show()
 
 # As we can see we have a very good approximation of the original function, even thought some noise is present. Let's calculate the error now:
 
-# In[25]:
+# In[19]:
 
 
 print(f'l2 error: {l2_error(input_data2[0, 0, :, -1], output[0, 0, :, -1]):.2%}')
@@ -598,7 +598,7 @@ print(f'l2 error: {l2_error(input_data2[0, 0, :, -1], output[0, 0, :, -1]):.2%}'
 # ### Autoencoding at different resolution
 # In the previous example we already had the hidden dimension (of original input) and we used it to upsample. Sometimes however we have a more fine mesh solution and we simply want to encode it. This can be done without retraining! This procedure can be useful in case we have many points in the mesh and just a smaller part of them are needed for training. Let's see the results of this:
 
-# In[26]:
+# In[20]:
 
 
 # setting the seed
