@@ -8,12 +8,18 @@ This tutorial presents how to solve with Physics-Informed Neural
 Networks a 2D Poisson problem with Dirichlet boundary conditions. Using
 extrafeatures.
 
-The problem is written as: :raw-latex:`\begin{equation}
-\begin{cases}
-\Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
-u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
-\end{cases}
-\end{equation}` where :math:`D` is a square domain :math:`[0,1]^2`, and
+The problem is written as:
+
+.. raw:: latex
+
+   \begin{equation}
+   \begin{cases}
+   \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
+   u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+   \end{cases}
+   \end{equation}
+
+where :math:`D` is a square domain :math:`[0,1]^2`, and
 :math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
 square.
 
@@ -37,8 +43,8 @@ First of all, some useful imports.
 
 Now, the Poisson problem is written in PINA code as a class. The
 equations are written as *conditions* that should be satisfied in the
-corresponding domains. *truth_solution* is the exact solution which will
-be compared with the predicted one.
+corresponding domains. *truth\_solution* is the exact solution which
+will be compared with the predicted one.
 
 .. code:: ipython3
 
@@ -107,12 +113,20 @@ of 0.006. These parameters can be modified as desired.
 
 .. parsed-literal::
 
-    GPU available: False, used: False
+    /u/n/ndemo/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
+      warnings.warn("Can't initialize NVML")
+    GPU available: True (cuda), used: True
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    /Users/dariocoscia/anaconda3/envs/pina/lib/python3.9/site-packages/lightning/pytorch/trainer/connectors/logger_connector/logger_connector.py:67: UserWarning: Starting from v1.9.0, `tensorboardX` has been removed as a dependency of the `lightning.pytorch` package, due to potential conflicts with other packages in the ML ecosystem. For this reason, `logger=True` will use `CSVLogger` as the default logger, unless the `tensorboard` or `tensorboardX` packages are found. Please `pip install lightning[extra]` or one of them to enable TensorBoard support by default
-      warning_cache.warn(
+    Missing logger folder: /u/n/ndemo/PINA/tutorials/tutorial2/lightning_logs
+    2023-10-17 10:09:18.208459: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+    2023-10-17 10:09:18.235849: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+    To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+    2023-10-17 10:09:20.462393: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+    /opt/sissa/apps/intelpython/2022.0.2/intelpython/latest/lib/python3.9/site-packages/scipy/__init__.py:138: UserWarning: A NumPy version >=1.16.5 and <1.23.0 is required for this version of SciPy (detected version 1.26.0)
+      warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion} is required for this version of "
+    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
     
       | Name        | Type    | Params
     ----------------------------------------
@@ -125,21 +139,18 @@ of 0.006. These parameters can be modified as desired.
     0.001     Total estimated model params size (MB)
 
 
+
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 129.50it/s, v_num=45, mean_loss=0.00196, gamma1_loss=0.0093, gamma2_loss=0.000146, gamma3_loss=8.16e-5, gamma4_loss=0.000201, D_loss=8.44e-5]  
+    Training: 0it [00:00, ?it/s]
+
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
 
 
-.. parsed-literal::
-
-    Epoch 999: : 1it [00:00, 101.25it/s, v_num=45, mean_loss=0.00196, gamma1_loss=0.0093, gamma2_loss=0.000146, gamma3_loss=8.16e-5, gamma4_loss=0.000201, D_loss=8.44e-5]
-
-
-Now the *Plotter* class is used to plot the results. The solution
+Now the ``Plotter`` class is used to plot the results. The solution
 predicted by the neural network is plotted on the left, the exact one is
 represented at the center and on the right the error between the exact
 and the predicted solutions is showed.
@@ -151,7 +162,7 @@ and the predicted solutions is showed.
 
 
 
-.. image:: tutorial_files/tutorial_11_0.png
+.. image:: output_11_0.png
 
 
 The problem solution with extra-features
@@ -162,9 +173,11 @@ is now defined, with an additional input variable, named extra-feature,
 which coincides with the forcing term in the Laplace equation. The set
 of input variables to the neural network is:
 
-:raw-latex:`\begin{equation}
-[x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
-\end{equation}`
+.. raw:: latex
+
+   \begin{equation}
+   [x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
+   \end{equation}
 
 where :math:`x` and :math:`y` are the spatial coordinates and
 :math:`k(x, y)` is the added feature.
@@ -210,10 +223,11 @@ new extra feature.
 
 .. parsed-literal::
 
-    GPU available: False, used: False
+    GPU available: True (cuda), used: True
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
+    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
     
       | Name        | Type    | Params
     ----------------------------------------
@@ -226,18 +240,15 @@ new extra feature.
     0.001     Total estimated model params size (MB)
 
 
+
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 112.55it/s, v_num=46, mean_loss=2.73e-7, gamma1_loss=1.13e-6, gamma2_loss=7.1e-8, gamma3_loss=4.69e-8, gamma4_loss=6.81e-8, D_loss=4.65e-8]    
+    Training: 0it [00:00, ?it/s]
+
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
-
-
-.. parsed-literal::
-
-    Epoch 999: : 1it [00:00, 92.69it/s, v_num=46, mean_loss=2.73e-7, gamma1_loss=1.13e-6, gamma2_loss=7.1e-8, gamma3_loss=4.69e-8, gamma4_loss=6.81e-8, D_loss=4.65e-8] 
 
 
 The predicted and exact solutions and the error between them are
@@ -251,7 +262,7 @@ of magnitudes in accuracy.
 
 
 
-.. image:: tutorial_files/tutorial_16_0.png
+.. image:: output_16_0.png
 
 
 The problem solution with learnable extra-features
@@ -263,9 +274,11 @@ Another way to exploit the extra features is the addition of learnable
 parameter inside them. In this way, the added parameters are learned
 during the training phase of the neural network. In this case, we use:
 
-:raw-latex:`\begin{equation}
-k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
-\end{equation}`
+.. raw:: latex
+
+   \begin{equation}
+   k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
+   \end{equation}
 
 where :math:`\alpha` and :math:`\beta` are the abovementioned
 parameters. Their implementation is quite trivial: by using the class
@@ -306,10 +319,11 @@ need, and they are managed by ``autograd`` module!
 
 .. parsed-literal::
 
-    GPU available: False, used: False
+    GPU available: True (cuda), used: True
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
+    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
     
       | Name        | Type    | Params
     ----------------------------------------
@@ -322,18 +336,15 @@ need, and they are managed by ``autograd`` module!
     0.001     Total estimated model params size (MB)
 
 
+
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 91.07it/s, v_num=47, mean_loss=2.11e-6, gamma1_loss=1.03e-5, gamma2_loss=4.17e-8, gamma3_loss=4.28e-8, gamma4_loss=5.65e-8, D_loss=6.21e-8]    
+    Training: 0it [00:00, ?it/s]
+
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
-
-
-.. parsed-literal::
-
-    Epoch 999: : 1it [00:00, 76.19it/s, v_num=47, mean_loss=2.11e-6, gamma1_loss=1.03e-5, gamma2_loss=4.17e-8, gamma3_loss=4.28e-8, gamma4_loss=5.65e-8, D_loss=6.21e-8]
 
 
 Umh, the final loss is not appreciabily better than previous model (with
@@ -365,10 +376,11 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
 
 .. parsed-literal::
 
-    GPU available: False, used: False
+    GPU available: True (cuda), used: True
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
+    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
     
       | Name        | Type    | Params
     ----------------------------------------
@@ -381,18 +393,15 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
     0.000     Total estimated model params size (MB)
 
 
+
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 149.45it/s, v_num=48, mean_loss=1.34e-16, gamma1_loss=6.66e-16, gamma2_loss=2.6e-18, gamma3_loss=4.84e-19, gamma4_loss=2.59e-18, D_loss=4.84e-19] 
+    Training: 0it [00:00, ?it/s]
+
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
-
-
-.. parsed-literal::
-
-    Epoch 999: : 1it [00:00, 117.81it/s, v_num=48, mean_loss=1.34e-16, gamma1_loss=6.66e-16, gamma2_loss=2.6e-18, gamma3_loss=4.84e-19, gamma4_loss=2.59e-18, D_loss=4.84e-19]
 
 
 In such a way, the model is able to reach a very high accuracy! Of
@@ -413,23 +422,5 @@ features.
 
 
 
-.. image:: tutorial_files/tutorial_23_0.png
-
-
-.. code:: ipython3
-
-    import matplotlib.pyplot as plt
-    
-    plt.figure(figsize=(16, 6))
-    plotter.plot_loss(trainer, label='Standard')
-    plotter.plot_loss(trainer_feat, label='Static Features')
-    plotter.plot_loss(trainer_learn, label='Learnable Features')
-    
-    plt.grid()
-    plt.legend()
-    plt.show()
-
-
-
-.. image:: tutorial_files/tutorial_24_0.png
+.. image:: output_23_0.png
 

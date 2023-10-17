@@ -3,7 +3,7 @@
 
 # # Tutorial 3: resolution of wave equation with hard constraint PINNs.
 
-# ### The problem solution 
+# ## The problem definition 
 
 # In this tutorial we present how to solve the wave equation using hard constraint PINNs. For doing so we will build a costum torch model and pass it to the `PINN` solver.
 # 
@@ -76,11 +76,13 @@ class Wave(TimeDependentProblem, SpatialProblem):
 problem = Wave()
 
 
-# After the problem, a **torch** model is needed to solve the PINN. Usually many models are already implemented in `PINA`, but the user has the possibility to build his/her own model in `pyTorch`. The hard constraint we impose are on the boundary of the spatial domain. Specificly our solution is written as:
+# ## Hard Constraint Model
+
+# After the problem, a **torch** model is needed to solve the PINN. Usually, many models are already implemented in `PINA`, but the user has the possibility to build his/her own model in `PyTorch`. The hard constraint we impose is on the boundary of the spatial domain. Specifically, our solution is written as:
 # 
 # $$ u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t), $$
 # 
-# where $NN$ is the neural net output. This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unkwown field of the Wave problem. By construction it is zero on the boundaries. The residual of the equations are evaluated at several sampling points (which the user can manipulate using the method `discretise_domain`) and the loss minimized by the neural network is the sum of the residuals.
+# where $NN$ is the neural net output. This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unknown field $u$. By construction, it is zero on the boundaries. The residuals of the equations are evaluated at several sampling points (which the user can manipulate using the method `discretise_domain`) and the loss minimized by the neural network is the sum of the residuals.
 
 # In[3]:
 
@@ -102,9 +104,11 @@ class HardMLP(torch.nn.Module):
         return hard*self.layers(x)
 
 
+# ## Train and Inference
+
 # In this tutorial, the neural network is trained for 3000 epochs with a learning rate of 0.001 (default in `PINN`). Training takes approximately 1 minute.
 
-# In[7]:
+# In[4]:
 
 
 pinn = PINN(problem, HardMLP(len(problem.input_variables), len(problem.output_variables)))
@@ -115,7 +119,7 @@ trainer.train()
 
 # Notice that the loss on the boundaries of the spatial domain is exactly zero, as expected! After the training is completed one can now plot some results using the `Plotter` class of **PINA**.
 
-# In[11]:
+# In[5]:
 
 
 plotter = Plotter()
