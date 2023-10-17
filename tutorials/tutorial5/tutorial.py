@@ -6,8 +6,7 @@
 # In this tutorial we are going to solve the Darcy flow 2d problem, presented in [Fourier Neural Operator for
 # Parametric Partial Differential Equation](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input output operation, run `pip install scipy` for installing it.
 
-# In[29]:
-
+# In[1]:
 
 
 from scipy import io
@@ -32,7 +31,7 @@ import matplotlib.pyplot as plt
 # Specifically, $u$ is the flow pressure, $k$ is the permeability field and $f$ is the forcing function. The Darcy flow can parameterize a variety of systems including flow through porous media, elastic materials and heat conduction. Here you will define the domain as a 2D unit square Dirichlet boundary conditions. The dataset is taken from the authors original reference.
 # 
 
-# In[36]:
+# In[2]:
 
 
 # download the dataset
@@ -49,7 +48,7 @@ y = torch.tensor(data['y'], dtype=torch.float)[0]
 
 # Let's visualize some data
 
-# In[88]:
+# In[3]:
 
 
 plt.subplot(1, 2, 1)
@@ -63,7 +62,7 @@ plt.show()
 
 # We now create the neural operator class. It is a very simple class, inheriting from `AbstractProblem`.
 
-# In[69]:
+# In[4]:
 
 
 class NeuralOperatorSolver(AbstractProblem):
@@ -80,7 +79,7 @@ problem = NeuralOperatorSolver()
 # 
 # We will first solve the problem using a Feedforward neural network. We will use the `SupervisedSolver` for solving the problem, since we are training using supervised learning.
 
-# In[78]:
+# In[5]:
 
 
 # make model
@@ -97,7 +96,7 @@ trainer.train()
 
 # The final loss is pretty high... We can calculate the error by importing `LpLoss`.
 
-# In[79]:
+# In[6]:
 
 
 from pina.loss import LpLoss
@@ -117,7 +116,7 @@ print(f'Final error testing {err:.2f}%')
 # 
 # We will now move to solve the problem using a FNO. Since we are learning operator this approach is better suited, as we shall see.
 
-# In[70]:
+# In[7]:
 
 
 # make model
@@ -141,7 +140,7 @@ trainer.train()
 
 # We can clearly see that with 1/3 of the total epochs the loss is lower. Let's see in testing.. Notice that the number of parameters is way higher than a `FeedForward` network. We suggest to use GPU or TPU for a speed up in training.
 
-# In[77]:
+# In[8]:
 
 
 err = float(metric_err(u_train.squeeze(-1), solver.models[0](k_train).squeeze(-1)).mean())*100
