@@ -57,6 +57,7 @@ solve problems in a continuous and nonlinear settings. :py:class:`pina.pinn.PINN
     Wave equation <_rst/tutorial3/tutorial.rst>
     Continuous Convolutional Filter <_rst/tutorial4/tutorial.rst>
     Fourier Neural Operator <_rst/tutorial5/tutorial.rst>
+    Geometry Usage <_rst/tutorial6/tutorial.rst>
 
 .. ........................................................................................
 
