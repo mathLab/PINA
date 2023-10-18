@@ -40,6 +40,14 @@ class LabelTensor(torch.Tensor):
                     [0.5819],
                     [0.1025],
                     [0.9615]])
+            >>> tensor['a']
+            tensor([[0.0671],
+                    [0.9239],
+                    [0.8927],
+                    ...,
+                    [0.5819],
+                    [0.1025],
+                    [0.9615]])
             >>> tensor.extract(['a', 'b'])
             tensor([[0.0671, 0.4889],
                     [0.9239, 0.8207],
@@ -69,7 +77,7 @@ class LabelTensor(torch.Tensor):
                 'the passed labels.'
             )
         self._labels = labels
-
+    
     @property
     def labels(self):
         """Property decorator for labels
@@ -100,7 +108,7 @@ class LabelTensor(torch.Tensor):
         """
         try:
             out = LabelTensor(super().clone(*args, **kwargs), self.labels)
-        except:
+        except: # this is used when the tensor loose the labels, notice it will create a bug! Kept for compatibility with Lightining 
             out = super().clone(*args, **kwargs)
 
         return out
@@ -122,6 +130,22 @@ class LabelTensor(torch.Tensor):
         tmp = super().select(*args, **kwargs)
         tmp._labels = self._labels
         return tmp
+
+    def cuda(self, *args, **kwargs):
+            """
+            Send Tensor to cuda. For more details, see :meth:`torch.Tensor.cuda`.
+            """
+            tmp = super().cuda(*args, **kwargs)
+            tmp._labels = self._labels
+            return tmp
+
+    def cpu(self, *args, **kwargs):
+            """
+            Send Tensor to cpu. For more details, see :meth:`torch.Tensor.cpu`.
+            """
+            tmp = super().cpu(*args, **kwargs)
+            tmp._labels = self._labels
+            return tmp
 
     def extract(self, label_to_extract):
         """
@@ -149,7 +173,7 @@ class LabelTensor(torch.Tensor):
             except ValueError:
                 raise ValueError(f'`{f}` not in the labels list')
 
-        new_data = super(Tensor, self.T).__getitem__(indeces).float().T
+        new_data = super(Tensor, self.T).__getitem__(indeces).T
         new_labels = [self.labels[idx] for idx in indeces]
 
         extracted_tensor = new_data.as_subclass(LabelTensor)
@@ -196,8 +220,12 @@ class LabelTensor(torch.Tensor):
         """
         Return a copy of the selected tensor.
         """
-        selected_lt = super(Tensor, self).__getitem__(index)
 
+        if isinstance(index, str) or (isinstance(index, (tuple, list))and all(isinstance(a, str) for a in index)):
+            return self.extract(index)
+
+        selected_lt = super(Tensor, self).__getitem__(index)
+        
         try:
             len_index = len(index)
         except TypeError:
