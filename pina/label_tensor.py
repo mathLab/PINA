@@ -132,20 +132,22 @@ class LabelTensor(torch.Tensor):
         return tmp
 
     def cuda(self, *args, **kwargs):
-            """
-            Send Tensor to cuda. For more details, see :meth:`torch.Tensor.cuda`.
-            """
-            tmp = super().cuda(*args, **kwargs)
-            tmp._labels = self._labels
-            return tmp
+        """
+        Send Tensor to cuda. For more details, see :meth:`torch.Tensor.cuda`.
+        """
+        tmp = super().cuda(*args, **kwargs)
+        new = self.__class__.clone(self)
+        new.data = tmp.data
+        return tmp
 
     def cpu(self, *args, **kwargs):
-            """
-            Send Tensor to cpu. For more details, see :meth:`torch.Tensor.cpu`.
-            """
-            tmp = super().cpu(*args, **kwargs)
-            tmp._labels = self._labels
-            return tmp
+        """
+        Send Tensor to cpu. For more details, see :meth:`torch.Tensor.cpu`.
+        """
+        tmp = super().cpu(*args, **kwargs)
+        new = self.__class__.clone(self)
+        new.data = tmp.data
+        return tmp
 
     def extract(self, label_to_extract):
         """
