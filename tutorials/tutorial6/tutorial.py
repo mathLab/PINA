@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial 6: How to Use Geometries in PINA
-
-# ## Built-in Geometries
-
+# # Tutorial: Building custom geometries with PINA `Location` class
+# 
 # In this tutorial we will show how to use geometries in PINA. Specifically, the tutorial will include how to create geometries and how to visualize them. The topics covered are:
 # 
 # * Creating CartesianDomains and EllipsoidDomains
 # * Getting the Union and Difference of Geometries
 # * Sampling points in the domain (and visualize them)
 # 
-# We import the relevant modules.
+# We import the relevant modules first.
 
 # In[1]:
 
@@ -24,6 +22,8 @@ def plot_scatter(ax, pts, title):
     ax.title.set_text(title)
     ax.scatter(pts.extract('x'), pts.extract('y'), color='blue', alpha=0.5)
 
+
+# ## Built-in Geometries
 
 # We will create one cartesian and two ellipsoids. For the sake of simplicity, we show here the 2-dimensional, but it's trivial the extension to 3D (and higher) cases. The geometries allows also the generation of samples belonging to the boundary. So, we will create one ellipsoid with the border and one without.
 
@@ -180,7 +180,7 @@ class Heart(Location):
         
 
 
-# Because the `Location` class we are inherting from requires both a sample method and `is_inside` method, we will create them and just add in "pass" for the moment.
+# Because the `Location` class we are inherting from requires both a `sample` method and `is_inside` method, we will create them and just add in "pass" for the moment.
 
 # In[13]:
 
