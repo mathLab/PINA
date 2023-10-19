@@ -1,24 +1,22 @@
-Tutorial 4: continuous convolutional filter
-===========================================
+Tutorial: Unstructured convolutional autoencoder via continuous convolution
+===========================================================================
 
 In this tutorial, we will show how to use the Continuous Convolutional
 Filter, and how to build common Deep Learning architectures with it. The
-implementation of the filter follows the original work `**A Continuous
+implementation of the filter follows the original work `A Continuous
 Convolutional Trainable Filter for Modelling Unstructured
-Data** <https://arxiv.org/abs/2210.13416>`__.
+Data <https://arxiv.org/abs/2210.13416>`__.
 
-First of all we import the modules needed for the tutorial, which
-include:
-
--  ``ContinuousConv`` class from ``pina.model.layers`` which implements
-   the continuous convolutional filter
--  ``PyTorch`` and ``Matplotlib`` for tensorial operations and
-   visualization respectively
+First of all we import the modules needed for the tutorial:
 
 .. code:: ipython3
 
     import torch 
     import matplotlib.pyplot as plt 
+    from pina.problem import AbstractProblem
+    from pina.solvers import SupervisedSolver
+    from pina.trainer import Trainer
+    from pina import Condition, LabelTensor
     from pina.model.layers import ContinuousConvBlock 
     import torchvision # for MNIST dataset
     from pina.model import FeedForward # for building AE and MNIST classification
@@ -46,7 +44,7 @@ as:
 
        \mathcal{I}_{\rm{out}}(\mathbf{x}) = \int_{\mathcal{X}}  \mathcal{I}(\mathbf{x} + \mathbf{\tau}) \cdot \mathcal{K}(\mathbf{\tau}) d\mathbf{\tau},
 
- where :math:`\mathcal{K} : \mathcal{X} \rightarrow \mathbb{R}` is the
+where :math:`\mathcal{K} : \mathcal{X} \rightarrow \mathbb{R}` is the
 *continuous filter* function, and
 :math:`\mathcal{I} : \Omega \subset \mathbb{R}^N \rightarrow \mathbb{R}`
 is the input function. The continuous filter function is approximated
@@ -62,7 +60,7 @@ by the authors. Thus, given :math:`\{\mathbf{x}_i\}_{i=1}^{n}` points in
 
        \mathcal{I}_{\rm{out}}(\mathbf{\tilde{x}}_i) = \sum_{{\mathbf{x}_i}\in\mathcal{X}}  \mathcal{I}(\mathbf{x}_i + \mathbf{\tau}) \cdot \mathcal{K}(\mathbf{x}_i),
 
- where :math:`\mathbf{\tau} \in \mathcal{S}`, with :math:`\mathcal{S}`
+where :math:`\mathbf{\tau} \in \mathcal{S}`, with :math:`\mathcal{S}`
 the set of available strides, corresponds to the current stride position
 of the filter, and :math:`\mathbf{\tilde{x}}_i` points are obtained by
 taking the centroid of the filter position mapped on the :math:`\Omega`
@@ -83,7 +81,7 @@ shape:
 
 .. math:: [B \times N_{in} \times N \times D]
 
-where :math:`B` is the batch\_size, :math:`N_{in}` is the number of
+\ where :math:`B` is the batch_size, :math:`N_{in}` is the number of
 input fields, :math:`N` the number of points in the mesh, :math:`D` the
 dimension of the problem. In particular: \* :math:`D` is the number of
 spatial variables + 1. The last column must contain the field value. For
@@ -93,7 +91,7 @@ like ``[first coordinate, second coordinate, field value]`` \*
 For example a vectorial function :math:`f = [f_1, f_2]` will have
 :math:`N_{in}=2`
 
-Let's see an example to clear the ideas. We will be verbose to explain
+Let’s see an example to clear the ideas. We will be verbose to explain
 in details the input form. We wish to create the function:
 
 .. math::
@@ -148,12 +146,12 @@ where to go. Here is an example for the :math:`[0,1]\times[0,5]` domain:
 
 .. code:: python
 
-    # stride definition
-    stride = {"domain": [1, 5],
-              "start": [0, 0],
-              "jump": [0.1, 0.3],
-              "direction": [1, 1],
-              }
+   # stride definition
+   stride = {"domain": [1, 5],
+             "start": [0, 0],
+             "jump": [0.1, 0.3],
+             "direction": [1, 1],
+             }
 
 This tells the filter: 1. ``domain``: square domain (the only
 implemented) :math:`[0,1]\times[0,5]`. The minimum value is always zero,
@@ -198,15 +196,15 @@ fix the filter dimension to be :math:`[0.1, 0.1]`.
 
 .. parsed-literal::
 
-    /u/n/ndemo/.local/lib/python3.9/site-packages/torch/functional.py:504: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3526.)
+    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/functional.py:504: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3483.)
       return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
 
 
-That's it! In just one line of code we have created the continuous
+That’s it! In just one line of code we have created the continuous
 convolutional filter. By default the ``pina.model.FeedForward`` neural
 network is intitialised, more on the
 `documentation <https://mathlab.github.io/PINA/_rst/fnn.html>`__. In
-case the mesh doesn't change during training we can set the ``optimize``
+case the mesh doesn’t change during training we can set the ``optimize``
 flag equals to ``True``, to exploit optimizations for finding the points
 to convolve.
 
@@ -220,7 +218,7 @@ to convolve.
                            optimize=True)
 
 
-Let's try to do a forward pass
+Let’s try to do a forward pass
 
 .. code:: ipython3
 
@@ -238,7 +236,7 @@ Let's try to do a forward pass
     Filter output data has shape: torch.Size([1, 1, 169, 3])
 
 
-If we don't want to use the default ``FeedForward`` neural network, we
+If we don’t want to use the default ``FeedForward`` neural network, we
 can pass a specified torch model in the ``model`` keyword as follow:
 
 .. code:: ipython3
@@ -270,7 +268,7 @@ Notice that we pass the class and not an already built object!
 Building a MNIST Classifier
 ---------------------------
 
-Let's see how we can build a MNIST classifier using a continuous
+Let’s see how we can build a MNIST classifier using a continuous
 convolutional filter. We will use the MNIST dataset from PyTorch. In
 order to keep small training times we use only 6000 samples for training
 and 1000 samples for testing.
@@ -308,68 +306,7 @@ and 1000 samples for testing.
     test_loader = DataLoader(train_data, batch_size=batch_size,
                               sampler=SubsetRandomSampler(subsample_train_indices))
 
-
-.. parsed-literal::
-
-    Downloading http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
-    Downloading http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz to ./data/MNIST/raw/train-images-idx3-ubyte.gz
-
-
-.. parsed-literal::
-
-    100%|█████████████████████████████████| 9912422/9912422 [00:00<00:00, 59926793.62it/s]
-
-
-.. parsed-literal::
-
-    Extracting ./data/MNIST/raw/train-images-idx3-ubyte.gz to ./data/MNIST/raw
-    
-    Downloading http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
-    Downloading http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz to ./data/MNIST/raw/train-labels-idx1-ubyte.gz
-
-
-.. parsed-literal::
-
-    100%|██████████████████████████████████████| 28881/28881 [00:00<00:00, 2463209.03it/s]
-
-
-.. parsed-literal::
-
-    Extracting ./data/MNIST/raw/train-labels-idx1-ubyte.gz to ./data/MNIST/raw
-    
-    Downloading http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
-    Downloading http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz to ./data/MNIST/raw/t10k-images-idx3-ubyte.gz
-
-
-.. parsed-literal::
-
-    100%|█████████████████████████████████| 1648877/1648877 [00:00<00:00, 46499639.59it/s]
-
-
-.. parsed-literal::
-
-    Extracting ./data/MNIST/raw/t10k-images-idx3-ubyte.gz to ./data/MNIST/raw
-    
-    Downloading http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
-    Downloading http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz to ./data/MNIST/raw/t10k-labels-idx1-ubyte.gz
-
-
-.. parsed-literal::
-
-    100%|███████████████████████████████████████| 4542/4542 [00:00<00:00, 19761959.30it/s]
-
-.. parsed-literal::
-
-    Extracting ./data/MNIST/raw/t10k-labels-idx1-ubyte.gz to ./data/MNIST/raw
-    
-
-
-.. parsed-literal::
-
-    
-
-
-Let's now build a simple classifier. The MNIST dataset is composed by
+Let’s now build a simple classifier. The MNIST dataset is composed by
 vectors of shape ``[batch, 1, 28, 28]``, but we can image them as one
 field functions where the pixels :math:`ij` are the coordinate
 :math:`x=i, y=j` in a :math:`[0, 27]\times[0,27]` domain, and the pixels
@@ -448,7 +385,7 @@ filter followed by a feedforward neural network
     
     net = ContinuousClassifier()
 
-Let's try to train it using a simple pytorch training loop. We train for
+Let’s try to train it using a simple pytorch training loop. We train for
 juts 1 epoch using Adam optimizer with a :math:`0.001` learning rate.
 
 .. code:: ipython3
@@ -487,7 +424,9 @@ juts 1 epoch using Adam optimizer with a :math:`0.001` learning rate.
 
 .. parsed-literal::
 
-    /u/n/ndemo/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:611: UserWarning: Can't initialize NVML
+    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/autograd/__init__.py:200: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:109.)
+      Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
       warnings.warn("Can't initialize NVML")
 
 
@@ -510,7 +449,7 @@ juts 1 epoch using Adam optimizer with a :math:`0.001` learning rate.
     batch [750/750] loss[0.040]
 
 
-Let's see the performance on the train set!
+Let’s see the performance on the train set!
 
 .. code:: ipython3
 
@@ -537,7 +476,7 @@ Let's see the performance on the train set!
 
 
 As we can see we have very good performance for having traing only for 1
-epoch! Nevertheless, we are still using structured data... Let's see how
+epoch! Nevertheless, we are still using structured data… Let’s see how
 we can build an autoencoder for unstructured data now.
 
 Building a Continuous Convolutional Autoencoder
@@ -546,7 +485,7 @@ Building a Continuous Convolutional Autoencoder
 Just as toy problem, we will now build an autoencoder for the following
 function :math:`f(x,y)=\sin(\pi x)\sin(\pi y)` on the unit circle domain
 centered in :math:`(0.5, 0.5)`. We will also see the ability to
-up-sample (once trained) the results without retraining. Let's first
+up-sample (once trained) the results without retraining. Let’s first
 create the input and visualize it, we will use firstly a mesh of
 :math:`100` points.
 
@@ -592,12 +531,12 @@ create the input and visualize it, we will use firstly a mesh of
 
 
 
-.. image:: output_32_0.png
+.. image:: tutorial_files/tutorial_32_0.png
 
 
-Let's now build a simple autoencoder using the continuous convolutional
+Let’s now build a simple autoencoder using the continuous convolutional
 filter. The data is clearly unstructured and a simple convolutional
-filter might not work without projecting or interpolating first. Let's
+filter might not work without projecting or interpolating first. Let’s
 first build and ``Encoder`` and ``Decoder`` class, and then a
 ``Autoencoder`` class that contains both.
 
@@ -658,7 +597,7 @@ first build and ``Encoder`` and ``Decoder`` class, and then a
 Very good! Notice that in the ``Decoder`` class in the ``forward`` pass
 we have used the ``.transpose()`` method of the
 ``ContinuousConvolution`` class. This method accepts the ``weights`` for
-upsampling and the ``grid`` on where to upsample. Let's now build the
+upsampling and the ``grid`` on where to upsample. Let’s now build the
 autoencoder! We set the hidden dimension in the ``hidden_dimension``
 variable. We apply the sigmoid on the output since the field value is
 between :math:`[0, 1]`.
@@ -681,59 +620,50 @@ between :math:`[0, 1]`.
             out = self.decoder(weights, grid)
             return out
     
-    
     net = Autoencoder()
 
-Let's now train the autoencoder, minimizing the mean square error loss
-and optimizing using Adam.
+Let’s now train the autoencoder, minimizing the mean square error loss
+and optimizing using Adam. We use the ``SupervisedSolver`` as solver,
+and the problem is a simple problem created by inheriting from
+``AbstractProblem``. It takes approximately two minutes to train on CPU.
 
 .. code:: ipython3
 
-    # setting the seed
-    torch.manual_seed(seed)
+    # define the problem
+    class CircleProblem(AbstractProblem):
+        input_variables = ['x', 'y', 'f']
+        output_variables = input_variables
+        conditions = {'data' : Condition(input_points=LabelTensor(input_data, input_variables), output_points=LabelTensor(input_data, output_variables))}
     
-    # optimizer and loss function
-    optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
-    criterion = torch.nn.MSELoss()
-    max_epochs = 150
+    # define the solver
+    solver = SupervisedSolver(problem=CircleProblem(), model=net, loss=torch.nn.MSELoss())          
     
-    for epoch in range(max_epochs):  # loop over the dataset multiple times
-    
-        # zero the parameter gradients
-        optimizer.zero_grad()
-    
-        # forward + backward + optimize
-        outputs = net(input_data)
-        loss = criterion(outputs[..., -1], input_data[..., -1])
-        loss.backward()
-        optimizer.step()
-    
-        # print statistics
-        if epoch % 10 ==9:
-            print(f'epoch [{epoch + 1}/{max_epochs}] loss [{loss.item():.2}]')
+    # train
+    trainer = Trainer(solver, max_epochs=150, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+    trainer.train()
+            
+
+
+.. parsed-literal::
+
+    GPU available: False, used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
 
 
 
 .. parsed-literal::
 
-    epoch [10/150] loss [0.012]
-    epoch [20/150] loss [0.0036]
-    epoch [30/150] loss [0.0018]
-    epoch [40/150] loss [0.0014]
-    epoch [50/150] loss [0.0012]
-    epoch [60/150] loss [0.001]
-    epoch [70/150] loss [0.0009]
-    epoch [80/150] loss [0.00082]
-    epoch [90/150] loss [0.00075]
-    epoch [100/150] loss [0.0007]
-    epoch [110/150] loss [0.00066]
-    epoch [120/150] loss [0.00063]
-    epoch [130/150] loss [0.00061]
-    epoch [140/150] loss [0.00059]
-    epoch [150/150] loss [0.00058]
+    Training: 0it [00:00, ?it/s]
 
 
-Let's visualize the two solutions side by side!
+.. parsed-literal::
+
+    `Trainer.fit` stopped: `max_epochs=150` reached.
+
+
+Let’s visualize the two solutions side by side!
 
 .. code:: ipython3
 
@@ -757,7 +687,7 @@ Let's visualize the two solutions side by side!
 
 
 
-.. image:: output_40_0.png
+.. image:: tutorial_files/tutorial_40_0.png
 
 
 As we can see the two are really similar! We can compute the :math:`l_2`
@@ -774,19 +704,19 @@ error quite easily as well:
 
 .. parsed-literal::
 
-    l2 error: 4.22%
+    l2 error: 4.32%
 
 
 More or less :math:`4\%` in :math:`l_2` error, which is really low
 considering the fact that we use just **one** convolutional layer and a
-simple feedforward to decrease the dimension. Let's see now some
+simple feedforward to decrease the dimension. Let’s see now some
 peculiarity of the filter.
 
 Filter for upsampling
 ~~~~~~~~~~~~~~~~~~~~~
 
 Suppose we have already the hidden dimension and we want to upsample on
-a differen grid with more points. Let's see how to do it:
+a differen grid with more points. Let’s see how to do it:
 
 .. code:: ipython3
 
@@ -820,11 +750,11 @@ a differen grid with more points. Let's see how to do it:
 
 
 
-.. image:: output_45_0.png
+.. image:: tutorial_files/tutorial_45_0.png
 
 
 As we can see we have a very good approximation of the original
-function, even thought some noise is present. Let's calculate the error
+function, even thought some noise is present. Let’s calculate the error
 now:
 
 .. code:: ipython3
@@ -834,7 +764,7 @@ now:
 
 .. parsed-literal::
 
-    l2 error: 8.37%
+    l2 error: 8.49%
 
 
 Autoencoding at different resolution
@@ -844,7 +774,7 @@ In the previous example we already had the hidden dimension (of original
 input) and we used it to upsample. Sometimes however we have a more fine
 mesh solution and we simply want to encode it. This can be done without
 retraining! This procedure can be useful in case we have many points in
-the mesh and just a smaller part of them are needed for training. Let's
+the mesh and just a smaller part of them are needed for training. Let’s
 see the results of this:
 
 .. code:: ipython3
@@ -883,18 +813,23 @@ see the results of this:
 
 
 
-.. image:: output_49_0.png
+.. image:: tutorial_files/tutorial_49_0.png
 
 
 .. parsed-literal::
 
-    l2 error: 8.50%
+    l2 error: 8.59%
 
 
-What's next?
+What’s next?
 ------------
 
-We have shown the basic usage of a convolutional filter. In the next
-tutorials we will show how to combine the PINA framework with the
-convolutional filter to train in few lines and efficiently a Neural
-Network!
+We have shown the basic usage of a convolutional filter. There are
+additional extensions possible:
+
+1. Train using Physics Informed strategies
+
+2. Use the filter to build an unstructured convolutional autoencoder for
+   reduced order modelling
+
+3. Many more…

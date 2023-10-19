@@ -1,28 +1,9 @@
-Tutorial 3: resolution of wave equation with hard constraint PINNs.
-===================================================================
-
-The problem definition
-----------------------
+Tutorial: Two dimensional Wave problem with hard constraint
+===========================================================
 
 In this tutorial we present how to solve the wave equation using hard
-constraint PINNs. For doing so we will build a costum torch model and
-pass it to the ``PINN`` solver.
-
-The problem is written in the following form:
-
-.. raw:: latex
-
-   \begin{equation}
-   \begin{cases}
-   \Delta u(x,y,t) = \frac{\partial^2}{\partial t^2} u(x,y,t) \quad \text{in } D, \\\\
-   u(x, y, t=0) = \sin(\pi x)\sin(\pi y), \\\\
-   u(x, y, t) = 0 \quad \text{on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
-   \end{cases}
-   \end{equation}
-
-where :math:`D` is a square domain :math:`[0,1]^2`, and
-:math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
-square, and the velocity in the standard wave equation is fixed to one.
+constraint PINNs. For doing so we will build a costum ``torch`` model
+and pass it to the ``PINN`` solver.
 
 First of all, some useful imports.
 
@@ -38,6 +19,23 @@ First of all, some useful imports.
     from pina.equation import Equation
     from pina.equation.equation_factory import FixedValue
     from pina import Condition, Plotter
+
+The problem definition
+----------------------
+
+The problem is written in the following form:
+
+:raw-latex:`\begin{equation}
+\begin{cases}
+\Delta u(x,y,t) = \frac{\partial^2}{\partial t^2} u(x,y,t) \quad \text{in } D, \\\\
+u(x, y, t=0) = \sin(\pi x)\sin(\pi y), \\\\
+u(x, y, t) = 0 \quad \text{on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+\end{cases}
+\end{equation}`
+
+where :math:`D` is a square domain :math:`[0,1]^2`, and
+:math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
+square, and the velocity in the standard wave equation is fixed to one.
 
 Now, the wave problem is written in PINA code as a class, inheriting
 from ``SpatialProblem`` and ``TimeDependentProblem`` since we deal with
@@ -86,8 +84,8 @@ Hard Constraint Model
 ---------------------
 
 After the problem, a **torch** model is needed to solve the PINN.
-Usually, many models are already implemented in ``PINA``, but the user
-has the possibility to build his/her own model in ``PyTorch``. The hard
+Usually, many models are already implemented in **PINA**, but the user
+has the possibility to build his/her own model in ``torch``. The hard
 constraint we impose is on the boundary of the spatial domain.
 Specifically, our solution is written as:
 
@@ -108,11 +106,11 @@ the sum of the residuals.
         def __init__(self, input_dim, output_dim):
             super().__init__()
     
-            self.layers = torch.nn.Sequential(torch.nn.Linear(input_dim, 20),
-                                              torch.nn.Tanh(),
-                                              torch.nn.Linear(20, 20),
-                                              torch.nn.Tanh(),
-                                              torch.nn.Linear(20, output_dim))
+            self.layers = torch.nn.Sequential(torch.nn.Linear(input_dim, 40),
+                                              torch.nn.ReLU(),
+                                              torch.nn.Linear(40, 40),
+                                              torch.nn.ReLU(),
+                                              torch.nn.Linear(40, output_dim))
             
         # here in the foward we implement the hard constraints
         def forward(self, x):
@@ -122,44 +120,33 @@ the sum of the residuals.
 Train and Inference
 -------------------
 
-In this tutorial, the neural network is trained for 3000 epochs with a
+In this tutorial, the neural network is trained for 1000 epochs with a
 learning rate of 0.001 (default in ``PINN``). Training takes
-approximately 1 minute.
+approximately 3 minutes.
 
 .. code:: ipython3
 
+    # generate the data
+    problem.discretise_domain(1000, 'random', locations=['D', 't0', 'gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    
+    # crete the solver
     pinn = PINN(problem, HardMLP(len(problem.input_variables), len(problem.output_variables)))
-    problem.discretise_domain(1000, 'random', locations=['D','t0', 'gamma1', 'gamma2', 'gamma3', 'gamma4'])
-    trainer = Trainer(pinn, max_epochs=3000)
+    
+    # create trainer and train
+    trainer = Trainer(pinn, max_epochs=1000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     trainer.train()
 
 
 .. parsed-literal::
 
-    /u/n/ndemo/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
+    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
       warnings.warn("Can't initialize NVML")
-    GPU available: True (cuda), used: True
+    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:651: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:109.)
+      return torch._C._cuda_getDeviceCount() if nvml_count < 0 else nvml_count
+    GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    Missing logger folder: /u/n/ndemo/PINA/tutorials/tutorial3/lightning_logs
-    2023-10-17 10:24:02.163746: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-    2023-10-17 10:24:02.218849: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-    To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-    2023-10-17 10:24:07.063047: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-    /opt/sissa/apps/intelpython/2022.0.2/intelpython/latest/lib/python3.9/site-packages/scipy/__init__.py:138: UserWarning: A NumPy version >=1.16.5 and <1.23.0 is required for this version of SciPy (detected version 1.26.0)
-      warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion} is required for this version of "
-    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-    
-      | Name        | Type    | Params
-    ----------------------------------------
-    0 | _loss       | MSELoss | 0     
-    1 | _neural_net | Network | 521   
-    ----------------------------------------
-    521       Trainable params
-    0         Non-trainable params
-    521       Total params
-    0.002     Total estimated model params size (MB)
 
 
 
@@ -170,7 +157,7 @@ approximately 1 minute.
 
 .. parsed-literal::
 
-    `Trainer.fit` stopped: `max_epochs=3000` reached.
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
 
 
 Notice that the loss on the boundaries of the spatial domain is exactly
@@ -182,23 +169,174 @@ results using the ``Plotter`` class of **PINA**.
     plotter = Plotter()
     
     # plotting at fixed time t = 0.0
+    print('Plotting at t=0')
     plotter.plot(trainer, fixed_variables={'t': 0.0})
     
     # plotting at fixed time t = 0.5
+    print('Plotting at t=0.5')
     plotter.plot(trainer, fixed_variables={'t': 0.5})
     
     # plotting at fixed time t = 1.
+    print('Plotting at t=1')
     plotter.plot(trainer, fixed_variables={'t': 1.0})
 
 
+.. parsed-literal::
 
-.. image:: output_14_0.png
-
-
-
-.. image:: output_14_1.png
+    Plotting at t=0
 
 
 
-.. image:: output_14_2.png
+.. image:: tutorial_files/tutorial_13_1.png
 
+
+.. parsed-literal::
+
+    Plotting at t=0.5
+
+
+
+.. image:: tutorial_files/tutorial_13_3.png
+
+
+.. parsed-literal::
+
+    Plotting at t=1
+
+
+
+.. image:: tutorial_files/tutorial_13_5.png
+
+
+The results are not so great, and we can clearly see that as time
+progress the solution get worse…. Can we do better?
+
+A valid option is to impose the initial condition as hard constraint as
+well. Specifically, our solution is written as:
+
+.. math::  u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)\cdot t + \cos(\sqrt{2}\pi t)sin(\pi x)\sin(\pi y), 
+
+Let us build the network first
+
+.. code:: ipython3
+
+    class HardMLPtime(torch.nn.Module):
+    
+        def __init__(self, input_dim, output_dim):
+            super().__init__()
+    
+            self.layers = torch.nn.Sequential(torch.nn.Linear(input_dim, 40),
+                                              torch.nn.ReLU(),
+                                              torch.nn.Linear(40, 40),
+                                              torch.nn.ReLU(),
+                                              torch.nn.Linear(40, output_dim))
+            
+        # here in the foward we implement the hard constraints
+        def forward(self, x):
+            hard_space = x.extract(['x'])*(1-x.extract(['x']))*x.extract(['y'])*(1-x.extract(['y']))
+            hard_t = torch.sin(torch.pi*x.extract(['x'])) * torch.sin(torch.pi*x.extract(['y'])) * torch.cos(torch.sqrt(torch.tensor(2.))*torch.pi*x.extract(['t']))
+            return hard_space * self.layers(x) * x.extract(['t']) + hard_t
+
+Now let’s train with the same configuration as thre previous test
+
+.. code:: ipython3
+
+    # generate the data
+    problem.discretise_domain(1000, 'random', locations=['D', 't0', 'gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    
+    # crete the solver
+    pinn = PINN(problem, HardMLPtime(len(problem.input_variables), len(problem.output_variables)))
+    
+    # create trainer and train
+    trainer = Trainer(pinn, max_epochs=1000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+    trainer.train()
+
+
+.. parsed-literal::
+
+    GPU available: False, used: False
+    TPU available: False, using: 0 TPU cores
+    IPU available: False, using: 0 IPUs
+    HPU available: False, using: 0 HPUs
+
+
+
+.. parsed-literal::
+
+    Training: 0it [00:00, ?it/s]
+
+
+.. parsed-literal::
+
+    `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+We can clearly see that the loss is way lower now. Let’s plot the
+results
+
+.. code:: ipython3
+
+    plotter = Plotter()
+    
+    # plotting at fixed time t = 0.0
+    print('Plotting at t=0')
+    plotter.plot(trainer, fixed_variables={'t': 0.0})
+    
+    # plotting at fixed time t = 0.5
+    print('Plotting at t=0.5')
+    plotter.plot(trainer, fixed_variables={'t': 0.5})
+    
+    # plotting at fixed time t = 1.
+    print('Plotting at t=1')
+    plotter.plot(trainer, fixed_variables={'t': 1.0})
+
+
+.. parsed-literal::
+
+    Plotting at t=0
+
+
+
+.. image:: tutorial_files/tutorial_19_1.png
+
+
+.. parsed-literal::
+
+    Plotting at t=0.5
+
+
+
+.. image:: tutorial_files/tutorial_19_3.png
+
+
+.. parsed-literal::
+
+    Plotting at t=1
+
+
+
+.. image:: tutorial_files/tutorial_19_5.png
+
+
+We can see now that the results are way better! This is due to the fact
+that previously the network was not learning correctly the initial
+conditon, leading to a poor solution when the time evolved. By imposing
+the initial condition the network is able to correctly solve the
+problem.
+
+What’s next?
+------------
+
+Nice you have completed the two dimensional Wave tutorial of **PINA**!
+There are multiple directions you can go now:
+
+1. Train the network for longer or with different layer sizes and assert
+   the finaly accuracy
+
+2. Propose new types of hard constraints in time, e.g. 
+
+   .. math::  u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)(1-\exp(-t)) + \cos(\sqrt{2}\pi t)sin(\pi x)\sin(\pi y), 
+
+3. Exploit extrafeature training for model 1 and 2
+
+4. Many more…

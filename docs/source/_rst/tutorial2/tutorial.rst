@@ -1,27 +1,13 @@
-Tutorial 2: resolution of Poisson problem and usage of extra-features
-=====================================================================
-
-The problem definition
-~~~~~~~~~~~~~~~~~~~~~~
+Tutorial: Two dimensional Poisson problem using Extra Features Learning
+=======================================================================
 
 This tutorial presents how to solve with Physics-Informed Neural
-Networks a 2D Poisson problem with Dirichlet boundary conditions. Using
-extrafeatures.
-
-The problem is written as:
-
-.. raw:: latex
-
-   \begin{equation}
-   \begin{cases}
-   \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
-   u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
-   \end{cases}
-   \end{equation}
-
-where :math:`D` is a square domain :math:`[0,1]^2`, and
-:math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
-square.
+Networks (PINNs) a 2D Poisson problem with Dirichlet boundary
+conditions. We will train with standard PINN’s training, and with
+extrafeatures. For more insights on extrafeature learning please read
+`An extended physics informed neural network for preliminary analysis of
+parametric optimal control
+problems <https://www.sciencedirect.com/science/article/abs/pii/S0898122123002018>`__.
 
 First of all, some useful imports.
 
@@ -41,9 +27,22 @@ First of all, some useful imports.
     from pina import Condition, LabelTensor
     from pina.callbacks import MetricTracker
 
-Now, the Poisson problem is written in PINA code as a class. The
+The problem definition
+----------------------
+
+The two-dimensional Poisson problem is mathematically written as:
+:raw-latex:`\begin{equation}
+\begin{cases}
+\Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
+u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+\end{cases}
+\end{equation}` where :math:`D` is a square domain :math:`[0,1]^2`, and
+:math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
+square.
+
+The Poisson problem is written in **PINA** code as a class. The
 equations are written as *conditions* that should be satisfied in the
-corresponding domains. *truth\_solution* is the exact solution which
+corresponding domains. The *truth_solution* is the exact solution which
 will be compared with the predicted one.
 
 .. code:: ipython3
@@ -58,6 +57,7 @@ will be compared with the predicted one.
             laplacian_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
             return laplacian_u - force_term
     
+        # here we write the problem conditions
         conditions = {
             'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1}), equation=FixedValue(0.)),
             'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0}), equation=FixedValue(0.)),
@@ -80,8 +80,8 @@ will be compared with the predicted one.
     problem.discretise_domain(25, 'grid', locations=['D'])
     problem.discretise_domain(25, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 
-The problem solution
-~~~~~~~~~~~~~~~~~~~~
+Solving the problem with standard PINNs
+---------------------------------------
 
 After the problem, the feed-forward neural network is defined, through
 the class ``FeedForward``. This neural network takes as input the
@@ -93,7 +93,9 @@ neural network is the sum of the residuals.
 
 In this tutorial, the neural network is composed by two hidden layers of
 10 neurons each, and it is trained for 1000 epochs with a learning rate
-of 0.006. These parameters can be modified as desired.
+of 0.006 and :math:`l_2` weight regularization set to :math:`10^{-7}`.
+These parameters can be modified as desired. We use the
+``MetricTracker`` class to track the metrics during training.
 
 .. code:: ipython3
 
@@ -105,7 +107,7 @@ of 0.006. These parameters can be modified as desired.
         input_dimensions=len(problem.input_variables)
     )
     pinn = PINN(problem, model, optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
-    trainer = Trainer(pinn, max_epochs=1000, callbacks=[MetricTracker()])
+    trainer = Trainer(pinn, max_epochs=1000, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     
     # train
     trainer.train()
@@ -113,30 +115,15 @@ of 0.006. These parameters can be modified as desired.
 
 .. parsed-literal::
 
-    /u/n/ndemo/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
+    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
       warnings.warn("Can't initialize NVML")
-    GPU available: True (cuda), used: True
+    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:651: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:109.)
+      return torch._C._cuda_getDeviceCount() if nvml_count < 0 else nvml_count
+    GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    Missing logger folder: /u/n/ndemo/PINA/tutorials/tutorial2/lightning_logs
-    2023-10-17 10:09:18.208459: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-    2023-10-17 10:09:18.235849: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-    To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-    2023-10-17 10:09:20.462393: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-    /opt/sissa/apps/intelpython/2022.0.2/intelpython/latest/lib/python3.9/site-packages/scipy/__init__.py:138: UserWarning: A NumPy version >=1.16.5 and <1.23.0 is required for this version of SciPy (detected version 1.26.0)
-      warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion} is required for this version of "
-    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-    
-      | Name        | Type    | Params
-    ----------------------------------------
-    0 | _loss       | MSELoss | 0     
-    1 | _neural_net | Network | 151   
-    ----------------------------------------
-    151       Trainable params
-    0         Non-trainable params
-    151       Total params
-    0.001     Total estimated model params size (MB)
+    Missing logger folder: /u/d/dcoscia/PINA/tutorials/tutorial2/lightning_logs
 
 
 
@@ -162,22 +149,20 @@ and the predicted solutions is showed.
 
 
 
-.. image:: output_11_0.png
+.. image:: tutorial_files/tutorial_9_0.png
 
 
-The problem solution with extra-features
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Solving the problem with extra-features PINNs
+---------------------------------------------
 
 Now, the same problem is solved in a different way. A new neural network
 is now defined, with an additional input variable, named extra-feature,
 which coincides with the forcing term in the Laplace equation. The set
 of input variables to the neural network is:
 
-.. raw:: latex
-
-   \begin{equation}
-   [x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
-   \end{equation}
+:raw-latex:`\begin{equation}
+[x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
+\end{equation}`
 
 where :math:`x` and :math:`y` are the spatial coordinates and
 :math:`k(x, y)` is the added feature.
@@ -215,7 +200,7 @@ new extra feature.
         input_dimensions=len(problem.input_variables)+1
     )
     pinn_feat = PINN(problem, model_feat, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
-    trainer_feat = Trainer(pinn_feat, max_epochs=1000, callbacks=[MetricTracker()])
+    trainer_feat = Trainer(pinn_feat, max_epochs=1000, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     
     # train
     trainer_feat.train()
@@ -223,21 +208,10 @@ new extra feature.
 
 .. parsed-literal::
 
-    GPU available: True (cuda), used: True
+    GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-    
-      | Name        | Type    | Params
-    ----------------------------------------
-    0 | _loss       | MSELoss | 0     
-    1 | _neural_net | Network | 161   
-    ----------------------------------------
-    161       Trainable params
-    0         Non-trainable params
-    161       Total params
-    0.001     Total estimated model params size (MB)
 
 
 
@@ -262,11 +236,11 @@ of magnitudes in accuracy.
 
 
 
-.. image:: output_16_0.png
+.. image:: tutorial_files/tutorial_14_0.png
 
 
-The problem solution with learnable extra-features
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Solving the problem with learnable extra-features PINNs
+-------------------------------------------------------
 
 We can still do better!
 
@@ -274,11 +248,9 @@ Another way to exploit the extra features is the addition of learnable
 parameter inside them. In this way, the added parameters are learned
 during the training phase of the neural network. In this case, we use:
 
-.. raw:: latex
-
-   \begin{equation}
-   k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
-   \end{equation}
+:raw-latex:`\begin{equation}
+k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
+\end{equation}`
 
 where :math:`\alpha` and :math:`\beta` are the abovementioned
 parameters. Their implementation is quite trivial: by using the class
@@ -310,8 +282,8 @@ need, and they are managed by ``autograd`` module!
         output_dimensions=len(problem.output_variables),
         input_dimensions=len(problem.input_variables)+1
     )
-    pinn_lean = PINN(problem, model_lean, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
-    trainer_learn = Trainer(pinn_lean, max_epochs=1000)
+    pinn_lean = PINN(problem, model_lean, extra_features=[SinSinAB()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+    trainer_learn = Trainer(pinn_lean, max_epochs=1000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     
     # train
     trainer_learn.train()
@@ -319,21 +291,10 @@ need, and they are managed by ``autograd`` module!
 
 .. parsed-literal::
 
-    GPU available: True (cuda), used: True
+    GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-    
-      | Name        | Type    | Params
-    ----------------------------------------
-    0 | _loss       | MSELoss | 0     
-    1 | _neural_net | Network | 161   
-    ----------------------------------------
-    161       Trainable params
-    0         Non-trainable params
-    161       Total params
-    0.001     Total estimated model params size (MB)
 
 
 
@@ -367,8 +328,8 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
         output_dimensions=len(problem.output_variables),
         input_dimensions=len(problem.input_variables)+1
     )
-    pinn_learn = PINN(problem, model_lean, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
-    trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()])
+    pinn_learn = PINN(problem, model_lean, extra_features=[SinSinAB()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+    trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     
     # train
     trainer_learn.train()
@@ -376,21 +337,10 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
 
 .. parsed-literal::
 
-    GPU available: True (cuda), used: True
+    GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-    
-      | Name        | Type    | Params
-    ----------------------------------------
-    0 | _loss       | MSELoss | 0     
-    1 | _neural_net | Network | 4     
-    ----------------------------------------
-    4         Trainable params
-    0         Non-trainable params
-    4         Total params
-    0.000     Total estimated model params size (MB)
 
 
 
@@ -422,5 +372,35 @@ features.
 
 
 
-.. image:: output_23_0.png
+.. image:: tutorial_files/tutorial_21_0.png
 
+
+Let us compare the training losses for the various types of training
+
+.. code:: ipython3
+
+    plotter.plot_loss(trainer, label='Standard')
+    plotter.plot_loss(trainer_feat, label='Static Features')
+    plotter.plot_loss(trainer_learn, label='Learnable Features')
+
+
+
+
+.. image:: tutorial_files/tutorial_23_0.png
+
+
+What’s next?
+------------
+
+Nice you have completed the two dimensional Poisson tutorial of
+**PINA**! There are multiple directions you can go now:
+
+1. Train the network for longer or with different layer sizes and assert
+   the finaly accuracy
+
+2. Propose new types of extrafeatures and see how they affect the
+   learning
+
+3. Exploit extrafeature training in more complex problems
+
+4. Many more…

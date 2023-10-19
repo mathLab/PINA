@@ -8,17 +8,11 @@ In this folder we collect useful tutorials in order to understand the principles
 Getting started with PINA
 -------------------------
 
-.. list-table::
-   :header-rows: 1
-
    * Introduction to PINA for Physics Informed Neural Networks training <_rst/tutorial1/tutorial.rst>
-   * Building custom geometries with PINA ``Location`` class
+   * Building custom geometries with PINA ``Location`` class <_rst/tutorial6/tutorial.rst>
 
 Physics Informed Neural Networks
 --------------------------------
-
-.. list-table::
-   :header-rows: 1
 
    * Two dimensional Poisson problem using Extra Features Learning<_rst/tutorial2/tutorial.rst>
    * Two dimensional Wave problem with hard constraint <_rst/tutorial3/tutorial.rst>
@@ -26,15 +20,9 @@ Physics Informed Neural Networks
 Neural Operator Learning
 ------------------------
 
-.. list-table::
-   :header-rows: 1
-
    * Two dimensional Darcy flow using the Fourier Neural Operator  <_rst/tutorial5/tutorial.rst>
 
 Supervised Learning
 -------------------
-
-.. list-table::
-   :header-rows: 1
 
    * Unstructured convolutional autoencoder via continuous convolution <_rst/tutorial4/tutorial.rst>

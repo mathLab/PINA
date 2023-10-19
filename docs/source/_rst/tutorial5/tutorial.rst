@@ -1,16 +1,15 @@
-Tutorial 5: Fourier Neural Operator Learning
-============================================
+Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator
+======================================================================
 
-In this tutorial we are going to solve the Darcy flow 2d problem,
-presented in `Fourier Neural Operator for Parametric Partial
+In this tutorial we are going to solve the Darcy flow problem in two
+dimensions, presented in `Fourier Neural Operator for Parametric Partial
 Differential Equation <https://openreview.net/pdf?id=c8P9NQVtmnO>`__.
 First of all we import the modules needed for the tutorial. Importing
-``scipy`` is needed for input output operation, run
-``pip install scipy`` for installing it.
+``scipy`` is needed for input output operations.
 
 .. code:: ipython3
 
-    
+    # !pip install scipy  # install scipy
     from scipy import io
     import torch
     from pina.model import FNO, FeedForward  # let's import some models
@@ -20,13 +19,6 @@ First of all we import the modules needed for the tutorial. Importing
     from pina.trainer import Trainer
     from pina.problem import AbstractProblem
     import matplotlib.pyplot as plt
-
-
-.. parsed-literal::
-
-    /opt/sissa/apps/intelpython/2022.0.2/intelpython/latest/lib/python3.9/site-packages/scipy/__init__.py:138: UserWarning: A NumPy version >=1.16.5 and <1.23.0 is required for this version of SciPy (detected version 1.26.0)
-      warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion} is required for this version of "
-
 
 Data Generation
 ---------------
@@ -51,15 +43,15 @@ taken from the authors original reference.
     # download the dataset
     data = io.loadmat("Data_Darcy.mat")
     
-    # extract data
-    k_train = torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1)
-    u_train = torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1)
+    # extract data (we use only 100 data for train)
+    k_train = torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1)[:100, ...]
+    u_train = torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1)[:100, ...]
     k_test = torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1)
     u_test= torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1)
     x = torch.tensor(data['x'], dtype=torch.float)[0]
     y = torch.tensor(data['y'], dtype=torch.float)[0]
 
-Let's visualize some data
+Let’s visualize some data
 
 .. code:: ipython3
 
@@ -73,7 +65,7 @@ Let's visualize some data
 
 
 
-.. image:: output_6_0.png
+.. image:: tutorial_files/tutorial_6_0.png
 
 
 We now create the neural operator class. It is a very simple class,
@@ -100,43 +92,24 @@ training using supervised learning.
 .. code:: ipython3
 
     # make model
-    model=FeedForward(input_dimensions=1, output_dimensions=1)
+    model = FeedForward(input_dimensions=1, output_dimensions=1)
     
     
     # make solver
     solver = SupervisedSolver(problem=problem, model=model)
     
     # make the trainer and train
-    trainer = Trainer(solver=solver, max_epochs=100)
+    trainer = Trainer(solver=solver, max_epochs=100, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     trainer.train()
 
 
 
 .. parsed-literal::
 
-    /u/n/ndemo/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:611: UserWarning: Can't initialize NVML
-      warnings.warn("Can't initialize NVML")
-    GPU available: True (cuda), used: True
+    GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    Missing logger folder: /u/n/ndemo/PINA/tutorials/tutorial5/lightning_logs
-    2023-10-17 10:41:03.316644: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-    2023-10-17 10:41:03.333768: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
-    2023-10-17 10:41:03.383188: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-    To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-    2023-10-17 10:41:07.712785: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-    
-      | Name        | Type    | Params
-    ----------------------------------------
-    0 | _loss       | MSELoss | 0     
-    1 | _neural_net | Network | 481   
-    ----------------------------------------
-    481       Trainable params
-    0         Non-trainable params
-    481       Total params
-    0.002     Total estimated model params size (MB)
 
 
 
@@ -147,12 +120,10 @@ training using supervised learning.
 
 .. parsed-literal::
 
-    /u/n/ndemo/.local/lib/python3.9/site-packages/torch/_tensor.py:1386: UserWarning: The use of `x.T` on tensors of dimension other than 2 to reverse their shape is deprecated and it will throw an error in a future release. Consider `x.mT` to transpose batches of matrices or `x.permute(*torch.arange(x.ndim - 1, -1, -1))` to reverse the dimensions of a tensor. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3614.)
-      ret = func(*args, **kwargs)
     `Trainer.fit` stopped: `max_epochs=100` reached.
 
 
-The final loss is pretty high... We can calculate the error by importing
+The final loss is pretty high… We can calculate the error by importing
 ``LpLoss``.
 
 .. code:: ipython3
@@ -172,8 +143,8 @@ The final loss is pretty high... We can calculate the error by importing
 
 .. parsed-literal::
 
-    Final error training 56.86%
-    Final error testing 56.82%
+    Final error training 56.24%
+    Final error testing 55.95%
 
 
 Solving the problem with a Fuorier Neural Operator (FNO)
@@ -199,28 +170,17 @@ operator this approach is better suited, as we shall see.
     solver = SupervisedSolver(problem=problem, model=model)
     
     # make the trainer and train
-    trainer = Trainer(solver=solver, max_epochs=20)
+    trainer = Trainer(solver=solver, max_epochs=100, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     trainer.train()
 
 
 
 .. parsed-literal::
 
-    GPU available: True (cuda), used: True
+    GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-    
-      | Name        | Type    | Params
-    ----------------------------------------
-    0 | _loss       | MSELoss | 0     
-    1 | _neural_net | Network | 591 K 
-    ----------------------------------------
-    591 K     Trainable params
-    0         Non-trainable params
-    591 K     Total params
-    2.364     Total estimated model params size (MB)
 
 
 
@@ -231,13 +191,13 @@ operator this approach is better suited, as we shall see.
 
 .. parsed-literal::
 
-    `Trainer.fit` stopped: `max_epochs=20` reached.
+    `Trainer.fit` stopped: `max_epochs=100` reached.
 
 
-We can clearly see that with 1/3 of the total epochs the loss is lower.
-Let's see in testing.. Notice that the number of parameters is way
-higher than a ``FeedForward`` network. We suggest to use GPU or TPU for
-a speed up in training.
+We can clearly see that the final loss is lower. Let’s see in testing..
+Notice that the number of parameters is way higher than a
+``FeedForward`` network. We suggest to use GPU or TPU for a speed up in
+training, when many data samples are used.
 
 .. code:: ipython3
 
@@ -250,13 +210,13 @@ a speed up in training.
 
 .. parsed-literal::
 
-    Final error training 26.19%
-    Final error testing 25.89%
+    Final error training 10.86%
+    Final error testing 12.77%
 
 
 As we can see the loss is way lower!
 
-What's next?
+What’s next?
 ------------
 
 We have made a very simple example on how to use the ``FNO`` for

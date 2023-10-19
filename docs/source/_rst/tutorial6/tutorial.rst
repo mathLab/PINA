@@ -1,8 +1,5 @@
-Tutorial 6: How to Use Geometries in PINA
-=========================================
-
-Built-in Geometries
--------------------
+Tutorial: Building custom geometries with PINA ``Location`` class
+=================================================================
 
 In this tutorial we will show how to use geometries in PINA.
 Specifically, the tutorial will include how to create geometries and how
@@ -12,7 +9,7 @@ to visualize them. The topics covered are:
 -  Getting the Union and Difference of Geometries
 -  Sampling points in the domain (and visualize them)
 
-We import the relevant modules.
+We import the relevant modules first.
 
 .. code:: ipython3
 
@@ -24,8 +21,11 @@ We import the relevant modules.
         ax.title.set_text(title)
         ax.scatter(pts.extract('x'), pts.extract('y'), color='blue', alpha=0.5)
 
+Built-in Geometries
+-------------------
+
 We will create one cartesian and two ellipsoids. For the sake of
-simplicity, we show here the 2-dimensional, but it's trivial the
+simplicity, we show here the 2-dimensional, but it’s trivial the
 extension to 3D (and higher) cases. The geometries allows also the
 generation of samples belonging to the boundary. So, we will create one
 ellipsoid with the border and one without.
@@ -109,7 +109,7 @@ We are now ready to visualize the samples using matplotlib.
 
 
 
-.. image:: output_11_0.png
+.. image:: tutorial_files/tutorial_10_0.png
 
 
 We have now created, sampled, and visualized our first geometries! We
@@ -151,7 +151,7 @@ Among the built-in shapes, we quickly show here the usage of
 
 
 
-.. image:: output_14_0.png
+.. image:: tutorial_files/tutorial_13_0.png
 
 
 Boolean Operations
@@ -161,7 +161,7 @@ To create complex shapes we can use the boolean operations, for example
 to merge two default geometries. We need to simply use the ``Union``
 class: it takes a list of geometries and returns the union of them.
 
-Let's create three unions. Firstly, it will be a union of ``cartesian``
+Let’s create three unions. Firstly, it will be a union of ``cartesian``
 and ``ellipsoid_no_border``. Next, it will be a union of
 ``ellipse_no_border`` and ``ellipse_border``. Lastly, it will be a union
 of all three geometries.
@@ -195,7 +195,7 @@ with.
 
 
 
-.. image:: output_21_0.png
+.. image:: tutorial_files/tutorial_20_0.png
 
 
 Now, we will find the differences of the geometries. We will find the
@@ -211,7 +211,7 @@ difference of ``cartesian`` and ``ellipsoid_no_border``.
 
 
 
-.. image:: output_23_0.png
+.. image:: tutorial_files/tutorial_22_0.png
 
 
 Create Custom Location
@@ -222,7 +222,7 @@ try to make is a heart defined by the function
 
 .. math:: (x^2+y^2-1)^3-x^2y^3 \le 0
 
-Let's start by importing what we will need to create our own geometry
+Let’s start by importing what we will need to create our own geometry
 based on this equation.
 
 .. code:: ipython3
@@ -244,8 +244,8 @@ Next, we will create the ``Heart(Location)`` class and initialize it.
             
 
 Because the ``Location`` class we are inherting from requires both a
-sample method and ``is_inside`` method, we will create them and just add
-in "pass" for the moment.
+``sample`` method and ``is_inside`` method, we will create them and just
+add in “pass” for the moment.
 
 .. code:: ipython3
 
@@ -262,7 +262,7 @@ in "pass" for the moment.
             pass
 
 Now we have the skeleton for our ``Heart`` class. The ``is_inside``
-method is where most of the work is done so let's fill it out.
+method is where most of the work is done so let’s fill it out.
 
 .. code:: ipython3
 
@@ -304,5 +304,5 @@ To sample from the Heart geometry we simply run:
 
 
 
-.. image:: output_37_0.png
+.. image:: tutorial_files/tutorial_36_0.png
 
