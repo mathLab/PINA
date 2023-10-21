@@ -1,8 +1,8 @@
 Location
 =========
-.. currentmodule:: pina.location
+.. currentmodule:: pina.geometry.location
 
-.. automodule:: pina.location
+.. automodule:: pina.geometry.location
 
 .. autoclass:: Location
     :members:

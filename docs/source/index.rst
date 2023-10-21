@@ -46,7 +46,7 @@ solve problems in a continuous and nonlinear settings.
 Neural operator learning
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Neural Operators <https://www.jmlr.org/papers/v24/21-1524.html>`_` is a novel approach involving neural networks
+`Neural Operators <https://www.jmlr.org/papers/v24/21-1524.html>`_ is a novel approach involving neural networks
 to learn differential operators using supervised learning strategies. By learning the differential operator, the
 neural network is able to generalize across different instances of the differential equations (e.g. different forcing
 terms), without the need of re-training. 
@@ -57,9 +57,9 @@ terms), without the need of re-training.
    :maxdepth: 2
    :caption: Package Documentation:
 
-   API <_rst/code>
-   Contributing <_rst/contributing>
-   License <LICENSE.rst>
+   API <_rst/_code>
+   Contributing <_rst/_contributing>
+   License <_LICENSE.rst>
 
 .. the following is demo content intended to showcase some of the features you can invoke in reStructuredText
 .. this can be safely deleted or commented out
@@ -70,15 +70,5 @@ terms), without the need of re-training.
     :numbered:
     :caption: Getting Started:
 
-    Tutorials <_rst/tutorials>
-
-.. ........................................................................................
-
-.. toctree::
-    :maxdepth: 2
-    :numbered:
-    :caption: Download
-
-    Installation <_rst/installation>
-
-.. ........................................................................................
+    Installation <_rst/_installation>
+    Tutorials <_rst/_tutorials>

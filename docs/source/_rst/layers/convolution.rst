@@ -1,10 +1,10 @@
-ContinuousConv
-==============
+ContinuousConvBlock
+===================
 .. currentmodule:: pina.model.layers.convolution_2d
 
 .. automodule:: pina.model.layers.convolution_2d
 
-.. autoclass:: ContinuousConv
+.. autoclass:: ContinuousConvBlock
     :members:
     :private-members:
     :undoc-members:
