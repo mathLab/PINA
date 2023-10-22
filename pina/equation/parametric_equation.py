@@ -19,26 +19,17 @@ class ParametricEquation(EquationInterface):
                              f'{equation}')
         self.__equation = equation
 
-    def residual(self, input_, output_, infer_):
+    def residual(self, input_, output_, params_):
         """
         Residual computation of the equation.
 
         :param LabelTensor input_: Input points to evaluate the equation.
-        :param LabelTensor output_: Output vectors given my a model (e.g,
+        :param LabelTensor output_: Output vectors given by a model (e.g,
             a ``FeedForward`` model).
+        :param LabelTensor params_: Parameters of the InverseProblem
+            that are learned during tre training process by the model.
         :return: The residual evaluation of the specified equation.
         :rtype: LabelTensor
         """
-        return self.__equation(input_, output_, infer_)
+        return self.__equation(input_, output_, params_)
 
-#    def parametric_residual(self, input_, output_, infer_):
-#        """
-#        Residual computation of the equation.
-#
-#        :param LabelTensor input_: Input points to evaluate the equation.
-#        :param LabelTensor output_: Output vectors given my a model (e.g,
-#            a ``FeedForward`` model).
-#        :return: The residual evaluation of the specified equation.
-#        :rtype: LabelTensor
-#        """
-#        return self.__equation(input_, output_, infer_)

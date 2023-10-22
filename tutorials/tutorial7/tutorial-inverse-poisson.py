@@ -27,18 +27,19 @@ class Poisson(SpatialProblem, InverseProblem):
     output_variables = ['u']
     spatial_domain = CartesianDomain({'x': [x_min, x_max], 'y': [y_min, y_max]})
     # initialize the parameters to be evaluated as torch Parameters
-    inferred_parameters = torch.nn.Parameter(torch.rand(2,
-        requires_grad=True))
+#    unknown_parameters = torch.nn.Parameter(torch.rand(2,
+#        requires_grad=True))
     # define the ranges for the parameters
-    inferred_domain = CartesianDomain({'mu1': [-1, 1], 'mu2': [-1, 1]})
+    unknown_parameters_domain = CartesianDomain({'mu1': [-1, 1], 'mu2': [-1, 1]})
 
-    def laplace_equation(input_, output_, inferred_parameters):
+    def laplace_equation(input_, output_, unknown_variables):
         '''
         Laplace equation with a force term
         '''
+        print('sono in laplace equation', unknown_variables)
         force_term = torch.exp(
-                - 2*(input_.extract(['x']) - inferred_parameters[0])**2
-                - 2*(input_.extract(['y']) - inferred_parameters[1])**2)
+                - 2*(input_.extract(['x']) - unknown_variables[0])**2
+                - 2*(input_.extract(['y']) - unknown_variables[1])**2)
         delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
         return delta_u - force_term
 
@@ -94,10 +95,9 @@ if __name__ == '__main__':
             def on_train_epoch_end(self, trainer, __):
                 if trainer.current_epoch % 100 == 99:
                     pl = Plotter()
-                    pl.plot(pinn, levels=120, cmap='jet', filename=f'img/epoch_{trainer.current_epoch}.pdf')
+                    pl.plot(trainer, levels=120, cmap='jet', filename=f'epoch_{trainer.current_epoch}.pdf')
                     # save the torch parameters every 100 epochs
-                    torch.save(pinn.problem.inferred_parameters, f'img/epoch_{trainer.current_epoch}')
-
+                    torch.save(pinn.problem.unknown_parameters, f'epoch_{trainer.current_epoch}')
 
         pinn = PINN(problem, model, optimizer_kwargs={'lr':0.01})
         # define the trainer for the solver

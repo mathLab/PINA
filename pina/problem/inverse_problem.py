@@ -6,59 +6,65 @@ from .abstract_problem import AbstractProblem
 
 class InverseProblem(AbstractProblem):
     """
-    The class for the definition of parametric problems, i.e., problems
-    with parameters among the input variables.
+    The class for the definition of inverse problems, i.e., problems
+    with unknown parameters that have to be learned during the training process
+    from given data.
 
-    Here's an example of a spatial parametric ODE problem, i.e., a spatial
-    ODE problem with an additional parameter `alpha` as coefficient of the
+    Here's an example of a spatial inverse ODE problem, i.e., a spatial
+    ODE problem with an unknown parameter `alpha` as coefficient of the
     derivative term.
 
     :Example:
-        >>> from pina.problem import SpatialProblem, ParametricProblem
+        >>> from pina.problem import SpatialProblem, InverseProblem
         >>> from pina.operators import grad
-        >>> from pina import Condition, Span
+        >>> from pina.equation import ParametricEquation, FixedValue
+        >>> from pina import Condition, CartesianDomain
         >>> import torch
         >>>
-        >>> class ParametricODE(SpatialProblem, ParametricProblem):
+        >>> class InverseODE(SpatialProblem, InverseProblem):
         >>>
         >>>     output_variables = ['u']
-        >>>     spatial_domain = Span({'x': [0, 1]})
-        >>>     parameter_domain = Span({'alpha': [1, 10]})
+        >>>     spatial_domain = CartesianDomain({'x': [0, 1]})
+        >>>     unknown_parameters_domain = CartesianDomain({'alpha': [1, 10]})
         >>>
-        >>>     def ode_equation(input_, output_):
+        >>>     def ode_equation(input_, output_, params_):
         >>>         u_x = grad(output_, input_, components=['u'], d=['x'])
         >>>         u = output_.extract(['u'])
-        >>>         alpha = input_.extract(['alpha'])
-        >>>         return alpha * u_x - u
+        >>>         return params_[0] * u_x - u
         >>>
-        >>>     def initial_condition(input_, output_):
-        >>>         value = 1.0
-        >>>         u = output_.extract(['u'])
-        >>>         return u - value
+        >>>     def solution_data(input_, output_):
+        >>>         x = input_.extract(['x'])
+        >>>         solution = torch.exp(x)
+        >>>         return output_ - solution
         >>>
         >>>     conditions = {
-        >>>         'x0': Condition(Span({'x': 0, 'alpha':[1, 10]}), initial_condition),
-        >>>         'D': Condition(Span({'x': [0, 1], 'alpha':[1, 10]}), ode_equation)}
+        >>>         'x0': Condition(location=CartesianDomain({'x': 0}), equation=FixedValue(1.0, components=['u'])),
+        >>>         'D': Condition(location=CartesianDomain({'x': [0, 1]}), equation=ParametricEquation(ode_equation)),
+        >>>         'data': Condition(location=CartesianDomain({'x': [0, 1]}), equation=Equation(solution_data))
     """
 
     @abstractmethod
-    def inferred_domain(self):
+    def unknown_parameters_domain(self):
         """
         The parameters' domain of the problem.
         """
         pass
 
     @property
-    def inferred_variables(self):
-        """
-        The parameters' variables of the problem.
-        """
-        return self.inferred_domain.variables
-
-    @property
-    def inferred_parameters(self):
+    def unknown_variables(self):
         """
         The parameters of the problem.
         """
-        pass
+        return self.unknown_parameters_domain.variables
+
+    @property
+    def unknown_parameters(self):
+        """
+        The parameters of the problem.
+        """
+        return self.__unknown_parameters
+
+    @unknown_parameters.setter
+    def unknown_parameters(self, value):
+        self.__unknown_parameters = value
 

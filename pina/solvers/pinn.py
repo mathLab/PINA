@@ -96,11 +96,11 @@ class PINN(SolverInterface):
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
         """
-        # add the inferred parameters to the parameters that the optimizer
-        # will optimize
+        # if the problem is an InverseProblem, add the unknown parameters
+        # to the parameters that the optimizer needs to optimize
         if isinstance(self.problem, InverseProblem):
             self.optimizers[0].add_param_group(
-                {'params': self.problem.inferred_parameters}
+                {'params': self.problem.unknown_parameters}
                 )
         return self.optimizers, [self.scheduler]
 
@@ -150,15 +150,12 @@ class PINN(SolverInterface):
             loss = loss.as_subclass(torch.Tensor)
 
 #            # add condition losses and accumulate logging for each epoch
-#=======
-#
 #            # PINN loss: equation evaluated on location or input_points
 #            if hasattr(condition, 'equation'):
 #                if isinstance(condition.equation, ParametricEquation):
-#                    print('inferred_params', self.problem.inferred_parameters)
 #                    target = condition.equation.residual(samples,
 #                            self.forward(samples),
-#                            self.problem.inferred_parameters)
+#                            self.problem.unknown_parameters)
 #                else:
 #                    target = condition.equation.residual(samples,
 #                        self.forward(samples))
@@ -167,19 +164,17 @@ class PINN(SolverInterface):
 #            elif hasattr(condition, 'output_points'):
 #                input_pts, output_pts = samples
 #                loss = self.loss(self.forward(input_pts), output_pts)
-#
-#>>>>>>> inverse problem implementation
+
             condition_losses.append(loss * condition.data_weight)
             self.log(condition_name + '_loss', float(loss),
                      prog_bar=True, logger=True, on_epoch=True, on_step=False)
 
-        # add to tot loss and accumulate logging for each epoch
-#        # clamp inferred parameters to their domain
-#        if isinstance(self.problem, InverseProblem):
-#            for i, p in enumerate(self.problem.inferred_variables):
-#                self.problem.inferred_parameters[i].data.clamp_(
-#                        self.problem.inferred_domain.range_[p][0],
-#                        self.problem.inferred_domain.range_[p][1])
+        # clamp unknwon parameters of the InverseProblem to their domain ranges
+        if isinstance(self.problem, InverseProblem):
+            for i, p in enumerate(self.problem.unknown_variables):
+                self.problem.unknown_parameters[i].data.clamp_(
+                        self.problem.unknown_parameters_domain.range_[p][0],
+                        self.problem.unknown_parameters_domain.range_[p][1])
 
         # TODO Fix the bug, tot_loss is a label tensor without labels
         # we need to pass it as a torch tensor to make everything work
