@@ -14,7 +14,7 @@ class TimeDependentProblem(AbstractProblem):
     :Example:
         >>> from pina.problem import SpatialProblem, TimeDependentProblem
         >>> from pina.operators import grad, laplacian
-        >>> from pina.equations import Equation, FixedValue
+        >>> from pina.equation import Equation, FixedValue
         >>> from pina import Condition
         >>> from pina.geometry import CartesianDomain
         >>> import torch
@@ -43,7 +43,6 @@ class TimeDependentProblem(AbstractProblem):
         >>>         'gamma1': Condition(CartesianDomain({'x':0, 't':[0, 1]}), FixedValue(0.)),
         >>>         'gamma2': Condition(CartesianDomain({'x':3, 't':[0, 1]}), FixedValue(0.)),
         >>>         'D': Condition(CartesianDomain({'x': [0, 3], 't':[0, 1]}), Equation(wave_equation))}
-
     """
 
     @abstractmethod

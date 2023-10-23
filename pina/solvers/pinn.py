@@ -169,12 +169,12 @@ class PINN(SolverInterface):
             self.log(condition_name + '_loss', float(loss),
                      prog_bar=True, logger=True, on_epoch=True, on_step=False)
 
-        # clamp unknwon parameters of the InverseProblem to their domain ranges
+        # clamp unknown parameters of the InverseProblem to their domain ranges
         if isinstance(self.problem, InverseProblem):
-            for i, p in enumerate(self.problem.unknown_variables):
-                self.problem.unknown_parameters[i].data.clamp_(
-                        self.problem.unknown_parameters_domain.range_[p][0],
-                        self.problem.unknown_parameters_domain.range_[p][1])
+            for v in self.problem.unknown_variables:
+                self.problem.unknown_parameters.extract([v]).data.clamp_(
+                        self.problem.unknown_parameter_domain.range_[v][0],
+                        self.problem.unknown_parameter_domain.range_[v][1])
 
         # TODO Fix the bug, tot_loss is a label tensor without labels
         # we need to pass it as a torch tensor to make everything work

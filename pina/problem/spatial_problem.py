@@ -14,7 +14,7 @@ class SpatialProblem(AbstractProblem):
     :Example:
         >>> from pina.problem import SpatialProblem
         >>> from pina.operators import grad
-        >>> from pina.equations import Equation, FixedValue
+        >>> from pina.equation import Equation, FixedValue
         >>> from pina import Condition
         >>> from pina.geometry import CartesianDomain
         >>> import torch
@@ -33,7 +33,6 @@ class SpatialProblem(AbstractProblem):
         >>>     conditions = {
         >>>         'x0': Condition(CartesianDomain({'x': 0, 'alpha':[1, 10]}), FixedValue(1.)),
         >>>         'D': Condition(CartesianDomain({'x': [0, 1], 'alpha':[1, 10]}), Equation(ode_equation))}
-
     """
 
     @abstractmethod

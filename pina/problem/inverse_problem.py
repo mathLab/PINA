@@ -18,19 +18,20 @@ class InverseProblem(AbstractProblem):
         >>> from pina.problem import SpatialProblem, InverseProblem
         >>> from pina.operators import grad
         >>> from pina.equation import ParametricEquation, FixedValue
-        >>> from pina import Condition, CartesianDomain
+        >>> from pina import Condition
+        >>> from pina.geometry import CartesianDomain
         >>> import torch
         >>>
         >>> class InverseODE(SpatialProblem, InverseProblem):
         >>>
         >>>     output_variables = ['u']
         >>>     spatial_domain = CartesianDomain({'x': [0, 1]})
-        >>>     unknown_parameters_domain = CartesianDomain({'alpha': [1, 10]})
+        >>>     unknown_parameter_domain = CartesianDomain({'alpha': [1, 10]})
         >>>
         >>>     def ode_equation(input_, output_, params_):
         >>>         u_x = grad(output_, input_, components=['u'], d=['x'])
         >>>         u = output_.extract(['u'])
-        >>>         return params_[0] * u_x - u
+        >>>         return params_.extract(['alpha']) * u_x - u
         >>>
         >>>     def solution_data(input_, output_):
         >>>         x = input_.extract(['x'])
@@ -38,13 +39,13 @@ class InverseProblem(AbstractProblem):
         >>>         return output_ - solution
         >>>
         >>>     conditions = {
-        >>>         'x0': Condition(location=CartesianDomain({'x': 0}), equation=FixedValue(1.0, components=['u'])),
+        >>>         'x0': Condition(location=CartesianDomain({'x': 0}), equation=FixedValue(1.0)),
         >>>         'D': Condition(location=CartesianDomain({'x': [0, 1]}), equation=ParametricEquation(ode_equation)),
         >>>         'data': Condition(location=CartesianDomain({'x': [0, 1]}), equation=Equation(solution_data))
     """
 
     @abstractmethod
-    def unknown_parameters_domain(self):
+    def unknown_parameter_domain(self):
         """
         The parameters' domain of the problem.
         """
@@ -55,7 +56,7 @@ class InverseProblem(AbstractProblem):
         """
         The parameters of the problem.
         """
-        return self.unknown_parameters_domain.variables
+        return self.unknown_parameter_domain.variables
 
     @property
     def unknown_parameters(self):
