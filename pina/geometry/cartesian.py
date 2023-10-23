@@ -51,13 +51,13 @@ class CartesianDomain(Location):
         """Adding new dimensions on the span
 
         :param new_span: A new span object to merge
-        :type new_span: Span
+        :type new_span: CartesianDomain
 
         :Example:
-            >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+            >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
             >>> spatial_domain.variables
             ['x', 'y']
-            >>> spatial_domain_2 = Span({'z': [3, 4], 'w': [0, 1]})
+            >>> spatial_domain_2 = CartesianDomain({'z': [3, 4], 'w': [0, 1]})
             >>> spatial_domain.update(spatial_domain_2)
             >>> spatial_domain.variables
             ['x', 'y', 'z', 'w']
@@ -83,7 +83,7 @@ class CartesianDomain(Location):
         """
         dim = bounds.shape[0]
         if mode in ['chebyshev', 'grid'] and dim != 1:
-            raise RuntimeError('Something wrong in Span...')
+            raise RuntimeError('Something wrong in CartesianDomain...')
 
         if mode == 'random':
             pts = torch.rand(size=(n, dim))
@@ -124,10 +124,10 @@ class CartesianDomain(Location):
             are sampled all together, and the final number of points
 
         .. warning::
-            The extrema values of Span are always sampled only for 'grid' mode.
+            The extrema values of CartesianDomain are always sampled only for 'grid' mode.
 
         :Example:
-            >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+            >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
             >>> spatial_domain.sample(n=4, mode='random')
                 tensor([[0.0108, 0.7643],
                         [0.4477, 0.8015],
