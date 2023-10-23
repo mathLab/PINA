@@ -2,22 +2,31 @@ import torch
 
 from .location import Location
 from ..label_tensor import LabelTensor
-from ..utils import torch_lhs, chebyshev_roots
+from ..utils import torch_lhs, chebyshev_roots, check_consistency
 
 
 class CartesianDomain(Location):
     """PINA implementation of Hypercube domain."""
 
-    def __init__(self, span_dict):
+    def __init__(self, span_dict, sample_surface=False):
         """
         :param span_dict: A dictionary with dict-key a string representing
             the input variables for the pinn, and dict-value a list with
             the domain extrema.
         :type span_dict: dict
+        :param sample_surface: A variable for choosing sample strategies. If
+            `sample_surface=True` only samples on the Cartesian surface
+            frontier are taken. If `sample_surface=False`, no such criteria
+            is followed.
+        :type sample_surface: bool
 
         :Example:
             >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
         """
+        # check consistency of sample_surface as bool
+        check_consistency(sample_surface, bool)
+        self._sample_surface = sample_surface
+
         self.fixed_ = {}
         self.range_ = {}
 
