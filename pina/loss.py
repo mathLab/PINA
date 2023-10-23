@@ -6,7 +6,7 @@ from torch.nn.modules.loss import _Loss
 import torch
 from .utils import check_consistency
 
-__all__ = ['LpLoss']
+__all__ = ['LossInterface', 'LpLoss', 'PowerLoss']
 
 class LossInterface(_Loss, metaclass=ABCMeta):
     """

@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.viewcode',
     #'sphinx.ext.ifconfig',
     'sphinx.ext.mathjax',
+    'sphinx.ext.autosectionlabel',
 ]
 #autosummary_generate = True
 
