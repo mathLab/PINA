@@ -152,7 +152,7 @@ class CartesianDomain(Location):
                         [1.0000, 1.0000]])
         """
         def _1d_sampler(n, mode, variables):
-            """ Sample independentely the variables and cross the results"""
+            """ Sample independently the variables and cross the results"""
             tmp = []
             for variable in variables:
                 if variable in self.range_.keys():
