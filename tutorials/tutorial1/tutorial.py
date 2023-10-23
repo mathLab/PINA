@@ -1,22 +1,25 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial 1: Physics Informed Neural Networks on PINA
+# # Tutorial: Physics Informed Neural Networks on PINA
 
-# In this tutorial, we will demonstrate a typical use case of PINA on a toy problem. Specifically, the tutorial aims to introduce the following topics:
+# In this tutorial, we will demonstrate a typical use case of **PINA** on a toy problem, following the standard API procedure. 
 # 
-# * Defining a PINA Problem,
-# * Building a `pinn` object,
-# * Sampling points in a domain
+# <p align="center">
+#     <img src="../../readme/API_color.png" alt="PINA API" width="400"/>
+# </p>
 # 
-# These are the three main steps needed **before** training a Physics Informed Neural Network (PINN). We will show each step in detail, and at the end, we will solve the problem.
+# Specifically, the tutorial aims to introduce the following topics:
+# 
+# * Explaining how to build **PINA** Problem,
+# * Showing how to generate data for `PINN` straining
+# 
+# These are the two main steps needed **before** starting the modelling optimization (choose model and solver, and train). We will show each step in detail, and at the end, we will solve a simple Ordinary Differential Equation (ODE) problem busing the `PINN` solver.
 
-# ## PINA Problem
+# ## Build a PINA problem
 
-# ### Initialize the `Problem` class
-
-# Problem definition in the PINA framework is done by building a python `class`, which inherits from one or more problem classes (`SpatialProblem`, `TimeDependentProblem`, `ParametricProblem`) depending on the nature of the problem. Below is an example:
-# #### Simple Ordinary Differential Equation
+# Problem definition in the **PINA** framework is done by building a python `class`, which inherits from one or more problem classes (`SpatialProblem`, `TimeDependentProblem`, `ParametricProblem`, ...) depending on the nature of the problem. Below is an example:
+# ### Simple Ordinary Differential Equation
 # Consider the following:
 # 
 # $$
@@ -42,8 +45,8 @@
 #     # other stuff ...
 # ```
 # 
-# Notice that we define `output_variables` as a list of symbols, indicating the output variables of our equation (in this case only $u$). The `spatial_domain` variable indicates where the sample points are going to be sampled in the domain, in this case $x\in[0,1]$.
-
+# Notice that we define `output_variables` as a list of symbols, indicating the output variables of our equation (in this case only $u$), this is done because in **PINA** the `torch.Tensor`s are labelled, allowing the user maximal flexibility for the manipulation of the tensor. The `spatial_domain` variable indicates where the sample points are going to be sampled in the domain, in this case $x\in[0,1]$.
+# 
 # What about if our equation is also time dependent? In this case, our `class` will inherit from both `SpatialProblem` and `TimeDependentProblem`:
 # 
 
@@ -64,22 +67,24 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 
 # where we have included the `temporal_domain` variable, indicating the time domain wanted for the solution.
 # 
-# In summary, using PINA, we can initialize a problem with a class which inherits from three base classes: `SpatialProblem`, `TimeDependentProblem`, `ParametricProblem`, depending on the type of problem we are considering. For reference:
+# In summary, using **PINA**, we can initialize a problem with a class which inherits from different base classes: `SpatialProblem`, `TimeDependentProblem`, `ParametricProblem`, and so on depending on the type of problem we are considering. Here are some examples (more on the official documentation):
 # * `SpatialProblem` $\rightarrow$ a differential equation with spatial variable(s)
 # * `TimeDependentProblem` $\rightarrow$ a time-dependent differential equation
 # * `ParametricProblem` $\rightarrow$ a parametrized differential equation
+# * `AbstractProblem` $\rightarrow$ any **PINA** problem inherits from here
 
-# ### Write the `Problem` class
+# ### Write the problem class
 # 
-# Once the `Problem` class is initialized, we need to represent the differential equation in PINA. In order to do this, we need to load the PINA operators from `pina.operators` module. Again, we'll consider Equation (1) and represent it in PINA:
+# Once the `Problem` class is initialized, we need to represent the differential equation in **PINA**. In order to do this, we need to load the **PINA** operators from `pina.operators` module. Again, we'll consider Equation (1) and represent it in **PINA**:
 
 # In[2]:
 
 
 from pina.problem import SpatialProblem
 from pina.operators import grad
-from pina import Condition, CartesianDomain
-from pina.equation.equation import Equation
+from pina import Condition
+from pina.geometry import CartesianDomain
+from pina.equation import Equation, FixedValue
 
 import torch
 
@@ -101,22 +106,10 @@ class SimpleODE(SpatialProblem):
         # calculate the residual and return it
         return u_x - u
 
-    # defining the initial condition
-    def initial_condition(input_, output_):
-        
-        # setting the initial value
-        value = 1.0
-
-        # extracting the u input variable
-        u = output_.extract(['u'])
-
-        # calculate the residual and return it
-        return u - value
-
     # conditions to hold
     conditions = {
-        'x0': Condition(location=CartesianDomain({'x': 0.}), equation=Equation(initial_condition)),
-        'D': Condition(location=CartesianDomain({'x': [0, 1]}), equation=Equation(ode_equation)),
+        'x0': Condition(location=CartesianDomain({'x': 0.}), equation=FixedValue(1)),             # We fix initial condition to value 1
+        'D': Condition(location=CartesianDomain({'x': [0, 1]}), equation=Equation(ode_equation)), # We wrap the python equation using Equation
     }
 
     # sampled points (see below)
@@ -125,27 +118,76 @@ class SimpleODE(SpatialProblem):
     # defining the true solution
     def truth_solution(self, pts):
         return torch.exp(pts.extract(['x']))
+    
+problem = SimpleODE()
 
 
-# After we define the `Problem` class, we need to write different class methods, where each method is a function returning a residual. These functions are the ones minimized during PINN optimization, given the initial conditions. For example, in the domain $[0,1]$, the ODE equation (`ode_equation`) must be satisfied. We represent this by returning the difference between subtracting the variable `u` from its gradient (the residual), which we hope to minimize to 0. This is done for all conditions (`ode_equation`, `initial_condition`). 
+# After we define the `Problem` class, we need to write different class methods, where each method is a function returning a residual. These functions are the ones minimized during PINN optimization, given the initial conditions. For example, in the domain $[0,1]$, the ODE equation (`ode_equation`) must be satisfied. We represent this by returning the difference between subtracting the variable `u` from its gradient (the residual), which we hope to minimize to 0. This is done for all conditions. Notice that we do not pass directly a `python` function, but an `Equation` object, which is initialized with the `python` function. This is done so that all the computations, and internal checks are done inside **PINA**.
 # 
-# Once we have defined the function, we need to tell the neural network where these methods are to be applied. To do so, we use the `Condition` class. In the `Condition` class, we pass the location points and the function we want minimized on those points (other possibilities are allowed, see the documentation for reference) as parameters.
+# Once we have defined the function, we need to tell the neural network where these methods are to be applied. To do so, we use the `Condition` class. In the `Condition` class, we pass the location points and the equation we want minimized on those points (other possibilities are allowed, see the documentation for reference).
 # 
 # Finally, it's possible to define a `truth_solution` function, which can be useful if we want to plot the results and see how the real solution compares to the expected (true) solution. Notice that the `truth_solution` function is a method of the `PINN` class, but is not mandatory for problem definition.
 # 
 
-# ## Build the `PINN` object
-
-# The basic requirements for building a `PINN` model are a `Problem` and a model. We have just covered the `Problem` definition. For the model parameter, one can use either the default models provided in PINA or a custom model. We will not go into the details of model definition (see Tutorial2 and Tutorial3 for more details on model definition).
+# ## Generate data 
+# 
+# Data for training can come in form of direct numerical simulation reusults, or points in the domains. In case we do unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in **PINA** is very easy, here we show three examples using the `.discretise_domain` method of the `AbstractProblem` class.
 
 # In[3]:
 
 
-from pina.model import FeedForward
-from pina import PINN
+# sampling 20 points in [0, 1] through discretization in all locations
+problem.discretise_domain(n=20, mode='grid', variables=['x'], locations='all')
 
-# initialize the problem
-problem = SimpleODE()
+# sampling 20 points in (0, 1) through latin hypercube samping in D, and 1 point in x0
+problem.discretise_domain(n=20, mode='latin', variables=['x'], locations=['D'])
+problem.discretise_domain(n=1, mode='random', variables=['x'], locations=['x0'])
+
+# sampling 20 points in (0, 1) randomly
+problem.discretise_domain(n=20, mode='random', variables=['x'])
+
+
+# We are going to use latin hypercube points for sampling. We need to sample in all the conditions domains. In our case we sample in `D` and `x0`.
+
+# In[4]:
+
+
+# sampling for training
+problem.discretise_domain(1, 'random', locations=['x0'])
+problem.discretise_domain(20, 'lh', locations=['D'])
+
+
+# The points are saved in a python `dict`, and can be accessed by calling the attribute `input_pts` of the problem 
+
+# In[5]:
+
+
+print('Input points:', problem.input_pts)
+print('Input points labels:', problem.input_pts['D'].labels)
+
+
+# To visualize the sampled points we can use the `.plot_samples` method of the `Plotter` class
+
+# In[6]:
+
+
+from pina import Plotter
+
+pl = Plotter()
+pl.plot_samples(problem=problem)
+
+
+# ## Perform a small training
+
+# Once we have defined the problem and generated the data we can start the modelling. Here we will choose a `FeedForward` neural network available in `pina.model`, and we will train using the `PINN` solver from `pina.solvers`. We highlight that this training is fairly simple, for more advanced stuff consider the tutorials in the ***Physics Informed Neural Networks*** section of ***Tutorials***. For training we use the `Trainer` class from `pina.trainer`. Here we show a very short training and some method for plotting the results. Notice that by default all relevant metrics (e.g. MSE error during training) are going to be tracked using a `lightining` logger, by default `CSVLogger`. If you want to track the metric by yourself without a logger, use `pina.callbacks.MetricTracker`.
+
+# In[7]:
+
+
+from pina import PINN, Trainer
+from pina.model import FeedForward
+from pina.callbacks import MetricTracker
+
 
 # build the model
 model = FeedForward(
@@ -158,38 +200,49 @@ model = FeedForward(
 # create the PINN object
 pinn = PINN(problem, model)
 
+# create the trainer
+trainer = Trainer(solver=pinn, max_epochs=1500, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 
-# Creating the `PINN` object is fairly simple. Different optional parameters include: optimizer, batch size, ... (see [documentation](https://mathlab.github.io/PINA/) for reference).
-
-# ## Sample points in the domain 
-
-# Once the `PINN` object is created, we need to generate the points for starting the optimization. To do so, we use the `sample` method of the `CartesianDomain` class. Below are three examples of sampling methods on the $[0,1]$ domain:
-
-# In[4]:
-
-
-# sampling 20 points in [0, 1] through discretization
-pinn.problem.discretise_domain(n=20, mode='grid', variables=['x'])
-
-# sampling 20 points in (0, 1) through latin hypercube samping
-pinn.problem.discretise_domain(n=20, mode='latin', variables=['x'])
-
-# sampling 20 points in (0, 1) randomly
-pinn.problem.discretise_domain(n=20, mode='random', variables=['x'])
-
-
-# ### Very simple training and plotting
-# 
-# Once we have defined the PINA model, created a network, and sampled points in the domain, we have everything necessary for training a PINN. To do so, we make use of the `Trainer` class.
-
-# In[5]:
-
-
-from pina import Trainer
-
-# initialize trainer
-trainer = Trainer(pinn)
-
-# train the model
+# train
 trainer.train()
 
+
+# After the training we can inspect trainer logged metrics (by default **PINA** logs mean square error residual loss). The logged metrics can be accessed online using one of the `Lightinig` loggers. The final loss can be accessed by `trainer.logged_metrics`
+
+# In[8]:
+
+
+# inspecting final loss
+trainer.logged_metrics
+
+
+# By using the `Plotter` class from **PINA** we can also do some quatitative plots of the solution. 
+
+# In[9]:
+
+
+# plotting the solution
+pl.plot(trainer=trainer)
+
+
+# The solution is overlapped with the actual one, and they are barely indistinguishable. We can also plot easily the loss:
+
+# In[10]:
+
+
+pl.plot_loss(trainer=trainer, metric='mean_loss', log_scale=True)
+
+
+# As we can see the loss has not reached a minimum, suggesting that we could train for longer
+
+# ## What's next?
+# 
+# Nice you have completed the introductory tutorial of **PINA**! There are multiple directions you can go now:
+# 
+# 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
+# 
+# 2. Train the network using other types of models (see `pina.model`)
+# 
+# 3. GPU trainining and benchmark the speed
+# 
+# 4. Many more...

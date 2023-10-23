@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial 5: Fourier Neural Operator Learning
+# # Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator
 
-# In this tutorial we are going to solve the Darcy flow 2d problem, presented in [Fourier Neural Operator for
-# Parametric Partial Differential Equation](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input output operation, run `pip install scipy` for installing it.
+# In this tutorial we are going to solve the Darcy flow problem in two dimensions, presented in [*Fourier Neural Operator for
+# Parametric Partial Differential Equation*](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input output operations.
 
 # In[1]:
 
 
+# !pip install scipy  # install scipy
 from scipy import io
 import torch
 from pina.model import FNO, FeedForward  # let's import some models
@@ -31,15 +32,15 @@ import matplotlib.pyplot as plt
 # Specifically, $u$ is the flow pressure, $k$ is the permeability field and $f$ is the forcing function. The Darcy flow can parameterize a variety of systems including flow through porous media, elastic materials and heat conduction. Here you will define the domain as a 2D unit square Dirichlet boundary conditions. The dataset is taken from the authors original reference.
 # 
 
-# In[2]:
+# In[17]:
 
 
 # download the dataset
 data = io.loadmat("Data_Darcy.mat")
 
-# extract data
-k_train = torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1)
-u_train = torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1)
+# extract data (we use only 100 data for train)
+k_train = torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1)[:100, ...]
+u_train = torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1)[:100, ...]
 k_test = torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1)
 u_test= torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1)
 x = torch.tensor(data['x'], dtype=torch.float)[0]
@@ -48,7 +49,7 @@ y = torch.tensor(data['y'], dtype=torch.float)[0]
 
 # Let's visualize some data
 
-# In[3]:
+# In[18]:
 
 
 plt.subplot(1, 2, 1)
@@ -62,7 +63,7 @@ plt.show()
 
 # We now create the neural operator class. It is a very simple class, inheriting from `AbstractProblem`.
 
-# In[4]:
+# In[19]:
 
 
 class NeuralOperatorSolver(AbstractProblem):
@@ -79,24 +80,24 @@ problem = NeuralOperatorSolver()
 # 
 # We will first solve the problem using a Feedforward neural network. We will use the `SupervisedSolver` for solving the problem, since we are training using supervised learning.
 
-# In[5]:
+# In[20]:
 
 
 # make model
-model=FeedForward(input_dimensions=1, output_dimensions=1)
+model = FeedForward(input_dimensions=1, output_dimensions=1)
 
 
 # make solver
 solver = SupervisedSolver(problem=problem, model=model)
 
 # make the trainer and train
-trainer = Trainer(solver=solver, max_epochs=100)
+trainer = Trainer(solver=solver, max_epochs=100, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 trainer.train()
 
 
 # The final loss is pretty high... We can calculate the error by importing `LpLoss`.
 
-# In[6]:
+# In[21]:
 
 
 from pina.loss import LpLoss
@@ -116,7 +117,7 @@ print(f'Final error testing {err:.2f}%')
 # 
 # We will now move to solve the problem using a FNO. Since we are learning operator this approach is better suited, as we shall see.
 
-# In[7]:
+# In[22]:
 
 
 # make model
@@ -134,13 +135,13 @@ model = FNO(lifting_net=lifting_net,
 solver = SupervisedSolver(problem=problem, model=model)
 
 # make the trainer and train
-trainer = Trainer(solver=solver, max_epochs=20)
+trainer = Trainer(solver=solver, max_epochs=100, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 trainer.train()
 
 
-# We can clearly see that with 1/3 of the total epochs the loss is lower. Let's see in testing.. Notice that the number of parameters is way higher than a `FeedForward` network. We suggest to use GPU or TPU for a speed up in training.
+# We can clearly see that the final loss is lower. Let's see in testing.. Notice that the number of parameters is way higher than a `FeedForward` network. We suggest to use GPU or TPU for a speed up in training, when many data samples are used.
 
-# In[8]:
+# In[23]:
 
 
 err = float(metric_err(u_train.squeeze(-1), solver.models[0](k_train).squeeze(-1)).mean())*100

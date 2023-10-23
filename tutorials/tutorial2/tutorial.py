@@ -1,21 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial 2: resolution of Poisson problem and usage of extra-features
-
-# ### The problem definition
-
-# This tutorial presents how to solve with Physics-Informed Neural Networks a 2D Poisson problem with Dirichlet boundary conditions. Using extrafeatures.
+# # Tutorial: Two dimensional Poisson problem using Extra Features Learning
 # 
-# The problem is written as:
-# \begin{equation}
-# \begin{cases}
-# \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
-# u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
-# \end{cases}
-# \end{equation}
-# where $D$ is a square domain $[0,1]^2$, and $\Gamma_i$, with $i=1,...,4$, are the boundaries of the square.
-
+# This tutorial presents how to solve with Physics-Informed Neural Networks (PINNs) a 2D Poisson problem with Dirichlet boundary conditions. We will train with standard PINN's training, and with extrafeatures. For more insights on extrafeature learning please read [*An extended physics informed neural network for preliminary analysis of parametric optimal control problems*](https://www.sciencedirect.com/science/article/abs/pii/S0898122123002018).
+# 
 # First of all, some useful imports.
 
 # In[1]:
@@ -36,7 +25,18 @@ from pina import Condition, LabelTensor
 from pina.callbacks import MetricTracker
 
 
-# Now, the Poisson problem is written in PINA code as a class. The equations are written as *conditions* that should be satisfied in the corresponding domains. *truth_solution*
+# ## The problem definition
+
+# The two-dimensional Poisson problem is mathematically written as:
+# \begin{equation}
+# \begin{cases}
+# \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
+# u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+# \end{cases}
+# \end{equation}
+# where $D$ is a square domain $[0,1]^2$, and $\Gamma_i$, with $i=1,...,4$, are the boundaries of the square.
+# 
+# The Poisson problem is written in **PINA** code as a class. The equations are written as *conditions* that should be satisfied in the corresponding domains. The *truth_solution*
 # is the exact solution which will be compared with the predicted one.
 
 # In[2]:
@@ -52,6 +52,7 @@ class Poisson(SpatialProblem):
         laplacian_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
         return laplacian_u - force_term
 
+    # here we write the problem conditions
     conditions = {
         'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1}), equation=FixedValue(0.)),
         'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0}), equation=FixedValue(0.)),
@@ -75,11 +76,11 @@ problem.discretise_domain(25, 'grid', locations=['D'])
 problem.discretise_domain(25, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 
 
-# ### The problem solution 
+# ## Solving the problem with standard PINNs
 
 # After the problem, the feed-forward neural network is defined, through the class `FeedForward`. This neural network takes as input the coordinates (in this case $x$ and $y$) and provides the unkwown field of the Poisson problem. The residual of the equations are evaluated at several sampling points (which the user can manipulate using the method `CartesianDomain_pts`) and the loss minimized by the neural network is the sum of the residuals.
 # 
-# In this tutorial, the neural network is composed by two hidden layers of 10 neurons each, and it is trained for 1000 epochs with a learning rate of 0.006. These parameters can be modified as desired.
+# In this tutorial, the neural network is composed by two hidden layers of 10 neurons each, and it is trained for 1000 epochs with a learning rate of 0.006 and $l_2$ weight regularization set to $10^{-7}$. These parameters can be modified as desired. We use the `MetricTracker` class to track the metrics during training.
 
 # In[3]:
 
@@ -92,7 +93,7 @@ model = FeedForward(
     input_dimensions=len(problem.input_variables)
 )
 pinn = PINN(problem, model, optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
-trainer = Trainer(pinn, max_epochs=1000, callbacks=[MetricTracker()])
+trainer = Trainer(pinn, max_epochs=1000, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 
 # train
 trainer.train()
@@ -108,7 +109,7 @@ plotter = Plotter()
 plotter.plot(trainer)
 
 
-# ### The problem solution with extra-features
+# ## Solving the problem with extra-features PINNs
 
 # Now, the same problem is solved in a different way.
 # A new neural network is now defined, with an additional input variable, named extra-feature, which coincides with the forcing term in the Laplace equation. 
@@ -147,7 +148,7 @@ model_feat = FeedForward(
     input_dimensions=len(problem.input_variables)+1
 )
 pinn_feat = PINN(problem, model_feat, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
-trainer_feat = Trainer(pinn_feat, max_epochs=1000, callbacks=[MetricTracker()])
+trainer_feat = Trainer(pinn_feat, max_epochs=1000, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 
 # train
 trainer_feat.train()
@@ -162,7 +163,7 @@ trainer_feat.train()
 plotter.plot(trainer_feat)
 
 
-# ### The problem solution with learnable extra-features
+# ## Solving the problem with learnable extra-features PINNs
 
 # We can still do better!
 # 
@@ -176,7 +177,7 @@ plotter.plot(trainer_feat)
 # where $\alpha$ and $\beta$ are the abovementioned parameters.
 # Their implementation is quite trivial: by using the class `torch.nn.Parameter` we cam define all the learnable parameters we need, and they are managed by `autograd` module!
 
-# In[7]:
+# In[8]:
 
 
 class SinSinAB(torch.nn.Module):
@@ -202,8 +203,8 @@ model_lean= FeedForward(
     output_dimensions=len(problem.output_variables),
     input_dimensions=len(problem.input_variables)+1
 )
-pinn_lean = PINN(problem, model_lean, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
-trainer_learn = Trainer(pinn_lean, max_epochs=1000)
+pinn_lean = PINN(problem, model_lean, extra_features=[SinSinAB()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+trainer_learn = Trainer(pinn_lean, max_epochs=1000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 
 # train
 trainer_learn.train()
@@ -211,7 +212,7 @@ trainer_learn.train()
 
 # Umh, the final loss is not appreciabily better than previous model (with static extra features), despite the usage of learnable parameters. This is mainly due to the over-parametrization of the network: there are many parameter to optimize during the training, and the model in unable to understand automatically that only the parameters of the extra feature (and not the weights/bias of the FFN) should be tuned in order to fit our problem. A longer training can be helpful, but in this case the faster way to reach machine precision for solving the Poisson problem is removing all the hidden layers in the `FeedForward`, keeping only the $\alpha$ and $\beta$ parameters of the extra feature.
 
-# In[8]:
+# In[11]:
 
 
 # make model + solver + trainer
@@ -221,8 +222,8 @@ model_lean= FeedForward(
     output_dimensions=len(problem.output_variables),
     input_dimensions=len(problem.input_variables)+1
 )
-pinn_learn = PINN(problem, model_lean, extra_features=[SinSin()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
-trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()])
+pinn_learn = PINN(problem, model_lean, extra_features=[SinSinAB()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 
 # train
 trainer_learn.train()
@@ -233,8 +234,30 @@ trainer_learn.train()
 # 
 # We conclude here by showing the graphical comparison of the unknown field and the loss trend for all the test cases presented here: the standard PINN, PINN with extra features, and PINN with learnable extra features.
 
-# In[9]:
+# In[12]:
 
 
 plotter.plot(trainer_learn)
 
+
+# Let us compare the training losses for the various types of training
+
+# In[14]:
+
+
+plotter.plot_loss(trainer, label='Standard')
+plotter.plot_loss(trainer_feat, label='Static Features')
+plotter.plot_loss(trainer_learn, label='Learnable Features')
+
+
+# ## What's next?
+# 
+# Nice you have completed the two dimensional Poisson tutorial of **PINA**! There are multiple directions you can go now:
+# 
+# 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
+# 
+# 2. Propose new types of extrafeatures and see how they affect the learning
+# 
+# 3. Exploit extrafeature training in more complex problems
+# 
+# 4. Many more...
