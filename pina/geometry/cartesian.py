@@ -2,31 +2,22 @@ import torch
 
 from .location import Location
 from ..label_tensor import LabelTensor
-from ..utils import torch_lhs, chebyshev_roots, check_consistency
+from ..utils import torch_lhs, chebyshev_roots
 
 
 class CartesianDomain(Location):
     """PINA implementation of Hypercube domain."""
 
-    def __init__(self, span_dict, sample_surface=False):
+    def __init__(self, span_dict):
         """
         :param span_dict: A dictionary with dict-key a string representing
             the input variables for the pinn, and dict-value a list with
             the domain extrema.
         :type span_dict: dict
-        :param sample_surface: A variable for choosing sample strategies. If
-            `sample_surface=True` only samples on the Cartesian surface
-            frontier are taken. If `sample_surface=False`, no such criteria
-            is followed.
-        :type sample_surface: bool
 
         :Example:
             >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
         """
-        # check consistency of sample_surface as bool
-        check_consistency(sample_surface, bool)
-        self._sample_surface = sample_surface
-
         self.fixed_ = {}
         self.range_ = {}
 
@@ -51,13 +42,13 @@ class CartesianDomain(Location):
         """Adding new dimensions on the span
 
         :param new_span: A new span object to merge
-        :type new_span: CartesianDomain
+        :type new_span: Span
 
         :Example:
-            >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
+            >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
             >>> spatial_domain.variables
             ['x', 'y']
-            >>> spatial_domain_2 = CartesianDomain({'z': [3, 4], 'w': [0, 1]})
+            >>> spatial_domain_2 = Span({'z': [3, 4], 'w': [0, 1]})
             >>> spatial_domain.update(spatial_domain_2)
             >>> spatial_domain.variables
             ['x', 'y', 'z', 'w']
@@ -83,7 +74,7 @@ class CartesianDomain(Location):
         """
         dim = bounds.shape[0]
         if mode in ['chebyshev', 'grid'] and dim != 1:
-            raise RuntimeError('Something wrong in CartesianDomain...')
+            raise RuntimeError('Something wrong in Span...')
 
         if mode == 'random':
             pts = torch.rand(size=(n, dim))
@@ -124,10 +115,10 @@ class CartesianDomain(Location):
             are sampled all together, and the final number of points
 
         .. warning::
-            The extrema values of CartesianDomain are always sampled only for 'grid' mode.
+            The extrema values of Span are always sampled only for 'grid' mode.
 
         :Example:
-            >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
+            >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
             >>> spatial_domain.sample(n=4, mode='random')
                 tensor([[0.0108, 0.7643],
                         [0.4477, 0.8015],
@@ -152,7 +143,7 @@ class CartesianDomain(Location):
                         [1.0000, 1.0000]])
         """
         def _1d_sampler(n, mode, variables):
-            """ Sample independently the variables and cross the results"""
+            """ Sample independentely the variables and cross the results"""
             tmp = []
             for variable in variables:
                 if variable in self.range_.keys():
