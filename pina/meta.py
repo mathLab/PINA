@@ -11,10 +11,10 @@ __all__ = [
 
 __project__ = 'PINA'
 __title__ = "pina"
-__author__ = "Nicola Demo, Maria Strazzullo"
-__copyright__ = "Copyright 2021-2021, PINA contributors"
+__author__ = "PINA Contributors"
+__copyright__ = "Copyright 2021-2023, PINA Contributors"
 __license__ = "MIT"
-__version__ = "0.0.3"
+__version__ = "0.1"
 __mail__ = 'demo.nicola@gmail.com, '  # TODO
 __maintainer__ = __author__
 __status__ = "Alpha"
