@@ -43,9 +43,9 @@ class Poisson(SpatialProblem):
         'D': Condition(
             input_points=LabelTensor(torch.rand(size=(100, 2)), ['x', 'y']),
             equation=my_laplace),
-        'data': Condition(
-            input_points=in_,
-            output_points=out_)
+        #'data': Condition(
+        #    input_points=in_,
+        #    output_points=out_)
     }
 
     def poisson_sol(self, pts):
@@ -102,11 +102,11 @@ def test_train_restore():
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
-    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu', default_root_dir=tmpdir)
+    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu', default_root_dir=tmpdir, batch_size=10)
     trainer.train()
     ntrainer = Trainer(solver=pinn, max_epochs=15, accelerator='cpu')
     t = ntrainer.train(
-        ckpt_path=f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt')
+        ckpt_path=f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=4-step=70.ckpt')
     import shutil
     shutil.rmtree(tmpdir)
 

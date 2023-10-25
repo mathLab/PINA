@@ -1,18 +1,19 @@
 """ Solver module. """
 
-import lightning.pytorch as pl
+from pytorch_lightning import Trainer
 from .utils import check_consistency
-from .dataset import DummyLoader
+from .dataset import SamplePointDataset, SamplePointLoader
 from .solvers.solver import SolverInterface
 
-class Trainer(pl.Trainer):
+class Trainer(Trainer):
 
-    def __init__(self, solver, **kwargs):
+    def __init__(self, solver, batch_size=None, **kwargs):
         super().__init__(**kwargs)
 
         # check inheritance consistency for solver
         check_consistency(solver, SolverInterface)
         self._model = solver
+        self.batch_size = batch_size
 
         # create dataloader
         if solver.problem.have_sampled_points is False:
@@ -29,12 +30,12 @@ class Trainer(pl.Trainer):
     # during training, there is no need to define to touch the
     # trainer dataloader, just call the method.
     def _create_or_update_loader(self):
-        # get accellerator
-        device = self._accelerator_connector._accelerator_flag
-        self._loader = DummyLoader(self._model.problem.input_pts, device) 
+        dataset = SamplePointDataset(self._model.problem.input_pts) 
+        self._loader = SamplePointLoader(
+            dataset, batch_size=self.batch_size, shuffle=True)
 
-    def train(self, **kwargs): # TODO add kwargs and lightining capabilities
-        return super().fit(self._model, self._loader, **kwargs)
+    def train(self, **kwargs):
+        return super().fit(self._model, train_dataloaders=self._loader, **kwargs)
     
     @property
     def solver(self):

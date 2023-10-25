@@ -16,3 +16,6 @@ from .plotter import Plotter
 from .condition import Condition
 from .geometry import Location
 from .geometry import CartesianDomain
+
+from .dataset import SamplePointDataset
+from .dataset import SamplePointLoader

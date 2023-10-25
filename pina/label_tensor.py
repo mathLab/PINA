@@ -88,6 +88,25 @@ class LabelTensor(torch.Tensor):
 
         self._labels = labels   # assign the label
 
+    @staticmethod
+    def vstack(label_tensors):
+        """
+        Stack tensors vertically. For more details, see
+        :meth:`torch.vstack`.
+
+        :param list(LabelTensor) label_tensors: the tensors to stack. They need
+            to have equal labels.
+        :return: the stacked tensor
+        :rtype: LabelTensor
+        """
+        all_labels = [label for lt in label_tensors for label in lt.labels]
+        if set(all_labels) != set(label_tensors[0].labels):
+            raise RuntimeError('The tensors to stack have different labels')
+
+        labels = label_tensors[0].labels
+        tensors = [lt.extract(labels) for lt in label_tensors]
+        return LabelTensor(torch.vstack(tensors), labels)
+
     # TODO remove try/ except thing IMPORTANT
     # make the label None of default
     def clone(self, *args, **kwargs):
@@ -156,6 +175,12 @@ class LabelTensor(torch.Tensor):
         extracted_tensor.labels = new_labels
 
         return extracted_tensor
+
+    def detach(self):
+        detached = super().detach()
+        detached._labels = self._labels
+        return detached
+
 
     def append(self, lt, mode='std'):
         """

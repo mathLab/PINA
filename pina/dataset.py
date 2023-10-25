@@ -1,78 +1,72 @@
-from torch.utils.data import Dataset, DataLoader
-import functools
+from torch.utils.data import Dataset
+import torch
+from pina import LabelTensor
 
 
-class PinaDataset():
+class SamplePointDataset(Dataset):
+    """
+    This class is used to create a dataset of sample points.
+    """
 
-    def __init__(self, pinn) -> None:
-        self.pinn = pinn
-
-    @property
-    def dataloader(self):
-        return self._create_dataloader()
-
-    @property
-    def dataset(self):
-        return [self.SampleDataset(key, val)
-                for key, val in self.input_pts.items()]
-
-    def _create_dataloader(self):
-        """Private method for creating dataloader
-
-        :return: dataloader
-        :rtype: torch.utils.data.DataLoader
+    def __init__(self, input_pts) -> None:
         """
-        if self.pinn.batch_size is None:
-            return {key: [{key: val}] for key, val in self.pinn.input_pts.items()}
+        :param dict input_pts: The input points.
+        """
+        super().__init__()
+        self.pts = LabelTensor.vstack(list(input_pts.values()))
 
-        def custom_collate(batch):
-            # extracting pts labels
-            _, pts = list(batch[0].items())[0]
-            labels = pts.labels
-            # calling default torch collate
-            collate_res = default_collate(batch)
-            # save collate result in dict
-            res = {}
-            for key, val in collate_res.items():
-                val.labels = labels
-                res[key] = val
-        def __getitem__(self, index):
-            tensor = self._tensor.select(0, index)
-            return {self._location: tensor}
+        self.conditions = torch.cat([
+            torch.tensor([i]*len(pts))
+            for i, pts in enumerate(input_pts.values())
+        ], dim=0)
+        self.label_encode = list(input_pts.keys())
+        
+        # self.pts.requires_grad_(True)
+        # self.pts.retain_grad()
+        # # print(self.pts)
 
-        def __len__(self):
-            return self._len
+    def __len__(self):
+        return self.pts.shape[0]
+    
 
+class SamplePointLoader:
+    """
+    This class is used to create a dataloader to use during the training.
+    """
 
+    def __init__(self, sample_pts, batch_size=None, shuffle=True) -> None:
+        """
+        Constructor.
 
-# TODO: working also for datapoints
-class DummyLoader:
+        :param SamplePointDataset sample_pts: The sample points dataset.
+        :param int batch_size: The batch size. If ``None``, the batch size is
+            set to the number of sample points. Default is ``None``.
+        :param bool shuffle: If ``True``, the sample points are shuffled.
+            Default is ``True``.
+        """
+        if not isinstance(sample_pts, SamplePointDataset):
+            raise TypeError(f'Expected SamplePointDataset, got {type(sample_pts)}')
 
-    def __init__(self, data, device) -> None:
+        if batch_size is None:
+            batch_size = len(sample_pts)
 
-        # TODO: We need to make a dataset somehow
-        #       and the PINADataset needs to have a method
-        #       to send points to device
-        #       now we simply do it here
-        # send data to device
-        def convert_tensors(pts, device):
-            pts = pts.to(device)
-            pts.requires_grad_(True)
-            pts.retain_grad()
-            return pts
+        self.batch_size = batch_size
+        self.batch_num = len(sample_pts) // batch_size
+        
+        self.tensor_pts = sample_pts.pts
+        self.tensor_conditions = sample_pts.conditions
 
-        for location, pts in data.items():
-            if isinstance(pts, (tuple, list)):
-                pts = tuple(map(functools.partial(convert_tensors, device=device),pts))
-            else:
-                pts = pts.to(device)
-                pts = pts.requires_grad_(True)
-                pts.retain_grad()
-            
-            data[location] = pts
+        if shuffle:
+            idx = torch.randperm(self.tensor_pts.shape[0])
+            self.tensor_pts = self.tensor_pts[idx]
+            self.tensor_conditions = self.tensor_conditions[idx]
+           
+        self.tensor_pts = torch.tensor_split(self.tensor_pts, self.batch_num)
+        for i, batch in enumerate(self.tensor_pts):
+            self.tensor_pts[i].labels = sample_pts.pts.labels
 
-        # iterator
-        self.data = [data]
+        self.tensor_conditions = torch.tensor_split(
+            self.tensor_conditions, self.batch_num)
 
     def __iter__(self):
-        return iter(self.data)
+        return iter(zip(self.tensor_pts, self.tensor_conditions))

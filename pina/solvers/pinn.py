@@ -109,15 +109,17 @@ class PINN(SolverInterface):
         """
 
         condition_losses = []
-        condition_names = []
 
-        for condition_name, samples in batch.items():
+        pts, condition_idx = batch
+        pts = pts.detach()
+        pts = pts.requires_grad_(True)
 
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError('Something wrong happened.')
+        for condition_id in range(condition_idx.min(), condition_idx.max()+1):
 
-            condition_names.append(condition_name)
+            condition_name = list(self.problem.conditions.keys())[condition_id]
             condition = self.problem.conditions[condition_name]
+            samples = pts[condition_idx == condition_id]
+            samples.labels = pts.labels
 
             # PINN loss: equation evaluated on location or input_points
             if hasattr(condition, 'equation'):
@@ -128,6 +130,8 @@ class PINN(SolverInterface):
                 input_pts, output_pts = samples
                 loss = self.loss(self.forward(input_pts), output_pts)
 
+            loss = loss.as_subclass(torch.Tensor)
+
             condition_losses.append(loss * condition.data_weight)
 
         # TODO Fix the bug, tot_loss is a label tensor without labels
@@ -135,8 +139,8 @@ class PINN(SolverInterface):
         total_loss = sum(condition_losses)
 
         self.log('mean_loss', float(total_loss / len(condition_losses)), prog_bar=True, logger=True)
-        for condition_loss, loss in zip(condition_names, condition_losses):
-            self.log(condition_loss + '_loss', float(loss), prog_bar=True, logger=True)
+        # for condition_loss, loss in zip(condition_names, condition_losses):
+        #     self.log(condition_loss + '_loss', float(loss), prog_bar=True, logger=True)
         return total_loss
 
     @property
