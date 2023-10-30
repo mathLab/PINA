@@ -22,6 +22,7 @@ def test_constructor():
         sample_surface=True,
     )
     with pytest.raises(ValueError):
+        # different labels
         SimplexDomain(
             [
                 LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
@@ -29,6 +30,7 @@ def test_constructor():
                 LabelTensor(torch.tensor([[0, 2]]), labels=["x", "a"]),
             ]
         )
+        # not LabelTensor
         SimplexDomain(
             [
                 LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
@@ -36,6 +38,15 @@ def test_constructor():
                 LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
             ]
         )
+        #  different number of vertices
+        SimplexDomain(
+                    [
+                        LabelTensor(torch.tensor([[ 0., -2.]]), labels=["x", "y"]),
+                        LabelTensor(torch.tensor([[-.5, -.5]]), labels=["x", "y"]),
+                        LabelTensor(torch.tensor([[-2.,  0.]]), labels=["x", "y"]),
+                        LabelTensor(torch.tensor([[-.5,  .5]]), labels=["x", "y"]),
+                    ]
+                )
 
 def test_sample():
     # sampling inside
