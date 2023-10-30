@@ -48,7 +48,12 @@ class SimplexDomain(Location):
         matrix_labels = simplex_matrix[0].labels
         if not all(vertex.labels == matrix_labels for vertex in simplex_matrix):
             raise ValueError(f"Labels don't match.")
-
+        
+        # check consistency dimensions
+        dim_simplex = len(matrix_labels)
+        if len(simplex_matrix) != dim_simplex + 1:
+            raise ValueError("An n-dimensional simplex is composed by n + 1 tensors of dimension n.")
+        
         # creating vertices matrix
         self._vertices_matrix = torch.cat(simplex_matrix)
         self._vertices_matrix.labels = matrix_labels
