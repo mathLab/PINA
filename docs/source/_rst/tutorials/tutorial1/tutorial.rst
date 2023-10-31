@@ -215,26 +215,26 @@ calling the attribute ``input_pts`` of the problem
 
 .. parsed-literal::
 
-    Input points: {'x0': LabelTensor([[[0.]]]), 'D': LabelTensor([[[0.8569]],
-                 [[0.9478]],
-                 [[0.3030]],
-                 [[0.8182]],
-                 [[0.4116]],
-                 [[0.6687]],
-                 [[0.5394]],
-                 [[0.9927]],
-                 [[0.6082]],
-                 [[0.4605]],
-                 [[0.2859]],
-                 [[0.7321]],
-                 [[0.5624]],
-                 [[0.1303]],
-                 [[0.2402]],
-                 [[0.0182]],
-                 [[0.0714]],
-                 [[0.3697]],
-                 [[0.7770]],
-                 [[0.1784]]])}
+    Input points: {'x0': LabelTensor([[[0.]]]), 'D': LabelTensor([[[0.8633]],
+                 [[0.4009]],
+                 [[0.6489]],
+                 [[0.9278]],
+                 [[0.3975]],
+                 [[0.1484]],
+                 [[0.9632]],
+                 [[0.5485]],
+                 [[0.2984]],
+                 [[0.5643]],
+                 [[0.0368]],
+                 [[0.7847]],
+                 [[0.4741]],
+                 [[0.6957]],
+                 [[0.3281]],
+                 [[0.0958]],
+                 [[0.1847]],
+                 [[0.2232]],
+                 [[0.8099]],
+                 [[0.7304]]])}
     Input points labels: ['x']
 
 
@@ -296,19 +296,16 @@ If you want to track the metric by yourself without a logger, use
 
 .. parsed-literal::
 
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
-      warnings.warn("Can't initialize NVML")
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:651: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:109.)
-      return torch._C._cuda_getDeviceCount() if nvml_count < 0 else nvml_count
     GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
+    Missing logger folder: /Users/dariocoscia/Desktop/PINA/tutorials/tutorial1/lightning_logs
 
 
 .. parsed-literal::
 
-    Epoch 1499: : 1it [00:00, 143.58it/s, v_num=5, mean_loss=1.09e-5, x0_loss=1.33e-7, D_loss=2.17e-5] 
+    Epoch 1499: : 1it [00:00, 316.24it/s, v_num=0, mean_loss=5.39e-5, x0_loss=1.26e-6, D_loss=0.000106] 
 
 .. parsed-literal::
 
@@ -317,7 +314,7 @@ If you want to track the metric by yourself without a logger, use
 
 .. parsed-literal::
 
-    Epoch 1499: : 1it [00:00, 65.39it/s, v_num=5, mean_loss=1.09e-5, x0_loss=1.33e-7, D_loss=2.17e-5] 
+    Epoch 1499: : 1it [00:00, 166.89it/s, v_num=0, mean_loss=5.39e-5, x0_loss=1.26e-6, D_loss=0.000106]
 
 
 After the training we can inspect trainer logged metrics (by default
@@ -335,9 +332,9 @@ loss can be accessed by ``trainer.logged_metrics``
 
 .. parsed-literal::
 
-    {'mean_loss': tensor(1.0938e-05),
-     'x0_loss': tensor(1.3328e-07),
-     'D_loss': tensor(2.1743e-05)}
+    {'mean_loss': tensor(5.3852e-05),
+     'x0_loss': tensor(1.2636e-06),
+     'D_loss': tensor(0.0001)}
 
 
 
@@ -347,11 +344,17 @@ quatitative plots of the solution.
 .. code:: ipython3
 
     # plotting the solution
-    pl.plot(trainer=trainer)
+    pl.plot(solver=pinn)
 
 
 
 .. image:: tutorial_files/tutorial_23_0.png
+
+
+
+.. parsed-literal::
+
+    <Figure size 640x480 with 0 Axes>
 
 
 The solution is overlapped with the actual one, and they are barely
@@ -359,7 +362,7 @@ indistinguishable. We can also plot easily the loss:
 
 .. code:: ipython3
 
-    pl.plot_loss(trainer=trainer, metric='mean_loss', log_scale=True)
+    pl.plot_loss(trainer=trainer, label = 'mean_loss',  logy=True)
 
 
 

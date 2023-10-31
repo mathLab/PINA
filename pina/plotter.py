@@ -227,7 +227,7 @@ class Plotter:
                 raise ValueError(f'{metric} not a valid metric. Available metrics are {list(trainer_metrics.keys())}.')
             loss = trainer_metrics[metric]
             epochs = range(len(loss))
-            plt.plot(epochs, loss, label=metric, **kwargs)
+            plt.plot(epochs, loss, **kwargs)
 
         # plotting
         plt.xlabel('epoch')
@@ -243,5 +243,3 @@ class Plotter:
         # saving in file
         if filename:
             plt.savefig(filename)
-        else:
-            plt.show()
