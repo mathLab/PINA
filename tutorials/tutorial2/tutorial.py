@@ -106,7 +106,7 @@ trainer.train()
 
 
 plotter = Plotter()
-plotter.plot(trainer)
+plotter.plot(solver=pinn)
 
 
 # ## Solving the problem with extra-features PINNs
@@ -160,7 +160,7 @@ trainer_feat.train()
 # In[6]:
 
 
-plotter.plot(trainer_feat)
+plotter.plot(solver=pinn_feat)
 
 
 # ## Solving the problem with learnable extra-features PINNs
@@ -177,7 +177,7 @@ plotter.plot(trainer_feat)
 # where $\alpha$ and $\beta$ are the abovementioned parameters.
 # Their implementation is quite trivial: by using the class `torch.nn.Parameter` we cam define all the learnable parameters we need, and they are managed by `autograd` module!
 
-# In[8]:
+# In[14]:
 
 
 class SinSinAB(torch.nn.Module):
@@ -212,7 +212,7 @@ trainer_learn.train()
 
 # Umh, the final loss is not appreciabily better than previous model (with static extra features), despite the usage of learnable parameters. This is mainly due to the over-parametrization of the network: there are many parameter to optimize during the training, and the model in unable to understand automatically that only the parameters of the extra feature (and not the weights/bias of the FFN) should be tuned in order to fit our problem. A longer training can be helpful, but in this case the faster way to reach machine precision for solving the Poisson problem is removing all the hidden layers in the `FeedForward`, keeping only the $\alpha$ and $\beta$ parameters of the extra feature.
 
-# In[11]:
+# In[19]:
 
 
 # make model + solver + trainer
@@ -222,7 +222,7 @@ model_lean= FeedForward(
     output_dimensions=len(problem.output_variables),
     input_dimensions=len(problem.input_variables)+1
 )
-pinn_learn = PINN(problem, model_lean, extra_features=[SinSinAB()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+pinn_learn = PINN(problem, model_lean, extra_features=[SinSinAB()], optimizer_kwargs={'lr':0.01, 'weight_decay':1e-8})
 trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 
 # train
@@ -234,20 +234,20 @@ trainer_learn.train()
 # 
 # We conclude here by showing the graphical comparison of the unknown field and the loss trend for all the test cases presented here: the standard PINN, PINN with extra features, and PINN with learnable extra features.
 
-# In[12]:
+# In[20]:
 
 
-plotter.plot(trainer_learn)
+plotter.plot(solver=pinn_learn)
 
 
 # Let us compare the training losses for the various types of training
 
-# In[14]:
+# In[21]:
 
 
-plotter.plot_loss(trainer, label='Standard')
-plotter.plot_loss(trainer_feat, label='Static Features')
-plotter.plot_loss(trainer_learn, label='Learnable Features')
+plotter.plot_loss(trainer, logy=True, label='Standard')
+plotter.plot_loss(trainer_feat, logy=True,label='Static Features')
+plotter.plot_loss(trainer_learn, logy=True, label='Learnable Features')
 
 
 # ## What's next?

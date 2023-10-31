@@ -203,6 +203,7 @@ class Heart(Location):
 # In[14]:
 
 
+
 class Heart(Location):
     """Implementation of the Heart Domain."""
 
@@ -242,3 +243,7 @@ pts_heart = heart.sample(1500)
 fig, ax = plt.subplots()
 plot_scatter(ax, pts_heart, 'Heart Domain')
 
+
+# ## What's next?
+# 
+# We have made a very simple tutorial on how to build custom geometries and use domain operation to compose base geometries. Now you can play around with different geometries and build your own!  

@@ -115,26 +115,24 @@ These parameters can be modified as desired. We use the
 
 .. parsed-literal::
 
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
-      warnings.warn("Can't initialize NVML")
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:651: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:109.)
-      return torch._C._cuda_getDeviceCount() if nvml_count < 0 else nvml_count
     GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    Missing logger folder: /u/d/dcoscia/PINA/tutorials/tutorial2/lightning_logs
-
 
 
 .. parsed-literal::
 
-    Training: 0it [00:00, ?it/s]
-
+    Epoch 999: : 1it [00:00, 152.98it/s, v_num=9, mean_loss=0.000239, D_loss=0.000793, gamma1_loss=8.51e-5, gamma2_loss=0.000103, gamma3_loss=0.000122, gamma4_loss=9.14e-5]  
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 119.21it/s, v_num=9, mean_loss=0.000239, D_loss=0.000793, gamma1_loss=8.51e-5, gamma2_loss=0.000103, gamma3_loss=0.000122, gamma4_loss=9.14e-5]
 
 
 Now the ``Plotter`` class is used to plot the results. The solution
@@ -145,7 +143,7 @@ and the predicted solutions is showed.
 .. code:: ipython3
 
     plotter = Plotter()
-    plotter.plot(trainer)
+    plotter.plot(solver=pinn)
 
 
 
@@ -214,15 +212,18 @@ new extra feature.
     HPU available: False, using: 0 HPUs
 
 
-
 .. parsed-literal::
 
-    Training: 0it [00:00, ?it/s]
-
+    Epoch 999: : 1it [00:00, 119.36it/s, v_num=10, mean_loss=8.97e-7, D_loss=4.43e-6, gamma1_loss=1.37e-8, gamma2_loss=1.68e-8, gamma3_loss=1.22e-8, gamma4_loss=1.77e-8]     
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 95.23it/s, v_num=10, mean_loss=8.97e-7, D_loss=4.43e-6, gamma1_loss=1.37e-8, gamma2_loss=1.68e-8, gamma3_loss=1.22e-8, gamma4_loss=1.77e-8] 
 
 
 The predicted and exact solutions and the error between them are
@@ -232,7 +233,7 @@ of magnitudes in accuracy.
 
 .. code:: ipython3
 
-    plotter.plot(trainer_feat)
+    plotter.plot(solver=pinn_feat)
 
 
 
@@ -297,15 +298,18 @@ need, and they are managed by ``autograd`` module!
     HPU available: False, using: 0 HPUs
 
 
-
 .. parsed-literal::
 
-    Training: 0it [00:00, ?it/s]
-
+    Epoch 999: : 1it [00:00, 103.14it/s, v_num=14, mean_loss=1.39e-6, D_loss=6.04e-6, gamma1_loss=4.19e-7, gamma2_loss=2.8e-8, gamma3_loss=4.05e-7, gamma4_loss=3.49e-8]    
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 84.50it/s, v_num=14, mean_loss=1.39e-6, D_loss=6.04e-6, gamma1_loss=4.19e-7, gamma2_loss=2.8e-8, gamma3_loss=4.05e-7, gamma4_loss=3.49e-8] 
 
 
 Umh, the final loss is not appreciabily better than previous model (with
@@ -328,7 +332,7 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
         output_dimensions=len(problem.output_variables),
         input_dimensions=len(problem.input_variables)+1
     )
-    pinn_learn = PINN(problem, model_lean, extra_features=[SinSinAB()], optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+    pinn_learn = PINN(problem, model_lean, extra_features=[SinSinAB()], optimizer_kwargs={'lr':0.01, 'weight_decay':1e-8})
     trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()], accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     
     # train
@@ -343,15 +347,18 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
     HPU available: False, using: 0 HPUs
 
 
-
 .. parsed-literal::
 
-    Training: 0it [00:00, ?it/s]
-
+    Epoch 999: : 1it [00:00, 130.55it/s, v_num=17, mean_loss=1.34e-14, D_loss=6.7e-14, gamma1_loss=5.13e-17, gamma2_loss=9.68e-18, gamma3_loss=5.14e-17, gamma4_loss=9.75e-18] 
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 104.91it/s, v_num=17, mean_loss=1.34e-14, D_loss=6.7e-14, gamma1_loss=5.13e-17, gamma2_loss=9.68e-18, gamma3_loss=5.14e-17, gamma4_loss=9.75e-18]
 
 
 In such a way, the model is able to reach a very high accuracy! Of
@@ -368,7 +375,7 @@ features.
 
 .. code:: ipython3
 
-    plotter.plot(trainer_learn)
+    plotter.plot(solver=pinn_learn)
 
 
 
@@ -379,9 +386,9 @@ Let us compare the training losses for the various types of training
 
 .. code:: ipython3
 
-    plotter.plot_loss(trainer, label='Standard')
-    plotter.plot_loss(trainer_feat, label='Static Features')
-    plotter.plot_loss(trainer_learn, label='Learnable Features')
+    plotter.plot_loss(trainer, logy=True, label='Standard')
+    plotter.plot_loss(trainer_feat, logy=True,label='Static Features')
+    plotter.plot_loss(trainer_learn, logy=True, label='Learnable Features')
 
 
 

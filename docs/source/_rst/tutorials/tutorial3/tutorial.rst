@@ -139,25 +139,25 @@ approximately 3 minutes.
 
 .. parsed-literal::
 
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
-      warnings.warn("Can't initialize NVML")
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:651: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:109.)
-      return torch._C._cuda_getDeviceCount() if nvml_count < 0 else nvml_count
     GPU available: False, used: False
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-
+    Missing logger folder: /Users/dariocoscia/Desktop/PINA/tutorials/tutorial3/lightning_logs
 
 
 .. parsed-literal::
 
-    Training: 0it [00:00, ?it/s]
-
+    Epoch 999: : 1it [00:00, 62.13it/s, v_num=0, mean_loss=0.0268, D_loss=0.0397, t0_loss=0.121, gamma1_loss=0.000, gamma2_loss=0.000, gamma3_loss=0.000, gamma4_loss=0.000] 
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 53.88it/s, v_num=0, mean_loss=0.0268, D_loss=0.0397, t0_loss=0.121, gamma1_loss=0.000, gamma2_loss=0.000, gamma3_loss=0.000, gamma4_loss=0.000]
 
 
 Notice that the loss on the boundaries of the spatial domain is exactly
@@ -170,15 +170,15 @@ results using the ``Plotter`` class of **PINA**.
     
     # plotting at fixed time t = 0.0
     print('Plotting at t=0')
-    plotter.plot(trainer, fixed_variables={'t': 0.0})
+    plotter.plot(pinn, fixed_variables={'t': 0.0})
     
     # plotting at fixed time t = 0.5
     print('Plotting at t=0.5')
-    plotter.plot(trainer, fixed_variables={'t': 0.5})
+    plotter.plot(pinn, fixed_variables={'t': 0.5})
     
     # plotting at fixed time t = 1.
     print('Plotting at t=1')
-    plotter.plot(trainer, fixed_variables={'t': 1.0})
+    plotter.plot(pinn, fixed_variables={'t': 1.0})
 
 
 .. parsed-literal::
@@ -260,15 +260,18 @@ Now let’s train with the same configuration as thre previous test
     HPU available: False, using: 0 HPUs
 
 
-
 .. parsed-literal::
 
-    Training: 0it [00:00, ?it/s]
-
+    Epoch 999: : 1it [00:00, 48.54it/s, v_num=1, mean_loss=1.48e-8, D_loss=8.89e-8, t0_loss=0.000, gamma1_loss=2.06e-15, gamma2_loss=0.000, gamma3_loss=2.1e-15, gamma4_loss=0.000]
 
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
+
+
+.. parsed-literal::
+
+    Epoch 999: : 1it [00:00, 43.25it/s, v_num=1, mean_loss=1.48e-8, D_loss=8.89e-8, t0_loss=0.000, gamma1_loss=2.06e-15, gamma2_loss=0.000, gamma3_loss=2.1e-15, gamma4_loss=0.000]
 
 
 We can clearly see that the loss is way lower now. Let’s plot the
@@ -280,15 +283,15 @@ results
     
     # plotting at fixed time t = 0.0
     print('Plotting at t=0')
-    plotter.plot(trainer, fixed_variables={'t': 0.0})
+    plotter.plot(pinn, fixed_variables={'t': 0.0})
     
     # plotting at fixed time t = 0.5
     print('Plotting at t=0.5')
-    plotter.plot(trainer, fixed_variables={'t': 0.5})
+    plotter.plot(pinn, fixed_variables={'t': 0.5})
     
     # plotting at fixed time t = 1.
     print('Plotting at t=1')
-    plotter.plot(trainer, fixed_variables={'t': 1.0})
+    plotter.plot(pinn, fixed_variables={'t': 1.0})
 
 
 .. parsed-literal::

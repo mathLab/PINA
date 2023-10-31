@@ -306,3 +306,10 @@ To sample from the Heart geometry we simply run:
 
 .. image:: tutorial_files/tutorial_36_0.png
 
+
+What’s next?
+------------
+
+We have made a very simple tutorial on how to build custom geometries
+and use domain operation to compose base geometries. Now you can play
+around with different geometries and build your own!
