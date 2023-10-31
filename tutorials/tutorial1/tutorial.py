@@ -77,7 +77,7 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 # 
 # Once the `Problem` class is initialized, we need to represent the differential equation in **PINA**. In order to do this, we need to load the **PINA** operators from `pina.operators` module. Again, we'll consider Equation (1) and represent it in **PINA**:
 
-# In[2]:
+# In[3]:
 
 
 from pina.problem import SpatialProblem
@@ -133,7 +133,7 @@ problem = SimpleODE()
 # 
 # Data for training can come in form of direct numerical simulation reusults, or points in the domains. In case we do unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in **PINA** is very easy, here we show three examples using the `.discretise_domain` method of the `AbstractProblem` class.
 
-# In[3]:
+# In[4]:
 
 
 # sampling 20 points in [0, 1] through discretization in all locations
@@ -149,7 +149,7 @@ problem.discretise_domain(n=20, mode='random', variables=['x'])
 
 # We are going to use latin hypercube points for sampling. We need to sample in all the conditions domains. In our case we sample in `D` and `x0`.
 
-# In[4]:
+# In[5]:
 
 
 # sampling for training
@@ -159,7 +159,7 @@ problem.discretise_domain(20, 'lh', locations=['D'])
 
 # The points are saved in a python `dict`, and can be accessed by calling the attribute `input_pts` of the problem 
 
-# In[5]:
+# In[6]:
 
 
 print('Input points:', problem.input_pts)
@@ -168,7 +168,7 @@ print('Input points labels:', problem.input_pts['D'].labels)
 
 # To visualize the sampled points we can use the `.plot_samples` method of the `Plotter` class
 
-# In[6]:
+# In[7]:
 
 
 from pina import Plotter
@@ -181,7 +181,7 @@ pl.plot_samples(problem=problem)
 
 # Once we have defined the problem and generated the data we can start the modelling. Here we will choose a `FeedForward` neural network available in `pina.model`, and we will train using the `PINN` solver from `pina.solvers`. We highlight that this training is fairly simple, for more advanced stuff consider the tutorials in the ***Physics Informed Neural Networks*** section of ***Tutorials***. For training we use the `Trainer` class from `pina.trainer`. Here we show a very short training and some method for plotting the results. Notice that by default all relevant metrics (e.g. MSE error during training) are going to be tracked using a `lightining` logger, by default `CSVLogger`. If you want to track the metric by yourself without a logger, use `pina.callbacks.MetricTracker`.
 
-# In[7]:
+# In[8]:
 
 
 from pina import PINN, Trainer
@@ -209,7 +209,7 @@ trainer.train()
 
 # After the training we can inspect trainer logged metrics (by default **PINA** logs mean square error residual loss). The logged metrics can be accessed online using one of the `Lightinig` loggers. The final loss can be accessed by `trainer.logged_metrics`
 
-# In[8]:
+# In[9]:
 
 
 # inspecting final loss
@@ -218,19 +218,19 @@ trainer.logged_metrics
 
 # By using the `Plotter` class from **PINA** we can also do some quatitative plots of the solution. 
 
-# In[9]:
+# In[12]:
 
 
 # plotting the solution
-pl.plot(trainer=trainer)
+pl.plot(solver=pinn)
 
 
 # The solution is overlapped with the actual one, and they are barely indistinguishable. We can also plot easily the loss:
 
-# In[10]:
+# In[14]:
 
 
-pl.plot_loss(trainer=trainer, metric='mean_loss', log_scale=True)
+pl.plot_loss(trainer=trainer, label = 'mean_loss', logy=True)
 
 
 # As we can see the loss has not reached a minimum, suggesting that we could train for longer
