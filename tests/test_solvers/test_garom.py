@@ -134,7 +134,7 @@ def test_train_cpu():
                                                 hidden_dimension=64)
                 )
 
-    trainer = Trainer(solver=solver, max_epochs=4, accelerator='cpu')
+    trainer = Trainer(solver=solver, max_epochs=4, accelerator='cpu', batch_size=20)
     trainer.train()
 
 def test_sample():

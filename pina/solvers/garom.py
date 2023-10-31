@@ -115,12 +115,15 @@ class GAROM(SolverInterface):
         check_consistency(lambda_k, float)
         check_consistency(regularizer, bool)
 
-
         # assign schedulers
-        self._schedulers = [scheduler_generator(self.optimizers[0], 
-                                                  **scheduler_generator_kwargs),
-                            scheduler_discriminator(self.optimizers[1],
-                                                    **scheduler_discriminator_kwargs)]
+        self._schedulers = [
+            scheduler_generator(
+                self.optimizers[0], **scheduler_generator_kwargs),
+            scheduler_discriminator(
+                self.optimizers[1],
+                **scheduler_discriminator_kwargs)
+        ]
+
         # loss and writer 
         self._loss = loss
 
@@ -169,7 +172,16 @@ class GAROM(SolverInterface):
         :rtype: LabelTensor
         """
 
-        for condition_name, samples in batch.items():
+        pts, condition_idx = batch
+        pts = pts.detach()
+        pts = pts.requires_grad_(True)
+
+        for condition_id in range(condition_idx.min(), condition_idx.max()+1):
+
+            condition_name = list(self.problem.conditions.keys())[condition_id]
+            condition = self.problem.conditions[condition_name]
+            samples = pts[condition_idx == condition_id]
+            samples.labels = pts.labels
 
             if condition_name not in self.problem.conditions:
                 raise RuntimeError('Something wrong happened.')
@@ -177,69 +189,70 @@ class GAROM(SolverInterface):
             condition = self.problem.conditions[condition_name]
 
             # for data driven mode
-            if hasattr(condition, 'output_points'):
-
-                # get data
-                parameters, input_pts = samples
-
-                # get optimizers
-                opt_gen, opt_disc = self.optimizers
-
-                # ---------------------
-                #  Train Discriminator
-                # ---------------------
-                opt_disc.zero_grad()
-
-                # Generate a batch of images
-                gen_imgs = self.generator(parameters)
-            
-                # Discriminator pass
-                d_real = self.discriminator([input_pts, parameters])
-                d_fake = self.discriminator([gen_imgs.detach(), parameters]) 
-
-                # evaluate loss
-                d_loss_real = self._loss(d_real, input_pts)
-                d_loss_fake = self._loss(d_fake, gen_imgs.detach())
-                d_loss = d_loss_real - self.k * d_loss_fake
-
-                # backward step
-                d_loss.backward()
-                opt_disc.step()
-                
-                # -----------------
-                #  Train Generator
-                # -----------------
-                opt_gen.zero_grad()
-
-                # Generate a batch of images
-                gen_imgs = self.generator(parameters)
-
-                # generator loss
-                r_loss = self._loss(input_pts, gen_imgs)
-                d_fake = self.discriminator([gen_imgs, parameters])
-                g_loss = self._loss(d_fake, gen_imgs) + self.regularizer * r_loss
-
-                # backward step
-                g_loss.backward()
-                opt_gen.step()
-
-                # ----------------
-                # Update weights
-                # ----------------
-                diff = torch.mean(self.gamma * d_loss_real - d_loss_fake)
-
-                # Update weight term for fake samples
-                self.k += self.lambda_k * diff.item()
-                self.k = min(max(self.k, 0), 1)  # Constraint to interval [0, 1]
-
-                # logging
-                self.log('mean_loss', float(r_loss), prog_bar=True, logger=True)
-                self.log('d_loss', float(d_loss), prog_bar=True, logger=True)
-                self.log('g_loss', float(g_loss), prog_bar=True, logger=True)
-                self.log('stability_metric', float(d_loss_real + torch.abs(diff)), prog_bar=True, logger=True)
-
-            else:
+            if not hasattr(condition, 'output_points'):
                 raise NotImplementedError('GAROM works only in data-driven mode.')
+
+            # get data
+            print(samples.shape)
+            input_pts = samples
+            parameters = condition.output_points
+            print(parameters.shape)
+
+            # get optimizers
+            opt_gen, opt_disc = self.optimizers
+
+            # ---------------------
+            #  Train Discriminator
+            # ---------------------
+            opt_disc.zero_grad()
+
+            # Generate a batch of images
+            gen_imgs = self.generator(parameters)
+        
+            # Discriminator pass
+            d_real = self.discriminator([input_pts, parameters])
+            d_fake = self.discriminator([gen_imgs.detach(), parameters]) 
+
+            # evaluate loss
+            d_loss_real = self._loss(d_real, input_pts)
+            d_loss_fake = self._loss(d_fake, gen_imgs.detach())
+            d_loss = d_loss_real - self.k * d_loss_fake
+
+            # backward step
+            d_loss.backward()
+            opt_disc.step()
+            
+            # -----------------
+            #  Train Generator
+            # -----------------
+            opt_gen.zero_grad()
+
+            # Generate a batch of images
+            gen_imgs = self.generator(parameters)
+
+            # generator loss
+            r_loss = self._loss(input_pts, gen_imgs)
+            d_fake = self.discriminator([gen_imgs, parameters])
+            g_loss = self._loss(d_fake, gen_imgs) + self.regularizer * r_loss
+
+            # backward step
+            g_loss.backward()
+            opt_gen.step()
+
+            # ----------------
+            # Update weights
+            # ----------------
+            diff = torch.mean(self.gamma * d_loss_real - d_loss_fake)
+
+            # Update weight term for fake samples
+            self.k += self.lambda_k * diff.item()
+            self.k = min(max(self.k, 0), 1)  # Constraint to interval [0, 1]
+
+            # logging
+            self.log('mean_loss', float(r_loss), prog_bar=True, logger=True)
+            self.log('d_loss', float(d_loss), prog_bar=True, logger=True)
+            self.log('g_loss', float(g_loss), prog_bar=True, logger=True)
+            self.log('stability_metric', float(d_loss_real + torch.abs(diff)), prog_bar=True, logger=True)
 
         return
     

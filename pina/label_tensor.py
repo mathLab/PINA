@@ -99,7 +99,11 @@ class LabelTensor(torch.Tensor):
         :return: the stacked tensor
         :rtype: LabelTensor
         """
+        if len(label_tensors) == 0:
+            return []
+
         all_labels = [label for lt in label_tensors for label in lt.labels]
+        print(all_labels)
         if set(all_labels) != set(label_tensors[0].labels):
             raise RuntimeError('The tensors to stack have different labels')
 

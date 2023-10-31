@@ -8,18 +8,39 @@ class SamplePointDataset(Dataset):
     This class is used to create a dataset of sample points.
     """
 
-    def __init__(self, input_pts) -> None:
+    def __init__(self, problem) -> None:
         """
         :param dict input_pts: The input points.
         """
         super().__init__()
-        self.pts = LabelTensor.vstack(list(input_pts.values()))
+        pts_list = [] #list(problem.input_pts.values())
+        self.condition_names = []
+        # out_list = [torch.zeros(len(pts), len(problem.output_variables)) for pts in pts_list]
+        # out_list = []
+        for name, condition in problem.conditions.items():
+            if not hasattr(condition, 'output_points'):
+                pts_list.append(problem.input_pts[name])
+                self.condition_names.append(name)
 
-        self.conditions = torch.cat([
-            torch.tensor([i]*len(pts))
-            for i, pts in enumerate(input_pts.values())
+
+
+
+        #         out_list.append(condition.output_points)
+        #     else:
+        #         out_list.append(
+        #             LabelTensor(
+        #                 torch.zeros(len(problem.input_pts[name]), 1),
+        #                 labels=['res']
+        #             )
+        #         )
+        # print(out_list)
+        self.pts = LabelTensor.vstack(pts_list)
+        # self.out = LabelTensor.vstack(out_list)
+
+        self.condition_indeces = torch.cat([
+            torch.tensor([i]*len(pts_list[i]))
+            for i in range(len(self.condition_names))
         ], dim=0)
-        self.label_encode = list(input_pts.keys())
         
         # self.pts.requires_grad_(True)
         # self.pts.retain_grad()
@@ -29,12 +50,39 @@ class SamplePointDataset(Dataset):
         return self.pts.shape[0]
     
 
+class DataPointDataset(Dataset):
+
+    def __init__(self, problem) -> None:
+        super().__init__()
+        input_list = [] #list(problem.input_pts.values())
+        output_list = [] #list(problem.output_pts.values())
+        self.condition_names = []
+        # out_list = [torch.zeros(len(pts), len(problem.output_variables)) for pts in pts_list]
+        # out_list = []
+        for name, condition in problem.conditions.items():
+            if hasattr(condition, 'output_points'):
+                input_list.append(problem.conditions[name].input_points)
+                output_list.append(problem.conditions[name].output_points)
+                self.condition_names.append(name)
+
+        self.input_pts = LabelTensor.vstack(input_list)
+        self.output_pts = LabelTensor.vstack(output_list)
+        self.condition_indeces = torch.cat([
+            torch.tensor([i]*len(input_list[i]))
+            for i in range(len(self.condition_names))
+        ], dim=0)
+
+
+    def __len__(self):
+        return self.input_pts.shape[0]
+
+
 class SamplePointLoader:
     """
     This class is used to create a dataloader to use during the training.
     """
 
-    def __init__(self, sample_pts, batch_size=None, shuffle=True) -> None:
+    def __init__(self, sample_dataset, data_dataset, batch_size=None, shuffle=True) -> None:
         """
         Constructor.
 
@@ -44,29 +92,94 @@ class SamplePointLoader:
         :param bool shuffle: If ``True``, the sample points are shuffled.
             Default is ``True``.
         """
-        if not isinstance(sample_pts, SamplePointDataset):
-            raise TypeError(f'Expected SamplePointDataset, got {type(sample_pts)}')
+        if not isinstance(sample_dataset, SamplePointDataset):
+            raise TypeError(f'Expected SamplePointDataset, got {type(sample_dataset)}')
+        if not isinstance(data_dataset, DataPointDataset):
+            raise TypeError(f'Expected DataPointDataset, got {type(data_dataset)}')
+
+        self.n_data_conditions = len(data_dataset.condition_names)
+        self.n_phys_conditions = len(sample_dataset.condition_names)
+        data_dataset.condition_indeces += self.n_phys_conditions
+
+        self._prepare_sample_dataset(sample_dataset, batch_size, shuffle)
+        self._prepare_data_dataset(data_dataset, batch_size, shuffle)
+
+        # for i in range(len(self.batch_data_conditions)):
+        #     self.batch_data_conditions[i] += len(self.batch_sample_conditions)
+        self.condition_names = sample_dataset.condition_names + data_dataset.condition_names
+        self.batch_list = []
+        for i in range(len(self.batch_sample_pts)):
+            self.batch_list.append(
+                ('sample', i)
+            )
+
+        for i in range(len(self.batch_input_pts)):
+            self.batch_list.append(
+                ('data', i)
+            )
+
+        self.random_idx = torch.randperm(len(self.batch_list))   
+
+    def _prepare_data_dataset(self, dataset, batch_size, shuffle):
+        self.sample_dataset = dataset
 
         if batch_size is None:
-            batch_size = len(sample_pts)
+            batch_size = len(dataset)
 
-        self.batch_size = batch_size
-        self.batch_num = len(sample_pts) // batch_size
+        batch_num = len(dataset) // batch_size
+        output_labels = dataset.output_pts.labels
+        input_labels = dataset.input_pts.labels
+
+        if shuffle:
+            idx = torch.randperm(dataset.input_pts.shape[0])
+            self.input_pts = dataset.input_pts[idx]
+            self.output_pts = dataset.output_pts[idx]
+            self.tensor_conditions = dataset.condition_indeces[idx]
+
+        self.batch_input_pts = torch.tensor_split(
+            dataset.input_pts, batch_num)
+        self.batch_output_pts = torch.tensor_split(
+            dataset.output_pts, batch_num)
+
+        for i in range(len(self.batch_input_pts)):
+            self.batch_input_pts[i].labels = input_labels
+            self.batch_output_pts[i].labels = output_labels
         
-        self.tensor_pts = sample_pts.pts
-        self.tensor_conditions = sample_pts.conditions
+        self.batch_data_conditions = torch.tensor_split(
+            self.tensor_conditions, batch_num)
+
+    def _prepare_sample_dataset(self, sample_dataset, batch_size, shuffle):
+
+        self.sample_dataset = sample_dataset
+
+        if batch_size is None:
+            batch_size = len(sample_dataset)
+
+        batch_size = batch_size
+        batch_num = len(sample_dataset) // batch_size
+        
+        self.tensor_pts = sample_dataset.pts
+        self.tensor_conditions = sample_dataset.condition_indeces
 
         if shuffle:
             idx = torch.randperm(self.tensor_pts.shape[0])
             self.tensor_pts = self.tensor_pts[idx]
             self.tensor_conditions = self.tensor_conditions[idx]
            
-        self.tensor_pts = torch.tensor_split(self.tensor_pts, self.batch_num)
-        for i, batch in enumerate(self.tensor_pts):
-            self.tensor_pts[i].labels = sample_pts.pts.labels
+        self.batch_sample_pts = torch.tensor_split(self.tensor_pts, batch_num)
+        for i in range(len(self.batch_sample_pts)):
+            self.batch_sample_pts[i].labels = sample_dataset.pts.labels
 
-        self.tensor_conditions = torch.tensor_split(
-            self.tensor_conditions, self.batch_num)
+        self.batch_sample_conditions = torch.tensor_split(
+            self.tensor_conditions, batch_num)
 
     def __iter__(self):
-        return iter(zip(self.tensor_pts, self.tensor_conditions))
+        for i in self.random_idx:
+            type_, idx_ = self.batch_list[i]
+
+            if type_ == 'sample':
+                yield self.batch_sample_pts[idx_], self.batch_sample_conditions[idx_]
+            else:
+                yield self.batch_input_pts[idx_], self.batch_output_pts[idx_], self.batch_data_conditions[idx_]
+            
+        # return iter(zip(self.tensor_pts, self.tensor_conditions))

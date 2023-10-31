@@ -22,6 +22,8 @@ def laplace_equation(input_, output_):
 my_laplace = Equation(laplace_equation)
 in_ = LabelTensor(torch.tensor([[0., 1.]]), ['x', 'y'])
 out_ = LabelTensor(torch.tensor([[0.]]), ['u'])
+in2_ = LabelTensor(torch.rand(60, 2), ['x', 'y'])
+out2_ = LabelTensor(torch.rand(60, 1), ['u'])
 
 class Poisson(SpatialProblem):
     output_variables = ['u']
@@ -43,9 +45,12 @@ class Poisson(SpatialProblem):
         'D': Condition(
             input_points=LabelTensor(torch.rand(size=(100, 2)), ['x', 'y']),
             equation=my_laplace),
-        #'data': Condition(
-        #    input_points=in_,
-        #    output_points=out_)
+        # 'data': Condition(
+        #     input_points=in_,
+        #     output_points=out_),
+        'data2': Condition(
+            input_points=in2_,
+            output_points=out2_)
     }
 
     def poisson_sol(self, pts):
@@ -92,7 +97,7 @@ def test_train_cpu():
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
-    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu')
+    trainer = Trainer(solver=pinn, max_epochs=50, accelerator='cpu', batch_size=20)
     trainer.train()
 
 def test_train_restore():

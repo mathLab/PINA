@@ -97,6 +97,17 @@ class PINN(SolverInterface):
         """
         return self.optimizers, [self.scheduler]
     
+    def _loss_data(self, input, output):
+        input = input.requires_grad_(True)
+        return self.loss(self.forward(input), output)
+
+    
+    def _loss_phys(self, samples, equation):
+        samples = samples.requires_grad_(True)
+        residual = equation.residual(samples, self.forward(samples))
+        return self.loss(torch.zeros_like(residual, requires_grad=True), residual)
+
+
     def training_step(self, batch, batch_idx):
         """PINN solver training step.
 
@@ -108,27 +119,30 @@ class PINN(SolverInterface):
         :rtype: LabelTensor
         """
 
+        dataloader = self.trainer.train_dataloader
         condition_losses = []
 
-        pts, condition_idx = batch
-        pts = pts.detach()
-        pts = pts.requires_grad_(True)
+        condition_idx = batch[-1]
 
         for condition_id in range(condition_idx.min(), condition_idx.max()+1):
 
-            condition_name = list(self.problem.conditions.keys())[condition_id]
+            condition_name = dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
-            samples = pts[condition_idx == condition_id]
-            samples.labels = pts.labels
+            pts = batch[0]
 
-            # PINN loss: equation evaluated on location or input_points
-            if hasattr(condition, 'equation'):
-                target = condition.equation.residual(samples, self.forward(samples))
-                loss = self.loss(torch.zeros_like(target), target)
-            # PINN loss: evaluate model(input_points) vs output_points
-            elif hasattr(condition, 'output_points'):
-                input_pts, output_pts = samples
-                loss = self.loss(self.forward(input_pts), output_pts)
+            if len(batch) == 2:
+                samples = pts[condition_idx == condition_id]
+                samples.labels = pts.labels
+                loss = self._loss_phys(pts, condition.equation)
+            elif len(batch) == 3:
+                samples = pts[condition_idx == condition_id]
+                samples.labels = pts.labels
+                ground_truth = batch[1][condition_idx == condition_id]
+                ground_truth.labels = batch[1].labels
+                loss = self._loss_data(samples, ground_truth)
+            else:
+                raise ValueError("Batch size not supported")
+
 
             loss = loss.as_subclass(torch.Tensor)
 
