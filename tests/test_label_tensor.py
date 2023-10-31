@@ -87,6 +87,11 @@ def test_getitem():
     assert tensor_view.labels == ['a']
     assert torch.allclose(tensor_view.flatten(), data[:, 0])
 
+    tensor_view = tensor['a', 'c']
+
+    assert tensor_view.labels == ['a', 'c']
+    assert torch.allclose(tensor_view, data[:, 0::2])
+
 def test_getitem2():
     tensor = LabelTensor(data, labels)
     tensor_view = tensor[:5]
