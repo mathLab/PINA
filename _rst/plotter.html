@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plotter &mdash; PINA 0.0.3.post2310 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Plotter &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -33,7 +33,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.3.post2310
+                0.0.3.post2311
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -101,7 +101,7 @@
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="sig-name descname">Plotter</code><a class="reference internal" href="../_modules/pina/plotter.html#Plotter"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Implementation of a plotter class, for easy visualizations.</p>
 <dl class="method">
 <dt>
@@ -111,18 +111,18 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pinn</strong> (<a class="reference internal" href="pinn.html#pina.pinn.PINN" title="pina.pinn.PINN"><em>PINN</em></a>) – the PINN object.</p></li>
-<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the output variable to plot. If None, all
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the output variable to plot. If None, all
 the output variables of the problem are selected. Default value is
 None.</p></li>
-<li><p><strong>fixed_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – a dictionary with all the variables that
+<li><p><strong>fixed_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – a dictionary with all the variables that
 should be kept fixed during the plot. The keys of the dictionary
 are the variables name whereas the values are the corresponding
 values of the variables. Defaults is <cite>dict()</cite>.</p></li>
 <li><p><strong>'pcolor'} method</strong> (<em>{'contourf'</em><em>,</em>) – the matplotlib method to use for
 plotting the solution. Default is ‘contourf’.</p></li>
-<li><p><strong>res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the resolution, aka the number of points used for
+<li><p><strong>res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – the resolution, aka the number of points used for
 plotting in each axis. Default is 256.</p></li>
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the file name to save the plot. If None, the plot
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the file name to save the plot. If None, the plot
 is shown using the setted matplotlib frontend. Default is None.</p></li>
 </ul>
 </dd>
@@ -137,10 +137,10 @@ is shown using the setted matplotlib frontend. Default is None.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pinn</strong> (<a class="reference internal" href="pinn.html#pina.pinn.PINN" title="pina.pinn.PINN"><em>PINN</em></a>) – the PINN object.</p></li>
-<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the label to use in the legend, defaults to None.</p></li>
-<li><p><strong>log_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If True, the y axis is in log scale. Default is
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the label to use in the legend, defaults to None.</p></li>
+<li><p><strong>log_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, the y axis is in log scale. Default is
 True.</p></li>
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the file name to save the plot. If None, the plot
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the file name to save the plot. If None, the plot
 is not saved. Default is None.</p></li>
 </ul>
 </dd>
@@ -157,7 +157,7 @@ is not saved. Default is None.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pinn</strong> (<a class="reference internal" href="pinn.html#pina.pinn.PINN" title="pina.pinn.PINN"><em>PINN</em></a>) – the PINN object.</p></li>
-<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – variables to plot. If None, all variables
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – variables to plot. If None, all variables
 are plotted. If ‘spatial’, only spatial variables are plotted. If
 ‘temporal’, only temporal variables are plotted. Defaults to None.</p></li>
 </ul>
@@ -196,7 +196,7 @@ are plotted. If ‘spatial’, only spatial variables are plotted. If
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Oct 01, 2023.
+      <span class="lastupdated">Last updated on Nov 01, 2023.
       </span></p>
   </div>
 

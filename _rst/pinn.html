@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PINN &mdash; PINA 0.0.3.post2310 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>PINN &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -33,7 +33,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.3.post2310
+                0.0.3.post2311
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -101,30 +101,30 @@
 <dl class="class">
 <dt id="pina.pinn.PINN">
 <em class="property">class </em><code class="sig-name descname">PINN</code><span class="sig-paren">(</span><em class="sig-param">problem</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optimizer_kwargs=None</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">lr_scheduler_type=&lt;class 'torch.optim.lr_scheduler.ConstantLR'&gt;</em>, <em class="sig-param">lr_scheduler_kwargs={'factor': 1</em>, <em class="sig-param">'total_iters': 0}</em>, <em class="sig-param">regularizer=1e-05</em>, <em class="sig-param">batch_size=None</em>, <em class="sig-param">dtype=torch.float32</em>, <em class="sig-param">device='cpu'</em>, <em class="sig-param">error_norm='mse'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/pinn.html#PINN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.pinn.PINN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>problem</strong> (<a class="reference internal" href="abstractproblem.html#pina.problem.abstract_problem.AbstractProblem" title="pina.problem.abstract_problem.AbstractProblem"><em>AbstractProblem</em></a>) – the formualation of the problem.</p></li>
-<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><em>torch.nn.Module</em></a>) – the neural network model to use.</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.0)"><em>torch.optim.Optimizer</em></a>) – the neural network optimizer to
+<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a>) – the neural network model to use.</p></li>
+<li><p><strong>optimizer</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.1)"><em>torch.optim.Optimizer</em></a>) – the neural network optimizer to
 use; default is <cite>torch.optim.Adam</cite>.</p></li>
-<li><p><strong>optimizer_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – Optimizer constructor keyword args.</p></li>
-<li><p><strong>lr</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the learning rate; default is 0.001.</p></li>
+<li><p><strong>optimizer_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Optimizer constructor keyword args.</p></li>
+<li><p><strong>lr</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – the learning rate; default is 0.001.</p></li>
 <li><p><strong>lr_scheduler_type</strong> (<em>torch.optim.LRScheduler</em>) – Learning
 rate scheduler.</p></li>
-<li><p><strong>lr_scheduler_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – LR scheduler constructor keyword args.</p></li>
-<li><p><strong>regularizer</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the coefficient for L2 regularizer term.</p></li>
-<li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><em>type</em></a>) – the data type to use for the model. Valid option are
+<li><p><strong>lr_scheduler_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – LR scheduler constructor keyword args.</p></li>
+<li><p><strong>regularizer</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – the coefficient for L2 regularizer term.</p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><em>type</em></a>) – the data type to use for the model. Valid option are
 <cite>torch.float32</cite> and <cite>torch.float64</cite> (<cite>torch.float16</cite> only on GPU);
 default is <cite>torch.float64</cite>.</p></li>
-<li><p><strong>device</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the device used for training; default ‘cpu’
+<li><p><strong>device</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the device used for training; default ‘cpu’
 option include ‘cuda’ if cuda is available.</p></li>
-<li><p><strong>int</strong><strong>) </strong><strong>error_norm</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>,</em>) – the loss function used as minimizer,
+<li><p><strong>int</strong><strong>) </strong><strong>error_norm</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>,</em>) – the loss function used as minimizer,
 default mean square error ‘mse’. If string options include mean
 error ‘me’ and mean square error ‘mse’. If int, the p-norm is
 calculated where p is specifined by the int input.</p></li>
-<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – batch size for the dataloader; default 5.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – batch size for the dataloader; default 5.</p></li>
 </ul>
 </dd>
 </dl>
@@ -135,7 +135,7 @@ calculated where p is specifined by the int input.</p></li>
 <cite>self.error_norm</cite> attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>vec</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.0)"><em>torch.Tensor</em></a>) – the tensor</p>
+<dd class="field-odd"><p><strong>vec</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – the tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -146,7 +146,7 @@ calculated where p is specifined by the int input.</p></li>
 <dd><p>Load the state of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the filename to load the state from.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the filename to load the state from.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -163,7 +163,7 @@ calculated where p is specifined by the int input.</p></li>
 <dd><p>Save the state of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the filename to save the state to.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the filename to save the state to.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -196,7 +196,7 @@ the problem.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Oct 01, 2023.
+      <span class="lastupdated">Last updated on Nov 01, 2023.
       </span></p>
   </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Operators &mdash; PINA 0.0.3.post2310 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Operators &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -33,7 +33,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.3.post2310
+                0.0.3.post2311
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -110,12 +110,12 @@ with multiple input coordinates.</p>
 nabla.</p></li>
 <li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which computing
 the nabla.</p></li>
-<li><p><strong>velocity_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the name of the output variables which is used
+<li><p><strong>velocity_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the name of the output variables which is used
 as velocity field. It should be a subset of the output labels.</p></li>
-<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
 the nabla for. It should be a subset of the output labels. If None,
 all the output variables are considered. Default is None.</p></li>
-<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the name of the input variables on which the nabla
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the nabla
 is calculated. d should be a subset of the input labels. If None, all
 the input variables are considered. Default is None.</p></li>
 </ul>
@@ -141,19 +141,19 @@ with multiple input coordinates.</p>
 divergence.</p></li>
 <li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which computing
 the divergence.</p></li>
-<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
 the divergence for. It should be a subset of the output labels. If None,
 all the output variables are considered. Default is None.</p></li>
-<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the name of the input variables on which the divergence
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the divergence
 is calculated. d should be a subset of the input labels. If None, all
 the input variables are considered. Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.11)"><strong>TypeError</strong></a> – div operator works only for LabelTensor.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – div operator works only for vector fields.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – div operator must derive all components with
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – div operator works only for LabelTensor.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – div operator works only for vector fields.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – div operator must derive all components with
 respect to all coordinates.</p></li>
 </ul>
 </dd>
@@ -178,10 +178,10 @@ functions, with multiple input coordinates.</p>
 gradient.</p></li>
 <li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which computing
 the gradient.</p></li>
-<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
 the gradient for. It should be a subset of the output labels. If None,
 all the output variables are considered. Default is None.</p></li>
-<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the name of the input variables on which the gradient is
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the gradient is
 calculated. d should be a subset of the input labels. If None, all the
 input variables are considered. Default is None.</p></li>
 </ul>
@@ -207,20 +207,20 @@ scalar functions, with multiple input coordinates.</p>
 nabla.</p></li>
 <li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which computing
 the nabla.</p></li>
-<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
 the nabla for. It should be a subset of the output labels. If None,
 all the output variables are considered. Default is None.</p></li>
-<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the name of the input variables on which the nabla
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the nabla
 is calculated. d should be a subset of the input labels. If None, all
 the input variables are considered. Default is None.</p></li>
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – used method to calculate nabla, defaults to ‘std’.</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – used method to calculate nabla, defaults to ‘std’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – for vectorial field derivative with respect to
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – for vectorial field derivative with respect to
 all coordinates must be performed.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.11)"><strong>NotImplementedError</strong></a> – ‘divgrad’ not implemented as method.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.12)"><strong>NotImplementedError</strong></a> – ‘divgrad’ not implemented as method.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -246,7 +246,7 @@ all coordinates must be performed.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Oct 01, 2023.
+      <span class="lastupdated">Last updated on Nov 01, 2023.
       </span></p>
   </div>
 

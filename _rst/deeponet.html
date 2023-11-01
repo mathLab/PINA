@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DeepONet &mdash; PINA 0.0.3.post2310 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>DeepONet &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -33,7 +33,7 @@
             PINA
           </a>
               <div class="version">
-                0.0.3.post2310
+                0.0.3.post2311
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -107,7 +107,7 @@
 <dl class="class">
 <dt id="pina.model.deeponet.DeepONet">
 <em class="property">class </em><code class="sig-name descname">DeepONet</code><span class="sig-paren">(</span><em class="sig-param">nets</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">aggregator='*'</em>, <em class="sig-param">reduction='+'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/model/deeponet.html#DeepONet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.deeponet.DeepONet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of DeepONet network.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -119,17 +119,17 @@ DOI: <a class="reference external" href="https://doi.org/10.1038/s42256-021-0030
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nets</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.0)"><em>torch.nn.Module</em></a><em>)</em>) – Internal DeepONet networks
+<li><p><strong>nets</strong> (<em>iterable</em><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a><em>)</em>) – Internal DeepONet networks
 (branch and trunk in the original DeepONet).</p></li>
-<li><p><strong>output_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>)</em>) – the list containing the labels
+<li><p><strong>output_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the list containing the labels
 corresponding to the components of the output computed by the
 model.</p></li>
-<li><p><strong>| callable aggregator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Aggregator to be used to aggregate
+<li><p><strong>| callable aggregator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Aggregator to be used to aggregate
 partial results from the modules in <cite>nets</cite>. Partial results are
 aggregated component-wise. See
 <a class="reference internal" href="#pina.model.deeponet.DeepONet._symbol_functions" title="pina.model.deeponet.DeepONet._symbol_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">pina.model.deeponet.DeepONet._symbol_functions()</span></code></a> for the
 available default aggregators.</p></li>
-<li><p><strong>| callable reduction</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Reduction to be used to reduce
+<li><p><strong>| callable reduction</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Reduction to be used to reduce
 the aggregated result of the modules in <cite>nets</cite> to the desired output
 dimension. See <a class="reference internal" href="#pina.model.deeponet.DeepONet._symbol_functions" title="pina.model.deeponet.DeepONet._symbol_functions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.model.deeponet.DeepONet._symbol_functions</span></code></a> for the available default
 reductions.</p></li>
@@ -211,7 +211,7 @@ reductions.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Oct 01, 2023.
+      <span class="lastupdated">Last updated on Nov 01, 2023.
       </span></p>
   </div>
 
