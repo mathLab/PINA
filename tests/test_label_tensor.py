@@ -27,7 +27,6 @@ def test_labels():
 def test_extract():
     label_to_extract = ['a', 'c']
     tensor = LabelTensor(data, labels)
-    print(tensor)
     new = tensor.extract(label_to_extract)
     assert new.labels == label_to_extract
     assert new.shape[1] == len(label_to_extract)
@@ -58,7 +57,6 @@ def test_extract_order():
     expected = torch.cat(
         (data[:, 2].reshape(-1, 1), data[:, 0].reshape(-1, 1)),
         dim=1)
-    print(expected)
     assert new.labels == label_to_extract
     assert new.shape[1] == len(label_to_extract)
     assert torch.all(torch.isclose(expected, new))
@@ -83,6 +81,18 @@ def test_merge2():
 
 
 def test_getitem():
+    tensor = LabelTensor(data, labels)
+    tensor_view = tensor['a']
+
+    assert tensor_view.labels == ['a']
+    assert torch.allclose(tensor_view.flatten(), data[:, 0])
+
+    tensor_view = tensor['a', 'c']
+
+    assert tensor_view.labels == ['a', 'c']
+    assert torch.allclose(tensor_view, data[:, 0::2])
+
+def test_getitem2():
     tensor = LabelTensor(data, labels)
     tensor_view = tensor[:5]
 
