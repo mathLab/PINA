@@ -236,7 +236,7 @@ class LabelTensor(torch.Tensor):
             len_index = len(index)
         except TypeError:
             len_index = 1
-
+        
         if isinstance(index, int) or len_index == 1:
             if selected_lt.ndim == 1:
                 selected_lt = selected_lt.reshape(1, -1)
@@ -254,6 +254,10 @@ class LabelTensor(torch.Tensor):
             selected_lt.labels = self.labels
                     
         return selected_lt
+    
+    @property
+    def tensor(self):
+        return self.as_subclass(Tensor)
 
     def __len__(self) -> int:
         return super().__len__()

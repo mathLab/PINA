@@ -190,58 +190,73 @@ class GAROM(SolverInterface):
                 raise NotImplementedError('GAROM works only in data-driven mode.')
 
             # get data
-            input_pts = out[condition_idx == condition_id]
+            snapshots = out[condition_idx == condition_id]
             parameters = pts[condition_idx == condition_id]
 
-            # get optimizers
-            opt_gen, opt_disc = self.optimizers
 
             # ---------------------
             #  Train Discriminator
             # ---------------------
-            opt_disc.zero_grad()
+            def _train_discriminator(parameters, snapshots):
 
-            # Generate a batch of images
-            gen_imgs = self.generator(parameters)
+                optimizer = self.optimizers[1]
+                optimizer.zero_grad()
+
+                # Generate a batch of images
+                generated_snapshots = self.generator(parameters)
         
-            # Discriminator pass
-            d_real = self.discriminator([input_pts, parameters])
-            d_fake = self.discriminator([gen_imgs.detach(), parameters]) 
+                # Discriminator pass
+                d_real = self.discriminator([snapshots, parameters])
+                d_fake = self.discriminator([generated_snapshots, parameters]) 
 
-            # evaluate loss
-            d_loss_real = self._loss(d_real, input_pts)
-            d_loss_fake = self._loss(d_fake, gen_imgs.detach())
-            d_loss = d_loss_real - self.k * d_loss_fake
+                # evaluate loss
+                d_loss_real = self._loss(d_real, snapshots)
+                d_loss_fake = self._loss(d_fake, generated_snapshots.detach())
+                d_loss = d_loss_real - self.k * d_loss_fake
 
-            # backward step
-            d_loss.backward()
-            opt_disc.step()
+                # backward step
+                d_loss.backward(retain_graph=True)
+                optimizer.step()
+
+                return d_loss_real, d_loss_fake, d_loss
             
+            d_loss_real, d_loss_fake, d_loss = _train_discriminator(
+                parameters, snapshots)
+
             # -----------------
             #  Train Generator
             # -----------------
-            opt_gen.zero_grad()
+            def _train_generator(parameters, snapshots):
 
-            # Generate a batch of images
-            gen_imgs = self.generator(parameters)
+                optimizer = self.optimizers[0]
 
-            # generator loss
-            r_loss = self._loss(input_pts, gen_imgs)
-            d_fake = self.discriminator([gen_imgs, parameters])
-            g_loss = self._loss(d_fake, gen_imgs) + self.regularizer * r_loss
+                generated_snapshots = self.generator(parameters)
 
-            # backward step
-            g_loss.backward()
-            opt_gen.step()
+                # generator loss
+                r_loss = self._loss(snapshots, generated_snapshots)
+                d_fake = self.discriminator([generated_snapshots, parameters])
+                g_loss = self._loss(d_fake, generated_snapshots) + self.regularizer * r_loss
 
+                # backward step
+                g_loss.backward()
+                optimizer.step()
+
+                return r_loss, g_loss
+
+            r_loss, g_loss = _train_generator(parameters, snapshots)
             # ----------------
             # Update weights
             # ----------------
-            diff = torch.mean(self.gamma * d_loss_real - d_loss_fake)
+            def _update_weights(d_loss_real, d_loss_fake):
 
-            # Update weight term for fake samples
-            self.k += self.lambda_k * diff.item()
-            self.k = min(max(self.k, 0), 1)  # Constraint to interval [0, 1]
+                diff = torch.mean(self.gamma * d_loss_real - d_loss_fake)
+
+                # Update weight term for fake samples
+                self.k += self.lambda_k * diff.item()
+                self.k = min(max(self.k, 0), 1)  # Constraint to interval [0, 1]
+                return diff
+            
+            diff = _update_weights(d_loss_real, d_loss_fake)
 
             # logging
             self.log('mean_loss', float(r_loss), prog_bar=True, logger=True)
