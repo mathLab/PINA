@@ -207,6 +207,7 @@ nitpick_ignore = [
     ("py:func", "wandb.init"),
     ("py:class", "wandb.sdk.lib.RunDisabled"),
     ("py:class", "wandb.wandb_run.Run"),
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

@@ -1,11 +1,7 @@
 import torch
-import pytest
 
-from pina import LabelTensor, Condition, CartesianDomain, PINN
-from pina.problem import SpatialProblem
-from pina.model import FeedForward
-from pina.operators import laplacian
-
+from pina import LabelTensor
+from pina.geometry import CartesianDomain
 
 def test_constructor():
     CartesianDomain({'x': [0, 1], 'y': [0, 1]})
