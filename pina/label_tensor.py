@@ -103,7 +103,6 @@ class LabelTensor(torch.Tensor):
             return []
 
         all_labels = [label for lt in label_tensors for label in lt.labels]
-        print(all_labels)
         if set(all_labels) != set(label_tensors[0].labels):
             raise RuntimeError('The tensors to stack have different labels')
 
@@ -182,9 +181,15 @@ class LabelTensor(torch.Tensor):
 
     def detach(self):
         detached = super().detach()
-        detached._labels = self._labels
+        if hasattr(self, '_labels'):
+            detached._labels = self._labels
         return detached
 
+
+    def requires_grad_(self, mode = True) -> Tensor:
+        lt = super().requires_grad_(mode)
+        lt.labels = self.labels
+        return lt
 
     def append(self, lt, mode='std'):
         """
@@ -245,6 +250,8 @@ class LabelTensor(torch.Tensor):
                     selected_lt.labels = [self.labels[i] for i in index[1]]
                 else:
                     selected_lt.labels = self.labels[index[1]]
+        else:
+            selected_lt.labels = self.labels
                     
         return selected_lt
 

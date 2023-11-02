@@ -172,31 +172,26 @@ class GAROM(SolverInterface):
         :rtype: LabelTensor
         """
 
-        pts, condition_idx = batch
-        pts = pts.detach()
-        pts = pts.requires_grad_(True)
+        dataloader = self.trainer.train_dataloader
+        condition_idx = batch['condition']
 
         for condition_id in range(condition_idx.min(), condition_idx.max()+1):
 
-            condition_name = list(self.problem.conditions.keys())[condition_id]
+            condition_name = dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
-            samples = pts[condition_idx == condition_id]
-            samples.labels = pts.labels
+            pts = batch['pts']
+            out = batch['output']
 
             if condition_name not in self.problem.conditions:
                 raise RuntimeError('Something wrong happened.')
-
-            condition = self.problem.conditions[condition_name]
 
             # for data driven mode
             if not hasattr(condition, 'output_points'):
                 raise NotImplementedError('GAROM works only in data-driven mode.')
 
             # get data
-            print(samples.shape)
-            input_pts = samples
-            parameters = condition.output_points
-            print(parameters.shape)
+            input_pts = out[condition_idx == condition_id]
+            parameters = pts[condition_idx == condition_id]
 
             # get optimizers
             opt_gen, opt_disc = self.optimizers

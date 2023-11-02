@@ -33,7 +33,7 @@ class Trainer(Trainer):
         dataset_phys = SamplePointDataset(self._model.problem) 
         dataset_data = DataPointDataset(self._model.problem)
         self._loader = SamplePointLoader(
-            dataset_phys, dataset_data, batch_size=10,
+            dataset_phys, dataset_data, batch_size=self.batch_size,
             shuffle=True)
 
     def train(self, **kwargs):

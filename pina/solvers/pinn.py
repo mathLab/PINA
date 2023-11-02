@@ -98,12 +98,10 @@ class PINN(SolverInterface):
         return self.optimizers, [self.scheduler]
     
     def _loss_data(self, input, output):
-        input = input.requires_grad_(True)
         return self.loss(self.forward(input), output)
 
     
     def _loss_phys(self, samples, equation):
-        samples = samples.requires_grad_(True)
         residual = equation.residual(samples, self.forward(samples))
         return self.loss(torch.zeros_like(residual, requires_grad=True), residual)
 
@@ -122,23 +120,20 @@ class PINN(SolverInterface):
         dataloader = self.trainer.train_dataloader
         condition_losses = []
 
-        condition_idx = batch[-1]
+        condition_idx = batch['condition']
 
         for condition_id in range(condition_idx.min(), condition_idx.max()+1):
 
             condition_name = dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
-            pts = batch[0]
+            pts = batch['pts']
 
             if len(batch) == 2:
                 samples = pts[condition_idx == condition_id]
-                samples.labels = pts.labels
                 loss = self._loss_phys(pts, condition.equation)
             elif len(batch) == 3:
                 samples = pts[condition_idx == condition_id]
-                samples.labels = pts.labels
-                ground_truth = batch[1][condition_idx == condition_id]
-                ground_truth.labels = batch[1].labels
+                ground_truth = batch['output'][condition_idx == condition_id]
                 loss = self._loss_data(samples, ground_truth)
             else:
                 raise ValueError("Batch size not supported")

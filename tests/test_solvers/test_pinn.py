@@ -107,11 +107,11 @@ def test_train_restore():
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
-    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu', default_root_dir=tmpdir, batch_size=10)
+    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu', default_root_dir=tmpdir)
     trainer.train()
     ntrainer = Trainer(solver=pinn, max_epochs=15, accelerator='cpu')
     t = ntrainer.train(
-        ckpt_path=f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=4-step=70.ckpt')
+        ckpt_path=f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=4-step=10.ckpt')
     import shutil
     shutil.rmtree(tmpdir)
 
@@ -126,7 +126,7 @@ def test_train_load():
                      default_root_dir=tmpdir)
     trainer.train()
     new_pinn = PINN.load_from_checkpoint(
-        f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=14-step=15.ckpt',
+        f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=14-step=30.ckpt',
         problem = poisson_problem, model=model)
     test_pts = CartesianDomain({'x': [0, 1], 'y': [0, 1]}).sample(10)
     assert new_pinn.forward(test_pts).extract(['u']).shape == (10, 1)
