@@ -13,43 +13,25 @@ class SamplePointDataset(Dataset):
         :param dict input_pts: The input points.
         """
         super().__init__()
-        pts_list = [] #list(problem.input_pts.values())
+        pts_list = []
         self.condition_names = []
-        # out_list = [torch.zeros(len(pts), len(problem.output_variables)) for pts in pts_list]
-        # out_list = []
+
         for name, condition in problem.conditions.items():
             if not hasattr(condition, 'output_points'):
                 pts_list.append(problem.input_pts[name])
                 self.condition_names.append(name)
 
-
-
-
-        #         out_list.append(condition.output_points)
-        #     else:
-        #         out_list.append(
-        #             LabelTensor(
-        #                 torch.zeros(len(problem.input_pts[name]), 1),
-        #                 labels=['res']
-        #             )
-        #         )
-        # print(out_list)
         self.pts = LabelTensor.vstack(pts_list)
-        # self.out = LabelTensor.vstack(out_list)
 
         if self.pts != []:
             self.condition_indeces = torch.cat([
                 torch.tensor([i]*len(pts_list[i]))
                 for i in range(len(self.condition_names))
             ], dim=0)
-        else:
+        else: # if there are no sample points
             self.condition_indeces = torch.tensor([])
             self.pts = torch.tensor([])
         
-        # self.pts.requires_grad_(True)
-        # self.pts.retain_grad()
-        # # print(self.pts)
-
     def __len__(self):
         return self.pts.shape[0]
     
@@ -58,11 +40,10 @@ class DataPointDataset(Dataset):
 
     def __init__(self, problem) -> None:
         super().__init__()
-        input_list = [] #list(problem.input_pts.values())
-        output_list = [] #list(problem.output_pts.values())
+        input_list = []
+        output_list = [] 
         self.condition_names = []
-        # out_list = [torch.zeros(len(pts), len(problem.output_variables)) for pts in pts_list]
-        # out_list = []
+
         for name, condition in problem.conditions.items():
             if hasattr(condition, 'output_points'):
                 input_list.append(problem.conditions[name].input_points)
@@ -77,11 +58,10 @@ class DataPointDataset(Dataset):
                 torch.tensor([i]*len(input_list[i]))
                 for i in range(len(self.condition_names))
             ], dim=0)
-        else:
+        else: # if there are no data points
             self.condition_indeces = torch.tensor([])
             self.input_pts = torch.tensor([])
             self.output_pts = torch.tensor([])
-
 
     def __len__(self):
         return self.input_pts.shape[0]
@@ -90,6 +70,10 @@ class DataPointDataset(Dataset):
 class SamplePointLoader:
     """
     This class is used to create a dataloader to use during the training.
+
+    :var condition_names: The names of the conditions. The order is consistent
+        with the condition indeces in the batches.
+    :vartype condition_names: list[str]
     """
 
     def __init__(self, sample_dataset, data_dataset, batch_size=None, shuffle=True) -> None:
@@ -114,9 +98,9 @@ class SamplePointLoader:
         self._prepare_sample_dataset(sample_dataset, batch_size, shuffle)
         self._prepare_data_dataset(data_dataset, batch_size, shuffle)
 
-        # for i in range(len(self.batch_data_conditions)):
-        #     self.batch_data_conditions[i] += len(self.batch_sample_conditions)
-        self.condition_names = sample_dataset.condition_names + data_dataset.condition_names
+        self.condition_names = (
+            sample_dataset.condition_names + data_dataset.condition_names)
+
         self.batch_list = []
         for i in range(len(self.batch_sample_pts)):
             self.batch_list.append(
@@ -155,7 +139,6 @@ class SamplePointLoader:
         batch_num = len(dataset) // batch_size
         if len(dataset) % batch_size != 0:
             batch_num += 1
-        print(batch_num, batch_size)
 
         output_labels = dataset.output_pts.labels
         input_labels = dataset.input_pts.labels
@@ -200,7 +183,6 @@ class SamplePointLoader:
         if len(dataset) % batch_size != 0:
             batch_num += 1
         
-        # self.tensor_pts = sample_dataset.pts.requires_grad_(True)
         self.tensor_pts = dataset.pts
         self.tensor_conditions = dataset.condition_indeces
 
@@ -218,7 +200,16 @@ class SamplePointLoader:
 
     def __iter__(self):
         """
-        Return an iterator over the points.
+        Return an iterator over the points. Any element of the iterator is a
+        dictionary with the following keys:
+            - ``pts``: The input sample points. It is a LabelTensor with the
+                shape ``(batch_size, input_dimension)``.
+            - ``output``: The output sample points. This key is present only
+                if data conditions are present. It is a LabelTensor with the
+                shape ``(batch_size, output_dimension)``.
+            - ``condition``: The integer condition indeces. It is a tensor
+                with the shape ``(batch_size, )`` of type ``torch.int64`` and
+                indicates for any ``pts`` the corresponding problem condition.
 
         :return: An iterator over the points.
         :rtype: iter
@@ -227,19 +218,14 @@ class SamplePointLoader:
             type_, idx_ = self.batch_list[i]
 
             if type_ == 'sample':
-
-
                 d = {
                     'pts': self.batch_sample_pts[idx_].requires_grad_(True),
                     'condition': self.batch_sample_conditions[idx_],
                 }
-                # yield self.batch_sample_pts[idx_], self.batch_sample_conditions[idx_]
             else:
                 d = {
                     'pts': self.batch_input_pts[idx_].requires_grad_(True),
                     'output': self.batch_output_pts[idx_],
                     'condition': self.batch_data_conditions[idx_],
                 }
-                # yield self.batch_input_pts[idx_], self.batch_output_pts[idx_], self.batch_data_conditions[idx_]
-            
             yield d

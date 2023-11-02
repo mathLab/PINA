@@ -93,7 +93,6 @@ def test_getitem():
     assert tensor_view.labels == labels
 
 
-
 def test_slice():
     tensor = LabelTensor(data, labels)
     tensor_view = tensor[:5, :2]
