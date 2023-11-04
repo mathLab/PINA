@@ -1,42 +1,40 @@
-"""Module for Location class."""
+"""Module for Exclusion class. """
+
 import torch
-from .location import Location
-from ..utils import check_consistency
 from ..label_tensor import LabelTensor
 import random
 from .operation_interface import OperationInterface
 
 
 class Exclusion(OperationInterface):
-    """ PINA implementation of Exclusion of Domains."""
 
     def __init__(self, geometries):
-        """
+        r"""
         PINA implementation of Exclusion of Domains.
         Given two sets :math:`A` and :math:`B` then the
         domain difference is defined as:
 
-        ..:math:
-        A \setminus B = \{x \mid x \in A \text{ and } x \in B\ \text{ and } x \not\in (A \text{ or } B)},
+        .. math::
+            A \setminus B = \{x \mid x \in A \land x \in B \land  x \not\in (A \lor B)\},
 
         with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
         the dimension of the geometry space.
 
-        :param list geometries: A list of geometries from ``pina.geometry ``
+        :param list geometries: A list of geometries from ``pina.geometry``
             such as ``EllipsoidDomain`` or ``CartesianDomain``.
 
         :Example:
-            # Create two ellipsoid domains
+            >>> # Create two ellipsoid domains
             >>> ellipsoid1 = EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1]})
             >>> ellipsoid2 = EllipsoidDomain({'x': [0, 2], 'y': [0, 2]})
-
-            # Create a Exclusion of the ellipsoid domains
+            >>> # Create a Exclusion of the ellipsoid domains
             >>> exclusion = Exclusion([ellipsoid1, ellipsoid2])
         """
         super().__init__(geometries)
 
     def is_inside(self, point, check_border=False):
-        """Check if a point is inside the Exclusion domain.
+        """
+        Check if a point is inside the ``Exclusion`` domain.
 
         :param point: Point to be checked.
         :type point: torch.Tensor   
@@ -51,7 +49,8 @@ class Exclusion(OperationInterface):
         return flag == 1
 
     def sample(self, n, mode='random', variables='all'):
-        """Sample routine for exclusion domain.
+        """
+        Sample routine for ``Exclusion`` domain.
 
         :param int n: Number of points to sample in the shape.
         :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
@@ -61,20 +60,18 @@ class Exclusion(OperationInterface):
         :rtype: LabelTensor
 
         :Example:
-            # Create two Cartesian domains
+            >>> # Create two Cartesian domains
             >>> cartesian1 = CartesianDomain({'x': [0, 2], 'y': [0, 2]})
             >>> cartesian2 = CartesianDomain({'x': [1, 3], 'y': [1, 3]})
-
-            # Create a Exclusion of the ellipsoid domains
+            >>> # Create a Exclusion of the ellipsoid domains
             >>> Exclusion = Exclusion([cartesian1, cartesian2])
-
+            >>> # Sample
             >>> Exclusion.sample(n=5)
                 LabelTensor([[2.4187, 1.5792],
                             [2.7456, 2.3868],
                             [2.3830, 1.7037],
                             [0.8636, 1.8453],
                             [0.1978, 0.3526]])
-
             >>> len(Exclusion.sample(n=5)
                 5
 

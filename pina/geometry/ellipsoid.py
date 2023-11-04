@@ -16,7 +16,7 @@ class EllipsoidDomain(Location):
             the domain extrema.
         :type ellipsoid_dict: dict
         :param sample_surface: A variable for choosing sample strategies. If
-            `sample_surface=True` only samples on the ellipsoid surface
+            ``sample_surface=True`` only samples on the ellipsoid surface
             frontier are taken. If ``sample_surface=False`` only samples on
             the ellipsoid interior are taken, defaults to ``False``.
         :type sample_surface: bool

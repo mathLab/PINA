@@ -13,11 +13,11 @@ class FourierBlock1D(nn.Module):
 
     .. seealso::
 
-        **Original reference**: Li, Zongyi, et al.
-        "Fourier neural operator for parametric partial
-        differential equations." arXiv preprint
-        arXiv:2010.08895 (2020)
-        <https://arxiv.org/abs/2010.08895.pdf>`_.
+        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B.,
+        Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). *Fourier neural operator for
+        parametric partial differential equations*.
+        DOI: `arXiv preprint arXiv:2010.08895.
+        <https://arxiv.org/abs/2010.08895>`_
 
     """
 
@@ -80,8 +80,8 @@ class FourierBlock2D(nn.Module):
     .. seealso::
 
         **Original reference**: Li, Zongyi, et al.
-        "Fourier neural operator for parametric partial
-        differential equations." arXiv preprint
+        *Fourier neural operator for parametric partial
+        differential equations*. arXiv preprint
         arXiv:2010.08895 (2020)
         <https://arxiv.org/abs/2010.08895.pdf>`_.
 
@@ -147,8 +147,8 @@ class FourierBlock3D(nn.Module):
     .. seealso::
 
         **Original reference**: Li, Zongyi, et al.
-        "Fourier neural operator for parametric partial
-        differential equations." arXiv preprint
+        *Fourier neural operator for parametric partial
+        differential equations*. arXiv preprint
         arXiv:2010.08895 (2020)
         <https://arxiv.org/abs/2010.08895.pdf>`_.
 

@@ -1,22 +1,21 @@
-"""Module for Location class."""
+"""Module for Intersection class. """
+
 import torch
-from .exclusion_domain import Exclusion
 from ..label_tensor import LabelTensor
 from .operation_interface import OperationInterface
 import random
 
 
 class Intersection(OperationInterface):
-    """ PINA implementation of Intersection of Domains."""
 
     def __init__(self, geometries):
-        """
+        r"""
         PINA implementation of Intersection of Domains.
         Given two sets :math:`A` and :math:`B` then the
         domain difference is defined as:
 
-        ..:math:
-        A \cap B = \{x \mid x \in A \text{ and } x \in B\},
+        .. math::
+            A \cap B = \{x \mid x \in A \land x \in B\},
 
         with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
         the dimension of the geometry space.
@@ -27,22 +26,22 @@ class Intersection(OperationInterface):
             geometry will be the intersection of all the geometries in the list.
 
         :Example:
-            # Create two ellipsoid domains
+            >>> # Create two ellipsoid domains
             >>> ellipsoid1 = EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1]})
             >>> ellipsoid2 = EllipsoidDomain({'x': [0, 2], 'y': [0, 2]})
-
-            # Create a Intersection of the ellipsoid domains
+            >>> # Create a Intersection of the ellipsoid domains
             >>> intersection = Intersection([ellipsoid1, ellipsoid2])
         """
         super().__init__(geometries)
 
     def is_inside(self, point, check_border=False):
-        """Check if a point is inside the Exclusion domain.
+        """
+        Check if a point is inside the ``Intersection`` domain.
 
         :param point: Point to be checked.
         :type point: torch.Tensor   
         :param bool check_border: If ``True``, the border is considered inside.
-        :return: ``True`` if the point is inside the Exclusion domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the Intersection domain, ``False`` otherwise.
         :rtype: bool
         """
         flag = 0
@@ -52,7 +51,8 @@ class Intersection(OperationInterface):
         return flag == len(self.geometries)
 
     def sample(self, n, mode='random', variables='all'):
-        """Sample routine for intersection domain.
+        """
+        Sample routine for ``Intersection`` domain.
 
         :param int n: Number of points to sample in the shape.
         :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
@@ -62,20 +62,18 @@ class Intersection(OperationInterface):
         :rtype: LabelTensor
 
         :Example:
-            # Create two Cartesian domains
+            >>> # Create two Cartesian domains
             >>> cartesian1 = CartesianDomain({'x': [0, 2], 'y': [0, 2]})
             >>> cartesian2 = CartesianDomain({'x': [1, 3], 'y': [1, 3]})
-
-            # Create a Intersection of the ellipsoid domains
+            >>> # Create a Intersection of the ellipsoid domains
             >>> intersection = Intersection([cartesian1, cartesian2])
-
+            >>> # Sample
             >>> intersection.sample(n=5)
                 LabelTensor([[1.7697, 1.8654],
                             [1.2841, 1.1208],
                             [1.7289, 1.9843],
                             [1.3332, 1.2448],
                             [1.9902, 1.4458]])
-
             >>> len(intersection.sample(n=5)
                 5
 

@@ -8,12 +8,12 @@ from ..utils import torch_lhs, chebyshev_roots
 class CartesianDomain(Location):
     """PINA implementation of Hypercube domain."""
 
-    def __init__(self, span_dict):
+    def __init__(self, cartesian_dict):
         """
-        :param span_dict: A dictionary with dict-key a string representing
+        :param cartesian_dict: A dictionary with dict-key a string representing
             the input variables for the pinn, and dict-value a list with
             the domain extrema.
-        :type span_dict: dict
+        :type cartesian_dict: dict
 
         :Example:
             >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
@@ -21,7 +21,7 @@ class CartesianDomain(Location):
         self.fixed_ = {}
         self.range_ = {}
 
-        for k, v in span_dict.items():
+        for k, v in cartesian_dict.items():
             if isinstance(v, (int, float)):
                 self.fixed_[k] = v
             elif isinstance(v, (list, tuple)) and len(v) == 2:

@@ -7,14 +7,13 @@ import warnings
 ######## 1D Spectral Convolution ###########
 class SpectralConvBlock1D(nn.Module):
     """
-    Implementation of Spectral Convolution Block for one
-    dimensional tensor.
+    PINA implementation of Spectral Convolution Block for one
+    dimensional tensors.
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
         """
-        PINA implementation of spectral convolution. The module computes
-        the spectral convolution of the input with a linear kernel in the
+        The module computes the spectral convolution of the input with a linear kernel in the
         fourier space, and then it maps the input back to the physical
         space.
 
@@ -50,10 +49,10 @@ class SpectralConvBlock1D(nn.Module):
         with the linear kernel weights.
 
         :param input: The input tensor, expect of size 
-            [batch, input_numb_fields, x].
+            ``[batch, input_numb_fields, x]``.
         :type input: torch.Tensor
         :param weights: The kernel weights, expect of
-            size [input_numb_fields, output_numb_fields, x].
+            size ``[input_numb_fields, output_numb_fields, x]``.
         :type weights: torch.Tensor
         :return: The matrix multiplication of the input
             with the linear kernel weights.
@@ -66,10 +65,10 @@ class SpectralConvBlock1D(nn.Module):
         Forward computation for Spectral Convolution.
 
         :param x: The input tensor, expect of size 
-            [batch, input_numb_fields, x].
+            ``[batch, input_numb_fields, x]``.
         :type x: torch.Tensor
         :return: The output tensor obtained from the
-            spectral convolution of size [batch, output_numb_fields, x].
+            spectral convolution of size ``[batch, output_numb_fields, x]``.
         :rtype: torch.Tensor
         """
         batch_size = x.shape[0]
@@ -93,14 +92,13 @@ class SpectralConvBlock1D(nn.Module):
 ######## 2D Spectral Convolution ###########
 class SpectralConvBlock2D(nn.Module):
     """
-    Implementation of spectral convolution block for two
-    dimensional tensor.
+    PINA implementation of spectral convolution block for two
+    dimensional tensors.
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
         """
-        PINA implementation of spectral convolution. The module computes
-        the spectral convolution of the input with a linear kernel in the
+        The module computes the spectral convolution of the input with a linear kernel in the
         fourier space, and then it maps the input back to the physical
         space.
 
@@ -157,10 +155,10 @@ class SpectralConvBlock2D(nn.Module):
         with the linear kernel weights.
 
         :param input: The input tensor, expect of size 
-            [batch, input_numb_fields, x, y].
+            ``[batch, input_numb_fields, x, y]``.
         :type input: torch.Tensor
         :param weights: The kernel weights, expect of
-            size [input_numb_fields, output_numb_fields, x, y].
+            size ``[input_numb_fields, output_numb_fields, x, y]``.
         :type weights: torch.Tensor
         :return: The matrix multiplication of the input
             with the linear kernel weights.
@@ -173,10 +171,10 @@ class SpectralConvBlock2D(nn.Module):
         Forward computation for Spectral Convolution.
 
         :param x: The input tensor, expect of size 
-            [batch, input_numb_fields, x].
+            ``[batch, input_numb_fields, x, y]``.
         :type x: torch.Tensor
         :return: The output tensor obtained from the
-            spectral convolution of size [batch, output_numb_fields, x].
+            spectral convolution of size ``[batch, output_numb_fields, x, y]``.
         :rtype: torch.Tensor
         """
 
@@ -201,17 +199,16 @@ class SpectralConvBlock2D(nn.Module):
         return torch.fft.irfft2(out_ft, s=(x.size(-2), x.size(-1)))
 
 
-######## 2D Spectral Convolution ###########
+######## 3D Spectral Convolution ###########
 class SpectralConvBlock3D(nn.Module):
     """
-    Implementation of spectral convolution block for two
-    dimensional tensor.
+    PINA implementation of spectral convolution block for three
+    dimensional tensors.
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
         """
-        PINA implementation of spectral convolution. The module computes
-        the spectral convolution of the input with a linear kernel in the
+        The module computes the spectral convolution of the input with a linear kernel in the
         fourier space, and then it maps the input back to the physical
         space.
 
@@ -283,10 +280,10 @@ class SpectralConvBlock3D(nn.Module):
         with the linear kernel weights.
 
         :param input: The input tensor, expect of size 
-            [batch, input_numb_fields, x, y].
+            ``[batch, input_numb_fields, x, y, z]``.
         :type input: torch.Tensor
         :param weights: The kernel weights, expect of
-            size [input_numb_fields, output_numb_fields, x, y].
+            size ``[input_numb_fields, output_numb_fields, x, y, z]``.
         :type weights: torch.Tensor
         :return: The matrix multiplication of the input
             with the linear kernel weights.
@@ -299,10 +296,10 @@ class SpectralConvBlock3D(nn.Module):
         Forward computation for Spectral Convolution.
 
         :param x: The input tensor, expect of size 
-            [batch, input_numb_fields, x].
+            ``[batch, input_numb_fields, x, y, z]``.
         :type x: torch.Tensor
         :return: The output tensor obtained from the
-            spectral convolution of size [batch, output_numb_fields, x].
+            spectral convolution of size ``[batch, output_numb_fields, x, y, z]``.
         :rtype: torch.Tensor
         """
 

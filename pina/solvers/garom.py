@@ -22,8 +22,8 @@ class GAROM(SolverInterface):
     .. seealso::
 
         **Original reference**: Coscia, D., Demo, N., & Rozza, G. (2023).
-        Generative Adversarial Reduced Order Modelling. 
-        arXiv preprint arXiv:2305.15881.
+        *Generative Adversarial Reduced Order Modelling*. 
+        DOI: `arXiv preprint arXiv:2305.15881.
         <https://doi.org/10.48550/arXiv.2305.15881>`_.
     """
 
@@ -85,11 +85,11 @@ class GAROM(SolverInterface):
             rate scheduler for the discriminator.
         :param dict scheduler_discriminator_kwargs: LR scheduler constructor keyword args.
         :param gamma: Ratio of expected loss for generator and discriminator, defaults to 0.3.
-        :type gamma: float, optional
+        :type gamma: float
         :param lambda_k: Learning rate for control theory optimization, defaults to 0.001.
-        :type lambda_k: float, optional
+        :type lambda_k: float
         :param regularizer: Regularization term in the GAROM loss, defaults to False.
-        :type regularizer: bool, optional
+        :type regularizer: bool
 
         .. warning::
             The algorithm works only for data-driven model. Hence in the ``problem`` definition
@@ -147,6 +147,20 @@ class GAROM(SolverInterface):
         self.regularizer = float(regularizer)
 
     def forward(self, x, mc_steps=20, variance=False):
+        """
+        Forward step for GAROM solver
+
+        :param x: The input tensor.
+        :type x: torch.Tensor
+        :param mc_steps: Number of montecarlo samples to approximate the 
+            expected value, defaults to 20.
+        :type mc_steps: int
+        :param variance: Returining also the sample variance of the solution, defaults to False.
+        :type variance: bool
+        :return: The expected value of the generator distribution. If ``variance=True`` also the
+            sample variance is returned.
+        :rtype: torch.Tensor | tuple(torch.Tensor, torch.Tensor)
+        """
 
         # sampling
         field_sample = [self.sample(x) for _ in range(mc_steps)]
@@ -162,8 +176,9 @@ class GAROM(SolverInterface):
         return mean
 
     def configure_optimizers(self):
-        """Optimizer configuration for the GAROM
-           solver.
+        """
+        Optimizer configuration for the GAROM
+        solver.
 
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
@@ -233,7 +248,7 @@ class GAROM(SolverInterface):
         return diff
     
     def training_step(self, batch, batch_idx):
-        """PINN solver training step.
+        """GAROM solver training step.
 
         :param batch: The batch element in the dataloader.
         :type batch: tuple

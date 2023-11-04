@@ -1,25 +1,17 @@
-import torch
+""" Module for OperationInterface class. """
+
 from .location import Location
 from ..utils import check_consistency
-from ..label_tensor import LabelTensor
 from abc import ABCMeta, abstractmethod
-import random
 
 
 class OperationInterface(Location, metaclass=ABCMeta):
-    """PINA Operation Interface"""
 
     def __init__(self, geometries):
         """
-        Abstract Operation class.
-        Any geometry operation entity must inherit from this class.
+        Abstract set operation class. Any geometry operation entity must inherit from this class.
 
-        .. warning::
-            The ``sample_surface=True`` option is not implemented yet
-            for Difference, Intersection, and Exclusion. The usage will
-            result in unwanted behaviour.
-
-        :param list geometries: A list of geometries from ``pina.geometry ``
+        :param list geometries: A list of geometries from ``pina.geometry``
             such as ``EllipsoidDomain`` or ``CartesianDomain``.
         """
         # check consistency geometries
@@ -35,18 +27,33 @@ class OperationInterface(Location, metaclass=ABCMeta):
     @property
     def geometries(self):
         """ 
-        The geometries."""
+        The geometries to perform set operation.
+        """
         return self._geometries
 
     @property
     def variables(self):
         """
-        Spatial variables.
+        Spatial variables of the domain.
 
         :return: All the variables defined in ``__init__`` in order.
         :rtype: list[str]
         """
         return self.geometries[0].variables
+    
+    @ abstractmethod
+    def is_inside(self, point, check_border=False):
+        """
+        Check if a point is inside the resulting domain after
+        a set operation is applied.
+
+        :param point: Point to be checked.
+        :type point: torch.Tensor   
+        :param bool check_border: If ``True``, the border is considered inside.
+        :return: ``True`` if the point is inside the Intersection domain, ``False`` otherwise.
+        :rtype: bool
+        """
+        pass
 
     def _check_dimensions(self, geometries):
         """Check if the dimensions of the geometries are consistent.

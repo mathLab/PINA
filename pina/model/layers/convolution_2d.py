@@ -10,7 +10,7 @@ class ContinuousConvBlock(BaseContinuousConv):
     Implementation of Continuous Convolutional operator.
 
     The algorithm expects input to be in the form:
-    :math:`[B \times N_{in} \times N \times D]`
+    :math:`[B, N_{in}, N,  D]`
     where :math:`B` is the batch_size, :math:`N_{in}` is the number of input
     fields, :math:`N` the number of points in the mesh, :math:`D` the dimension
     of the problem. In particular:
@@ -25,11 +25,9 @@ class ContinuousConvBlock(BaseContinuousConv):
 
     .. seealso::
 
-        **Original reference**: Coscia, D., Meneghetti, L., Demo, N.,
-        Stabile, G., & Rozza, G.. (2022). A Continuous Convolutional Trainable
-        Filter for Modelling Unstructured Data.
-        DOI: `10.48550/arXiv.2210.13416
-        <https://doi.org/10.48550/arXiv.2210.13416>`_.
+        **Original reference**: Coscia, D., Meneghetti, L., Demo, N. et al.
+        *A continuous convolutional trainable filter for modelling unstructured data*.
+        Comput Mech 72, 253–265 (2023). DOI `<https://doi.org/10.1007/s00466-023-02291-1>`_
 
     """
 
@@ -299,11 +297,11 @@ class ContinuousConvBlock(BaseContinuousConv):
 
     def forward(self, X):
         """
-        Forward pass in the layer
+        Forward pass in the convolutional layer.
 
-        :param x: Input data for the convolution :math:`[B \times N_{in} \times N \times D]`.
+        :param x: Input data for the convolution :math:`[B, N_{in}, N,  D]`.
         :type x: torch.Tensor
-        :return: Convolution output :math:`[B \times N_{out} \times N \times D]`.
+        :return: Convolution output :math:`[B, N_{out}, N,  D]`.
         :rtype: torch.Tensor
         """
 
@@ -361,25 +359,25 @@ class ContinuousConvBlock(BaseContinuousConv):
         Transpose pass in the layer for no-overlapping filters
 
         :param integrals: Weights for the transpose convolution. Shape
-            [B x N_in x N]
-            where B is the batch_size, N_in is the number of input
-            fields, N the number of points in the mesh, D the dimension
+            :math:`[B, N_{in}, N]`
+            where B is the batch_size, :math`N_{in}` is the number of input
+            fields, :math:`N` the number of points in the mesh, D the dimension
             of the problem.
         :type integral: torch.tensor
         :param X: Input data. Expect tensor of shape
-            [B x N_in x M x D] where B is the batch_size,
-            N_in is the number of input fields, M the number of points
-            in the mesh, D the dimension of the problem. Note, last column
+            :math:`[B, N_{in}, M,  D]` where :math:`B` is the batch_size,
+            :math`N_{in}`is the number of input fields, :math:`M` the number of points
+            in the mesh, :math:`D` the dimension of the problem.
         :type X: torch.Tensor
         :return: Feed forward transpose convolution. Tensor of shape
-            [B x N_out x N] where B is the batch_size,
-            N_out is the number of output fields, N the number of points
-            in the mesh, D the dimension of the problem.
+            :math:`[B, N_{out}, M,  D]` where :math:`B` is the batch_size,
+            :math`N_{out}`is the number of input fields, :math:`M` the number of points
+            in the mesh, :math:`D` the dimension of the problem.
         :rtype: torch.Tensor
 
         .. note::
-            This function is automatically called when `.transpose()`
-            method is used and `no_overlap=True`
+            This function is automatically called when ``.transpose()``
+            method is used and ``no_overlap=True``
         """
 
         # initialize convolution
@@ -440,24 +438,24 @@ class ContinuousConvBlock(BaseContinuousConv):
         Transpose pass in the layer for overlapping filters
 
         :param integrals: Weights for the transpose convolution. Shape
-            [B x N_in x N]
-            where B is the batch_size, N_in is the number of input
-            fields, N the number of points in the mesh, D the dimension
+            :math:`[B, N_{in}, N]`
+            where B is the batch_size, :math`N_{in}` is the number of input
+            fields, :math:`N` the number of points in the mesh, D the dimension
             of the problem.
         :type integral: torch.tensor
         :param X: Input data. Expect tensor of shape
-            [B x N_in x M x D] where B is the batch_size,
-            N_in is the number of input fields, M the number of points
-            in the mesh, D the dimension of the problem. Note, last column
+            :math:`[B, N_{in}, M,  D]` where :math:`B` is the batch_size,
+            :math`N_{in}`is the number of input fields, :math:`M` the number of points
+            in the mesh, :math:`D` the dimension of the problem.
         :type X: torch.Tensor
         :return: Feed forward transpose convolution. Tensor of shape
-            [B x N_out x N] where B is the batch_size,
-            N_out is the number of output fields, N the number of points
-            in the mesh, D the dimension of the problem.
+            :math:`[B, N_{out}, M,  D]` where :math:`B` is the batch_size,
+            :math`N_{out}`is the number of input fields, :math:`M` the number of points
+            in the mesh, :math:`D` the dimension of the problem.
         :rtype: torch.Tensor
 
-        .. note:: This function is automatically called when `.transpose()`
-            method is used and `no_overlap=False`
+        .. note:: This function is automatically called when ``.transpose()``
+            method is used and ``no_overlap=False``
         """
 
         # initialize convolution

@@ -55,7 +55,7 @@ class PINN(SolverInterface):
             use; default is :class:`torch.optim.Adam`.
         :param dict optimizer_kwargs: Optimizer constructor keyword args.
         :param float lr: The learning rate; default is 0.001.
-        :param torch.optim.lr_scheduler.LRScheduler scheduler: Learning
+        :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         '''

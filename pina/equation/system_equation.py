@@ -1,4 +1,4 @@
-""" Module """
+""" Module for SystemEquation. """
 import torch
 from .equation import Equation
 from ..utils import check_consistency

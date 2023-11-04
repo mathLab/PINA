@@ -55,10 +55,11 @@ class AbstractProblem(metaclass=ABCMeta):
     def domain(self):
         """
         The domain(s) where the conditions of the AbstractProblem are valid.
+        If more than one domain type is passed, a list of Location is
+        retured.
 
-        :return: the domain(s) of self
-        :rtype: list (if more than one domain are defined),
-            `Span` domain (of only one domain is defined)
+        :return: the domain(s) of ``self``
+        :rtype: list[Location]
         """
         domains = [
             getattr(self, f'{t}_domain')
@@ -237,13 +238,14 @@ class AbstractProblem(metaclass=ABCMeta):
     def have_sampled_points(self):
         """
         Check if all points for 
-        ``'Location'`` are sampled.
+        ``Location`` are sampled.
         """
         return all(self._have_sampled_points.values())
 
     @property
     def not_sampled_points(self):
-        """Check which points are 
+        """
+        Check which points are 
         not sampled.
         """
         # variables which are not sampled

@@ -38,11 +38,11 @@ class SupervisedSolver(SolverInterface):
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
-            default torch.nn.MSELoss().
+            default :class:`torch.nn.MSELoss`.
         :param torch.nn.Module extra_features: The additional input
             features to use as augmented input.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is `torch.optim.Adam`.
+            use; default is :class:`torch.optim.Adam`.
         :param dict optimizer_kwargs: Optimizer constructor keyword args.
         :param float lr: The learning rate; default is 0.001.
         :param torch.optim.LRScheduler scheduler: Learning
@@ -68,9 +68,9 @@ class SupervisedSolver(SolverInterface):
     def forward(self, x):
         """Forward pass implementation for the solver.
 
-        :param torch.tensor x: Input data. 
+        :param torch.Tensor x: Input tensor. 
         :return: Solver solution.
-        :rtype: torch.tensor
+        :rtype: torch.Tensor
         """
         # extract labels
         x = x.extract(self.problem.input_variables)

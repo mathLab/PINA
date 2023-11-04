@@ -17,8 +17,8 @@ class FNO(torch.nn.Module):
     .. seealso::
 
         **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B.,
-        Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). "Fourier neural operator for
-        parametric partial differential equations".
+        Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). *Fourier neural operator for
+        parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
     """

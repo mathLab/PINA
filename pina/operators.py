@@ -1,4 +1,10 @@
-"""Module for operators vectorize implementation"""
+"""
+Module for operators vectorize implementation. Differential operators are used to write any differential problem.
+These operators are implemented to work on different accellerators: CPU, GPU, TPU or MPS.
+All operators take as input a tensor onto which computing the operator, a tensor with respect
+to which computing the operator, the name of the output variables to calculate the operator
+for (in case of multidimensional functions), and the variables name on which the operator is calculated.
+"""
 import torch
 
 from pina.label_tensor import LabelTensor

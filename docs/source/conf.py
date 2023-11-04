@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
     'sphinx.ext.mathjax',
+    'sphinx.ext.intersphinx',
     'paramref_extension',    # this extension is made to remove paramref links from lightining doc
 ]
 
@@ -55,7 +56,7 @@ intersphinx_mapping = {
     'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('http://matplotlib.sourceforge.net/', None),
     'torch': ('https://pytorch.org/docs/stable/', None),
-    'lightning.pytorch': ("https://lightning.ai/docs/pytorch/stable/", None),
+    'pytorch_lightning': ("https://lightning.ai/docs/pytorch/stable/", None),
     }
 
 nitpicky = True
@@ -70,6 +71,7 @@ nitpick_ignore = [
     ('py:class', 'pina.model.layers.convolution.BaseContinuousConv'),
     ('py:class', 'Module'),
     ('py:class', 'torch.nn.modules.loss._Loss'), # TO FIX
+    ('py:class', 'torch.optim.LRScheduler'), # TO FIX 
 
     ]
 

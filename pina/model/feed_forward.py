@@ -98,8 +98,8 @@ class ResidualFeedForward(torch.nn.Module):
     .. seealso::
 
         **Original reference**: Wang, Sifan, Yujun Teng, and Paris Perdikaris. 
-        "Understanding and mitigating gradient flow pathologies in physics-informed
-        neural networks." SIAM Journal on Scientific Computing 43.5 (2021): A3055-A3081.
+        *Understanding and mitigating gradient flow pathologies in physics-informed
+        neural networks*. SIAM Journal on Scientific Computing 43.5 (2021): A3055-A3081.
         DOI: `10.1137/20M1318043
         <https://epubs.siam.org/doi/abs/10.1137/20M1318043>`_
 

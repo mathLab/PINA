@@ -17,7 +17,7 @@ class MIONet(torch.nn.Module):
     .. seealso::
 
         **Original reference**: Jin, Pengzhan, Shuai Meng, and Lu Lu.
-        "MIONet: Learning multiple-input operators via tensor product."
+        *MIONet: Learning multiple-input operators via tensor product.*
         SIAM Journal on Scientific Computing 44.6 (2022): A3490-A351
         DOI: `10.1137/22M1477751
         <https://doi.org/10.1137/22M1477751>`_
@@ -42,13 +42,12 @@ class MIONet(torch.nn.Module):
             Default implementation consist of different branch nets and one trunk nets.
         :param str or Callable aggregator: Aggregator to be used to aggregate
             partial results from the modules in `nets`. Partial results are
-            aggregated component-wise. See
-            :func:`pina.model.deeponet.MIONet._symbol_functions` for the
-            available default aggregators.
+            aggregated component-wise. Available aggregators include
+            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max: ``max``.
         :param str or Callable reduction: Reduction to be used to reduce
             the aggregated result of the modules in `nets` to the desired output
-            dimension. See :py:obj:`pina.model.deeponet.MIONet._symbol_functions`
-            for the available default reductions. 
+            dimension. Available reductions include
+            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max: ``max``.
         :param bool or Callable scale: Scaling the final output before returning the
             forward pass, default ``True``.
         :param bool or Callable translation: Translating the final output before
@@ -311,13 +310,12 @@ class DeepONet(MIONet):
             the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor` are extracted.
         :param str or Callable aggregator: Aggregator to be used to aggregate
             partial results from the modules in `nets`. Partial results are
-            aggregated component-wise. See
-            :func:`pina.model.deeponet.MIONet._symbol_functions` for the
-            available default aggregators.
+            aggregated component-wise. Available aggregators include
+            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max: ``max``.
         :param str or Callable reduction: Reduction to be used to reduce
             the aggregated result of the modules in `nets` to the desired output
-            dimension. See :py:obj:`pina.model.deeponet.MIONet._symbol_functions` for the available default
-            reductions. 
+            dimension. Available reductions include
+            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max: ``max``.
         :param bool or Callable scale: Scaling the final output before returning the
             forward pass, default True.
         :param bool or Callable translation: Translating the final output before

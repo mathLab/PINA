@@ -9,10 +9,10 @@ class ResidualBlock(nn.Module):
     .. seealso::
 
         **Original reference**: He, Kaiming, et al.
-        "Deep residual learning for image recognition."
+        *Deep residual learning for image recognition.*
         Proceedings of the IEEE conference on computer vision
         and pattern recognition. 2016..
-        <https://arxiv.org/pdf/1512.03385.pdf>`_.
+        DOI: `<https://arxiv.org/pdf/1512.03385.pdf>`_.
 
     """
 
@@ -76,26 +76,6 @@ class ResidualBlock(nn.Module):
         :rtype: torch.nn.Module
         """
         return nn.utils.spectral_norm(x) if self._spectral_norm else x
-
-    @property
-    def spectral_norm(self):
-        return self._spectral_norm
-
-    @property
-    def input_dim(self):
-        return self._input_dim
-
-    @property
-    def output_dim(self):
-        return self._output_dim
-
-    @property
-    def hidden_dim(self):
-        return self._hidden_dim
-
-    @property
-    def activation(self):
-        return self._activation
 
 
 class EnhancedLinear(torch.nn.Module):
