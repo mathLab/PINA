@@ -12,8 +12,8 @@ The high-level structure of the package is depicted in our API.
 The pipeline to solve differential equations with PINA follows just five steps:
 
     1. Define the `Problem`_ the user aim to solve
-    2. Choose or build one or more `Models`_ to solve the problem
-    3. Generate data using built in `Geometries`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
+    2. Generate data using built in `Geometries`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
+    3. Choose or build one or more `Models`_ to solve the problem
     4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solvers/solver_interface>`
     5.  Train the model with the PINA :doc:`Trainer <solvers/solver_interface>`
 

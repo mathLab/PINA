@@ -1,6 +1,177 @@
-<!doctype html>
-<html lang=en>
-    <head>
-        <meta http-equiv="refresh" content="0; url=build/html/index.html" />
-    </head>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to PINA’s documentation! &mdash; PINA 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/yourtheme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code Documentation" href="_rst/_code.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#">
+            
+              <img src="_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_code.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Join Us:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_LICENSE.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to PINA’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-pina-s-documentation">
+<h1>Welcome to PINA’s documentation!<a class="headerlink" href="#welcome-to-pina-s-documentation" title="Link to this heading">¶</a></h1>
+<p>Physics Informed Neural network for Advanced modeling (<strong>PINA</strong>) is
+an open-source Python library providing an intuitive interface for
+solving differential equations using PINNs, NOs or both together.
+Based on <a class="reference external" href="https://pytorch.org/">PyTorch</a> and <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/">PyTorchLightning</a>,
+PINA offers a simple and intuitive way to formalize a specific (differential) problem
+and solve it using neural networks . The approximated solution of a differential equation
+can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly interface.</p>
+<p><a class="reference external" href="https://lightning.ai/docs/pytorch/stable/">PyTorchLightning</a> as backhand is done to offer
+professional AI researchers and machine learning engineers the possibility of using advancement
+training strategies provided by the library, such as multiple device training, modern model compression techniques,
+gradient accumulation, and so on. In addition, it provides the possibility to add arbitrary
+self-contained routines (callbacks) to the training for easy extensions without the need to touch the
+underlying code.</p>
+<p>The high-level structure of the package is depicted in our API. The pipeline to solve differential equations
+with PINA follows just five steps: problem definition, model selection, data generation, solver selection, and training.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/API_color.png"><img alt="PINA application program interface" src="_images/API_color.png" style="width: 600px;" /></a>
+</figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<section id="physics-informed-neural-network">
+<h2>Physics-informed neural network<a class="headerlink" href="#physics-informed-neural-network" title="Link to this heading">¶</a></h2>
+<p><a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0021999118307125">PINN</a> is a novel approach that
+involves neural networks to solve differential equations in an unsupervised manner, while respecting
+any given law of physics described by general differential equations. Proposed in “<em>Physics-informed neural
+networks: A deep learning framework for solving forward and inverse problems
+involving nonlinear partial differential equations</em>”, such framework aims to
+solve problems in a continuous and nonlinear settings.</p>
+</section>
+<section id="neural-operator-learning">
+<h2>Neural operator learning<a class="headerlink" href="#neural-operator-learning" title="Link to this heading">¶</a></h2>
+<p><a class="reference external" href="https://www.jmlr.org/papers/v24/21-1524.html">Neural Operators</a> is a novel approach involving neural networks
+to learn differential operators using supervised learning strategies. By learning the differential operator, the
+neural network is able to generalize across different instances of the differential equations (e.g. different forcing
+terms), without the need of re-training.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_code.html">API</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Join Us:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_LICENSE.html">License</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_rst/_code.html" class="btn btn-neutral float-right" title="Code Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 05, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>

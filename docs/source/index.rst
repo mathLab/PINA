@@ -1,13 +1,6 @@
 Welcome to PINA's documentation!
 ===================================================
 
-.. figure:: index_files/pina_logo.png
-    :align: center
-    :width: 150
-
-|
-
-
 Physics Informed Neural network for Advanced modeling (**PINA**) is
 an open-source Python library providing an intuitive interface for
 solving differential equations using PINNs, NOs or both together.
@@ -29,7 +22,7 @@ with PINA follows just five steps: problem definition, model selection, data gen
 .. figure:: index_files/API_color.png
     :alt: PINA application program interface
     :align: center
-    :width: 500
+    :width: 600
 
 |
 
@@ -54,12 +47,10 @@ terms), without the need of re-training.
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Package Documentation:
-
+   
    API <_rst/_code>
-   Contributing <_rst/_contributing>
-   License <_LICENSE.rst>
 
 .. the following is demo content intended to showcase some of the features you can invoke in reStructuredText
 .. this can be safely deleted or commented out
@@ -67,8 +58,15 @@ terms), without the need of re-training.
 
 .. toctree::
     :maxdepth: 1
-    :numbered:
     :caption: Getting Started:
 
     Installation <_rst/_installation>
     Tutorials <_rst/_tutorial>
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Join Us:
+
+    Team & Foundings <_team.rst>
+    Contributing <_rst/_contributing>
+    License <_LICENSE.rst>

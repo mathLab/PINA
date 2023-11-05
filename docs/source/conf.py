@@ -180,7 +180,13 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = None
+html_logo = "index_files/pina_logo.png"
+html_theme_options = {
+    'logo_only': True,
+    'display_version': False,
+    'prev_next_buttons_location': 'bottom',
+
+}
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
