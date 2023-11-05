@@ -62,6 +62,7 @@ Layers
     :titlesonly:
 
     Residual layer <layers/residual.rst>
+    EnhancedLinear layer <layers/enhanced_linear.rst>
     Spectral convolution <layers/spectral.rst>
     Fourier layers <layers/fourier.rst>
     Continuous convolution <layers/convolution.rst>
