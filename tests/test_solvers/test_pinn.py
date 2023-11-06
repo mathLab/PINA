@@ -97,7 +97,7 @@ def test_train_cpu():
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
-    trainer = Trainer(solver=pinn, max_epochs=1, accelerator='cuda', batch_size=20)
+    trainer = Trainer(solver=pinn, max_epochs=1, accelerator='cpu', batch_size=20)
     trainer.train()
 
 def test_train_restore():
