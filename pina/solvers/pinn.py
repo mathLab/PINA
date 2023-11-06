@@ -138,8 +138,8 @@ class PINN(SolverInterface):
             else:
                 raise ValueError("Batch size not supported")
 
-
             loss = loss.as_subclass(torch.Tensor)
+            loss = loss
 
             condition_losses.append(loss * condition.data_weight)
 

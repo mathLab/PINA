@@ -56,7 +56,7 @@ poisson = Poisson()
 poisson.discretise_domain(10, 'grid', locations=boundaries)
 
 def test_sample():
-    sample_dataset = SamplePointDataset(poisson)
+    sample_dataset = SamplePointDataset(poisson, device='cpu')
     assert len(sample_dataset) == 140
     assert sample_dataset.pts.shape == (140, 2)
     assert sample_dataset.pts.labels == ['x', 'y']
@@ -65,7 +65,7 @@ def test_sample():
     assert sample_dataset.condition_indeces.min() == torch.tensor(0)
 
 def test_data():
-    dataset = DataPointDataset(poisson)
+    dataset = DataPointDataset(poisson, device='cpu')
     assert len(dataset) == 61
     assert dataset.input_pts.shape == (61, 2)
     assert dataset.input_pts.labels == ['x', 'y']
@@ -76,8 +76,8 @@ def test_data():
     assert dataset.condition_indeces.min() == torch.tensor(0)
 
 def test_loader():
-    sample_dataset = SamplePointDataset(poisson)
-    data_dataset = DataPointDataset(poisson)
+    sample_dataset = SamplePointDataset(poisson, device='cpu')
+    data_dataset = DataPointDataset(poisson, device='cpu')
     loader = SamplePointLoader(sample_dataset, data_dataset, batch_size=10)
 
     for batch in loader:
@@ -85,7 +85,7 @@ def test_loader():
         assert batch['pts'].shape[0] <= 10
         assert batch['pts'].requires_grad == True
         assert batch['pts'].labels == ['x', 'y']
-    
+
     loader2 = SamplePointLoader(sample_dataset, data_dataset, batch_size=None)
     assert len(list(loader2)) == 2
 
@@ -94,8 +94,8 @@ def test_loader2():
     del poisson.conditions['data2']
     del poisson2.conditions['data']
     poisson2.discretise_domain(10, 'grid', locations=boundaries)
-    sample_dataset = SamplePointDataset(poisson)
-    data_dataset = DataPointDataset(poisson)
+    sample_dataset = SamplePointDataset(poisson, device='cpu')
+    data_dataset = DataPointDataset(poisson, device='cpu')
     loader = SamplePointLoader(sample_dataset, data_dataset, batch_size=10)
 
     for batch in loader:
@@ -111,8 +111,8 @@ def test_loader3():
     del poisson.conditions['gamma3']
     del poisson.conditions['gamma4']
     del poisson.conditions['D']
-    sample_dataset = SamplePointDataset(poisson)
-    data_dataset = DataPointDataset(poisson)
+    sample_dataset = SamplePointDataset(poisson, device='cpu')
+    data_dataset = DataPointDataset(poisson, device='cpu')
     loader = SamplePointLoader(sample_dataset, data_dataset, batch_size=10)
 
     for batch in loader:

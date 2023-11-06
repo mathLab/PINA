@@ -23,20 +23,30 @@ class Trainer(Trainer):
                                'discretise_domain function before train '
                                'in the provided locations.')
         
-        # TODO: make a better dataloader for train
         self._create_or_update_loader()
 
-    # this method is used here because is resampling is needed
-    # during training, there is no need to define to touch the
-    # trainer dataloader, just call the method.
     def _create_or_update_loader(self):
-        dataset_phys = SamplePointDataset(self._model.problem) 
-        dataset_data = DataPointDataset(self._model.problem)
+        """
+        This method is used here because is resampling is needed
+        during training, there is no need to define to touch the
+        trainer dataloader, just call the method.
+        """
+        devices = self._accelerator_connector._parallel_devices
+
+        if len(devices) > 1:
+            raise RuntimeError('Parallel training is not supported yet.')
+
+        device = devices[0]
+        dataset_phys = SamplePointDataset(self._model.problem, device)
+        dataset_data = DataPointDataset(self._model.problem, device)
         self._loader = SamplePointLoader(
             dataset_phys, dataset_data, batch_size=self.batch_size,
             shuffle=True)
 
     def train(self, **kwargs):
+        """
+        Train the solver.
+        """
         return super().fit(self._model, train_dataloaders=self._loader, **kwargs)
     
     @property

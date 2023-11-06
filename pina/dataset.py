@@ -8,7 +8,7 @@ class SamplePointDataset(Dataset):
     This class is used to create a dataset of sample points.
     """
 
-    def __init__(self, problem) -> None:
+    def __init__(self, problem, device) -> None:
         """
         :param dict input_pts: The input points.
         """
@@ -31,6 +31,9 @@ class SamplePointDataset(Dataset):
         else: # if there are no sample points
             self.condition_indeces = torch.tensor([])
             self.pts = torch.tensor([])
+
+        self.pts = self.pts.to(device)
+        self.condition_indeces = self.condition_indeces.to(device)
         
     def __len__(self):
         return self.pts.shape[0]
@@ -38,7 +41,7 @@ class SamplePointDataset(Dataset):
 
 class DataPointDataset(Dataset):
 
-    def __init__(self, problem) -> None:
+    def __init__(self, problem, device) -> None:
         super().__init__()
         input_list = []
         output_list = [] 
@@ -62,6 +65,10 @@ class DataPointDataset(Dataset):
             self.condition_indeces = torch.tensor([])
             self.input_pts = torch.tensor([])
             self.output_pts = torch.tensor([])
+
+        self.input_pts = self.input_pts.to(device)
+        self.output_pts = self.output_pts.to(device)
+        self.condition_indeces = self.condition_indeces.to(device)
 
     def __len__(self):
         return self.input_pts.shape[0]
@@ -142,6 +149,7 @@ class SamplePointLoader:
 
         output_labels = dataset.output_pts.labels
         input_labels = dataset.input_pts.labels
+        self.tensor_conditions = dataset.condition_indeces
 
         if shuffle:
             idx = torch.randperm(dataset.input_pts.shape[0])
@@ -186,10 +194,10 @@ class SamplePointLoader:
         self.tensor_pts = dataset.pts
         self.tensor_conditions = dataset.condition_indeces
 
-        if shuffle:
-            idx = torch.randperm(self.tensor_pts.shape[0])
-            self.tensor_pts = self.tensor_pts[idx]
-            self.tensor_conditions = self.tensor_conditions[idx]
+        # if shuffle:
+        #     idx = torch.randperm(self.tensor_pts.shape[0])
+        #     self.tensor_pts = self.tensor_pts[idx]
+        #     self.tensor_conditions = self.tensor_conditions[idx]
         
         self.batch_sample_pts = torch.tensor_split(self.tensor_pts, batch_num)
         for i in range(len(self.batch_sample_pts)):
@@ -214,7 +222,8 @@ class SamplePointLoader:
         :return: An iterator over the points.
         :rtype: iter
         """
-        for i in self.random_idx:
+        #for i in self.random_idx:
+        for i in range(len(self.batch_list)):
             type_, idx_ = self.batch_list[i]
 
             if type_ == 'sample':
