@@ -5,5 +5,6 @@ Trainer
 .. automodule:: pina.trainer
 
 .. autoclass:: Trainer
-    :show-inheritance:
     :members:
+    :private-members:
+    :show-inheritance:

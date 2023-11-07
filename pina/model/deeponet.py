@@ -40,18 +40,18 @@ class MIONet(torch.nn.Module):
             are extracted. The ``torch.nn.Module`` model has to take as input a
             :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`.
             Default implementation consist of different branch nets and one trunk nets.
-        :param str | Callable aggregator: Aggregator to be used to aggregate
+        :param str or Callable aggregator: Aggregator to be used to aggregate
             partial results from the modules in `nets`. Partial results are
             aggregated component-wise. See
             :func:`pina.model.deeponet.MIONet._symbol_functions` for the
             available default aggregators.
-        :param str | Callable reduction: Reduction to be used to reduce
+        :param str or Callable reduction: Reduction to be used to reduce
             the aggregated result of the modules in `nets` to the desired output
             dimension. See :py:obj:`pina.model.deeponet.MIONet._symbol_functions`
             for the available default reductions. 
-        :param bool | Callable scale: Scaling the final output before returning the
+        :param bool or Callable scale: Scaling the final output before returning the
             forward pass, default ``True``.
-        :param bool | Callable translation: Translating the final output before
+        :param bool or Callable translation: Translating the final output before
             returning the forward pass, default ``True``.
 
         .. warning::
@@ -196,9 +196,9 @@ class MIONet(torch.nn.Module):
         """
         Defines the computation performed at every call.
 
-        :param LabelTensor | torch.Tensor x: The input tensor for the forward call.
+        :param LabelTensor or torch.Tensor x: The input tensor for the forward call.
         :return: The output computed by the DeepONet model.
-        :rtype: LabelTensor | torch.Tensor 
+        :rtype: LabelTensor or torch.Tensor 
         """
 
         # forward pass
@@ -299,28 +299,28 @@ class DeepONet(MIONet):
             model. It has to take as input a :py:obj:`pina.label_tensor.LabelTensor`
             or :class:`torch.Tensor`. The number of dimensions of the output
             has to be the same of the ``branch_net``.
-        :param list(int) | list(str) input_indeces_branch_net: List of indeces
+        :param list(int) or list(str) input_indeces_branch_net: List of indeces
             to extract from the input variable in the forward pass for the
             branch net. If a list of ``int`` is passed, the corresponding columns
             of the inner most entries are extracted. If a list of ``str`` is passed
             the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor` are extracted.
-        :param list(int) | list(str) input_indeces_trunk_net: List of indeces
+        :param list(int) or list(str) input_indeces_trunk_net: List of indeces
             to extract from the input variable in the forward pass for the
             trunk net. If a list of ``int`` is passed, the corresponding columns
             of the inner most entries are extracted. If a list of ``str`` is passed
             the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor` are extracted.
-        :param str | Callable aggregator: Aggregator to be used to aggregate
+        :param str or Callable aggregator: Aggregator to be used to aggregate
             partial results from the modules in `nets`. Partial results are
             aggregated component-wise. See
             :func:`pina.model.deeponet.MIONet._symbol_functions` for the
             available default aggregators.
-        :param str | Callable reduction: Reduction to be used to reduce
+        :param str or Callable reduction: Reduction to be used to reduce
             the aggregated result of the modules in `nets` to the desired output
             dimension. See :py:obj:`pina.model.deeponet.MIONet._symbol_functions` for the available default
             reductions. 
-        :param bool | Callable scale: Scaling the final output before returning the
+        :param bool or Callable scale: Scaling the final output before returning the
             forward pass, default True.
-        :param bool | Callable translation: Translating the final output before
+        :param bool or Callable translation: Translating the final output before
             returning the forward pass, default True.
 
         .. warning::
@@ -372,17 +372,29 @@ class DeepONet(MIONet):
                          reduction=reduction,
                          scale=scale,
                          translation=translation)
+        
 
-        @property
-        def branch_net(self):
-            """
-            The branch net for DeepONet.
-            """
-            return self.models[0]
+    def forward(self, x):
+        """
+        Defines the computation performed at every call.
 
-        @property
-        def trunk_net(self):
-            """
-            The trunk net for DeepONet.
-            """
-            return self.models[1]
+        :param LabelTensor or torch.Tensor x: The input tensor for the forward call.
+        :return: The output computed by the DeepONet model.
+        :rtype: LabelTensor or torch.Tensor 
+        """
+        return super().forward(x)
+
+
+    @property
+    def branch_net(self):
+        """
+        The branch net for DeepONet.
+        """
+        return self.models[0]
+
+    @property
+    def trunk_net(self):
+        """
+        The trunk net for DeepONet.
+        """
+        return self.models[1]

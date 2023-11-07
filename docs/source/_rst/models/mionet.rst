@@ -6,5 +6,4 @@ MIONet
 
 .. autoclass:: MIONet
    :members:
-   :private-members:
    :show-inheritance:

@@ -12,7 +12,7 @@ class MultiFeedForward(torch.nn.Module):
     together. The user has to define the `forward` method choosing how to
     combine the different FeedForward networks.
 
-    :param dict dff_dict: dictionary of FeedForward networks.
+    :param dict ffn_dict: dictionary of FeedForward networks.
     """
 
     def __init__(self, ffn_dict):

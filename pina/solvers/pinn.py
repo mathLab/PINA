@@ -48,14 +48,14 @@ class PINN(SolverInterface):
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
-            default torch.nn.MSELoss().
+            default :class:`torch.nn.MSELoss`.
         :param torch.nn.Module extra_features: The additional input
             features to use as augmented input.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is `torch.optim.Adam`.
+            use; default is :class:`torch.optim.Adam`.
         :param dict optimizer_kwargs: Optimizer constructor keyword args.
         :param float lr: The learning rate; default is 0.001.
-        :param torch.optim.LRScheduler scheduler: Learning
+        :param torch.optim.lr_scheduler.LRScheduler scheduler: Learning
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         '''
@@ -76,10 +76,11 @@ class PINN(SolverInterface):
         self._neural_net = self.models[0]
 
     def forward(self, x):
-        """Forward pass implementation for the PINN
-           solver.
+        """
+        Forward pass implementation for the PINN
+        solver.
 
-        :param torch.Tensor x: Input data. 
+        :param torch.Tensor x: Input tensor. 
         :return: PINN solution.
         :rtype: torch.Tensor
         """
@@ -92,8 +93,9 @@ class PINN(SolverInterface):
         return output
 
     def configure_optimizers(self):
-        """Optimizer configuration for the PINN
-           solver.
+        """
+        Optimizer configuration for the PINN
+        solver.
 
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
@@ -110,7 +112,8 @@ class PINN(SolverInterface):
 
 
     def training_step(self, batch, batch_idx):
-        """PINN solver training step.
+        """
+        PINN solver training step.
 
         :param batch: The batch element in the dataloader.
         :type batch: tuple

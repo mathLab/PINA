@@ -126,9 +126,9 @@ class AbstractProblem(metaclass=ABCMeta):
             latin hypercube sampling, ``latin`` or ``lh``;
             chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
         :param variables: problem's variables to be sampled, defaults to 'all'.
-        :type variables: str or list[str], optional
+        :type variables: str | list[str]
         :param locations: problem's locations from where to sample, defaults to 'all'.
-        :type locations: str, optional
+        :type locations: str
 
         :Example:
             >>> pinn.discretise_domain(n=10, mode='grid')

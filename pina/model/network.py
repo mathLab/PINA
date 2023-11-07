@@ -4,8 +4,12 @@ from ..utils import check_consistency
 
 
 class Network(torch.nn.Module):
-    """ Network class with starndard forward method 
-    and possibility to pass extra features."""
+    """
+    Network class with standard forward method 
+    and possibility to pass extra features. This
+    class is used internally in PINA to convert
+    any :class:`torch.nn.Module`s in a PINA module.
+    """
 
     def __init__(self, model, extra_features=None):
         super().__init__()
@@ -27,12 +31,12 @@ class Network(torch.nn.Module):
 
     def forward(self, x):
         """
-        Forward method for Network class. This class 
-        implements the standard forward method, and 
+        Forward method for Network class. This class
+        implements the standard forward method, and
         it adds the possibility to pass extra features.
 
-        :param torch.tensor x: input of the network
-        :return torch.tensor: output of the network
+        :param torch.Tensor x: Input of the network.
+        :return torch.Tensor: Output of the network.
         """
         # extract features and append
         for feature in self._extra_features:
