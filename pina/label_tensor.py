@@ -40,6 +40,14 @@ class LabelTensor(torch.Tensor):
                     [0.5819],
                     [0.1025],
                     [0.9615]])
+            >>> tensor['a']
+            tensor([[0.0671],
+                    [0.9239],
+                    [0.8927],
+                    ...,
+                    [0.5819],
+                    [0.1025],
+                    [0.9615]])
             >>> tensor.extract(['a', 'b'])
             tensor([[0.0671, 0.4889],
                     [0.9239, 0.8207],
@@ -69,7 +77,7 @@ class LabelTensor(torch.Tensor):
                 'the passed labels.'
             )
         self._labels = labels
-
+    
     @property
     def labels(self):
         """Property decorator for labels
@@ -144,6 +152,24 @@ class LabelTensor(torch.Tensor):
         tmp._labels = self._labels
         return tmp
 
+    def cuda(self, *args, **kwargs):
+        """
+        Send Tensor to cuda. For more details, see :meth:`torch.Tensor.cuda`.
+        """
+        tmp = super().cuda(*args, **kwargs)
+        new = self.__class__.clone(self)
+        new.data = tmp.data
+        return tmp
+
+    def cpu(self, *args, **kwargs):
+        """
+        Send Tensor to cpu. For more details, see :meth:`torch.Tensor.cpu`.
+        """
+        tmp = super().cpu(*args, **kwargs)
+        new = self.__class__.clone(self)
+        new.data = tmp.data
+        return tmp
+
     def extract(self, label_to_extract):
         """
         Extract the subset of the original tensor by returning all the columns
@@ -170,7 +196,7 @@ class LabelTensor(torch.Tensor):
             except ValueError:
                 raise ValueError(f'`{f}` not in the labels list')
 
-        new_data = super(Tensor, self.T).__getitem__(indeces).float().T
+        new_data = super(Tensor, self.T).__getitem__(indeces).T
         new_labels = [self.labels[idx] for idx in indeces]
 
         extracted_tensor = new_data.as_subclass(LabelTensor)
