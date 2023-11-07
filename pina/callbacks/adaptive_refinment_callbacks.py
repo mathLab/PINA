@@ -6,7 +6,6 @@ import torch
 from ..utils import check_consistency
 
 
-
 class R3Refinement(Callback):
     """
     PINA implementation of a R3 Refinement Callback.
@@ -36,7 +35,7 @@ class R3Refinement(Callback):
         # sample every
         check_consistency(sample_every, int)
         self._sample_every = sample_every
-            
+
     def _compute_residual(self, trainer):
         """
         Computes the residuals for a PINN object.
@@ -63,7 +62,7 @@ class R3Refinement(Callback):
             target = condition.equation.residual(pts, solver.forward(pts))
             res_loss[location] = torch.abs(target).as_subclass(torch.Tensor)
             tot_loss.append(torch.abs(target))
-    
+
         return torch.vstack(tot_loss), res_loss
 
     def _r3_routine(self, trainer):
@@ -79,7 +78,7 @@ class R3Refinement(Callback):
         # !!!!!! From now everything is performed on CPU !!!!!!
 
         # average loss
-        avg = (tot_loss.mean()).to('cpu') 
+        avg = (tot_loss.mean()).to('cpu')
 
         # points to keep
         old_pts = {}
@@ -97,16 +96,18 @@ class R3Refinement(Callback):
                 tot_points += len(pts)
 
         # extract new points to sample uniformally for each location
-        n_points = (self._tot_pop_numb - tot_points ) // len(self._sampling_locations)
-        remainder = (self._tot_pop_numb - tot_points ) % len(self._sampling_locations)
+        n_points = (self._tot_pop_numb - tot_points) // len(
+            self._sampling_locations)
+        remainder = (self._tot_pop_numb - tot_points) % len(
+            self._sampling_locations)
         n_uniform_points = [n_points] * len(self._sampling_locations)
         n_uniform_points[-1] += remainder
 
         # sample new points
         for numb_pts, loc in zip(n_uniform_points, self._sampling_locations):
             trainer._model.problem.discretise_domain(numb_pts,
-                                                    'random',
-                                                    locations=[loc])
+                                                     'random',
+                                                     locations=[loc])
         # adding previous population points
         trainer._model.problem.add_points(old_pts)
 
@@ -122,7 +123,7 @@ class R3Refinement(Callback):
             if hasattr(condition, 'location'):
                 locations.append(condition_name)
         self._sampling_locations = locations
-        
+
         # extract total population
         total_population = 0
         for location in self._sampling_locations:

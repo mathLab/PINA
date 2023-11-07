@@ -16,8 +16,11 @@ class ResidualBlock(nn.Module):
 
     """
 
-    def __init__(self, input_dim, output_dim,
-                 hidden_dim, spectral_norm=False, 
+    def __init__(self,
+                 input_dim,
+                 output_dim,
+                 hidden_dim,
+                 spectral_norm=False,
                  activation=torch.nn.ReLU()):
         """Residual block constructor
 
@@ -74,31 +77,32 @@ class ResidualBlock(nn.Module):
         """
         return nn.utils.spectral_norm(x) if self._spectral_norm else x
 
-    @ property
+    @property
     def spectral_norm(self):
         return self._spectral_norm
 
-    @ property
+    @property
     def input_dim(self):
         return self._input_dim
 
-    @ property
+    @property
     def output_dim(self):
         return self._output_dim
 
-    @ property
+    @property
     def hidden_dim(self):
         return self._hidden_dim
-    
-    @ property
+
+    @property
     def activation(self):
         return self._activation
-    
+
 
 class EnhancedLinear(torch.nn.Module):
     """
     TODO
     """
+
     def __init__(self, layer, activation=None, dropout=None):
         super().__init__()
 
@@ -108,23 +112,20 @@ class EnhancedLinear(torch.nn.Module):
             check_consistency(activation, nn.Module)
         if dropout is not None:
             check_consistency(dropout, float)
-        
+
         # assign forward
         if (dropout is None) and (activation is None):
             self._model = torch.nn.Sequential(layer)
 
         elif (dropout is None) and (activation is not None):
-            self._model = torch.nn.Sequential(layer,
-                                              activation)
-            
+            self._model = torch.nn.Sequential(layer, activation)
+
         elif (dropout is not None) and (activation is None):
-            self._model = torch.nn.Sequential(layer,
-                                              self._drop(dropout))
-            
+            self._model = torch.nn.Sequential(layer, self._drop(dropout))
+
         elif (dropout is not None) and (activation is not None):
-            self._model = torch.nn.Sequential(layer,
-                                              activation,
+            self._model = torch.nn.Sequential(layer, activation,
                                               self._drop(dropout))
-            
+
     def forward(self, x):
         return self._model(x)

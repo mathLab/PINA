@@ -72,10 +72,8 @@ class LabelTensor(torch.Tensor):
             labels = [labels]
 
         if len(labels) != x.shape[-1]:
-            raise ValueError(
-                'the tensor has not the same number of columns of '
-                'the passed labels.'
-            )
+            raise ValueError('the tensor has not the same number of columns of '
+                             'the passed labels.')
         self._labels = labels
     
     @property
@@ -90,11 +88,10 @@ class LabelTensor(torch.Tensor):
     @labels.setter
     def labels(self, labels):
         if len(labels) != self.shape[self.ndim - 1]:  # small check
-            raise ValueError(
-                'the tensor has not the same number of columns of '
-                'the passed labels.')
+            raise ValueError('the tensor has not the same number of columns of '
+                             'the passed labels.')
 
-        self._labels = labels   # assign the label
+        self._labels = labels  # assign the label
 
     @staticmethod
     def vstack(label_tensors):
@@ -239,12 +236,9 @@ class LabelTensor(torch.Tensor):
             n1 = tensor1.shape[0]
             n2 = tensor2.shape[0]
 
-            tensor1 = LabelTensor(
-                tensor1.repeat(n2, 1),
-                labels=tensor1.labels)
-            tensor2 = LabelTensor(
-                tensor2.repeat_interleave(n1, dim=0),
-                labels=tensor2.labels)
+            tensor1 = LabelTensor(tensor1.repeat(n2, 1), labels=tensor1.labels)
+            tensor2 = LabelTensor(tensor2.repeat_interleave(n1, dim=0),
+                                  labels=tensor2.labels)
             new_tensor = torch.cat((tensor1, tensor2), dim=1)
 
         new_tensor = new_tensor.as_subclass(LabelTensor)
@@ -290,7 +284,7 @@ class LabelTensor(torch.Tensor):
 
     def __len__(self) -> int:
         return super().__len__()
-        
+
     def __str__(self):
         if hasattr(self, 'labels'):
             s = f'labels({str(self.labels)})\n'

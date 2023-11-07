@@ -1,5 +1,5 @@
 FeedForward
-===========
+======================
 .. currentmodule:: pina.model.feed_forward
 
 .. automodule:: pina.model.feed_forward

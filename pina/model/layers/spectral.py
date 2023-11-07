@@ -3,6 +3,7 @@ import torch.nn as nn
 from ...utils import check_consistency
 import warnings
 
+
 ######## 1D Spectral Convolution ###########
 class SpectralConvBlock1D(nn.Module):
     """
@@ -37,12 +38,12 @@ class SpectralConvBlock1D(nn.Module):
         self._output_channels = output_numb_fields
 
         # scaling factor
-        scale = (1. / (self._input_channels  * self._output_channels))
+        scale = (1. / (self._input_channels * self._output_channels))
         self._weights = nn.Parameter(scale * torch.rand(self._input_channels,
                                                         self._output_channels,
                                                         self._modes,
                                                         dtype=torch.cfloat))
-    
+
     def _compute_mult1d(self, input, weights):
         """
         Compute the matrix multiplication of the input
@@ -82,11 +83,12 @@ class SpectralConvBlock1D(nn.Module):
                              x.size(-1) // 2 + 1,
                              device=x.device,
                              dtype=torch.cfloat)
-        out_ft[:, :, :self._modes] = self._compute_mult1d(x_ft[:, :, :self._modes], self._weights)
+        out_ft[:, :, :self._modes] = self._compute_mult1d(
+            x_ft[:, :, :self._modes], self._weights)
 
         # Return to physical space
         return torch.fft.irfft(out_ft, n=x.size(-1))
-    
+
 
 ######## 2D Spectral Convolution ###########
 class SpectralConvBlock2D(nn.Module):
@@ -118,17 +120,18 @@ class SpectralConvBlock2D(nn.Module):
         check_consistency(n_modes, int)
         if isinstance(n_modes, (tuple, list)):
             if len(n_modes) != 2:
-                raise ValueError('Expected n_modes to be a list or tuple of len two, '
-                             'with each entry corresponding to the number of modes '
-                             'for each dimension ')
+                raise ValueError(
+                    'Expected n_modes to be a list or tuple of len two, '
+                    'with each entry corresponding to the number of modes '
+                    'for each dimension ')
         elif isinstance(n_modes, int):
-            n_modes = [n_modes]*2
+            n_modes = [n_modes] * 2
         else:
-            raise ValueError('Expected n_modes to be a list or tuple of len two, '
-                             'with each entry corresponding to the number of modes '
-                             'for each dimension; or an int value representing the '
-                             'number of modes for all dimensions')
-        
+            raise ValueError(
+                'Expected n_modes to be a list or tuple of len two, '
+                'with each entry corresponding to the number of modes '
+                'for each dimension; or an int value representing the '
+                'number of modes for all dimensions')
 
         # assign variables
         self._modes = n_modes
@@ -136,7 +139,7 @@ class SpectralConvBlock2D(nn.Module):
         self._output_channels = output_numb_fields
 
         # scaling factor
-        scale = (1. / (self._input_channels  * self._output_channels))
+        scale = (1. / (self._input_channels * self._output_channels))
         self._weights1 = nn.Parameter(scale * torch.rand(self._input_channels,
                                                          self._output_channels,
                                                          self._modes[0],
@@ -147,7 +150,7 @@ class SpectralConvBlock2D(nn.Module):
                                                          self._modes[0],
                                                          self._modes[1],
                                                          dtype=torch.cfloat))
-    
+
     def _compute_mult2d(self, input, weights):
         """
         Compute the matrix multiplication of the input
@@ -186,13 +189,13 @@ class SpectralConvBlock2D(nn.Module):
         out_ft = torch.zeros(batch_size,
                              self._output_channels,
                              x.size(-2),
-                             x.size(-1)//2 + 1,
+                             x.size(-1) // 2 + 1,
                              device=x.device,
                              dtype=torch.cfloat)
-        out_ft[:, :, :self._modes[0], :self._modes[1]] = self._compute_mult2d(x_ft[:, :, :self._modes[0], :self._modes[1]],
-                                                                              self._weights1)
-        out_ft[:, :, -self._modes[0]:, :self._modes[1]:] = self._compute_mult2d(x_ft[:, :, -self._modes[0]:, :self._modes[1]],
-                                                                                self._weights2)
+        out_ft[:, :, :self._modes[0], :self._modes[1]] = self._compute_mult2d(
+            x_ft[:, :, :self._modes[0], :self._modes[1]], self._weights1)
+        out_ft[:, :, -self._modes[0]:, :self._modes[1]:] = self._compute_mult2d(
+            x_ft[:, :, -self._modes[0]:, :self._modes[1]], self._weights2)
 
         # Return to physical space
         return torch.fft.irfft2(out_ft, s=(x.size(-2), x.size(-1)))
@@ -229,16 +232,18 @@ class SpectralConvBlock3D(nn.Module):
         check_consistency(n_modes, int)
         if isinstance(n_modes, (tuple, list)):
             if len(n_modes) != 3:
-                raise ValueError('Expected n_modes to be a list or tuple of len three, '
-                             'with each entry corresponding to the number of modes '
-                             'for each dimension ')
+                raise ValueError(
+                    'Expected n_modes to be a list or tuple of len three, '
+                    'with each entry corresponding to the number of modes '
+                    'for each dimension ')
         elif isinstance(n_modes, int):
-            n_modes = [n_modes]*3
+            n_modes = [n_modes] * 3
         else:
-            raise ValueError('Expected n_modes to be a list or tuple of len three, '
-                             'with each entry corresponding to the number of modes '
-                             'for each dimension; or an int value representing the '
-                             'number of modes for all dimensions')
+            raise ValueError(
+                'Expected n_modes to be a list or tuple of len three, '
+                'with each entry corresponding to the number of modes '
+                'for each dimension; or an int value representing the '
+                'number of modes for all dimensions')
 
         # assign variables
         self._modes = n_modes
@@ -246,7 +251,7 @@ class SpectralConvBlock3D(nn.Module):
         self._output_channels = output_numb_fields
 
         # scaling factor
-        scale = (1. / (self._input_channels  * self._output_channels))
+        scale = (1. / (self._input_channels * self._output_channels))
         self._weights1 = nn.Parameter(scale * torch.rand(self._input_channels,
                                                          self._output_channels,
                                                          self._modes[0],
@@ -271,7 +276,7 @@ class SpectralConvBlock3D(nn.Module):
                                                          self._modes[1],
                                                          self._modes[2],
                                                          dtype=torch.cfloat))
-    
+
     def _compute_mult3d(self, input, weights):
         """
         Compute the matrix multiplication of the input
@@ -311,42 +316,45 @@ class SpectralConvBlock3D(nn.Module):
                              self._output_channels,
                              x.size(-3),
                              x.size(-2),
-                             x.size(-1)//2 + 1,
+                             x.size(-1) // 2 + 1,
                              device=x.device,
                              dtype=torch.cfloat)
-        
-        slice0 = (slice(None),
-                  slice(None),
-                  slice(self._modes[0]),
-                  slice(self._modes[1]),
-                  slice(self._modes[2]),
-                  )
+
+        slice0 = (
+            slice(None),
+            slice(None),
+            slice(self._modes[0]),
+            slice(self._modes[1]),
+            slice(self._modes[2]),
+        )
         out_ft[slice0] = self._compute_mult3d(x_ft[slice0], self._weights1)
 
-        slice1 = (slice(None),
-                  slice(None),
-                  slice(self._modes[0]),
-                  slice(-self._modes[1], None),
-                  slice(self._modes[2]),
-                  )
+        slice1 = (
+            slice(None),
+            slice(None),
+            slice(self._modes[0]),
+            slice(-self._modes[1], None),
+            slice(self._modes[2]),
+        )
         out_ft[slice1] = self._compute_mult3d(x_ft[slice1], self._weights2)
 
-        slice2 = (slice(None),
-                  slice(None),
-                  slice(-self._modes[0], None),
-                  slice(self._modes[1]),
-                  slice(self._modes[2]),
-                  )
+        slice2 = (
+            slice(None),
+            slice(None),
+            slice(-self._modes[0], None),
+            slice(self._modes[1]),
+            slice(self._modes[2]),
+        )
         out_ft[slice2] = self._compute_mult3d(x_ft[slice2], self._weights3)
 
-        slice3 = (slice(None),
-                  slice(None),
-                  slice(-self._modes[0], None),
-                  slice(-self._modes[1], None),
-                  slice(self._modes[2]),
-                  )
+        slice3 = (
+            slice(None),
+            slice(None),
+            slice(-self._modes[0], None),
+            slice(-self._modes[1], None),
+            slice(self._modes[2]),
+        )
         out_ft[slice3] = self._compute_mult3d(x_ft[slice3], self._weights4)
 
         # Return to physical space
         return torch.fft.irfftn(out_ft, s=(x.size(-3), x.size(-2), x.size(-1)))
-

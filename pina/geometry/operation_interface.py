@@ -19,8 +19,8 @@ class OperationInterface(Location, metaclass=ABCMeta):
             for Difference, Intersection, and Exclusion. The usage will
             result in unwanted behaviour.
 
-        :param list geometries: A list of geometries from 'pina.geometry' 
-            such as 'EllipsoidDomain' or 'CartesianDomain'.
+        :param list geometries: A list of geometries from ``pina.geometry ``
+            such as ``EllipsoidDomain`` or ``CartesianDomain``.
         """
         # check consistency geometries
         check_consistency(geometries, Location)

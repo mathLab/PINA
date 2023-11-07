@@ -48,15 +48,15 @@ def grad(output_, input_, components=None, d=None):
             raise RuntimeError('derivative labels missing from input tensor')
 
         output_fieldname = output_.labels[0]
-        gradients = torch.autograd.grad(
-            output_,
-            input_,
-            grad_outputs=torch.ones(output_.size(), dtype=output_.dtype,
-                                    device=output_.device),
-            create_graph=True,
-            retain_graph=True,
-            allow_unused=True
-        )[0]
+        gradients = torch.autograd.grad(output_,
+                                        input_,
+                                        grad_outputs=torch.ones(
+                                            output_.size(),
+                                            dtype=output_.dtype,
+                                            device=output_.device),
+                                        create_graph=True,
+                                        retain_graph=True,
+                                        allow_unused=True)[0]
 
         gradients.labels = input_.labels
         gradients = gradients.extract(d)
@@ -188,11 +188,13 @@ def laplacian(output_, input_, components=None, d=None, method='std'):
             result = torch.zeros(output_.shape[0], 1, device=output_.device)
             for i, label in enumerate(grad_output.labels):
                 gg = grad(grad_output, input_, d=d, components=[label])
-                result[:, 0] += super(torch.Tensor, gg.T).__getitem__(i) # TODO improve
+                result[:, 0] += super(torch.Tensor,
+                                      gg.T).__getitem__(i)  # TODO improve
             labels = [f'dd{components[0]}']
 
         else:
-            result = torch.empty(input_.shape[0], len(components),
+            result = torch.empty(input_.shape[0],
+                                 len(components),
                                  device=output_.device)
             labels = [None] * len(components)
             for idx, (ci, di) in enumerate(zip(components, d)):
@@ -237,8 +239,8 @@ def advection(output_, input_, velocity_field, components=None, d=None):
     if components is None:
         components = output_.labels
 
-    tmp = grad(output_, input_, components, d
-               ).reshape(-1, len(components), len(d)).transpose(0, 1)
+    tmp = grad(output_, input_, components, d).reshape(-1, len(components),
+                                                       len(d)).transpose(0, 1)
 
     tmp *= output_.extract(velocity_field)
     return tmp.sum(dim=2).T

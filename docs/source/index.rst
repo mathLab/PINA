@@ -71,4 +71,4 @@ terms), without the need of re-training.
     :caption: Getting Started:
 
     Installation <_rst/_installation>
-    Tutorials <_rst/_tutorials>
+    Tutorials <_rst/_tutorial>

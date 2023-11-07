@@ -3,9 +3,11 @@ from .label_tensor import LabelTensor
 from .geometry import Location
 from .equation.equation import Equation
 
+
 def dummy(a):
     """Dummy function for testing purposes."""
     return None
+
 
 class Condition:
     """
@@ -49,8 +51,7 @@ class Condition:
     """
 
     __slots__ = [
-        'input_points', 'output_points', 'location', 'equation',
-        'data_weight'
+        'input_points', 'output_points', 'location', 'equation', 'data_weight'
     ]
 
     def _dictvalue_isinstance(self, dict_, key_, class_):
@@ -67,13 +68,14 @@ class Condition:
         self.data_weight = kwargs.pop('data_weight', 1.0)
 
         if len(args) != 0:
-            raise ValueError('Condition takes only the following keyword arguments: {`input_points`, `output_points`, `location`, `function`, `data_weight`}.')
+            raise ValueError(
+                'Condition takes only the following keyword arguments: {`input_points`, `output_points`, `location`, `function`, `data_weight`}.'
+            )
 
-        if (
-            sorted(kwargs.keys()) != sorted(['input_points', 'output_points']) and
-            sorted(kwargs.keys()) != sorted(['location', 'equation']) and
-            sorted(kwargs.keys()) != sorted(['input_points', 'equation'])
-        ):
+        if (sorted(kwargs.keys()) != sorted(['input_points', 'output_points'])
+                and sorted(kwargs.keys()) != sorted(['location', 'equation'])
+                and sorted(kwargs.keys()) != sorted(
+                    ['input_points', 'equation'])):
             raise ValueError(f'Invalid keyword arguments {kwargs.keys()}.')
 
         if not self._dictvalue_isinstance(kwargs, 'input_points', LabelTensor):

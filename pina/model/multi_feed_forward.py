@@ -14,6 +14,7 @@ class MultiFeedForward(torch.nn.Module):
 
     :param dict dff_dict: dictionary of FeedForward networks.
     """
+
     def __init__(self, ffn_dict):
         super().__init__()
 

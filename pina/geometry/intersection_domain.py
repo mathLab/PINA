@@ -21,8 +21,8 @@ class Intersection(OperationInterface):
         with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
         the dimension of the geometry space.
 
-        :param list geometries: A list of geometries from 'pina.geometry' 
-            such as 'EllipsoidDomain' or 'CartesianDomain'. The intersection
+        :param list geometries: A list of geometries from ``pina.geometry`` 
+            such as ``EllipsoidDomain`` or ``CartesianDomain``. The intersection
             will be taken between all the geometries in the list. The resulting
             geometry will be the intersection of all the geometries in the list.
 
@@ -41,8 +41,8 @@ class Intersection(OperationInterface):
 
         :param point: Point to be checked.
         :type point: torch.Tensor   
-        :param bool check_border: If True, the border is considered inside.
-        :return: True if the point is inside the Exclusion domain, False otherwise.
+        :param bool check_border: If ``True``, the border is considered inside.
+        :return: ``True`` if the point is inside the Exclusion domain, ``False`` otherwise.
         :rtype: bool
         """
         flag = 0
@@ -54,13 +54,12 @@ class Intersection(OperationInterface):
     def sample(self, n, mode='random', variables='all'):
         """Sample routine for intersection domain.
 
-        :param n: Number of points to sample in the shape.
-        :type n: int
-        :param mode: Mode for sampling, defaults to 'random'.
-            Available modes include: random sampling, 'random'.
-        :type mode: str, optional
-        :param variables: pinn variable to be sampled, defaults to 'all'.
-        :type variables: str or list[str], optional
+        :param int n: Number of points to sample in the shape.
+        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
+        :param variables: Variables to be sampled, defaults to ``all``.
+        :type variables: str | list[str]
+        :return: Returns ``LabelTensor`` of n sampled points.
+        :rtype: LabelTensor
 
         :Example:
             # Create two Cartesian domains

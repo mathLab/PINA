@@ -12,6 +12,7 @@ class SwitchOptimizer(Callback):
     try multiple optimizers during the training, without the
     need to stop training.
     """
+
     def __init__(self, new_optimizers, new_optimizers_kwargs, epoch_switch):
         """
         SwitchOptimizer is a routine for switching optimizer during training.
@@ -44,7 +45,7 @@ class SwitchOptimizer(Callback):
                              ' arguments for each optimizers.'
                              f' Got {len_optimizer} optimizers, and'
                              f' {len_optimizer_kwargs} dicitionaries')
-        
+
         # save new optimizers
         self._new_optimizers = new_optimizers
         self._new_optimizers_kwargs = new_optimizers_kwargs
@@ -54,9 +55,9 @@ class SwitchOptimizer(Callback):
         if trainer.current_epoch == self._epoch_switch:
             optims = []
             for idx, (optim, optim_kwargs) in enumerate(
-                zip(self._new_optimizers,
-                    self._new_optimizers_kwargs)
-            ):
-                optims.append(optim(trainer._model.models[idx].parameters(), **optim_kwargs))
+                    zip(self._new_optimizers, self._new_optimizers_kwargs)):
+                optims.append(
+                    optim(trainer._model.models[idx].parameters(),
+                          **optim_kwargs))
 
             trainer.optimizers = optims

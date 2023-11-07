@@ -10,6 +10,7 @@ def prod(iterable):
 
 
 def make_grid(x):
+
     def _transform_image(image):
 
         # extracting image info
@@ -17,11 +18,13 @@ def make_grid(x):
 
         # initializing transfomed image
         coordinates = torch.zeros(
-            [channels, prod(dimension), len(dimension) + 1]).to(image.device)
+            [channels, prod(dimension),
+             len(dimension) + 1]).to(image.device)
 
         # creating the n dimensional mesh grid
-        values_mesh = [torch.arange(0, dim).float().to(
-            image.device) for dim in dimension]
+        values_mesh = [
+            torch.arange(0, dim).float().to(image.device) for dim in dimension
+        ]
         mesh = torch.meshgrid(values_mesh)
         coordinates_mesh = [x.reshape(-1, 1) for x in mesh]
         coordinates_mesh.append(0)
@@ -40,11 +43,9 @@ class MLP(torch.nn.Module):
 
     def __init__(self) -> None:
         super().__init__()
-        self. model = torch.nn.Sequential(torch.nn.Linear(2, 8),
-                                          torch.nn.ReLU(),
-                                          torch.nn.Linear(8, 8),
-                                          torch.nn.ReLU(),
-                                          torch.nn.Linear(8, 1))
+        self.model = torch.nn.Sequential(torch.nn.Linear(2, 8), torch.nn.ReLU(),
+                                         torch.nn.Linear(8, 8), torch.nn.ReLU(),
+                                         torch.nn.Linear(8, 1))
 
     def forward(self, x):
         return self.model(x)
@@ -56,10 +57,12 @@ channel_output = 6
 batch = 2
 N = 10
 dim = [3, 3]
-stride = {"domain": [10, 10],
-          "start": [0, 0],
-          "jumps": [3, 3],
-          "direction": [1, 1.]}
+stride = {
+    "domain": [10, 10],
+    "start": [0, 0],
+    "jumps": [3, 3],
+    "direction": [1, 1.]
+}
 dim_filter = len(dim)
 dim_input = (batch, channel_input, 10, dim_filter)
 dim_output = (batch, channel_output, 4, dim_filter)
@@ -71,15 +74,15 @@ def test_constructor():
     model = MLP
 
     conv = ContinuousConvBlock(channel_input,
-                          channel_output,
-                          dim,
-                          stride,
-                          model=model)
+                               channel_output,
+                               dim,
+                               stride,
+                               model=model)
     conv = ContinuousConvBlock(channel_input,
-                          channel_output,
-                          dim,
-                          stride,
-                          model=None)
+                               channel_output,
+                               dim,
+                               stride,
+                               model=None)
 
 
 def test_forward():
@@ -87,19 +90,19 @@ def test_forward():
 
     # simple forward
     conv = ContinuousConvBlock(channel_input,
-                          channel_output,
-                          dim,
-                          stride,
-                          model=model)
+                               channel_output,
+                               dim,
+                               stride,
+                               model=model)
     conv(x)
 
     # simple forward with optimization
     conv = ContinuousConvBlock(channel_input,
-                          channel_output,
-                          dim,
-                          stride,
-                          model=model,
-                          optimize=True)
+                               channel_output,
+                               dim,
+                               stride,
+                               model=model,
+                               optimize=True)
     conv(x)
 
 
@@ -108,16 +111,16 @@ def test_transpose():
 
     # simple transpose
     conv = ContinuousConvBlock(channel_input,
-                          channel_output,
-                          dim,
-                          stride,
-                          model=model)
+                               channel_output,
+                               dim,
+                               stride,
+                               model=model)
 
     conv2 = ContinuousConvBlock(channel_output,
-                           channel_input,
-                           dim,
-                           stride,
-                           model=model)
+                                channel_input,
+                                dim,
+                                stride,
+                                model=model)
 
     integrals = conv(x)
     conv2.transpose(integrals[..., -1], x)

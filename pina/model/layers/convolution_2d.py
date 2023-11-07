@@ -19,8 +19,13 @@ class ContinuousConvBlock(BaseContinuousConv):
 
     """
 
-    def __init__(self, input_numb_field, output_numb_field,
-                 filter_dim, stride, model=None, optimize=False,
+    def __init__(self,
+                 input_numb_field,
+                 output_numb_field,
+                 filter_dim,
+                 stride,
+                 model=None,
+                 optimize=False,
                  no_overlap=False):
         """
 
@@ -238,10 +243,8 @@ class ContinuousConvBlock(BaseContinuousConv):
         number_points = len(self._stride)
 
         # initialize the grid
-        grid = torch.zeros(size=(X.shape[0],
-                                 self._output_numb_field,
-                                 number_points,
-                                 filter_dim + 1),
+        grid = torch.zeros(size=(X.shape[0], self._output_numb_field,
+                                 number_points, filter_dim + 1),
                            device=X.device,
                            dtype=X.dtype)
         grid[..., :-1] = (self._stride + self._dim * 0.5)
@@ -353,9 +356,9 @@ class ContinuousConvBlock(BaseContinuousConv):
 
             # sum filters (for each input fields) in groups
             # for different ouput fields
-            conv[batch_idx, ..., -1] = res_tmp.reshape(self._output_numb_field,
-                                                       self._input_numb_field,
-                                                       -1).sum(1)
+            conv[batch_idx, ...,
+                 -1] = res_tmp.reshape(self._output_numb_field,
+                                       self._input_numb_field, -1).sum(1)
         return conv
 
     def transpose_no_overlap(self, integrals, X):
@@ -473,8 +476,9 @@ class ContinuousConvBlock(BaseContinuousConv):
 
         # list to iterate for calculating nn output
         tmp = [i for i in range(self._output_numb_field)]
-        iterate_conv = [item for item in tmp for _ in range(
-            self._input_numb_field)]
+        iterate_conv = [
+            item for item in tmp for _ in range(self._input_numb_field)
+        ]
 
         for batch_idx, x in enumerate(X):
 

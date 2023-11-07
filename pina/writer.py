@@ -11,10 +11,7 @@ class Writer:
     Implementation of a writer class, for textual output.
     """
 
-    def __init__(self,
-                 frequency_print=10,
-                 header='any') -> None:
-
+    def __init__(self, frequency_print=10, header='any') -> None:
         """
         The constructor of the class.
 
@@ -24,7 +21,6 @@ class Writer:
 
         self._frequency_print = frequency_print
         self._header = header
-
 
     def header(self, trainer):
         """
@@ -41,7 +37,6 @@ class Writer:
         The method for writing the output.
         """
         pass
-
 
     def write_loss_in_loop(self, trainer, loss):
         """

@@ -41,7 +41,7 @@ extensions = [
     #'sphinx.ext.graphviz',
     #'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
+    # 'sphinx.ext.todo',
     #'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
     #'sphinx.ext.ifconfig',
@@ -53,7 +53,7 @@ extensions = [
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+    # 'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('http://matplotlib.sourceforge.net/', None),
     'torch': ('https://pytorch.org/docs/stable/', None),
 }
@@ -95,7 +95,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -182,7 +182,7 @@ html_static_path = ['_static']
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
-html_extra_path = ['_tutorials']
+# html_extra_path = ['_tutorial']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.

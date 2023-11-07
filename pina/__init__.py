@@ -1,11 +1,6 @@
 __all__ = [
-    'PINN',
-    'Trainer',
-    'LabelTensor',
-    'Plotter',
-    'Condition',
-    'Location',
-    'CartesianDomain'
+    'PINN', 'Trainer', 'LabelTensor', 'Plotter', 'Condition',
+    'SamplePointDataset', 'SamplePointLoader'
 ]
 
 from .meta import *
@@ -14,8 +9,5 @@ from .solvers.pinn import PINN
 from .trainer import Trainer
 from .plotter import Plotter
 from .condition import Condition
-from .geometry import Location
-from .geometry import CartesianDomain
-
 from .dataset import SamplePointDataset
 from .dataset import SamplePointLoader

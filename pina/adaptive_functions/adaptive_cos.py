@@ -1,6 +1,7 @@
 import torch
 from torch.nn.parameter import Parameter
 
+
 class AdaptiveCos(torch.nn.Module):
     '''
     Implementation of soft exponential activation.
@@ -18,7 +19,8 @@ class AdaptiveCos(torch.nn.Module):
         >>> x = torch.randn(256)
         >>> x = a1(x)
     '''
-    def __init__(self, alpha = None):
+
+    def __init__(self, alpha=None):
         '''
         Initialization.
         INPUT:
@@ -31,16 +33,18 @@ class AdaptiveCos(torch.nn.Module):
 
         # initialize alpha
         if alpha == None:
-            self.alpha = Parameter(torch.tensor(1.0)) # create a tensor out of alpha
+            self.alpha = Parameter(
+                torch.tensor(1.0))  # create a tensor out of alpha
         else:
-            self.alpha = Parameter(torch.tensor(alpha)) # create a tensor out of alpha
-        self.alpha.requiresGrad = True # set requiresGrad to true!
+            self.alpha = Parameter(
+                torch.tensor(alpha))  # create a tensor out of alpha
+        self.alpha.requiresGrad = True  # set requiresGrad to true!
 
         self.scale = Parameter(torch.tensor(1.0))
-        self.scale.requiresGrad = True # set requiresGrad to true!
+        self.scale.requiresGrad = True  # set requiresGrad to true!
 
         self.translate = Parameter(torch.tensor(0.0))
-        self.translate.requiresGrad = True # set requiresGrad to true!
+        self.translate.requiresGrad = True  # set requiresGrad to true!
 
     def forward(self, x):
         '''

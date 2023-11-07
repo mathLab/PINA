@@ -39,7 +39,9 @@ def check_consistency(object, object_instance, subclass=False):
             raise ValueError(f"{type(obj).__name__} must be {object_instance}.")
 
 
-def number_parameters(model, aggregate=True, only_trainable=True):  # TODO: check
+def number_parameters(model,
+                      aggregate=True,
+                      only_trainable=True):  # TODO: check
     """
     Return the number of parameters of a given `model`.
 
@@ -140,6 +142,7 @@ def chebyshev_roots(n):
     nodes = torch.sort(torch.cos(pi * (k + 0.5) / n))[0]
     return nodes
 
+
 # class PinaDataset():
 
 #     def __init__(self, pinn) -> None:
@@ -185,7 +188,6 @@ def chebyshev_roots(n):
 
 #         def __len__(self):
 #             return self._len
-
 
 
 class LabelTensorDataLoader(DataLoader):

@@ -4,7 +4,7 @@ import torch
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
-    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler # torch < 2.0
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler  # torch < 2.0
 
 from torch.optim.lr_scheduler import ConstantLR
 from .solver import SolverInterface
@@ -26,24 +26,32 @@ class GAROM(SolverInterface):
         arXiv preprint arXiv:2305.15881.
         <https://doi.org/10.48550/arXiv.2305.15881>`_.
     """
-    def __init__(self,
-                 problem,
-                 generator,
-                 discriminator,
-                 extra_features=None,
-                 loss = None,
-                 optimizer_generator=torch.optim.Adam,
-                 optimizer_generator_kwargs={'lr' : 0.001},
-                 optimizer_discriminator=torch.optim.Adam,
-                 optimizer_discriminator_kwargs={'lr' : 0.001},
-                 scheduler_generator=ConstantLR,
-                 scheduler_generator_kwargs={"factor": 1, "total_iters": 0},
-                 scheduler_discriminator=ConstantLR,
-                 scheduler_discriminator_kwargs={"factor": 1, "total_iters": 0},
-                 gamma = 0.3,
-                 lambda_k = 0.001,
-                 regularizer = False,
-                 ):
+
+    def __init__(
+        self,
+        problem,
+        generator,
+        discriminator,
+        extra_features=None,
+        loss=None,
+        optimizer_generator=torch.optim.Adam,
+        optimizer_generator_kwargs={'lr': 0.001},
+        optimizer_discriminator=torch.optim.Adam,
+        optimizer_discriminator_kwargs={'lr': 0.001},
+        scheduler_generator=ConstantLR,
+        scheduler_generator_kwargs={
+            "factor": 1,
+            "total_iters": 0
+        },
+        scheduler_discriminator=ConstantLR,
+        scheduler_discriminator_kwargs={
+            "factor": 1,
+            "total_iters": 0
+        },
+        gamma=0.3,
+        lambda_k=0.001,
+        regularizer=False,
+    ):
         """
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module generator: The neural network model to use
@@ -90,22 +98,27 @@ class GAROM(SolverInterface):
         """
 
         if isinstance(extra_features, dict):
-            extra_features = [extra_features['generator'], extra_features['discriminator']]
+            extra_features = [
+                extra_features['generator'], extra_features['discriminator']
+            ]
 
-        super().__init__(models=[generator, discriminator],
-                         problem=problem,
-                         extra_features=extra_features,
-                         optimizers=[optimizer_generator, optimizer_discriminator],
-                         optimizers_kwargs=[optimizer_generator_kwargs, optimizer_discriminator_kwargs])
-        
+        super().__init__(
+            models=[generator, discriminator],
+            problem=problem,
+            extra_features=extra_features,
+            optimizers=[optimizer_generator, optimizer_discriminator],
+            optimizers_kwargs=[
+                optimizer_generator_kwargs, optimizer_discriminator_kwargs
+            ])
+
         # set automatic optimization for GANs
         self.automatic_optimization = False
 
         # set loss
         if loss is None:
             loss = PowerLoss(p=1)
-        
-        # check consistency 
+
+        # check consistency
         check_consistency(scheduler_generator, LRScheduler, subclass=True)
         check_consistency(scheduler_generator_kwargs, dict)
         check_consistency(scheduler_discriminator, LRScheduler, subclass=True)
@@ -147,7 +160,7 @@ class GAROM(SolverInterface):
             return mean, var
 
         return mean
-    
+
     def configure_optimizers(self):
         """Optimizer configuration for the GAROM
            solver.
@@ -265,27 +278,27 @@ class GAROM(SolverInterface):
             self.log('stability_metric', float(d_loss_real + torch.abs(diff)), prog_bar=True, logger=True, on_epoch=True, on_step=False)
 
         return
-    
+
     @property
     def generator(self):
         return self.models[0]
-    
+
     @property
     def discriminator(self):
         return self.models[1]
-    
+
     @property
     def optimizer_generator(self):
         return self.optimizers[0]
-    
+
     @property
     def optimizer_discriminator(self):
         return self.optimizers[1]
-    
+
     @property
     def scheduler_generator(self):
         return self._schedulers[0]
-    
+
     @property
     def scheduler_discriminator(self):
         return self._schedulers[1]

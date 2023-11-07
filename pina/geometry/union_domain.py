@@ -21,8 +21,8 @@ class Union(OperationInterface):
         with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
         the dimension of the geometry space.
 
-        :param list geometries: A list of geometries from 'pina.geometry' 
-            such as 'EllipsoidDomain' or 'CartesianDomain'.
+        :param list geometries: A list of geometries from ``pina.geometry`` 
+            such as ``EllipsoidDomain`` or ``CartesianDomain``.
 
         :Example:
             # Create two ellipsoid domains
@@ -41,9 +41,9 @@ class Union(OperationInterface):
         :param point: Point to be checked.
         :type point: LabelTensor
         :param check_border: Check if the point is also on the frontier
-            of the ellipsoid, default False.
+            of the ellipsoid, default ``False``.
         :type check_border: bool
-        :return: Returning True if the point is inside, False otherwise.
+        :return: Returning ``True`` if the point is inside, ``False`` otherwise.
         :rtype: bool
         """
         for geometry in self.geometries:
@@ -54,13 +54,12 @@ class Union(OperationInterface):
     def sample(self, n, mode='random', variables='all'):
         """Sample routine for union domain.
 
-        :param n: Number of points to sample in the shape.
-        :type n: int
-        :param mode: Mode for sampling, defaults to 'random'.
-            Available modes include: random sampling, 'random'.
-        :type mode: str, optional
-        :param variables: pinn variable to be sampled, defaults to 'all'.
-        :type variables: str or list[str], optional
+        :param int n: Number of points to sample in the shape.
+        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
+        :param variables: Variables to be sampled, defaults to ``all``.
+        :type variables: str | list[str]
+        :return: Returns ``LabelTensor`` of n sampled points.
+        :rtype: LabelTensor
 
         :Example:
             # Create two ellipsoid domains
@@ -95,8 +94,9 @@ class Union(OperationInterface):
             # int(i < remainder) is one only if we have a remainder
             # different than zero. Notice that len(geometries) is
             # always smaller than remaider.
-            sampled_points.append(geometry.sample(
-                num_points + int(i < remainder), mode, variables))
+            sampled_points.append(
+                geometry.sample(num_points + int(i < remainder), mode,
+                                variables))
             # in case number of sampled points is smaller than the number of geometries
             if len(sampled_points) >= n:
                 break

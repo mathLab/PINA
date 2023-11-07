@@ -1,5 +1,5 @@
 EllipsoidDomain
-===========
+======================
 .. currentmodule:: pina.geometry.ellipsoid
 
 .. automodule:: pina.geometry.ellipsoid

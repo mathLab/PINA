@@ -4,20 +4,24 @@ from pina import LabelTensor
 import torch
 import pytest
 
+
 def eq1(input_, output_):
     u_grad = grad(output_, input_)
     u1_xx = grad(u_grad, input_, components=['du1dx'], d=['x'])
     u2_xy = grad(u_grad, input_, components=['du2dx'], d=['y'])
-    return torch.hstack([u1_xx , u2_xy])  
+    return torch.hstack([u1_xx, u2_xy])
+
 
 def eq2(input_, output_):
-    force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
-                    torch.sin(input_.extract(['y'])*torch.pi))
+    force_term = (torch.sin(input_.extract(['x']) * torch.pi) *
+                  torch.sin(input_.extract(['y']) * torch.pi))
     delta_u = laplacian(output_.extract(['u1']), input_)
     return delta_u - force_term
 
+
 def foo():
     pass
+
 
 def test_constructor():
     SystemEquation([eq1, eq2])
@@ -26,6 +30,7 @@ def test_constructor():
         SystemEquation([eq1, eq2], reduction='foo')
     with pytest.raises(ValueError):
         SystemEquation(foo)
+
 
 def test_residual():
 

@@ -1,5 +1,5 @@
 SolverInterface
-===========
+=================
 .. currentmodule:: pina.solvers.solver
 
 .. automodule:: pina.solvers.solver

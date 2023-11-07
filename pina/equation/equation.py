@@ -1,6 +1,7 @@
 """ Module """
 from .equation_interface import EquationInterface
 
+
 class Equation(EquationInterface):
 
     def __init__(self, equation):

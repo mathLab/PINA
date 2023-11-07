@@ -3,6 +3,7 @@ import torch
 from .equation import Equation
 from ..utils import check_consistency
 
+
 class SystemEquation(Equation):
 
     def __init__(self, list_equation, reduction='mean'):
@@ -28,7 +29,7 @@ class SystemEquation(Equation):
 
         # equations definition
         self.equations = []
-        for _, equation in enumerate(list_equation):            
+        for _, equation in enumerate(list_equation):
             self.equations.append(Equation(equation))
 
         # possible reduction
@@ -39,7 +40,8 @@ class SystemEquation(Equation):
         elif (reduction == 'none') or callable(reduction):
             self.reduction = reduction
         else:
-            raise NotImplementedError('Only mean and sum reductions implemented.')
+            raise NotImplementedError(
+                'Only mean and sum reductions implemented.')
 
     def residual(self, input_, output_):
         """
@@ -52,12 +54,10 @@ class SystemEquation(Equation):
             aggregated by the ``reduction`` defined in the ``__init__``.
         :rtype: LabelTensor
         """
-        residual = torch.hstack([
-                equation.residual(input_, output_)
-                for equation in self.equations
-            ])
-        
+        residual = torch.hstack(
+            [equation.residual(input_, output_) for equation in self.equations])
+
         if self.reduction == 'none':
             return residual
-        
+
         return self.reduction(residual, dim=-1)

@@ -1,6 +1,5 @@
 """ Module for plotting. """
 
-
 import matplotlib.pyplot as plt
 import torch
 from pina.callbacks import MetricTracker
@@ -44,11 +43,13 @@ class Plotter:
         proj = '3d' if len(variables) == 3 else None
         ax = fig.add_subplot(projection=proj)
         for location in problem.input_pts:
-            coords = problem.input_pts[location].extract(
-                variables).T.detach()
+            coords = problem.input_pts[location].extract(variables).T.detach()
             if coords.shape[0] == 1:  # 1D samples
-                ax.plot(coords.flatten(), torch.zeros(coords.flatten().shape), '.',
-                        label=location, **kwargs)
+                ax.plot(coords.flatten(),
+                        torch.zeros(coords.flatten().shape),
+                        '.',
+                        label=location,
+                        **kwargs)
             else:
                 ax.plot(*coords, '.', label=location, **kwargs)
 
@@ -92,7 +93,13 @@ class Plotter:
         plt.legend()
         plt.show()
 
-    def _2d_plot(self, pts, pred, v, res, method, truth_solution=None,
+    def _2d_plot(self,
+                 pts,
+                 pred,
+                 v,
+                 res,
+                 method,
+                 truth_solution=None,
                  **kwargs):
         """Plot solution for two dimensional function
 
@@ -116,28 +123,35 @@ class Plotter:
             truth_output = truth_solution(pts).float().reshape(res, res)
             fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
 
-            cb = getattr(ax[0], method)(
-                *grids, pred_output.cpu().detach(), **kwargs)
+            cb = getattr(ax[0], method)(*grids, pred_output.cpu().detach(),
+                                        **kwargs)
             fig.colorbar(cb, ax=ax[0])
             ax[0].title.set_text('Neural Network prediction')
-            cb = getattr(ax[1], method)(
-                *grids, truth_output.cpu().detach(), **kwargs)
+            cb = getattr(ax[1], method)(*grids, truth_output.cpu().detach(),
+                                        **kwargs)
             fig.colorbar(cb, ax=ax[1])
             ax[1].title.set_text('True solution')
-            cb = getattr(ax[2], method)(*grids,
-                                        (truth_output-pred_output).cpu().detach(),
-                                        **kwargs)
+            cb = getattr(ax[2],
+                         method)(*grids,
+                                 (truth_output - pred_output).cpu().detach(),
+                                 **kwargs)
             fig.colorbar(cb, ax=ax[2])
             ax[2].title.set_text('Residual')
         else:
             fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 6))
-            cb = getattr(ax, method)(
-                *grids, pred_output.cpu().detach(), **kwargs)
+            cb = getattr(ax, method)(*grids, pred_output.cpu().detach(),
+                                     **kwargs)
             fig.colorbar(cb, ax=ax)
             ax.title.set_text('Neural Network prediction')
 
-    def plot(self, solver, components=None, fixed_variables={}, method='contourf',
-             res=256, filename=None, **kwargs):
+    def plot(self,
+             solver,
+             components=None,
+             fixed_variables={},
+             method='contourf',
+             res=256,
+             filename=None,
+             **kwargs):
         """
         Plot sample of SolverInterface output.
 
@@ -184,8 +198,8 @@ class Plotter:
             self._1d_plot(pts, predicted_output, method, truth_solution,
                           **kwargs)
         elif len(v) == 2:
-            self._2d_plot(pts, predicted_output, v, res, method,
-                          truth_solution, **kwargs)
+            self._2d_plot(pts, predicted_output, v, res, method, truth_solution,
+                          **kwargs)
 
         plt.tight_layout()
         if filename:
@@ -193,7 +207,13 @@ class Plotter:
         else:
             plt.show()
 
-    def plot_loss(self, trainer, metrics=None, logy = False, logx=False, filename=None, **kwargs):
+    def plot_loss(self,
+                  trainer,
+                  metrics=None,
+                  logy=False,
+                  logx=False,
+                  filename=None,
+                  **kwargs):
         """
         Plot the loss function values during traininig.
 
@@ -209,10 +229,14 @@ class Plotter:
         """
 
         # check that MetricTracker has been used
-        list_ = [idx for idx, s in enumerate(trainer.callbacks) if isinstance(s, MetricTracker)]
+        list_ = [
+            idx for idx, s in enumerate(trainer.callbacks)
+            if isinstance(s, MetricTracker)
+        ]
         if not bool(list_):
-            raise FileNotFoundError('MetricTracker should be used as a callback during training to'
-                                    ' use this method.')
+            raise FileNotFoundError(
+                'MetricTracker should be used as a callback during training to'
+                ' use this method.')
 
         # extract trainer metrics
         trainer_metrics = trainer.callbacks[list_[0]].metrics
@@ -220,11 +244,13 @@ class Plotter:
             metrics = ['mean_loss']
         elif not isinstance(metrics, list):
             raise ValueError('metrics must be class list.')
-            
+
         # loop over metrics to plot
         for metric in metrics:
             if metric not in trainer_metrics:
-                raise ValueError(f'{metric} not a valid metric. Available metrics are {list(trainer_metrics.keys())}.')
+                raise ValueError(
+                    f'{metric} not a valid metric. Available metrics are {list(trainer_metrics.keys())}.'
+                )
             loss = trainer_metrics[metric]
             epochs = range(len(loss))
             plt.plot(epochs, loss, **kwargs)

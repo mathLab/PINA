@@ -1,5 +1,5 @@
 ParametricProblem
-=================
+====================
 .. currentmodule:: pina.problem.parametric_problem
 
 .. automodule:: pina.problem.parametric_problem

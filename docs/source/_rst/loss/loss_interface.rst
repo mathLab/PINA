@@ -1,5 +1,5 @@
 LpLoss
-====
+===============
 .. currentmodule:: pina.loss
 
 .. automodule:: pina.loss

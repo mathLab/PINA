@@ -4,10 +4,6 @@ PINA Tutorials
 
 In this folder we collect useful tutorials in order to understand the principles and the potential of **PINA**. 
 
-.. toctree::
-    :maxdepth: 3
-    :hidden:
-
 Getting started with PINA
 -------------------------
    * :doc:`Introduction to PINA for Physics Informed Neural Networks training<tutorials/tutorial1/tutorial>`

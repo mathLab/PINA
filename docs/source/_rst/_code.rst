@@ -3,7 +3,7 @@ Code Documentation
 Welcome to PINA documentation! Here you can find the modules of the package divided in different sections.
 
 PINA Features
--------
+--------------
 .. toctree::
     :titlesonly:
 
@@ -12,7 +12,7 @@ PINA Features
     Plotter <plotter.rst>
 
 Problem
--------
+--------------
 
 .. toctree::
     :titlesonly:
@@ -23,7 +23,7 @@ Problem
     ParametricProblem <problem/parametricproblem.rst>
 
 Solvers
--------
+--------------
 
 .. toctree::
     :titlesonly:
@@ -33,7 +33,7 @@ Solvers
 
 
 Models
------
+------------
 
 .. toctree::
     :titlesonly:
@@ -43,10 +43,11 @@ Models
     MultiFeedForward <models/multifeedforward.rst>
     ResidualFeedForward <models/fnn_residual.rst>
     DeepONet <models/deeponet.rst>
+    MIONet <models/mionet.rst>
     FNO <models/fno.rst>
 
 Layers
-------
+-------------
 
 .. toctree::
     :titlesonly:
@@ -55,7 +56,7 @@ Layers
     
 
 Geometries
-----------
+-----------------
 
 .. toctree::
     :titlesonly:

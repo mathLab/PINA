@@ -33,28 +33,27 @@ class CartesianDomain(Location):
     def variables(self):
         """Spatial variables.
 
-        :return: Spatial variables defined in '__init__()'
+        :return: Spatial variables defined in ``__init__()``
         :rtype: list[str]
         """
         return list(self.fixed_.keys()) + list(self.range_.keys())
 
-    def update(self, new_span):
-        """Adding new dimensions on the span
+    def update(self, new_domain):
+        """Adding new dimensions on the ``CartesianDomain``
 
-        :param new_span: A new span object to merge
-        :type new_span: Span
+        :param CartesianDomain new_domain: A new ``CartesianDomain`` object to merge
 
         :Example:
-            >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+            >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
             >>> spatial_domain.variables
             ['x', 'y']
-            >>> spatial_domain_2 = Span({'z': [3, 4], 'w': [0, 1]})
+            >>> spatial_domain_2 = CartesianDomain({'z': [3, 4], 'w': [0, 1]})
             >>> spatial_domain.update(spatial_domain_2)
             >>> spatial_domain.variables
             ['x', 'y', 'z', 'w']
         """
-        self.fixed_.update(new_span.fixed_)
-        self.range_.update(new_span.range_)
+        self.fixed_.update(new_domain.fixed_)
+        self.range_.update(new_domain.range_)
 
     def _sample_range(self, n, mode, bounds):
         """Rescale the samples to the correct bounds
@@ -62,11 +61,11 @@ class CartesianDomain(Location):
         :param n: Number of points to sample, see Note below
             for reference.
         :type n: int
-        :param mode: Mode for sampling, defaults to 'random'.
-            Available modes include: random sampling, 'random';
-            latin hypercube sampling, 'latin' or 'lh';
-            chebyshev sampling, 'chebyshev'; grid sampling 'grid'.
-        :type mode: str, optional
+        :param mode: Mode for sampling, defaults to ``random``.
+            Available modes include: random sampling, ``random``;
+            latin hypercube sampling, ``latin`` or ``lh``;
+            chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
+        :type mode: str
         :param bounds: Bounds to rescale the samples.
         :type bounds: torch.Tensor
         :return: Rescaled sample points.
@@ -97,25 +96,27 @@ class CartesianDomain(Location):
         :param n: Number of points to sample, see Note below
             for reference.
         :type n: int
-        :param mode: Mode for sampling, defaults to 'random'.
-            Available modes include: random sampling, 'random';
-            latin hypercube sampling, 'latin' or 'lh';
-            chebyshev sampling, 'chebyshev'; grid sampling 'grid'.
-        :type mode: str, optional
-        :param variables: pinn variable to be sampled, defaults to 'all'.
-        :type variables: str or list[str], optional
+        :param mode: Mode for sampling, defaults to ``random``.
+            Available modes include: random sampling, ``random``;
+            latin hypercube sampling, ``latin`` or ``lh``;
+            chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
+        :type mode: str
+        :param variables: pinn variable to be sampled, defaults to ``all``.
+        :type variables: str | list[str]
+        :return: Returns ``LabelTensor`` of n sampled points.
+        :rtype: LabelTensor
 
         .. note::
             The total number of points sampled in case of multiple variables
-            is not 'n', and it depends on the chosen 'mode'. If 'mode' is
-            'grid' or 'chebyshev', the points are sampled independentely
+            is not ``n``, and it depends on the chosen ``mode``. If ``mode`` is
+            'grid' or ``chebyshev``, the points are sampled independentely
             across the variables and the results crossed together, i.e. the
-            final number of points is 'n' to the power of the number of
-            variables. If 'mode' is 'random', 'lh' or 'latin', the variables
+            final number of points is ``n`` to the power of the number of
+            variables. If 'mode' is 'random', ``lh`` or ``latin``, the variables
             are sampled all together, and the final number of points
 
         .. warning::
-            The extrema values of Span are always sampled only for 'grid' mode.
+            The extrema values of Span are always sampled only for ``grid`` mode.
 
         :Example:
             >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
@@ -142,6 +143,7 @@ class CartesianDomain(Location):
                         [0.6667, 1.0000],
                         [1.0000, 1.0000]])
         """
+
         def _1d_sampler(n, mode, variables):
             """ Sample independentely the variables and cross the results"""
             tmp = []
@@ -161,8 +163,8 @@ class CartesianDomain(Location):
             for variable in variables:
                 if variable in self.fixed_.keys():
                     value = self.fixed_[variable]
-                    pts_variable = torch.tensor([[value]]).repeat(
-                        result.shape[0], 1)
+                    pts_variable = torch.tensor([[value]
+                                                 ]).repeat(result.shape[0], 1)
                     pts_variable = pts_variable.as_subclass(LabelTensor)
                     pts_variable.labels = [variable]
 
@@ -175,13 +177,13 @@ class CartesianDomain(Location):
 
             :param n: Number of points to sample.
             :type n: int
-            :param mode: Mode for sampling, defaults to 'random'.
-                Available modes include: random sampling, 'random';
-                latin hypercube sampling, 'latin' or 'lh';
-                chebyshev sampling, 'chebyshev'; grid sampling 'grid'.
-            :type mode: str, optional.
-            :param variables: pinn variable to be sampled, defaults to 'all'.
-            :type variables: str or list[str], optional.
+            :param mode: Mode for sampling, defaults to ``random``.
+                Available modes include: random sampling, ``random``;
+                latin hypercube sampling, ``latin`` or ``lh``;
+                chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
+            :type mode: str.
+            :param variables: pinn variable to be sampled, defaults to ``all``.
+            :type variables: str or list[str].
             :return: Sample points.
             :rtype: list[torch.Tensor]
             """
@@ -195,8 +197,8 @@ class CartesianDomain(Location):
             for variable in variables:
                 if variable in self.fixed_.keys():
                     value = self.fixed_[variable]
-                    pts_variable = torch.tensor([[value]]).repeat(
-                        result.shape[0], 1)
+                    pts_variable = torch.tensor([[value]
+                                                 ]).repeat(result.shape[0], 1)
                     pts_variable = pts_variable.as_subclass(LabelTensor)
                     pts_variable.labels = [variable]
 
@@ -241,16 +243,15 @@ class CartesianDomain(Location):
         else:
             raise ValueError(f'mode={mode} is not valid.')
 
-    
     def is_inside(self, point, check_border=False):
         """Check if a point is inside the ellipsoid.
 
         :param point: Point to be checked
         :type point: LabelTensor
         :param check_border: Check if the point is also on the frontier
-            of the hypercube, default False.
+            of the hypercube, default ``False``.
         :type check_border: bool
-        :return: Returning True if the point is inside, False otherwise.
+        :return: Returning ``True`` if the point is inside, ``False`` otherwise.
         :rtype: bool
         """
         is_inside = []
@@ -268,7 +269,7 @@ class CartesianDomain(Location):
                     check = bound[0] <= point.extract([variable]) <= bound[1]
                 else:
                     check = bound[0] < point.extract([variable]) < bound[1]
-            
+
                 is_inside.append(check)
 
         return all(is_inside)

@@ -8,6 +8,7 @@ class Location(metaclass=ABCMeta):
     Abstract Location class.
     Any geometry entity should inherit from this class.
     """
+
     @abstractmethod
     def sample(self):
         """

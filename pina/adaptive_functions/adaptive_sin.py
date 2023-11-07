@@ -1,6 +1,7 @@
 import torch
 from torch.nn.parameter import Parameter
 
+
 class AdaptiveSin(torch.nn.Module):
     '''
     Implementation of soft exponential activation.
@@ -18,7 +19,8 @@ class AdaptiveSin(torch.nn.Module):
         >>> x = torch.randn(256)
         >>> x = a1(x)
     '''
-    def __init__(self, alpha = None):
+
+    def __init__(self, alpha=None):
         '''
         Initialization.
         INPUT:
@@ -29,14 +31,18 @@ class AdaptiveSin(torch.nn.Module):
         super(AdaptiveSin, self).__init__()
 
         # initialize alpha
-        self.alpha = Parameter(torch.normal(torch.tensor(1.0), torch.tensor(0.1))) # create a tensor out of alpha
-        self.alpha.requiresGrad = True # set requiresGrad to true!
+        self.alpha = Parameter(
+            torch.normal(torch.tensor(1.0),
+                         torch.tensor(0.1)))  # create a tensor out of alpha
+        self.alpha.requiresGrad = True  # set requiresGrad to true!
 
-        self.scale = Parameter(torch.normal(torch.tensor(1.0), torch.tensor(0.1)))
-        self.scale.requiresGrad = True # set requiresGrad to true!
+        self.scale = Parameter(
+            torch.normal(torch.tensor(1.0), torch.tensor(0.1)))
+        self.scale.requiresGrad = True  # set requiresGrad to true!
 
-        self.translate = Parameter(torch.normal(torch.tensor(0.0), torch.tensor(0.1)))
-        self.translate.requiresGrad = True # set requiresGrad to true!
+        self.translate = Parameter(
+            torch.normal(torch.tensor(0.0), torch.tensor(0.1)))
+        self.translate.requiresGrad = True  # set requiresGrad to true!
 
     def forward(self, x):
         '''

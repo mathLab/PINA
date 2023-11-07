@@ -3,8 +3,8 @@ import torch
 
 def check_point(x, current_stride, dim):
     max_stride = current_stride + dim
-    indeces = torch.logical_and(x[..., :-1] < max_stride,
-                                x[..., :-1] >= current_stride).all(dim=-1)
+    indeces = torch.logical_and(x[..., :-1] < max_stride, x[..., :-1]
+                                >= current_stride).all(dim=-1)
     return indeces
 
 
