@@ -118,7 +118,7 @@ class LabelTensor(torch.Tensor):
         :return: a copy of the tensor
         :rtype: LabelTensor
         """
-        # used before merging 
+        # # used before merging 
         # try:
         #     out = LabelTensor(super().clone(*args, **kwargs), self.labels)
         # except:
@@ -229,8 +229,12 @@ class LabelTensor(torch.Tensor):
         """
         Return a copy of the selected tensor.
         """
-        selected_lt = super(Tensor, self).__getitem__(index)
 
+        if isinstance(index, str) or (isinstance(index, (tuple, list))and all(isinstance(a, str) for a in index)):
+            return self.extract(index)
+
+        selected_lt = super(Tensor, self).__getitem__(index)
+        
         try:
             len_index = len(index)
         except TypeError:
