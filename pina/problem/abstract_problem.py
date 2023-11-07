@@ -22,6 +22,8 @@ class AbstractProblem(metaclass=ABCMeta):
         # varible to check if sampling is done. If no location
         # element is presented in Condition this variable is set to true
         self._have_sampled_points = {}
+        for condition_name in self.conditions:
+            self._have_sampled_points[condition_name] = False
 
         # put in self.input_pts all the points that we don't need to sample
         self._span_condition_points()
@@ -102,15 +104,10 @@ class AbstractProblem(metaclass=ABCMeta):
         """
         for condition_name in self.conditions:
             condition = self.conditions[condition_name]
-            if hasattr(condition, 'equation') and hasattr(condition, 'input_points'):
+            if hasattr(condition, 'input_points'):
                 samples = condition.input_points
-            elif hasattr(condition, 'output_points') and hasattr(condition, 'input_points'):
-                samples = (condition.input_points, condition.output_points)
-            # skip if we need to sample
-            elif hasattr(condition, 'location'):
-                self._have_sampled_points[condition_name] = False
-                continue
-            self.input_pts[condition_name] = samples
+                self.input_pts[condition_name] = samples
+                self._have_sampled_points[condition_name] = True
 
     def discretise_domain(self, n, mode = 'random', variables = 'all', locations = 'all'):
         """
@@ -204,7 +201,7 @@ class AbstractProblem(metaclass=ABCMeta):
 
     def add_points(self, new_points):
         """
-        Adding points to the already sampled points
+        Adding points to the already sampled points.
 
         :param dict new_points: a dictionary with key the location to add the points
             and values the torch.Tensor points.
