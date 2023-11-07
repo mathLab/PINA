@@ -44,9 +44,9 @@ class Poisson(SpatialProblem):
         'D': Condition(
             input_points=LabelTensor(torch.rand(size=(100, 2)), ['x', 'y']),
             equation=my_laplace),
-        'data': Condition(
-            input_points=in_,
-            output_points=out_)
+        # 'data': Condition(
+        #     input_points=in_,
+        #     output_points=out_)
     }
 
 

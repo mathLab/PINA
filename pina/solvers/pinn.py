@@ -97,6 +97,15 @@ class PINN(SolverInterface):
         """
         return self.optimizers, [self.scheduler]
     
+    def _loss_data(self, input, output):
+        return self.loss(self.forward(input), output)
+
+    
+    def _loss_phys(self, samples, equation):
+        residual = equation.residual(samples, self.forward(samples))
+        return self.loss(torch.zeros_like(residual, requires_grad=True), residual)
+
+
     def training_step(self, batch, batch_idx):
         """PINN solver training step.
 
@@ -108,25 +117,29 @@ class PINN(SolverInterface):
         :rtype: LabelTensor
         """
 
+        dataloader = self.trainer.train_dataloader
         condition_losses = []
-        condition_names = []
 
-        for condition_name, samples in batch.items():
+        condition_idx = batch['condition']
 
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError('Something wrong happened.')
+        for condition_id in range(condition_idx.min(), condition_idx.max()+1):
 
-            condition_names.append(condition_name)
+            condition_name = dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
+            pts = batch['pts']
 
-            # PINN loss: equation evaluated on location or input_points
-            if hasattr(condition, 'equation'):
-                target = condition.equation.residual(samples, self.forward(samples))
-                loss = self.loss(torch.zeros_like(target), target)
-            # PINN loss: evaluate model(input_points) vs output_points
-            elif hasattr(condition, 'output_points'):
-                input_pts, output_pts = samples
-                loss = self.loss(self.forward(input_pts), output_pts)
+            if len(batch) == 2:
+                samples = pts[condition_idx == condition_id]
+                loss = self._loss_phys(pts, condition.equation)
+            elif len(batch) == 3:
+                samples = pts[condition_idx == condition_id]
+                ground_truth = batch['output'][condition_idx == condition_id]
+                loss = self._loss_data(samples, ground_truth)
+            else:
+                raise ValueError("Batch size not supported")
+
+            loss = loss.as_subclass(torch.Tensor)
+            loss = loss
 
             condition_losses.append(loss * condition.data_weight)
 
@@ -135,8 +148,8 @@ class PINN(SolverInterface):
         total_loss = sum(condition_losses)
 
         self.log('mean_loss', float(total_loss / len(condition_losses)), prog_bar=True, logger=True)
-        for condition_loss, loss in zip(condition_names, condition_losses):
-            self.log(condition_loss + '_loss', float(loss), prog_bar=True, logger=True)
+        # for condition_loss, loss in zip(condition_names, condition_losses):
+        #     self.log(condition_loss + '_loss', float(loss), prog_bar=True, logger=True)
         return total_loss
 
     @property

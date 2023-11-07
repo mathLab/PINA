@@ -2,7 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 from ..model.network import Network
-import lightning.pytorch as pl
+import pytorch_lightning as pl
 from ..utils import check_consistency
 from ..problem import AbstractProblem
 import torch
