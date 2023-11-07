@@ -15,7 +15,7 @@ class SystemEquation(Equation):
         A ``SystemEquation`` is specified by a list of 
         equations.
 
-        :param callable equation: A ``torch`` callable equation to
+        :param Callable equation: A ``torch`` callable equation to
             evaluate the residual
         :param str reduction: Specifies the reduction to apply to the output:
             ``none`` | ``mean`` | ``sum``  | ``callable``. ``none``: no reduction 

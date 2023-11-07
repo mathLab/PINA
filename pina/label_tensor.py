@@ -208,7 +208,7 @@ class LabelTensor(torch.Tensor):
         return detached
 
 
-    def requires_grad_(self, mode = True) -> Tensor:
+    def requires_grad_(self, mode = True):
         lt = super().requires_grad_(mode)
         lt.labels = self.labels
         return lt

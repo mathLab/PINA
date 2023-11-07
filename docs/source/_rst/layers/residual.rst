@@ -4,5 +4,4 @@ Residual layer
 
 .. autoclass:: ResidualBlock
     :members:
-    :undoc-members:
     :show-inheritance:

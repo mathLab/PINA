@@ -4,5 +4,4 @@ MultiFeedForward
 
 .. autoclass:: MultiFeedForward
     :members:
-    :private-members:
     :show-inheritance:

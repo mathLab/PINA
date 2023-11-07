@@ -7,28 +7,29 @@ from ..utils import check_consistency
 
 
 class R3Refinement(Callback):
-    """
-    PINA implementation of a R3 Refinement Callback.
 
-    .. seealso::
-
-        **Original reference**: Daw, Arka, et al. "Mitigating Propagation Failures
-        in Physics-informed Neural Networks using
-        Retain-Resample-Release (R3) Sampling." (2023).
-        DOI: `10.48550/arXiv.2207.02338
-        < https://doi.org/10.48550/arXiv.2207.02338>`_
-    """
 
     def __init__(self, sample_every):
         """
-        R3 routine for sampling new points based on
-        adpative search. The algorithm incrementally
-        accumulate collocation points in regions of
-        high PDE residuals, and release the one which
-        have low residual. Points are sampled uniformmaly
-        in all region where sampling is needed.
+        PINA Implementation of an R3 Refinement Callback.
+
+        This callback implements the R3 (Retain-Resample-Release) routine for sampling new points based on adaptive search.
+        The algorithm incrementally accumulates collocation points in regions of high PDE residuals, and releases those 
+        with low residuals. Points are sampled uniformly in all regions where sampling is needed.
+
+        .. seealso::
+
+            Original Reference: Daw, Arka, et al. *Mitigating Propagation Failures in Physics-informed Neural Networks 
+            using Retain-Resample-Release (R3) Sampling. (2023)*.
+            DOI: `10.48550/arXiv.2207.02338
+            <https://doi.org/10.48550/arXiv.2207.02338>`_
 
         :param int sample_every: Frequency for sampling.
+
+        :raises ValueError: If `sample_every` is not an integer.
+
+        Example:
+            >>> r3_callback = R3Refinement(sample_every=5)
         """
         super().__init__()
 
@@ -115,6 +116,18 @@ class R3Refinement(Callback):
         trainer._create_or_update_loader()
 
     def on_train_start(self, trainer, _):
+        """
+        Callback function called at the start of training.
+
+        This method extracts the locations for sampling from the problem conditions and calculates the total population.
+
+        :param trainer: The trainer object managing the training process.
+        :type trainer: pytorch_lightning.Trainer
+        :param _: Placeholder argument (not used).
+
+        :return: None
+        :rtype: None
+        """
         # extract locations for sampling
         problem = trainer._model.problem
         locations = []
@@ -132,5 +145,17 @@ class R3Refinement(Callback):
         self._tot_pop_numb = total_population
 
     def on_train_epoch_end(self, trainer, __):
+        """
+        Callback function called at the end of each training epoch.
+
+        This method triggers the R3 routine for refinement if the current epoch is a multiple of `_sample_every`.
+
+        :param trainer: The trainer object managing the training process.
+        :type trainer: pytorch_lightning.Trainer
+        :param __: Placeholder argument (not used).
+
+        :return: None
+        :rtype: None
+        """
         if trainer.current_epoch % self._sample_every == 0:
             self._r3_routine(trainer)

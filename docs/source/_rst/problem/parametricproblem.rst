@@ -6,5 +6,4 @@ ParametricProblem
 
 .. autoclass:: ParametricProblem
     :members:
-    :private-members:
     :show-inheritance:

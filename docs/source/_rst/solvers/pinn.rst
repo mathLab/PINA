@@ -4,5 +4,4 @@ PINN
 
 .. autoclass:: PINN
    :members:
-   :private-members:
    :show-inheritance:

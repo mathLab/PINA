@@ -4,5 +4,4 @@ FeedForward
 
 .. autoclass:: FeedForward
    :members:
-   :private-members:
    :show-inheritance:

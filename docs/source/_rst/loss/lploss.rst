@@ -7,5 +7,4 @@ LpLoss
 
 .. autoclass:: LpLoss
    :members:
-   :private-members:
    :show-inheritance:

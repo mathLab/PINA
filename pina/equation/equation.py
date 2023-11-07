@@ -12,7 +12,7 @@ class Equation(EquationInterface):
 
         :param equation: A ``torch`` callable equation to
             evaluate the residual.
-        :type equation: callable
+        :type equation: Callable
         """
         if not callable(equation):
             raise ValueError('equation must be a callable function.'

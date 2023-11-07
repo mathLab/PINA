@@ -28,8 +28,8 @@ Build a PINA problem
 Problem definition in the **PINA** framework is done by building a
 python ``class``, which inherits from one or more problem classes
 (``SpatialProblem``, ``TimeDependentProblem``, ``ParametricProblem``, …)
-depending on the nature of the problem. Below is an example: ### Simple
-Ordinary Differential Equation Consider the following:
+depending on the nature of the problem. Below is an example. Consider the following
+simple Ordinary Differential Equation:
 
 .. math::
 

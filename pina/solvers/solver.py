@@ -2,13 +2,13 @@
 
 from abc import ABCMeta, abstractmethod
 from ..model.network import Network
-import pytorch_lightning as pl
+import pytorch_lightning
 from ..utils import check_consistency
 from ..problem import AbstractProblem
 import torch
 
 
-class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
+class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
     """
     Solver base class. This class inherits is a wrapper of
     LightningModule class, inheriting all the
@@ -26,6 +26,9 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
         :type models: torch.nn.Module
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
+        :param list(torch.optim.Optimizer) optimizer: A list of neural network optimizers to
+            use.
+        :param list(dict) optimizer_kwargs: A list of optimizer constructor keyword args.
         :param list(torch.nn.Module) extra_features: The additional input
             features to use as augmented input. If ``None`` no extra features 
             are passed. If it is a list of :class:`torch.nn.Module`, the extra feature

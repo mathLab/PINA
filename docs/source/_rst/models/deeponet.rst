@@ -4,5 +4,4 @@ DeepONet
 
 .. autoclass:: DeepONet
    :members:
-   :private-members:
    :show-inheritance:

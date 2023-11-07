@@ -4,5 +4,4 @@ FNO
 
 .. autoclass:: FNO
    :members:
-   :private-members:
    :show-inheritance:

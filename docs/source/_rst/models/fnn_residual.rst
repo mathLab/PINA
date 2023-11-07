@@ -4,5 +4,4 @@ ResidualFeedForward
 
 .. autoclass:: ResidualFeedForward
    :members:
-   :private-members:
    :show-inheritance:

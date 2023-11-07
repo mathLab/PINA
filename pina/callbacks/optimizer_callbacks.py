@@ -6,23 +6,30 @@ from ..utils import check_consistency
 
 
 class SwitchOptimizer(Callback):
-    """
-    PINA implementation of a Lightining Callback to switch
-    optimizer during training. The rouutine can be used to
-    try multiple optimizers during the training, without the
-    need to stop training.
-    """
 
     def __init__(self, new_optimizers, new_optimizers_kwargs, epoch_switch):
         """
-        SwitchOptimizer is a routine for switching optimizer during training.
+        PINA Implementation of a Lightning Callback to switch optimizer during training.
 
-        :param torch.optim.Optimizer | list new_optimizers: The model optimizers to
-            switch to. It must be a list of :class:`torch.optim.Optimizer` or list of
-            :class:`torch.optim.Optimizer` for multiple model solvers.
-        :param dict| list new_optimizers: The model optimizers keyword arguments to
-            switch use. It must be a dict or list of dict for multiple optimizers.
-        :param int epoch_switch: Epoch for switching optimizer.
+        This callback allows for switching between different optimizers during training, enabling
+        the exploration of multiple optimization strategies without the need to stop training.
+
+        :param new_optimizers: The model optimizers to switch to. Can be a single 
+                            :class:`torch.optim.Optimizer` or a list of them for multiple model solvers.
+        :type new_optimizers: torch.optim.Optimizer | list
+        :param new_optimizers_kwargs: The keyword arguments for the new optimizers. Can be a single dictionary
+                                    or a list of dictionaries corresponding to each optimizer.
+        :type new_optimizers_kwargs: dict | list
+        :param epoch_switch: The epoch at which to switch to the new optimizer.
+        :type epoch_switch: int
+
+        :raises ValueError: If `epoch_switch` is less than 1 or if there is a mismatch in the number of 
+                            optimizers and their corresponding keyword argument dictionaries.
+
+        Example:
+            >>> switch_callback = SwitchOptimizer(new_optimizers=[optimizer1, optimizer2],
+            >>>                                  new_optimizers_kwargs=[{'lr': 0.001}, {'lr': 0.01}],
+            >>>                                  epoch_switch=10)
         """
         super().__init__()
 
@@ -52,6 +59,16 @@ class SwitchOptimizer(Callback):
         self._epoch_switch = epoch_switch
 
     def on_train_epoch_start(self, trainer, __):
+        """
+        Callback function to switch optimizer at the start of each training epoch.
+
+        :param trainer: The trainer object managing the training process.
+        :type trainer: pytorch_lightning.Trainer
+        :param _: Placeholder argument (not used).
+
+        :return: None
+        :rtype: None
+        """
         if trainer.current_epoch == self._epoch_switch:
             optims = []
             for idx, (optim, optim_kwargs) in enumerate(

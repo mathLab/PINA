@@ -4,5 +4,4 @@ SupervisedSolver
 
 .. autoclass:: SupervisedSolver
    :members:
-   :private-members:
    :show-inheritance:

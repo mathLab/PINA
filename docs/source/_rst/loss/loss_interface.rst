@@ -6,5 +6,4 @@ LpLoss
 
 .. autoclass:: LossInterface
    :members:
-   :private-members:
    :show-inheritance:

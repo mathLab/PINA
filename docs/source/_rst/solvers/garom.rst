@@ -4,5 +4,4 @@ GAROM
 
 .. autoclass:: GAROM
    :members:
-   :private-members:
    :show-inheritance:

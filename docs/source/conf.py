@@ -48,14 +48,15 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.intersphinx',
     'paramref_extension',    # this extension is made to remove paramref links from lightining doc
+    'sphinx_copybutton', 
 ]
 
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+    # 'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    # 'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('http://matplotlib.sourceforge.net/', None),
-    'torch': ('https://pytorch.org/docs/stable/', None),
+    'torch': ('https://pytorch.org/docs/stable/', None), 
     'pytorch_lightning': ("https://lightning.ai/docs/pytorch/stable/", None),
     }
 
@@ -183,7 +184,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_logo = "index_files/pina_logo.png"
 html_theme_options = {
     'logo_only': True,
-    'display_version': False,
+    'display_version': True,
     'prev_next_buttons_location': 'bottom',
 
 }

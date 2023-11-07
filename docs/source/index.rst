@@ -65,8 +65,9 @@ terms), without the need of re-training.
 
 .. toctree::
     :maxdepth: 1
-    :caption: Join Us:
+    :caption: Community:
 
     Team & Foundings <_team.rst>
     Contributing <_rst/_contributing>
     License <_LICENSE.rst>
+    Cite PINA <_cite.rst>

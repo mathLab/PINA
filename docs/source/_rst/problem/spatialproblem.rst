@@ -6,6 +6,4 @@ SpatialProblem
 
 .. autoclass:: SpatialProblem
     :members:
-    :private-members:
-    :undoc-members:
     :show-inheritance:

@@ -6,5 +6,4 @@ Location
 
 .. autoclass:: Location
     :members:
-    :private-members:
     :show-inheritance:

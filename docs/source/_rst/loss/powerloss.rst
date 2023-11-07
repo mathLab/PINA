@@ -7,5 +7,4 @@ PowerLoss
 
 .. autoclass:: PowerLoss
    :members:
-   :private-members:
    :show-inheritance:

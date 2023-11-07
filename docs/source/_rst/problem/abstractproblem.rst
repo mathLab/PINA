@@ -6,6 +6,4 @@ AbstractProblem
 
 .. autoclass:: AbstractProblem
     :members:
-    :private-members:
-    :undoc-members:
     :show-inheritance:
