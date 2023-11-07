@@ -1,6 +1,6 @@
 '''PINA Callbacks Implementations'''
 
-from lightning.pytorch.callbacks import Callback
+from pytorch_lightning.callbacks import Callback
 import torch
 import copy
 
