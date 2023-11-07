@@ -19,7 +19,7 @@ class EllipsoidDomain(Location):
             `sample_surface=True` only samples on the ellipsoid surface
             frontier are taken. If ``sample_surface=False`` only samples on
             the ellipsoid interior are taken, defaults to ``False``.
-        :type sample_surface: bool, optional
+        :type sample_surface: bool
 
         .. warning::
             Sampling for dimensions greater or equal to 10 could result

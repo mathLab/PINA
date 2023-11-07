@@ -5,6 +5,5 @@ SolverInterface
 .. automodule:: pina.solvers.solver
 
 .. autoclass:: SolverInterface
-    :members:
     :show-inheritance:
-    :noindex:
+    :members:

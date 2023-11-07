@@ -5,7 +5,7 @@ __all__ = [
 
 from .meta import *
 from .label_tensor import LabelTensor
-from .solvers.pinn import PINN
+from .solvers.solver import SolverInterface
 from .trainer import Trainer
 from .plotter import Plotter
 from .condition import Condition

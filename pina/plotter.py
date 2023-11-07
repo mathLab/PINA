@@ -13,9 +13,9 @@ class Plotter:
 
     def plot_samples(self, problem, variables=None, **kwargs):
         """
-            Plot the training grid samples.
+        Plot the training grid samples.
 
-        :param SolverInterface solver: The SolverInterface object.
+        :param SolverInterface solver: The ``SolverInterface`` object.
         :param list(str) variables: Variables to plot. If None, all variables
             are plotted. If 'spatial', only spatial variables are plotted. If
             'temporal', only temporal variables are plotted. Defaults to None.
@@ -105,7 +105,7 @@ class Plotter:
 
         :param pts: Points to plot the solution.
         :type pts: torch.Tensor
-        :param pred: SolverInterface solution evaluated at 'pts'.
+        :param pred: ``SolverInterface`` solution evaluated at 'pts'.
         :type pred: torch.Tensor
         :param method: Matplotlib method to plot 2-dimensional data,
             see https://matplotlib.org/stable/api/axes_api.html for
@@ -155,7 +155,7 @@ class Plotter:
         """
         Plot sample of SolverInterface output.
 
-        :param SolverInterface solver: The SolverInterface object instance.
+        :param SolverInterface solver: The ``SolverInterface`` object instance.
         :param list(str) components: The output variable to plot. If None, all
             the output variables of the problem are selected. Default value is
             None.
@@ -163,8 +163,9 @@ class Plotter:
             should be kept fixed during the plot. The keys of the dictionary
             are the variables name whereas the values are the corresponding
             values of the variables. Defaults is `dict()`.
-        :param {'contourf', 'pcolor'} method: The matplotlib method to use for
-            plotting the solution. Default is 'contourf'.
+        :param str method: The matplotlib method to use for
+            plotting the solution. Available methods are {'contourf', 'pcolor'}.
+            Default is 'contourf'.
         :param int res: The resolution, aka the number of points used for
             plotting in each axis. Default is 256.
         :param str filename: The file name to save the plot. If None, the plot
@@ -217,8 +218,9 @@ class Plotter:
         """
         Plot the loss function values during traininig.
 
-        :param Trainer trainer: the PINA Trainer object instance.
-        :param str/list(str) metric: The metrics to use in the y axis. If None, the mean loss
+        :param trainer: the PINA Trainer object instance.
+        :type trainer: Trainer
+        :param str | list(str) metric: The metrics to use in the y axis. If None, the mean loss
             is plotted.
         :param bool logy: If True, the y axis is in log scale. Default is
             True.

@@ -9,7 +9,11 @@ import torch
 
 
 class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
-    """ Solver base class. """
+    """
+    Solver base class. This class inherits is a wrapper of
+    LightningModule class, inheriting all the
+    LightningModule methods.
+    """
 
     def __init__(self,
                  models,
@@ -22,11 +26,11 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
         :type models: torch.nn.Module
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
-        :param list(torch.nn.Module) extra_features: the additional input
-        features to use as augmented input. If ``None`` no extra features 
-        are passed. If it is a list of ``torch.nn.Module``, the extra feature
-        list is passed to all models. If it is a list of extra features' lists,
-        each single list of extra feature is passed to a model.
+        :param list(torch.nn.Module) extra_features: The additional input
+            features to use as augmented input. If ``None`` no extra features 
+            are passed. If it is a list of :class:`torch.nn.Module`, the extra feature
+            list is passed to all models. If it is a list of extra features' lists,
+            each single list of extra feature is passed to a model.
         """
         super().__init__()
 
@@ -94,7 +98,7 @@ class SolverInterface(pl.LightningModule, metaclass=ABCMeta):
         self._pina_problem = problem
 
     @abstractmethod
-    def forward(self):
+    def forward(self, *args, **kwargs):
         pass
 
     @abstractmethod

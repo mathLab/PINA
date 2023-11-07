@@ -36,28 +36,28 @@ class MIONet(torch.nn.Module):
             as value the list of indeces to extract from the input variable
             in the forward pass of the neural network. If a list of ``int`` is passed,
             the corresponding columns of the inner most entries are extracted.
-            If a list of ``str`` is passed the variables of the corresponding :py:class:`LabelTensor`
+            If a list of ``str`` is passed the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor`
             are extracted. The ``torch.nn.Module`` model has to take as input a
-            :py:class:`LabelTensor` or :class:`torch.Tensor`. Default implementation consist of different
-            branch nets and one trunk net.
-        :param str | callable aggregator: Aggregator to be used to aggregate
+            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`.
+            Default implementation consist of different branch nets and one trunk nets.
+        :param str | Callable aggregator: Aggregator to be used to aggregate
             partial results from the modules in `nets`. Partial results are
             aggregated component-wise. See
             :func:`pina.model.deeponet.MIONet._symbol_functions` for the
             available default aggregators.
-        :param str | callable reduction: Reduction to be used to reduce
+        :param str | Callable reduction: Reduction to be used to reduce
             the aggregated result of the modules in `nets` to the desired output
             dimension. See :py:obj:`pina.model.deeponet.MIONet._symbol_functions`
             for the available default reductions. 
-        :param bool | callable scale: Scaling the final output before returning the
+        :param bool | Callable scale: Scaling the final output before returning the
             forward pass, default ``True``.
-        :param bool | callable translation: Translating the final output before
+        :param bool | Callable translation: Translating the final output before
             returning the forward pass, default ``True``.
 
         .. warning::
             In the forward pass we do not check if the input is instance of
-            :py:class:`LabelTensor` or :class:`torch.Tensor`. A general rule is
-            that for a :py:class:`LabelTensor` input both list of integers and
+            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`. A general rule is
+            that for a :py:obj:`pina.label_tensor.LabelTensor` input both list of integers and
             list of strings can be passed for ``input_indeces_branch_net``
             and ``input_indeces_trunk_net``. Differently, for a :class:`torch.Tensor`
             only a list of integers can be passed for ``input_indeces_branch_net``
@@ -292,41 +292,41 @@ class DeepONet(MIONet):
                  translation=True):
         """
         :param torch.nn.Module branch_net: The neural network to use as branch
-            model. It has to take as input a :py:class:`LabelTensor`
+            model. It has to take as input a :py:obj:`pina.label_tensor.LabelTensor`
             or :class:`torch.Tensor`. The number of dimensions of the output has
             to be the same of the ``trunk_net``.
         :param torch.nn.Module trunk_net: The neural network to use as trunk
-            model. It has to take as input a :py:class:`LabelTensor`
+            model. It has to take as input a :py:obj:`pina.label_tensor.LabelTensor`
             or :class:`torch.Tensor`. The number of dimensions of the output
             has to be the same of the ``branch_net``.
         :param list(int) | list(str) input_indeces_branch_net: List of indeces
             to extract from the input variable in the forward pass for the
             branch net. If a list of ``int`` is passed, the corresponding columns
             of the inner most entries are extracted. If a list of ``str`` is passed
-            the variables of the corresponding :py:class:`LabelTensor` are extracted.
+            the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor` are extracted.
         :param list(int) | list(str) input_indeces_trunk_net: List of indeces
             to extract from the input variable in the forward pass for the
             trunk net. If a list of ``int`` is passed, the corresponding columns
             of the inner most entries are extracted. If a list of ``str`` is passed
-            the variables of the corresponding :py:class:`LabelTensor` are extracted.
-        :param str | callable aggregator: Aggregator to be used to aggregate
+            the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor` are extracted.
+        :param str | Callable aggregator: Aggregator to be used to aggregate
             partial results from the modules in `nets`. Partial results are
             aggregated component-wise. See
             :func:`pina.model.deeponet.MIONet._symbol_functions` for the
             available default aggregators.
-        :param str | callable reduction: Reduction to be used to reduce
+        :param str | Callable reduction: Reduction to be used to reduce
             the aggregated result of the modules in `nets` to the desired output
             dimension. See :py:obj:`pina.model.deeponet.MIONet._symbol_functions` for the available default
             reductions. 
-        :param bool | callable scale: Scaling the final output before returning the
+        :param bool | Callable scale: Scaling the final output before returning the
             forward pass, default True.
-        :param bool | callable translation: Translating the final output before
+        :param bool | Callable translation: Translating the final output before
             returning the forward pass, default True.
 
         .. warning::
             In the forward pass we do not check if the input is instance of
-            :py:class:`LabelTensor` or :class:`torch.Tensor`. A general rule is
-            that for a :py:class:`LabelTensor` input both list of integers and
+            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`. A general rule is
+            that for a :py:obj:`pina.label_tensor.LabelTensor` input both list of integers and
             list of strings can be passed for ``input_indeces_branch_net``
             and ``input_indeces_trunk_net``. Differently, for a :class:`torch.Tensor`
             only a list of integers can be passed for ``input_indeces_branch_net``

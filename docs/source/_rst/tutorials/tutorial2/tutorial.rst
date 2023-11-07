@@ -31,12 +31,16 @@ The problem definition
 ----------------------
 
 The two-dimensional Poisson problem is mathematically written as:
-:raw-latex:`\begin{equation}
-\begin{cases}
-\Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
-u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
-\end{cases}
-\end{equation}` where :math:`D` is a square domain :math:`[0,1]^2`, and
+
+.. math::
+    \begin{equation}
+    \begin{cases}
+    \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
+    u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+    \end{cases}
+    \end{equation}
+
+where :math:`D` is a square domain :math:`[0,1]^2`, and
 :math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
 square.
 
@@ -158,9 +162,10 @@ is now defined, with an additional input variable, named extra-feature,
 which coincides with the forcing term in the Laplace equation. The set
 of input variables to the neural network is:
 
-:raw-latex:`\begin{equation}
-[x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
-\end{equation}`
+.. math::
+    \begin{equation}
+    [x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
+    \end{equation}
 
 where :math:`x` and :math:`y` are the spatial coordinates and
 :math:`k(x, y)` is the added feature.
@@ -249,9 +254,10 @@ Another way to exploit the extra features is the addition of learnable
 parameter inside them. In this way, the added parameters are learned
 during the training phase of the neural network. In this case, we use:
 
-:raw-latex:`\begin{equation}
-k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
-\end{equation}`
+.. math::
+    \begin{equation}
+    k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
+    \end{equation}
 
 where :math:`\alpha` and :math:`\beta` are the abovementioned
 parameters. Their implementation is quite trivial: by using the class

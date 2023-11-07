@@ -79,9 +79,9 @@ class PINN(SolverInterface):
         """Forward pass implementation for the PINN
            solver.
 
-        :param torch.tensor x: Input data. 
+        :param torch.Tensor x: Input data. 
         :return: PINN solution.
-        :rtype: torch.tensor
+        :rtype: torch.Tensor
         """
         # extract labels
         x = x.extract(self.problem.input_variables)

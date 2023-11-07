@@ -18,7 +18,8 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
                  model=None,
                  optimize=False,
                  no_overlap=False):
-        """Base Class for Continuous Convolution.
+        """
+        Base Class for Continuous Convolution.
 
         The algorithm expects input to be in the form:
         $$[B \times N_{in} \times N \times D]$$
@@ -55,7 +56,7 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
         :param stride: stride for the filter
         :type stride: dict
         :param model: neural network for inner parametrization,
-        defaults to None
+            defaults to None.
         :type model: torch.nn.Module, optional
         :param optimize: flag for performing optimization on the continuous
             filter, defaults to False. The flag `optimize=True` should be

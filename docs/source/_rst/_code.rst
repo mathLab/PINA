@@ -10,6 +10,7 @@ PINA Features
     LabelTensor <label_tensor.rst>
     Condition <condition.rst>
     Plotter <plotter.rst>
+    Trainer <trainer.rst>
 
 Problem
 --------------
