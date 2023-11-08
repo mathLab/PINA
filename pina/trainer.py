@@ -25,9 +25,10 @@ class Trainer(pytorch_lightning.Trainer):
 
         super().__init__(**kwargs)
 
-        # check inheritance consistency for solver
+        # check inheritance consistency for solver and batch size
         check_consistency(solver, SolverInterface)
-        check_consistency(batch_size, int)
+        if batch_size is not None:
+            check_consistency(batch_size, int)
         
         self._model = solver
         self.batch_size = batch_size
