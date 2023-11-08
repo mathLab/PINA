@@ -1,6 +1,7 @@
 import torch
 from torch.nn.parameter import Parameter
 
+
 class AdaptiveSoftplus(torch.nn.Module):
     '''
     Implementation of soft exponential activation.
@@ -18,6 +19,7 @@ class AdaptiveSoftplus(torch.nn.Module):
         >>> x = torch.randn(256)
         >>> x = a1(x)
     '''
+
     def __init__(self):
         '''
         Initialization.
@@ -31,7 +33,7 @@ class AdaptiveSoftplus(torch.nn.Module):
         self.soft = torch.nn.Softplus()
 
         self.scale = Parameter(torch.rand(1))
-        self.scale.requiresGrad = True # set requiresGrad to true!
+        self.scale.requiresGrad = True  # set requiresGrad to true!
 
     def forward(self, x):
         '''
@@ -39,4 +41,4 @@ class AdaptiveSoftplus(torch.nn.Module):
         Applies the function to the input elementwise.
         '''
         #x += self.translate
-        return self.soft(x)*self.scale
+        return self.soft(x) * self.scale

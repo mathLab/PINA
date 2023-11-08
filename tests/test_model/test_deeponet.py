@@ -32,36 +32,39 @@ def test_constructor_fails_when_invalid_inner_layer_size():
                  reduction='+',
                  aggregator='*')
 
+
 def test_forward_extract_str():
     branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
     trunk_net = FeedForward(input_dimensions=2, output_dimensions=10)
     model = DeepONet(branch_net=branch_net,
-                    trunk_net=trunk_net,
-                    input_indeces_branch_net=['a'],
-                    input_indeces_trunk_net=['b', 'c'],
-                    reduction='+',
-                    aggregator='*')
+                     trunk_net=trunk_net,
+                     input_indeces_branch_net=['a'],
+                     input_indeces_trunk_net=['b', 'c'],
+                     reduction='+',
+                     aggregator='*')
     model(input_)
+
 
 def test_forward_extract_int():
     branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
     trunk_net = FeedForward(input_dimensions=2, output_dimensions=10)
     model = DeepONet(branch_net=branch_net,
-                    trunk_net=trunk_net,
-                    input_indeces_branch_net=[0],
-                    input_indeces_trunk_net=[1, 2],
-                    reduction='+',
-                    aggregator='*')
+                     trunk_net=trunk_net,
+                     input_indeces_branch_net=[0],
+                     input_indeces_trunk_net=[1, 2],
+                     reduction='+',
+                     aggregator='*')
     model(data)
+
 
 def test_forward_extract_str_wrong():
     branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
     trunk_net = FeedForward(input_dimensions=2, output_dimensions=10)
     model = DeepONet(branch_net=branch_net,
-                    trunk_net=trunk_net,
-                    input_indeces_branch_net=['a'],
-                    input_indeces_trunk_net=['b', 'c'],
-                    reduction='+',
-                    aggregator='*')
+                     trunk_net=trunk_net,
+                     input_indeces_branch_net=['a'],
+                     input_indeces_trunk_net=['b', 'c'],
+                     reduction='+',
+                     aggregator='*')
     with pytest.raises(RuntimeError):
         model(data)

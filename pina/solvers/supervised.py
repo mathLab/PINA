@@ -3,7 +3,7 @@ import torch
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
-    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler # torch < 2.0
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler  # torch < 2.0
 
 from torch.optim.lr_scheduler import ConstantLR
 
@@ -19,25 +19,30 @@ class SupervisedSolver(SolverInterface):
     SupervisedSolver solver class. This class implements a SupervisedSolver,
     using a user specified ``model`` to solve a specific ``problem``. 
     """
-    def __init__(self,
-                 problem,
-                 model,
-                 extra_features=None,
-                 loss = torch.nn.MSELoss(),
-                 optimizer=torch.optim.Adam,
-                 optimizer_kwargs={'lr' : 0.001},
-                 scheduler=ConstantLR,
-                 scheduler_kwargs={"factor": 1, "total_iters": 0},
-                 ):
+
+    def __init__(
+        self,
+        problem,
+        model,
+        extra_features=None,
+        loss=torch.nn.MSELoss(),
+        optimizer=torch.optim.Adam,
+        optimizer_kwargs={'lr': 0.001},
+        scheduler=ConstantLR,
+        scheduler_kwargs={
+            "factor": 1,
+            "total_iters": 0
+        },
+    ):
         '''
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
-            default torch.nn.MSELoss().
+            default :class:`torch.nn.MSELoss`.
         :param torch.nn.Module extra_features: The additional input
             features to use as augmented input.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is `torch.optim.Adam`.
+            use; default is :class:`torch.optim.Adam`.
         :param dict optimizer_kwargs: Optimizer constructor keyword args.
         :param float lr: The learning rate; default is 0.001.
         :param torch.optim.LRScheduler scheduler: Learning
@@ -49,8 +54,8 @@ class SupervisedSolver(SolverInterface):
                          optimizers=[optimizer],
                          optimizers_kwargs=[optimizer_kwargs],
                          extra_features=extra_features)
-        
-        # check consistency 
+
+        # check consistency
         check_consistency(scheduler, LRScheduler, subclass=True)
         check_consistency(scheduler_kwargs, dict)
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
@@ -60,13 +65,12 @@ class SupervisedSolver(SolverInterface):
         self._loss = loss
         self._neural_net = self.models[0]
 
-
     def forward(self, x):
         """Forward pass implementation for the solver.
 
-        :param torch.tensor x: Input data. 
+        :param torch.Tensor x: Input tensor. 
         :return: Solver solution.
-        :rtype: torch.tensor
+        :rtype: torch.Tensor
         """
         # extract labels
         x = x.extract(self.problem.input_variables)
@@ -83,7 +87,7 @@ class SupervisedSolver(SolverInterface):
         :rtype: tuple(list, list)
         """
         return self.optimizers, [self.scheduler]
-    
+
     def training_step(self, batch, batch_idx):
         """Solver training step.
 
@@ -105,9 +109,11 @@ class SupervisedSolver(SolverInterface):
             # data loss
             if hasattr(condition, 'output_points'):
                 input_pts, output_pts = samples
-                loss = self.loss(self.forward(input_pts), output_pts) * condition.data_weight
+                loss = self.loss(self.forward(input_pts),
+                                 output_pts) * condition.data_weight
             else:
-                raise RuntimeError('Supervised solver works only in data-driven mode.')
+                raise RuntimeError(
+                    'Supervised solver works only in data-driven mode.')
 
         self.log('mean_loss', float(loss), prog_bar=True, logger=True)
         return loss
@@ -118,14 +124,14 @@ class SupervisedSolver(SolverInterface):
         Scheduler for training.
         """
         return self._scheduler
-    
+
     @property
     def neural_net(self):
         """
         Neural network for training.
         """
         return self._neural_net
-    
+
     @property
     def loss(self):
         """

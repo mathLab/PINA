@@ -1,6 +1,7 @@
 import torch
 from torch.nn.parameter import Parameter
 
+
 class AdaptiveExp(torch.nn.Module):
     '''
     Implementation of soft exponential activation.
@@ -18,6 +19,7 @@ class AdaptiveExp(torch.nn.Module):
         >>> x = torch.randn(256)
         >>> x = a1(x)
     '''
+
     def __init__(self):
         '''
         Initialization.
@@ -28,14 +30,20 @@ class AdaptiveExp(torch.nn.Module):
         '''
         super(AdaptiveExp, self).__init__()
 
-        self.scale = Parameter(torch.normal(torch.tensor(1.0), torch.tensor(0.1))) # create a tensor out of alpha
-        self.scale.requiresGrad = True # set requiresGrad to true!
+        self.scale = Parameter(
+            torch.normal(torch.tensor(1.0),
+                         torch.tensor(0.1)))  # create a tensor out of alpha
+        self.scale.requiresGrad = True  # set requiresGrad to true!
 
-        self.alpha = Parameter(torch.normal(torch.tensor(1.0), torch.tensor(0.1))) # create a tensor out of alpha
-        self.alpha.requiresGrad = True # set requiresGrad to true!
+        self.alpha = Parameter(
+            torch.normal(torch.tensor(1.0),
+                         torch.tensor(0.1)))  # create a tensor out of alpha
+        self.alpha.requiresGrad = True  # set requiresGrad to true!
 
-        self.translate = Parameter(torch.normal(torch.tensor(0.0), torch.tensor(0.1))) # create a tensor out of alpha
-        self.translate.requiresGrad = True # set requiresGrad to true!
+        self.translate = Parameter(
+            torch.normal(torch.tensor(0.0),
+                         torch.tensor(0.1)))  # create a tensor out of alpha
+        self.translate.requiresGrad = True  # set requiresGrad to true!
 
     def forward(self, x):
         '''

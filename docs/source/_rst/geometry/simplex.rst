@@ -1,5 +1,5 @@
 SimplexDomain
-===========
+======================
 .. currentmodule:: pina.geometry.simplex
 
 .. automodule:: pina.geometry.simplex

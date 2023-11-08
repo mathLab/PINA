@@ -17,22 +17,23 @@ class FNO(torch.nn.Module):
     .. seealso::
 
         **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B.,
-        Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). "Fourier neural operator for
-        parametric partial differential equations".
+        Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). *Fourier neural operator for
+        parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
     """
+
     def __init__(self,
-                 lifting_net, 
+                 lifting_net,
                  projecting_net,
                  n_modes,
-                 dimensions = 3,
-                 padding = 8,
-                 padding_type = "constant",
-                 inner_size = 20,
-                 n_layers = 2,
-                 func = nn.Tanh,
-                 layers = None):
+                 dimensions=3,
+                 padding=8,
+                 padding_type="constant",
+                 inner_size=20,
+                 n_layers=2,
+                 func=nn.Tanh,
+                 layers=None):
         super().__init__()
 
         # check type consistency
@@ -50,10 +51,11 @@ class FNO(torch.nn.Module):
             else:
                 raise ValueError('layers must be tuple or list of int.')
         if not isinstance(n_modes, (list, tuple, int)):
-            raise ValueError('n_modes must be a int or list or tuple of valid modes.'
-                             ' More information on the official documentation.')
-        
-        # assign variables 
+            raise ValueError(
+                'n_modes must be a int or list or tuple of valid modes.'
+                ' More information on the official documentation.')
+
+        # assign variables
         # TODO check input lifting net and input projecting net
         self._lifting_net = lifting_net
         self._projecting_net = projecting_net
@@ -78,15 +80,18 @@ class FNO(torch.nn.Module):
         # 2. Assign activation functions for each FNO layer
         if isinstance(func, list):
             if len(layers) != len(func):
-                raise RuntimeError('Uncosistent number of layers and functions.')
+                raise RuntimeError(
+                    'Uncosistent number of layers and functions.')
             self._functions = func
         else:
             self._functions = [func for _ in range(len(layers))]
 
         # 3. Assign modes functions for each FNO layer
         if isinstance(n_modes, list):
-            if all(isinstance(i, list) for i in n_modes) and len(layers) != len(n_modes):
-                raise RuntimeError('Uncosistent number of layers and functions.')
+            if all(isinstance(i, list)
+                   for i in n_modes) and len(layers) != len(n_modes):
+                raise RuntimeError(
+                    'Uncosistent number of layers and functions.')
             elif all(isinstance(i, int) for i in n_modes):
                 n_modes = [n_modes] * len(layers)
         else:
@@ -105,8 +110,7 @@ class FNO(torch.nn.Module):
                 fourier_layer(input_numb_fields=tmp_layers[i],
                               output_numb_fields=tmp_layers[i + 1],
                               n_modes=n_modes[i],
-                              activation=self._functions[i])
-            )
+                              activation=self._functions[i]))
         self._layers = nn.Sequential(*self._layers)
 
         # 5. Padding values for spectral conv
@@ -114,9 +118,9 @@ class FNO(torch.nn.Module):
             padding = [padding] * dimensions
         self._ipad = [-pad if pad > 0 else None for pad in padding[:dimensions]]
         self._padding_type = padding_type
-        self._pad = [val for pair in zip([0]*dimensions, padding) for val in pair]
-
-
+        self._pad = [
+            val for pair in zip([0] * dimensions, padding) for val in pair
+        ]
 
     def forward(self, x):
         """
@@ -136,9 +140,9 @@ class FNO(torch.nn.Module):
 
         # lifting the input in higher dimensional space
         x = self._lifting_net(x)
-        
+
         # permuting the input [batch, channels, x, y, ...]
-        permutation_idx = [0, x.ndim-1, *[i for i in range(1, x.ndim-1)]]
+        permutation_idx = [0, x.ndim - 1, *[i for i in range(1, x.ndim - 1)]]
         x = x.permute(permutation_idx)
 
         # padding the input
@@ -148,7 +152,7 @@ class FNO(torch.nn.Module):
         x = self._layers(x)
 
         # remove padding
-        idxs = [slice(None), slice(None)] + [slice(pad) for pad in self._ipad] 
+        idxs = [slice(None), slice(None)] + [slice(pad) for pad in self._ipad]
         x = x[idxs]
 
         # permuting back [batch, x, y, ..., channels]
