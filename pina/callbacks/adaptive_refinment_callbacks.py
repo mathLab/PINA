@@ -90,10 +90,10 @@ class R3Refinement(Callback):
             pts = pts.cpu().detach()
             residuals = res_loss[location].cpu()
             mask = (residuals > avg).flatten()
-            # TODO masking remove labels
-            pts = pts[mask]
+            pts = pts[mask] # TODO masking remove labels
+            if pts.nelement() == 0: # if residuals is lower for all point we resample uniformly the location
+                continue
             pts.labels = labels
-            ####
             old_pts[location] = pts
             tot_points += len(pts)
 
