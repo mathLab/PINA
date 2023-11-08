@@ -13,14 +13,19 @@ class FourierBlock1D(nn.Module):
 
     .. seealso::
 
-        **Original reference**: Li, Zongyi, et al.
-        "Fourier neural operator for parametric partial
-        differential equations." arXiv preprint
-        arXiv:2010.08895 (2020)
-        <https://arxiv.org/abs/2010.08895.pdf>`_.
+        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B.,
+        Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). *Fourier neural operator for
+        parametric partial differential equations*.
+        DOI: `arXiv preprint arXiv:2010.08895.
+        <https://arxiv.org/abs/2010.08895>`_
 
     """
-    def __init__(self, input_numb_fields, output_numb_fields, n_modes, activation=torch.nn.Tanh):
+
+    def __init__(self,
+                 input_numb_fields,
+                 output_numb_fields,
+                 n_modes,
+                 activation=torch.nn.Tanh):
         super().__init__()
         """
         PINA implementation of Fourier block one dimension. The module computes
@@ -43,12 +48,13 @@ class FourierBlock1D(nn.Module):
         check_consistency(activation(), nn.Module)
 
         # assign variables
-        self._spectral_conv = SpectralConvBlock1D(input_numb_fields=input_numb_fields,
-                                                  output_numb_fields=output_numb_fields,
-                                                  n_modes=n_modes)
+        self._spectral_conv = SpectralConvBlock1D(
+            input_numb_fields=input_numb_fields,
+            output_numb_fields=output_numb_fields,
+            n_modes=n_modes)
         self._activation = activation()
         self._linear = nn.Conv1d(input_numb_fields, output_numb_fields, 1)
-        
+
     def forward(self, x):
         """
         Forward computation for Fourier Block. It performs a spectral 
@@ -74,13 +80,18 @@ class FourierBlock2D(nn.Module):
     .. seealso::
 
         **Original reference**: Li, Zongyi, et al.
-        "Fourier neural operator for parametric partial
-        differential equations." arXiv preprint
+        *Fourier neural operator for parametric partial
+        differential equations*. arXiv preprint
         arXiv:2010.08895 (2020)
         <https://arxiv.org/abs/2010.08895.pdf>`_.
 
     """
-    def __init__(self, input_numb_fields, output_numb_fields, n_modes, activation=torch.nn.Tanh):
+
+    def __init__(self,
+                 input_numb_fields,
+                 output_numb_fields,
+                 n_modes,
+                 activation=torch.nn.Tanh):
         """
         PINA implementation of Fourier block two dimensions. The module computes
         the spectral convolution of the input with a linear kernel in the
@@ -104,12 +115,13 @@ class FourierBlock2D(nn.Module):
         check_consistency(activation(), nn.Module)
 
         # assign variables
-        self._spectral_conv = SpectralConvBlock2D(input_numb_fields=input_numb_fields,
-                                                  output_numb_fields=output_numb_fields,
-                                                  n_modes=n_modes)
+        self._spectral_conv = SpectralConvBlock2D(
+            input_numb_fields=input_numb_fields,
+            output_numb_fields=output_numb_fields,
+            n_modes=n_modes)
         self._activation = activation()
         self._linear = nn.Conv2d(input_numb_fields, output_numb_fields, 1)
-        
+
     def forward(self, x):
         """
         Forward computation for Fourier Block. It performs a spectral 
@@ -135,13 +147,18 @@ class FourierBlock3D(nn.Module):
     .. seealso::
 
         **Original reference**: Li, Zongyi, et al.
-        "Fourier neural operator for parametric partial
-        differential equations." arXiv preprint
+        *Fourier neural operator for parametric partial
+        differential equations*. arXiv preprint
         arXiv:2010.08895 (2020)
         <https://arxiv.org/abs/2010.08895.pdf>`_.
 
     """
-    def __init__(self, input_numb_fields, output_numb_fields, n_modes, activation=torch.nn.Tanh):
+
+    def __init__(self,
+                 input_numb_fields,
+                 output_numb_fields,
+                 n_modes,
+                 activation=torch.nn.Tanh):
         """
         PINA implementation of Fourier block three dimensions. The module computes
         the spectral convolution of the input with a linear kernel in the
@@ -166,12 +183,13 @@ class FourierBlock3D(nn.Module):
         check_consistency(activation(), nn.Module)
 
         # assign variables
-        self._spectral_conv = SpectralConvBlock3D(input_numb_fields=input_numb_fields,
-                                                  output_numb_fields=output_numb_fields,
-                                                  n_modes=n_modes)
+        self._spectral_conv = SpectralConvBlock3D(
+            input_numb_fields=input_numb_fields,
+            output_numb_fields=output_numb_fields,
+            n_modes=n_modes)
         self._activation = activation()
         self._linear = nn.Conv3d(input_numb_fields, output_numb_fields, 1)
-        
+
     def forward(self, x):
         """
         Forward computation for Fourier Block. It performs a spectral 

@@ -1,6 +1,7 @@
 import torch
 from torch.nn.parameter import Parameter
 
+
 class AdaptiveReLU(torch.nn.Module, Parameter):
     '''
     Implementation of soft exponential activation.
@@ -18,6 +19,7 @@ class AdaptiveReLU(torch.nn.Module, Parameter):
         >>> x = torch.randn(256)
         >>> x = a1(x)
     '''
+
     def __init__(self):
         '''
         Initialization.
@@ -29,10 +31,10 @@ class AdaptiveReLU(torch.nn.Module, Parameter):
         super(AdaptiveReLU, self).__init__()
 
         self.scale = Parameter(torch.rand(1))
-        self.scale.requiresGrad = True # set requiresGrad to true!
+        self.scale.requiresGrad = True  # set requiresGrad to true!
 
         self.translate = Parameter(torch.rand(1))
-        self.translate.requiresGrad = True # set requiresGrad to true!
+        self.translate.requiresGrad = True  # set requiresGrad to true!
 
     def forward(self, x):
         '''
@@ -40,4 +42,4 @@ class AdaptiveReLU(torch.nn.Module, Parameter):
         Applies the function to the input elementwise.
         '''
         #x += self.translate
-        return torch.relu(x+self.translate)*self.scale
+        return torch.relu(x + self.translate) * self.scale

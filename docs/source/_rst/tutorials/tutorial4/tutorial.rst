@@ -21,16 +21,15 @@ First of all we import the modules needed for the tutorial:
     import torchvision # for MNIST dataset
     from pina.model import FeedForward # for building AE and MNIST classification
 
-The tutorial is structured as follow: \* `Continuous filter
-background <#continuous-filter-background>`__: understand how the
-convolutional filter works and how to use it. \* `Building a MNIST
-Classifier <#building-a-mnist-classifier>`__: show how to build a simple
-classifier using the MNIST dataset and how to combine a continuous
-convolutional layer with a feedforward neural network. \* `Building a
-Continuous Convolutional
-Autoencoder <#building-a-continuous-convolutional-autoencoder>`__: show
-how to use the continuous filter to work with unstructured data for
-autoencoding and up-sampling.
+The tutorial is structured as follow: 
+
+* `Continuous filter background <#continuous-filter-background>`__: understand how the convolutional filter works and how to use it. 
+* `Building a MNIST Classifier <#building-a-mnist-classifier>`__: show how to build a simple
+  classifier using the MNIST dataset and how to combine a continuous
+  convolutional layer with a feedforward neural network. 
+* `Building a Continuous Convolutional Autoencoder <#building-a-continuous-convolutional-autoencoder>`__: show
+  show to use the continuous filter to work with unstructured data for
+  autoencoding and up-sampling.
 
 Continuous filter background
 ----------------------------
@@ -153,13 +152,16 @@ where to go. Here is an example for the :math:`[0,1]\times[0,5]` domain:
              "direction": [1, 1],
              }
 
-This tells the filter: 1. ``domain``: square domain (the only
-implemented) :math:`[0,1]\times[0,5]`. The minimum value is always zero,
-while the maximum is specified by the user 2. ``start``: start position
-of the filter, coordinate :math:`(0, 0)` 3. ``jump``: the jumps of the
-centroid of the filter to the next position :math:`(0.1, 0.3)` 4.
-``direction``: the directions of the jump, with ``1 = right``,
-``0 = no jump``,\ ``-1 = left`` with respect to the current position
+This tells the filter:
+
+1. ``domain``: square domain (the only implemented) :math:`[0,1]\times[0,5]`. The minimum value is always zero,
+   while the maximum is specified by the user
+2. ``start``: start position
+   of the filter, coordinate :math:`(0, 0)` 
+3. ``jump``: the jumps of the
+   centroid of the filter to the next position :math:`(0.1, 0.3)` 
+4. ``direction``: the directions of the jump, with ``1 = right``, 
+   ``0 = no jump``,\ ``-1 = left`` with respect to the current position
 
 **Note**
 
@@ -170,9 +172,7 @@ Filter definition
 ~~~~~~~~~~~~~~~~~
 
 Having defined all the previous blocks we are able to construct the
-continuous filter.
-
-Suppose we would like to get an ouput with only one field, and let us
+continuous filter. Suppose we would like to get an ouput with only one field, and let us
 fix the filter dimension to be :math:`[0.1, 0.1]`.
 
 .. code:: ipython3
@@ -192,13 +192,7 @@ fix the filter dimension to be :math:`[0.1, 0.1]`.
                             output_numb_field=1,
                             filter_dim=filter_dim,
                             stride=stride)
-
-
-.. parsed-literal::
-
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/functional.py:504: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3483.)
-      return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
-
+                            
 
 That’s it! In just one line of code we have created the continuous
 convolutional filter. By default the ``pina.model.FeedForward`` neural

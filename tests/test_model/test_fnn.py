@@ -3,7 +3,6 @@ import pytest
 
 from pina.model import FeedForward
 
-
 data = torch.rand((20, 3))
 input_vars = 3
 output_vars = 4
@@ -13,17 +12,22 @@ def test_constructor():
     FeedForward(input_vars, output_vars)
     FeedForward(input_vars, output_vars, inner_size=10, n_layers=20)
     FeedForward(input_vars, output_vars, layers=[10, 20, 5, 2])
-    FeedForward(input_vars, output_vars, layers=[10, 20, 5, 2],
+    FeedForward(input_vars,
+                output_vars,
+                layers=[10, 20, 5, 2],
                 func=torch.nn.ReLU)
-    FeedForward(input_vars, output_vars, layers=[10, 20, 5, 2],
+    FeedForward(input_vars,
+                output_vars,
+                layers=[10, 20, 5, 2],
                 func=[torch.nn.ReLU, torch.nn.ReLU, None, torch.nn.Tanh])
 
 
 def test_constructor_wrong():
     with pytest.raises(RuntimeError):
-        FeedForward(input_vars, output_vars, layers=[10, 20, 5, 2],
+        FeedForward(input_vars,
+                    output_vars,
+                    layers=[10, 20, 5, 2],
                     func=[torch.nn.ReLU, torch.nn.ReLU])
-
 
 
 def test_forward():

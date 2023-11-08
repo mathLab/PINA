@@ -71,6 +71,7 @@ def test_merge():
     tensor_bc = tensor_b.append(tensor_c)
     assert torch.allclose(tensor_bc, tensor.extract(['b', 'c']))
 
+
 def test_merge2():
     tensor = LabelTensor(data, labels)
     tensor_b = tensor.extract('b')

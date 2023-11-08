@@ -68,11 +68,13 @@ class Stride(object):
                 direction[i] = 1
 
         # creating the stride grid
-        values_mesh = [torch.arange(0, i, step).float()
-                       for i, step in zip(domain, jumps)]
+        values_mesh = [
+            torch.arange(0, i, step).float() for i, step in zip(domain, jumps)
+        ]
 
-        values_mesh = [single * dim for single,
-                       dim in zip(values_mesh, direction)]
+        values_mesh = [
+            single * dim for single, dim in zip(values_mesh, direction)
+        ]
 
         mesh = torch.meshgrid(values_mesh)
         coordinates_mesh = [x.reshape(-1, 1) for x in mesh]

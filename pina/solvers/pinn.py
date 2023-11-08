@@ -3,7 +3,7 @@ import torch
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
-    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler # torch < 2.0
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler  # torch < 2.0
 
 from torch.optim.lr_scheduler import ConstantLR
 
@@ -12,7 +12,6 @@ from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 from ..loss import LossInterface
 from torch.nn.modules.loss import _Loss
-
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
@@ -30,27 +29,31 @@ class PINN(SolverInterface):
         Physics-informed machine learning. Nature Reviews Physics, 3(6), 422-440.
         <https://doi.org/10.1038/s42254-021-00314-5>`_.
     """
-    def __init__(self,
-                 problem,
-                 model,
-                 extra_features=None,
-                 loss = torch.nn.MSELoss(),
-                 optimizer=torch.optim.Adam,
-                 optimizer_kwargs={'lr' : 0.001},
-                 scheduler=ConstantLR,
-                 scheduler_kwargs={"factor": 1, "total_iters": 0},
-                 ):
+
+    def __init__(
+        self,
+        problem,
+        model,
+        extra_features=None,
+        loss=torch.nn.MSELoss(),
+        optimizer=torch.optim.Adam,
+        optimizer_kwargs={'lr': 0.001},
+        scheduler=ConstantLR,
+        scheduler_kwargs={
+            "factor": 1,
+            "total_iters": 0
+        },
+    ):
         '''
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
-            default torch.nn.MSELoss().
+            default :class:`torch.nn.MSELoss`.
         :param torch.nn.Module extra_features: The additional input
             features to use as augmented input.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is `torch.optim.Adam`.
+            use; default is :class:`torch.optim.Adam`.
         :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param float lr: The learning rate; default is 0.001.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
@@ -60,8 +63,8 @@ class PINN(SolverInterface):
                          optimizers=[optimizer],
                          optimizers_kwargs=[optimizer_kwargs],
                          extra_features=extra_features)
-        
-        # check consistency 
+
+        # check consistency
         check_consistency(scheduler, LRScheduler, subclass=True)
         check_consistency(scheduler_kwargs, dict)
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
@@ -71,14 +74,14 @@ class PINN(SolverInterface):
         self._loss = loss
         self._neural_net = self.models[0]
 
-
     def forward(self, x):
-        """Forward pass implementation for the PINN
-           solver.
+        """
+        Forward pass implementation for the PINN
+        solver.
 
-        :param torch.tensor x: Input data. 
+        :param torch.Tensor x: Input tensor. 
         :return: PINN solution.
-        :rtype: torch.tensor
+        :rtype: torch.Tensor
         """
         # extract labels
         x = x.extract(self.problem.input_variables)
@@ -89,8 +92,9 @@ class PINN(SolverInterface):
         return output
 
     def configure_optimizers(self):
-        """Optimizer configuration for the PINN
-           solver.
+        """
+        Optimizer configuration for the PINN
+        solver.
 
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
@@ -107,7 +111,8 @@ class PINN(SolverInterface):
 
 
     def training_step(self, batch, batch_idx):
-        """PINN solver training step.
+        """
+        PINN solver training step.
 
         :param batch: The batch element in the dataloader.
         :type batch: tuple
@@ -159,14 +164,14 @@ class PINN(SolverInterface):
         Scheduler for the PINN training.
         """
         return self._scheduler
-    
+
     @property
     def neural_net(self):
         """
         Neural network for the PINN training.
         """
         return self._neural_net
-    
+
     @property
     def loss(self):
         """

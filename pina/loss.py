@@ -1,6 +1,5 @@
 """ Module for Loss class """
 
-
 from abc import ABCMeta, abstractmethod
 from torch.nn.modules.loss import _Loss
 import torch
@@ -8,39 +7,47 @@ from .utils import check_consistency
 
 __all__ = ['LossInterface', 'LpLoss', 'PowerLoss']
 
+
 class LossInterface(_Loss, metaclass=ABCMeta):
     """
-    The abstract `LossInterface` class. All the class defining a PINA Loss
+    The abstract ``LossInterface`` class. All the class defining a PINA Loss
     should be inheritied from this class.
     """
 
-    def __init__(self, reduction = 'mean'):
+    def __init__(self, reduction='mean'):
         """
         :param str reduction: Specifies the reduction to apply to the output:
-            ``'none'`` | ``'mean'`` | ``'sum'``. ``'none'``: no reduction 
-            will be applied, ``'mean'``: the sum of the output will be divided
-            by the number of elements in the output, ``'sum'``: the output will
-            be summed. Note: :attr:`size_average` and :attr:`reduce` are in the
+            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction 
+            will be applied, ``mean``: the sum of the output will be divided
+            by the number of elements in the output, ``sum``: the output will
+            be summed. Note: ``size_average`` and ``reduce`` are in the
             process of being deprecated, and in the meantime, specifying either of
-            those two args will override :attr:`reduction`. Default: ``'mean'``.
+            those two args will override ``reduction``. Default: ``mean``.
         """
         super().__init__(reduction=reduction, size_average=None, reduce=None)
 
     @abstractmethod
-    def forward(self):
+    def forward(self, input, target):
+        """Forward method for loss function.
+
+        :param torch.Tensor input: Input tensor from real data.
+        :param torch.Tensor target: Model tensor output.
+        :return: Loss evaluation.
+        :rtype: torch.Tensor
+        """
         pass
 
     def _reduction(self, loss):
         """Simple helper function to check reduction
 
         :param reduction: Specifies the reduction to apply to the output:
-            ``'none'`` | ``'mean'`` | ``'sum'``. ``'none'``: no reduction 
-            will be applied, ``'mean'``: the sum of the output will be divided
-            by the number of elements in the output, ``'sum'``: the output will
-            be summed. Note: :attr:`size_average` and :attr:`reduce` are in the
+            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction 
+            will be applied, ``mean``: the sum of the output will be divided
+            by the number of elements in the output, ``sum``: the output will
+            be summed. Note: ``size_average`` and ``reduce`` are in the
             process of being deprecated, and in the meantime, specifying either of
-            those two args will override :attr:`reduction`. Default: ``'mean'``.
-        :type reduction: str, optional
+            those two args will override ``reduction``. Default: ``mean``.
+        :type reduction: str
         :param loss: Loss tensor for each element.
         :type loss: torch.Tensor
         :return: Reduced loss.
@@ -56,13 +63,14 @@ class LossInterface(_Loss, metaclass=ABCMeta):
             raise ValueError(self.reduction + " is not valid")
         return ret
 
+
 class LpLoss(LossInterface):
     r"""
     The Lp loss implementation class. Creates a criterion that measures
     the Lp error between each element in the input :math:`x` and
     target :math:`y`.
 
-    The unreduced (i.e. with :attr:`reduction` set to ``none``) loss can
+    The unreduced (i.e. with ``reduction`` set to ``none``) loss can
     be described as:
 
     .. math::
@@ -75,8 +83,8 @@ class LpLoss(LossInterface):
         \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
         l_n = \frac{ [\sum_{i=1}^{D} | x_n^i - y_n^i|^p] }{[\sum_{i=1}^{D}|y_n^i|^p]},
 
-    where :math:`N` is the batch size. If :attr:`reduction` is not ``none``
-    (default ``'mean'``), then:
+    where :math:`N` is the batch size. If ``reduction`` is not ``none``
+    (default ``mean``), then:
 
     .. math::
         \ell(x, y) =
@@ -90,21 +98,20 @@ class LpLoss(LossInterface):
 
     The sum operation still operates over all the elements, and divides by :math:`n`.
 
-    The division by :math:`n` can be avoided if one sets :attr:`reduction` to ``sum``.
+    The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.
     """
 
-    def __init__(self, p=2, reduction = 'mean', relative = False):
+    def __init__(self, p=2, reduction='mean', relative=False):
         """
         :param int p: Degree of Lp norm. It specifies the type of norm to
-            be calculated. See :meth:`torch.linalg.norm` ```'ord'``` to
-            see the possible degrees. Default 2 (euclidean norm).
+            be calculated. See `list of possible orders in torch linalg
+            <https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm>`_ to
+            for possible degrees. Default 2 (euclidean norm).
         :param str reduction: Specifies the reduction to apply to the output:
-            ``'none'`` | ``'mean'`` | ``'sum'``. ``'none'``: no reduction 
-            will be applied, ``'mean'``: the sum of the output will be divided
-            by the number of elements in the output, ``'sum'``: the output will
-            be summed. Note: :attr:`size_average` and :attr:`reduce` are in the
-            process of being deprecated, and in the meantime, specifying either of
-            those two args will override :attr:`reduction`. Default: ``'mean'``.
+            ``none`` | ``mean`` | ``sum``. ``none``: no reduction 
+            will be applied, ``mean``: the sum of the output will be divided
+            by the number of elements in the output, ``sum``: the output will
+            be summed.
         :param bool relative: Specifies if relative error should be computed.
         """
         super().__init__(reduction=reduction)
@@ -124,11 +131,10 @@ class LpLoss(LossInterface):
         :return: Loss evaluation.
         :rtype: torch.Tensor
         """
-        loss = torch.linalg.norm((input-target), ord=self.p, dim=-1)
+        loss = torch.linalg.norm((input - target), ord=self.p, dim=-1)
         if self.relative:
-            loss = loss / torch.linalg.norm(input, ord=self.p, dim=-1)          
+            loss = loss / torch.linalg.norm(input, ord=self.p, dim=-1)
         return self._reduction(loss)
-    
 
 
 class PowerLoss(LossInterface):
@@ -137,7 +143,7 @@ class PowerLoss(LossInterface):
     the error between each element in the input :math:`x` and
     target :math:`y` powered to a specific integer.
 
-    The unreduced (i.e. with :attr:`reduction` set to ``none``) loss can
+    The unreduced (i.e. with ``reduction`` set to ``none``) loss can
     be described as:
 
     .. math::
@@ -150,8 +156,8 @@ class PowerLoss(LossInterface):
         \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
         l_n = \frac{ \sum_{i=1}^{D} | x_n^i - y_n^i|^p }{\sum_{i=1}^{D}|y_n^i|^p},
 
-    where :math:`N` is the batch size. If :attr:`reduction` is not ``none``
-    (default ``'mean'``), then:
+    where :math:`N` is the batch size. If ``reduction`` is not ``none``
+    (default ``mean``), then:
 
     .. math::
         \ell(x, y) =
@@ -165,27 +171,26 @@ class PowerLoss(LossInterface):
 
     The sum operation still operates over all the elements, and divides by :math:`n`.
 
-    The division by :math:`n` can be avoided if one sets :attr:`reduction` to ``sum``.
+    The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.
     """
 
-    def __init__(self, p=2, reduction = 'mean', relative = False):
+    def __init__(self, p=2, reduction='mean', relative=False):
         """
         :param int p: Degree of Lp norm. It specifies the type of norm to
-            be calculated. See :meth:`torch.linalg.norm` ```'ord'``` to
+            be calculated. See `list of possible orders in torch linalg
+            <https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm>`_ to
             see the possible degrees. Default 2 (euclidean norm).
         :param str reduction: Specifies the reduction to apply to the output:
-            ``'none'`` | ``'mean'`` | ``'sum'``. ``'none'``: no reduction 
-            will be applied, ``'mean'``: the sum of the output will be divided
-            by the number of elements in the output, ``'sum'``: the output will
-            be summed. Note: :attr:`size_average` and :attr:`reduce` are in the
-            process of being deprecated, and in the meantime, specifying either of
-            those two args will override :attr:`reduction`. Default: ``'mean'``.
+            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction 
+            will be applied, ``mean``: the sum of the output will be divided
+            by the number of elements in the output, ``sum``: the output will
+            be summed.
         :param bool relative: Specifies if relative error should be computed.
         """
         super().__init__(reduction=reduction)
 
         # check consistency
-        check_consistency(p, (str,int,float))
+        check_consistency(p, (str, int, float))
         self.p = p
         check_consistency(relative, bool)
         self.relative = relative
@@ -198,7 +203,7 @@ class PowerLoss(LossInterface):
         :return: Loss evaluation.
         :rtype: torch.Tensor
         """
-        loss = torch.abs((input-target)).pow(self.p).mean(-1)
+        loss = torch.abs((input - target)).pow(self.p).mean(-1)
         if self.relative:
-            loss = loss / torch.abs(input).pow(self.p).mean(-1)        
+            loss = loss / torch.abs(input).pow(self.p).mean(-1)
         return self._reduction(loss)

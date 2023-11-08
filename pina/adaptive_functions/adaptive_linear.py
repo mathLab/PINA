@@ -2,6 +2,7 @@
 import torch
 from torch.nn.parameter import Parameter
 
+
 class AdaptiveLinear(torch.nn.Module):
     '''
     Implementation of soft exponential activation.
@@ -19,6 +20,7 @@ class AdaptiveLinear(torch.nn.Module):
         >>> x = torch.randn(256)
         >>> x = a1(x)
     '''
+
     def __init__(self):
         '''
         Initialization.
@@ -30,10 +32,10 @@ class AdaptiveLinear(torch.nn.Module):
         super(AdaptiveLinear, self).__init__()
 
         self.scale = Parameter(torch.tensor(1.0))
-        self.scale.requiresGrad = True # set requiresGrad to true!
+        self.scale.requiresGrad = True  # set requiresGrad to true!
 
         self.translate = Parameter(torch.tensor(0.0))
-        self.translate.requiresGrad = True # set requiresGrad to true!
+        self.translate.requiresGrad = True  # set requiresGrad to true!
 
     def forward(self, x):
         '''

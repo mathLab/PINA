@@ -1,5 +1,5 @@
 CartesianDomain
-===========
+======================
 .. currentmodule:: pina.geometry.cartesian
 
 .. automodule:: pina.geometry.cartesian

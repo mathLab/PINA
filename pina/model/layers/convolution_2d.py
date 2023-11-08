@@ -9,75 +9,65 @@ class ContinuousConvBlock(BaseContinuousConv):
     """
     Implementation of Continuous Convolutional operator.
 
+    The algorithm expects input to be in the form:
+    :math:`[B, N_{in}, N,  D]`
+    where :math:`B` is the batch_size, :math:`N_{in}` is the number of input
+    fields, :math:`N` the number of points in the mesh, :math:`D` the dimension
+    of the problem. In particular:
+
+    *   :math:`D` is the number of spatial variables + 1. The last column must
+        contain the field value. For example for 2D problems :math:`D=3` and
+        the tensor will be something like ``[first coordinate, second
+        coordinate, field value]``.
+    *   :math:`N_{in}` represents the number of vectorial function presented.
+        For example a vectorial function :math:`f = [f_1, f_2]` will have
+        :math:`N_{in}=2`.
+
     .. seealso::
 
-        **Original reference**: Coscia, D., Meneghetti, L., Demo, N.,
-        Stabile, G., & Rozza, G.. (2022). A Continuous Convolutional Trainable
-        Filter for Modelling Unstructured Data.
-        DOI: `10.48550/arXiv.2210.13416
-        <https://doi.org/10.48550/arXiv.2210.13416>`_.
+        **Original reference**: Coscia, D., Meneghetti, L., Demo, N. et al.
+        *A continuous convolutional trainable filter for modelling unstructured data*.
+        Comput Mech 72, 253–265 (2023). DOI `<https://doi.org/10.1007/s00466-023-02291-1>`_
 
     """
 
-    def __init__(self, input_numb_field, output_numb_field,
-                 filter_dim, stride, model=None, optimize=False,
+    def __init__(self,
+                 input_numb_field,
+                 output_numb_field,
+                 filter_dim,
+                 stride,
+                 model=None,
+                 optimize=False,
                  no_overlap=False):
         """
-
-        :param input_numb_field: Number of fields N_in in the input.
+        :param input_numb_field: Number of fields :math:`N_{in}` in the input.
         :type input_numb_field: int
-        :param output_numb_field: Number of fields N_out  in the output.
+        :param output_numb_field: Number of fields :math:`N_{out}`  in the output.
         :type output_numb_field: int
         :param filter_dim: Dimension of the filter.
-        :type filter_dim: tuple/ list
+        :type filter_dim: tuple(int) | list(int)
         :param stride: Stride for the filter.
         :type stride: dict
         :param model: Neural network for inner parametrization,
-            defaults to None. If None, a default multilayer perceptron
-            is used, see BaseContinuousConv.DefaultKernel.
-        :type model: torch.nn.Module, optional
+            defaults to ``None``. If None, a default multilayer perceptron
+            of width three and size twenty with ReLU activation is used.
+        :type model: torch.nn.Module
         :param optimize: Flag for performing optimization on the continuous
             filter, defaults to False. The flag `optimize=True` should be
             used only when the scatter datapoints are fixed through the
-            training. If torch model is in `.eval()` mode, the flag is
+            training. If torch model is in ``.eval()`` mode, the flag is
             automatically set to False always.
-        :type optimize: bool, optional
+        :type optimize: bool
         :param no_overlap: Flag for performing optimization on the transpose
             continuous filter, defaults to False. The flag set to `True` should
             be used only when the filter positions do not overlap for different
             strides. RuntimeError will raise in case of non-compatible strides.
-        :type no_overlap: bool, optional
+        :type no_overlap: bool
 
         .. note::
             Using `optimize=True` the filter can be use either in `forward`
             or in `transpose` mode, not both. If `optimize=False` the same
             filter can be used for both `transpose` and `forward` modes.
-
-        .. warning::
-            The algorithm expects input to be in the form: [B x N_in x N x D]
-            where B is the batch_size, N_in is the number of input
-            fields, N the number of points in the mesh, D the dimension
-            of the problem. In particular:
-
-            *   D is the number of spatial variables + 1. The last column must
-                contain the field value. For example for 2D problems D=3 and
-                the tensor will be something like `[first coordinate, second
-                coordinate, field value]`.
-
-            *   N_in represents the number of vectorial function presented.
-                For example a vectorial function f = [f_1, f_2] will have
-                N_in=2.
-
-            The algorithm returns a tensor of shape: [B x N_out x N x D]
-            where B is the batch_size, N_out is the number of output
-            fields, N' the number of points in the mesh, D the dimension
-            of the problem (coordinates + field value).
-
-            For example, a 2-dimensional vectorial function N_in=2 of
-            3-dimensionalcinput D=3+1=4 with 100 points input mesh and batch
-            size of 8 is represented as a tensor `[8, 2, 100, 4]`, where the
-            columnsc`[:, 0, :, -1]` and `[:, 1, :, -1]` represent the first and
-            second filed value respectively.
 
         :Example:
             >>> class MLP(torch.nn.Module):
@@ -140,11 +130,12 @@ class ContinuousConvBlock(BaseContinuousConv):
         self._stride = self._stride._stride_discrete
 
     def _spawn_networks(self, model):
-        """Private method to create a collection of kernels
+        """
+        Private method to create a collection of kernels
 
-        :param model: a torch.nn.Module model in form of Object class
+        :param model: A :class:`torch.nn.Module` model in form of Object class.
         :type model: torch.nn.Module
-        :return: list of torch.nn.Module models
+        :return: List of :class:`torch.nn.Module` models.
         :rtype: torch.nn.ModuleList
 
         """
@@ -169,12 +160,13 @@ class ContinuousConvBlock(BaseContinuousConv):
         return torch.nn.ModuleList(nets)
 
     def _extract_mapped_points(self, batch_idx, index, x):
-        """Priviate method to extract mapped points in the filter
+        """
+        Priviate method to extract mapped points in the filter
 
-        :param x: input tensor [channel x N x dim]
-        :type x: torch.tensor
-        :return: mapped points and indeces for each channel
-        :rtype: tuple(torch.tensor, list)
+        :param x: Input tensor of shape ``[channel, N, dim]``
+        :type x: torch.Tensor
+        :return: Mapped points and indeces for each channel,
+        :rtype: torch.Tensor, list
 
         """
         mapped_points = []
@@ -210,10 +202,11 @@ class ContinuousConvBlock(BaseContinuousConv):
         return stacked_input, indeces_channels
 
     def _find_index(self, X):
-        """Private method to extract indeces for convolution.
+        """
+        Private method to extract indeces for convolution.
 
-        :param X: input tensor, as in ContinuousConv2D docstring
-        :type X: torch.tensor
+        :param X: Input tensor, as in ContinuousConvBlock ``__init__``.
+        :type X: torch.Tensor
 
         """
         # append the index for each stride
@@ -227,10 +220,11 @@ class ContinuousConvBlock(BaseContinuousConv):
         self._index = index
 
     def _make_grid_forward(self, X):
-        """Private method to create forward convolution grid.
+        """
+        Private method to create forward convolution grid.
 
-        :param X: input tensor, as in ContinuousConv2D docstring
-        :type X: torch.tensor
+        :param X: Input tensor, as in ContinuousConvBlock docstring.
+        :type X: torch.Tensor
 
         """
         # filter dimension + number of points in output grid
@@ -238,10 +232,8 @@ class ContinuousConvBlock(BaseContinuousConv):
         number_points = len(self._stride)
 
         # initialize the grid
-        grid = torch.zeros(size=(X.shape[0],
-                                 self._output_numb_field,
-                                 number_points,
-                                 filter_dim + 1),
+        grid = torch.zeros(size=(X.shape[0], self._output_numb_field,
+                                 number_points, filter_dim + 1),
                            device=X.device,
                            dtype=X.dtype)
         grid[..., :-1] = (self._stride + self._dim * 0.5)
@@ -250,10 +242,12 @@ class ContinuousConvBlock(BaseContinuousConv):
         self._grid = grid.detach()
 
     def _make_grid_transpose(self, X):
-        """Private method to create transpose convolution grid.
+        """
+        Private method to create transpose convolution grid.
 
-        :param X: input tensor, as in ContinuousConv2D docstring
-        :type X: torch.tensor
+        :param X: Input tensor, as in ContinuousConvBlock docstring.
+        :type X: torch.Tensor
+
 
         """
         # initialize to all zeros
@@ -264,13 +258,14 @@ class ContinuousConvBlock(BaseContinuousConv):
         self._grid_transpose = tmp
 
     def _make_grid(self, X, type):
-        """Private method to create convolution grid.
+        """
+        Private method to create convolution grid.
 
-        :param X: input tensor, as in ContinuousConv2D docstring
-        :type X: torch.tensor
-        :param type: type of convolution, ['forward', 'inverse'] the
-            possibilities
-        :type type: string
+        :param X: Input tensor, as in ContinuousConvBlock docstring.
+        :type X: torch.Tensor
+        :param type: Type of convolution, ``['forward', 'inverse']`` the
+            possibilities.
+        :type type: str
 
         """
         # choose the type of convolution
@@ -282,16 +277,16 @@ class ContinuousConvBlock(BaseContinuousConv):
             raise TypeError
 
     def _initialize_convolution(self, X, type='forward'):
-        """Private method to intialize the convolution.
+        """
+        Private method to intialize the convolution.
         The convolution is initialized by setting a grid and
         calculate the index for finding the points inside the
         filter.
 
-        :param X: input tensor, as in ContinuousConv2D docstring
-        :type X: torch.tensor
-        :param type: type of convolution, ['forward', 'inverse'] the
-            possibilities
-        :type type: string
+        :param X: Input tensor, as in ContinuousConvBlock docstring.
+        :type X: torch.Tensor
+        :param str type: type of convolution, ``['forward', 'inverse'] ``the
+            possibilities.
         """
 
         # variable for the convolution
@@ -301,12 +296,13 @@ class ContinuousConvBlock(BaseContinuousConv):
         self._find_index(X)
 
     def forward(self, X):
-        """Forward pass in the layer
+        """
+        Forward pass in the convolutional layer.
 
-        :param x: input data (input_numb_field x N x filter_dim)
-        :type x: torch.tensor
-        :return: feed forward convolution (output_numb_field x N x filter_dim)
-        :rtype: torch.tensor
+        :param x: Input data for the convolution :math:`[B, N_{in}, N,  D]`.
+        :type x: torch.Tensor
+        :return: Convolution output :math:`[B, N_{out}, N,  D]`.
+        :rtype: torch.Tensor
         """
 
         # initialize convolution
@@ -353,34 +349,35 @@ class ContinuousConvBlock(BaseContinuousConv):
 
             # sum filters (for each input fields) in groups
             # for different ouput fields
-            conv[batch_idx, ..., -1] = res_tmp.reshape(self._output_numb_field,
-                                                       self._input_numb_field,
-                                                       -1).sum(1)
+            conv[batch_idx, ...,
+                 -1] = res_tmp.reshape(self._output_numb_field,
+                                       self._input_numb_field, -1).sum(1)
         return conv
 
     def transpose_no_overlap(self, integrals, X):
-        """Transpose pass in the layer for no-overlapping filters
+        """
+        Transpose pass in the layer for no-overlapping filters
 
         :param integrals: Weights for the transpose convolution. Shape
-            [B x N_in x N]
-            where B is the batch_size, N_in is the number of input
-            fields, N the number of points in the mesh, D the dimension
+            :math:`[B, N_{in}, N]`
+            where B is the batch_size, :math`N_{in}` is the number of input
+            fields, :math:`N` the number of points in the mesh, D the dimension
             of the problem.
         :type integral: torch.tensor
         :param X: Input data. Expect tensor of shape
-            [B x N_in x M x D] where B is the batch_size,
-            N_in is the number of input fields, M the number of points
-            in the mesh, D the dimension of the problem. Note, last column
-        :type X: torch.tensor
+            :math:`[B, N_{in}, M,  D]` where :math:`B` is the batch_size,
+            :math`N_{in}`is the number of input fields, :math:`M` the number of points
+            in the mesh, :math:`D` the dimension of the problem.
+        :type X: torch.Tensor
         :return: Feed forward transpose convolution. Tensor of shape
-            [B x N_out x N] where B is the batch_size,
-            N_out is the number of output fields, N the number of points
-            in the mesh, D the dimension of the problem.
-        :rtype: torch.tensor
+            :math:`[B, N_{out}, M,  D]` where :math:`B` is the batch_size,
+            :math`N_{out}`is the number of input fields, :math:`M` the number of points
+            in the mesh, :math:`D` the dimension of the problem.
+        :rtype: torch.Tensor
 
         .. note::
-            This function is automatically called when `.transpose()`
-            method is used and `no_overlap=True`
+            This function is automatically called when ``.transpose()``
+            method is used and ``no_overlap=True``
         """
 
         # initialize convolution
@@ -437,27 +434,28 @@ class ContinuousConvBlock(BaseContinuousConv):
         return conv_transposed
 
     def transpose_overlap(self, integrals, X):
-        """Transpose pass in the layer for overlapping filters
+        """
+        Transpose pass in the layer for overlapping filters
 
         :param integrals: Weights for the transpose convolution. Shape
-            [B x N_in x N]
-            where B is the batch_size, N_in is the number of input
-            fields, N the number of points in the mesh, D the dimension
+            :math:`[B, N_{in}, N]`
+            where B is the batch_size, :math`N_{in}` is the number of input
+            fields, :math:`N` the number of points in the mesh, D the dimension
             of the problem.
         :type integral: torch.tensor
         :param X: Input data. Expect tensor of shape
-            [B x N_in x M x D] where B is the batch_size,
-            N_in is the number of input fields, M the number of points
-            in the mesh, D the dimension of the problem. Note, last column
-        :type X: torch.tensor
+            :math:`[B, N_{in}, M,  D]` where :math:`B` is the batch_size,
+            :math`N_{in}`is the number of input fields, :math:`M` the number of points
+            in the mesh, :math:`D` the dimension of the problem.
+        :type X: torch.Tensor
         :return: Feed forward transpose convolution. Tensor of shape
-            [B x N_out x N] where B is the batch_size,
-            N_out is the number of output fields, N the number of points
-            in the mesh, D the dimension of the problem.
-        :rtype: torch.tensor
+            :math:`[B, N_{out}, M,  D]` where :math:`B` is the batch_size,
+            :math`N_{out}`is the number of input fields, :math:`M` the number of points
+            in the mesh, :math:`D` the dimension of the problem.
+        :rtype: torch.Tensor
 
-        .. note:: This function is automatically called when `.transpose()`
-            method is used and `no_overlap=False`
+        .. note:: This function is automatically called when ``.transpose()``
+            method is used and ``no_overlap=False``
         """
 
         # initialize convolution
@@ -473,8 +471,9 @@ class ContinuousConvBlock(BaseContinuousConv):
 
         # list to iterate for calculating nn output
         tmp = [i for i in range(self._output_numb_field)]
-        iterate_conv = [item for item in tmp for _ in range(
-            self._input_numb_field)]
+        iterate_conv = [
+            item for item in tmp for _ in range(self._input_numb_field)
+        ]
 
         for batch_idx, x in enumerate(X):
 

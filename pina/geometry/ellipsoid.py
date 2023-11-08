@@ -16,10 +16,10 @@ class EllipsoidDomain(Location):
             the domain extrema.
         :type ellipsoid_dict: dict
         :param sample_surface: A variable for choosing sample strategies. If
-            `sample_surface=True` only samples on the ellipsoid surface
-            frontier are taken. If `sample_surface=False` only samples on
-            the ellipsoid interior are taken, defaults to False.
-        :type sample_surface: bool, optional
+            ``sample_surface=True`` only samples on the ellipsoid surface
+            frontier are taken. If ``sample_surface=False`` only samples on
+            the ellipsoid interior are taken, defaults to ``False``.
+        :type sample_surface: bool
 
         .. warning::
             Sampling for dimensions greater or equal to 10 could result
@@ -84,22 +84,22 @@ class EllipsoidDomain(Location):
         """Check if a point is inside the ellipsoid domain.
 
         .. note::
-            When ```'sample_surface'``` in the ```'__init()__'```
-            is set to ```'True'```, then the method only checks 
+            When ``sample_surface`` in the ``__init()__``
+            is set to ``True``, then the method only checks 
             points on the surface, and not inside the domain.
 
         :param point: Point to be checked.
         :type point: LabelTensor
         :param check_border: Check if the point is also on the frontier
-            of the ellipsoid, default False.
+            of the ellipsoid, default ``False``.
         :type check_border: bool
-        :return: Returning True if the point is inside, False otherwise.
+        :return: Returning True if the point is inside, ``False`` otherwise.
         :rtype: bool
         """
 
         # small check that point is labeltensor
         check_consistency(point, LabelTensor)
-        
+
         # get axis ellipse as tensors
         list_dict_vals = list(self._axis.values())
         tmp = torch.tensor(list_dict_vals, dtype=torch.float)
@@ -122,15 +122,15 @@ class EllipsoidDomain(Location):
         # calculate ellispoid equation
         eqn = torch.sum(point_sq.extract(ax_sq.labels) / ax_sq) - 1.
 
-        # if we have sampled only the surface, we check that the 
+        # if we have sampled only the surface, we check that the
         # point is inside the surface border only
         if self._sample_surface:
             return torch.allclose(eqn, torch.zeros_like(eqn))
 
-        # otherwise we check the ellipse 
+        # otherwise we check the ellipse
         if check_border:
             return bool(eqn <= 0)
-        
+
         return bool(eqn < 0)
 
     def _sample_range(self, n, mode, variables):
@@ -138,8 +138,8 @@ class EllipsoidDomain(Location):
 
         :param n: Number of points to sample in the ellipsoid.
         :type n: int
-        :param mode: Mode for sampling, defaults to 'random'.
-            Available modes include: random sampling, 'random'.
+        :param mode: Mode for sampling, defaults to ``random``.
+            Available modes include: random sampling, ``random``.
         :type mode: str, optional
         :param variables: Variables to  be rescaled in the samples.
         :type variables: torch.Tensor
@@ -195,13 +195,12 @@ class EllipsoidDomain(Location):
     def sample(self, n, mode='random', variables='all'):
         """Sample routine.
 
-        :param n: Number of points to sample in the ellipsoid.
-        :type n: int
-        :param mode: Mode for sampling, defaults to 'random'.
-            Available modes include: random sampling, 'random'.
-        :type mode: str, optional
-        :param variables: pinn variable to be sampled, defaults to 'all'.
-        :type variables: str or list[str], optional
+        :param int n: Number of points to sample in the shape.
+        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
+        :param variables: Variables to be sampled, defaults to ``all``.
+        :type variables: str | list[str]
+        :return: Returns ``LabelTensor`` of n sampled points.
+        :rtype: LabelTensor
 
         :Example:
             >>> elips = Ellipsoid({'x':[1, 0], 'y':1})
@@ -219,12 +218,12 @@ class EllipsoidDomain(Location):
 
             :param n: Number of points to sample.
             :type n: int
-            :param mode: Mode for sampling, defaults to 'random'.
-                Available modes include: random sampling, 'random';
+            :param mode: Mode for sampling, defaults to ``random``.
+                Available modes include: random sampling, ``random``;
                 latin hypercube sampling, 'latin' or 'lh';
                 chebyshev sampling, 'chebyshev'; grid sampling 'grid'.
             :type mode: str, optional.
-            :param variables: pinn variable to be sampled, defaults to 'all'.
+            :param variables: pinn variable to be sampled, defaults to ``all``.
             :type variables: str or list[str], optional.
             :return: Sample points.
             :rtype: list[torch.Tensor]

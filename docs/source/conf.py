@@ -22,6 +22,8 @@ import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('../..'))
 import pina
 
+sys.path.insert(0, os.path.abspath('../sphinx_extensions')) # extension to remove paramref link from lightinig
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -36,29 +38,45 @@ import pina
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    #'sphinx.ext.autosummary',
-    #'sphinx.ext.coverage',
-    #'sphinx.ext.graphviz',
-    #'sphinx.ext.doctest',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.doctest',
+    'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
-    #'sphinx.ext.coverage',
+    'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
-    #'sphinx.ext.ifconfig',
     'sphinx.ext.mathjax',
-    'sphinx.ext.autosectionlabel',
+    'sphinx.ext.intersphinx',
+    'paramref_extension',    # this extension is made to remove paramref links from lightining doc
+    'sphinx_copybutton', 
 ]
-#autosummary_generate = True
 
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+    # 'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    # 'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('http://matplotlib.sourceforge.net/', None),
-    'torch': ('https://pytorch.org/docs/stable/', None),
-}
+    'torch': ('https://pytorch.org/docs/stable/', None), 
+    'pytorch_lightning': ("https://lightning.ai/docs/pytorch/stable/", None),
+    }
 
 nitpicky = True
+nitpick_ignore = [
+    ('py:meth', 'pytorch_lightning.core.module.LightningModule.log'),
+    ('py:meth', 'pytorch_lightning.core.module.LightningModule.log_dict'),
+    ('py:exc', 'MisconfigurationException'),
+    ('py:func', 'torch.inference_mode'),
+    ('py:func', 'torch.no_grad'),
+    ('py:class', 'torch.utils.data.DistributedSampler'),
+    ('py:class', 'CartesianDomain'), # TO FIX
+    ('py:class', 'pina.model.layers.convolution.BaseContinuousConv'),
+    ('py:class', 'Module'),
+    ('py:class', 'torch.nn.modules.loss._Loss'), # TO FIX
+    ('py:class', 'torch.optim.LRScheduler'), # TO FIX 
+
+    ]
+
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -95,7 +113,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -125,11 +143,7 @@ add_module_names = False
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-# A list of ignored prefixes for module index sorting.
-# modindex_common_prefix = []
-
-# If true, keep warnings as "system message" paragraphs in the built documents.
-keep_warnings = False
+# A list of ignored prefixes for module index sortins as "systems = False
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
@@ -167,7 +181,13 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = None
+html_logo = "index_files/pina_logo.png"
+html_theme_options = {
+    'logo_only': True,
+    'display_version': True,
+    'prev_next_buttons_location': 'bottom',
+
+}
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -182,7 +202,7 @@ html_static_path = ['_static']
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
-html_extra_path = ['_tutorials']
+# html_extra_path = ['_tutorial']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -322,3 +342,4 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
+autodoc_member_order = 'bysource'

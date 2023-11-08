@@ -6,6 +6,4 @@ TimeDependentProblem
 
 .. autoclass:: TimeDependentProblem
     :members:
-    :private-members:
-    :undoc-members:
     :show-inheritance:
