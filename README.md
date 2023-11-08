@@ -132,7 +132,7 @@
 
 # 🤖 Introduction
 
-🤹 PINA is a Python package providing an easy interface to deal with *physics-informed neural networks* (PINN) for the approximation of (differential, nonlinear, ...) functions. Based on Pytorch, PINA offers a simple and intuitive way to formalize a specific problem and solve it using PINN.
+🤹 PINA is an open-source Python library providing an intuitive interface for solving differential equations using PINNs, NOs or both together. Based on [PyTorch](https://pytorch.org/) and [PyTorchLightning](https://lightning.ai/docs/pytorch/stable/), PINA offers a simple and intuitive way to formalize a specific (differential) problem and solve it using neural networks . The approximated solution of a differential equation can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly interface.
 
 - 👨‍💻 Formulate your differential problem in few lines of code, just translating the mathematical equations into Python
 
@@ -157,6 +157,10 @@ pip install "pina-mathlab"
 
 PINN is a novel approach that involves neural networks to solve supervised learning tasks while respecting any given law of physics described by general nonlinear differential equations. Proposed in [Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations](https://www.sciencedirect.com/science/article/pii/S0021999118307125?casa_token=p0BAG8SoAbEAAAAA:3H3r1G0SJ7IdXWm-FYGRJZ0RAb_T1qynSdfn-2VxqQubiSWnot5yyKli9UiH82rqQWY_Wzfq0HVV), such framework aims to solve problems in a continuous and nonlinear settings. 
 
+Differenlty from PINNs, Neural Operators learn differential operators using supervised learning strategies. By learning the differential operator, the neural network is able to generalize across different instances of the differential equations (e.g. different forcing terms), without the need of re-training.
+
+PINA can be used for PINN learning, Neural Operator learning, or both. Below is a simple example of PINN learning, for Neural Operator or more on PINNs look at our [tutorials](https://github.com/mathLab/PINA/tree/v0.1/tutorials)
+
 ## 🔋 1. Formulate the Problem
 
 First step is formalization of the problem in the PINA framework. We take as example here a simple Poisson problem, but PINA is already able to deal with **multi-dimensional**, **parametric**, **time-dependent** problems.
@@ -164,54 +168,49 @@ Consider:
 
 $$
 \begin{cases}
-\Delta u = \sin(\pi x)\sin(\pi y)\quad& \text{in}\, D \\
-u = 0& \text{on}\, \partial D \end{cases}$$
+\Delta u = \sin(\pi x)\sin(\pi y)\quad& \text{in } D \\
+u = 0& \text{in } \partial D \end{cases}$$
 
 where $D = [0, 1]^2$ is a square domain, $u$ the unknown field, and $\partial D  = \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4$, where $\Gamma_i$ are the boundaries of the square for $i=1,\cdots,4$. The translation in PINA code becomes a new class containing all the information about the domain, about the `conditions` and nothing more:
 
 ```python
 class Poisson(SpatialProblem):
     output_variables = ['u']
-    spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+    spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
     def laplace_equation(input_, output_):
         force_term = (torch.sin(input_.extract(['x'])*torch.pi) *
                       torch.sin(input_.extract(['y'])*torch.pi))
-        nabla_u = nabla(output_.extract(['u']), input_)
-        return nabla_u - force_term
-
-    def nil_dirichlet(input_, output_):
-      	value = 0.0
-      	return output_.extract(['u']) - value
+        laplacian_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
+        return laplacian_u - force_term
 
     conditions = {
-        'gamma1': Condition(Span({'x': [-1, 1], 'y':  1}), nil_dirichlet),
-        'gamma2': Condition(Span({'x': [-1, 1], 'y': -1}), nil_dirichlet),
-        'gamma3': Condition(Span({'x':  1, 'y': [-1, 1]}), nil_dirichlet),
-        'gamma4': Condition(Span({'x': -1, 'y': [-1, 1]}), nil_dirichlet),
-        'D': Condition(Span({'x': [-1, 1], 'y': [-1, 1]}), laplace_equation),
+        'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1}), equation=FixedValue(0.)),
+        'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0}), equation=FixedValue(0.)),
+        'gamma3': Condition(location=CartesianDomain({'x':  1, 'y': [0, 1]}), equation=FixedValue(0.)),
+        'gamma4': Condition(location=CartesianDomain({'x': 0, 'y': [0, 1]}), equation=FixedValue(0.)),
+        'D': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}), equation=Equation(laplace_equation)),
     }
 ```
 
 ## 👨‍🍳 2. Solve the Problem
-After defining it, we want of course to solve such a problem. The only things we need is a `model`, in this case a feed forward network, and some samples of the domain and boundaries, here using a Cartesian grid. In these points we are going to evaluate the residuals, which is nothing but the loss of the network.
+After defining it, we want of course to solve such a problem. The only things we need is a `model`, in this case a feed forward network, and some samples of the domain and boundaries, here using a Cartesian grid. In these points we are going to evaluate the residuals, which is nothing but the loss of the network. We optimize the `model` using a solver, here a `PINN`. Other types of solvers are possible, such as supervised solver or GAN based solver.
 
 ```python
-poisson_problem = Poisson()
+# make model + solver + trainer
+model = FeedForward(
+    layers=[10, 10],
+    func=Softplus,
+    output_dimensions=len(problem.output_variables),
+    input_dimensions=len(problem.input_variables)
+)
+pinn = PINN(problem, model, optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+trainer = Trainer(pinn, max_epochs=1000, accelerator='gpu', enable_model_summary=False, batch_size=8)
 
-model = FeedForward(layers=[10, 10],
-                    output_variables=poisson_problem.output_variables,
-                    input_variables=poisson_problem.input_variables)
-
-pinn = PINN(poisson_problem, model, lr=0.003, regularizer=1e-8)
-pinn.span_pts(20, 'grid', ['D'])
-pinn.span_pts(20, 'grid', ['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-pinn.train(1000, 100)
-
-plotter = Plotter()
-plotter.plot(pinn)
+# train
+trainer.train()
 ```
-After the training we can infer our model, save it or just plot the PINN approximation. Below the graphical representation of the PINN approximation, the analytical solution of the problem and the absolute error, from left to right.
+After the training we can infer our model, save it or just plot the approximation. Below the graphical representation of the PINN approximation, the analytical solution of the problem and the absolute error, from left to right.
 <p align="center">
   <img alt="Poisson approximation" src="readme/poisson_plot.png" width="100%" />
 </p>
