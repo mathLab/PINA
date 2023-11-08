@@ -166,6 +166,7 @@ class GAROM(SolverInterface):
         Private method to train the generator network.
         """
         optimizer = self.optimizer_generator
+        optimizer.zero_grad()
 
         generated_snapshots = self.generator(parameters)
 
@@ -258,10 +259,10 @@ class GAROM(SolverInterface):
             diff = self._update_weights(d_loss_real, d_loss_fake)
 
             # logging
-            self.log('mean_loss', float(r_loss), prog_bar=True, logger=True)
-            self.log('d_loss', float(d_loss), prog_bar=True, logger=True)
-            self.log('g_loss', float(g_loss), prog_bar=True, logger=True)
-            self.log('stability_metric', float(d_loss_real + torch.abs(diff)), prog_bar=True, logger=True)
+            self.log('mean_loss', float(r_loss), prog_bar=True, logger=True, on_epoch=True, on_step=False)
+            self.log('d_loss', float(d_loss), prog_bar=True, logger=True, on_epoch=True, on_step=False)
+            self.log('g_loss', float(g_loss), prog_bar=True, logger=True, on_epoch=True, on_step=False)
+            self.log('stability_metric', float(d_loss_real + torch.abs(diff)), prog_bar=True, logger=True, on_epoch=True, on_step=False)
 
         return
     
