@@ -90,12 +90,11 @@ class R3Refinement(Callback):
             pts = pts.cpu().detach()
             residuals = res_loss[location].cpu()
             mask = (residuals > avg).flatten()
-            pts = pts[mask] # TODO masking remove labels
-            if pts.nelement() == 0: # if residuals is lower for all point we resample uniformly the location
-                continue
-            pts.labels = labels
-            old_pts[location] = pts
-            tot_points += len(pts)
+            if any(mask): # if there are residuals greater than averge we append them
+                pts = pts[mask] # TODO masking remove labels
+                pts.labels = labels
+                old_pts[location] = pts
+                tot_points += len(pts)
 
         # extract new points to sample uniformally for each location
         n_points = (self._tot_pop_numb - tot_points ) // len(self._sampling_locations)
