@@ -100,8 +100,9 @@ class PINN(SolverInterface):
         # to the parameters that the optimizer needs to optimize
         if isinstance(self.problem, InverseProblem):
             self.optimizers[0].add_param_group(
-                {'params': self.problem.unknown_parameters}
+                {'params': [self.problem.unknown_parameters[var] for var in self.problem.unknown_variables]}
                 )
+            print(self.problem.unknown_parameters)
         return self.optimizers, [self.scheduler]
 
     def _loss_data(self, input, output):

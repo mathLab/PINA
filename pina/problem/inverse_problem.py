@@ -39,9 +39,9 @@ class InverseProblem(AbstractProblem):
         >>>         return output_ - solution
         >>>
         >>>     conditions = {
-        >>>         'x0': Condition(location=CartesianDomain({'x': 0}), equation=FixedValue(1.0)),
-        >>>         'D': Condition(location=CartesianDomain({'x': [0, 1]}), equation=ParametricEquation(ode_equation)),
-        >>>         'data': Condition(location=CartesianDomain({'x': [0, 1]}), equation=Equation(solution_data))
+        >>>         'x0': Condition(CartesianDomain({'x': 0}), FixedValue(1.0)),
+        >>>         'D': Condition(CartesianDomain({'x': [0, 1]}), ParametricEquation(ode_equation)),
+        >>>         'data': Condition(CartesianDomain({'x': [0, 1]}), Equation(solution_data))
     """
 
     @abstractmethod
