@@ -118,8 +118,6 @@ class LabelTensor(torch.Tensor):
         tensors = [lt.extract(labels) for lt in label_tensors]
         return LabelTensor(torch.vstack(tensors), labels)
 
-    # TODO remove try/ except thing IMPORTANT
-    # make the label None of default
     def clone(self, *args, **kwargs):
         """
         Clone the LabelTensor. For more details, see
@@ -128,11 +126,12 @@ class LabelTensor(torch.Tensor):
         :return: a copy of the tensor
         :rtype: LabelTensor
         """
-        try:
-            out = LabelTensor(super().clone(*args, **kwargs), self.labels)
-        except: # this is used when the tensor loose the labels, notice it will create a bug! Kept for compatibility with Lightining 
-            out = super().clone(*args, **kwargs)
-
+        # # used before merging 
+        # try:
+        #     out = LabelTensor(super().clone(*args, **kwargs), self.labels)
+        # except:
+        #     out = super().clone(*args, **kwargs)
+        out = LabelTensor(super().clone(*args, **kwargs), self.labels)
         return out
 
     def to(self, *args, **kwargs):
