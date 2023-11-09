@@ -28,8 +28,8 @@ Build a PINA problem
 Problem definition in the **PINA** framework is done by building a
 python ``class``, which inherits from one or more problem classes
 (``SpatialProblem``, ``TimeDependentProblem``, ``ParametricProblem``, …)
-depending on the nature of the problem. Below is an example. Consider the following
-simple Ordinary Differential Equation:
+depending on the nature of the problem. Below is an example: ### Simple
+Ordinary Differential Equation Consider the following:
 
 .. math::
 
@@ -49,7 +49,7 @@ our ``Problem`` class is going to be inherited from the
 .. code:: python
 
    from pina.problem import SpatialProblem
-   from pina import CartesianProblem
+   from pina.geometry import CartesianProblem
 
    class SimpleODE(SpatialProblem):
        
@@ -73,7 +73,7 @@ What about if our equation is also time dependent? In this case, our
 .. code:: ipython3
 
     from pina.problem import SpatialProblem, TimeDependentProblem
-    from pina import CartesianDomain
+    from pina.geometry import CartesianDomain
     
     class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
         
@@ -215,26 +215,26 @@ calling the attribute ``input_pts`` of the problem
 
 .. parsed-literal::
 
-    Input points: {'x0': LabelTensor([[[0.]]]), 'D': LabelTensor([[[0.8633]],
-                 [[0.4009]],
-                 [[0.6489]],
-                 [[0.9278]],
-                 [[0.3975]],
-                 [[0.1484]],
-                 [[0.9632]],
-                 [[0.5485]],
-                 [[0.2984]],
-                 [[0.5643]],
-                 [[0.0368]],
-                 [[0.7847]],
-                 [[0.4741]],
-                 [[0.6957]],
-                 [[0.3281]],
-                 [[0.0958]],
-                 [[0.1847]],
-                 [[0.2232]],
-                 [[0.8099]],
-                 [[0.7304]]])}
+    Input points: {'x0': LabelTensor([[[0.]]]), 'D': LabelTensor([[[0.7644]],
+                 [[0.2028]],
+                 [[0.1789]],
+                 [[0.4294]],
+                 [[0.3239]],
+                 [[0.6531]],
+                 [[0.1406]],
+                 [[0.6062]],
+                 [[0.4969]],
+                 [[0.7429]],
+                 [[0.8681]],
+                 [[0.3800]],
+                 [[0.5357]],
+                 [[0.0152]],
+                 [[0.9679]],
+                 [[0.8101]],
+                 [[0.0662]],
+                 [[0.9095]],
+                 [[0.2503]],
+                 [[0.5580]]])}
     Input points labels: ['x']
 
 
@@ -271,7 +271,8 @@ If you want to track the metric by yourself without a logger, use
 
 .. code:: ipython3
 
-    from pina import PINN, Trainer
+    from pina import Trainer
+    from pina.solvers import PINN
     from pina.model import FeedForward
     from pina.callbacks import MetricTracker
     
@@ -300,12 +301,11 @@ If you want to track the metric by yourself without a logger, use
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-    Missing logger folder: /Users/dariocoscia/Desktop/PINA/tutorials/tutorial1/lightning_logs
 
 
 .. parsed-literal::
 
-    Epoch 1499: : 1it [00:00, 316.24it/s, v_num=0, mean_loss=5.39e-5, x0_loss=1.26e-6, D_loss=0.000106] 
+    Epoch 1499: : 1it [00:00, 272.55it/s, v_num=3, x0_loss=7.71e-6, D_loss=0.000734, mean_loss=0.000371]
 
 .. parsed-literal::
 
@@ -314,7 +314,7 @@ If you want to track the metric by yourself without a logger, use
 
 .. parsed-literal::
 
-    Epoch 1499: : 1it [00:00, 166.89it/s, v_num=0, mean_loss=5.39e-5, x0_loss=1.26e-6, D_loss=0.000106]
+    Epoch 1499: : 1it [00:00, 167.14it/s, v_num=3, x0_loss=7.71e-6, D_loss=0.000734, mean_loss=0.000371]
 
 
 After the training we can inspect trainer logged metrics (by default
@@ -332,9 +332,9 @@ loss can be accessed by ``trainer.logged_metrics``
 
 .. parsed-literal::
 
-    {'mean_loss': tensor(5.3852e-05),
-     'x0_loss': tensor(1.2636e-06),
-     'D_loss': tensor(0.0001)}
+    {'x0_loss': tensor(7.7149e-06),
+     'D_loss': tensor(0.0007),
+     'mean_loss': tensor(0.0004)}
 
 
 
@@ -362,7 +362,7 @@ indistinguishable. We can also plot easily the loss:
 
 .. code:: ipython3
 
-    pl.plot_loss(trainer=trainer, label = 'mean_loss',  logy=True)
+    pl.plot_loss(trainer=trainer, label = 'mean_loss', logy=True)
 
 
 

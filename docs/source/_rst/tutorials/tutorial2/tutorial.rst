@@ -31,16 +31,12 @@ The problem definition
 ----------------------
 
 The two-dimensional Poisson problem is mathematically written as:
-
-.. math::
-    \begin{equation}
-    \begin{cases}
-    \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
-    u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
-    \end{cases}
-    \end{equation}
-
-where :math:`D` is a square domain :math:`[0,1]^2`, and
+:raw-latex:`\begin{equation}
+\begin{cases}
+\Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
+u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+\end{cases}
+\end{equation}` where :math:`D` is a square domain :math:`[0,1]^2`, and
 :math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
 square.
 
@@ -127,7 +123,7 @@ These parameters can be modified as desired. We use the
 
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 152.98it/s, v_num=9, mean_loss=0.000239, D_loss=0.000793, gamma1_loss=8.51e-5, gamma2_loss=0.000103, gamma3_loss=0.000122, gamma4_loss=9.14e-5]  
+    Epoch 999: : 1it [00:00, 158.53it/s, v_num=3, gamma1_loss=5.29e-5, gamma2_loss=4.09e-5, gamma3_loss=4.73e-5, gamma4_loss=4.18e-5, D_loss=0.00134, mean_loss=0.000304]    
 
 .. parsed-literal::
 
@@ -136,7 +132,7 @@ These parameters can be modified as desired. We use the
 
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 119.21it/s, v_num=9, mean_loss=0.000239, D_loss=0.000793, gamma1_loss=8.51e-5, gamma2_loss=0.000103, gamma3_loss=0.000122, gamma4_loss=9.14e-5]
+    Epoch 999: : 1it [00:00, 105.33it/s, v_num=3, gamma1_loss=5.29e-5, gamma2_loss=4.09e-5, gamma3_loss=4.73e-5, gamma4_loss=4.18e-5, D_loss=0.00134, mean_loss=0.000304]
 
 
 Now the ``Plotter`` class is used to plot the results. The solution
@@ -162,10 +158,9 @@ is now defined, with an additional input variable, named extra-feature,
 which coincides with the forcing term in the Laplace equation. The set
 of input variables to the neural network is:
 
-.. math::
-    \begin{equation}
-    [x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
-    \end{equation}
+:raw-latex:`\begin{equation}
+[x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
+\end{equation}`
 
 where :math:`x` and :math:`y` are the spatial coordinates and
 :math:`k(x, y)` is the added feature.
@@ -219,7 +214,7 @@ new extra feature.
 
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 119.36it/s, v_num=10, mean_loss=8.97e-7, D_loss=4.43e-6, gamma1_loss=1.37e-8, gamma2_loss=1.68e-8, gamma3_loss=1.22e-8, gamma4_loss=1.77e-8]     
+    Epoch 999: : 1it [00:00, 111.88it/s, v_num=4, gamma1_loss=2.54e-7, gamma2_loss=2.17e-7, gamma3_loss=1.94e-7, gamma4_loss=2.69e-7, D_loss=9.2e-6, mean_loss=2.03e-6]     
 
 .. parsed-literal::
 
@@ -228,7 +223,7 @@ new extra feature.
 
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 95.23it/s, v_num=10, mean_loss=8.97e-7, D_loss=4.43e-6, gamma1_loss=1.37e-8, gamma2_loss=1.68e-8, gamma3_loss=1.22e-8, gamma4_loss=1.77e-8] 
+    Epoch 999: : 1it [00:00, 85.62it/s, v_num=4, gamma1_loss=2.54e-7, gamma2_loss=2.17e-7, gamma3_loss=1.94e-7, gamma4_loss=2.69e-7, D_loss=9.2e-6, mean_loss=2.03e-6] 
 
 
 The predicted and exact solutions and the error between them are
@@ -254,10 +249,9 @@ Another way to exploit the extra features is the addition of learnable
 parameter inside them. In this way, the added parameters are learned
 during the training phase of the neural network. In this case, we use:
 
-.. math::
-    \begin{equation}
-    k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
-    \end{equation}
+:raw-latex:`\begin{equation}
+k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
+\end{equation}`
 
 where :math:`\alpha` and :math:`\beta` are the abovementioned
 parameters. Their implementation is quite trivial: by using the class
@@ -306,7 +300,7 @@ need, and they are managed by ``autograd`` module!
 
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 103.14it/s, v_num=14, mean_loss=1.39e-6, D_loss=6.04e-6, gamma1_loss=4.19e-7, gamma2_loss=2.8e-8, gamma3_loss=4.05e-7, gamma4_loss=3.49e-8]    
+    Epoch 999: : 1it [00:00, 119.29it/s, v_num=5, gamma1_loss=3.26e-8, gamma2_loss=7.84e-8, gamma3_loss=1.13e-7, gamma4_loss=3.02e-8, D_loss=2.66e-6, mean_loss=5.82e-7]  
 
 .. parsed-literal::
 
@@ -315,7 +309,7 @@ need, and they are managed by ``autograd`` module!
 
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 84.50it/s, v_num=14, mean_loss=1.39e-6, D_loss=6.04e-6, gamma1_loss=4.19e-7, gamma2_loss=2.8e-8, gamma3_loss=4.05e-7, gamma4_loss=3.49e-8] 
+    Epoch 999: : 1it [00:00, 85.94it/s, v_num=5, gamma1_loss=3.26e-8, gamma2_loss=7.84e-8, gamma3_loss=1.13e-7, gamma4_loss=3.02e-8, D_loss=2.66e-6, mean_loss=5.82e-7] 
 
 
 Umh, the final loss is not appreciabily better than previous model (with
@@ -355,7 +349,7 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
 
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 130.55it/s, v_num=17, mean_loss=1.34e-14, D_loss=6.7e-14, gamma1_loss=5.13e-17, gamma2_loss=9.68e-18, gamma3_loss=5.14e-17, gamma4_loss=9.75e-18] 
+    Epoch 0: : 0it [00:00, ?it/s]Epoch 999: : 1it [00:00, 131.20it/s, v_num=6, gamma1_loss=2.55e-16, gamma2_loss=4.76e-17, gamma3_loss=2.55e-16, gamma4_loss=4.76e-17, D_loss=1.74e-13, mean_loss=3.5e-14] 
 
 .. parsed-literal::
 
@@ -364,7 +358,7 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
 
 .. parsed-literal::
 
-    Epoch 999: : 1it [00:00, 104.91it/s, v_num=17, mean_loss=1.34e-14, D_loss=6.7e-14, gamma1_loss=5.13e-17, gamma2_loss=9.68e-18, gamma3_loss=5.14e-17, gamma4_loss=9.75e-18]
+    Epoch 999: : 1it [00:00, 98.81it/s, v_num=6, gamma1_loss=2.55e-16, gamma2_loss=4.76e-17, gamma3_loss=2.55e-16, gamma4_loss=4.76e-17, D_loss=1.74e-13, mean_loss=3.5e-14] 
 
 
 In such a way, the model is able to reach a very high accuracy! Of

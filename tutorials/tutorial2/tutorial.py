@@ -177,7 +177,7 @@ plotter.plot(solver=pinn_feat)
 # where $\alpha$ and $\beta$ are the abovementioned parameters.
 # Their implementation is quite trivial: by using the class `torch.nn.Parameter` we cam define all the learnable parameters we need, and they are managed by `autograd` module!
 
-# In[14]:
+# In[7]:
 
 
 class SinSinAB(torch.nn.Module):
@@ -212,7 +212,7 @@ trainer_learn.train()
 
 # Umh, the final loss is not appreciabily better than previous model (with static extra features), despite the usage of learnable parameters. This is mainly due to the over-parametrization of the network: there are many parameter to optimize during the training, and the model in unable to understand automatically that only the parameters of the extra feature (and not the weights/bias of the FFN) should be tuned in order to fit our problem. A longer training can be helpful, but in this case the faster way to reach machine precision for solving the Poisson problem is removing all the hidden layers in the `FeedForward`, keeping only the $\alpha$ and $\beta$ parameters of the extra feature.
 
-# In[19]:
+# In[8]:
 
 
 # make model + solver + trainer
@@ -234,7 +234,7 @@ trainer_learn.train()
 # 
 # We conclude here by showing the graphical comparison of the unknown field and the loss trend for all the test cases presented here: the standard PINN, PINN with extra features, and PINN with learnable extra features.
 
-# In[20]:
+# In[9]:
 
 
 plotter.plot(solver=pinn_learn)
@@ -242,7 +242,7 @@ plotter.plot(solver=pinn_learn)
 
 # Let us compare the training losses for the various types of training
 
-# In[21]:
+# In[10]:
 
 
 plotter.plot_loss(trainer, logy=True, label='Standard')
