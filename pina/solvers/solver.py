@@ -69,7 +69,7 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
                              f' {len_optimizer_kwargs} dicitionaries')
 
         # extra features handling
-        if extra_features is None:
+        if extra_features is None or (len(extra_features)==0):
             extra_features = [None] * len_model
         else:
             # if we only have a list of extra features
