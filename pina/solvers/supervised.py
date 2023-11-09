@@ -72,11 +72,11 @@ class SupervisedSolver(SolverInterface):
         :return: Solver solution.
         :rtype: torch.Tensor
         """
-        # extract labels
-        x = x.extract(self.problem.input_variables)
-        # perform forward pass
+        # extract torch.Tensor from corresponding label
+        x = x.extract(self.problem.input_variables).as_subclass(torch.Tensor)
+        # perform forward pass (using torch.Tensor) + converting to LabelTensor
         output = self.neural_net(x).as_subclass(LabelTensor)
-        # set the labels
+        # set the labels for LabelTensor
         output.labels = self.problem.output_variables
         return output
 
@@ -89,6 +89,44 @@ class SupervisedSolver(SolverInterface):
         return self.optimizers, [self.scheduler]
 
     def training_step(self, batch, batch_idx):
+        """Solver training step.
+
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
+        :param batch_idx: The batch index.
+        :type batch_idx: int
+        :return: The sum of the loss functions.
+        :rtype: LabelTensor
+        """
+
+        dataloader = self.trainer.train_dataloader
+        condition_idx = batch['condition']
+
+        for condition_id in range(condition_idx.min(), condition_idx.max()+1):
+
+            condition_name = dataloader.condition_names[condition_id]
+            condition = self.problem.conditions[condition_name]
+            pts = batch['pts']
+            out = batch['output']
+
+            if condition_name not in self.problem.conditions:
+                raise RuntimeError('Something wrong happened.')
+
+            # for data driven mode
+            if not hasattr(condition, 'output_points'):
+                raise NotImplementedError('Supervised solver works only in data-driven mode.')
+            
+            output_pts = out[condition_idx == condition_id]
+            input_pts = pts[condition_idx == condition_id]
+
+            loss = self.loss(self.forward(input_pts), output_pts) * condition.data_weight
+            loss = loss.as_subclass(torch.Tensor)
+
+        self.log('mean_loss', float(loss), prog_bar=True, logger=True)
+        return loss
+
+
+    def training_step_(self, batch, batch_idx):
         """Solver training step.
 
         :param batch: The batch element in the dataloader.
