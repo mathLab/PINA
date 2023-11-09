@@ -13,7 +13,6 @@ from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 from ..loss import LossInterface
 from ..problem import InverseProblem
-#from ..equation import ParametricEquation
 from torch.nn.modules.loss import _Loss
 from inspect import signature
 
@@ -24,7 +23,7 @@ class PINN(SolverInterface):
     """
     PINN solver class. This class implements Physics Informed Neural
     Network solvers, using a user specified ``model`` to solve a specific
-    ``problem``.
+    ``problem``. It can be used for solving both forward and inverse problems.
 
     .. seealso::
 
@@ -49,7 +48,7 @@ class PINN(SolverInterface):
         },
     ):
         '''
-        :param AbstractProblem problem: The formualation of the problem.
+        :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default :class:`torch.nn.MSELoss`.
