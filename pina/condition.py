@@ -2,7 +2,6 @@
 from .label_tensor import LabelTensor
 from .geometry import Location
 from .equation.equation import Equation
-from .equation.parametric_equation import ParametricEquation
 
 
 def dummy(a):
@@ -85,9 +84,8 @@ class Condition:
             raise TypeError('`output_points` must be a torch.Tensor.')
         if not self._dictvalue_isinstance(kwargs, 'location', Location):
             raise TypeError('`location` must be a Location.')
-        if not (self._dictvalue_isinstance(kwargs, 'equation', Equation) or
-             self._dictvalue_isinstance(kwargs, 'equation', ParametricEquation)):
-            raise TypeError('`equation` must be a Equation or ParametricEquation.')
+        if not (self._dictvalue_isinstance(kwargs, 'equation', Equation)):
+            raise TypeError('`equation` must be a Equation.')
 
         for key, value in kwargs.items():
             setattr(self, key, value)

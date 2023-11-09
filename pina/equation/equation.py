@@ -20,14 +20,17 @@ class Equation(EquationInterface):
                              f'{equation}')
         self.__equation = equation
 
-    def residual(self, input_, output_):
+    def residual(self, input_, output_, params_=None):
         """
         Residual computation of the equation.
 
         :param LabelTensor input_: Input points to evaluate the equation.
-        :param LabelTensor output_: Output vectors given my a model (e.g,
+        :param LabelTensor output_: Output vectors given by my model (e.g,
             a ``FeedForward`` model).
         :return: The residual evaluation of the specified equation.
         :rtype: LabelTensor
         """
-        return self.__equation(input_, output_)
+        if params_ is not None:
+            return self.__equation(input_, output_, params_)
+        elif params_ is None:
+            return self.__equation(input_, output_)

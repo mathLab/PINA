@@ -1,7 +1,7 @@
 """ Module for AbstractProblem class """
 from abc import ABCMeta, abstractmethod
 from ..utils import merge_tensors, check_consistency
-from ..equation import ParametricEquation
+#from ..equation import ParametricEquation
 import torch
 
 
@@ -110,8 +110,7 @@ class AbstractProblem(metaclass=ABCMeta):
                 samples = condition.input_points
                 self.input_pts[condition_name] = samples
                 self._have_sampled_points[condition_name] = True
-            if hasattr(condition, 'equation') and isinstance(condition.equation,
-                    ParametricEquation):
+            if hasattr(self, 'unknown_parameter_domain'):
                 # initialize the unknown parameters of the inverse problem given
                 # the domain the user gives
                 self.unknown_parameters = {}

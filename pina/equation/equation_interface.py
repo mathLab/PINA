@@ -11,3 +11,15 @@ class EquationInterface(metaclass=ABCMeta):
     the output variables, the condition(s), and the domain(s) where the
     conditions are applied.
     """
+
+    @abstractmethod
+    def residual(self):
+        """
+        Residual computation of the equation.
+
+        :param LabelTensor input_: Input points to evaluate the equation.
+        :param LabelTensor output_: Output vectors given by my model (e.g., a ``FeedForward`` model).
+        :return: The residual evaluation of the specified equation.
+        :rtype: LabelTensor
+        """
+        pass

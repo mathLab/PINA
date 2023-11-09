@@ -33,9 +33,10 @@ from lightning.pytorch.callbacks import Callback
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
 from pina.model import FeedForward
-from pina.equation import Equation, FixedValue, ParametricEquation
-from pina import (Condition, CartesianDomain, PINN, LabelTensor,
-        Plotter, Location, Trainer)
+from pina.equation import Equation, FixedValue#, ParametricEquation
+from pina import Condition, LabelTensor, Plotter, Trainer
+from pina.geometry import CartesianDomain
+from pina.solvers import PINN
 from pina.callbacks import MetricTracker
 
 
@@ -87,8 +88,9 @@ class Poisson(SpatialProblem, InverseProblem):
         Laplace equation with a force term.
         '''
         force_term = torch.exp(
-                - 2*(input_.extract(['x']) - params_.extract(['mu1']))**2
-                - 2*(input_.extract(['y']) - params_.extract(['mu2']))**2)
+                - 2*(input_.extract(['x']) - params_['mu1'])**2
+                - 2*(input_.extract(['y']) - params_['mu2'])**2
+                )
         delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
 
         return delta_u - force_term
@@ -109,8 +111,8 @@ class Poisson(SpatialProblem, InverseProblem):
             equation=FixedValue(0.0, components=['u'])),
         'D': Condition(location=CartesianDomain({'x': [x_min, x_max], 'y': [y_min, y_max]
             }),
-        equation=ParametricEquation(laplace_equation)),
-        'data': Condition(input_points=data_input.extract(['x', 'y']), output_points=data_output)
+        equation=Equation(laplace_equation)),
+#        'data': Condition(input_points=data_input.extract(['x', 'y']), output_points=data_output)
     }
 
 problem = Poisson()
@@ -147,14 +149,14 @@ problem.discretise_domain(100, 'grid', locations=['gamma1', 'gamma2',
 # temporary directory for saving logs of training
 tmp_dir = "tmp_poisson_inverse"
 
-class SaveParameters(Callback):
-    '''
-    Callback to save the parameters of the model every 100 epochs.
-    '''
-    def on_train_epoch_end(self, trainer, __):
-        if trainer.current_epoch % 100 == 99:
-            torch.save(pinn.problem.unknown_parameters, '{}/parameters_epoch{}'.format(tmp_dir, trainer.current_epoch))
-
+#class SaveParameters(Callback):
+#    '''
+#    Callback to save the parameters of the model every 100 epochs.
+#    '''
+#    def on_train_epoch_end(self, trainer, __):
+#        if trainer.current_epoch % 100 == 99:
+#            torch.save(pinn.problem.unknown_parameters, '{}/parameters_epoch{}'.format(tmp_dir, trainer.current_epoch))
+#
 
 # Then, we define the `PINN` object that we train the neural network.
 
@@ -165,8 +167,8 @@ class SaveParameters(Callback):
 max_epochs=5000
 pinn = PINN(problem, model, optimizer_kwargs={'lr':0.001})
 # define the trainer for the solver
-trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=max_epochs,
-        default_root_dir=tmp_dir, callbacks=[SaveParameters(), MetricTracker()])
+trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=max_epochs)#,
+    #    default_root_dir=tmp_dir)#, callbacks=[SaveParameters(), MetricTracker()])
 trainer.train()
 
 

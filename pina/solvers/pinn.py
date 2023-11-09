@@ -13,8 +13,9 @@ from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 from ..loss import LossInterface
 from ..problem import InverseProblem
-from ..equation import ParametricEquation
+#from ..equation import ParametricEquation
 from torch.nn.modules.loss import _Loss
+from inspect import signature
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
@@ -102,7 +103,6 @@ class PINN(SolverInterface):
             self.optimizers[0].add_param_group(
                 {'params': [self.problem.unknown_parameters[var] for var in self.problem.unknown_variables]}
                 )
-            print(self.problem.unknown_parameters)
         return self.optimizers, [self.scheduler]
 
     def _loss_data(self, input, output):
@@ -110,7 +110,11 @@ class PINN(SolverInterface):
 
 
     def _loss_phys(self, samples, equation):
-        residual = equation.residual(samples, self.forward(samples))
+        try:
+            residual = equation.residual(samples, self.forward(samples))
+        except TypeError:
+            residual = equation.residual(samples, self.forward(samples),
+                params_=self.problem.unknown_parameters)
         return self.loss(torch.zeros_like(residual, requires_grad=True), residual)
 
 
@@ -151,37 +155,22 @@ class PINN(SolverInterface):
             loss = loss.as_subclass(torch.Tensor)
 
 #            # add condition losses and accumulate logging for each epoch
-#            # PINN loss: equation evaluated on location or input_points
-#            if hasattr(condition, 'equation'):
-#                if isinstance(condition.equation, ParametricEquation):
-#                    target = condition.equation.residual(samples,
-#                            self.forward(samples),
-#                            self.problem.unknown_parameters)
-#                else:
-#                    target = condition.equation.residual(samples,
-#                        self.forward(samples))
-#                loss = self.loss(torch.zeros_like(target), target)
-#            # PINN loss: evaluate model(input_points) vs output_points
-#            elif hasattr(condition, 'output_points'):
-#                input_pts, output_pts = samples
-#                loss = self.loss(self.forward(input_pts), output_pts)
-
             condition_losses.append(loss * condition.data_weight)
             self.log(condition_name + '_loss', float(loss),
                      prog_bar=True, logger=True, on_epoch=True, on_step=False)
-
-        # clamp unknown parameters of the InverseProblem to their domain ranges
-        if isinstance(self.problem, InverseProblem):
-            for v in self.problem.unknown_variables:
-                self.problem.unknown_parameters.extract([v]).data.clamp_(
-                        self.problem.unknown_parameter_domain.range_[v][0],
-                        self.problem.unknown_parameter_domain.range_[v][1])
 
         # TODO Fix the bug, tot_loss is a label tensor without labels
         # we need to pass it as a torch tensor to make everything work
         total_loss = sum(condition_losses)
         self.log('mean_loss', float(total_loss / len(condition_losses)),
                  prog_bar=True, logger=True, on_epoch=True, on_step=False)
+        # clamp unknown parameters of the InverseProblem to their domain ranges
+        if isinstance(self.problem, InverseProblem):
+            for v in self.problem.unknown_variables:
+                self.problem.unknown_parameters[v].data.clamp_(
+                        self.problem.unknown_parameter_domain.range_[v][0],
+                        self.problem.unknown_parameter_domain.range_[v][1])
+
 
         return total_loss
 
