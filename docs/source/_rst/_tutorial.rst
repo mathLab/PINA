@@ -1,7 +1,7 @@
 PINA Tutorials
 ==============
 
-In this folder we collect useful tutorials in order to understand the principles and the potential of **PINA**. 
+In this folder we collect useful tutorials in order to understand the principles and the potential of **PINA**.
 
 Getting started with PINA
 -------------------------
@@ -37,3 +37,11 @@ Supervised Learning
    :titlesonly:
 
    Unstructured convolutional autoencoder via continuous convolution<tutorials/tutorial4/tutorial.rst>
+
+Inverse Problem
+-------------------
+.. toctree::
+   :maxdepth: 3
+   :titlesonly:
+
+   Resolution of a 2D Poisson inverse problem<tutorials/tutorial7/tutorial.rst>

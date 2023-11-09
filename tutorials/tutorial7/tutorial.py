@@ -29,15 +29,14 @@
 import matplotlib.pyplot as plt
 import torch
 from torch.nn import Softplus
-from lightning.pytorch.callbacks import Callback
+from pytorch_lightning.callbacks import Callback
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
 from pina.model import FeedForward
-from pina.equation import Equation, FixedValue#, ParametricEquation
-from pina import Condition, LabelTensor, Plotter, Trainer
-from pina.geometry import CartesianDomain
+from pina.equation import Equation, FixedValue
+from pina import Condition, LabelTensor, Trainer
 from pina.solvers import PINN
-from pina.callbacks import MetricTracker
+from pina.geometry import CartesianDomain
 
 
 # Then, we import the pre-saved data, for ($\mu_1$, $\mu_2$)=($0.5$, $0.5$). These two values are the optimal parameters that we want to find through the neural network training. In particular, we import the `input_points`(the spatial coordinates), and the `output_points` (the corresponding $u$ values evaluated at the `input_points`).
@@ -63,7 +62,7 @@ plt.show()
 
 
 # Then, we initialize the Poisson problem, that is inherited from the `SpatialProblem` and from the `InverseProblem` classes. We here have to define all the variables, and the domain where our unknown parameters ($\mu_1$, $\mu_2$) belong.
-# In the following class, the equation with the unknown parameters is inherited from the class `ParametricEquation`. Differently from the standard `Equation`, it takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
+# In the following class, the equation with the unknown parameters is inherited from the class `Equation`. Differently from the standard `Equation`, it takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
 
 # In[ ]:
 
@@ -89,8 +88,7 @@ class Poisson(SpatialProblem, InverseProblem):
         '''
         force_term = torch.exp(
                 - 2*(input_.extract(['x']) - params_['mu1'])**2
-                - 2*(input_.extract(['y']) - params_['mu2'])**2
-                )
+                - 2*(input_.extract(['y']) - params_['mu2'])**2)
         delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
 
         return delta_u - force_term
@@ -112,7 +110,7 @@ class Poisson(SpatialProblem, InverseProblem):
         'D': Condition(location=CartesianDomain({'x': [x_min, x_max], 'y': [y_min, y_max]
             }),
         equation=Equation(laplace_equation)),
-#        'data': Condition(input_points=data_input.extract(['x', 'y']), output_points=data_output)
+        'data': Condition(input_points=data_input.extract(['x', 'y']), output_points=data_output)
     }
 
 problem = Poisson()
@@ -149,14 +147,14 @@ problem.discretise_domain(100, 'grid', locations=['gamma1', 'gamma2',
 # temporary directory for saving logs of training
 tmp_dir = "tmp_poisson_inverse"
 
-#class SaveParameters(Callback):
-#    '''
-#    Callback to save the parameters of the model every 100 epochs.
-#    '''
-#    def on_train_epoch_end(self, trainer, __):
-#        if trainer.current_epoch % 100 == 99:
-#            torch.save(pinn.problem.unknown_parameters, '{}/parameters_epoch{}'.format(tmp_dir, trainer.current_epoch))
-#
+class SaveParameters(Callback):
+    '''
+    Callback to save the parameters of the model every 100 epochs.
+    '''
+    def on_train_epoch_end(self, trainer, __):
+        if trainer.current_epoch % 100 == 99:
+            torch.save(pinn.problem.unknown_parameters, '{}/parameters_epoch{}'.format(tmp_dir, trainer.current_epoch))
+
 
 # Then, we define the `PINN` object that we train the neural network.
 
@@ -164,24 +162,15 @@ tmp_dir = "tmp_poisson_inverse"
 
 
 ### train the problem with PINN
-max_epochs=5000
+max_epochs = 200
 pinn = PINN(problem, model, optimizer_kwargs={'lr':0.001})
 # define the trainer for the solver
-trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=max_epochs)#,
-    #    default_root_dir=tmp_dir)#, callbacks=[SaveParameters(), MetricTracker()])
+trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=max_epochs,
+        default_root_dir=tmp_dir, callbacks=[SaveParameters()])
 trainer.train()
 
 
-# We can finally plot the solution and see that it is really similar to the one given by the initial data.
-
-# In[ ]:
-
-
-plotter = Plotter()
-plotter.plot(trainer)
-
-
-# One can also see how the parameters vary during the training by reading the saved solution and plotting them. The plot shows that the parameters stabilize to their true value before reaching the epoch $1000$!
+# One can now see how the parameters vary during the training by reading the saved solution and plotting them. The plot shows that the parameters stabilize to their true value before reaching the epoch $1000$!
 
 # In[ ]:
 
@@ -190,9 +179,11 @@ epochs_saved = range(99, max_epochs, 100)
 parameters = torch.empty((int(max_epochs/100), 2))
 for i, epoch in enumerate(epochs_saved):
     params_torch = torch.load('{}/parameters_epoch{}'.format(tmp_dir, epoch))
-    parameters[i, :] = params_torch.data
+    for e, var in enumerate(pinn.problem.unknown_variables):
+        parameters[i, e] = params_torch[var].data
 
 # Plot parameters
+plt.close()
 plt.plot(epochs_saved, parameters[:, 0], label='mu1', marker='o')
 plt.plot(epochs_saved, parameters[:, 1], label='mu2', marker='s')
 plt.ylim(-1, 1)
