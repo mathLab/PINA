@@ -83,11 +83,11 @@ class PINN(SolverInterface):
         :return: PINN solution.
         :rtype: torch.Tensor
         """
-        # extract labels
-        x = x.extract(self.problem.input_variables)
-        # perform forward pass
+        # extract torch.Tensor from corresponding label
+        x = x.extract(self.problem.input_variables).as_subclass(torch.Tensor)
+        # perform forward pass (using torch.Tensor) + converting to LabelTensor
         output = self.neural_net(x).as_subclass(LabelTensor)
-        # set the labels
+        # set the labels for LabelTensor
         output.labels = self.problem.output_variables
         return output
 
