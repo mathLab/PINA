@@ -1,55 +1,52 @@
 import argparse
-import numpy as np
-import torch
-from torch.nn import ReLU, Tanh, Softplus
+from torch.nn import Softplus
 
-from pina import PINN, Plotter
+from pina import Plotter, Trainer
 from pina.model import FeedForward
-from pina.adaptive_functions import AdaptiveSin, AdaptiveCos, AdaptiveTanh
+from pina.solvers import PINN
 from problems.stokes import Stokes
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Run PINA")
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-s", "-save", action="store_true")
-    group.add_argument("-l", "-load", action="store_true")
-    parser.add_argument("id_run", help="number of run", type=int)
+    parser = argparse.ArgumentParser(description="Run PINA")
+    parser.add_argument("--load", help="directory to save or load file", type=str)
+    parser.add_argument("--epochs", help="extra features", type=int, default=1000)
     args = parser.parse_args()
 
 
+    # create problem and discretise domain
     stokes_problem = Stokes()
+    stokes_problem.discretise_domain(n=1000, locations=['gamma_top', 'gamma_bot', 'gamma_in', 'gamma_out'])
+    stokes_problem.discretise_domain(n=2000, locations=['D'])
+
+    # make the model
     model = FeedForward(
         layers=[10, 10, 10, 10],
-        output_variables=stokes_problem.output_variables,
-        input_variables=stokes_problem.input_variables,
+        output_dimensions=len(stokes_problem.output_variables),
+        input_dimensions=len(stokes_problem.input_variables),
         func=Softplus,
     )
 
+    # make the pinn
     pinn = PINN(
         stokes_problem,
         model,
-        lr=0.006,
-        error_norm='mse',
-        regularizer=1e-8)
+        optimizer_kwargs={'lr' : 0.001}
+        )
 
-    if args.s:
+    # create trainer
+    directory = 'pina.navier_stokes'
+    trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=args.epochs, default_root_dir=directory)
 
-        pinn.span_pts(200, 'grid', locations=['gamma_top', 'gamma_bot', 'gamma_in', 'gamma_out'])
-        # pinn.span_pts(2000, 'random', locations=['D'])
-        pinn.span_pts(2000, 'random', locations=['D1'])
-        pinn.span_pts(2000, 'random', locations=['D2'])
-        pinn.train(10000, 100)
-        with open('stokes_history_{}.txt'.format(args.id_run), 'w') as file_:
-            for i, losses in pinn.history_loss.items():
-                file_.write('{} {}\n'.format(i, sum(losses)))
-        pinn.save_state('pina.stokes')
 
-    else:
-        pinn.load_state('pina.stokes')
+    if args.load:
+        pinn = PINN.load_from_checkpoint(checkpoint_path=args.load, problem=stokes_problem, model=model)
         plotter = Plotter()
         plotter.plot(pinn, components='ux')
         plotter.plot(pinn, components='uy')
         plotter.plot(pinn, components='p')
+    else:
+        trainer.train()
 
 

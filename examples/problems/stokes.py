@@ -5,7 +5,7 @@ from pina.problem import SpatialProblem
 from pina.operators import laplacian, grad, div
 from pina import Condition, LabelTensor
 from pina.geometry import CartesianDomain
-from pina.equation import Equation
+from pina.equation import SystemEquation, Equation
 
 # ===================================================== #
 #                                                       #
@@ -55,5 +55,5 @@ class Stokes(SpatialProblem):
         'gamma_bot': Condition(location=CartesianDomain({'x': [-2, 2], 'y': -1}), equation=Equation(wall)),
         'gamma_out': Condition(location=CartesianDomain({'x':  2, 'y': [-1, 1]}), equation=Equation(outlet)),
         'gamma_in':  Condition(location=CartesianDomain({'x': -2, 'y': [-1, 1]}), equation=Equation(inlet)),
-        'D': Condition(location=CartesianDomain({'x': [-2, 2], 'y': [-1, 1]}), equation=[Equation(momentum), Equation(continuity)])
+        'D': Condition(location=CartesianDomain({'x': [-2, 2], 'y': [-1, 1]}), equation=SystemEquation([momentum, continuity]))
     }

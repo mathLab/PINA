@@ -3,7 +3,7 @@
 
 from pina import Condition
 from pina.geometry import CartesianDomain
-from pina.equation import Equation, FixedValue
+from pina.equation import SystemEquation, FixedValue
 from pina.problem import SpatialProblem, ParametricProblem
 from pina.operators import laplacian
 
@@ -49,26 +49,32 @@ class ParametricEllipticOptimalControl(SpatialProblem, ParametricProblem):
 
     def term2(input_, output_):
         laplace_y = laplacian(output_, input_, components=['y'], d=['x1', 'x2'])
-        return - laplace_y - output_.extract(['u_param'])
+        return - laplace_y - output_.extract(['u'])
+    
+    def fixed_y(input_, output_):
+        return output_.extract(['y'])
+
+    def fixed_p(input_, output_):
+        return output_.extract(['p']) 
 
     # setting problem condition formulation
     conditions = {
         'gamma1': Condition(
             location=CartesianDomain({'x1': x_range, 'x2':  1, 'mu': mu_range, 'alpha': a_range}),
-            equation=[FixedValue(0.0, ['y']), FixedValue(0.0, ['p'])]),
+            equation=SystemEquation([fixed_y, fixed_p])),
         'gamma2': Condition(
             location=CartesianDomain({'x1': x_range, 'x2': -1, 'mu': mu_range, 'alpha': a_range}),
-            equation=[FixedValue(0.0, ['y']), FixedValue(0.0, ['p'])]),
+            equation=SystemEquation([fixed_y, fixed_p])),
         'gamma3': Condition(
             location=CartesianDomain({'x1':  1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
-            equation=[FixedValue(0.0, ['y']), FixedValue(0.0, ['p'])]),
+            equation=SystemEquation([fixed_y, fixed_p])),
         'gamma4': Condition(
             location=CartesianDomain({'x1': -1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
-            equation=[FixedValue(0.0, ['y']), FixedValue(0.0, ['p'])]),
+            equation=SystemEquation([fixed_y, fixed_p])),
         'D': Condition(
             location=CartesianDomain(
                 {'x1': x_range, 'x2': y_range,
                 'mu': mu_range, 'alpha': a_range
                 }),
-            equation=[Equation(term1), Equation(term2)]),
+            equation=SystemEquation([term1, term2])),
     }

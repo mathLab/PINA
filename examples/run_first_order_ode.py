@@ -3,7 +3,6 @@ import argparse
 import torch
 from torch.nn import Softplus
 
-from pina import LabelTensor
 from pina.model import FeedForward
 from pina.solvers import PINN
 from pina.plotter import Plotter
@@ -48,8 +47,7 @@ if __name__ == "__main__":
 
     if args.load:
         pinn = PINN.load_from_checkpoint(checkpoint_path=args.load, problem=problem, model=model)
-        trainer = Trainer(solver=pinn)
         plotter = Plotter()
-        plotter.plot(trainer)
+        plotter.plot(pinn)
     else:
         trainer.train()

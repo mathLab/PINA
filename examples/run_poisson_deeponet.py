@@ -1,120 +1,75 @@
 import argparse
-import logging
-
 import torch
-from problems.poisson import Poisson
-
-from pina import PINN, LabelTensor, Plotter
+from pina import Plotter, LabelTensor, Trainer
+from pina.solvers import PINN
 from pina.model import DeepONet, FeedForward
+from problems.parametric_poisson import ParametricPoisson
 
 
-class SinFeature(torch.nn.Module):
+class myFeature(torch.nn.Module):
     """
-    Feature: sin(x)
     """
-
-    def __init__(self, label):
-        super().__init__()
-
-        if not isinstance(label, (tuple, list)):
-            label = [label]
-        self._label = label
-
-    def forward(self, x):
-        """
-        Defines the computation performed at every call.
-
-        :param LabelTensor x: the input tensor.
-        :return: the output computed by the model.
-        :rtype: LabelTensor
-        """
-        t = torch.sin(x.extract(self._label) * torch.pi)
-        return LabelTensor(t, [f"sin({self._label})"])
-
-
-class myRBF(torch.nn.Module):
-    def __init__(self, input_):
-
-        super().__init__()
-
-        self.input_variables = [input_]
-        self.a = torch.nn.Parameter(torch.tensor([-.3]))
-        # self.b = torch.nn.Parameter(torch.tensor([0.5]))
-        self.b = torch.tensor([0.5])
-        self.c = torch.nn.Parameter(torch.tensor([.5]))
-
-    def forward(self, x):
-        x = x.extract(self.input_variables)
-        result = self.a * torch.exp(-(x - self.b)**2/(self.c**2))
-        return result
-
-
-class myModel(torch.nn.Module):
-    """ Model for the Poisson equation."""
-
     def __init__(self):
-
-        super().__init__()
-        self.ffn_x = myRBF('x')
-        self.ffn_y = myRBF('y')
+        super(myFeature, self).__init__()
 
     def forward(self, x):
-        result = self.ffn_x(x) * self.ffn_y(x)
-        result.labels = ['u']
-        return result
+        t = (
+            torch.exp(
+                - 2*(x.extract(['x']) - x.extract(['mu1']))**2
+                - 2*(x.extract(['y']) - x.extract(['mu2']))**2
+            )
+        )
+        return LabelTensor(t, ['k0'])
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run PINA")
-    parser.add_argument("-s", "--save", action="store_true")
-    parser.add_argument("-l", "--load", action="store_true")
-    parser.add_argument("id_run", help="Run ID", type=int)
 
-    parser.add_argument("--extra", help="Extra features", action="store_true")
+    parser = argparse.ArgumentParser(description="Run PINA")
+    parser.add_argument("--load", help="directory to save or load file", type=str)
+    parser.add_argument("--epochs", help="extra features", type=int, default=1000)
     args = parser.parse_args()
 
-    problem = Poisson()
 
-    # ffn_x = FeedForward(
-    #     input_variables=['x'], layers=[], output_variables=1,
-    #     func=torch.nn.Softplus,
-    #     extra_features=[SinFeature('x')]
-    # )
-    # ffn_y = FeedForward
-    #     input_variables=['y'], layers=[], output_variables=1,
-    #     func=torch.nn.Softplus,
-    #     extra_features=[SinFeature('y')]
-    # )
-    model = myModel()
-    test = torch.tensor([[0.0, 0.5]])
-    test.labels = ['x', 'y']
-    pinn = PINN(problem, model, lr=0.0001)
+    # create problem and discretise domain
+    ppoisson_problem = ParametricPoisson()
+    ppoisson_problem.discretise_domain(n=100, mode='random', variables = ['x', 'y'], locations=['D'])
+    ppoisson_problem.discretise_domain(n=100, mode='random', variables = ['mu1', 'mu2'], locations=['D'])
+    ppoisson_problem.discretise_domain(n=20, mode='random', variables = ['x', 'y'], locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    ppoisson_problem.discretise_domain(n=5, mode='random', variables = ['mu1', 'mu2'], locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 
-    if args.save:
-        pinn.span_pts(
-            20, "grid", locations=["gamma1", "gamma2", "gamma3", "gamma4"]
-        )
-        pinn.span_pts(20, "grid", locations=["D"])
-        while True:
-            pinn.train(500, 50)
-            print(model.ffn_x.a)
-            print(model.ffn_x.b)
-            print(model.ffn_x.c)
+    # create model
+    trunck = FeedForward(
+        layers=[40, 40],
+        output_dimensions=1,
+        input_dimensions=2,
+        func=torch.nn.ReLU
+    )
+    branch = FeedForward(
+        layers=[40, 40],
+        output_dimensions=1,
+        input_dimensions=2,
+        func=torch.nn.ReLU
+    )
+    model = DeepONet(branch_net=branch,
+                     trunk_net=trunck,
+                     input_indeces_branch_net=['x', 'y'],
+                     input_indeces_trunk_net=['mu1', 'mu2'])
 
-            xi = torch.linspace(0, 1, 64).reshape(-1,
-                                                  1).as_subclass(LabelTensor)
-            xi.labels = ['x']
-            yi = model.ffn_x(xi)
-            y_truth = -torch.sin(xi*torch.pi)
+    # create solver
+    pinn = PINN(
+        problem=ppoisson_problem,
+        model=model,
+        optimizer_kwargs={'lr' : 0.006}
+    )
 
-            import matplotlib.pyplot as plt
-            plt.plot(xi.detach().flatten(), yi.detach().flatten(), 'r-')
-            plt.plot(xi.detach().flatten(), y_truth.detach().flatten(), 'b-')
-            plt.plot(xi.detach().flatten(), -y_truth.detach().flatten(), 'b-')
-            plt.show()
-        pinn.save_state(f"pina.poisson_{args.id_run}")
+    # create trainer
+    directory = 'pina.parametric_poisson_deeponet'
+    trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=args.epochs, default_root_dir=directory)
+
 
     if args.load:
-        pinn.load_state(f"pina.poisson_{args.id_run}")
+        pinn = PINN.load_from_checkpoint(checkpoint_path=args.load, problem=ppoisson_problem, model=model)
         plotter = Plotter()
-        plotter.plot(pinn)
+        plotter.plot(pinn, fixed_variables={'mu1': 1, 'mu2': -1})
+    else:
+        trainer.train()

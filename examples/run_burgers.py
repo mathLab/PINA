@@ -1,4 +1,5 @@
 """ Run PINA on Burgers equation. """
+
 import argparse
 import torch
 from torch.nn import Softplus
@@ -60,14 +61,13 @@ if __name__ == "__main__":
     )
 
     # create trainer
-    directory = 'pina.burger.{}'.format(args.features)
+    directory = 'pina.burger_extrafeats_{}'.format(bool(args.features))
     trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=args.epochs, default_root_dir=directory)
 
 
     if args.load:
         pinn = PINN.load_from_checkpoint(checkpoint_path=args.load, problem=burgers_problem, model=model)
-        trainer = Trainer(solver=pinn)
         plotter = Plotter()
-        plotter.plot(trainer)
+        plotter.plot(pinn)
     else:
         trainer.train()
