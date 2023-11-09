@@ -20,7 +20,7 @@ class Equation(EquationInterface):
                              f'{equation}')
         self.__equation = equation
 
-    def residual(self, input_, output_, params_=None):
+    def residual(self, input_, output_, params_ = None):
         """
         Residual computation of the equation.
 
@@ -30,7 +30,8 @@ class Equation(EquationInterface):
         :return: The residual evaluation of the specified equation.
         :rtype: LabelTensor
         """
-        if params_ is not None:
-            return self.__equation(input_, output_, params_)
-        elif params_ is None:
-            return self.__equation(input_, output_)
+        if params_ is None:
+            result = self.__equation(input_, output_)
+        else:
+            result = self.__equation(input_, output_, params_)
+        return result

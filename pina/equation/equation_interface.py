@@ -13,7 +13,7 @@ class EquationInterface(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def residual(self):
+    def residual(self, input_, output_, params_):
         """
         Residual computation of the equation.
 

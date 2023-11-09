@@ -43,7 +43,7 @@ class SystemEquation(Equation):
             raise NotImplementedError(
                 'Only mean and sum reductions implemented.')
 
-    def residual(self, input_, output_):
+    def residual(self, input_, output_, params_=None):
         """
         Residual computation of the equation.
 
@@ -55,7 +55,7 @@ class SystemEquation(Equation):
         :rtype: LabelTensor
         """
         residual = torch.hstack(
-            [equation.residual(input_, output_) for equation in self.equations])
+            [equation.residual(input_, output_, params_) for equation in self.equations])
 
         if self.reduction == 'none':
             return residual

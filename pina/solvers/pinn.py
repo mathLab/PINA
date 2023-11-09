@@ -76,6 +76,12 @@ class PINN(SolverInterface):
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self._loss = loss
         self._neural_net = self.models[0]
+        
+        # inverse problem handling
+        if isinstance(self.problem, InverseProblem):
+            self._params = self.problem.unknown_parameters
+        else:
+            self._params = None
 
     def forward(self, x):
         """
@@ -100,22 +106,25 @@ class PINN(SolverInterface):
         # to the parameters that the optimizer needs to optimize
         if isinstance(self.problem, InverseProblem):
             self.optimizers[0].add_param_group(
-                {'params': [self.problem.unknown_parameters[var] for var in self.problem.unknown_variables]}
+                {'params': [self._params[var] for var in self.problem.unknown_variables]}
                 )
         return self.optimizers, [self.scheduler]
 
+    def _clamp_inverse_problem_params(self):
+        for v in self._params:
+            self._params[v].data.clamp_(
+                    self.problem.unknown_parameter_domain.range_[v][0],
+                    self.problem.unknown_parameter_domain.range_[v][1])
+                
     def _loss_data(self, input, output):
         return self.loss(self.forward(input), output)
-
 
     def _loss_phys(self, samples, equation):
         try:
             residual = equation.residual(samples, self.forward(samples))
-        except TypeError:
-            residual = equation.residual(samples, self.forward(samples),
-                params_=self.problem.unknown_parameters)
+        except TypeError: # this occurs when the function has three inputs, i.e. inverse problem
+            residual = equation.residual(samples, self.forward(samples), self._params)
         return self.loss(torch.zeros_like(residual, requires_grad=True), residual)
-
 
     def training_step(self, batch, batch_idx):
         """
@@ -150,7 +159,7 @@ class PINN(SolverInterface):
             else:
                 raise ValueError("Batch size not supported")
 
-            # TODO for users this us hard to remebeber when creating a new solver, to fix in a smarter way
+            # TODO for users this us hard to remember when creating a new solver, to fix in a smarter way
             loss = loss.as_subclass(torch.Tensor)
 
 #            # add condition losses and accumulate logging for each epoch
@@ -158,18 +167,15 @@ class PINN(SolverInterface):
             self.log(condition_name + '_loss', float(loss),
                      prog_bar=True, logger=True, on_epoch=True, on_step=False)
 
+        # clamp unknown parameters of the InverseProblem to their domain ranges (if needed)
+        if isinstance(self.problem, InverseProblem):    
+            self._clamp_inverse_problem_params()
+
         # TODO Fix the bug, tot_loss is a label tensor without labels
         # we need to pass it as a torch tensor to make everything work
         total_loss = sum(condition_losses)
         self.log('mean_loss', float(total_loss / len(condition_losses)),
                  prog_bar=True, logger=True, on_epoch=True, on_step=False)
-        # clamp unknown parameters of the InverseProblem to their domain ranges
-        if isinstance(self.problem, InverseProblem):
-            for v in self.problem.unknown_variables:
-                self.problem.unknown_parameters[v].data.clamp_(
-                        self.problem.unknown_parameter_domain.range_[v][0],
-                        self.problem.unknown_parameter_domain.range_[v][1])
-
 
         return total_loss
 
