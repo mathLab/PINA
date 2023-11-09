@@ -44,8 +44,8 @@ taken from the authors original reference.
     data = io.loadmat("Data_Darcy.mat")
     
     # extract data (we use only 100 data for train)
-    k_train = torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1)[:100, ...]
-    u_train = torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1)[:100, ...]
+    k_train = torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1)
+    u_train = torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1)
     k_test = torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1)
     u_test= torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1)
     x = torch.tensor(data['x'], dtype=torch.float)[0]
@@ -77,7 +77,7 @@ inheriting from ``AbstractProblem``.
         input_variables = ['u_0']
         output_variables = ['u']
         conditions = {'data' : Condition(input_points=LabelTensor(k_train, input_variables), 
-                                         output_points=LabelTensor(u_train, input_variables))}
+                                         output_points=LabelTensor(u_train, output_variables))}
     
     # make problem
     problem = NeuralOperatorSolver()
@@ -99,7 +99,7 @@ training using supervised learning.
     solver = SupervisedSolver(problem=problem, model=model)
     
     # make the trainer and train
-    trainer = Trainer(solver=solver, max_epochs=100, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+    trainer = Trainer(solver=solver, max_epochs=10, accelerator='cpu', enable_model_summary=False, batch_size=10) # we train on CPU and avoid model summary at beginning of training (optional)
     trainer.train()
 
 
@@ -112,15 +112,18 @@ training using supervised learning.
     HPU available: False, using: 0 HPUs
 
 
+.. parsed-literal::
+
+    Epoch 9: : 100it [00:00, 383.36it/s, v_num=36, mean_loss=0.108]
 
 .. parsed-literal::
 
-    Training: 0it [00:00, ?it/s]
+    `Trainer.fit` stopped: `max_epochs=10` reached.
 
 
 .. parsed-literal::
 
-    `Trainer.fit` stopped: `max_epochs=100` reached.
+    Epoch 9: : 100it [00:00, 380.57it/s, v_num=36, mean_loss=0.108]
 
 
 The final loss is pretty high… We can calculate the error by importing
@@ -143,8 +146,8 @@ The final loss is pretty high… We can calculate the error by importing
 
 .. parsed-literal::
 
-    Final error training 56.24%
-    Final error testing 55.95%
+    Final error training 56.04%
+    Final error testing 56.01%
 
 
 Solving the problem with a Fuorier Neural Operator (FNO)
@@ -170,7 +173,7 @@ operator this approach is better suited, as we shall see.
     solver = SupervisedSolver(problem=problem, model=model)
     
     # make the trainer and train
-    trainer = Trainer(solver=solver, max_epochs=100, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+    trainer = Trainer(solver=solver, max_epochs=10, accelerator='cpu', enable_model_summary=False, batch_size=10) # we train on CPU and avoid model summary at beginning of training (optional)
     trainer.train()
 
 
@@ -183,15 +186,18 @@ operator this approach is better suited, as we shall see.
     HPU available: False, using: 0 HPUs
 
 
+.. parsed-literal::
+
+    Epoch 9: : 100it [00:04, 22.13it/s, v_num=37, mean_loss=0.000952]
 
 .. parsed-literal::
 
-    Training: 0it [00:00, ?it/s]
+    `Trainer.fit` stopped: `max_epochs=10` reached.
 
 
 .. parsed-literal::
 
-    `Trainer.fit` stopped: `max_epochs=100` reached.
+    Epoch 9: : 100it [00:04, 22.07it/s, v_num=37, mean_loss=0.000952]
 
 
 We can clearly see that the final loss is lower. Let’s see in testing..
@@ -210,8 +216,8 @@ training, when many data samples are used.
 
 .. parsed-literal::
 
-    Final error training 10.86%
-    Final error testing 12.77%
+    Final error training 4.45%
+    Final error testing 4.91%
 
 
 As we can see the loss is way lower!
