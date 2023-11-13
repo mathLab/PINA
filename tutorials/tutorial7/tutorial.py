@@ -3,14 +3,14 @@
 
 # # Tutorial 7: Resolution of an inverse problem
 
-# ### Problem definition
+# ### Introduction to the inverse problem
 
 # This tutorial shows how to solve an inverse Poisson problem with Physics-Informed Neural Networks. The problem definition is that of a Poisson problem with homogeneous boundary conditions and it reads:
 # \begin{equation}
-# \begin{cases}\\
-# \Delta u = \exp{-2(x-\mu_1)^2-2(y-\mu_2)^2} \text{ in } \Omega\, ,\\
+# \begin{cases}
+# \Delta u = e^{-2(x-\mu_1)^2-2(y-\mu_2)^2} \text{ in } \Omega\, ,\\
 # u = 0 \text{ on }\partial \Omega,\\
-# u(\mu_1, \mu_2) = \text{ data},
+# u(\mu_1, \mu_2) = \text{ data}
 # \end{cases}
 # \end{equation}
 # where $\Omega$ is a square domain $[-2, 2] \times [-2, 2]$, and $\partial \Omega=\Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4$ is the union of the boundaries of the domain.
@@ -23,48 +23,49 @@
 
 # Let's start with useful imports.
 
-# In[2]:
+# In[1]:
 
 
 import matplotlib.pyplot as plt
 import torch
-from torch.nn import Softplus
 from pytorch_lightning.callbacks import Callback
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
 from pina.model import FeedForward
 from pina.equation import Equation, FixedValue
-from pina import Condition, LabelTensor, Trainer
+from pina import Condition, Trainer
 from pina.solvers import PINN
 from pina.geometry import CartesianDomain
 
 
 # Then, we import the pre-saved data, for ($\mu_1$, $\mu_2$)=($0.5$, $0.5$). These two values are the optimal parameters that we want to find through the neural network training. In particular, we import the `input_points`(the spatial coordinates), and the `output_points` (the corresponding $u$ values evaluated at the `input_points`).
 
-# In[ ]:
+# In[2]:
 
 
-data_output = torch.load('data/pinn_solution_0.5_0.5')
+data_output = torch.load('data/pinn_solution_0.5_0.5').detach()
 data_input = torch.load('data/pts_0.5_0.5')
 
 
 # Moreover, let's plot also the data points and the reference solution: this is the expected output of the neural network.
 
-# In[ ]:
+# In[3]:
 
 
 points = data_input.extract(['x', 'y']).detach().numpy()
 truth = data_output.detach().numpy()
-plt.scatter(points[:, 0], points[:, 1], c=truth)
+
+plt.scatter(points[:, 0], points[:, 1], c=truth, s=8)
 plt.axis('equal')
 plt.colorbar()
 plt.show()
 
 
-# Then, we initialize the Poisson problem, that is inherited from the `SpatialProblem` and from the `InverseProblem` classes. We here have to define all the variables, and the domain where our unknown parameters ($\mu_1$, $\mu_2$) belong.
-# In the following class, the equation with the unknown parameters is inherited from the class `Equation`. Differently from the standard `Equation`, it takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
+# ### Inverse problem definition in PINA
 
-# In[ ]:
+# Then, we initialize the Poisson problem, that is inherited from the `SpatialProblem` and from the `InverseProblem` classes. We here have to define all the variables, and the domain where our unknown parameters ($\mu_1$, $\mu_2$) belong. Notice that the laplace equation takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
+
+# In[4]:
 
 
 ### Define ranges of variables
@@ -116,14 +117,14 @@ class Poisson(SpatialProblem, InverseProblem):
 problem = Poisson()
 
 
-# Then, we define the model of the neural network we want to use, here a simple `FeedForward`.
+# Then, we define the model of the neural network we want to use. Here we used a model which impose hard constrains on the boundary conditions, as also done in the Wave tutorial!
 
-# In[ ]:
+# In[5]:
 
 
 model = FeedForward(
     layers=[20, 20, 20],
-    func=Softplus,
+    func=torch.nn.Softplus,
     output_dimensions=len(problem.output_variables),
     input_dimensions=len(problem.input_variables)
     )
@@ -131,17 +132,18 @@ model = FeedForward(
 
 # After that, we discretize the spatial domain.
 
-# In[ ]:
+# In[6]:
 
 
-problem.discretise_domain(100, 'grid', locations=['D'], variables=['x', 'y'])
-problem.discretise_domain(100, 'grid', locations=['gamma1', 'gamma2',
+problem.discretise_domain(20, 'grid', locations=['D'], variables=['x', 'y'])
+problem.discretise_domain(1000, 'random', locations=['gamma1', 'gamma2',
     'gamma3', 'gamma4'], variables=['x', 'y'])
 
 
-# Here, we define a simple callback for the trainer, that will be used to save the parameters in a directory, such that we can then plot how their trend across the epochs.
+# Here, we define a simple callback for the trainer. We use this callback to save the parameters predicted by the neural network during the training. The parameters are saved every 100 epochs as `torch` tensors in a specified directory (`tmp_dir` in our case).
+# The goal is to read the saved parameters after training and plot their trend across the epochs.
 
-# In[ ]:
+# In[7]:
 
 
 # temporary directory for saving logs of training
@@ -153,17 +155,17 @@ class SaveParameters(Callback):
     '''
     def on_train_epoch_end(self, trainer, __):
         if trainer.current_epoch % 100 == 99:
-            torch.save(pinn.problem.unknown_parameters, '{}/parameters_epoch{}'.format(tmp_dir, trainer.current_epoch))
+            torch.save(trainer.solver.problem.unknown_parameters, '{}/parameters_epoch{}'.format(tmp_dir, trainer.current_epoch))
 
 
-# Then, we define the `PINN` object that we train the neural network.
+# Then, we define the `PINN` object and train the solver using the `Trainer`.
 
-# In[ ]:
+# In[8]:
 
 
 ### train the problem with PINN
-max_epochs = 200
-pinn = PINN(problem, model, optimizer_kwargs={'lr':0.001})
+max_epochs = 5000
+pinn = PINN(problem, model, optimizer_kwargs={'lr':0.005})
 # define the trainer for the solver
 trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=max_epochs,
         default_root_dir=tmp_dir, callbacks=[SaveParameters()])
@@ -172,7 +174,7 @@ trainer.train()
 
 # One can now see how the parameters vary during the training by reading the saved solution and plotting them. The plot shows that the parameters stabilize to their true value before reaching the epoch $1000$!
 
-# In[ ]:
+# In[9]:
 
 
 epochs_saved = range(99, max_epochs, 100)
