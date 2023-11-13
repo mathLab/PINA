@@ -13,8 +13,7 @@ First of all we import the modules needed for the tutorial. Importing
     from scipy import io
     import torch
     from pina.model import FNO, FeedForward  # let's import some models
-    from pina import Condition
-    from pina import LabelTensor
+    from pina import Condition, LabelTensor
     from pina.solvers import SupervisedSolver
     from pina.trainer import Trainer
     from pina.problem import AbstractProblem
@@ -44,10 +43,10 @@ taken from the authors original reference.
     data = io.loadmat("Data_Darcy.mat")
     
     # extract data (we use only 100 data for train)
-    k_train = torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1)
-    u_train = torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1)
-    k_test = torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1)
-    u_test= torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1)
+    k_train = LabelTensor(torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1), ['u0'])
+    u_train = LabelTensor(torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1), ['u'])
+    k_test =  LabelTensor(torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1), ['u0'])
+    u_test= LabelTensor(torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1), ['u'])
     x = torch.tensor(data['x'], dtype=torch.float)[0]
     y = torch.tensor(data['y'], dtype=torch.float)[0]
 
@@ -74,10 +73,10 @@ inheriting from ``AbstractProblem``.
 .. code:: ipython3
 
     class NeuralOperatorSolver(AbstractProblem):
-        input_variables = ['u_0']
-        output_variables = ['u']
-        conditions = {'data' : Condition(input_points=LabelTensor(k_train, input_variables), 
-                                         output_points=LabelTensor(u_train, output_variables))}
+        input_variables = k_train.labels
+        output_variables = u_train.labels
+        conditions = {'data' : Condition(input_points=k_train, 
+                                         output_points=u_train)}
     
     # make problem
     problem = NeuralOperatorSolver()
@@ -114,7 +113,7 @@ training using supervised learning.
 
 .. parsed-literal::
 
-    Epoch 9: : 100it [00:00, 383.36it/s, v_num=36, mean_loss=0.108]
+    Epoch 9: : 100it [00:00, 357.28it/s, v_num=1, mean_loss=0.108]
 
 .. parsed-literal::
 
@@ -123,7 +122,7 @@ training using supervised learning.
 
 .. parsed-literal::
 
-    Epoch 9: : 100it [00:00, 380.57it/s, v_num=36, mean_loss=0.108]
+    Epoch 9: : 100it [00:00, 354.81it/s, v_num=1, mean_loss=0.108]
 
 
 The final loss is pretty high… We can calculate the error by importing
@@ -137,10 +136,10 @@ The final loss is pretty high… We can calculate the error by importing
     metric_err = LpLoss(relative=True)
     
     
-    err = float(metric_err(u_train.squeeze(-1), solver.models[0](k_train).squeeze(-1)).mean())*100
+    err = float(metric_err(u_train.squeeze(-1), solver.neural_net(k_train).squeeze(-1)).mean())*100
     print(f'Final error training {err:.2f}%')
     
-    err = float(metric_err(u_test.squeeze(-1), solver.models[0](k_test).squeeze(-1)).mean())*100
+    err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)).mean())*100
     print(f'Final error testing {err:.2f}%')
 
 
@@ -163,10 +162,10 @@ operator this approach is better suited, as we shall see.
     projecting_net = torch.nn.Linear(24, 1)
     model = FNO(lifting_net=lifting_net,
                 projecting_net=projecting_net,
-                n_modes=16,
+                n_modes=8,
                 dimensions=2,
                 inner_size=24,
-                padding=11)
+                padding=8)
     
     
     # make solver
@@ -188,7 +187,7 @@ operator this approach is better suited, as we shall see.
 
 .. parsed-literal::
 
-    Epoch 9: : 100it [00:04, 22.13it/s, v_num=37, mean_loss=0.000952]
+    Epoch 0: : 0it [00:00, ?it/s]Epoch 9: : 100it [00:02, 47.76it/s, v_num=4, mean_loss=0.00106] 
 
 .. parsed-literal::
 
@@ -197,7 +196,7 @@ operator this approach is better suited, as we shall see.
 
 .. parsed-literal::
 
-    Epoch 9: : 100it [00:04, 22.07it/s, v_num=37, mean_loss=0.000952]
+    Epoch 9: : 100it [00:02, 47.65it/s, v_num=4, mean_loss=0.00106]
 
 
 We can clearly see that the final loss is lower. Let’s see in testing..
@@ -207,17 +206,17 @@ training, when many data samples are used.
 
 .. code:: ipython3
 
-    err = float(metric_err(u_train.squeeze(-1), solver.models[0](k_train).squeeze(-1)).mean())*100
+    err = float(metric_err(u_train.squeeze(-1), solver.neural_net(k_train).squeeze(-1)).mean())*100
     print(f'Final error training {err:.2f}%')
     
-    err = float(metric_err(u_test.squeeze(-1), solver.models[0](k_test).squeeze(-1)).mean())*100
+    err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)).mean())*100
     print(f'Final error testing {err:.2f}%')
 
 
 .. parsed-literal::
 
-    Final error training 4.45%
-    Final error testing 4.91%
+    Final error training 4.83%
+    Final error testing 5.16%
 
 
 As we can see the loss is way lower!
