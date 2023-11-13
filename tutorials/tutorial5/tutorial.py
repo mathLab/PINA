@@ -6,15 +6,14 @@
 # In this tutorial we are going to solve the Darcy flow problem in two dimensions, presented in [*Fourier Neural Operator for
 # Parametric Partial Differential Equation*](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input output operations.
 
-# In[11]:
+# In[1]:
 
 
 # !pip install scipy  # install scipy
 from scipy import io
 import torch
 from pina.model import FNO, FeedForward  # let's import some models
-from pina import Condition
-from pina import LabelTensor
+from pina import Condition, LabelTensor
 from pina.solvers import SupervisedSolver
 from pina.trainer import Trainer
 from pina.problem import AbstractProblem
@@ -39,10 +38,10 @@ import matplotlib.pyplot as plt
 data = io.loadmat("Data_Darcy.mat")
 
 # extract data (we use only 100 data for train)
-k_train = torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1)
-u_train = torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1)
-k_test = torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1)
-u_test= torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1)
+k_train = LabelTensor(torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1), ['u0'])
+u_train = LabelTensor(torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1), ['u'])
+k_test =  LabelTensor(torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1), ['u0'])
+u_test= LabelTensor(torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1), ['u'])
 x = torch.tensor(data['x'], dtype=torch.float)[0]
 y = torch.tensor(data['y'], dtype=torch.float)[0]
 
@@ -63,14 +62,14 @@ plt.show()
 
 # We now create the neural operator class. It is a very simple class, inheriting from `AbstractProblem`.
 
-# In[14]:
+# In[17]:
 
 
 class NeuralOperatorSolver(AbstractProblem):
-    input_variables = ['u_0']
-    output_variables = ['u']
-    conditions = {'data' : Condition(input_points=LabelTensor(k_train, input_variables), 
-                                     output_points=LabelTensor(u_train, output_variables))}
+    input_variables = k_train.labels
+    output_variables = u_train.labels
+    conditions = {'data' : Condition(input_points=k_train, 
+                                     output_points=u_train)}
 
 # make problem
 problem = NeuralOperatorSolver()
@@ -80,7 +79,7 @@ problem = NeuralOperatorSolver()
 # 
 # We will first solve the problem using a Feedforward neural network. We will use the `SupervisedSolver` for solving the problem, since we are training using supervised learning.
 
-# In[15]:
+# In[18]:
 
 
 # make model
@@ -97,7 +96,7 @@ trainer.train()
 
 # The final loss is pretty high... We can calculate the error by importing `LpLoss`.
 
-# In[16]:
+# In[19]:
 
 
 from pina.loss import LpLoss
@@ -106,10 +105,10 @@ from pina.loss import LpLoss
 metric_err = LpLoss(relative=True)
 
 
-err = float(metric_err(u_train.squeeze(-1), solver.models[0](k_train).squeeze(-1)).mean())*100
+err = float(metric_err(u_train.squeeze(-1), solver.neural_net(k_train).squeeze(-1)).mean())*100
 print(f'Final error training {err:.2f}%')
 
-err = float(metric_err(u_test.squeeze(-1), solver.models[0](k_test).squeeze(-1)).mean())*100
+err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)).mean())*100
 print(f'Final error testing {err:.2f}%')
 
 
@@ -117,7 +116,7 @@ print(f'Final error testing {err:.2f}%')
 # 
 # We will now move to solve the problem using a FNO. Since we are learning operator this approach is better suited, as we shall see.
 
-# In[17]:
+# In[24]:
 
 
 # make model
@@ -125,10 +124,10 @@ lifting_net = torch.nn.Linear(1, 24)
 projecting_net = torch.nn.Linear(24, 1)
 model = FNO(lifting_net=lifting_net,
             projecting_net=projecting_net,
-            n_modes=16,
+            n_modes=8,
             dimensions=2,
             inner_size=24,
-            padding=11)
+            padding=8)
 
 
 # make solver
@@ -141,13 +140,13 @@ trainer.train()
 
 # We can clearly see that the final loss is lower. Let's see in testing.. Notice that the number of parameters is way higher than a `FeedForward` network. We suggest to use GPU or TPU for a speed up in training, when many data samples are used.
 
-# In[18]:
+# In[25]:
 
 
-err = float(metric_err(u_train.squeeze(-1), solver.models[0](k_train).squeeze(-1)).mean())*100
+err = float(metric_err(u_train.squeeze(-1), solver.neural_net(k_train).squeeze(-1)).mean())*100
 print(f'Final error training {err:.2f}%')
 
-err = float(metric_err(u_test.squeeze(-1), solver.models[0](k_test).squeeze(-1)).mean())*100
+err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)).mean())*100
 print(f'Final error testing {err:.2f}%')
 
 
