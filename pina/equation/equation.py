@@ -25,8 +25,16 @@ class Equation(EquationInterface):
         Residual computation of the equation.
 
         :param LabelTensor input_: Input points to evaluate the equation.
-        :param LabelTensor output_: Output vectors given by my model (e.g,
+        :param LabelTensor output_: Output vectors given by a model (e.g,
             a ``FeedForward`` model).
+        :param dict params_: Dictionary of parameters related to the inverse
+            problem (if any).
+            If the equation is not related to an ``InverseProblem``, the
+            parameters are initialized to ``None`` and the residual is
+            computed as ``equation(input_, output_)``.
+            Otherwise, the parameters are automatically initialized in the
+            ranges specified by the user.
+
         :return: The residual evaluation of the specified equation.
         :rtype: LabelTensor
         """
