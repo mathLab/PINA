@@ -1,9 +1,11 @@
-import numpy as np
-import torch
+""" Navier Stokes Problem """
 
+import torch
 from pina.problem import SpatialProblem
 from pina.operators import laplacian, grad, div
-from pina import Condition, Span, LabelTensor
+from pina import Condition, LabelTensor
+from pina.geometry import CartesianDomain
+from pina.equation import SystemEquation, Equation
 
 # ===================================================== #
 #                                                       #
@@ -21,7 +23,7 @@ class Stokes(SpatialProblem):
 
     # assign output/ spatial variables
     output_variables = ['ux', 'uy', 'p']
-    spatial_domain = Span({'x': [-2, 2], 'y': [-1, 1]})
+    spatial_domain = CartesianDomain({'x': [-2, 2], 'y': [-1, 1]})
 
     # define the momentum equation
     def momentum(input_, output_):
@@ -49,17 +51,9 @@ class Stokes(SpatialProblem):
 
     # problem condition statement
     conditions = {
-        'gamma_top': Condition(location=Span({'x': [-2, 2], 'y':  1}), function=wall),
-        'gamma_bot': Condition(location=Span({'x': [-2, 2], 'y': -1}), function=wall),
-        'gamma_out': Condition(location=Span({'x':  2, 'y': [-1, 1]}), function=outlet),
-        'gamma_in':  Condition(location=Span({'x': -2, 'y': [-1, 1]}), function=inlet),
-        'D1': Condition(location=Span({'x': [-2, 2], 'y': [-1, 1]}), function=momentum),
-        'D2': Condition(location=Span({'x': [-2, 2], 'y': [-1, 1]}), function=continuity),
+        'gamma_top': Condition(location=CartesianDomain({'x': [-2, 2], 'y':  1}), equation=Equation(wall)),
+        'gamma_bot': Condition(location=CartesianDomain({'x': [-2, 2], 'y': -1}), equation=Equation(wall)),
+        'gamma_out': Condition(location=CartesianDomain({'x':  2, 'y': [-1, 1]}), equation=Equation(outlet)),
+        'gamma_in':  Condition(location=CartesianDomain({'x': -2, 'y': [-1, 1]}), equation=Equation(inlet)),
+        'D': Condition(location=CartesianDomain({'x': [-2, 2], 'y': [-1, 1]}), equation=SystemEquation([momentum, continuity]))
     }
-    # conditions = {
-    #     'gamma_top': Condition(location=Span({'x': [-2, 2], 'y':  1}), function=wall),
-    #     'gamma_bot': Condition(location=Span({'x': [-2, 2], 'y': -1}), function=wall),
-    #     'gamma_out': Condition(location=Span({'x':  2, 'y': [-1, 1]}), function=outlet),
-    #     'gamma_in':  Condition(location=Span({'x': -2, 'y': [-1, 1]}), function=inlet),
-    #     'D': Condition(location=Span({'x': [-2, 2], 'y': [-1, 1]}), function=[momentum, continuity]),
-    # }

@@ -1,7 +1,8 @@
 import argparse
 import torch
 from torch.nn import Softplus
-from pina import Plotter, LabelTensor, PINN
+from pina import Plotter, LabelTensor, Trainer
+from pina.solvers import PINN
 from pina.model import FeedForward
 from problems.parametric_poisson import ParametricPoisson
 
@@ -25,41 +26,48 @@ class myFeature(torch.nn.Module):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Run PINA")
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-s", "-save", action="store_true")
-    group.add_argument("-l", "-load", action="store_true")
-    parser.add_argument("id_run", help="number of run", type=int)
-    parser.add_argument("features", help="extra features", type=int)
+    parser.add_argument("--load", help="directory to save or load file", type=str)
+    parser.add_argument("--features", help="extra features", type=int)
+    parser.add_argument("--epochs", help="extra features", type=int, default=1000)
     args = parser.parse_args()
 
+    if args.features is None:
+        args.features = 0
+
+    # extra features
     feat = [myFeature()] if args.features else []
 
-    poisson_problem = ParametricPoisson()
+    # create problem and discretise domain
+    ppoisson_problem = ParametricPoisson()
+    ppoisson_problem.discretise_domain(n=100, mode='random', variables = ['x', 'y'], locations=['D'])
+    ppoisson_problem.discretise_domain(n=100, mode='random', variables = ['mu1', 'mu2'], locations=['D'])
+    ppoisson_problem.discretise_domain(n=20, mode='random', variables = ['x', 'y'], locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    ppoisson_problem.discretise_domain(n=5, mode='random', variables = ['mu1', 'mu2'], locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+
+    # create model
     model = FeedForward(
         layers=[10, 10, 10],
-        output_variables=poisson_problem.output_variables,
-        input_variables=poisson_problem.input_variables,
-        func=Softplus,
-        extra_features=feat
+        output_dimensions=len(ppoisson_problem.output_variables),
+        input_dimensions=len(ppoisson_problem.input_variables) + len(feat),
+        func=Softplus
     )
 
-    pinn = PINN(poisson_problem, model, lr=0.006, regularizer=1e-6)
+    # create solver
+    pinn = PINN(
+        problem=ppoisson_problem,
+        model=model,
+        extra_features=feat,
+        optimizer_kwargs={'lr' : 0.006}
+    )
 
-    if args.s:
+    # create trainer
+    directory = 'pina.parametric_poisson_extrafeats_{}'.format(bool(args.features))
+    trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=args.epochs, default_root_dir=directory)
 
-        pinn.span_pts(
-            {'variables': ['x', 'y'], 'mode': 'random', 'n': 100},
-            {'variables': ['mu1', 'mu2'], 'mode': 'grid', 'n': 5},
-            locations=['D'])
-        pinn.span_pts(
-            {'variables': ['x', 'y'], 'mode': 'grid', 'n': 20},
-            {'variables': ['mu1', 'mu2'], 'mode': 'grid', 'n': 5},
-            locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-        pinn.train(10000, 100)
-        pinn.save_state('pina.poisson_param')
 
-    else:
-        pinn.load_state('pina.poisson_param')
+    if args.load:
+        pinn = PINN.load_from_checkpoint(checkpoint_path=args.load, problem=ppoisson_problem, model=model, extra_features=feat)
         plotter = Plotter()
-        plotter.plot(pinn, fixed_variables={'mu1': 0, 'mu2': 1}, levels=21)
-        plotter.plot(pinn, fixed_variables={'mu1': 1, 'mu2': -1}, levels=21)
+        plotter.plot(pinn, fixed_variables={'mu1': 1, 'mu2': -1})
+    else:
+        trainer.train()
