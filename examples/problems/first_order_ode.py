@@ -1,7 +1,5 @@
-from pina.problem import SpatialProblem
-from pina import Condition, Span
-from pina.operators import grad
-import torch
+""" Simple ODE problem. """
+
 
 # ===================================================== #
 #                                                       #
@@ -11,27 +9,34 @@ import torch
 #           y --> field variable                        #
 #           x --> spatial variable                      #
 #                                                       #
+#  The equation is:                                     #
+#           dy(x)/dx + y(x) = x                         #
+#                                                       #
 # ===================================================== #
+
+
+from pina.problem import SpatialProblem
+from pina import Condition
+from pina.geometry import CartesianDomain
+from pina.operators import grad
+from pina.equation import Equation, FixedValue
+import torch
+
 
 class FirstOrderODE(SpatialProblem):
 
     # variable domain range
-    x_rng = [0, 5]
+    x_rng = [0., 5.]
     # field variable
     output_variables = ['y']
     # create domain
-    spatial_domain = Span({'x': x_rng})
+    spatial_domain = CartesianDomain({'x': x_rng})
 
     # define the ode
     def ode(input_, output_):
         y = output_
         x = input_
         return grad(y, x) + y - x
-
-    # define initial conditions
-    def fixed(input_, output_):
-        exp_value = 1.
-        return output_ - exp_value
 
     # define real solution
     def solution(self, input_):
@@ -40,7 +45,8 @@ class FirstOrderODE(SpatialProblem):
 
     # define problem conditions
     conditions = {
-        'bc': Condition(location=Span({'x': x_rng[0]}), function=fixed),
-        'dd': Condition(location=Span({'x': x_rng}), function=ode),
+        'BC': Condition(location=CartesianDomain({'x': x_rng[0]}), equation=FixedValue(1.)),
+        'D': Condition(location=CartesianDomain({'x': x_rng}), equation=Equation(ode)),
     }
+
     truth_solution = solution

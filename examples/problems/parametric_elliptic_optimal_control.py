@@ -1,52 +1,80 @@
-import numpy as np
-import torch
-from pina.segment import Segment
-from pina.cube import Cube
-from pina.problem2d import Problem2D
-
-xmin, xmax, ymin, ymax = -1, 1, -1, 1
-
-class ParametricEllipticOptimalControl(Problem2D):
-
-    def __init__(self, alpha=1):
-
-        def term1(input_, param_, output_):
-            grad_p = self.grad(output_['p'], input_)
-            gradgrad_p_x1 = self.grad(grad_p['x1'], input_)
-            gradgrad_p_x2 = self.grad(grad_p['x2'], input_)
-            return output_['y'] - param_ - (gradgrad_p_x1['x1'] + gradgrad_p_x2['x2'])
-
-        def term2(input_, param_, output_):
-            grad_y = self.grad(output_['y'], input_)
-            gradgrad_y_x1 = self.grad(grad_y['x1'], input_)
-            gradgrad_y_x2 = self.grad(grad_y['x2'], input_)
-            return - (gradgrad_y_x1['x1'] + gradgrad_y_x2['x2']) - output_['u_param']
-
-        def term3(input_, param_, output_):
-            return output_['p'] - output_['u_param']*alpha
+""" Poisson OCP problem. """
 
 
-        def term(input_, param_, output_):
-            return term1( input_, param_, output_)  +term2( input_, param_, output_) + term3( input_, param_, output_)
+from pina import Condition
+from pina.geometry import CartesianDomain
+from pina.equation import SystemEquation, FixedValue
+from pina.problem import SpatialProblem, ParametricProblem
+from pina.operators import laplacian
 
-        def nil_dirichlet(input_, param_, output_):
-            y_value = 0.0
-            p_value = 0.0
-            return torch.abs(output_['y'] - y_value) + torch.abs(output_['p'] - p_value)
+# ===================================================== #
+#                                                       #
+#  This script implements the two dimensional           #
+#  Parametric Elliptic Optimal Control problem.         #
+#  The ParametricEllipticOptimalControl class is        #
+#  inherited from TimeDependentProblem, SpatialProblem  #
+#  and we denote:                                       #
+#           u --> field variable                        #
+#           p --> field variable                        #
+#           y --> field variable                        #
+#           x1, x2 --> spatial variables                #
+#           mu, alpha --> problem parameters            #
+#                                                       #
+#  More info in https://arxiv.org/pdf/2110.13530.pdf    #
+#  Section 4.2 of the article                           #
+# ===================================================== #
 
-        self.conditions = {
-            'gamma1': {'location': Segment((xmin, ymin), (xmax, ymin)), 'func': nil_dirichlet},
-            'gamma2': {'location': Segment((xmax, ymin), (xmax, ymax)), 'func': nil_dirichlet},
-            'gamma3': {'location': Segment((xmax, ymax), (xmin, ymax)), 'func': nil_dirichlet},
-            'gamma4': {'location': Segment((xmin, ymax), (xmin, ymin)), 'func': nil_dirichlet},
-            'D1': {'location': Cube([[xmin, xmax], [ymin, ymax]]), 'func': term},
-            #'D2': {'location': Cube([[0, 1], [0, 1]]), 'func': term2},
-            #'D3': {'location': Cube([[0, 1], [0, 1]]), 'func': term3}
-        }
 
-        self.input_variables = ['x1', 'x2']
-        self.output_variables = ['u', 'p', 'y']
-        self.parameters = ['mu']
-        self.spatial_domain = Cube([[xmin, xmax], [xmin, xmax]])
-        self.parameter_domain = np.array([[0.5, 3]])
+class ParametricEllipticOptimalControl(SpatialProblem, ParametricProblem):
 
+    # setting spatial variables ranges
+    xmin, xmax, ymin, ymax = -1, 1, -1, 1
+    x_range = [xmin, xmax]
+    y_range = [ymin, ymax]
+    # setting parameters range
+    amin, amax = 0.0001, 1
+    mumin, mumax = 0.5, 3
+    mu_range = [mumin, mumax]
+    a_range = [amin, amax]
+    # setting field variables
+    output_variables = ['u', 'p', 'y']
+    # setting spatial and parameter domain
+    spatial_domain = CartesianDomain({'x1': x_range, 'x2': y_range})
+    parameter_domain = CartesianDomain({'mu': mu_range, 'alpha': a_range})
+
+    # equation terms as in https://arxiv.org/pdf/2110.13530.pdf
+    def term1(input_, output_):
+        laplace_p = laplacian(output_, input_, components=['p'], d=['x1', 'x2'])
+        return output_.extract(['y']) - input_.extract(['mu']) - laplace_p
+
+    def term2(input_, output_):
+        laplace_y = laplacian(output_, input_, components=['y'], d=['x1', 'x2'])
+        return - laplace_y - output_.extract(['u'])
+    
+    def fixed_y(input_, output_):
+        return output_.extract(['y'])
+
+    def fixed_p(input_, output_):
+        return output_.extract(['p']) 
+
+    # setting problem condition formulation
+    conditions = {
+        'gamma1': Condition(
+            location=CartesianDomain({'x1': x_range, 'x2':  1, 'mu': mu_range, 'alpha': a_range}),
+            equation=SystemEquation([fixed_y, fixed_p])),
+        'gamma2': Condition(
+            location=CartesianDomain({'x1': x_range, 'x2': -1, 'mu': mu_range, 'alpha': a_range}),
+            equation=SystemEquation([fixed_y, fixed_p])),
+        'gamma3': Condition(
+            location=CartesianDomain({'x1':  1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
+            equation=SystemEquation([fixed_y, fixed_p])),
+        'gamma4': Condition(
+            location=CartesianDomain({'x1': -1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
+            equation=SystemEquation([fixed_y, fixed_p])),
+        'D': Condition(
+            location=CartesianDomain(
+                {'x1': x_range, 'x2': y_range,
+                'mu': mu_range, 'alpha': a_range
+                }),
+            equation=SystemEquation([term1, term2])),
+    }

@@ -1,12 +1,13 @@
+""" Run PINA on ODE equation. """
 import argparse
-import sys
-import numpy as np
 import torch
-from torch.nn import ReLU, Tanh, Softplus
+from torch.nn import Softplus
 
-from pina import PINN, LabelTensor, Plotter
+from pina import LabelTensor 
 from pina.model import FeedForward
-from pina.adaptive_functions import AdaptiveSin, AdaptiveCos, AdaptiveTanh
+from pina.solvers import PINN
+from pina.plotter import Plotter
+from pina.trainer import Trainer
 from problems.poisson import Poisson
 
 
@@ -26,39 +27,47 @@ class myFeature(torch.nn.Module):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Run PINA")
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-s", "-save", action="store_true")
-    group.add_argument("-l", "-load", action="store_true")
-    parser.add_argument("id_run", help="number of run", type=int)
-    parser.add_argument("features", help="extra features", type=int)
+    parser.add_argument("--load", help="directory to save or load file", type=str)
+    parser.add_argument("--features", help="extra features", type=int)
+    parser.add_argument("--epochs", help="extra features", type=int, default=1000)
     args = parser.parse_args()
 
-    feat = [myFeature()] if args.features else []
+    if args.features is None:
+        args.features = 0
 
-    poisson_problem = Poisson()
+    # extra features
+    feat = [myFeature()] if args.features else []
+    args = parser.parse_args()
+
+    # create problem and discretise domain
+    problem = Poisson()
+    problem.discretise_domain(n=20, mode='grid', locations=['D'])
+    problem.discretise_domain(n=100, mode='random', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+
+    # create model
     model = FeedForward(
-        layers=[20, 20],
-        output_variables=poisson_problem.output_variables,
-        input_variables=poisson_problem.input_variables,
-        func=Softplus,
-        extra_features=feat
+        layers=[10, 10],
+        output_dimensions=len(problem.output_variables),
+        input_dimensions=len(problem.input_variables) + len(feat),
+        func=Softplus
     )
 
+    # create solver
     pinn = PINN(
-        poisson_problem,
-        model,
-        lr=0.03,
-        error_norm='mse',
-        regularizer=1e-8)
+        problem=problem,
+        model=model,
+        extra_features=feat,
+        optimizer_kwargs={'lr' : 0.001}
+    )
 
-    if args.s:
+    # create trainer
+    directory = 'pina.parametric_poisson_extrafeats_{}'.format(bool(args.features))
+    trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=args.epochs, default_root_dir=directory)
 
-        pinn.span_pts(20, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-        pinn.span_pts(20, 'grid', locations=['D'])
-        pinn.train(5000, 100)
-        pinn.save_state('pina.poisson')
 
-    else:
-        pinn.load_state('pina.poisson')
+    if args.load:
+        pinn = PINN.load_from_checkpoint(checkpoint_path=args.load, problem=problem, model=model, extra_features=feat)
         plotter = Plotter()
         plotter.plot(pinn)
+    else:
+        trainer.train()
