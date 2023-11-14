@@ -1,7 +1,6 @@
 """ Module for AbstractProblem class """
 from abc import ABCMeta, abstractmethod
 from ..utils import merge_tensors, check_consistency
-#from ..equation import ParametricEquation
 import torch
 
 

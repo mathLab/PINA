@@ -84,7 +84,7 @@ class Condition:
             raise TypeError('`output_points` must be a torch.Tensor.')
         if not self._dictvalue_isinstance(kwargs, 'location', Location):
             raise TypeError('`location` must be a Location.')
-        if not (self._dictvalue_isinstance(kwargs, 'equation', Equation)):
+        if not self._dictvalue_isinstance(kwargs, 'equation', Equation):
             raise TypeError('`equation` must be a Equation.')
 
         for key, value in kwargs.items():

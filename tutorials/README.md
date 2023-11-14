@@ -15,6 +15,7 @@ Building custom geometries with PINA `Location` class|[[.ipynb](tutorial1/tutori
 |---------------|-----------|
 Two dimensional Poisson problem using Extra Features Learning &nbsp; &nbsp; |[[.ipynb](tutorial2/tutorial.ipynb),&#160;[.py](tutorial2/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial2/tutorial.html)]|
 Two dimensional Wave problem with hard constraint |[[.ipynb](tutorial3/tutorial.ipynb),&#160;[.py](tutorial3/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial3/tutorial.html)]|
+Resolution of a 2D Poisson inverse problem |[[.ipynb](tutorial7/tutorial.ipynb),&#160;[.py](tutorial7/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial7/tutorial.html)]|
 
 ## Neural Operator Learning
 | Description   | Tutorial  |
@@ -25,8 +26,3 @@ Two dimensional Darcy flow using the Fourier Neural Operator  &nbsp; &nbsp; &nbs
 | Description   | Tutorial  |
 |---------------|-----------|
 Unstructured convolutional autoencoder via continuous convolution |[[.ipynb](tutorial4/tutorial.ipynb),&#160;[.py](tutorial4/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial4/tutorial.html)]|
-
-## Inverse Problem
-| Description   | Tutorial  |
-|---------------|-----------|
-Resolution of a 2D Poisson inverse problem |[[.ipynb](tutorial7/tutorial.ipynb),&#160;[.py](tutorial7/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial7/tutorial.html)]|

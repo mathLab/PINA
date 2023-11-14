@@ -1,6 +1,5 @@
 """ Module for PINN """
 import torch
-import inspect
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
@@ -14,7 +13,6 @@ from ..utils import check_consistency
 from ..loss import LossInterface
 from ..problem import InverseProblem
 from torch.nn.modules.loss import _Loss
-from inspect import signature
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
@@ -76,7 +74,7 @@ class PINN(SolverInterface):
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self._loss = loss
         self._neural_net = self.models[0]
-        
+
         # inverse problem handling
         if isinstance(self.problem, InverseProblem):
             self._params = self.problem.unknown_parameters
@@ -115,7 +113,7 @@ class PINN(SolverInterface):
             self._params[v].data.clamp_(
                     self.problem.unknown_parameter_domain.range_[v][0],
                     self.problem.unknown_parameter_domain.range_[v][1])
-                
+
     def _loss_data(self, input, output):
         return self.loss(self.forward(input), output)
 
@@ -168,7 +166,7 @@ class PINN(SolverInterface):
                      prog_bar=True, logger=True, on_epoch=True, on_step=False)
 
         # clamp unknown parameters of the InverseProblem to their domain ranges (if needed)
-        if isinstance(self.problem, InverseProblem):    
+        if isinstance(self.problem, InverseProblem):
             self._clamp_inverse_problem_params()
 
         # TODO Fix the bug, tot_loss is a label tensor without labels

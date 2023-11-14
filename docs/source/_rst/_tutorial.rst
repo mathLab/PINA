@@ -20,6 +20,7 @@ Physics Informed Neural Networks
 
    Two dimensional Poisson problem using Extra Features Learning<tutorials/tutorial2/tutorial.rst>
    Two dimensional Wave problem with hard constraint<tutorials/tutorial3/tutorial.rst>
+   Resolution of a 2D Poisson inverse problem<tutorials/tutorial7/tutorial.rst>
 
 
 Neural Operator Learning
@@ -38,10 +39,3 @@ Supervised Learning
 
    Unstructured convolutional autoencoder via continuous convolution<tutorials/tutorial4/tutorial.rst>
 
-Inverse Problem
--------------------
-.. toctree::
-   :maxdepth: 3
-   :titlesonly:
-
-   Resolution of a 2D Poisson inverse problem<tutorials/tutorial7/tutorial.rst>
