@@ -88,7 +88,10 @@ class Plotter:
             truth_output = truth_solution(pts).float()
             ax.plot(pts, truth_output.detach(), label='True solution', **kwargs)
 
-        plt.ylabel(pred.labels[0])
+        # TODO: pred is a torch.Tensor, so no labels is available
+        #      extra variable for labels should be
+        #      passed in the function arguments.
+        # plt.ylabel(pred.labels[0]) 
         plt.legend()
         plt.show()
 
