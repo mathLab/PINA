@@ -37,7 +37,7 @@ class Condition:
     >>> example_input_pts = LabelTensor(
     >>>     torch.tensor([[0, 0, 0]]), ['x', 'y', 'z'])
     >>> example_output_pts = LabelTensor(torch.tensor([[1, 2]]), ['a', 'b'])
-    >>> 
+    >>>
     >>> Condition(
     >>>     input_points=example_input_pts,
     >>>     output_points=example_output_pts)

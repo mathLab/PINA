@@ -11,14 +11,14 @@ class SystemEquation(Equation):
         System of Equation class for specifing any system
         of equations in PINA.
         Each ``equation`` passed to a ``Condition`` object
-        must be an ``Equation`` or ``SystemEquation``. 
-        A ``SystemEquation`` is specified by a list of 
+        must be an ``Equation`` or ``SystemEquation``.
+        A ``SystemEquation`` is specified by a list of
         equations.
 
         :param Callable equation: A ``torch`` callable equation to
             evaluate the residual
         :param str reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``  | ``callable``. ``none``: no reduction 
+            ``none`` | ``mean`` | ``sum``  | ``callable``. ``none``: no reduction
             will be applied, ``mean``: the sum of the output will be divided
             by the number of elements in the output, ``sum``: the output will
             be summed. ``callable`` a callable function to perform reduction,
@@ -43,19 +43,28 @@ class SystemEquation(Equation):
             raise NotImplementedError(
                 'Only mean and sum reductions implemented.')
 
-    def residual(self, input_, output_):
+    def residual(self, input_, output_, params_=None):
         """
-        Residual computation of the equation.
+        Residual computation for the equations of the system.
 
-        :param LabelTensor input_: Input points to evaluate the equation.
-        :param LabelTensor output_: Output vectors given my a model (e.g,
+        :param LabelTensor input_: Input points to evaluate the system of
+            equations.
+        :param LabelTensor output_: Output vectors given by a model (e.g,
             a ``FeedForward`` model).
-        :return: The residual evaluation of the specified equation,
+        :param dict params_: Dictionary of parameters related to the inverse
+            problem (if any).
+            If the equation is not related to an ``InverseProblem``, the
+            parameters are initialized to ``None`` and the residual is
+            computed as ``equation(input_, output_)``.
+            Otherwise, the parameters are automatically initialized in the
+            ranges specified by the user.
+
+        :return: The residual evaluation of the specified system of equations,
             aggregated by the ``reduction`` defined in the ``__init__``.
         :rtype: LabelTensor
         """
         residual = torch.hstack(
-            [equation.residual(input_, output_) for equation in self.equations])
+            [equation.residual(input_, output_, params_) for equation in self.equations])
 
         if self.reduction == 'none':
             return residual

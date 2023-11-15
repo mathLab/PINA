@@ -109,6 +109,14 @@ class AbstractProblem(metaclass=ABCMeta):
                 samples = condition.input_points
                 self.input_pts[condition_name] = samples
                 self._have_sampled_points[condition_name] = True
+            if hasattr(self, 'unknown_parameter_domain'):
+                # initialize the unknown parameters of the inverse problem given
+                # the domain the user gives
+                self.unknown_parameters = {}
+                for i, var in enumerate(self.unknown_variables):
+                    range_var = self.unknown_parameter_domain.range_[var]
+                    tensor_var = torch.rand(1, requires_grad=True) * range_var[1] + range_var[0]
+                    self.unknown_parameters[var] = torch.nn.Parameter(tensor_var)
 
     def discretise_domain(self,
                           n,
@@ -203,6 +211,7 @@ class AbstractProblem(metaclass=ABCMeta):
                     self.input_variables):
                 self._have_sampled_points[location] = True
 
+
     def add_points(self, new_points):
         """
         Adding points to the already sampled points.
@@ -237,7 +246,7 @@ class AbstractProblem(metaclass=ABCMeta):
     @property
     def have_sampled_points(self):
         """
-        Check if all points for 
+        Check if all points for
         ``Location`` are sampled.
         """
         return all(self._have_sampled_points.values())
@@ -245,7 +254,7 @@ class AbstractProblem(metaclass=ABCMeta):
     @property
     def not_sampled_points(self):
         """
-        Check which points are 
+        Check which points are
         not sampled.
         """
         # variables which are not sampled
@@ -257,3 +266,4 @@ class AbstractProblem(metaclass=ABCMeta):
                 if not is_sample:
                     not_sampled.append(condition_name)
         return not_sampled
+
