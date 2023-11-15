@@ -205,6 +205,7 @@ class Plotter:
             plt.savefig(filename)
         else:
             plt.show()
+        plt.close()
 
     def plot_loss(self,
                   trainer,
