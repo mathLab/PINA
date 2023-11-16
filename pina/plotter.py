@@ -197,7 +197,7 @@ class Plotter:
         truth_solution = getattr(solver.problem, 'truth_solution', None)
 
         if len(v) == 1:
-            self._1d_plot(pts, predicted_output, method, truth_solution,
+            self._1d_plot(pts.extract(v), predicted_output, method, truth_solution,
                           **kwargs)
         elif len(v) == 2:
             self._2d_plot(pts, predicted_output, v, res, method, truth_solution,
@@ -208,7 +208,6 @@ class Plotter:
             plt.savefig(filename)
         else:
             plt.show()
-        plt.close()
 
     def plot_loss(self,
                   trainer,
