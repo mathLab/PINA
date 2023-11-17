@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Difference &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Exclusion" href="exclusion_domain.html" />
+    <link rel="prev" title="Intersection" href="intersection_domain.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../_code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#pina-features">PINA Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../_code.html#geometry-set-operations">Geometry set operations</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="operation_interface.html">OperationInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="union_domain.html">Union</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersection_domain.html">Intersection</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Difference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exclusion_domain.html">Exclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#metrics-and-losses">Metrics and Losses</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../_code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">Difference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/_rst/geometry/difference_domain.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-pina.geometry.difference_domain">
+<span id="difference"></span><h1>Difference<a class="headerlink" href="#module-pina.geometry.difference_domain" title="Permalink to this headline">¶</a></h1>
+<p>Module for Difference class.</p>
+<dl class="class">
+<dt id="pina.geometry.difference_domain.Difference">
+<em class="property">class </em><code class="sig-name descname">Difference</code><span class="sig-paren">(</span><em class="sig-param">geometries</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/difference_domain.html#Difference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.geometry.difference_domain.Difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="operation_interface.html#pina.geometry.operation_interface.OperationInterface" title="pina.geometry.operation_interface.OperationInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.geometry.operation_interface.OperationInterface</span></code></a></p>
+<p>PINA implementation of Difference of Domains.
+Given two sets <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> then the
+domain difference is defined as:</p>
+<div class="math notranslate nohighlight">
+\[A - B = \{x \mid x \in A \land x \not\in B\},\]</div>
+<p>with <span class="math notranslate nohighlight">\(x\)</span> a point in <span class="math notranslate nohighlight">\(\mathbb{R}^N\)</span> and <span class="math notranslate nohighlight">\(N\)</span>
+the dimension of the geometry space.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>geometries</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A list of geometries from <code class="docutils literal notranslate"><span class="pre">pina.geometry</span></code>
+such as <code class="docutils literal notranslate"><span class="pre">EllipsoidDomain</span></code> or <code class="docutils literal notranslate"><span class="pre">CartesianDomain</span></code>. The first
+geometry in the list is the geometry from which points are
+sampled. The rest of the geometries are the geometries that
+are excluded from the first geometry to find the difference.</p>
+</dd>
+<dt class="field-even">Example</dt>
+<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create two ellipsoid domains</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ellipsoid1</span> <span class="o">=</span> <span class="n">EllipsoidDomain</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ellipsoid2</span> <span class="o">=</span> <span class="n">EllipsoidDomain</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a Difference of the ellipsoid domains</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference</span> <span class="o">=</span> <span class="n">Difference</span><span class="p">([</span><span class="n">ellipsoid1</span><span class="p">,</span> <span class="n">ellipsoid2</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pina.geometry.difference_domain.Difference.is_inside">
+<code class="sig-name descname">is_inside</code><span class="sig-paren">(</span><em class="sig-param">point</em>, <em class="sig-param">check_border=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/difference_domain.html#Difference.is_inside"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.geometry.difference_domain.Difference.is_inside" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a point is inside the <code class="docutils literal notranslate"><span class="pre">Difference</span></code> domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – Point to be checked.</p></li>
+<li><p><strong>check_border</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the border is considered inside.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the point is inside the Exclusion domain, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.geometry.difference_domain.Difference.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">mode='random'</em>, <em class="sig-param">variables='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/difference_domain.html#Difference.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.geometry.difference_domain.Difference.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample routine for <code class="docutils literal notranslate"><span class="pre">Difference</span></code> domain.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of points to sample in the shape.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Mode for sampling, defaults to <code class="docutils literal notranslate"><span class="pre">random</span></code>. Available modes include: <code class="docutils literal notranslate"><span class="pre">random</span></code>.</p></li>
+<li><p><strong>variables</strong> (<em>str | list</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>]</em>) – Variables to be sampled, defaults to <code class="docutils literal notranslate"><span class="pre">all</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns <code class="docutils literal notranslate"><span class="pre">LabelTensor</span></code> of n sampled points.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+<dt class="field-even">Example</dt>
+<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create two Cartesian domains</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cartesian1</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cartesian2</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a Difference of the ellipsoid domains</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference</span> <span class="o">=</span> <span class="n">Difference</span><span class="p">([</span><span class="n">cartesian1</span><span class="p">,</span> <span class="n">cartesian2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Sampling</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">    LabelTensor([[0.8400, 0.9179],</span>
+<span class="go">                [0.9154, 0.5769],</span>
+<span class="go">                [1.7403, 0.4835],</span>
+<span class="go">                [0.9545, 1.2851],</span>
+<span class="go">                [1.3726, 0.9831]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">difference</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">    5</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intersection_domain.html" class="btn btn-neutral float-left" title="Intersection" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="exclusion_domain.html" class="btn btn-neutral float-right" title="Exclusion" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

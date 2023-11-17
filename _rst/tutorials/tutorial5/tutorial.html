@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Tutorial: Unstructured convolutional autoencoder via continuous convolution" href="../tutorial4/tutorial.html" />
+    <link rel="prev" title="Tutorial 7: Resolution of an inverse problem" href="../tutorial7/tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Two dimensional Darcy flow using the Fourier Neural Operator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#data-generation">Data Generation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#solving-the-problem-with-a-feedforward-neural-network">Solving the problem with a FeedForward Neural Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#solving-the-problem-with-a-fuorier-neural-operator-fno">Solving the problem with a Fuorier Neural Operator (FNO)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#whats-next">What’s next?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/_rst/tutorials/tutorial5/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tutorial-two-dimensional-darcy-flow-using-the-fourier-neural-operator">
+<h1>Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator<a class="headerlink" href="#tutorial-two-dimensional-darcy-flow-using-the-fourier-neural-operator" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial we are going to solve the Darcy flow problem in two
+dimensions, presented in <a class="reference external" href="https://openreview.net/pdf?id=c8P9NQVtmnO">Fourier Neural Operator for Parametric Partial
+Differential Equation</a>.
+First of all we import the modules needed for the tutorial. Importing
+<code class="docutils literal notranslate"><span class="pre">scipy</span></code> is needed for input output operations.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># !pip install scipy  # install scipy
+from scipy import io
+import torch
+from pina.model import FNO, FeedForward  # let&#39;s import some models
+from pina import Condition, LabelTensor
+from pina.solvers import SupervisedSolver
+from pina.trainer import Trainer
+from pina.problem import AbstractProblem
+import matplotlib.pyplot as plt
+</pre></div>
+</div>
+<div class="section" id="data-generation">
+<h2>Data Generation<a class="headerlink" href="#data-generation" title="Permalink to this headline">¶</a></h2>
+<p>We will focus on solving the a specfic PDE, the <strong>Darcy Flow</strong> equation.
+The Darcy PDE is a second order, elliptic PDE with the following form:</p>
+<div class="math notranslate nohighlight">
+\[-\nabla\cdot(k(x, y)\nabla u(x, y)) = f(x) \quad (x, y) \in D.\]</div>
+<p>Specifically, <span class="math notranslate nohighlight">\(u\)</span> is the flow pressure, <span class="math notranslate nohighlight">\(k\)</span> is the
+permeability field and <span class="math notranslate nohighlight">\(f\)</span> is the forcing function. The Darcy flow
+can parameterize a variety of systems including flow through porous
+media, elastic materials and heat conduction. Here you will define the
+domain as a 2D unit square Dirichlet boundary conditions. The dataset is
+taken from the authors original reference.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># download the dataset
+data = io.loadmat(&quot;Data_Darcy.mat&quot;)
+
+# extract data (we use only 100 data for train)
+k_train = LabelTensor(torch.tensor(data[&#39;k_train&#39;], dtype=torch.float).unsqueeze(-1), [&#39;u0&#39;])
+u_train = LabelTensor(torch.tensor(data[&#39;u_train&#39;], dtype=torch.float).unsqueeze(-1), [&#39;u&#39;])
+k_test =  LabelTensor(torch.tensor(data[&#39;k_test&#39;], dtype=torch.float).unsqueeze(-1), [&#39;u0&#39;])
+u_test= LabelTensor(torch.tensor(data[&#39;u_test&#39;], dtype=torch.float).unsqueeze(-1), [&#39;u&#39;])
+x = torch.tensor(data[&#39;x&#39;], dtype=torch.float)[0]
+y = torch.tensor(data[&#39;y&#39;], dtype=torch.float)[0]
+</pre></div>
+</div>
+<p>Let’s visualize some data</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plt.subplot(1, 2, 1)
+plt.title(&#39;permeability&#39;)
+plt.imshow(k_train.squeeze(-1)[0])
+plt.subplot(1, 2, 2)
+plt.title(&#39;field solution&#39;)
+plt.imshow(u_train.squeeze(-1)[0])
+plt.show()
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_6_0.png" src="../../../_images/tutorial_6_0.png" />
+<p>We now create the neural operator class. It is a very simple class,
+inheriting from <code class="docutils literal notranslate"><span class="pre">AbstractProblem</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class NeuralOperatorSolver(AbstractProblem):
+    input_variables = k_train.labels
+    output_variables = u_train.labels
+    conditions = {&#39;data&#39; : Condition(input_points=k_train,
+                                     output_points=u_train)}
+
+# make problem
+problem = NeuralOperatorSolver()
+</pre></div>
+</div>
+</div>
+<div class="section" id="solving-the-problem-with-a-feedforward-neural-network">
+<h2>Solving the problem with a FeedForward Neural Network<a class="headerlink" href="#solving-the-problem-with-a-feedforward-neural-network" title="Permalink to this headline">¶</a></h2>
+<p>We will first solve the problem using a Feedforward neural network. We
+will use the <code class="docutils literal notranslate"><span class="pre">SupervisedSolver</span></code> for solving the problem, since we are
+training using supervised learning.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># make model
+model = FeedForward(input_dimensions=1, output_dimensions=1)
+
+
+# make solver
+solver = SupervisedSolver(problem=problem, model=model)
+
+# make the trainer and train
+trainer = Trainer(solver=solver, max_epochs=10, accelerator=&#39;cpu&#39;, enable_model_summary=False, batch_size=10) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer.train()
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
+<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
+<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
+<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">9</span><span class="p">:</span> <span class="p">:</span> <span class="mi">100</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">357.28</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.108</span><span class="p">]</span>
+</pre></div>
+</div>
+<pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=10</cite> reached.</pre>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">9</span><span class="p">:</span> <span class="p">:</span> <span class="mi">100</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">354.81</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.108</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The final loss is pretty high… We can calculate the error by importing
+<code class="docutils literal notranslate"><span class="pre">LpLoss</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from pina.loss import LpLoss
+
+# make the metric
+metric_err = LpLoss(relative=True)
+
+
+err = float(metric_err(u_train.squeeze(-1), solver.neural_net(k_train).squeeze(-1)).mean())*100
+print(f&#39;Final error training {err:.2f}%&#39;)
+
+err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)).mean())*100
+print(f&#39;Final error testing {err:.2f}%&#39;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Final</span> <span class="n">error</span> <span class="n">training</span> <span class="mf">56.04</span><span class="o">%</span>
+<span class="n">Final</span> <span class="n">error</span> <span class="n">testing</span> <span class="mf">56.01</span><span class="o">%</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="solving-the-problem-with-a-fuorier-neural-operator-fno">
+<h2>Solving the problem with a Fuorier Neural Operator (FNO)<a class="headerlink" href="#solving-the-problem-with-a-fuorier-neural-operator-fno" title="Permalink to this headline">¶</a></h2>
+<p>We will now move to solve the problem using a FNO. Since we are learning
+operator this approach is better suited, as we shall see.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># make model
+lifting_net = torch.nn.Linear(1, 24)
+projecting_net = torch.nn.Linear(24, 1)
+model = FNO(lifting_net=lifting_net,
+            projecting_net=projecting_net,
+            n_modes=8,
+            dimensions=2,
+            inner_size=24,
+            padding=8)
+
+
+# make solver
+solver = SupervisedSolver(problem=problem, model=model)
+
+# make the trainer and train
+trainer = Trainer(solver=solver, max_epochs=10, accelerator=&#39;cpu&#39;, enable_model_summary=False, batch_size=10) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer.train()
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
+<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
+<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
+<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 0: : 0it [00:00, ?it/s]Epoch 9: : 100it [00:02, 47.76it/s, v_num=4, mean_loss=0.00106]
+</pre></div>
+</div>
+<pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=10</cite> reached.</pre>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">9</span><span class="p">:</span> <span class="p">:</span> <span class="mi">100</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">02</span><span class="p">,</span> <span class="mf">47.65</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.00106</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We can clearly see that the final loss is lower. Let’s see in testing..
+Notice that the number of parameters is way higher than a
+<code class="docutils literal notranslate"><span class="pre">FeedForward</span></code> network. We suggest to use GPU or TPU for a speed up in
+training, when many data samples are used.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>err = float(metric_err(u_train.squeeze(-1), solver.neural_net(k_train).squeeze(-1)).mean())*100
+print(f&#39;Final error training {err:.2f}%&#39;)
+
+err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)).mean())*100
+print(f&#39;Final error testing {err:.2f}%&#39;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Final</span> <span class="n">error</span> <span class="n">training</span> <span class="mf">4.83</span><span class="o">%</span>
+<span class="n">Final</span> <span class="n">error</span> <span class="n">testing</span> <span class="mf">5.16</span><span class="o">%</span>
+</pre></div>
+</div>
+<p>As we can see the loss is way lower!</p>
+</div>
+<div class="section" id="whats-next">
+<h2>What’s next?<a class="headerlink" href="#whats-next" title="Permalink to this headline">¶</a></h2>
+<p>We have made a very simple example on how to use the <code class="docutils literal notranslate"><span class="pre">FNO</span></code> for
+learning neural operator. Currently in <strong>PINA</strong> we implement 1D/2D/3D
+cases. We suggest to extend the tutorial using more complex problems and
+train for longer, to see the full potential of neural operators.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial7/tutorial.html" class="btn btn-neutral float-left" title="Tutorial 7: Resolution of an inverse problem" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial4/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: Unstructured convolutional autoencoder via continuous convolution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

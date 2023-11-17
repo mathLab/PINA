@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAROM &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Network" href="../models/network.html" />
+    <link rel="prev" title="SupervisedSolver" href="supervised.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../_code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#pina-features">PINA Features</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../_code.html#solvers">Solvers</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="solver_interface.html">SolverInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pinn.html">PINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supervised.html">Supervised solver</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">GAROM</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometry-set-operations">Geometry set operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#metrics-and-losses">Metrics and Losses</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../_code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">GAROM</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/_rst/solvers/garom.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="garom">
+<h1>GAROM<a class="headerlink" href="#garom" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pina.solvers.garom.GAROM">
+<em class="property">class </em><code class="sig-name descname">GAROM</code><span class="sig-paren">(</span><em class="sig-param">problem</em>, <em class="sig-param">generator</em>, <em class="sig-param">discriminator</em>, <em class="sig-param">loss=None</em>, <em class="sig-param">optimizer_generator=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optimizer_generator_kwargs={'lr': 0.001}</em>, <em class="sig-param">optimizer_discriminator=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optimizer_discriminator_kwargs={'lr': 0.001}</em>, <em class="sig-param">scheduler_generator=&lt;class 'torch.optim.lr_scheduler.ConstantLR'&gt;</em>, <em class="sig-param">scheduler_generator_kwargs={'factor': 1</em>, <em class="sig-param">'total_iters': 0}</em>, <em class="sig-param">scheduler_discriminator=&lt;class 'torch.optim.lr_scheduler.ConstantLR'&gt;</em>, <em class="sig-param">scheduler_discriminator_kwargs={'factor': 1</em>, <em class="sig-param">'total_iters': 0}</em>, <em class="sig-param">gamma=0.3</em>, <em class="sig-param">lambda_k=0.001</em>, <em class="sig-param">regularizer=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/garom.html#GAROM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.garom.GAROM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="solver_interface.html#pina.solvers.solver.SolverInterface" title="pina.solvers.solver.SolverInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.solvers.solver.SolverInterface</span></code></a></p>
+<p>GAROM solver class. This class implements Generative Adversarial
+Reduced Order Model solver, using user specified <code class="docutils literal notranslate"><span class="pre">models</span></code> to solve
+a specific order reduction``problem``.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><strong>Original reference</strong>: Coscia, D., Demo, N., &amp; Rozza, G. (2023).
+<em>Generative Adversarial Reduced Order Modelling</em>.
+DOI: <a class="reference external" href="https://doi.org/10.48550/arXiv.2305.15881">arXiv preprint arXiv:2305.15881.</a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="../problem/abstractproblem.html#pina.problem.abstract_problem.AbstractProblem" title="pina.problem.abstract_problem.AbstractProblem"><em>AbstractProblem</em></a>) – The formualation of the problem.</p></li>
+<li><p><strong>generator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a>) – The neural network model to use
+for the generator.</p></li>
+<li><p><strong>discriminator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a>) – The neural network model to use
+for the discriminator.</p></li>
+<li><p><strong>loss</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a>) – The loss function used as minimizer,
+default <code class="docutils literal notranslate"><span class="pre">None</span></code>. If <code class="docutils literal notranslate"><span class="pre">loss</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> the defualt
+<code class="docutils literal notranslate"><span class="pre">PowerLoss(p=1)</span></code> is used, as in the original paper.</p></li>
+<li><p><strong>optimizer_generator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.1)"><em>torch.optim.Optimizer</em></a>) – The neural
+network optimizer to use for the generator network
+, default is <cite>torch.optim.Adam</cite>.</p></li>
+<li><p><strong>optimizer_generator_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Optimizer constructor keyword
+args. for the generator.</p></li>
+<li><p><strong>optimizer_discriminator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.1)"><em>torch.optim.Optimizer</em></a>) – The neural
+network optimizer to use for the discriminator network
+, default is <cite>torch.optim.Adam</cite>.</p></li>
+<li><p><strong>optimizer_discriminator_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Optimizer constructor keyword
+args. for the discriminator.</p></li>
+<li><p><strong>scheduler_generator</strong> (<em>torch.optim.LRScheduler</em>) – Learning
+rate scheduler for the generator.</p></li>
+<li><p><strong>scheduler_generator_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – LR scheduler constructor keyword args.</p></li>
+<li><p><strong>scheduler_discriminator</strong> (<em>torch.optim.LRScheduler</em>) – Learning
+rate scheduler for the discriminator.</p></li>
+<li><p><strong>scheduler_discriminator_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – LR scheduler constructor keyword args.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Ratio of expected loss for generator and discriminator, defaults to 0.3.</p></li>
+<li><p><strong>lambda_k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Learning rate for control theory optimization, defaults to 0.001.</p></li>
+<li><p><strong>regularizer</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Regularization term in the GAROM loss, defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The algorithm works only for data-driven model. Hence in the <code class="docutils literal notranslate"><span class="pre">problem</span></code> definition
+the codition must only contain <code class="docutils literal notranslate"><span class="pre">input_points</span></code> (e.g. coefficient parameters, time
+parameters), and <code class="docutils literal notranslate"><span class="pre">output_points</span></code>.</p>
+</div>
+<dl class="method">
+<dt id="pina.solvers.garom.GAROM.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">mc_steps=20</em>, <em class="sig-param">variance=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/garom.html#GAROM.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.garom.GAROM.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward step for GAROM solver</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – The input tensor.</p></li>
+<li><p><strong>mc_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of montecarlo samples to approximate the
+expected value, defaults to 20.</p></li>
+<li><p><strong>variance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Returining also the sample variance of the solution, defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The expected value of the generator distribution. If <code class="docutils literal notranslate"><span class="pre">variance=True</span></code> also the
+sample variance is returned.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor | tuple(<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)">torch.Tensor</a>, <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)">torch.Tensor</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.garom.GAROM.configure_optimizers">
+<code class="sig-name descname">configure_optimizers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/garom.html#GAROM.configure_optimizers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.garom.GAROM.configure_optimizers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizer configuration for the GAROM
+solver.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The optimizers and the schedulers</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)">tuple</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.garom.GAROM.training_step">
+<code class="sig-name descname">training_step</code><span class="sig-paren">(</span><em class="sig-param">batch</em>, <em class="sig-param">batch_idx</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/garom.html#GAROM.training_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.garom.GAROM.training_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>GAROM solver training step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><em>tuple</em></a>) – The batch element in the dataloader.</p></li>
+<li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The batch index.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The sum of the loss functions.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="supervised.html" class="btn btn-neutral float-left" title="SupervisedSolver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../models/network.html" class="btn btn-neutral float-right" title="Network" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

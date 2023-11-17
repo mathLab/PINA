@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pina.geometry.simplex &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pina.geometry.simplex</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pina.geometry.simplex</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">.location</span> <span class="kn">import</span> <span class="n">Location</span>
+<span class="kn">from</span> <span class="nn">pina.geometry</span> <span class="kn">import</span> <span class="n">CartesianDomain</span>
+<span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+
+
+<div class="viewcode-block" id="SimplexDomain"><a class="viewcode-back" href="../../../_rst/geometry/simplex.html#pina.geometry.simplex.SimplexDomain">[docs]</a><span class="k">class</span> <span class="nc">SimplexDomain</span><span class="p">(</span><span class="n">Location</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;PINA implementation of a Simplex.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplex_matrix</span><span class="p">,</span> <span class="n">sample_surface</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param simplex_matrix: A matrix of LabelTensor objects representing</span>
+<span class="sd">            a vertex of the simplex (a tensor), and the coordinates of the</span>
+<span class="sd">            point (a list of labels).</span>
+
+<span class="sd">        :type simplex_matrix: list[LabelTensor]</span>
+<span class="sd">        :param sample_surface: A variable for choosing sample strategies. If</span>
+<span class="sd">            ``sample_surface=True`` only samples on the Simplex surface</span>
+<span class="sd">            frontier are taken. If ``sample_surface=False``, no such criteria</span>
+<span class="sd">            is followed.</span>
+
+<span class="sd">        :type sample_surface: bool</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Sampling for dimensions greater or equal to 10 could result</span>
+<span class="sd">            in a shrinking of the simplex, which degrades the quality</span>
+<span class="sd">            of the samples. For dimensions higher than 10, other algorithms</span>
+<span class="sd">            for sampling should be used.</span>
+
+<span class="sd">        :Example:</span>
+<span class="sd">            &gt;&gt;&gt; spatial_domain = SimplexDomain(</span>
+<span class="sd">                    [</span>
+<span class="sd">                        LabelTensor(torch.tensor([[0, 0]]), labels=[&quot;x&quot;, &quot;y&quot;]),</span>
+<span class="sd">                        LabelTensor(torch.tensor([[1, 1]]), labels=[&quot;x&quot;, &quot;y&quot;]),</span>
+<span class="sd">                        LabelTensor(torch.tensor([[0, 2]]), labels=[&quot;x&quot;, &quot;y&quot;]),</span>
+<span class="sd">                    ], sample_surface = True</span>
+<span class="sd">                )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check consistency of sample_surface as bool</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">sample_surface</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_surface</span> <span class="o">=</span> <span class="n">sample_surface</span>
+
+        <span class="c1"># check consistency of simplex_matrix as list or tuple</span>
+        <span class="n">check_consistency</span><span class="p">([</span><span class="n">simplex_matrix</span><span class="p">],</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+
+        <span class="c1"># check everything within simplex_matrix is a LabelTensor</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">simplex_matrix</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">)</span>
+
+        <span class="c1"># check consistency of labels</span>
+        <span class="n">matrix_labels</span> <span class="o">=</span> <span class="n">simplex_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">labels</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">vertex</span><span class="o">.</span><span class="n">labels</span> <span class="o">==</span> <span class="n">matrix_labels</span> <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">simplex_matrix</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Labels don&#39;t match.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># check consistency dimensions</span>
+        <span class="n">dim_simplex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix_labels</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">simplex_matrix</span><span class="p">)</span> <span class="o">!=</span> <span class="n">dim_simplex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;An n-dimensional simplex is composed by n + 1 tensors of dimension n.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># creating vertices matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertices_matrix</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">simplex_matrix</span><span class="p">)</span>
+
+        <span class="c1"># creating basis vectors for simplex</span>
+        <span class="c1"># self._vectors_shifted = (</span>
+        <span class="c1">#     (self._vertices_matrix.T)[:, :-1] - (self._vertices_matrix.T)[:, None, -1]</span>
+        <span class="c1"># )  ### TODO: Remove after checking</span>
+
+        <span class="n">vert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertices_matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vectors_shifted</span> <span class="o">=</span> <span class="p">(</span><span class="n">vert</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">vert</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1"># build cartesian_bound</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cartesian_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertices_matrix</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertices_matrix</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">def</span> <span class="nf">_build_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build Cartesian border for Simplex domain to be used in sampling.</span>
+<span class="sd">        :param vertex_matrix: matrix of vertices</span>
+<span class="sd">        :type vertices: list[list]</span>
+<span class="sd">        :return: Cartesian border for triangular domain</span>
+<span class="sd">        :rtype: CartesianDomain</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">span_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">):</span>
+            <span class="n">sorted_vertices</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">vertex</span><span class="p">:</span> <span class="n">vertex</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="c1"># respective coord bounded by the lowest and highest values</span>
+            <span class="n">span_dict</span><span class="p">[</span><span class="n">coord</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">sorted_vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]),</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">sorted_vertices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">CartesianDomain</span><span class="p">(</span><span class="n">span_dict</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SimplexDomain.is_inside"><a class="viewcode-back" href="../../../_rst/geometry/simplex.html#pina.geometry.simplex.SimplexDomain.is_inside">[docs]</a>    <span class="k">def</span> <span class="nf">is_inside</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">check_border</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a point is inside the simplex.</span>
+<span class="sd">        Uses the algorithm described involving barycentric coordinates:</span>
+<span class="sd">        https://en.wikipedia.org/wiki/Barycentric_coordinate_system.</span>
+
+<span class="sd">        :param point: Point to be checked.</span>
+<span class="sd">        :type point: LabelTensor</span>
+<span class="sd">        :param check_border: Check if the point is also on the frontier</span>
+<span class="sd">            of the simplex, default ``False``.</span>
+<span class="sd">        :type check_border: bool</span>
+<span class="sd">        :return: Returning ``True`` if the point is inside, ``False`` otherwise.</span>
+<span class="sd">        :rtype: bool</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            When ``sample_surface`` in the ``__init()__``</span>
+<span class="sd">            is set to ``True``, then the method only checks</span>
+<span class="sd">            points on the surface, and not inside the domain.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">point</span><span class="o">.</span><span class="n">labels</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Point labels different from constructor&quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot; dictionary labels. Got </span><span class="si">{point.labels}</span><span class="s2">,&quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot; expected </span><span class="si">{self.variables}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">point_shift</span> <span class="o">=</span> <span class="n">point</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertices_matrix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">point_shift</span> <span class="o">=</span> <span class="n">point_shift</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># compute barycentric coordinates</span>
+        <span class="n">lambda_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vectors_shifted</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">,</span>
+                                     <span class="n">point_shift</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">lambda_1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">lambda_</span><span class="p">)</span>
+        <span class="n">lambdas</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">lambda_</span><span class="p">,</span> <span class="n">lambda_1</span><span class="p">])</span>
+
+        <span class="c1"># perform checks</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_border</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="n">lambdas</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="n">lambdas</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="n">lambdas</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">lambdas</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                                              <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">lambdas</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span></div>
+
+    <span class="k">def</span> <span class="nf">_sample_interior_randomly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Randomly sample points inside a simplex of arbitrary</span>
+<span class="sd">        dimension, without the boundary.</span>
+<span class="sd">        :param int n: Number of points to sample in the shape.</span>
+<span class="sd">        :param variables: pinn variable to be sampled, defaults to ``all``.</span>
+<span class="sd">        :type variables: str or list[str], optional</span>
+<span class="sd">        :return: Returns tensor of n sampled points.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># =============== For Developers ================ #</span>
+        <span class="c1">#</span>
+        <span class="c1"># The sampling startegy used is fairly simple.</span>
+        <span class="c1"># First we sample a random vector from the hypercube</span>
+        <span class="c1"># which contains the simplex. Then, if the point</span>
+        <span class="c1"># sampled is inside the simplex, we add it as a valid</span>
+        <span class="c1"># one.</span>
+        <span class="c1">#</span>
+        <span class="c1"># =============================================== #</span>
+
+        <span class="n">sampled_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">sampled_points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="n">sampled_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cartesian_bound</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                         <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span>
+                                                         <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside</span><span class="p">(</span><span class="n">sampled_point</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_surface</span><span class="p">):</span>
+                <span class="n">sampled_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampled_point</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">sampled_points</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_sample_boundary_randomly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Randomly sample points on the boundary of a simplex</span>
+<span class="sd">        of arbitrary dimensions.</span>
+<span class="sd">        :param int n: Number of points to sample in the shape.</span>
+<span class="sd">        :return: Returns tensor of n sampled points</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># =============== For Developers ================ #</span>
+        <span class="c1">#</span>
+        <span class="c1"># The sampling startegy used is fairly simple.</span>
+        <span class="c1"># We first sample the lambdas in [0, 1] domain,</span>
+        <span class="c1"># we then set to zero only one lambda, and normalize.</span>
+        <span class="c1"># Finally, we compute the matrix product between the</span>
+        <span class="c1"># lamdas and the vertices matrix.</span>
+        <span class="c1">#</span>
+        <span class="c1"># =============================================== #</span>
+
+        <span class="n">sampled_points</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">sampled_points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="c1"># extract number of vertices</span>
+            <span class="n">number_of_vertices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertices_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># extract idx lambda to set to zero randomly</span>
+            <span class="n">idx_lambda</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                       <span class="n">high</span><span class="o">=</span><span class="n">number_of_vertices</span><span class="p">,</span>
+                                       <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+            <span class="c1"># build lambda vector</span>
+            <span class="c1"># 1. sampling [1, 2)</span>
+            <span class="n">lambdas</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="n">number_of_vertices</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="c1"># 2. setting lambdas[idx_lambda] to 0</span>
+            <span class="n">lambdas</span><span class="p">[</span><span class="n">idx_lambda</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># 3. normalize</span>
+            <span class="n">lambdas</span> <span class="o">/=</span> <span class="n">lambdas</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="c1"># 4. compute dot product</span>
+            <span class="n">sampled_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertices_matrix</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">lambdas</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">sampled_points</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+<div class="viewcode-block" id="SimplexDomain.sample"><a class="viewcode-back" href="../../../_rst/geometry/simplex.html#pina.geometry.simplex.SimplexDomain.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sample n points from Simplex domain.</span>
+
+<span class="sd">        :param int n: Number of points to sample in the shape.</span>
+<span class="sd">        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.</span>
+<span class="sd">        :param variables: Variables to be sampled, defaults to ``all``.</span>
+<span class="sd">        :type variables: str | list[str]</span>
+<span class="sd">        :return: Returns ``LabelTensor`` of n sampled points.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            When ``sample_surface = True`` in the initialization, all</span>
+<span class="sd">            the variables are sampled, despite passing different once</span>
+<span class="sd">            in ``variables``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;random&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_surface</span><span class="p">:</span>
+                <span class="n">sample_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_boundary_randomly</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sample_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_interior_randomly</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mode=</span><span class="si">{mode}</span><span class="s2"> is not implemented.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">sample_pts</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

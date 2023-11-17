@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Equations &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Operators" href="operators.html" />
+    <link rel="prev" title="Continuous convolution" href="layers/convolution.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="_code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="_code.html#pina-features">PINA Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#layers">Layers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="_code.html#equations-and-operators">Equations and Operators</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Equations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="operators.html">Differential Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#geometry-set-operations">Geometry set operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#metrics-and-losses">Metrics and Losses</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="_code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">Equations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_rst/equations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="equations">
+<h1>Equations<a class="headerlink" href="#equations" title="Permalink to this headline">¶</a></h1>
+<p>Equations are used in PINA to make easy the training. During problem definition
+each <cite>equation</cite> passed to a <cite>Condition</cite> object must be an <cite>Equation</cite> or <cite>SystemEquation</cite>.
+An <cite>Equation</cite> is simply a wrapper over callable python functions, while <cite>SystemEquation</cite> is
+a wrapper arounf a list of callable python functions. We provide a wide rage of already implemented
+equations to ease the code writing, such as <cite>FixedValue</cite>, <cite>Laplace</cite>, and many more.</p>
+<dl class="class">
+<dt id="pina.equation.equation_interface.EquationInterface">
+<em class="property">class </em><code class="sig-name descname">EquationInterface</code><a class="reference internal" href="../_modules/pina/equation/equation_interface.html#EquationInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.equation_interface.EquationInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The abstract <cite>AbstractProblem</cite> class. All the class defining a PINA Problem
+should be inheritied from this class.</p>
+<p>In the definition of a PINA problem, the fundamental elements are:
+the output variables, the condition(s), and the domain(s) where the
+conditions are applied.</p>
+<dl class="method">
+<dt id="pina.equation.equation_interface.EquationInterface.residual">
+<em class="property">abstract </em><code class="sig-name descname">residual</code><span class="sig-paren">(</span><em class="sig-param">input_</em>, <em class="sig-param">output_</em>, <em class="sig-param">params_</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/equation_interface.html#EquationInterface.residual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.equation_interface.EquationInterface.residual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Residual computation of the equation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Input points to evaluate the equation.</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Output vectors given by my model (e.g., a <code class="docutils literal notranslate"><span class="pre">FeedForward</span></code> model).</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Dictionary of unknown parameters, eventually
+related to an <code class="docutils literal notranslate"><span class="pre">InverseProblem</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The residual evaluation of the specified equation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pina.equation.equation.Equation">
+<em class="property">class </em><code class="sig-name descname">Equation</code><span class="sig-paren">(</span><em class="sig-param">equation</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/equation.html#Equation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.equation.Equation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pina.equation.equation_interface.EquationInterface" title="pina.equation.equation_interface.EquationInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.equation.equation_interface.EquationInterface</span></code></a></p>
+<p>Equation class for specifing any equation in PINA.
+Each <code class="docutils literal notranslate"><span class="pre">equation</span></code> passed to a <code class="docutils literal notranslate"><span class="pre">Condition</span></code> object
+must be an <code class="docutils literal notranslate"><span class="pre">Equation</span></code> or <code class="docutils literal notranslate"><span class="pre">SystemEquation</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>equation</strong> (<em>Callable</em>) – A <code class="docutils literal notranslate"><span class="pre">torch</span></code> callable equation to
+evaluate the residual.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pina.equation.equation.Equation.residual">
+<code class="sig-name descname">residual</code><span class="sig-paren">(</span><em class="sig-param">input_</em>, <em class="sig-param">output_</em>, <em class="sig-param">params_=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/equation.html#Equation.residual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.equation.Equation.residual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Residual computation of the equation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Input points to evaluate the equation.</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Output vectors given by a model (e.g,
+a <code class="docutils literal notranslate"><span class="pre">FeedForward</span></code> model).</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Dictionary of parameters related to the inverse
+problem (if any).
+If the equation is not related to an <code class="docutils literal notranslate"><span class="pre">InverseProblem</span></code>, the
+parameters are initialized to <code class="docutils literal notranslate"><span class="pre">None</span></code> and the residual is
+computed as <code class="docutils literal notranslate"><span class="pre">equation(input_,</span> <span class="pre">output_)</span></code>.
+Otherwise, the parameters are automatically initialized in the
+ranges specified by the user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The residual evaluation of the specified equation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pina.equation.system_equation.SystemEquation">
+<em class="property">class </em><code class="sig-name descname">SystemEquation</code><span class="sig-paren">(</span><em class="sig-param">list_equation</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/system_equation.html#SystemEquation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.system_equation.SystemEquation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.equation.equation.Equation</span></code></a></p>
+<p>System of Equation class for specifing any system
+of equations in PINA.
+Each <code class="docutils literal notranslate"><span class="pre">equation</span></code> passed to a <code class="docutils literal notranslate"><span class="pre">Condition</span></code> object
+must be an <code class="docutils literal notranslate"><span class="pre">Equation</span></code> or <code class="docutils literal notranslate"><span class="pre">SystemEquation</span></code>.
+A <code class="docutils literal notranslate"><span class="pre">SystemEquation</span></code> is specified by a list of
+equations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>equation</strong> (<em>Callable</em>) – A <code class="docutils literal notranslate"><span class="pre">torch</span></code> callable equation to
+evaluate the residual</p></li>
+<li><p><strong>reduction</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Specifies the reduction to apply to the output:
+<code class="docutils literal notranslate"><span class="pre">none</span></code> | <code class="docutils literal notranslate"><span class="pre">mean</span></code> | <code class="docutils literal notranslate"><span class="pre">sum</span></code>  | <code class="docutils literal notranslate"><span class="pre">callable</span></code>. <code class="docutils literal notranslate"><span class="pre">none</span></code>: no reduction
+will be applied, <code class="docutils literal notranslate"><span class="pre">mean</span></code>: the sum of the output will be divided
+by the number of elements in the output, <code class="docutils literal notranslate"><span class="pre">sum</span></code>: the output will
+be summed. <code class="docutils literal notranslate"><span class="pre">callable</span></code> a callable function to perform reduction,
+no checks guaranteed. Default: <code class="docutils literal notranslate"><span class="pre">mean</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pina.equation.system_equation.SystemEquation.residual">
+<code class="sig-name descname">residual</code><span class="sig-paren">(</span><em class="sig-param">input_</em>, <em class="sig-param">output_</em>, <em class="sig-param">params_=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/system_equation.html#SystemEquation.residual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.system_equation.SystemEquation.residual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Residual computation for the equations of the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Input points to evaluate the system of
+equations.</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Output vectors given by a model (e.g,
+a <code class="docutils literal notranslate"><span class="pre">FeedForward</span></code> model).</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Dictionary of parameters related to the inverse
+problem (if any).
+If the equation is not related to an <code class="docutils literal notranslate"><span class="pre">InverseProblem</span></code>, the
+parameters are initialized to <code class="docutils literal notranslate"><span class="pre">None</span></code> and the residual is
+computed as <code class="docutils literal notranslate"><span class="pre">equation(input_,</span> <span class="pre">output_)</span></code>.
+Otherwise, the parameters are automatically initialized in the
+ranges specified by the user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The residual evaluation of the specified system of equations,
+aggregated by the <code class="docutils literal notranslate"><span class="pre">reduction</span></code> defined in the <code class="docutils literal notranslate"><span class="pre">__init__</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pina.equation.equation_factory.FixedValue">
+<em class="property">class </em><code class="sig-name descname">FixedValue</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">components=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/equation_factory.html#FixedValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.equation_factory.FixedValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.equation.equation.Equation</span></code></a></p>
+<p>Fixed Value Equation class. This class can be
+used to enforced a fixed value for a specific
+condition, e.g. Dirichlet Boundary conditions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Value to be mantained fixed.</p></li>
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output
+variables to calculate the gradient for. It should
+be a subset of the output labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+all the output variables are considered.
+Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="pina.equation.equation_factory.FixedGradient">
+<em class="property">class </em><code class="sig-name descname">FixedGradient</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/equation_factory.html#FixedGradient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.equation_factory.FixedGradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.equation.equation.Equation</span></code></a></p>
+<p>Fixed Gradient Equation class. This class can be
+used to enforced a fixed gradient for a specific
+condition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Value to be mantained fixed.</p></li>
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output
+variables to calculate the gradient for. It should
+be a subset of the output labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+all the output variables are considered.
+Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on
+which the gradient is calculated. d should be a subset
+of the input labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all the input variables
+are considered. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="pina.equation.equation_factory.FixedFlux">
+<em class="property">class </em><code class="sig-name descname">FixedFlux</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/equation_factory.html#FixedFlux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.equation_factory.FixedFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.equation.equation.Equation</span></code></a></p>
+<p>Fixed Flux Equation class. This class can be
+used to enforced a fixed flux for a specific
+condition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – Value to be mantained fixed.</p></li>
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output
+variables to calculate the flux for. It should
+be a subset of the output labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+all the output variables are considered.
+Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on
+which the flux is calculated. d should be a subset
+of the input labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all the input variables
+are considered. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="pina.equation.equation_factory.Laplace">
+<em class="property">class </em><code class="sig-name descname">Laplace</code><span class="sig-paren">(</span><em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/equation/equation_factory.html#Laplace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.equation.equation_factory.Laplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.equation.equation.Equation</span></code></a></p>
+<p>Laplace Equation class. This class can be
+used to enforced a Laplace equation for a specific
+condition (force term set to zero).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output
+variables to calculate the flux for. It should
+be a subset of the output labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+all the output variables are considered.
+Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on
+which the flux is calculated. d should be a subset
+of the input labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all the input variables
+are considered. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="layers/convolution.html" class="btn btn-neutral float-left" title="Continuous convolution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="operators.html" class="btn btn-neutral float-right" title="Operators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

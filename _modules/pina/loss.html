@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pina.loss &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pina.loss</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pina.loss</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Module for Loss class &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">torch.nn.modules.loss</span> <span class="kn">import</span> <span class="n">_Loss</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LossInterface&#39;</span><span class="p">,</span> <span class="s1">&#39;LpLoss&#39;</span><span class="p">,</span> <span class="s1">&#39;PowerLoss&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="LossInterface"><a class="viewcode-back" href="../../_rst/loss/loss_interface.html#pina.loss.LossInterface">[docs]</a><span class="k">class</span> <span class="nc">LossInterface</span><span class="p">(</span><span class="n">_Loss</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The abstract ``LossInterface`` class. All the class defining a PINA Loss</span>
+<span class="sd">    should be inheritied from this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param str reduction: Specifies the reduction to apply to the output:</span>
+<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction </span>
+<span class="sd">            will be applied, ``mean``: the sum of the output will be divided</span>
+<span class="sd">            by the number of elements in the output, ``sum``: the output will</span>
+<span class="sd">            be summed. Note: ``size_average`` and ``reduce`` are in the</span>
+<span class="sd">            process of being deprecated, and in the meantime, specifying either of</span>
+<span class="sd">            those two args will override ``reduction``. Default: ``mean``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">,</span> <span class="n">size_average</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LossInterface.forward"><a class="viewcode-back" href="../../_rst/loss/loss_interface.html#pina.loss.LossInterface.forward">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward method for loss function.</span>
+
+<span class="sd">        :param torch.Tensor input: Input tensor from real data.</span>
+<span class="sd">        :param torch.Tensor target: Model tensor output.</span>
+<span class="sd">        :return: Loss evaluation.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+    <span class="k">def</span> <span class="nf">_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Simple helper function to check reduction</span>
+
+<span class="sd">        :param reduction: Specifies the reduction to apply to the output:</span>
+<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction </span>
+<span class="sd">            will be applied, ``mean``: the sum of the output will be divided</span>
+<span class="sd">            by the number of elements in the output, ``sum``: the output will</span>
+<span class="sd">            be summed. Note: ``size_average`` and ``reduce`` are in the</span>
+<span class="sd">            process of being deprecated, and in the meantime, specifying either of</span>
+<span class="sd">            those two args will override ``reduction``. Default: ``mean``.</span>
+<span class="sd">        :type reduction: str</span>
+<span class="sd">        :param loss: Loss tensor for each element.</span>
+<span class="sd">        :type loss: torch.Tensor</span>
+<span class="sd">        :return: Reduced loss.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">loss</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">+</span> <span class="s2">&quot; is not valid&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="LpLoss"><a class="viewcode-back" href="../../_rst/loss/lploss.html#pina.loss.LpLoss">[docs]</a><span class="k">class</span> <span class="nc">LpLoss</span><span class="p">(</span><span class="n">LossInterface</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Lp loss implementation class. Creates a criterion that measures</span>
+<span class="sd">    the Lp error between each element in the input :math:`x` and</span>
+<span class="sd">    target :math:`y`.</span>
+
+<span class="sd">    The unreduced (i.e. with ``reduction`` set to ``none``) loss can</span>
+<span class="sd">    be described as:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad</span>
+<span class="sd">        l_n = \left[\sum_{i=1}^{D} \left| x_n^i - y_n^i \right|^p \right],</span>
+<span class="sd">    </span>
+<span class="sd">    If ``&#39;relative&#39;`` is set to true:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad</span>
+<span class="sd">        l_n = \frac{ [\sum_{i=1}^{D} | x_n^i - y_n^i|^p] }{[\sum_{i=1}^{D}|y_n^i|^p]},</span>
+
+<span class="sd">    where :math:`N` is the batch size. If ``reduction`` is not ``none``</span>
+<span class="sd">    (default ``mean``), then:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \ell(x, y) =</span>
+<span class="sd">        \begin{cases}</span>
+<span class="sd">            \operatorname{mean}(L), &amp; \text{if reduction} = \text{`mean&#39;;}\\</span>
+<span class="sd">            \operatorname{sum}(L),  &amp; \text{if reduction} = \text{`sum&#39;.}</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    :math:`x` and :math:`y` are tensors of arbitrary shapes with a total</span>
+<span class="sd">    of :math:`n` elements each.</span>
+
+<span class="sd">    The sum operation still operates over all the elements, and divides by :math:`n`.</span>
+
+<span class="sd">    The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param int p: Degree of Lp norm. It specifies the type of norm to</span>
+<span class="sd">            be calculated. See `list of possible orders in torch linalg</span>
+<span class="sd">            &lt;https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm&gt;`_ to</span>
+<span class="sd">            for possible degrees. Default 2 (euclidean norm).</span>
+<span class="sd">        :param str reduction: Specifies the reduction to apply to the output:</span>
+<span class="sd">            ``none`` | ``mean`` | ``sum``. ``none``: no reduction </span>
+<span class="sd">            will be applied, ``mean``: the sum of the output will be divided</span>
+<span class="sd">            by the number of elements in the output, ``sum``: the output will</span>
+<span class="sd">            be summed.</span>
+<span class="sd">        :param bool relative: Specifies if relative error should be computed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
+
+        <span class="c1"># check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">))</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">relative</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span>
+
+<div class="viewcode-block" id="LpLoss.forward"><a class="viewcode-back" href="../../_rst/loss/lploss.html#pina.loss.LpLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward method for loss function.</span>
+
+<span class="sd">        :param torch.Tensor input: Input tensor from real data.</span>
+<span class="sd">        :param torch.Tensor target: Model tensor output.</span>
+<span class="sd">        :return: Loss evaluation.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">((</span><span class="nb">input</span> <span class="o">-</span> <span class="n">target</span><span class="p">),</span> <span class="nb">ord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PowerLoss"><a class="viewcode-back" href="../../_rst/loss/powerloss.html#pina.loss.PowerLoss">[docs]</a><span class="k">class</span> <span class="nc">PowerLoss</span><span class="p">(</span><span class="n">LossInterface</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The PowerLoss loss implementation class. Creates a criterion that measures</span>
+<span class="sd">    the error between each element in the input :math:`x` and</span>
+<span class="sd">    target :math:`y` powered to a specific integer.</span>
+
+<span class="sd">    The unreduced (i.e. with ``reduction`` set to ``none``) loss can</span>
+<span class="sd">    be described as:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad</span>
+<span class="sd">        l_n = \frac{1}{D}\left[\sum_{i=1}^{D} \left| x_n^i - y_n^i \right|^p \right],</span>
+<span class="sd">    </span>
+<span class="sd">    If ``&#39;relative&#39;`` is set to true:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad</span>
+<span class="sd">        l_n = \frac{ \sum_{i=1}^{D} | x_n^i - y_n^i|^p }{\sum_{i=1}^{D}|y_n^i|^p},</span>
+
+<span class="sd">    where :math:`N` is the batch size. If ``reduction`` is not ``none``</span>
+<span class="sd">    (default ``mean``), then:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \ell(x, y) =</span>
+<span class="sd">        \begin{cases}</span>
+<span class="sd">            \operatorname{mean}(L), &amp; \text{if reduction} = \text{`mean&#39;;}\\</span>
+<span class="sd">            \operatorname{sum}(L),  &amp; \text{if reduction} = \text{`sum&#39;.}</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    :math:`x` and :math:`y` are tensors of arbitrary shapes with a total</span>
+<span class="sd">    of :math:`n` elements each.</span>
+
+<span class="sd">    The sum operation still operates over all the elements, and divides by :math:`n`.</span>
+
+<span class="sd">    The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param int p: Degree of Lp norm. It specifies the type of norm to</span>
+<span class="sd">            be calculated. See `list of possible orders in torch linalg</span>
+<span class="sd">            &lt;https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm&gt;`_ to</span>
+<span class="sd">            see the possible degrees. Default 2 (euclidean norm).</span>
+<span class="sd">        :param str reduction: Specifies the reduction to apply to the output:</span>
+<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction </span>
+<span class="sd">            will be applied, ``mean``: the sum of the output will be divided</span>
+<span class="sd">            by the number of elements in the output, ``sum``: the output will</span>
+<span class="sd">            be summed.</span>
+<span class="sd">        :param bool relative: Specifies if relative error should be computed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
+
+        <span class="c1"># check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">relative</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span>
+
+<div class="viewcode-block" id="PowerLoss.forward"><a class="viewcode-back" href="../../_rst/loss/powerloss.html#pina.loss.PowerLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward method for loss function.</span>
+
+<span class="sd">        :param torch.Tensor input: Input tensor from real data.</span>
+<span class="sd">        :param torch.Tensor target: Model tensor output.</span>
+<span class="sd">        :return: Loss evaluation.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="nb">input</span> <span class="o">-</span> <span class="n">target</span><span class="p">))</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

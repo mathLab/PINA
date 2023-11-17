@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Operators &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Operators &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -13,12 +14,14 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Plotter" href="plotter.html" />
-    <link rel="prev" title="Span" href="span.html" /> 
+    <link rel="next" title="AbstractProblem" href="problem/abstractproblem.html" />
+    <link rel="prev" title="Equations" href="equations.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -29,11 +32,12 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
-            PINA
+          <a href="../index.html">
+            
+              <img src="../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.0.3.post2311
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -45,29 +49,35 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Package Documentation:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="span.html">Span</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Operators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plotter.html">Plotter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="condition.html">Condition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="location.html">Location</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#layers">Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#problem">Problem</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="_code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="_code.html#pina-features">PINA Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#layers">Layers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="_code.html#equations-and-operators">Equations and Operators</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="equations.html">Equations</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Differential Operators</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#geometry-set-operations">Geometry set operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#metrics-and-losses">Metrics and Losses</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials:</span></p>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial.html">1. Getting start with PINA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">2. Poisson problem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">3. Wave equation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_cite.html">Cite PINA</a></li>
 </ul>
 
         </div>
@@ -84,7 +94,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="code.html">Code Documentation</a></li>
+          <li class="breadcrumb-item"><a href="_code.html">Code Documentation</a></li>
       <li class="breadcrumb-item active">Operators</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/_rst/operators.rst.txt" rel="nofollow"> View page source</a>
@@ -95,33 +105,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="operators">
-<h1>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h1>
-<p>Module for operators vectorize implementation</p>
+  <div class="section" id="module-pina.operators">
+<span id="operators"></span><h1>Operators<a class="headerlink" href="#module-pina.operators" title="Permalink to this headline">¶</a></h1>
+<p>Module for operators vectorize implementation. Differential operators are used to write any differential problem.
+These operators are implemented to work on different accellerators: CPU, GPU, TPU or MPS.
+All operators take as input a tensor onto which computing the operator, a tensor with respect
+to which computing the operator, the name of the output variables to calculate the operator
+for (in case of multidimensional functions), and the variables name on which the operator is calculated.</p>
 <dl class="function">
-<dt>
-<code class="sig-name descname">advection</code><span class="sig-paren">(</span><em class="sig-param">output_</em>, <em class="sig-param">input_</em>, <em class="sig-param">velocity_field</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operators.html#advection"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Perform advection operation. The operator works for vectorial functions,
-with multiple input coordinates.</p>
+<dt id="pina.operators.grad">
+<code class="sig-name descname">grad</code><span class="sig-paren">(</span><em class="sig-param">output_</em>, <em class="sig-param">input_</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operators.html#grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.operators.grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform gradient operation. The operator works for vectorial and scalar
+functions, with multiple input coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the output tensor onto which computing the
-nabla.</p></li>
+gradient.</p></li>
 <li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which computing
-the nabla.</p></li>
-<li><p><strong>velocity_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the name of the output variables which is used
-as velocity field. It should be a subset of the output labels.</p></li>
+the gradient.</p></li>
 <li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
-the nabla for. It should be a subset of the output labels. If None,
+the gradient for. It should be a subset of the output labels. If None,
 all the output variables are considered. Default is None.</p></li>
-<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the nabla
-is calculated. d should be a subset of the input labels. If None, all
-the input variables are considered. Default is None.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the gradient is
+calculated. d should be a subset of the input labels. If None, all the
+input variables are considered. Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the tensor containing the result of the advection operator.</p>
+<dd class="field-even"><p>the gradient tensor.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
@@ -130,8 +142,8 @@ the input variables are considered. Default is None.</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt>
-<code class="sig-name descname">div</code><span class="sig-paren">(</span><em class="sig-param">output_</em>, <em class="sig-param">input_</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operators.html#div"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="pina.operators.div">
+<code class="sig-name descname">div</code><span class="sig-paren">(</span><em class="sig-param">output_</em>, <em class="sig-param">input_</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operators.html#div"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.operators.div" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform divergence operation. The operator works for vectorial functions,
 with multiple input coordinates.</p>
 <dl class="field-list simple">
@@ -167,53 +179,24 @@ respect to all coordinates.</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt>
-<code class="sig-name descname">grad</code><span class="sig-paren">(</span><em class="sig-param">output_</em>, <em class="sig-param">input_</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operators.html#grad"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Perform gradient operation. The operator works for vectorial and scalar
-functions, with multiple input coordinates.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the output tensor onto which computing the
-gradient.</p></li>
-<li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which computing
-the gradient.</p></li>
-<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
-the gradient for. It should be a subset of the output labels. If None,
-all the output variables are considered. Default is None.</p></li>
-<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the gradient is
-calculated. d should be a subset of the input labels. If None, all the
-input variables are considered. Default is None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the gradient tensor.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt>
-<code class="sig-name descname">nabla</code><span class="sig-paren">(</span><em class="sig-param">output_</em>, <em class="sig-param">input_</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em>, <em class="sig-param">method='std'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operators.html#nabla"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Perform nabla (laplace) operator. The operator works for vectorial and
+<dt id="pina.operators.laplacian">
+<code class="sig-name descname">laplacian</code><span class="sig-paren">(</span><em class="sig-param">output_</em>, <em class="sig-param">input_</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em>, <em class="sig-param">method='std'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operators.html#laplacian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.operators.laplacian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Laplace operator. The operator works for vectorial and
 scalar functions, with multiple input coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the output tensor onto which computing the
-nabla.</p></li>
+Laplacian.</p></li>
 <li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which computing
-the nabla.</p></li>
+the Laplacian.</p></li>
 <li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
-the nabla for. It should be a subset of the output labels. If None,
+the Laplacian for. It should be a subset of the output labels. If None,
 all the output variables are considered. Default is None.</p></li>
-<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the nabla
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the Laplacian
 is calculated. d should be a subset of the input labels. If None, all
 the input variables are considered. Default is None.</p></li>
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – used method to calculate nabla, defaults to ‘std’.</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – used method to calculate Laplacian, defaults to ‘std’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -224,10 +207,41 @@ all coordinates must be performed.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The tensor containing the result of the nabla operator.</p>
+<dd class="field-odd"><p>The tensor containing the result of the Laplacian operator.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pina.operators.advection">
+<code class="sig-name descname">advection</code><span class="sig-paren">(</span><em class="sig-param">output_</em>, <em class="sig-param">input_</em>, <em class="sig-param">velocity_field</em>, <em class="sig-param">components=None</em>, <em class="sig-param">d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operators.html#advection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.operators.advection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform advection operation. The operator works for vectorial functions,
+with multiple input coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the output tensor onto which computing the
+advection.</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which computing
+the advection.</p></li>
+<li><p><strong>velocity_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the name of the output variables which is used
+as velocity field. It should be a subset of the output labels.</p></li>
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the output variables to calculate
+the Laplacian for. It should be a subset of the output labels. If None,
+all the output variables are considered. Default is None.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the name of the input variables on which the advection
+is calculated. d should be a subset of the input labels. If None, all
+the input variables are considered. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the tensor containing the result of the advection operator.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -238,15 +252,15 @@ all coordinates must be performed.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="span.html" class="btn btn-neutral float-left" title="Span" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="plotter.html" class="btn btn-neutral float-right" title="Plotter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="equations.html" class="btn btn-neutral float-left" title="Equations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="problem/abstractproblem.html" class="btn btn-neutral float-right" title="AbstractProblem" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Nov 01, 2023.
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
       </span></p>
   </div>
 

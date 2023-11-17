@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LabelTensor &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>LabelTensor &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -13,12 +14,14 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Span" href="span.html" />
-    <link rel="prev" title="PINN" href="pinn.html" /> 
+    <link rel="next" title="Condition" href="condition.html" />
+    <link rel="prev" title="Code Documentation" href="_code.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -29,11 +32,12 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
-            PINA
+          <a href="../index.html">
+            
+              <img src="../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.0.3.post2311
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -45,29 +49,37 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Package Documentation:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">LabelTensor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="span.html">Span</a></li>
-<li class="toctree-l2"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plotter.html">Plotter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="condition.html">Condition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="location.html">Location</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#layers">Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#problem">Problem</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="_code.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="_code.html#pina-features">PINA Features</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">LabelTensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="condition.html">Condition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trainer.html">Trainer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotter.html">Plotter</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#equations-and-operators">Equations and Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#geometry-set-operations">Geometry set operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#metrics-and-losses">Metrics and Losses</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials:</span></p>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial.html">1. Getting start with PINA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">2. Poisson problem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">3. Wave equation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_cite.html">Cite PINA</a></li>
 </ul>
 
         </div>
@@ -84,7 +96,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="code.html">Code Documentation</a></li>
+          <li class="breadcrumb-item"><a href="_code.html">Code Documentation</a></li>
       <li class="breadcrumb-item active">LabelTensor</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/_rst/label_tensor.rst.txt" rel="nofollow"> View page source</a>
@@ -95,9 +107,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-pina.label_tensor">
-<span id="labeltensor"></span><h1>LabelTensor<a class="headerlink" href="#module-pina.label_tensor" title="Permalink to this headline">¶</a></h1>
-<p>Module for LabelTensor</p>
+  <div class="section" id="labeltensor">
+<h1>LabelTensor<a class="headerlink" href="#labeltensor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pina.label_tensor.LabelTensor">
 <em class="property">class </em><code class="sig-name descname">LabelTensor</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">labels</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor" title="Permalink to this definition">¶</a></dt>
@@ -109,8 +120,8 @@ allowing for an easier manipulation.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – the data tensor.</p></li>
-<li><p><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><em>iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the labels of the columns.</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – The data tensor.</p></li>
+<li><p><strong>labels</strong> (<em>str | list</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>) </em><em>| tuple</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – The labels of the columns.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Example</dt>
@@ -125,6 +136,14 @@ allowing for an easier manipulation.</p>
 <span class="go">    [1.0246e-01, 9.5179e-01, 3.7043e-02],</span>
 <span class="go">    [9.6150e-01, 8.0656e-01, 8.3824e-01]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="go">tensor([[0.0671],</span>
+<span class="go">        [0.9239],</span>
+<span class="go">        [0.8927],</span>
+<span class="go">        ...,</span>
+<span class="go">        [0.5819],</span>
+<span class="go">        [0.1025],</span>
+<span class="go">        [0.9615]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
 <span class="go">tensor([[0.0671],</span>
 <span class="go">        [0.9239],</span>
 <span class="go">        [0.8927],</span>
@@ -153,59 +172,6 @@ allowing for an easier manipulation.</p>
 </dd>
 </dl>
 <dl class="method">
-<dt id="pina.label_tensor.LabelTensor.append">
-<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">lt</em>, <em class="sig-param">mode='std'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of the merged tensors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lt</strong> (<a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the tensor to merge.</p></li>
-<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – {‘std’, ‘first’, ‘cross’}</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the merged tensors</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="pina.label_tensor.LabelTensor.clone">
-<code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.clone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clone the LabelTensor. For more details, see
-<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.clone.html#torch.Tensor.clone" title="(in PyTorch v2.1)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.clone()</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>a copy of the tensor</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="pina.label_tensor.LabelTensor.extract">
-<code class="sig-name descname">extract</code><span class="sig-paren">(</span><em class="sig-param">label_to_extract</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.extract" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract the subset of the original tensor by returning all the columns
-corresponding to the passed <cite>label_to_extract</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>label_to_extract</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><em>iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the label(s) to extract.</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – labels are not str</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – label to extract is not in the labels list</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="pina.label_tensor.LabelTensor.labels">
 <em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pina.label_tensor.LabelTensor.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Property decorator for labels</p>
@@ -220,9 +186,37 @@ corresponding to the passed <cite>label_to_extract</cite>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pina.label_tensor.LabelTensor.select">
-<code class="sig-name descname">select</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs Tensor selection. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.select.html#torch.Tensor.select" title="(in PyTorch v2.1)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.select()</span></code></a>.</p>
+<dt id="pina.label_tensor.LabelTensor.vstack">
+<em class="property">static </em><code class="sig-name descname">vstack</code><span class="sig-paren">(</span><em class="sig-param">label_tensors</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.vstack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.vstack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stack tensors vertically. For more details, see
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.vstack()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>label_tensors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a><em>)</em>) – the tensors to stack. They need
+to have equal labels.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the stacked tensor</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.label_tensor.LabelTensor.clone">
+<code class="sig-name descname">clone</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone the LabelTensor. For more details, see
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.clone.html#torch.Tensor.clone" title="(in PyTorch v2.1)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.clone()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A copy of the tensor.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -230,6 +224,120 @@ corresponding to the passed <cite>label_to_extract</cite>.</p>
 <code class="sig-name descname">to</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs Tensor dtype and/or device conversion. For more details, see
 <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch.Tensor.to" title="(in PyTorch v2.1)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.to()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.label_tensor.LabelTensor.select">
+<code class="sig-name descname">select</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs Tensor selection. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.select.html#torch.Tensor.select" title="(in PyTorch v2.1)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.select()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.label_tensor.LabelTensor.cuda">
+<code class="sig-name descname">cuda</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.cuda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.cuda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send Tensor to cuda. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.cuda.html#torch.Tensor.cuda" title="(in PyTorch v2.1)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.cuda()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.label_tensor.LabelTensor.cpu">
+<code class="sig-name descname">cpu</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.cpu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.cpu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send Tensor to cpu. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.cpu.html#torch.Tensor.cpu" title="(in PyTorch v2.1)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.cpu()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.label_tensor.LabelTensor.extract">
+<code class="sig-name descname">extract</code><span class="sig-paren">(</span><em class="sig-param">label_to_extract</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the subset of the original tensor by returning all the columns
+corresponding to the passed <code class="docutils literal notranslate"><span class="pre">label_to_extract</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>label_to_extract</strong> (<em>str | list</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>) </em><em>| tuple</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – The label(s) to extract.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – Labels are not <code class="docutils literal notranslate"><span class="pre">str</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><strong>ValueError</strong></a> – Label to extract is not in the labels <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.label_tensor.LabelTensor.detach">
+<code class="sig-name descname">detach</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.detach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.detach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Tensor, detached from the current graph.</p>
+<p>The result will never require gradient.</p>
+<p>This method also affects forward mode AD gradients and the result will never
+have forward mode AD gradients.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Returned Tensor shares the same storage with the original one.
+In-place modifications on either of them will be seen, and may trigger
+errors in correctness checks.
+IMPORTANT NOTE: Previously, in-place size / stride / storage changes
+(such as <cite>resize_</cite> / <cite>resize_as_</cite> / <cite>set_</cite> / <cite>transpose_</cite>) to the returned tensor
+also update the original tensor. Now, these in-place changes will not update the
+original tensor anymore, and will instead trigger an error.
+For sparse tensors:
+In-place indices / values changes (such as <cite>zero_</cite> / <cite>copy_</cite> / <cite>add_</cite>) to the
+returned tensor will not update the original tensor anymore, and will instead
+trigger an error.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.label_tensor.LabelTensor.requires_grad_">
+<code class="sig-name descname">requires_grad_</code><span class="sig-paren">(</span><em class="sig-param">requires_grad=True</em><span class="sig-paren">)</span> &#x2192; Tensor<a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.requires_grad_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.requires_grad_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change if autograd should record operations on this tensor: sets this tensor’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">requires_grad</span></code> attribute in-place. Returns this tensor.</p>
+<p><a class="reference internal" href="#pina.label_tensor.LabelTensor.requires_grad_" title="pina.label_tensor.LabelTensor.requires_grad_"><code class="xref py py-func docutils literal notranslate"><span class="pre">requires_grad_()</span></code></a>’s main use case is to tell autograd to begin recording
+operations on a Tensor <code class="docutils literal notranslate"><span class="pre">tensor</span></code>. If <code class="docutils literal notranslate"><span class="pre">tensor</span></code> has <code class="docutils literal notranslate"><span class="pre">requires_grad=False</span></code>
+(because it was obtained through a DataLoader, or required preprocessing or
+initialization), <code class="docutils literal notranslate"><span class="pre">tensor.requires_grad_()</span></code> makes it so that autograd will
+begin to record operations on <code class="docutils literal notranslate"><span class="pre">tensor</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>requires_grad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If autograd should record operations on this tensor.
+Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Let&#39;s say we want to preprocess some saved weights and use</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># the result as new weights.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">saved_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loaded_weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">saved_weights</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">weights</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">loaded_weights</span><span class="p">)</span>  <span class="c1"># some function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">weights</span>
+<span class="go">tensor([-0.5503,  0.4926, -2.1158, -0.8303])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Now, start to record operations done to weights</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">weights</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">weights</span><span class="o">.</span><span class="n">grad</span>
+<span class="go">tensor([-1.1007,  0.9853, -4.2316, -1.6606])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.label_tensor.LabelTensor.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">lt</em>, <em class="sig-param">mode='std'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the merged tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lt</strong> (<a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The tensor to merge.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – {‘std’, ‘first’, ‘cross’}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The merged tensors.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -240,15 +348,15 @@ corresponding to the passed <cite>label_to_extract</cite>.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pinn.html" class="btn btn-neutral float-left" title="PINN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="span.html" class="btn btn-neutral float-right" title="Span" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="_code.html" class="btn btn-neutral float-left" title="Code Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="condition.html" class="btn btn-neutral float-right" title="Condition" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Nov 01, 2023.
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
       </span></p>
   </div>
 

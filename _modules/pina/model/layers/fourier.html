@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pina.model.layers.fourier &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+        <script src="../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_rst/_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pina.model.layers.fourier</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pina.model.layers.fourier</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">...utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+
+<span class="kn">from</span> <span class="nn">pina.model.layers</span> <span class="kn">import</span> <span class="n">SpectralConvBlock1D</span><span class="p">,</span> <span class="n">SpectralConvBlock2D</span><span class="p">,</span> <span class="n">SpectralConvBlock3D</span>
+
+
+<div class="viewcode-block" id="FourierBlock1D"><a class="viewcode-back" href="../../../../_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock1D">[docs]</a><span class="k">class</span> <span class="nc">FourierBlock1D</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fourier block implementation for three dimensional</span>
+<span class="sd">    input tensor. The combination of Fourier blocks</span>
+<span class="sd">    make up the Fourier Neural Operator  </span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B.,</span>
+<span class="sd">        Bhattacharya, K., Stuart, A., &amp; Anandkumar, A. (2020). *Fourier neural operator for</span>
+<span class="sd">        parametric partial differential equations*.</span>
+<span class="sd">        DOI: `arXiv preprint arXiv:2010.08895.</span>
+<span class="sd">        &lt;https://arxiv.org/abs/2010.08895&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">input_numb_fields</span><span class="p">,</span>
+                 <span class="n">output_numb_fields</span><span class="p">,</span>
+                 <span class="n">n_modes</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PINA implementation of Fourier block one dimension. The module computes</span>
+<span class="sd">        the spectral convolution of the input with a linear kernel in the</span>
+<span class="sd">        fourier space, and then it maps the input back to the physical</span>
+<span class="sd">        space. The output is then added to a Linear tranformation of the</span>
+<span class="sd">        input in the physical space. Finally an activation function is</span>
+<span class="sd">        applied to the output. </span>
+
+<span class="sd">        The block expects an input of size ``[batch, input_numb_fields, N]``</span>
+<span class="sd">        and returns an output of size ``[batch, output_numb_fields, N]``.</span>
+
+<span class="sd">        :param int input_numb_fields: The number of channels for the input.</span>
+<span class="sd">        :param int output_numb_fields: The number of channels for the output.</span>
+<span class="sd">        :param list | tuple n_modes: Number of modes to select for each dimension.</span>
+<span class="sd">            It must be at most equal to the ``floor(N/2)+1``.</span>
+<span class="sd">        :param torch.nn.Module activation: The activation function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check type consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">activation</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+
+        <span class="c1"># assign variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spectral_conv</span> <span class="o">=</span> <span class="n">SpectralConvBlock1D</span><span class="p">(</span>
+            <span class="n">input_numb_fields</span><span class="o">=</span><span class="n">input_numb_fields</span><span class="p">,</span>
+            <span class="n">output_numb_fields</span><span class="o">=</span><span class="n">output_numb_fields</span><span class="p">,</span>
+            <span class="n">n_modes</span><span class="o">=</span><span class="n">n_modes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv1d</span><span class="p">(</span><span class="n">input_numb_fields</span><span class="p">,</span> <span class="n">output_numb_fields</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FourierBlock1D.forward"><a class="viewcode-back" href="../../../../_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock1D.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward computation for Fourier Block. It performs a spectral </span>
+<span class="sd">        convolution and a linear transformation of the input and sum the</span>
+<span class="sd">        results.</span>
+
+<span class="sd">        :param x: The input tensor for fourier block, expect of size </span>
+<span class="sd">            ``[batch, input_numb_fields, x]``.</span>
+<span class="sd">        :type x: torch.Tensor</span>
+<span class="sd">        :return: The output tensor obtained from the</span>
+<span class="sd">            fourier block of size ``[batch, output_numb_fields, x]``.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spectral_conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="FourierBlock2D"><a class="viewcode-back" href="../../../../_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock2D">[docs]</a><span class="k">class</span> <span class="nc">FourierBlock2D</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fourier block implementation for two dimensional</span>
+<span class="sd">    input tensor. The combination of Fourier blocks</span>
+<span class="sd">    make up the Fourier Neural Operator    </span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        **Original reference**: Li, Zongyi, et al.</span>
+<span class="sd">        *Fourier neural operator for parametric partial</span>
+<span class="sd">        differential equations*. arXiv preprint</span>
+<span class="sd">        arXiv:2010.08895 (2020)</span>
+<span class="sd">        &lt;https://arxiv.org/abs/2010.08895.pdf&gt;`_.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">input_numb_fields</span><span class="p">,</span>
+                 <span class="n">output_numb_fields</span><span class="p">,</span>
+                 <span class="n">n_modes</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PINA implementation of Fourier block two dimensions. The module computes</span>
+<span class="sd">        the spectral convolution of the input with a linear kernel in the</span>
+<span class="sd">        fourier space, and then it maps the input back to the physical</span>
+<span class="sd">        space. The output is then added to a Linear tranformation of the</span>
+<span class="sd">        input in the physical space. Finally an activation function is</span>
+<span class="sd">        applied to the output. </span>
+
+<span class="sd">        The block expects an input of size ``[batch, input_numb_fields, Nx, Ny]``</span>
+<span class="sd">        and returns an output of size ``[batch, output_numb_fields, Nx, Ny]``.</span>
+
+<span class="sd">        :param int input_numb_fields: The number of channels for the input.</span>
+<span class="sd">        :param int output_numb_fields: The number of channels for the output.</span>
+<span class="sd">        :param list | tuple n_modes: Number of modes to select for each dimension.</span>
+<span class="sd">            It must be at most equal to the ``floor(Nx/2)+1`` and ``floor(Ny/2)+1``.</span>
+<span class="sd">        :param torch.nn.Module activation: The activation function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># check type consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">activation</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+
+        <span class="c1"># assign variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spectral_conv</span> <span class="o">=</span> <span class="n">SpectralConvBlock2D</span><span class="p">(</span>
+            <span class="n">input_numb_fields</span><span class="o">=</span><span class="n">input_numb_fields</span><span class="p">,</span>
+            <span class="n">output_numb_fields</span><span class="o">=</span><span class="n">output_numb_fields</span><span class="p">,</span>
+            <span class="n">n_modes</span><span class="o">=</span><span class="n">n_modes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">input_numb_fields</span><span class="p">,</span> <span class="n">output_numb_fields</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FourierBlock2D.forward"><a class="viewcode-back" href="../../../../_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock2D.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward computation for Fourier Block. It performs a spectral </span>
+<span class="sd">        convolution and a linear transformation of the input and sum the</span>
+<span class="sd">        results.</span>
+
+<span class="sd">        :param x: The input tensor for fourier block, expect of size </span>
+<span class="sd">            ``[batch, input_numb_fields, x, y]``.</span>
+<span class="sd">        :type x: torch.Tensor</span>
+<span class="sd">        :return: The output tensor obtained from the</span>
+<span class="sd">            fourier block of size ``[batch, output_numb_fields, x, y, z]``.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spectral_conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="FourierBlock3D"><a class="viewcode-back" href="../../../../_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock3D">[docs]</a><span class="k">class</span> <span class="nc">FourierBlock3D</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fourier block implementation for three dimensional</span>
+<span class="sd">    input tensor. The combination of Fourier blocks</span>
+<span class="sd">    make up the Fourier Neural Operator  </span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        **Original reference**: Li, Zongyi, et al.</span>
+<span class="sd">        *Fourier neural operator for parametric partial</span>
+<span class="sd">        differential equations*. arXiv preprint</span>
+<span class="sd">        arXiv:2010.08895 (2020)</span>
+<span class="sd">        &lt;https://arxiv.org/abs/2010.08895.pdf&gt;`_.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">input_numb_fields</span><span class="p">,</span>
+                 <span class="n">output_numb_fields</span><span class="p">,</span>
+                 <span class="n">n_modes</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PINA implementation of Fourier block three dimensions. The module computes</span>
+<span class="sd">        the spectral convolution of the input with a linear kernel in the</span>
+<span class="sd">        fourier space, and then it maps the input back to the physical</span>
+<span class="sd">        space. The output is then added to a Linear tranformation of the</span>
+<span class="sd">        input in the physical space. Finally an activation function is</span>
+<span class="sd">        applied to the output. </span>
+
+<span class="sd">        The block expects an input of size ``[batch, input_numb_fields, Nx, Ny, Nz]``</span>
+<span class="sd">        and returns an output of size ``[batch, output_numb_fields, Nx, Ny, Nz]``.</span>
+
+<span class="sd">        :param int input_numb_fields: The number of channels for the input.</span>
+<span class="sd">        :param int output_numb_fields: The number of channels for the output.</span>
+<span class="sd">        :param list | tuple n_modes: Number of modes to select for each dimension.</span>
+<span class="sd">            It must be at most equal to the ``floor(Nx/2)+1``, ``floor(Ny/2)+1``</span>
+<span class="sd">            and ``floor(Nz/2)+1``.</span>
+<span class="sd">        :param torch.nn.Module activation: The activation function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># check type consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">activation</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+
+        <span class="c1"># assign variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spectral_conv</span> <span class="o">=</span> <span class="n">SpectralConvBlock3D</span><span class="p">(</span>
+            <span class="n">input_numb_fields</span><span class="o">=</span><span class="n">input_numb_fields</span><span class="p">,</span>
+            <span class="n">output_numb_fields</span><span class="o">=</span><span class="n">output_numb_fields</span><span class="p">,</span>
+            <span class="n">n_modes</span><span class="o">=</span><span class="n">n_modes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv3d</span><span class="p">(</span><span class="n">input_numb_fields</span><span class="p">,</span> <span class="n">output_numb_fields</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FourierBlock3D.forward"><a class="viewcode-back" href="../../../../_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock3D.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward computation for Fourier Block. It performs a spectral </span>
+<span class="sd">        convolution and a linear transformation of the input and sum the</span>
+<span class="sd">        results.</span>
+
+<span class="sd">        :param x: The input tensor for fourier block, expect of size </span>
+<span class="sd">            ``[batch, input_numb_fields, x, y, z]``.</span>
+<span class="sd">        :type x: torch.Tensor</span>
+<span class="sd">        :return: The output tensor obtained from the</span>
+<span class="sd">            fourier block of size ``[batch, output_numb_fields, x, y, z]``.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_activation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spectral_conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

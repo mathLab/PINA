@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview: module code &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Overview: module code &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -13,6 +14,8 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -27,11 +30,12 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
-            PINA
+          <a href="../index.html">
+            
+              <img src="../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.0.3.post2311
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -43,17 +47,19 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Package Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../_rst/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../_rst/code.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../_rst/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_rst/_code.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials:</span></p>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../_rst/tutorial1/tutorial.html">1. Getting start with PINA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../_rst/tutorial2/tutorial.html">2. Poisson problem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../_rst/tutorial3/tutorial.html">3. Wave equation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../_rst/tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_cite.html">Cite PINA</a></li>
 </ul>
 
         </div>
@@ -80,22 +86,45 @@
            <div itemprop="articleBody">
              
   <h1>All modules for which code is available</h1>
-<ul><li><a href="pina/condition.html">pina.condition</a></li>
+<ul><li><a href="pina/callbacks/adaptive_refinment_callbacks.html">pina.callbacks.adaptive_refinment_callbacks</a></li>
+<li><a href="pina/callbacks/optimizer_callbacks.html">pina.callbacks.optimizer_callbacks</a></li>
+<li><a href="pina/callbacks/processing_callbacks.html">pina.callbacks.processing_callbacks</a></li>
+<li><a href="pina/condition.html">pina.condition</a></li>
+<li><a href="pina/equation/equation.html">pina.equation.equation</a></li>
+<li><a href="pina/equation/equation_factory.html">pina.equation.equation_factory</a></li>
+<li><a href="pina/equation/equation_interface.html">pina.equation.equation_interface</a></li>
+<li><a href="pina/equation/system_equation.html">pina.equation.system_equation</a></li>
+<li><a href="pina/geometry/cartesian.html">pina.geometry.cartesian</a></li>
+<li><a href="pina/geometry/difference_domain.html">pina.geometry.difference_domain</a></li>
+<li><a href="pina/geometry/ellipsoid.html">pina.geometry.ellipsoid</a></li>
+<li><a href="pina/geometry/exclusion_domain.html">pina.geometry.exclusion_domain</a></li>
+<li><a href="pina/geometry/intersection_domain.html">pina.geometry.intersection_domain</a></li>
+<li><a href="pina/geometry/location.html">pina.geometry.location</a></li>
+<li><a href="pina/geometry/operation_interface.html">pina.geometry.operation_interface</a></li>
+<li><a href="pina/geometry/simplex.html">pina.geometry.simplex</a></li>
+<li><a href="pina/geometry/union_domain.html">pina.geometry.union_domain</a></li>
 <li><a href="pina/label_tensor.html">pina.label_tensor</a></li>
-<li><a href="pina/location.html">pina.location</a></li>
+<li><a href="pina/loss.html">pina.loss</a></li>
 <li><a href="pina/model/deeponet.html">pina.model.deeponet</a></li>
 <li><a href="pina/model/feed_forward.html">pina.model.feed_forward</a></li>
+<li><a href="pina/model/fno.html">pina.model.fno</a></li>
 <li><a href="pina/model/layers/convolution_2d.html">pina.model.layers.convolution_2d</a></li>
+<li><a href="pina/model/layers/fourier.html">pina.model.layers.fourier</a></li>
+<li><a href="pina/model/layers/residual.html">pina.model.layers.residual</a></li>
+<li><a href="pina/model/layers/spectral.html">pina.model.layers.spectral</a></li>
 <li><a href="pina/model/multi_feed_forward.html">pina.model.multi_feed_forward</a></li>
 <li><a href="pina/model/network.html">pina.model.network</a></li>
 <li><a href="pina/operators.html">pina.operators</a></li>
-<li><a href="pina/pinn.html">pina.pinn</a></li>
 <li><a href="pina/plotter.html">pina.plotter</a></li>
 <li><a href="pina/problem/abstract_problem.html">pina.problem.abstract_problem</a></li>
 <li><a href="pina/problem/parametric_problem.html">pina.problem.parametric_problem</a></li>
 <li><a href="pina/problem/spatial_problem.html">pina.problem.spatial_problem</a></li>
 <li><a href="pina/problem/timedep_problem.html">pina.problem.timedep_problem</a></li>
-<li><a href="pina/span.html">pina.span</a></li>
+<li><a href="pina/solvers/garom.html">pina.solvers.garom</a></li>
+<li><a href="pina/solvers/pinn.html">pina.solvers.pinn</a></li>
+<li><a href="pina/solvers/solver.html">pina.solvers.solver</a></li>
+<li><a href="pina/solvers/supervised.html">pina.solvers.supervised</a></li>
+<li><a href="pina/trainer.html">pina.trainer</a></li>
 </ul>
 
            </div>
@@ -105,8 +134,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Nov 01, 2023.
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
       </span></p>
   </div>
 

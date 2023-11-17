@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pina.solvers.solver &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pina.solvers.solver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pina.solvers.solver</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Solver module. &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">..model.network</span> <span class="kn">import</span> <span class="n">Network</span>
+<span class="kn">import</span> <span class="nn">pytorch_lightning</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+<span class="kn">from</span> <span class="nn">..problem</span> <span class="kn">import</span> <span class="n">AbstractProblem</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+
+<div class="viewcode-block" id="SolverInterface"><a class="viewcode-back" href="../../../_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface">[docs]</a><span class="k">class</span> <span class="nc">SolverInterface</span><span class="p">(</span><span class="n">pytorch_lightning</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solver base class. This class inherits is a wrapper of</span>
+<span class="sd">    LightningModule class, inheriting all the</span>
+<span class="sd">    LightningModule methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">models</span><span class="p">,</span>
+                 <span class="n">problem</span><span class="p">,</span>
+                 <span class="n">optimizers</span><span class="p">,</span>
+                 <span class="n">optimizers_kwargs</span><span class="p">,</span>
+                 <span class="n">extra_features</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param models: A torch neural network model instance.</span>
+<span class="sd">        :type models: torch.nn.Module</span>
+<span class="sd">        :param problem: A problem definition instance.</span>
+<span class="sd">        :type problem: AbstractProblem</span>
+<span class="sd">        :param list(torch.optim.Optimizer) optimizer: A list of neural network optimizers to</span>
+<span class="sd">            use.</span>
+<span class="sd">        :param list(dict) optimizer_kwargs: A list of optimizer constructor keyword args.</span>
+<span class="sd">        :param list(torch.nn.Module) extra_features: The additional input</span>
+<span class="sd">            features to use as augmented input. If ``None`` no extra features </span>
+<span class="sd">            are passed. If it is a list of :class:`torch.nn.Module`, the extra feature</span>
+<span class="sd">            list is passed to all models. If it is a list of extra features&#39; lists,</span>
+<span class="sd">            each single list of extra feature is passed to a model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># check consistency of the inputs</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">AbstractProblem</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">optimizers</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">optimizers_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+
+        <span class="c1"># put everything in a list if only one input</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">models</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">optimizers</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">optimizers</span> <span class="o">=</span> <span class="p">[</span><span class="n">optimizers</span><span class="p">]</span>
+            <span class="n">optimizers_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">optimizers_kwargs</span><span class="p">]</span>
+
+        <span class="c1"># number of models and optimizers</span>
+        <span class="n">len_model</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        <span class="n">len_optimizer</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimizers</span><span class="p">)</span>
+        <span class="n">len_optimizer_kwargs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimizers_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># check length consistency optimizers</span>
+        <span class="k">if</span> <span class="n">len_model</span> <span class="o">!=</span> <span class="n">len_optimizer</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You must define one optimizer for each model.&#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;Got </span><span class="si">{len_model}</span><span class="s1"> models, and </span><span class="si">{len_optimizer}</span><span class="s1">&#39;</span>
+                             <span class="s1">&#39; optimizers.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># check length consistency optimizers kwargs</span>
+        <span class="k">if</span> <span class="n">len_optimizer_kwargs</span> <span class="o">!=</span> <span class="n">len_optimizer</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You must define one dictionary of keyword&#39;</span>
+                             <span class="s1">&#39; arguments for each optimizers.&#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;Got </span><span class="si">{len_optimizer}</span><span class="s1"> optimizers, and&#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{len_optimizer_kwargs}</span><span class="s1"> dicitionaries&#39;</span><span class="p">)</span>
+
+        <span class="c1"># extra features handling</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">extra_features</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">extra_features</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">extra_features</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">len_model</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if we only have a list of extra features</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra_features</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                <span class="n">extra_features</span> <span class="o">=</span> <span class="p">[</span><span class="n">extra_features</span><span class="p">]</span> <span class="o">*</span> <span class="n">len_model</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># if we have a list of list extra features</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extra_features</span><span class="p">)</span> <span class="o">!=</span> <span class="n">len_model</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;You passed a list of extrafeatures list with len&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;different of models len. Expected </span><span class="si">{len_model}</span><span class="s1"> &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;got {len(extra_features)}. If you want to use &#39;</span>
+                        <span class="s1">&#39;the same list of extra features for all models, &#39;</span>
+                        <span class="s1">&#39;just pass a list of extrafeatures and not a list &#39;</span>
+                        <span class="s1">&#39;of list of extra features.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># assigning model and optimizers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_model</span><span class="p">):</span>
+            <span class="n">model_</span> <span class="o">=</span> <span class="n">Network</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">models</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                             <span class="n">input_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span><span class="p">,</span>
+                             <span class="n">output_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">output_variables</span><span class="p">,</span>
+                             <span class="n">extra_features</span><span class="o">=</span><span class="n">extra_features</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">optim_</span> <span class="o">=</span> <span class="n">optimizers</span><span class="p">[</span><span class="n">idx</span><span class="p">](</span><span class="n">model_</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+                                     <span class="o">**</span><span class="n">optimizers_kwargs</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optim_</span><span class="p">)</span>
+
+        <span class="c1"># assigning problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span> <span class="o">=</span> <span class="n">problem</span>
+
+<div class="viewcode-block" id="SolverInterface.forward"><a class="viewcode-back" href="../../../_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface.forward">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SolverInterface.training_step"><a class="viewcode-back" href="../../../_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface.training_step">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SolverInterface.configure_optimizers"><a class="viewcode-back" href="../../../_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface.configure_optimizers">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The torch model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The torch model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The problem formulation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span></div>
+
+    <span class="c1"># @model.setter</span>
+    <span class="c1"># def model(self, new_model):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Set the torch.&quot;&quot;&quot;</span>
+    <span class="c1">#     check_consistency(new_model, nn.Module, &#39;torch model&#39;)</span>
+    <span class="c1">#     self._model= new_model</span>
+
+    <span class="c1"># @problem.setter</span>
+    <span class="c1"># def problem(self, problem):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Set the problem formulation.&quot;&quot;&quot;</span>
+    <span class="c1">#     check_consistency(problem, AbstractProblem, &#39;pina problem&#39;)</span>
+    <span class="c1">#     self._problem = problem</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

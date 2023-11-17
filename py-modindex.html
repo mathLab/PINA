@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Module Index &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Python Module Index &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -13,6 +14,8 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -30,11 +33,12 @@
 
           
           
-          <a href="index.html" class="icon icon-home">
-            PINA
+          <a href="index.html">
+            
+              <img src="_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.0.3.post2311
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -46,17 +50,19 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Package Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="_rst/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_rst/code.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_rst/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_code.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials:</span></p>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="_rst/tutorial1/tutorial.html">1. Getting start with PINA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_rst/tutorial2/tutorial.html">2. Poisson problem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_rst/tutorial3/tutorial.html">3. Wave equation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_rst/tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_cite.html">Cite PINA</a></li>
 </ul>
 
         </div>
@@ -102,72 +108,87 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/condition.html#module-pina.condition"><code class="xref">pina.condition</code></a></td><td>
+       <a href="_rst/geometry/cartesian.html#module-pina.geometry.cartesian"><code class="xref">pina.geometry.cartesian</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/label_tensor.html#module-pina.label_tensor"><code class="xref">pina.label_tensor</code></a></td><td>
+       <a href="_rst/geometry/difference_domain.html#module-pina.geometry.difference_domain"><code class="xref">pina.geometry.difference_domain</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/location.html#module-pina.location"><code class="xref">pina.location</code></a></td><td>
+       <a href="_rst/geometry/ellipsoid.html#module-pina.geometry.ellipsoid"><code class="xref">pina.geometry.ellipsoid</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/deeponet.html#module-pina.model.deeponet"><code class="xref">pina.model.deeponet</code></a></td><td>
+       <a href="_rst/geometry/exclusion_domain.html#module-pina.geometry.exclusion_domain"><code class="xref">pina.geometry.exclusion_domain</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/fnn.html#module-pina.model.feed_forward"><code class="xref">pina.model.feed_forward</code></a></td><td>
+       <a href="_rst/geometry/intersection_domain.html#module-pina.geometry.intersection_domain"><code class="xref">pina.geometry.intersection_domain</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/convolution.html#module-pina.model.layers.convolution_2d"><code class="xref">pina.model.layers.convolution_2d</code></a></td><td>
+       <a href="_rst/geometry/location.html#module-pina.geometry.location"><code class="xref">pina.geometry.location</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/multifeedforward.html#module-pina.model.multi_feed_forward"><code class="xref">pina.model.multi_feed_forward</code></a></td><td>
+       <a href="_rst/geometry/operation_interface.html#module-pina.geometry.operation_interface"><code class="xref">pina.geometry.operation_interface</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/network.html#module-pina.model.network"><code class="xref">pina.model.network</code></a></td><td>
+       <a href="_rst/geometry/simplex.html#module-pina.geometry.simplex"><code class="xref">pina.geometry.simplex</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/pinn.html#module-pina.pinn"><code class="xref">pina.pinn</code></a></td><td>
+       <a href="_rst/geometry/union_domain.html#module-pina.geometry.union_domain"><code class="xref">pina.geometry.union_domain</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/abstractproblem.html#module-pina.problem.abstract_problem"><code class="xref">pina.problem.abstract_problem</code></a></td><td>
+       <a href="_rst/loss/loss_interface.html#module-pina.loss"><code class="xref">pina.loss</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/parametricproblem.html#module-pina.problem.parametric_problem"><code class="xref">pina.problem.parametric_problem</code></a></td><td>
+       <a href="_rst/models/network.html#module-pina.model.network"><code class="xref">pina.model.network</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/spatialproblem.html#module-pina.problem.spatial_problem"><code class="xref">pina.problem.spatial_problem</code></a></td><td>
+       <a href="_rst/operators.html#module-pina.operators"><code class="xref">pina.operators</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/timedepproblem.html#module-pina.problem.timedep_problem"><code class="xref">pina.problem.timedep_problem</code></a></td><td>
+       <a href="_rst/problem/abstractproblem.html#module-pina.problem.abstract_problem"><code class="xref">pina.problem.abstract_problem</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="_rst/span.html#module-pina.span"><code class="xref">pina.span</code></a></td><td>
+       <a href="_rst/problem/parametricproblem.html#module-pina.problem.parametric_problem"><code class="xref">pina.problem.parametric_problem</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="_rst/problem/spatialproblem.html#module-pina.problem.spatial_problem"><code class="xref">pina.problem.spatial_problem</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="_rst/problem/timedepproblem.html#module-pina.problem.timedep_problem"><code class="xref">pina.problem.timedep_problem</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="_rst/trainer.html#module-pina.trainer"><code class="xref">pina.trainer</code></a></td><td>
        <em></em></td></tr>
    </table>
 
@@ -179,8 +200,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Nov 01, 2023.
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
       </span></p>
   </div>
 

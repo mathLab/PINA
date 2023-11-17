@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial: Physics Informed Neural Networks on PINA &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Tutorial: Building custom geometries with PINA Location class" href="../tutorial6/tutorial.html" />
+    <link rel="prev" title="PINA Tutorials" href="../../_tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Introduction to PINA for Physics Informed Neural Networks training</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#build-a-pina-problem">Build a PINA problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generate-data">Generate data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#perform-a-small-training">Perform a small training</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#whats-next">What’s next?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial6/tutorial.html">Building custom geometries with PINA Location class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial: Physics Informed Neural Networks on PINA</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/_rst/tutorials/tutorial1/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tutorial-physics-informed-neural-networks-on-pina">
+<h1>Tutorial: Physics Informed Neural Networks on PINA<a class="headerlink" href="#tutorial-physics-informed-neural-networks-on-pina" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we will demonstrate a typical use case of <strong>PINA</strong> on
+a toy problem, following the standard API procedure.</p>
+<p align="center"></p><p>Specifically, the tutorial aims to introduce the following topics:</p>
+<ul class="simple">
+<li><p>Explaining how to build <strong>PINA</strong> Problem,</p></li>
+<li><p>Showing how to generate data for <code class="docutils literal notranslate"><span class="pre">PINN</span></code> straining</p></li>
+</ul>
+<p>These are the two main steps needed <strong>before</strong> starting the modelling
+optimization (choose model and solver, and train). We will show each
+step in detail, and at the end, we will solve a simple Ordinary
+Differential Equation (ODE) problem busing the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> solver.</p>
+<div class="section" id="build-a-pina-problem">
+<h2>Build a PINA problem<a class="headerlink" href="#build-a-pina-problem" title="Permalink to this headline">¶</a></h2>
+<p>Problem definition in the <strong>PINA</strong> framework is done by building a
+python <code class="docutils literal notranslate"><span class="pre">class</span></code>, which inherits from one or more problem classes
+(<code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code>, <code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code>, <code class="docutils literal notranslate"><span class="pre">ParametricProblem</span></code>, …)
+depending on the nature of the problem. Below is an example: ### Simple
+Ordinary Differential Equation Consider the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation}
+\begin{cases}
+\frac{d}{dx}u(x) &amp;=  u(x) \quad x\in(0,1)\\
+u(x=0) &amp;= 1 \\
+\end{cases}
+\end{equation}\end{split}\]</div>
+<p>with the analytical solution <span class="math notranslate nohighlight">\(u(x) = e^x\)</span>. In this case, our ODE
+depends only on the spatial variable <span class="math notranslate nohighlight">\(x\in(0,1)\)</span> , meaning that
+our <code class="docutils literal notranslate"><span class="pre">Problem</span></code> class is going to be inherited from the
+<code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pina.problem</span> <span class="kn">import</span> <span class="n">SpatialProblem</span>
+<span class="kn">from</span> <span class="nn">pina.geometry</span> <span class="kn">import</span> <span class="n">CartesianProblem</span>
+
+<span class="k">class</span> <span class="nc">SimpleODE</span><span class="p">(</span><span class="n">SpatialProblem</span><span class="p">):</span>
+
+    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">]</span>
+    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianProblem</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+
+    <span class="c1"># other stuff ...</span>
+</pre></div>
+</div>
+<p>Notice that we define <code class="docutils literal notranslate"><span class="pre">output_variables</span></code> as a list of symbols,
+indicating the output variables of our equation (in this case only
+<span class="math notranslate nohighlight">\(u\)</span>), this is done because in <strong>PINA</strong> the <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>s are
+labelled, allowing the user maximal flexibility for the manipulation of
+the tensor. The <code class="docutils literal notranslate"><span class="pre">spatial_domain</span></code> variable indicates where the sample
+points are going to be sampled in the domain, in this case
+<span class="math notranslate nohighlight">\(x\in[0,1]\)</span>.</p>
+<p>What about if our equation is also time dependent? In this case, our
+<code class="docutils literal notranslate"><span class="pre">class</span></code> will inherit from both <code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> and
+<code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code>:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from pina.problem import SpatialProblem, TimeDependentProblem
+from pina.geometry import CartesianDomain
+
+class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
+
+    output_variables = [&#39;u&#39;]
+    spatial_domain = CartesianDomain({&#39;x&#39;: [0, 1]})
+    temporal_domain = CartesianDomain({&#39;t&#39;: [0, 1]})
+
+    # other stuff ...
+</pre></div>
+</div>
+<p>where we have included the <code class="docutils literal notranslate"><span class="pre">temporal_domain</span></code> variable, indicating the
+time domain wanted for the solution.</p>
+<p>In summary, using <strong>PINA</strong>, we can initialize a problem with a class
+which inherits from different base classes: <code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code>,
+<code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code>, <code class="docutils literal notranslate"><span class="pre">ParametricProblem</span></code>, and so on depending on
+the type of problem we are considering. Here are some examples (more on
+the official documentation): * <code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a
+differential equation with spatial variable(s) *
+<code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a time-dependent
+differential equation * <code class="docutils literal notranslate"><span class="pre">ParametricProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a
+parametrized differential equation * <code class="docutils literal notranslate"><span class="pre">AbstractProblem</span></code>
+<span class="math notranslate nohighlight">\(\rightarrow\)</span> any <strong>PINA</strong> problem inherits from here</p>
+<div class="section" id="write-the-problem-class">
+<h3>Write the problem class<a class="headerlink" href="#write-the-problem-class" title="Permalink to this headline">¶</a></h3>
+<p>Once the <code class="docutils literal notranslate"><span class="pre">Problem</span></code> class is initialized, we need to represent the
+differential equation in <strong>PINA</strong>. In order to do this, we need to load
+the <strong>PINA</strong> operators from <code class="docutils literal notranslate"><span class="pre">pina.operators</span></code> module. Again, we’ll
+consider Equation (1) and represent it in <strong>PINA</strong>:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from pina.problem import SpatialProblem
+from pina.operators import grad
+from pina import Condition
+from pina.geometry import CartesianDomain
+from pina.equation import Equation, FixedValue
+
+import torch
+
+
+class SimpleODE(SpatialProblem):
+
+    output_variables = [&#39;u&#39;]
+    spatial_domain = CartesianDomain({&#39;x&#39;: [0, 1]})
+
+    # defining the ode equation
+    def ode_equation(input_, output_):
+
+        # computing the derivative
+        u_x = grad(output_, input_, components=[&#39;u&#39;], d=[&#39;x&#39;])
+
+        # extracting the u input variable
+        u = output_.extract([&#39;u&#39;])
+
+        # calculate the residual and return it
+        return u_x - u
+
+    # conditions to hold
+    conditions = {
+        &#39;x0&#39;: Condition(location=CartesianDomain({&#39;x&#39;: 0.}), equation=FixedValue(1)),             # We fix initial condition to value 1
+        &#39;D&#39;: Condition(location=CartesianDomain({&#39;x&#39;: [0, 1]}), equation=Equation(ode_equation)), # We wrap the python equation using Equation
+    }
+
+    # sampled points (see below)
+    input_pts = None
+
+    # defining the true solution
+    def truth_solution(self, pts):
+        return torch.exp(pts.extract([&#39;x&#39;]))
+
+problem = SimpleODE()
+</pre></div>
+</div>
+<p>After we define the <code class="docutils literal notranslate"><span class="pre">Problem</span></code> class, we need to write different class
+methods, where each method is a function returning a residual. These
+functions are the ones minimized during PINN optimization, given the
+initial conditions. For example, in the domain <span class="math notranslate nohighlight">\([0,1]\)</span>, the ODE
+equation (<code class="docutils literal notranslate"><span class="pre">ode_equation</span></code>) must be satisfied. We represent this by
+returning the difference between subtracting the variable <code class="docutils literal notranslate"><span class="pre">u</span></code> from its
+gradient (the residual), which we hope to minimize to 0. This is done
+for all conditions. Notice that we do not pass directly a <code class="docutils literal notranslate"><span class="pre">python</span></code>
+function, but an <code class="docutils literal notranslate"><span class="pre">Equation</span></code> object, which is initialized with the
+<code class="docutils literal notranslate"><span class="pre">python</span></code> function. This is done so that all the computations, and
+internal checks are done inside <strong>PINA</strong>.</p>
+<p>Once we have defined the function, we need to tell the neural network
+where these methods are to be applied. To do so, we use the
+<code class="docutils literal notranslate"><span class="pre">Condition</span></code> class. In the <code class="docutils literal notranslate"><span class="pre">Condition</span></code> class, we pass the location
+points and the equation we want minimized on those points (other
+possibilities are allowed, see the documentation for reference).</p>
+<p>Finally, it’s possible to define a <code class="docutils literal notranslate"><span class="pre">truth_solution</span></code> function, which
+can be useful if we want to plot the results and see how the real
+solution compares to the expected (true) solution. Notice that the
+<code class="docutils literal notranslate"><span class="pre">truth_solution</span></code> function is a method of the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> class, but is
+not mandatory for problem definition.</p>
+</div>
+</div>
+<div class="section" id="generate-data">
+<h2>Generate data<a class="headerlink" href="#generate-data" title="Permalink to this headline">¶</a></h2>
+<p>Data for training can come in form of direct numerical simulation
+reusults, or points in the domains. In case we do unsupervised learning,
+we just need the collocation points for training, i.e. points where we
+want to evaluate the neural network. Sampling point in <strong>PINA</strong> is very
+easy, here we show three examples using the <code class="docutils literal notranslate"><span class="pre">.discretise_domain</span></code>
+method of the <code class="docutils literal notranslate"><span class="pre">AbstractProblem</span></code> class.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># sampling 20 points in [0, 1] through discretization in all locations
+problem.discretise_domain(n=20, mode=&#39;grid&#39;, variables=[&#39;x&#39;], locations=&#39;all&#39;)
+
+# sampling 20 points in (0, 1) through latin hypercube samping in D, and 1 point in x0
+problem.discretise_domain(n=20, mode=&#39;latin&#39;, variables=[&#39;x&#39;], locations=[&#39;D&#39;])
+problem.discretise_domain(n=1, mode=&#39;random&#39;, variables=[&#39;x&#39;], locations=[&#39;x0&#39;])
+
+# sampling 20 points in (0, 1) randomly
+problem.discretise_domain(n=20, mode=&#39;random&#39;, variables=[&#39;x&#39;])
+</pre></div>
+</div>
+<p>We are going to use latin hypercube points for sampling. We need to
+sample in all the conditions domains. In our case we sample in <code class="docutils literal notranslate"><span class="pre">D</span></code> and
+<code class="docutils literal notranslate"><span class="pre">x0</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># sampling for training
+problem.discretise_domain(1, &#39;random&#39;, locations=[&#39;x0&#39;])
+problem.discretise_domain(20, &#39;lh&#39;, locations=[&#39;D&#39;])
+</pre></div>
+</div>
+<p>The points are saved in a python <code class="docutils literal notranslate"><span class="pre">dict</span></code>, and can be accessed by
+calling the attribute <code class="docutils literal notranslate"><span class="pre">input_pts</span></code> of the problem</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(&#39;Input points:&#39;, problem.input_pts)
+print(&#39;Input points labels:&#39;, problem.input_pts[&#39;D&#39;].labels)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Input</span> <span class="n">points</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;x0&#39;</span><span class="p">:</span> <span class="n">LabelTensor</span><span class="p">([[[</span><span class="mf">0.</span><span class="p">]]]),</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="n">LabelTensor</span><span class="p">([[[</span><span class="mf">0.7644</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.2028</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.1789</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.4294</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.3239</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.6531</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.1406</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.6062</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.4969</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.7429</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.8681</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.3800</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.5357</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.0152</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.9679</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.8101</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.0662</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.9095</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.2503</span><span class="p">]],</span>
+             <span class="p">[[</span><span class="mf">0.5580</span><span class="p">]]])}</span>
+<span class="n">Input</span> <span class="n">points</span> <span class="n">labels</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>To visualize the sampled points we can use the <code class="docutils literal notranslate"><span class="pre">.plot_samples</span></code> method
+of the <code class="docutils literal notranslate"><span class="pre">Plotter</span></code> class</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from pina import Plotter
+
+pl = Plotter()
+pl.plot_samples(problem=problem)
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_16_0.png" src="../../../_images/tutorial_16_0.png" />
+</div>
+<div class="section" id="perform-a-small-training">
+<h2>Perform a small training<a class="headerlink" href="#perform-a-small-training" title="Permalink to this headline">¶</a></h2>
+<p>Once we have defined the problem and generated the data we can start the
+modelling. Here we will choose a <code class="docutils literal notranslate"><span class="pre">FeedForward</span></code> neural network
+available in <code class="docutils literal notranslate"><span class="pre">pina.model</span></code>, and we will train using the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> solver
+from <code class="docutils literal notranslate"><span class="pre">pina.solvers</span></code>. We highlight that this training is fairly simple,
+for more advanced stuff consider the tutorials in the <strong>Physics Informed
+Neural Networks</strong> section of <strong>Tutorials</strong>. For training we use the
+<code class="docutils literal notranslate"><span class="pre">Trainer</span></code> class from <code class="docutils literal notranslate"><span class="pre">pina.trainer</span></code>. Here we show a very short
+training and some method for plotting the results. Notice that by
+default all relevant metrics (e.g. MSE error during training) are going
+to be tracked using a <code class="docutils literal notranslate"><span class="pre">lightining</span></code> logger, by default <code class="docutils literal notranslate"><span class="pre">CSVLogger</span></code>.
+If you want to track the metric by yourself without a logger, use
+<code class="docutils literal notranslate"><span class="pre">pina.callbacks.MetricTracker</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from pina import Trainer
+from pina.solvers import PINN
+from pina.model import FeedForward
+from pina.callbacks import MetricTracker
+
+
+# build the model
+model = FeedForward(
+    layers=[10, 10],
+    func=torch.nn.Tanh,
+    output_dimensions=len(problem.output_variables),
+    input_dimensions=len(problem.input_variables)
+)
+
+# create the PINN object
+pinn = PINN(problem, model)
+
+# create the trainer
+trainer = Trainer(solver=pinn, max_epochs=1500, callbacks=[MetricTracker()], accelerator=&#39;cpu&#39;, enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+
+# train
+trainer.train()
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
+<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
+<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
+<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">1499</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">272.55</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">x0_loss</span><span class="o">=</span><span class="mf">7.71e-6</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">0.000734</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.000371</span><span class="p">]</span>
+</pre></div>
+</div>
+<pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1500</cite> reached.</pre>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">1499</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">167.14</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">x0_loss</span><span class="o">=</span><span class="mf">7.71e-6</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">0.000734</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.000371</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>After the training we can inspect trainer logged metrics (by default
+<strong>PINA</strong> logs mean square error residual loss). The logged metrics can
+be accessed online using one of the <code class="docutils literal notranslate"><span class="pre">Lightinig</span></code> loggers. The final
+loss can be accessed by <code class="docutils literal notranslate"><span class="pre">trainer.logged_metrics</span></code></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># inspecting final loss
+trainer.logged_metrics
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;x0_loss&#39;</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">7.7149e-06</span><span class="p">),</span>
+ <span class="s1">&#39;D_loss&#39;</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">0.0007</span><span class="p">),</span>
+ <span class="s1">&#39;mean_loss&#39;</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">0.0004</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>By using the <code class="docutils literal notranslate"><span class="pre">Plotter</span></code> class from <strong>PINA</strong> we can also do some
+quatitative plots of the solution.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># plotting the solution
+pl.plot(solver=pinn)
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_23_0.png" src="../../../_images/tutorial_23_0.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Figure</span> <span class="n">size</span> <span class="mi">640</span><span class="n">x480</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">Axes</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The solution is overlapped with the actual one, and they are barely
+indistinguishable. We can also plot easily the loss:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pl.plot_loss(trainer=trainer, label = &#39;mean_loss&#39;, logy=True)
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_25_0.png" src="../../../_images/tutorial_25_0.png" />
+<p>As we can see the loss has not reached a minimum, suggesting that we
+could train for longer</p>
+</div>
+<div class="section" id="whats-next">
+<h2>What’s next?<a class="headerlink" href="#whats-next" title="Permalink to this headline">¶</a></h2>
+<p>Nice you have completed the introductory tutorial of <strong>PINA</strong>! There are
+multiple directions you can go now:</p>
+<ol class="arabic simple">
+<li><p>Train the network for longer or with different layer sizes and assert
+the finaly accuracy</p></li>
+<li><p>Train the network using other types of models (see <code class="docutils literal notranslate"><span class="pre">pina.model</span></code>)</p></li>
+<li><p>GPU trainining and benchmark the speed</p></li>
+<li><p>Many more…</p></li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../_tutorial.html" class="btn btn-neutral float-left" title="PINA Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial6/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: Building custom geometries with PINA Location class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

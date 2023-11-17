@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plotter &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Plotter &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -13,12 +14,14 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Condition" href="condition.html" />
-    <link rel="prev" title="Operators" href="operators.html" /> 
+    <link rel="next" title="SolverInterface" href="solvers/solver_interface.html" />
+    <link rel="prev" title="Trainer" href="trainer.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -29,11 +32,12 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
-            PINA
+          <a href="../index.html">
+            
+              <img src="../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.0.3.post2311
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -45,29 +49,37 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Package Documentation:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="code.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="pinn.html">PINN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="span.html">Span</a></li>
-<li class="toctree-l2"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Plotter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="condition.html">Condition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="location.html">Location</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#layers">Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code.html#problem">Problem</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="_code.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="_code.html#pina-features">PINA Features</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="condition.html">Condition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trainer.html">Trainer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Plotter</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../LICENSE.html">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#solvers">Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#equations-and-operators">Equations and Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#geometry-set-operations">Geometry set operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_code.html#metrics-and-losses">Metrics and Losses</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials:</span></p>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial1/tutorial.html">1. Getting start with PINA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial2/tutorial.html">2. Poisson problem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial3/tutorial.html">3. Wave equation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_cite.html">Cite PINA</a></li>
 </ul>
 
         </div>
@@ -84,7 +96,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="code.html">Code Documentation</a></li>
+          <li class="breadcrumb-item"><a href="_code.html">Code Documentation</a></li>
       <li class="breadcrumb-item active">Plotter</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/_rst/plotter.rst.txt" rel="nofollow"> View page source</a>
@@ -105,59 +117,13 @@
 <p>Implementation of a plotter class, for easy visualizations.</p>
 <dl class="method">
 <dt>
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">pinn</em>, <em class="sig-param">components=None</em>, <em class="sig-param">fixed_variables={}</em>, <em class="sig-param">method='contourf'</em>, <em class="sig-param">res=256</em>, <em class="sig-param">filename=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/plotter.html#Plotter.plot"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Plot sample of PINN output.</p>
+<code class="sig-name descname">plot_samples</code><span class="sig-paren">(</span><em class="sig-param">problem</em>, <em class="sig-param">variables=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/plotter.html#Plotter.plot_samples"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Plot the training grid samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pinn</strong> (<a class="reference internal" href="pinn.html#pina.pinn.PINN" title="pina.pinn.PINN"><em>PINN</em></a>) – the PINN object.</p></li>
-<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – the output variable to plot. If None, all
-the output variables of the problem are selected. Default value is
-None.</p></li>
-<li><p><strong>fixed_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – a dictionary with all the variables that
-should be kept fixed during the plot. The keys of the dictionary
-are the variables name whereas the values are the corresponding
-values of the variables. Defaults is <cite>dict()</cite>.</p></li>
-<li><p><strong>'pcolor'} method</strong> (<em>{'contourf'</em><em>,</em>) – the matplotlib method to use for
-plotting the solution. Default is ‘contourf’.</p></li>
-<li><p><strong>res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – the resolution, aka the number of points used for
-plotting in each axis. Default is 256.</p></li>
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the file name to save the plot. If None, the plot
-is shown using the setted matplotlib frontend. Default is None.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">plot_loss</code><span class="sig-paren">(</span><em class="sig-param">pinn</em>, <em class="sig-param">label=None</em>, <em class="sig-param">log_scale=True</em>, <em class="sig-param">filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/plotter.html#Plotter.plot_loss"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Plot the loss function values during traininig.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pinn</strong> (<a class="reference internal" href="pinn.html#pina.pinn.PINN" title="pina.pinn.PINN"><em>PINN</em></a>) – the PINN object.</p></li>
-<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the label to use in the legend, defaults to None.</p></li>
-<li><p><strong>log_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, the y axis is in log scale. Default is
-True.</p></li>
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – the file name to save the plot. If None, the plot
-is not saved. Default is None.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">plot_samples</code><span class="sig-paren">(</span><em class="sig-param">pinn</em>, <em class="sig-param">variables=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/plotter.html#Plotter.plot_samples"><span class="viewcode-link">[source]</span></a></dt>
-<dd><blockquote>
-<div><p>Plot a sample of solution.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pinn</strong> (<a class="reference internal" href="pinn.html#pina.pinn.PINN" title="pina.pinn.PINN"><em>PINN</em></a>) – the PINN object.</p></li>
-<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – variables to plot. If None, all variables
+<li><p><strong>solver</strong> (<a class="reference internal" href="solvers/solver_interface.html#pina.solvers.solver.SolverInterface" title="pina.solvers.solver.SolverInterface"><em>SolverInterface</em></a>) – The <code class="docutils literal notranslate"><span class="pre">SolverInterface</span></code> object.</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – Variables to plot. If None, all variables
 are plotted. If ‘spatial’, only spatial variables are plotted. If
 ‘temporal’, only temporal variables are plotted. Defaults to None.</p></li>
 </ul>
@@ -173,9 +139,56 @@ are plotted. If ‘spatial’, only spatial variables are plotted. If
 <dl class="field-list">
 <dt class="field-odd">Example</dt>
 <dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plotter</span> <span class="o">=</span> <span class="n">Plotter</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plotter</span><span class="o">.</span><span class="n">plot_samples</span><span class="p">(</span><span class="n">pinn</span><span class="o">=</span><span class="n">pinn</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s1">&#39;spatial&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plotter</span><span class="o">.</span><span class="n">plot_samples</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s1">&#39;spatial&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">solver</em>, <em class="sig-param">components=None</em>, <em class="sig-param">fixed_variables={}</em>, <em class="sig-param">method='contourf'</em>, <em class="sig-param">res=256</em>, <em class="sig-param">filename=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/plotter.html#Plotter.plot"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Plot sample of SolverInterface output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>solver</strong> (<a class="reference internal" href="solvers/solver_interface.html#pina.solvers.solver.SolverInterface" title="pina.solvers.solver.SolverInterface"><em>SolverInterface</em></a>) – The <code class="docutils literal notranslate"><span class="pre">SolverInterface</span></code> object instance.</p></li>
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – The output variable to plot. If None, all
+the output variables of the problem are selected. Default value is None.</p></li>
+<li><p><strong>fixed_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – A dictionary with all the variables that
+should be kept fixed during the plot. The keys of the dictionary
+are the variables name whereas the values are the corresponding
+values of the variables. Defaults is <cite>dict()</cite>.</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The matplotlib method to use for
+plotting the solution. Available methods are {‘contourf’, ‘pcolor’}.
+Default is ‘contourf’.</p></li>
+<li><p><strong>res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The resolution, aka the number of points used for
+plotting in each axis. Default is 256.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The file name to save the plot. If None, the plot
+is shown using the setted matplotlib frontend. Default is None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">plot_loss</code><span class="sig-paren">(</span><em class="sig-param">trainer</em>, <em class="sig-param">metrics=None</em>, <em class="sig-param">logy=False</em>, <em class="sig-param">logx=False</em>, <em class="sig-param">filename=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/plotter.html#Plotter.plot_loss"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Plot the loss function values during traininig.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainer</strong> (<a class="reference internal" href="trainer.html#pina.trainer.Trainer" title="pina.trainer.Trainer"><em>Trainer</em></a>) – the PINA Trainer object instance.</p></li>
+<li><p><strong>| list</strong><strong>(</strong><strong>str</strong><strong>) </strong><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The metrics to use in the y axis. If None, the mean loss
+is plotted.</p></li>
+<li><p><strong>logy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, the y axis is in log scale. Default is
+True.</p></li>
+<li><p><strong>logx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, the x axis is in log scale. Default is
+True.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The file name to save the plot. If None, the plot
+is shown using the setted matplotlib frontend. Default is None.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -188,15 +201,15 @@ are plotted. If ‘spatial’, only spatial variables are plotted. If
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="operators.html" class="btn btn-neutral float-left" title="Operators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="condition.html" class="btn btn-neutral float-right" title="Condition" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="trainer.html" class="btn btn-neutral float-left" title="Trainer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="solvers/solver_interface.html" class="btn btn-neutral float-right" title="SolverInterface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Nov 01, 2023.
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
       </span></p>
   </div>
 

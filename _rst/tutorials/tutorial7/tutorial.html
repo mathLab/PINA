@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 7: Resolution of an inverse problem &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" href="../tutorial5/tutorial.html" />
+    <link rel="prev" title="Tutorial: Two dimensional Wave problem with hard constraint" href="../tutorial3/tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../tutorial2/tutorial.html">Two dimensional Poisson problem using Extra Features Learning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial3/tutorial.html">Two dimensional Wave problem with hard constraint</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Resolution of a 2D Poisson inverse problem</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction-to-the-inverse-problem">Introduction to the inverse problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inverse-problem-definition-in-pina">Inverse problem definition in PINA</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial 7: Resolution of an inverse problem</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/_rst/tutorials/tutorial7/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tutorial-7-resolution-of-an-inverse-problem">
+<h1>Tutorial 7: Resolution of an inverse problem<a class="headerlink" href="#tutorial-7-resolution-of-an-inverse-problem" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-to-the-inverse-problem">
+<h2>Introduction to the inverse problem<a class="headerlink" href="#introduction-to-the-inverse-problem" title="Permalink to this headline">¶</a></h2>
+<p>This tutorial shows how to solve an inverse Poisson problem with
+Physics-Informed Neural Networks. The problem definition is that of a
+Poisson problem with homogeneous boundary conditions and it reads:
+<a href="#id1"><span class="problematic" id="id2">:raw-latex:`\begin{equation}
+\begin{cases}
+\Delta u = e^{-2(x-\mu_1)^2-2(y-\mu_2)^2} \text{ in } \Omega\, ,\\
+u = 0 \text{ on }\partial \Omega,\\
+u(\mu_1, \mu_2) = \text{ data}
+\end{cases}
+\end{equation}`</span></a> where <span class="math notranslate nohighlight">\(\Omega\)</span> is a square domain
+<span class="math notranslate nohighlight">\([-2, 2] \times [-2, 2]\)</span>, and
+<span class="math notranslate nohighlight">\(\partial \Omega=\Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4\)</span>
+is the union of the boundaries of the domain.</p>
+<p>This kind of problem, namely the “inverse problem”, has two main goals:
+- find the solution <span class="math notranslate nohighlight">\(u\)</span> that satisfies the Poisson equation; -
+find the unknown parameters (<span class="math notranslate nohighlight">\(\mu_1\)</span>, <span class="math notranslate nohighlight">\(\mu_2\)</span>) that better
+fit some given data (third equation in the system above).</p>
+<p>In order to achieve both the goals we will need to define an
+<code class="docutils literal notranslate"><span class="pre">InverseProblem</span></code> in PINA.</p>
+<p>Let’s start with useful imports.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
+import torch
+from pytorch_lightning.callbacks import Callback
+from pina.problem import SpatialProblem, InverseProblem
+from pina.operators import laplacian
+from pina.model import FeedForward
+from pina.equation import Equation, FixedValue
+from pina import Condition, Trainer
+from pina.solvers import PINN
+from pina.geometry import CartesianDomain
+</pre></div>
+</div>
+<p>Then, we import the pre-saved data, for (<span class="math notranslate nohighlight">\(\mu_1\)</span>,
+<span class="math notranslate nohighlight">\(\mu_2\)</span>)=(<span class="math notranslate nohighlight">\(0.5\)</span>, <span class="math notranslate nohighlight">\(0.5\)</span>). These two values are the
+optimal parameters that we want to find through the neural network
+training. In particular, we import the <code class="docutils literal notranslate"><span class="pre">input_points</span></code>(the spatial
+coordinates), and the <code class="docutils literal notranslate"><span class="pre">output_points</span></code> (the corresponding <span class="math notranslate nohighlight">\(u\)</span>
+values evaluated at the <code class="docutils literal notranslate"><span class="pre">input_points</span></code>).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>data_output = torch.load(&#39;data/pinn_solution_0.5_0.5&#39;).detach()
+data_input = torch.load(&#39;data/pts_0.5_0.5&#39;)
+</pre></div>
+</div>
+<p>Moreover, let’s plot also the data points and the reference solution:
+this is the expected output of the neural network.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>points = data_input.extract([&#39;x&#39;, &#39;y&#39;]).detach().numpy()
+truth = data_output.detach().numpy()
+
+plt.scatter(points[:, 0], points[:, 1], c=truth, s=8)
+plt.axis(&#39;equal&#39;)
+plt.colorbar()
+plt.show()
+</pre></div>
+</div>
+<img alt="../../../_images/output_8_0.png" src="../../../_images/output_8_0.png" />
+</div>
+<div class="section" id="inverse-problem-definition-in-pina">
+<h2>Inverse problem definition in PINA<a class="headerlink" href="#inverse-problem-definition-in-pina" title="Permalink to this headline">¶</a></h2>
+<p>Then, we initialize the Poisson problem, that is inherited from the
+<code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> and from the <code class="docutils literal notranslate"><span class="pre">InverseProblem</span></code> classes. We here have
+to define all the variables, and the domain where our unknown parameters
+(<span class="math notranslate nohighlight">\(\mu_1\)</span>, <span class="math notranslate nohighlight">\(\mu_2\)</span>) belong. Notice that the laplace equation
+takes as inputs also the unknown variables, that will be treated as
+parameters that the neural network optimizes during the training
+process.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>### Define ranges of variables
+x_min = -2
+x_max = 2
+y_min = -2
+y_max = 2
+
+class Poisson(SpatialProblem, InverseProblem):
+    &#39;&#39;&#39;
+    Problem definition for the Poisson equation.
+    &#39;&#39;&#39;
+    output_variables = [&#39;u&#39;]
+    spatial_domain = CartesianDomain({&#39;x&#39;: [x_min, x_max], &#39;y&#39;: [y_min, y_max]})
+    # define the ranges for the parameters
+    unknown_parameter_domain = CartesianDomain({&#39;mu1&#39;: [-1, 1], &#39;mu2&#39;: [-1, 1]})
+
+    def laplace_equation(input_, output_, params_):
+        &#39;&#39;&#39;
+        Laplace equation with a force term.
+        &#39;&#39;&#39;
+        force_term = torch.exp(
+                - 2*(input_.extract([&#39;x&#39;]) - params_[&#39;mu1&#39;])**2
+                - 2*(input_.extract([&#39;y&#39;]) - params_[&#39;mu2&#39;])**2)
+        delta_u = laplacian(output_, input_, components=[&#39;u&#39;], d=[&#39;x&#39;, &#39;y&#39;])
+
+        return delta_u - force_term
+
+    # define the conditions for the loss (boundary conditions, equation, data)
+    conditions = {
+        &#39;gamma1&#39;: Condition(location=CartesianDomain({&#39;x&#39;: [x_min, x_max],
+            &#39;y&#39;:  y_max}),
+            equation=FixedValue(0.0, components=[&#39;u&#39;])),
+        &#39;gamma2&#39;: Condition(location=CartesianDomain({&#39;x&#39;: [x_min, x_max], &#39;y&#39;: y_min
+            }),
+            equation=FixedValue(0.0, components=[&#39;u&#39;])),
+        &#39;gamma3&#39;: Condition(location=CartesianDomain({&#39;x&#39;:  x_max, &#39;y&#39;: [y_min, y_max]
+            }),
+            equation=FixedValue(0.0, components=[&#39;u&#39;])),
+        &#39;gamma4&#39;: Condition(location=CartesianDomain({&#39;x&#39;: x_min, &#39;y&#39;: [y_min, y_max]
+            }),
+            equation=FixedValue(0.0, components=[&#39;u&#39;])),
+        &#39;D&#39;: Condition(location=CartesianDomain({&#39;x&#39;: [x_min, x_max], &#39;y&#39;: [y_min, y_max]
+            }),
+        equation=Equation(laplace_equation)),
+        &#39;data&#39;: Condition(input_points=data_input.extract([&#39;x&#39;, &#39;y&#39;]), output_points=data_output)
+    }
+
+problem = Poisson()
+</pre></div>
+</div>
+<p>Then, we define the model of the neural network we want to use. Here we
+used a model which impose hard constrains on the boundary conditions, as
+also done in the Wave tutorial!</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>model = FeedForward(
+    layers=[20, 20, 20],
+    func=torch.nn.Softplus,
+    output_dimensions=len(problem.output_variables),
+    input_dimensions=len(problem.input_variables)
+    )
+</pre></div>
+</div>
+<p>After that, we discretize the spatial domain.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>problem.discretise_domain(20, &#39;grid&#39;, locations=[&#39;D&#39;], variables=[&#39;x&#39;, &#39;y&#39;])
+problem.discretise_domain(1000, &#39;random&#39;, locations=[&#39;gamma1&#39;, &#39;gamma2&#39;,
+    &#39;gamma3&#39;, &#39;gamma4&#39;], variables=[&#39;x&#39;, &#39;y&#39;])
+</pre></div>
+</div>
+<p>Here, we define a simple callback for the trainer. We use this callback
+to save the parameters predicted by the neural network during the
+training. The parameters are saved every 100 epochs as <code class="docutils literal notranslate"><span class="pre">torch</span></code> tensors
+in a specified directory (<code class="docutils literal notranslate"><span class="pre">tmp_dir</span></code> in our case). The goal is to read
+the saved parameters after training and plot their trend across the
+epochs.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># temporary directory for saving logs of training
+tmp_dir = &quot;tmp_poisson_inverse&quot;
+
+class SaveParameters(Callback):
+    &#39;&#39;&#39;
+    Callback to save the parameters of the model every 100 epochs.
+    &#39;&#39;&#39;
+    def on_train_epoch_end(self, trainer, __):
+        if trainer.current_epoch % 100 == 99:
+            torch.save(trainer.solver.problem.unknown_parameters, &#39;{}/parameters_epoch{}&#39;.format(tmp_dir, trainer.current_epoch))
+</pre></div>
+</div>
+<p>Then, we define the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> object and train the solver using the
+<code class="docutils literal notranslate"><span class="pre">Trainer</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>### train the problem with PINN
+max_epochs = 5000
+pinn = PINN(problem, model, optimizer_kwargs={&#39;lr&#39;:0.005})
+# define the trainer for the solver
+trainer = Trainer(solver=pinn, accelerator=&#39;cpu&#39;, max_epochs=max_epochs,
+        default_root_dir=tmp_dir, callbacks=[SaveParameters()])
+trainer.train()
+</pre></div>
+</div>
+<p>One can now see how the parameters vary during the training by reading
+the saved solution and plotting them. The plot shows that the parameters
+stabilize to their true value before reaching the epoch <span class="math notranslate nohighlight">\(1000\)</span>!</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>epochs_saved = range(99, max_epochs, 100)
+parameters = torch.empty((int(max_epochs/100), 2))
+for i, epoch in enumerate(epochs_saved):
+    params_torch = torch.load(&#39;{}/parameters_epoch{}&#39;.format(tmp_dir, epoch))
+    for e, var in enumerate(pinn.problem.unknown_variables):
+        parameters[i, e] = params_torch[var].data
+
+# Plot parameters
+plt.close()
+plt.plot(epochs_saved, parameters[:, 0], label=&#39;mu1&#39;, marker=&#39;o&#39;)
+plt.plot(epochs_saved, parameters[:, 1], label=&#39;mu2&#39;, marker=&#39;s&#39;)
+plt.ylim(-1, 1)
+plt.grid()
+plt.legend()
+plt.xlabel(&#39;Epoch&#39;)
+plt.ylabel(&#39;Parameter value&#39;)
+plt.show()
+</pre></div>
+</div>
+<img alt="../../../_images/output_21_0.png" src="../../../_images/output_21_0.png" />
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial3/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Two dimensional Wave problem with hard constraint" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial5/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

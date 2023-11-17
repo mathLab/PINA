@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.model.feed_forward &mdash; PINA 0.0.3.post2311 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.model.feed_forward &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -13,6 +14,8 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -27,11 +30,12 @@
 
           
           
-          <a href="../../../index.html" class="icon icon-home">
-            PINA
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.0.3.post2311
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -43,17 +47,19 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Package Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_rst/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_rst/code.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_rst/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_code.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials:</span></p>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_rst/tutorial1/tutorial.html">1. Getting start with PINA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_rst/tutorial2/tutorial.html">2. Poisson problem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_rst/tutorial3/tutorial.html">3. Wave equation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_rst/tutorial4/tutorial.html">4. Continuous Convolutional Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
 </ul>
 
         </div>
@@ -84,19 +90,21 @@
 <span></span><span class="sd">&quot;&quot;&quot;Module for FeedForward model&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+<span class="kn">from</span> <span class="nn">.layers.residual</span> <span class="kn">import</span> <span class="n">EnhancedLinear</span>
 
-<span class="kn">from</span> <span class="nn">pina.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
 
-
-<div class="viewcode-block" id="FeedForward"><a class="viewcode-back" href="../../../_rst/fnn.html#pina.model.feed_forward.FeedForward">[docs]</a><span class="k">class</span> <span class="nc">FeedForward</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="FeedForward"><a class="viewcode-back" href="../../../_rst/models/fnn.html#pina.model.feed_forward.FeedForward">[docs]</a><span class="k">class</span> <span class="nc">FeedForward</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The PINA implementation of feedforward network, also refered as multilayer</span>
 <span class="sd">    perceptron.</span>
 
-<span class="sd">    :param list(str) input_variables: the list containing the labels</span>
-<span class="sd">        corresponding to the input components of the model.</span>
-<span class="sd">    :param list(str) output_variables: the list containing the labels</span>
-<span class="sd">        corresponding to the components of the output computed by the model.</span>
+<span class="sd">    :param int input_dimensions: The number of input components of the model.</span>
+<span class="sd">        Expected tensor shape of the form :math:`(*, d)`, where *</span>
+<span class="sd">        means any number of dimensions including none, and :math:`d` the ``input_dimensions``.</span>
+<span class="sd">    :param int output_dimensions: The number of output components of the model.</span>
+<span class="sd">        Expected tensor shape of the form :math:`(*, d)`, where *</span>
+<span class="sd">        means any number of dimensions including none, and :math:`d` the ``output_dimensions``.</span>
 <span class="sd">    :param int inner_size: number of neurons in the hidden layer(s). Default is</span>
 <span class="sd">        20.</span>
 <span class="sd">    :param int n_layers: number of hidden layers. Default is 2.</span>
@@ -104,57 +112,47 @@
 <span class="sd">        :class:`torch.nn.Module` is passed, this is used as activation function</span>
 <span class="sd">        after any layers, except the last one. If a list of Modules is passed,</span>
 <span class="sd">        they are used as activation functions at any layers, in order.</span>
-<span class="sd">    :param iterable(int) layers: a list containing the number of neurons for</span>
-<span class="sd">        any hidden layers. If specified, the parameters `n_layers` e</span>
-<span class="sd">        `inner_size` are not considered.</span>
-<span class="sd">    :param iterable(torch.nn.Module) extra_features: the additional input</span>
-<span class="sd">        features to use ad augmented input.</span>
-<span class="sd">    :param bool bias: If `True` the MLP will consider some bias.</span>
+<span class="sd">    :param list(int) | tuple(int) layers: a list containing the number of neurons for</span>
+<span class="sd">        any hidden layers. If specified, the parameters ``n_layers`` e</span>
+<span class="sd">        ``inner_size`` are not considered.</span>
+<span class="sd">    :param bool bias: If ``True`` the MLP will consider some bias.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">,</span> <span class="n">output_variables</span><span class="p">,</span> <span class="n">inner_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-                 <span class="n">n_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_features</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">input_dimensions</span><span class="p">,</span>
+                 <span class="n">output_dimensions</span><span class="p">,</span>
+                 <span class="n">inner_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                 <span class="n">n_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                 <span class="n">func</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">,</span>
+                 <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">extra_features</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">extra_features</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extra_features</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">extra_features</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_dimensions</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;input_dimensions expected to be int.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dimension</span> <span class="o">=</span> <span class="n">input_dimensions</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_variables</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_dimension</span> <span class="o">=</span> <span class="n">input_variables</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_variables</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span> <span class="o">=</span> <span class="n">input_variables</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">input_dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_variables</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_variables</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_variables</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span> <span class="o">=</span> <span class="n">output_variables</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_variables</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_variables</span> <span class="o">=</span> <span class="n">output_variables</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_variables</span><span class="p">)</span>
-
-        <span class="n">n_features</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">extra_features</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_dimensions</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;output_dimensions expected to be int.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span> <span class="o">=</span> <span class="n">output_dimensions</span>
         <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">inner_size</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_layers</span>
 
         <span class="n">tmp_layers</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">tmp_layers</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dimension</span><span class="o">+</span><span class="n">n_features</span><span class="p">)</span>
+        <span class="n">tmp_layers</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dimension</span><span class="p">)</span>
         <span class="n">tmp_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>
-            <span class="p">)</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">func</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;uncosistent number of layers and functions&#39;</span><span class="p">)</span>
@@ -168,28 +166,161 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">unique_list</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FeedForward.forward"><a class="viewcode-back" href="../../../_rst/fnn.html#pina.model.feed_forward.FeedForward.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="FeedForward.forward"><a class="viewcode-back" href="../../../_rst/models/fnn.html#pina.model.feed_forward.FeedForward.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Defines the computation performed at every call.</span>
 
-<span class="sd">        :param x: .</span>
-<span class="sd">        :type x: :class:`pina.LabelTensor`</span>
+<span class="sd">        :param x: The tensor to apply the forward pass.</span>
+<span class="sd">        :type x: torch.Tensor</span>
 <span class="sd">        :return: the output computed by the model.</span>
-<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_features</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<div class="viewcode-block" id="ResidualFeedForward"><a class="viewcode-back" href="../../../_rst/models/fnn_residual.html#pina.model.feed_forward.ResidualFeedForward">[docs]</a><span class="k">class</span> <span class="nc">ResidualFeedForward</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The PINA implementation of feedforward network, also with skipped connection</span>
+<span class="sd">    and transformer network, as presented in **Understanding and mitigating gradient</span>
+<span class="sd">    pathologies in physics-informed neural networks**</span>
 
-        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
+<span class="sd">    .. seealso::</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_variables</span><span class="p">:</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_variables</span>
+<span class="sd">        **Original reference**: Wang, Sifan, Yujun Teng, and Paris Perdikaris. </span>
+<span class="sd">        *Understanding and mitigating gradient flow pathologies in physics-informed</span>
+<span class="sd">        neural networks*. SIAM Journal on Scientific Computing 43.5 (2021): A3055-A3081.</span>
+<span class="sd">        DOI: `10.1137/20M1318043</span>
+<span class="sd">        &lt;https://epubs.siam.org/doi/abs/10.1137/20M1318043&gt;`_</span>
 
-        <span class="k">return</span> <span class="n">output</span></div></div>
+
+<span class="sd">    :param int input_dimensions: The number of input components of the model.</span>
+<span class="sd">        Expected tensor shape of the form :math:`(*, d)`, where *</span>
+<span class="sd">        means any number of dimensions including none, and :math:`d` the ``input_dimensions``.</span>
+<span class="sd">    :param int output_dimensions: The number of output components of the model.</span>
+<span class="sd">        Expected tensor shape of the form :math:`(*, d)`, where *</span>
+<span class="sd">        means any number of dimensions including none, and :math:`d` the ``output_dimensions``.</span>
+<span class="sd">    :param int inner_size: number of neurons in the hidden layer(s). Default is</span>
+<span class="sd">        20.</span>
+<span class="sd">    :param int n_layers: number of hidden layers. Default is 2.</span>
+<span class="sd">    :param func: the activation function to use. If a single</span>
+<span class="sd">        :class:`torch.nn.Module` is passed, this is used as activation function</span>
+<span class="sd">        after any layers, except the last one. If a list of Modules is passed,</span>
+<span class="sd">        they are used as activation functions at any layers, in order.</span>
+<span class="sd">    :param bool bias: If ``True`` the MLP will consider some bias.</span>
+<span class="sd">    :param list | tuple transformer_nets: a list or tuple containing the two</span>
+<span class="sd">        torch.nn.Module which act as transformer network. The input dimension</span>
+<span class="sd">        of the network must be the same as ``input_dimensions``, and the output</span>
+<span class="sd">        dimension must be the same as ``inner_size``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">input_dimensions</span><span class="p">,</span>
+                 <span class="n">output_dimensions</span><span class="p">,</span>
+                 <span class="n">inner_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                 <span class="n">n_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                 <span class="n">func</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">,</span>
+                 <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">transformer_nets</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># check type consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">input_dimensions</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">output_dimensions</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">inner_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">n_layers</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+
+        <span class="c1"># check transformer nets</span>
+        <span class="k">if</span> <span class="n">transformer_nets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">transformer_nets</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">EnhancedLinear</span><span class="p">(</span>
+                    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">input_dimensions</span><span class="p">,</span>
+                              <span class="n">out_features</span><span class="o">=</span><span class="n">inner_size</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()),</span>
+                <span class="n">EnhancedLinear</span><span class="p">(</span>
+                    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">input_dimensions</span><span class="p">,</span>
+                              <span class="n">out_features</span><span class="o">=</span><span class="n">inner_size</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">())</span>
+            <span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transformer_nets</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformer_nets</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;transformer_nets needs to be a list of len two.&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">transformer_nets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;transformer_nets needs to be a list of torch.nn.Module.&#39;</span>
+                    <span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">input_dimensions</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;transformer network input incompatible with input_dimensions.&#39;</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">inner_size</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;transformer network output incompatible with inner_size.&#39;</span>
+                    <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;Runtime error for transformer nets, check official documentation.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># assign variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dimension</span> <span class="o">=</span> <span class="n">input_dimensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span> <span class="o">=</span> <span class="n">output_dimensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer_nets</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">transformer_nets</span><span class="p">)</span>
+
+        <span class="c1"># build layers</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">inner_size</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_layers</span>
+
+        <span class="n">tmp_layers</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">tmp_layers</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dimension</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                                    <span class="n">output_dimensions</span><span class="p">,</span>
+                                    <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">))]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;uncosistent number of layers and functions&#39;</span><span class="p">)</span>
+
+        <span class="n">unique_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">layer</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="p">):</span>
+            <span class="n">unique_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EnhancedLinear</span><span class="p">(</span><span class="n">layer</span><span class="o">=</span><span class="n">layer</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">func</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_layers</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">unique_list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ResidualFeedForward.forward"><a class="viewcode-back" href="../../../_rst/models/fnn_residual.html#pina.model.feed_forward.ResidualFeedForward.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the computation performed at every call.</span>
+
+<span class="sd">        :param x: The tensor to apply the forward pass.</span>
+<span class="sd">        :type x: torch.Tensor</span>
+<span class="sd">        :return: the output computed by the model.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># enhance the input with transformer</span>
+        <span class="n">input_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">nets</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_nets</span><span class="p">:</span>
+            <span class="n">input_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nets</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+        <span class="c1"># skip connections pass</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_layers</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">input_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">input_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># last layer</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -199,8 +330,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2021, PINA contributors.
-      <span class="lastupdated">Last updated on Nov 01, 2023.
+    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
       </span></p>
   </div>
 
