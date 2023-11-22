@@ -69,7 +69,7 @@ class Condition:
 
         if len(args) != 0:
             raise ValueError(
-                'Condition takes only the following keyword arguments: {`input_points`, `output_points`, `location`, `function`, `data_weight`}.'
+                f'Condition takes only the following keyword arguments: {Condition.__slots__}.'
             )
 
         if (sorted(kwargs.keys()) != sorted(['input_points', 'output_points'])
