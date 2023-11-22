@@ -1,6 +1,7 @@
 """ Module for GAROM """
 
 import torch
+import sys
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
@@ -251,7 +252,11 @@ class GAROM(SolverInterface):
 
         for condition_id in range(condition_idx.min(), condition_idx.max()+1):
 
-            condition_name = dataloader.condition_names[condition_id]
+            if sys.version_info >= (3, 8):
+                condition_name = dataloader.condition_names[condition_id]
+            else:
+                condition_name = dataloader.loaders.condition_names[condition_id]
+
             condition = self.problem.conditions[condition_name]
             pts = batch['pts'].detach()
             out = batch['output']
