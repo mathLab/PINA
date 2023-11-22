@@ -5,6 +5,7 @@ try:
 except ImportError:
     from torch.optim.lr_scheduler import _LRScheduler as LRScheduler  # torch < 2.0
 
+import sys
 from torch.optim.lr_scheduler import ConstantLR
 
 from .solver import SolverInterface
@@ -143,7 +144,10 @@ class PINN(SolverInterface):
 
         for condition_id in range(condition_idx.min(), condition_idx.max()+1):
 
-            condition_name = dataloader.condition_names[condition_id]
+            if sys.version_info >= (3, 8):
+                condition_name = dataloader.condition_names[condition_id]
+            else:
+                condition_name = dataloader.loaders.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
             pts = batch['pts']
 
