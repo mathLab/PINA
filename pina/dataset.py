@@ -124,8 +124,6 @@ class SamplePointLoader:
         else:
             self.random_idx = torch.arange(len(self.batch_list))
 
-        print(self.condition_names)
-
 
     def _prepare_data_dataset(self, dataset, batch_size, shuffle):
         """
