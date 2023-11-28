@@ -43,7 +43,7 @@ from pina.problem import AbstractProblem
 from pina.solvers import SupervisedSolver
 from pina.trainer import Trainer
 
-model=GNO(1,1,data_coarse,0.05,inner_size=100)
+model=GNO(1,1,data_coarse,0.05,inner_size=100,n_layers=3)
 class GNOSolver(AbstractProblem):
     input_variables=['input']
     input_points=LabelTensor(input_coarse,input_variables)
@@ -51,13 +51,35 @@ class GNOSolver(AbstractProblem):
     output_points=LabelTensor(output_coarse,output_variables)
     conditions={"data":Condition(input_points=input_points,output_points=output_points)}
 
+batch_size=10
 problem=GNOSolver()
-solver=SupervisedSolver(problem,model,)
-trainer=Trainer(solver=solver,max_epochs=5,accelerator='cpu',enable_model_summary=False,batch_size=10)
+solver=SupervisedSolver(problem,model)
+trainer=Trainer(solver=solver,max_epochs=5,accelerator='cpu',enable_model_summary=False,batch_size=batch_size)
 from pina.loss import LpLoss
 loss=LpLoss(2,relative=True)
 
 start_time=time()
 trainer.train()
 end_time=time()
-print(end_time-start_time)
+print(end_time-start_time) ###Approximately 7 minutes
+solver.neural_net=solver.neural_net.eval()
+
+loss=torch.nn.MSELoss()
+num_batches=len(input_coarse)//batch_size
+acc=0
+for i in range(num_batches):
+    input_variables=['input']
+    myinput=LabelTensor(input_coarse[i*batch_size:(i+1)*batch_size],input_variables)
+    tmp=model(myinput).detach()
+    acc=acc+loss(tmp,output_coarse[i*batch_size:(i+1)*batch_size]).item()
+print("Training mse loss is", acc/num_batches)
+
+
+num_batches=len(input_coarse)//batch_size
+acc=0
+for i in range(num_batches):
+    input_variables=['input']
+    myinput=LabelTensor(input_dense[i*batch_size:(i+1)*batch_size],input_variables)
+    tmp=model.forward_eval(myinput,data_dense).detach()
+    acc=acc+loss(tmp,output_dense[i*batch_size:(i+1)*batch_size]).item()
+print("Super Resolution mse loss is", acc/num_batches)
