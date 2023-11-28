@@ -30,6 +30,7 @@ Neural Operator Learning
    :titlesonly:
 
    Two dimensional Darcy flow using the Fourier Neural Operator<tutorials/tutorial5/tutorial.rst>
+   One dimensional advection problem with data driven DeepONet neural operator<tutorials/tutorial8/tutorial.rst>
 
 Supervised Learning
 -------------------

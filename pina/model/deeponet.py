@@ -5,6 +5,7 @@ from ..utils import check_consistency, is_function
 from functools import partial
 
 
+
 class MIONet(torch.nn.Module):
     """
     The PINA implementation of MIONet network.
@@ -62,6 +63,11 @@ class MIONet(torch.nn.Module):
             only a list of integers can be passed for ``input_indeces_branch_net``
             and ``input_indeces_trunk_net``.
 
+        .. warning::
+            In the forward pass we do not check if the network outputs of the single networks
+            are the same, and if this does not happen unwanted behaviour could result in the
+            forward pass not correctly extecuted.
+
         :Example:
             >>> branch_net1 = FeedForward(input_dimensons=1, output_dimensions=10)
             >>> branch_net2 = FeedForward(input_dimensons=2, output_dimensions=10)
@@ -112,17 +118,18 @@ class MIONet(torch.nn.Module):
         check_consistency(scale, bool)
         check_consistency(translation, bool)
 
-        # check trunk branch nets consistency
-        shapes = []
-        for key, value in networks.items():
-            check_consistency(value, (str, int))
-            check_consistency(key, torch.nn.Module)
-            input_ = torch.rand(10, len(value))
-            shapes.append(key(input_).shape[-1])
+        # TODO: Fix it does not work
+        # # check trunk branch nets consistency
+        # shapes = []
+        # for key, value in networks.items():
+        #     check_consistency(value, (str, int))
+        #     check_consistency(key, torch.nn.Module)
+        #     input_ = torch.rand(10, len(value))
+        #     shapes.append(key(input_).shape[-1])
 
-        if not all(map(lambda x: x == shapes[0], shapes)):
-            raise ValueError('The passed networks have not the same '
-                             'output dimension.')
+        # if not all(map(lambda x: x == shapes[0], shapes)):
+        #     raise ValueError('The passed networks have not the same '
+        #                      'output dimension.')
 
         # assign trunk and branch net with their input indeces
         self.models = torch.nn.ModuleList(networks.keys())
@@ -153,9 +160,11 @@ class MIONet(torch.nn.Module):
         }
 
     def _init_aggregator(self, aggregator):
-        aggregator_funcs = DeepONet._symbol_functions(dim=2)
+        aggregator_funcs = DeepONet._symbol_functions(dim=-1)
         if aggregator in aggregator_funcs:
-            aggregator_func = aggregator_funcs[aggregator]
+            def aggregator_func(tensors):
+                out_ = torch.stack(tensors, dim=-1)
+                return aggregator_funcs[aggregator](out_)
         elif isinstance(aggregator, nn.Module) or is_function(aggregator):
             aggregator_func = aggregator
         else:
@@ -207,10 +216,13 @@ class MIONet(torch.nn.Module):
         ]
 
         # aggregation
-        aggregated = self._aggregator(torch.dstack(output_))
+        aggregated = self._aggregator(output_)
+        
+        # before apply the reduction we clone the tensor for backprop
+        aggregated = aggregated.as_subclass(torch.Tensor).clone()
 
         # reduce
-        output_ = self._reduction(aggregated).reshape(-1, 1)
+        output_ = self._reduction(aggregated).unsqueeze(-1)
 
         # scale and translate
         output_ *= self._scale
@@ -329,6 +341,11 @@ class DeepONet(MIONet):
             and ``input_indeces_trunk_net``. Differently, for a :class:`torch.Tensor`
             only a list of integers can be passed for ``input_indeces_branch_net``
             and ``input_indeces_trunk_net``.
+
+        .. warning::
+            In the forward pass we do not check if the network outputs of the single networks
+            are the same, and if this does not happen unwanted behaviour could result in the
+            forward pass not correctly extecuted.
 
         :Example:
             >>> branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
