@@ -256,7 +256,7 @@ class Plotter:
                 )
             loss = trainer_metrics[metric]
             epochs = range(len(loss))
-            plt.plot(epochs, loss, **kwargs)
+            plt.plot(epochs, loss.cpu(), **kwargs)
 
         # plotting
         plt.xlabel('epoch')
