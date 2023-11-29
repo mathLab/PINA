@@ -238,3 +238,12 @@ class SamplePointLoader:
                     'condition': self.batch_data_conditions[idx_],
                 }
             yield d
+
+    def __len__(self):
+        """
+        Return the number of batches.
+
+        :return: The number of batches.
+        :rtype: int
+        """
+        return len(self.batch_list)
