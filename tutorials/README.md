@@ -21,6 +21,7 @@ Resolution of a 2D Poisson inverse problem |[[.ipynb](tutorial7/tutorial.ipynb),
 | Description   | Tutorial  |
 |---------------|-----------|
 Two dimensional Darcy flow using the Fourier Neural Operator  &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;|[[.ipynb](tutorial5/tutorial.ipynb),&#160;[.py](tutorial5/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial5/tutorial.html)]|
+One dimensional advection problem with data driven DeepONet neural operator  &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;|[[.ipynb](tutorial8/tutorial.ipynb),&#160;[.py](tutorial8/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial8/tutorial.html)]|
 
 ## Supervised Learning
 | Description   | Tutorial  |
