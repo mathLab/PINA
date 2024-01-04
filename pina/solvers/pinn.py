@@ -150,7 +150,6 @@ class PINN(SolverInterface):
                 condition_name = dataloader.loaders.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
             pts = batch['pts']
-
             if len(batch) == 2:
                 samples = pts[condition_idx == condition_id]
                 loss = self._loss_phys(samples, condition.equation)
@@ -164,7 +163,7 @@ class PINN(SolverInterface):
             # TODO for users this us hard to remember when creating a new solver, to fix in a smarter way
             loss = loss.as_subclass(torch.Tensor)
 
-#            # add condition losses and accumulate logging for each epoch
+            # add condition losses and accumulate logging for each epoch
             condition_losses.append(loss * condition.data_weight)
             self.log(condition_name + '_loss', float(loss),
                      prog_bar=True, logger=True, on_epoch=True, on_step=False)
@@ -179,7 +178,7 @@ class PINN(SolverInterface):
         self.log('mean_loss', float(total_loss / len(condition_losses)),
                  prog_bar=True, logger=True, on_epoch=True, on_step=False)
 
-        return total_loss
+        return total_loss/len(condition_losses)
 
     @property
     def scheduler(self):

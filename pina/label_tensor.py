@@ -99,7 +99,7 @@ class LabelTensor(torch.Tensor):
                 '`labels` should be a str, a list of str, a list of list of str or a dict')
 
         assert isinstance(labels, dict)
-        # print(labels)
+        print(labels)
 
         # print(x.shape)
         for d in labels:
@@ -344,6 +344,56 @@ class LabelTensor(torch.Tensor):
     #     new_tensor = new_tensor.as_subclass(LabelTensor)
     #     new_tensor.labels = new_labels
     #     return new_tensor
+    def append(self, lt, dim=None, component=None):
+
+
+        if dim is None and component is None:
+            pass
+
+        if dim is None and component is not None:
+
+            if self.ndim != lt.ndim:
+                raise RuntimeError('The tensors to merge have different dimensions')
+
+            common_labels = [i for i in self.labels.values()
+                      for j in lt.labels.values() if i == j]
+
+            # if len(common_labels) > 1:
+            #     raise RuntimeError(f'The tensors to merge have too many common labels: {common_labels}')
+
+            if len(common_labels) == 0:
+                raise RuntimeError(f'The tensors to merge have no common labels')
+
+            common_labels = common_labels[0]
+            for k, v in self.labels.items():
+                if v == common_labels:
+                    dim1 = [True] * self.ndim 
+                    dim1[k] = False
+                    
+            for k, v in lt.labels.items():
+                if v == common_labels:
+                    dim2 = [True] * lt.ndim 
+                    dim2[k] = False
+
+            if dim1 == dim2:
+                print(dim1, common_labels)
+                dim_to_append = [i for i, j in enumerate(dim1) if j == True]
+                print(dim_to_append)
+                if len(dim_to_append) > 1:
+                    raise RuntimeError(f'The tensors to merge have too dimensions and only {component} is given')
+                result = LabelTensor(
+                    torch.cat((self.tensor, lt.tensor), dim=dim_to_append[0]),
+                    labels={k: common_labels}
+                )
+                print(result)
+                print('ggggggggg')
+
+                return result
+            else: 
+                raise NotImplementedError
+
+    def _append(self, lt, mode):
+        print(self.labels, lt.labels)
 
     def __getitem__(self, index):
         """
@@ -370,5 +420,5 @@ class LabelTensor(torch.Tensor):
             s = f'labels({str(self.labels)})\n'
         else:
             s = 'no labels\n'
-        s += super().__str__()
+        s += self.tensor.__str__()
         return s

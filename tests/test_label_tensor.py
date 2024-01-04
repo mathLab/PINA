@@ -87,7 +87,45 @@ def test_tensor_consistency(tensor):
     torch.testing.assert_close(tt, tensor.tensor)
     torch.testing.assert_close(tt.mean(), mean + 1.)
 
+@pytest.mark.parametrize(("tensor1", "tensor2"), [
+    (
+        LabelTensor(data_2D, labels=labels_3),
+        LabelTensor(data_2D, labels=labels_3),
+    ),
+    (
+        LabelTensor(data_2D, labels=labels_3),
+        LabelTensor(data_2D[:-2], labels=labels_3)
+    ),
+    # (
+    #     LabelTensor(data_3D, labels=labels_2),
+    #     LabelTensor(data_3D, labels=labels_2),
+    # )
+])
+def test_append(tensor1, tensor2):
+    tensor = tensor1.append(tensor2, component=labels_3)
+    assert tensor.labels == tensor1.labels
+    assert tensor.shape[0] == tensor1.shape[0] + tensor2.shape[0]
+    assert torch.allclose(tensor, torch.cat((tensor1, tensor2), dim=0))
 
+# @pytest.mark.parametrize(("tensor1", "tensor2"), [
+#     (
+#         LabelTensor(data_2D, labels=labels_3),
+#         LabelTensor(data_2D.T, labels=labels_3),
+#     ),
+#     (
+#         LabelTensor(data_2D, labels=labels_3),
+#         LabelTensor(data_2D[:-2].T, labels=labels_3)
+#     ),
+#     # (
+#     #     LabelTensor(data_3D, labels=labels_2),
+#     #     LabelTensor(data_3D, labels=labels_2),
+#     # )
+# ])
+# def test_append_transpose(tensor1, tensor2):
+#     tensor = tensor1.append(tensor2, component=labels_3)
+#     assert tensor.labels == tensor1.labels
+#     assert tensor.shape[0] == tensor1.shape[0] + tensor2.shape[1]
+#     assert torch.allclose(tensor, torch.cat((tensor1, tensor2.T), dim=0))
 
 """
 def test_extract_onelabel():

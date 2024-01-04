@@ -249,6 +249,7 @@ class AbstractProblem(metaclass=ABCMeta):
         Check if all points for
         ``Location`` are sampled.
         """
+        print(self._have_sampled_points)
         return all(self._have_sampled_points.values())
 
     @property
