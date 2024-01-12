@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from layers.gnn_layer import GNN_Layer
 
-class Model(torch.nn.Module):
+class GNN(torch.nn.Module):
     """
     Message passing model class.
     """
@@ -11,7 +11,7 @@ class Model(torch.nn.Module):
                  time_window: int,
                  n_variables: int,
                  input_dimension: int, 
-                 output_dimension: int, 
+                 output_dimension: int, # TODO: to be removed if correct output_dimension
                  embedding_dimension: int = 128, 
                  processing_layers: int = 6):
         """
@@ -28,7 +28,8 @@ class Model(torch.nn.Module):
         
         super().__init__()
         self.input_dimension = input_dimension
-        self.output_dimension = output_dimension
+        # self.output_dimension = output_dimension -- TODO: vedi sotto e togli parametro init.
+        self.output_dimension = time_window # modificato
         self.embedding_dimension = embedding_dimension
         self.processing_layers = processing_layers
         self.handler = handler
@@ -36,6 +37,7 @@ class Model(torch.nn.Module):
         self.n_variables = n_variables
         
         # Encoder
+        # TODO: the user should be able to define as many layers as wanted
         self.encoder = nn.Sequential(nn.Linear(self.input_dimension, self.embedding_dimension), nn.SiLU(),
                                      nn.Linear(self.embedding_dimension, self.embedding_dimension), nn.SiLU())
         
@@ -71,3 +73,11 @@ class Model(torch.nn.Module):
         # Decoder
         out = self.decoder(graph.x)
         return out
+    
+        # TODO: modificare l'output, così non ha senso. Vedi Brandstetter.
+        # dt = (torch.ones(1, self.time_window) * self.pde.dt).to(graph.x.device) # -- trova modo di recuperare dt: lo passo nel graph handler?
+        # dt = torch.cumsum(dt, dim=1) # OK
+        # # [batch*n_nodes, hidden_dim] -> 1DCNN([batch*n_nodes, 1, hidden_dim]) -> [batch*n_nodes, time_window]
+        # diff = self.decoder(graph.x[:, None]).squeeze(1) # dovrebbe essere OK
+        # out = graph.u[:, -1].repeat(self.time_window, 1).transpose(0, 1) + dt * diff # dovrebbe essere OK
+        # return out

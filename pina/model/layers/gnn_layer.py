@@ -14,7 +14,8 @@ class GNN_Layer(MessagePassing):
                  out_features: int,
                  hidden_features: int,
                  time_window: int,
-                 n_variables: int):
+                 n_variables: int,
+                 n_spatial: int = 1):
         """
         Initialize message passing layers
         Args:
@@ -23,6 +24,7 @@ class GNN_Layer(MessagePassing):
             hidden_features (int): number of hidden features
             time_window (int): number of input/output timesteps (temporal bundling)
             n_variables (int): number of equation specific parameters used in the solver
+            n_spatial (int): number of spatial variables (ex: x --> 1, [x,y] --> 2)
         """
         super(GNN_Layer, self).__init__(node_dim=-2, aggr='mean')
         self.in_features = in_features
@@ -30,11 +32,10 @@ class GNN_Layer(MessagePassing):
         self.hidden_features = hidden_features
         self.time_window = time_window
         self.n_variables = n_variables
+        self.n_spatial = n_spatial
 
         # Message network -- equation 8
-        # Notice: spacial dimension is hard-coded and set to 1. For now, we deal with 1d-spatial PDEs.
-        # TODO: manage spacial dimension - to be passed as a parameter?
-        self.message_net_1 = nn.Sequential(nn.Linear(2*self.in_features + self.time_window + 1 + self.n_variables, self.hidden_features), SiLU())
+        self.message_net_1 = nn.Sequential(nn.Linear(2*self.in_features + self.time_window + self.n_spatial + self.n_variables, self.hidden_features), SiLU())
         self.message_net_2 = nn.Sequential(nn.Linear(self.hidden_features, self.hidden_features), SiLU())
 
         # Update network -- equation 9
@@ -104,7 +105,3 @@ class GraphHandler():
     
     def data_to_graph(self, data):
         self.graph.u = data
-
-    # Probably not useful
-    # def update_graph(self, features):
-    #     self.graph.x = features
