@@ -1,6 +1,4 @@
 import torch
-import torch.nn as nn
-from torch.nn import SiLU
 from torch_geometric.data import Data
 from torch_geometric.nn import MessagePassing, InstanceNorm
 from torch_cluster import radius_graph
@@ -35,12 +33,12 @@ class GNN_Layer(MessagePassing):
         self.n_spatial = n_spatial
 
         # Message network -- equation 8
-        self.message_net_1 = nn.Sequential(nn.Linear(2*self.in_features + self.time_window + self.n_spatial + self.n_variables, self.hidden_features), SiLU())
-        self.message_net_2 = nn.Sequential(nn.Linear(self.hidden_features, self.hidden_features), SiLU())
+        self.message_net_1 = torch.nn.Sequential(torch.nn.Linear(2*self.in_features + self.time_window + self.n_spatial + self.n_variables, self.hidden_features), torch.nn.SiLU())
+        self.message_net_2 = torch.nn.Sequential(torch.nn.Linear(self.hidden_features, self.hidden_features), torch.nn.SiLU())
 
         # Update network -- equation 9
-        self.update_net_1 = nn.Sequential(nn.Linear(self.in_features + self.hidden_features + self.n_variables, self.hidden_features), SiLU())
-        self.update_net_2 = nn.Sequential(nn.Linear(self.hidden_features, self.out_features), SiLU())
+        self.update_net_1 = torch.nn.Sequential(torch.nn.Linear(self.in_features + self.hidden_features + self.n_variables, self.hidden_features), torch.nn.SiLU())
+        self.update_net_2 = torch.nn.Sequential(torch.nn.Linear(self.hidden_features, self.out_features), torch.nn.SiLU())
 
         self.norm = InstanceNorm(self.hidden_features)
 
@@ -79,12 +77,19 @@ class GNN_Layer(MessagePassing):
 
 
 class GraphHandler():
-    def __init__(self, coordinates, variables, num_neighs=10):
+    """
+    Creates and manages a graph with following attrubutes:
+    - graph.u: values of u(x,t) at point x and time t in considered window
+    - graph.pos: spatial coordinates
+    - graph.variables: variables of the equation (time and parameters)
+    - graph.x: node features
+    """
+    def __init__(self, coordinates, variables, dt, num_neighs=10):
         super().__init__()
         self.n = num_neighs
-        self.graph = self.create_ball_graph(coordinates, variables)
+        self.graph = self.create_ball_graph(coordinates, variables, dt)
 
-    def create_ball_graph(self, coordinates, variables):
+    def create_ball_graph(self, coordinates, variables, dt):
         # Get the smallest distance between the coordinates
         if len(coordinates.shape) == 1:
             dx = coordinates[1]-coordinates[0]
@@ -93,7 +98,6 @@ class GraphHandler():
 
         # Set the radius so as to include the nearest neighbours 
         radius = self.n * dx + 0.000001
-
         edge_index = radius_graph(coordinates, r=radius, loop=False)
 
         # Features x are computed by the encoder preceeding the gnn_layer
@@ -101,6 +105,7 @@ class GraphHandler():
         graph.pos = coordinates
         graph.u = None
         graph.variables = variables
+        graph.dt = dt
         return graph
     
     def data_to_graph(self, data):

@@ -1,6 +1,6 @@
 import torch
-import torch.nn as nn
-from layers.gnn_layer import GNN_Layer
+from gnn_layer import GNN_Layer
+from pina import LabelTensor
 
 class GNN(torch.nn.Module):
     """
@@ -10,8 +10,6 @@ class GNN(torch.nn.Module):
                  handler, 
                  time_window: int,
                  n_variables: int,
-                 input_dimension: int, 
-                 output_dimension: int, # TODO: to be removed if correct output_dimension
                  embedding_dimension: int = 128, 
                  processing_layers: int = 6):
         """
@@ -20,16 +18,13 @@ class GNN(torch.nn.Module):
             handler: GraphHandler object to manage the graph
             time_window: temporal bundling parameter
             n_variables: number of paramaters of the PDE
-            input_dimension: dimension of the input
             output_dimension: dimension of the output
             embedding_dimension: dimension of node features
             processing_layers: number of message passing layers
         """
         
         super().__init__()
-        self.input_dimension = input_dimension
-        # self.output_dimension = output_dimension -- TODO: vedi sotto e togli parametro init.
-        self.output_dimension = time_window # modificato
+        self.output_dimension = time_window
         self.embedding_dimension = embedding_dimension
         self.processing_layers = processing_layers
         self.handler = handler
@@ -38,8 +33,8 @@ class GNN(torch.nn.Module):
         
         # Encoder
         # TODO: the user should be able to define as many layers as wanted
-        self.encoder = nn.Sequential(nn.Linear(self.input_dimension, self.embedding_dimension), nn.SiLU(),
-                                     nn.Linear(self.embedding_dimension, self.embedding_dimension), nn.SiLU())
+        self.encoder = torch.nn.Sequential(torch.nn.Linear(self.time_window + self.n_variables +1, self.embedding_dimension), torch.nn.SiLU(),
+                                           torch.nn.Linear(self.embedding_dimension, self.embedding_dimension), torch.nn.SiLU())
         
         # GNN layers
         self.gnn_layers = torch.nn.ModuleList(modules=(GNN_Layer(in_features=self.embedding_dimension, 
@@ -49,35 +44,40 @@ class GNN(torch.nn.Module):
                                                                  n_variables=self.n_variables) for _ in range(self.processing_layers)))
         
         # Decoder
-        # TODO: to be transformed in a 1d-CNN
-        self.decoder = torch.nn.Linear(self.embedding_dimension, self.output_dimension)
-        # parameters to be set in a correct way
-        # self.decoder = nn.Sequential(nn.Conv1d(in_channels=1, out_channels=8, kernel_size=15, stride=4),
-                                        # nn.Swish(),
-                                        # nn.Conv1d(in_channels=8, out_channels=1, kernel_size=10, stride=1))
+        # TODO: we use a linear layer after convolutions to allow easier management of strides and kernel sizes.
+        # However, it is not clean nor always correct: for self.embedding_dimension < 55, it is meaningless.
+        self.decoder = torch.nn.Sequential(torch.nn.Conv1d(in_channels=1, out_channels=8, kernel_size=15, stride=4),
+                                           torch.nn.SiLU(), 
+                                           torch.nn.Conv1d(in_channels=8, out_channels=1, kernel_size=10, stride=1),
+                                           torch.nn.SiLU(),
+                                           torch.nn.Linear(in_features= (int((self.embedding_dimension-15)/4)-8), out_features=self.output_dimension))
 
     def forward(self, x):
         # Insert graph.u data for message passing
-        self.handler.data_to_graph(x.extract(['k']))
+        self.handler.data_to_graph(x.extract(['k']).squeeze(-1).squeeze(0))
         graph = self.handler.graph
-
+        
         # Encoder
         input = torch.cat((graph.u, graph.pos, graph.variables), dim = -1)
         graph.x = self.encoder(input)
-
+        
         # Processor
         for i in range(self.processing_layers):
             h = self.gnn_layers[i](graph)
             graph.x = h
 
-        # Decoder
-        out = self.decoder(graph.x)
-        return out
-    
-        # TODO: modificare l'output, così non ha senso. Vedi Brandstetter.
-        # dt = (torch.ones(1, self.time_window) * self.pde.dt).to(graph.x.device) # -- trova modo di recuperare dt: lo passo nel graph handler?
-        # dt = torch.cumsum(dt, dim=1) # OK
-        # # [batch*n_nodes, hidden_dim] -> 1DCNN([batch*n_nodes, 1, hidden_dim]) -> [batch*n_nodes, time_window]
-        # diff = self.decoder(graph.x[:, None]).squeeze(1) # dovrebbe essere OK
-        # out = graph.u[:, -1].repeat(self.time_window, 1).transpose(0, 1) + dt * diff # dovrebbe essere OK
-        # return out
+        # Decoder -- controllare che funzioni dt
+        dt = (torch.ones(1, self.time_window)*graph.dt).to(graph.x.device)
+        dt = torch.cumsum(dt, dim=1)
+        diff = self.decoder(graph.x[:, None]).squeeze(1)
+        out = graph.u[:,-1].repeat(1, self.time_window) + dt*diff
+        
+        #print(f"{graph.u.shape=}")
+        #print(f"{graph.pos.shape=}")
+        #print(f"{graph.variables.shape=}")
+        #print(f"{graph.dt=}")
+        #print(f"{input.shape=}")
+        #print(f"{diff.shape=}")
+        #print(f"{out.shape=}")
+        
+        return LabelTensor(out.unsqueeze(-1), labels = ['u'])
