@@ -44,13 +44,18 @@ class GNN(torch.nn.Module):
                                                                  n_variables=self.n_variables) for _ in range(self.processing_layers)))
         
         # Decoder
-        # TODO: we use a linear layer after convolutions to allow easier management of strides and kernel sizes.
+        # TODO: use a linear layer after convolutions to allow easier management of strides and kernel sizes.
         # However, it is not clean nor always correct: for self.embedding_dimension < 55, it is meaningless.
-        self.decoder = torch.nn.Sequential(torch.nn.Conv1d(in_channels=1, out_channels=8, kernel_size=15, stride=4),
+        # self.decoder = torch.nn.Sequential(torch.nn.Conv1d(in_channels=1, out_channels=8, kernel_size=15, stride=4),
+                                           #torch.nn.SiLU(), 
+                                           #torch.nn.Conv1d(in_channels=8, out_channels=1, kernel_size=10, stride=1),
+                                           #torch.nn.SiLU(),
+                                           #torch.nn.Linear(in_features= (int((self.embedding_dimension-15)/4)-8), out_features=self.output_dimension))
+        
+        # At the moment we use a fixed time_window = 25                                   
+        self.decoder = torch.nn.Sequential(torch.nn.Conv1d(in_channels=1, out_channels=8, kernel_size=16, stride=3),
                                            torch.nn.SiLU(), 
-                                           torch.nn.Conv1d(in_channels=8, out_channels=1, kernel_size=10, stride=1),
-                                           torch.nn.SiLU(),
-                                           torch.nn.Linear(in_features= (int((self.embedding_dimension-15)/4)-8), out_features=self.output_dimension))
+                                           torch.nn.Conv1d(in_channels=8, out_channels=1, kernel_size=14, stride=1))
 
     def forward(self, x):
         # Insert graph.u data for message passing
