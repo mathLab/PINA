@@ -1,29 +1,32 @@
-from .solver import SolverInterface
-from abc import ABCMeta, abstractmethod
-from ..model.network import Network
-import pytorch_lightning
-from ..utils import check_consistency
-from ..problem import AbstractProblem
+from pina.solvers import SolverInterface
+from pina.utils import check_consistency
+from pina.loss import LossInterface
+from pina.problem import InverseProblem
+import sys
+import random
 import torch
 try:
-    from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
+    from torch.optim.lr_scheduler import LRScheduler
 except ImportError:
-    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler  # torch < 2.0
-
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
 from torch.optim.lr_scheduler import ConstantLR
-from ..label_tensor import LabelTensor
-from ..loss import LossInterface
-from ..problem import InverseProblem
 from torch.nn.modules.loss import _Loss
+from pina.model.graph_handler import GraphHandler
 
-torch.pi = torch.acos(torch.zeros(1)).item() * 2
 
 class MessagePassing(SolverInterface):
-    
+    """
+    Message Passing Neural PDE solver class.
+    """
     def __init__(
         self,
         problem,
         model,
+        dt,
+        time_window,
+        unrolling_list = [2],
+        time_res = 250,
+        adversarial = True,
         extra_features=None,
         loss=torch.nn.MSELoss(),
         optimizer=torch.optim.Adam,
@@ -34,6 +37,26 @@ class MessagePassing(SolverInterface):
             "total_iters": 0
         },
     ):
+        """
+        :param AbstractProblem problem: The formulation of the problem.
+        :param torch.nn.Module model: The neural network model to use.
+        :param float dt: length of a temporal step.
+        :param int time_window: temporal window length.
+        :param list unrolling_list: The list of possible unrollings;
+            default: :list:[2].
+        :param int time_res: The time resolution; default is :int:`250`.
+        :param bool adversarial: Whether to use or not adversarial training; 
+            default is :bool:`True`.
+        :param torch.nn.Module extra_features: The additional input
+            features to use as augmented input.
+        :param torch.nn.Module loss: The loss function used as minimizer,
+            default :class:`torch.nn.MSELoss`.
+        :param torch.optim.Optimizer optimizer: The neural network optimizer to
+            use; default is :class:`torch.optim.Adam`.
+        :param dict optimizer_kwargs: Optimizer constructor keyword args.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
+        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
+        """
         super().__init__(models=[model],
                          problem=problem,
                          optimizers=[optimizer],
@@ -44,88 +67,135 @@ class MessagePassing(SolverInterface):
         check_consistency(scheduler, LRScheduler, subclass=True)
         check_consistency(scheduler_kwargs, dict)
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
+        
+        # inverse problem handling
+        if isinstance(self.problem, InverseProblem):
+            raise ValueError('Message Passing works only for forward problems.')
+        else:
+            self._params = None
 
         # assign variables
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self._loss = loss
         self._neural_net = self.models[0]
-
-        # inverse problem handling
-        if isinstance(self.problem, InverseProblem):
-            raise ValueError('Message Passing only for forward problems.')
-            #self._params = self.problem.unknown_parameters
-        else:
-            self._params = None
-
-    def forward(self, x):
-        return self.neural_net(x)
-    
-    def training_step(self, batch, batch_idx):
-
-#############################
-        dataloader = self.trainer.train_dataloader
-        condition_idx = batch['condition']
-
-        for condition_id in range(condition_idx.min(), condition_idx.max()+1):
-
-            condition_name = dataloader.condition_names[condition_id]
-            condition = self.problem.conditions[condition_name]
-            pts = batch['pts']
-            out = batch['output']
-
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError('Something wrong happened.')
-
-            # for data driven mode
-            if not hasattr(condition, 'output_points'):
-                raise NotImplementedError('Supervised solver works only in data-driven mode.')
-#############################         
-        u, x, variables = pts.shape.....
-
-        # Randomly choose number of unrollings
-        unrolling = 2
-        import random
-        unrolled_graphs = random.choice(unrolling)
-        steps = [t for t in range(graph_creator.tw,
-                                graph_creator.t_res - graph_creator.tw - (graph_creator.tw * unrolled_graphs) + 1)]
-        # Randomly choose starting (time) point at the PDE solution manifold
-        random_steps = random.choices(steps, k=u.shape[0])
-        data, labels = graph_creator.create_data(u, random_steps)
-        if f'{model}' == 'GNN':
-            graph = graph_creator.create_graph(data, labels, x, variables, random_steps).to(device)
-        else:
-            data, labels = data.to(device), labels.to(device)
-
-        # Unrolling of the equation which serves as input at the current step
-        # This is the pushforward trick!!!
-        with torch.no_grad():
-            for _ in range(unrolled_graphs):
-                random_steps = [rs + graph_creator.tw for rs in random_steps]
-                _, labels = graph_creator.create_data(u_super, random_steps)
-                if f'{model}' == 'GNN':
-                    pred = model(graph)
-                    graph = graph_creator.create_next_graph(graph, pred, labels, random_steps).to(device)
-                else:
-                    data = model(data)
-                    labels = labels.to(device)
-
-        if f'{model}' == 'GNN':
-            pred = model(graph)
-            loss = criterion(pred, graph.y)
-        else:
-            pred = model(data)
-            loss = criterion(pred, labels)
-
-        return loss
-    
+        self.unrolling_list = unrolling_list if adversarial else [1]
+        self.num_iter = time_res if adversarial else 1
+        self.time_res = time_res
+        self.time_window = time_window
+        self.dt = dt
+        self.handler = GraphHandler(self.dt, num_neighs=5)
+        
+        
     def configure_optimizers(self):
-        """Optimizer configuration for the solver.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple(list, list)
+        """
+        Optimizer configuration for the solver.
+        
+        :return: The optimizers and the schedulers.
+        :rtype: tuple(list, list).
         """
         return self.optimizers, [self.scheduler]
 
+
+    def forward(self, x):
+        """
+        Message passing solver forward step.
+        
+        :param x: Input graph.
+        :return: Message Passing solution.
+        :rtype: torch.Tensor
+        """
+        return self.neural_net.torchmodel(x)
+    
+    
+    def training_step(self, batch, batch_idx):
+        """
+        Message passing training step.
+
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
+        :param batch_idx: The batch index.
+        :type batch_idx: int
+        :return: The sum of the loss functions.
+        :rtype: LabelTensor
+        """
+        dataloader = self.trainer.train_dataloader
+        condition_idx = batch['condition']
+        
+        for condition_id in range(condition_idx.min(), condition_idx.max()+1):
+            if sys.version_info >= (3,8):
+                condition_name = dataloader.condition_names[condition_id]
+            else:
+                condition_name = dataloader.loaders.condition_names[condition_id]
+            condition = self.problem.conditions[condition_name]
+            pts = batch['pts']
+            batch_size = pts.shape[0]
+            
+            if condition_name not in self.problem.conditions:
+                raise RuntimeError("Something wrong happened.")
+    
+            input_pts = pts[condition_idx == condition_id]
+            
+            for _ in range(self.num_iter):
+                unrolling = random.choice(self.unrolling_list)
+                steps = [t for t in range(self.time_window, self.time_res - self.time_window - (self.time_window*unrolling) +1)]
+                random_steps = random.choices(steps, k = batch_size)
+                data, variables, coordinates, btc = self.create_data(input_pts, random_steps)
+                self.handler.graph = self.handler.create_ball_graph(coordinates=coordinates, data = data, variables=variables, batch=btc.long())
+                with torch.no_grad():
+                    for _ in range(unrolling):
+                        random_steps = [rs + self.time_window for rs in random_steps]
+                        self.handler.graph.u = self.forward(self.handler.graph)
+                        self.handler.graph.variables = self.update_variables(input_pts, random_steps)
+
+                labels = self.create_labels(input_pts, random_steps)
+                pred = self.forward(self.handler.graph)
+                
+                loss = self.loss(pred, labels) * condition.data_weight
+                loss = loss.as_subclass(torch.Tensor)
+
+        self.log('mean_loss', float(loss), prog_bar=True, logger=True)
+        return loss
+    
+    
+    def create_data(self, pts, steps):
+        """
+        Creation of the data to be inserted in the graph.
+        
+        :param torch.Tensor pts: batched points.
+        :param list steps: random temporal steps.
+        :return: input, variables, coordinates, batch and target data in a reduced time window.
+        :rtype: tuple(torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor).
+        """
+        
+        data, variables, coordinates, batch = torch.Tensor(), torch.Tensor(), torch.Tensor(), torch.Tensor()
+        for i,st in enumerate(steps):
+            d = pts[i,:,st-self.time_window:st].extract(['u'])
+            coord = pts[i,:,0].extract(['x'])
+            v = pts[i,:,0].extract(['t', 'alpha', 'beta', 'gamma'])
+            data = torch.cat((data, d), 0)
+            variables = torch.cat((variables, v), 0)
+            coordinates = torch.cat((coordinates, coord), 0)
+            batch = torch.cat((batch, torch.ones(pts.shape[1])*i), 0)
+        
+        return data.squeeze(-1), variables, torch.Tensor(coordinates).squeeze(-1), batch
+    
+    
+    def update_variables(self, pts, steps):
+        variables = torch.Tensor()
+        for i in range(len(steps)):
+            v = pts[i,:,0].extract(['t', 'alpha', 'beta', 'gamma'])
+            variables = torch.cat((variables, v), 0)
+        return variables
+    
+    
+    def create_labels(self, pts, steps):
+        labels = torch.Tensor()
+        for i,st in enumerate(steps):
+            l = pts[i,:,st:self.time_window+st].extract(['u'])
+            labels = torch.cat((labels, l), 0)
+        return labels.squeeze(-1)
+
+        
     @property
     def scheduler(self):
         return self._scheduler

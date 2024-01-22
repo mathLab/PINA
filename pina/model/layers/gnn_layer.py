@@ -1,7 +1,5 @@
 import torch
-from torch_geometric.data import Data
 from torch_geometric.nn import MessagePassing, InstanceNorm
-from torch_cluster import radius_graph
 
 class GNN_Layer(MessagePassing):
     """
@@ -74,39 +72,3 @@ class GNN_Layer(MessagePassing):
             return x + update
         else:
             return update
-
-
-class GraphHandler():
-    """
-    Creates and manages a graph with following attrubutes:
-    - graph.u: values of u(x,t) at point x and time t in considered window
-    - graph.pos: spatial coordinates
-    - graph.variables: variables of the equation (time and parameters)
-    - graph.x: node features
-    """
-    def __init__(self, coordinates, variables, dt, num_neighs=10):
-        super().__init__()
-        self.n = num_neighs
-        self.graph = self.create_ball_graph(coordinates, variables, dt)
-
-    def create_ball_graph(self, coordinates, variables, dt):
-        # Get the smallest distance between the coordinates
-        if len(coordinates.shape) == 1:
-            dx = coordinates[1]-coordinates[0]
-        else:
-            dx = torch.pdist(coordinates).min()
-
-        # Set the radius so as to include the nearest neighbours 
-        radius = self.n * dx + 0.000001
-        edge_index = radius_graph(coordinates, r=radius, loop=False)
-
-        # Features x are computed by the encoder preceeding the gnn_layer
-        graph = Data(x = None, edge_index = edge_index, edge_attr = None)
-        graph.pos = coordinates
-        graph.u = None
-        graph.variables = variables
-        graph.dt = dt
-        return graph
-    
-    def data_to_graph(self, data):
-        self.graph.u = data

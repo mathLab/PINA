@@ -1,13 +1,11 @@
 import torch
-from gnn_layer import GNN_Layer
-from pina import LabelTensor
+from layers.gnn_layer import GNN_Layer
 
 class GNN(torch.nn.Module):
     """
     Message passing model class.
     """
-    def __init__(self,
-                 handler, 
+    def __init__(self, 
                  time_window: int,
                  n_variables: int,
                  embedding_dimension: int = 128, 
@@ -15,7 +13,6 @@ class GNN(torch.nn.Module):
         """
         Initialize Message Passing model class.
         Args:
-            handler: GraphHandler object to manage the graph
             time_window: temporal bundling parameter
             n_variables: number of paramaters of the PDE
             output_dimension: dimension of the output
@@ -27,7 +24,6 @@ class GNN(torch.nn.Module):
         self.output_dimension = time_window
         self.embedding_dimension = embedding_dimension
         self.processing_layers = processing_layers
-        self.handler = handler
         self.time_window = time_window
         self.n_variables = n_variables
         
@@ -57,10 +53,7 @@ class GNN(torch.nn.Module):
                                            torch.nn.SiLU(), 
                                            torch.nn.Conv1d(in_channels=8, out_channels=1, kernel_size=14, stride=1))
 
-    def forward(self, x):
-        # Insert graph.u data for message passing
-        self.handler.data_to_graph(x.extract(['k']).squeeze(-1).squeeze(0))
-        graph = self.handler.graph
+    def forward(self, graph):
         
         # Encoder
         input = torch.cat((graph.u, graph.pos, graph.variables), dim = -1)
@@ -77,12 +70,4 @@ class GNN(torch.nn.Module):
         diff = self.decoder(graph.x[:, None]).squeeze(1)
         out = graph.u[:,-1].repeat(1, self.time_window) + dt*diff
         
-        #print(f"{graph.u.shape=}")
-        #print(f"{graph.pos.shape=}")
-        #print(f"{graph.variables.shape=}")
-        #print(f"{graph.dt=}")
-        #print(f"{input.shape=}")
-        #print(f"{diff.shape=}")
-        #print(f"{out.shape=}")
-        
-        return LabelTensor(out.unsqueeze(-1), labels = ['u'])
+        return out
