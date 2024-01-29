@@ -176,7 +176,7 @@ class Plotter:
         if components is None:
             components = solver.problem.output_variables
         
-        if type(components) is not list:
+        if isinstance(components, str):
             components = [components]
             
         if len(components) > 1:
