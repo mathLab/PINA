@@ -176,6 +176,9 @@ class Plotter:
         if components is None:
             components = solver.problem.output_variables
         
+        if type(components) is not list:
+            components = [components]
+            
         if len(components) > 1:
             raise NotImplementedError('Multidimensional plots are not implemented, '
                                       'set components to an available components of the problem.')
