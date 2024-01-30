@@ -41,15 +41,12 @@ class GNN_Layer(MessagePassing):
         self.norm = InstanceNorm(self.hidden_features)
 
 
-    def forward(self, graph):
+    def forward(self, x, u, pos, variables, edge_index, batch):
         """
         Propagate messages along edges
         """
-        f = self.propagate(edge_index=graph.edge_index, 
-                           x=graph.x,
-                           u=graph.u, 
-                           pos=graph.pos, 
-                           variables=graph.variables)
+        f = self.propagate(edge_index=edge_index, x=x, u=u, pos=pos, variables=variables)
+        f = self.norm(f, batch)
         return f
 
 

@@ -12,7 +12,7 @@ except ImportError:
 from torch.optim.lr_scheduler import ConstantLR
 from torch.nn.modules.loss import _Loss
 from pina.model.graph_handler import GraphHandler
-
+from pina import LabelTensor
 
 class MessagePassing(SolverInterface):
     """
@@ -24,7 +24,7 @@ class MessagePassing(SolverInterface):
         model,
         dt,
         time_window,
-        unrolling_list = [2],
+        unrolling = 2,
         time_res = 250,
         adversarial = True,
         extra_features=None,
@@ -42,8 +42,7 @@ class MessagePassing(SolverInterface):
         :param torch.nn.Module model: The neural network model to use.
         :param float dt: length of a temporal step.
         :param int time_window: temporal window length.
-        :param list unrolling_list: The list of possible unrollings;
-            default: :list:[2].
+        :param int unrolling: The number of unrollings; default: :int:2.
         :param int time_res: The time resolution; default is :int:`250`.
         :param bool adversarial: Whether to use or not adversarial training; 
             default is :bool:`True`.
@@ -78,9 +77,9 @@ class MessagePassing(SolverInterface):
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self._loss = loss
         self._neural_net = self.models[0]
-        self.unrolling_list = unrolling_list if adversarial else [1]
-        self.num_iter = time_res if adversarial else 1
+        self.unrolling = unrolling if adversarial else 0
         self.time_res = time_res
+        self.num_iter = time_res if adversarial else 1
         self.time_window = time_window
         self.dt = dt
         self.handler = GraphHandler(self.dt, num_neighs=5)
@@ -128,29 +127,32 @@ class MessagePassing(SolverInterface):
                 condition_name = dataloader.loaders.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
             pts = batch['pts']
+            out = batch['output']
             batch_size = pts.shape[0]
             
             if condition_name not in self.problem.conditions:
                 raise RuntimeError("Something wrong happened.")
     
             input_pts = pts[condition_idx == condition_id]
+            output_pts = out[condition_idx == condition_id]
             
             for _ in range(self.num_iter):
-                unrolling = random.choice(self.unrolling_list)
-                steps = [t for t in range(self.time_window, self.time_res - self.time_window - (self.time_window*unrolling) +1)]
+                steps = [t for t in range(self.time_window, self.time_res - self.time_window - (self.time_window*self.unrolling) +1)]
                 random_steps = random.choices(steps, k = batch_size)
                 data, variables, coordinates, btc = self.create_data(input_pts, random_steps)
-                self.handler.graph = self.handler.create_ball_graph(coordinates=coordinates, data = data, variables=variables, batch=btc.long())
+                self.handler.graph = self.handler.create_ball_graph(coordinates=coordinates, data=data, variables=variables, batch=btc.long())
+
                 with torch.no_grad():
-                    for _ in range(unrolling):
+                    for _ in range(self.unrolling):
                         random_steps = [rs + self.time_window for rs in random_steps]
-                        self.handler.graph.u = self.forward(self.handler.graph)
+                        self.handler.graph.x = self.forward(self.handler.graph)
                         self.handler.graph.variables = self.update_variables(input_pts, random_steps)
 
-                labels = self.create_labels(input_pts, random_steps)
+                target = self.create_target(output_pts, random_steps)
                 pred = self.forward(self.handler.graph)
-                
-                loss = self.loss(pred, labels) * condition.data_weight
+                pred = LabelTensor(pred.unsqueeze(-1), labels=['u'])
+
+                loss = self.loss(pred, target) * condition.data_weight
                 loss = loss.as_subclass(torch.Tensor)
 
         self.log('mean_loss', float(loss), prog_bar=True, logger=True)
@@ -166,36 +168,25 @@ class MessagePassing(SolverInterface):
         :return: input, variables, coordinates, batch and target data in a reduced time window.
         :rtype: tuple(torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor).
         """
+        data = torch.cat([pts[i,:,st-self.time_window:st].extract(['u']) for i,st in enumerate(steps)])
+        coordinates = torch.cat([pts[i,:,st].extract(['x']) for i,st in enumerate(steps)])
+        variables = torch.cat([pts[i,:,st].extract(['t', 'alpha', 'beta', 'gamma']) for i,st in enumerate(steps)])
+        num_x = torch.unique(coordinates).shape[0]
+        batch = torch.cat([torch.ones(num_x)*i for i in range(pts.shape[0])]).to(device=pts.device)
         
-        data, variables, coordinates, batch = torch.Tensor(), torch.Tensor(), torch.Tensor(), torch.Tensor()
-        for i,st in enumerate(steps):
-            d = pts[i,:,st-self.time_window:st].extract(['u'])
-            coord = pts[i,:,0].extract(['x'])
-            v = pts[i,:,0].extract(['t', 'alpha', 'beta', 'gamma'])
-            data = torch.cat((data, d), 0)
-            variables = torch.cat((variables, v), 0)
-            coordinates = torch.cat((coordinates, coord), 0)
-            batch = torch.cat((batch, torch.ones(pts.shape[1])*i), 0)
-        
-        return data.squeeze(-1), variables, torch.Tensor(coordinates).squeeze(-1), batch
+        return data.squeeze(-1), LabelTensor(variables, labels=['t', 'alpha', 'beta', 'gamma']), torch.Tensor(coordinates).squeeze(-1), batch
     
     
     def update_variables(self, pts, steps):
-        variables = torch.Tensor()
-        for i in range(len(steps)):
-            v = pts[i,:,0].extract(['t', 'alpha', 'beta', 'gamma'])
-            variables = torch.cat((variables, v), 0)
-        return variables
+        variables = torch.cat([pts[i,:,st].extract(['t', 'alpha', 'beta', 'gamma']) for i,st in enumerate(steps)])
+        return LabelTensor(variables, labels=['t', 'alpha', 'beta', 'gamma'])
     
     
-    def create_labels(self, pts, steps):
-        labels = torch.Tensor()
-        for i,st in enumerate(steps):
-            l = pts[i,:,st:self.time_window+st].extract(['u'])
-            labels = torch.cat((labels, l), 0)
-        return labels.squeeze(-1)
-
-        
+    def create_target(self, pts, steps):
+        target = torch.cat([pts[i,:,st:st+self.time_window] for i,st in enumerate(steps)])
+        return LabelTensor(target, labels=['u'])
+    
+    
     @property
     def scheduler(self):
         return self._scheduler

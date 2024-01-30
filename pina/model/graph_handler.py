@@ -22,16 +22,9 @@ class GraphHandler():
         radius = self.num_neighs * dx + 0.000001
         edge_index = radius_graph(coordinates, r=radius, loop=False, batch=batch)
         
-        # Features x are computed by the encoder preceeding the gnn_layer
-        graph = Data(x = None, edge_index = edge_index, edge_attr = None)
+        graph = Data(x = data, edge_index = edge_index, edge_attr = None)
         graph.pos = coordinates.unsqueeze(-1)
-        graph.u = data
         graph.variables = variables
         graph.dt = self.dt
         graph.batch = batch
         return graph
-    
-    
-    def update_graph(self, data, variables):
-        self.graph.u = data
-        self.graph.variables = variables

@@ -1,5 +1,5 @@
 import torch
-from layers.gnn_layer import GNN_Layer
+from pina.model.layers.gnn_layer import GNN_Layer
 
 class GNN(torch.nn.Module):
     """
@@ -8,6 +8,7 @@ class GNN(torch.nn.Module):
     def __init__(self, 
                  time_window: int,
                  n_variables: int,
+                 t_max: float,
                  embedding_dimension: int = 128, 
                  processing_layers: int = 6):
         """
@@ -26,6 +27,7 @@ class GNN(torch.nn.Module):
         self.processing_layers = processing_layers
         self.time_window = time_window
         self.n_variables = n_variables
+        self.t_max = t_max
         
         # Encoder
         # TODO: the user should be able to define as many layers as wanted
@@ -55,19 +57,23 @@ class GNN(torch.nn.Module):
 
     def forward(self, graph):
         
+        #Normalization
+        vars = graph.variables.extract(['alpha', 'beta', 'gamma'])
+        time = graph.variables.extract(['t'])/self.t_max
+        graph.pos = graph.pos/graph.pos.max()
+
         # Encoder
-        input = torch.cat((graph.u, graph.pos, graph.variables), dim = -1)
-        graph.x = self.encoder(input)
+        input = torch.cat((graph.x, graph.pos, time, vars), dim = -1)
+        h = self.encoder(input)
         
         # Processor
         for i in range(self.processing_layers):
-            h = self.gnn_layers[i](graph)
-            graph.x = h
+            h = self.gnn_layers[i](h, graph.x, graph.pos, graph.variables, graph.edge_index, graph.batch)
 
         # Decoder -- controllare che funzioni dt
-        dt = (torch.ones(1, self.time_window)*graph.dt).to(graph.x.device)
+        dt = (torch.ones(1, self.time_window)*graph.dt).to(h.device)
         dt = torch.cumsum(dt, dim=1)
-        diff = self.decoder(graph.x[:, None]).squeeze(1)
-        out = graph.u[:,-1].repeat(1, self.time_window) + dt*diff
+        diff = self.decoder(h[:, None]).squeeze(1)
+        out = graph.x[:, -1].repeat(1, self.time_window) + dt*diff
         
         return out
