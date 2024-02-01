@@ -158,8 +158,9 @@ class Plotter:
         Plot sample of SolverInterface output.
 
         :param SolverInterface solver: The ``SolverInterface`` object instance.
-        :param str | list(str) components: The output variable(s) to plot. If None, all
-            the output variables of the problem are selected. Default value is None.
+        :param str | list(str) components: The output variable(s) to plot. 
+            If None, all the output variables of the problem are selected. 
+            Default value is None.
         :param dict fixed_variables: A dictionary with all the variables that
             should be kept fixed during the plot. The keys of the dictionary
             are the variables name whereas the values are the corresponding
