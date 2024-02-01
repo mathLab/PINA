@@ -11,189 +11,109 @@ except ImportError:
     from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
 from torch.optim.lr_scheduler import ConstantLR
 from torch.nn.modules.loss import _Loss
-from pina.model.graph_handler import GraphHandler
-from pina import LabelTensor
+from graph_handler import GraphHandler
+#import networkx as nx
+#import torch_geometric
+#from matplotlib import pyplot as plt
 
 class MessagePassing(SolverInterface):
-    """
-    Message Passing Neural PDE solver class.
-    """
-    def __init__(
-        self,
-        problem,
-        model,
-        dt,
-        time_window,
-        unrolling = 2,
-        time_res = 250,
-        adversarial = True,
-        extra_features=None,
-        loss=torch.nn.MSELoss(),
-        optimizer=torch.optim.Adam,
-        optimizer_kwargs={'lr': 0.001},
-        scheduler=ConstantLR,
-        scheduler_kwargs={
-            "factor": 1,
-            "total_iters": 0
-        },
-    ):
-        """
-        :param AbstractProblem problem: The formulation of the problem.
-        :param torch.nn.Module model: The neural network model to use.
-        :param float dt: length of a temporal step.
-        :param int time_window: temporal window length.
-        :param int unrolling: The number of unrollings; default: :int:2.
-        :param int time_res: The time resolution; default is :int:`250`.
-        :param bool adversarial: Whether to use or not adversarial training; 
-            default is :bool:`True`.
-        :param torch.nn.Module extra_features: The additional input
-            features to use as augmented input.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
-        :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
-        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
-        """
-        super().__init__(models=[model],
-                         problem=problem,
-                         optimizers=[optimizer],
-                         optimizers_kwargs=[optimizer_kwargs],
-                         extra_features=extra_features)
 
-        # check consistency
+    def __init__(self, problem, model, time_window, time_res, dt, neighbors=2, unrolling=2, adversarial=True,
+                 extra_features = None, loss=torch.nn.MSELoss(reduction='sum'), optimizer=torch.optim.Adam,
+                 optimizer_kwargs={'lr': 0.001}, scheduler = ConstantLR, scheduler_kwargs={'factor': 1, 'total_iters': 0}):
+        super().__init__(models=[model], problem=problem, optimizers=[optimizer],
+                         optimizers_kwargs=[optimizer_kwargs], extra_features=extra_features)
+        
         check_consistency(scheduler, LRScheduler, subclass=True)
         check_consistency(scheduler_kwargs, dict)
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
-        
-        # inverse problem handling
+
         if isinstance(self.problem, InverseProblem):
-            raise ValueError('Message Passing works only for forward problems.')
+            raise ValueError('MessagePassing works only for forward problems.')
         else:
             self._params = None
 
-        # assign variables
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self._loss = loss
         self._neural_net = self.models[0]
         self.unrolling = unrolling if adversarial else 0
-        self.time_res = time_res
         self.num_iter = time_res if adversarial else 1
+        self.time_res = time_res
         self.time_window = time_window
-        self.dt = dt
-        self.handler = GraphHandler(self.dt, num_neighs=5)
-        
-        
+        self.handler = GraphHandler(neighbors=neighbors, dt=dt)
+
+
     def configure_optimizers(self):
-        """
-        Optimizer configuration for the solver.
-        
-        :return: The optimizers and the schedulers.
-        :rtype: tuple(list, list).
-        """
-        return self.optimizers, [self.scheduler]
-
-
-    def forward(self, x):
-        """
-        Message passing solver forward step.
-        
-        :param x: Input graph.
-        :return: Message Passing solution.
-        :rtype: torch.Tensor
-        """
-        return self.neural_net.torchmodel(x)
+        return self.optimizers, [self._scheduler]
     
+
+    def forward(self, data, pos, time, variables, batch, edge_index, dt):
+        return self.neural_net.torchmodel(data, pos, time, variables, batch, edge_index, dt)
     
+
+    def create_labels(self, pts, steps):
+        target = [pts[i,:,st:st+self.time_window].extract(['u']) for i,st in enumerate(steps)]
+        return torch.cat(target).squeeze(-1)
+    
+
     def training_step(self, batch, batch_idx):
-        """
-        Message passing training step.
-
-        :param batch: The batch element in the dataloader.
-        :type batch: tuple
-        :param batch_idx: The batch index.
-        :type batch_idx: int
-        :return: The sum of the loss functions.
-        :rtype: LabelTensor
-        """
         dataloader = self.trainer.train_dataloader
         condition_idx = batch['condition']
-        
-        for condition_id in range(condition_idx.min(), condition_idx.max()+1):
-            if sys.version_info >= (3,8):
-                condition_name = dataloader.condition_names[condition_id]
-            else:
-                condition_name = dataloader.loaders.condition_names[condition_id]
-            condition = self.problem.conditions[condition_name]
-            pts = batch['pts']
-            out = batch['output']
-            batch_size = pts.shape[0]
-            
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError("Something wrong happened.")
-    
-            input_pts = pts[condition_idx == condition_id]
-            output_pts = out[condition_idx == condition_id]
-            
-            for _ in range(self.num_iter):
-                steps = [t for t in range(self.time_window, self.time_res - self.time_window - (self.time_window*self.unrolling) +1)]
-                random_steps = random.choices(steps, k = batch_size)
-                data, variables, coordinates, btc = self.create_data(input_pts, random_steps)
-                self.handler.graph = self.handler.create_ball_graph(coordinates=coordinates, data=data, variables=variables, batch=btc.long())
+        for _ in range(self.num_iter):
+            #self.optimizers[0].zero_grad() #Serve?
+            for condition_id in range(condition_idx.min(), condition_idx.max()+1):
+                if sys.version_info >= (3,8):
+                    condition_name = dataloader.condition_names[condition_id]
+                else:
+                    condition_name = dataloader.loaders.condition_names[condition_id]
+                condition = self.problem.conditions[condition_name]
+                pts = batch['pts']
+                out = batch['output']   #inutile
+                batch_size = pts.shape[0]
+                if condition_name not in self.problem.conditions:
+                    raise RuntimeError('Something wrong happened.')
+                input_pts = pts[condition_idx == condition_id]
+                output_pts = out[condition_idx == condition_id] #inutile
 
+                steps = [t for t in range(self.time_window, self.time_res - self.time_window - (self.time_window*self.unrolling) +1)]
+                random_steps = random.choices(steps, k=batch_size)
+                labels = self.create_labels(input_pts, random_steps)
+                graph = self.handler.create_graph(input_pts, labels, random_steps)
+                
+                #nx_graph = torch_geometric.utils.to_networkx(graph)
+                #nodes = nx_graph.nodes()
+                #positions = {node: (index, 0) for index, node in enumerate(nodes)}
+                #nx.draw_networkx_nodes(nx_graph, pos=positions, node_size=1, node_color='skyblue')
+                #nx.draw_networkx_edges(nx_graph, pos=positions, edge_color='gray')
+                #nx.draw_networkx_labels(nx_graph, pos=positions, font_color='black', font_size=8)
+                #plt.title("Line Graph with Edges Visualization")
+                #plt.axis('off')
+                #plt.savefig("graph_visualization.png")
+                
                 with torch.no_grad():
                     for _ in range(self.unrolling):
                         random_steps = [rs + self.time_window for rs in random_steps]
-                        self.handler.graph.x = self.forward(self.handler.graph)
-                        self.handler.graph.variables = self.update_variables(input_pts, random_steps)
-
-                target = self.create_target(output_pts, random_steps)
-                pred = self.forward(self.handler.graph)
-                pred = LabelTensor(pred.unsqueeze(-1), labels=['u'])
-
-                loss = self.loss(pred, target) * condition.data_weight
+                        labels = self.create_labels(input_pts, random_steps)
+                        pred = self.forward(graph.x, graph.pos, graph.time, graph.variables, graph.batch, graph.edge_index, graph.dt)
+                        graph = self.handler.update_graph(graph, pred, labels, random_steps, batch_size)
+                
+                pred = self.forward(graph.x, graph.pos, graph.time, graph.variables, graph.batch, graph.edge_index, graph.dt)
+                loss = self.loss(pred, graph.y) * condition.data_weight
                 loss = loss.as_subclass(torch.Tensor)
 
         self.log('mean_loss', float(loss), prog_bar=True, logger=True)
         return loss
     
-    
-    def create_data(self, pts, steps):
-        """
-        Creation of the data to be inserted in the graph.
-        
-        :param torch.Tensor pts: batched points.
-        :param list steps: random temporal steps.
-        :return: input, variables, coordinates, batch and target data in a reduced time window.
-        :rtype: tuple(torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor).
-        """
-        data = torch.cat([pts[i,:,st-self.time_window:st].extract(['u']) for i,st in enumerate(steps)])
-        coordinates = torch.cat([pts[i,:,st].extract(['x']) for i,st in enumerate(steps)])
-        variables = torch.cat([pts[i,:,st].extract(['t', 'alpha', 'beta', 'gamma']) for i,st in enumerate(steps)])
-        num_x = torch.unique(coordinates).shape[0]
-        batch = torch.cat([torch.ones(num_x)*i for i in range(pts.shape[0])]).to(device=pts.device)
-        
-        return data.squeeze(-1), LabelTensor(variables, labels=['t', 'alpha', 'beta', 'gamma']), torch.Tensor(coordinates).squeeze(-1), batch
-    
-    
-    def update_variables(self, pts, steps):
-        variables = torch.cat([pts[i,:,st].extract(['t', 'alpha', 'beta', 'gamma']) for i,st in enumerate(steps)])
-        return LabelTensor(variables, labels=['t', 'alpha', 'beta', 'gamma'])
-    
-    
-    def create_target(self, pts, steps):
-        target = torch.cat([pts[i,:,st:st+self.time_window] for i,st in enumerate(steps)])
-        return LabelTensor(target, labels=['u'])
-    
-    
+
     @property
     def scheduler(self):
         return self._scheduler
+    
 
     @property
     def neural_net(self):
         return self._neural_net
+    
 
     @property
     def loss(self):
