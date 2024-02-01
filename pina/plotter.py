@@ -158,8 +158,9 @@ class Plotter:
         Plot sample of SolverInterface output.
 
         :param SolverInterface solver: The ``SolverInterface`` object instance.
-        :param list(str) components: The output variable to plot. If None, all
-            the output variables of the problem are selected. Default value is None.
+        :param components: The output variable or variables to plot. If None, all
+                  the output variables of the problem are selected. Can be a
+                  single string or a list of strings. Default value is None.
         :param dict fixed_variables: A dictionary with all the variables that
             should be kept fixed during the plot. The keys of the dictionary
             are the variables name whereas the values are the corresponding
@@ -178,7 +179,10 @@ class Plotter:
         
         if isinstance(components, str):
             components = [components]
-            
+
+        if not isinstance(components, list):
+            raise NotImplementedError('Output variables must be passed as a string or a list of strings.')
+        
         if len(components) > 1:
             raise NotImplementedError('Multidimensional plots are not implemented, '
                                       'set components to an available components of the problem.')
