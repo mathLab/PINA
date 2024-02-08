@@ -28,7 +28,7 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install .[test]
-        python3 -m pip install torch_cluster -f https://data.pyg.org/whl/torch-2.1.0+cpu.html
+        python3 -m pip install torch_cluster -f https://data.pyg.org/whl/torch-2.2.0+cpu.html
 
     - name: Test with pytest
       run: |
