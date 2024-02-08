@@ -54,8 +54,8 @@ class AVNO(nn.Module):
         self.nn=nn.Sequential(*[AVNOLayer(inner_size,func) 
                                 for _ in range(n_layers)])
         self.projection=FeedForward(inner_size+self.points_size,
-                                    inner_size,
-                                    output_features,n_layers,func)
+                                    output_features,
+                                    inner_size,n_layers,func)
         self.points=points
     
     def forward(self, batch):
