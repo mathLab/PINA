@@ -13,34 +13,26 @@
 #                                                       #
 # ===================================================== #
 
+import torch
 
 from pina.problem import SpatialProblem
 from pina import Condition
 from pina.geometry import CartesianDomain
 from pina.operators import grad
 from pina.equation import Equation, FixedValue
-import torch
 
+
+def ode(input_, output_):
+    """ First order ODE: dy/dx + y = x."""
+    y = output_
+    x = input_
+    return grad(y, x) + y - x
 
 class FirstOrderODE(SpatialProblem):
 
-    # variable domain range
     x_rng = [0.0, 5.0]
-    # field variable
     output_variables = ["y"]
-    # create domain
     spatial_domain = CartesianDomain({"x": x_rng})
-
-    # define the ode
-    def ode(input_, output_):
-        y = output_
-        x = input_
-        return grad(y, x) + y - x
-
-    # define real solution
-    def solution(self, input_):
-        x = input_
-        return x - 1.0 + 2 * torch.exp(-x)
 
     # define problem conditions
     conditions = {
@@ -51,5 +43,10 @@ class FirstOrderODE(SpatialProblem):
             location=CartesianDomain({"x": x_rng}), equation=Equation(ode)
         ),
     }
+
+    def solution(self, input_):
+        """ Truth solution """
+        x = input_
+        return x - 1.0 + 2 * torch.exp(-x)
 
     truth_solution = solution

@@ -99,7 +99,7 @@ if __name__ == "__main__":
     )
 
     # create trainer
-    directory = "pina.parametric_optimal_control_{}".format(bool(args.features))
+    directory = f"pina.parametric_optimal_control_{bool(args.features)}"
     trainer = Trainer(
         solver=pinn,
         accelerator="cpu",

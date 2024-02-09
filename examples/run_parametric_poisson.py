@@ -77,9 +77,7 @@ if __name__ == "__main__":
     )
 
     # create trainer
-    directory = "pina.parametric_poisson_extrafeats_{}".format(
-        bool(args.features)
-    )
+    directory = f"pina.parametric_poisson_extrafeats_{bool(args.features)}"
     trainer = Trainer(
         solver=pinn,
         accelerator="cpu",

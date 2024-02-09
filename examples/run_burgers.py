@@ -71,7 +71,7 @@ if __name__ == "__main__":
     )
 
     # create trainer
-    directory = "pina.burger_extrafeats_{}".format(bool(args.features))
+    directory = f"pina.burger_extrafeats_{bool(args.features)}"
     trainer = Trainer(
         solver=pinn,
         accelerator="cpu",
