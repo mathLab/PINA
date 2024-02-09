@@ -32,12 +32,6 @@
 
 [downloads-url]: https://pypi.org/project/pina-mathlab/
 
-[codecov-shield]: https://img.shields.io/codecov/c/gh/zenml-io/zenml?style=for-the-badge
-
-[codecov-url]: https://codecov.io/gh/zenml-io/zenml
-
-[contributors-shield]: https://img.shields.io/github/contributors/zenml-io/zenml?style=for-the-badge
-
 [contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
 
 [license-shield]: https://img.shields.io/github/license/mathLab/pina?style=for-the-badge
@@ -46,25 +40,18 @@
 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 
-<!-- [linkedin-url]: https://www.linkedin.com/company/zenml/
-
-[twitter-shield]: https://img.shields.io/twitter/follow/zenml_io?style=for-the-badge
-
-[twitter-url]: https://twitter.com/zenml_io -->
-
 [slack-shield]: https://img.shields.io/badge/-Slack-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 
-[slack-url]: https://zenml.io/slack-invite
-
-[build-shield]: https://img.shields.io/github/workflow/status/zenml-io/zenml/Build,%20Lint,%20Unit%20&%20Integration%20Test/develop?logo=github&style=for-the-badge
-
-[build-url]: https://github.com/zenml-io/zenml/actions/workflows/ci.yml
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://zenml.io">
-    <img alt="ZenML Logo" src="https://github.com/mathLab/PINA/raw/master/readme/pina_logo.png" alt="Logo" width="200">
+    <img 
+      alt="PINA Logo"
+      src="https://github.com/mathLab/PINA/raw/master/readme/pina_logo.png" 
+      alt="Logo"
+      width="200">
   </a>
 
 <h3 align="center">Solve equations, intuitively.</h3>
@@ -72,39 +59,11 @@
   <p align="center">
     A simple framework to solve difficult problems with neural networks.
     <br />
-    <a href="https://mathlab.github.io/PINA/"><strong>Explore the docs »</strong></a>
-    <br />
-    <!-- <div align="center">
-      Join our <a href="https://zenml.io/slack-invite" target="_blank">
-      <img width="25" src="https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/306_Slack-512.png" alt="Slack"/>
-    <b>Slack Community</b> </a> and be part of the ZenML family.
-    </div> -->
-    <br />
-    <!-- <a href="https://zenml.io/features">Features</a>
-    ·
-    <a href="https://zenml.io/roadmap">Roadmap</a>
-    ·
-    <a href="https://github.com/zenml-io/zenml/issues">Report Bug</a>
-    ·
-    <a href="https://zenml.io/discussion">Vote New Features</a>
-    ·
-    <a href="https://blog.zenml.io/">Read Blog</a>
-    ·
-    <a href="#-meet-the-team">Meet the Team</a> -->
-    <!-- <br />
-    🎉 Version 0.41.0 is out. Check out the release notes
-    <a href="https://github.com/zenml-io/zenml/releases">here</a>.
-    <br />
-    <br />
-    <a href="https://www.linkedin.com/company/zenml/">
-    <img src="https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555" alt="Logo">
+    <a href="https://mathlab.github.io/PINA/">
+      <strong>Explore the docs »</strong>
     </a>
-    <a href="https://twitter.com/zenml_io">
-    <img src="https://img.shields.io/badge/-Twitter-black.svg?style=for-the-badge&logo=twitter&colorB=555" alt="Logo">
-    </a>
-    <a href="https://www.youtube.com/c/ZenML">
-    <img src="https://img.shields.io/badge/-YouTube-black.svg?style=for-the-badge&logo=youtube&colorB=555" alt="Logo">
-    </a> -->
+    <br />
+    <br />
   </p>
 </div>
 
@@ -115,7 +74,9 @@
     <li><a href="#-introduction">Introduction</a></li>
     <li><a href="#-quickstart">Quickstart</a></li>
     <li>
-      <a href="#%EF%B8%8F-solve-your-differential-problem">Solve Your Differential Problem</a>
+      <a href="#%EF%B8%8F-solve-your-differential-problem">
+        Solve Your Differential Problem
+      </a>
       <ul>
         <li><a href="#-1-formulate-the-problem">Formulate the Problem</a></li>
         <li><a href="#-2-solve-the-problem">Solve the Problem</a></li>
@@ -132,9 +93,17 @@
 
 # 🤖 Introduction
 
-🤹 PINA is an open-source Python library providing an intuitive interface for solving differential equations using PINNs, NOs or both together. Based on [PyTorch](https://pytorch.org/) and [PyTorchLightning](https://lightning.ai/docs/pytorch/stable/), PINA offers a simple and intuitive way to formalize a specific (differential) problem and solve it using neural networks . The approximated solution of a differential equation can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly interface.
+🤹 PINA is an open-source Python library providing an intuitive interface for
+solving differential equations using PINNs, NOs or both together. Based on
+[PyTorch](https://pytorch.org/) and
+[PyTorchLightning](https://lightning.ai/docs/pytorch/stable/), PINA offers a
+simple and intuitive way to formalize a specific (differential) problem and
+solve it using neural networks . The approximated solution of a differential
+equation can be implemented using PINA in a few lines of code thanks to the
+intuitive and user-friendly interface.
 
-- 👨‍💻 Formulate your differential problem in few lines of code, just translating the mathematical equations into Python
+- 👨‍💻 Formulate your differential problem in few lines of code, just
+translating the mathematical equations into Python
 
 - 📄 Training your neural network in order to solve the problem
 
@@ -155,11 +124,23 @@ pip install "pina-mathlab"
 
 # 🖼️ Solve Your Differential Problem
 
-PINN is a novel approach that involves neural networks to solve supervised learning tasks while respecting any given law of physics described by general nonlinear differential equations. Proposed in [Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations](https://www.sciencedirect.com/science/article/pii/S0021999118307125?casa_token=p0BAG8SoAbEAAAAA:3H3r1G0SJ7IdXWm-FYGRJZ0RAb_T1qynSdfn-2VxqQubiSWnot5yyKli9UiH82rqQWY_Wzfq0HVV), such framework aims to solve problems in a continuous and nonlinear settings. 
+PINN is a novel approach that involves neural networks to solve supervised
+learning tasks while respecting any given law of physics described by general
+nonlinear differential equations. Proposed in [Physics-informed neural networks:
+A deep learning framework for solving forward and inverse problems involving
+nonlinear partial differential
+equations](https://www.sciencedirect.com/science/article/pii/S0021999118307125?casa_token=p0BAG8SoAbEAAAAA:3H3r1G0SJ7IdXWm-FYGRJZ0RAb_T1qynSdfn-2VxqQubiSWnot5yyKli9UiH82rqQWY_Wzfq0HVV),
+such framework aims to solve problems in a continuous and nonlinear settings. 
 
-Differenlty from PINNs, Neural Operators learn differential operators using supervised learning strategies. By learning the differential operator, the neural network is able to generalize across different instances of the differential equations (e.g. different forcing terms), without the need of re-training.
+Differenlty from PINNs, Neural Operators learn differential operators using
+supervised learning strategies. By learning the differential operator, the
+neural network is able to generalize across different instances of the
+differential equations (e.g. different forcing terms), without the need of
+re-training.
 
-PINA can be used for PINN learning, Neural Operator learning, or both. Below is a simple example of PINN learning, for Neural Operator or more on PINNs look at our [tutorials](https://github.com/mathLab/PINA/tree/v0.1/tutorials)
+PINA can be used for PINN learning, Neural Operator learning, or both. Below is
+a simple example of PINN learning, for Neural Operator or more on PINNs look at
+our [tutorials](https://github.com/mathLab/PINA/tree/v0.1/tutorials)
 
 ## 🔋 1. Formulate the Problem
 

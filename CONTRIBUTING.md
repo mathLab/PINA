@@ -1,7 +1,9 @@
-## How to contribute
-We'd love to accept your patches and contributions to this project. There are just a few small guidelines you need to follow.
+# How to contribute
 
-### Submitting a patch
+We'd love to accept your patches and contributions to this project. There are
+just a few small guidelines you need to follow.
+
+## Submitting a patch
 
   1. It's generally best to start by opening a new issue describing the bug or
      feature you're intending to fix.  Even if you think it's relatively minor,
