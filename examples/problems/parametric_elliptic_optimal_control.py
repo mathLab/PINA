@@ -1,6 +1,5 @@
 """ Poisson OCP problem. """
 
-
 from pina import Condition
 from pina.geometry import CartesianDomain
 from pina.equation import SystemEquation, FixedValue
@@ -37,44 +36,56 @@ class ParametricEllipticOptimalControl(SpatialProblem, ParametricProblem):
     mu_range = [mumin, mumax]
     a_range = [amin, amax]
     # setting field variables
-    output_variables = ['u', 'p', 'y']
+    output_variables = ["u", "p", "y"]
     # setting spatial and parameter domain
-    spatial_domain = CartesianDomain({'x1': x_range, 'x2': y_range})
-    parameter_domain = CartesianDomain({'mu': mu_range, 'alpha': a_range})
+    spatial_domain = CartesianDomain({"x1": x_range, "x2": y_range})
+    parameter_domain = CartesianDomain({"mu": mu_range, "alpha": a_range})
 
     # equation terms as in https://arxiv.org/pdf/2110.13530.pdf
     def term1(input_, output_):
-        laplace_p = laplacian(output_, input_, components=['p'], d=['x1', 'x2'])
-        return output_.extract(['y']) - input_.extract(['mu']) - laplace_p
+        laplace_p = laplacian(output_, input_, components=["p"], d=["x1", "x2"])
+        return output_.extract(["y"]) - input_.extract(["mu"]) - laplace_p
 
     def term2(input_, output_):
-        laplace_y = laplacian(output_, input_, components=['y'], d=['x1', 'x2'])
-        return - laplace_y - output_.extract(['u'])
-    
+        laplace_y = laplacian(output_, input_, components=["y"], d=["x1", "x2"])
+        return -laplace_y - output_.extract(["u"])
+
     def fixed_y(input_, output_):
-        return output_.extract(['y'])
+        return output_.extract(["y"])
 
     def fixed_p(input_, output_):
-        return output_.extract(['p']) 
+        return output_.extract(["p"])
 
     # setting problem condition formulation
     conditions = {
-        'gamma1': Condition(
-            location=CartesianDomain({'x1': x_range, 'x2':  1, 'mu': mu_range, 'alpha': a_range}),
-            equation=SystemEquation([fixed_y, fixed_p])),
-        'gamma2': Condition(
-            location=CartesianDomain({'x1': x_range, 'x2': -1, 'mu': mu_range, 'alpha': a_range}),
-            equation=SystemEquation([fixed_y, fixed_p])),
-        'gamma3': Condition(
-            location=CartesianDomain({'x1':  1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
-            equation=SystemEquation([fixed_y, fixed_p])),
-        'gamma4': Condition(
-            location=CartesianDomain({'x1': -1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
-            equation=SystemEquation([fixed_y, fixed_p])),
-        'D': Condition(
+        "gamma1": Condition(
             location=CartesianDomain(
-                {'x1': x_range, 'x2': y_range,
-                'mu': mu_range, 'alpha': a_range
-                }),
-            equation=SystemEquation([term1, term2])),
+                {"x1": x_range, "x2": 1, "mu": mu_range, "alpha": a_range}
+            ),
+            equation=SystemEquation([fixed_y, fixed_p]),
+        ),
+        "gamma2": Condition(
+            location=CartesianDomain(
+                {"x1": x_range, "x2": -1, "mu": mu_range, "alpha": a_range}
+            ),
+            equation=SystemEquation([fixed_y, fixed_p]),
+        ),
+        "gamma3": Condition(
+            location=CartesianDomain(
+                {"x1": 1, "x2": y_range, "mu": mu_range, "alpha": a_range}
+            ),
+            equation=SystemEquation([fixed_y, fixed_p]),
+        ),
+        "gamma4": Condition(
+            location=CartesianDomain(
+                {"x1": -1, "x2": y_range, "mu": mu_range, "alpha": a_range}
+            ),
+            equation=SystemEquation([fixed_y, fixed_p]),
+        ),
+        "D": Condition(
+            location=CartesianDomain(
+                {"x1": x_range, "x2": y_range, "mu": mu_range, "alpha": a_range}
+            ),
+            equation=SystemEquation([term1, term2]),
+        ),
     }

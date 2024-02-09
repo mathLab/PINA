@@ -1,6 +1,5 @@
 """ Wave equation Problem """
 
-
 import torch
 from pina.geometry import CartesianDomain
 from pina import Condition
@@ -21,37 +20,59 @@ from pina.equation import FixedValue, Equation
 #                                                       #
 # ===================================================== #
 
+def wave_equation(input_, output_):
+    """ Wave motion equation. """
+    u_t = grad(output_, input_, components=["u"], d=["t"])
+    u_tt = grad(u_t, input_, components=["dudt"], d=["t"])
+    nabla_u = laplacian(output_, input_, components=["u"], d=["x", "y"])
+    return nabla_u - u_tt
 
+def initial_condition(input_, output_):
+    """ Initial condition. """
+    u_expected = torch.sin(torch.pi * input_.extract(["x"])) * torch.sin(
+        torch.pi * input_.extract(["y"])
+    )
+    return output_.extract(["u"]) - u_expected
 
 class Wave(TimeDependentProblem, SpatialProblem):
-    output_variables = ['u']
-    spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
-    temporal_domain = CartesianDomain({'t': [0, 1]})
+    output_variables = ["u"]
+    spatial_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
+    temporal_domain = CartesianDomain({"t": [0, 1]})
 
-    def wave_equation(input_, output_):
-        u_t = grad(output_, input_, components=['u'], d=['t'])
-        u_tt = grad(u_t, input_, components=['dudt'], d=['t'])
-        nabla_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
-        return nabla_u - u_tt
-
-    def initial_condition(input_, output_):
-        u_expected = (torch.sin(torch.pi*input_.extract(['x'])) *
-                      torch.sin(torch.pi*input_.extract(['y'])))
-        return output_.extract(['u']) - u_expected
 
     conditions = {
-        'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1, 't': [0, 1]}), equation=FixedValue(0.)),
-        'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0, 't': [0, 1]}), equation=FixedValue(0.)),
-        'gamma3': Condition(location=CartesianDomain({'x':  1, 'y': [0, 1], 't': [0, 1]}), equation=FixedValue(0.)),
-        'gamma4': Condition(location=CartesianDomain({'x': 0, 'y': [0, 1], 't': [0, 1]}), equation=FixedValue(0.)),
-        't0': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': 0}), equation=Equation(initial_condition)),
-        'D': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}), equation=Equation(wave_equation)),
+        "gamma1": Condition(
+            location=CartesianDomain({"x": [0, 1], "y": 1, "t": [0, 1]}),
+            equation=FixedValue(0.0),
+        ),
+        "gamma2": Condition(
+            location=CartesianDomain({"x": [0, 1], "y": 0, "t": [0, 1]}),
+            equation=FixedValue(0.0),
+        ),
+        "gamma3": Condition(
+            location=CartesianDomain({"x": 1, "y": [0, 1], "t": [0, 1]}),
+            equation=FixedValue(0.0),
+        ),
+        "gamma4": Condition(
+            location=CartesianDomain({"x": 0, "y": [0, 1], "t": [0, 1]}),
+            equation=FixedValue(0.0),
+        ),
+        "t0": Condition(
+            location=CartesianDomain({"x": [0, 1], "y": [0, 1], "t": 0}),
+            equation=Equation(initial_condition),
+        ),
+        "D": Condition(
+            location=CartesianDomain({"x": [0, 1], "y": [0, 1], "t": [0, 1]}),
+            equation=Equation(wave_equation),
+        ),
     }
 
     def wave_sol(self, pts):
-        sqrt_2 = torch.sqrt(torch.tensor(2.))
-        return (torch.sin(torch.pi*pts.extract(['x'])) *
-                torch.sin(torch.pi*pts.extract(['y'])) *
-                torch.cos(sqrt_2*torch.pi*pts.extract(['t'])))
+        sqrt_2 = torch.sqrt(torch.tensor(2.0))
+        return (
+            torch.sin(torch.pi * pts.extract(["x"]))
+            * torch.sin(torch.pi * pts.extract(["y"]))
+            * torch.cos(sqrt_2 * torch.pi * pts.extract(["t"]))
+        )
 
     truth_solution = wave_sol

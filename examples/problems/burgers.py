@@ -1,6 +1,5 @@
 """ Burgers' problem. """
 
-
 # ===================================================== #
 #                                                       #
 #  This script implements the one dimensional Burger    #
@@ -21,45 +20,52 @@ from pina.problem import TimeDependentProblem, SpatialProblem
 from pina.operators import grad
 from pina.equation import FixedValue, Equation
 
-        
+
 # define the burger equation
 def burger_equation(input_, output_):
+    """Burgers' equation."""
     du = grad(output_, input_)
-    ddu = grad(du, input_, components=['dudx'])
+    ddu = grad(du, input_, components=["dudx"])
     return (
-        du.extract(['dudt']) +
-        output_.extract(['u'])*du.extract(['dudx']) -
-        (0.01/torch.pi)*ddu.extract(['ddudxdx'])
+        du.extract(["dudt"])
+        + output_.extract(["u"]) * du.extract(["dudx"])
+        - (0.01 / torch.pi) * ddu.extract(["ddudxdx"])
     )
+
 
 # define initial condition
 def initial_condition(input_, output_):
-    u_expected = -torch.sin(torch.pi*input_.extract(['x']))
-    return output_.extract(['u']) - u_expected
+    """Initial condition. x_0 = -sin(pi*x)"""
+    u_expected = -torch.sin(torch.pi * input_.extract(["x"]))
+    return output_.extract(["u"]) - u_expected
+
 
 class Burgers1D(TimeDependentProblem, SpatialProblem):
+    """
+    1-dimensional time dependent Burgers' problem.
+    """
 
     # assign output/ spatial and temporal variables
-    output_variables = ['u']
-    spatial_domain = CartesianDomain({'x': [-1, 1]})
-    temporal_domain = CartesianDomain({'t': [0, 1]})
+    output_variables = ["u"]
+    spatial_domain = CartesianDomain({"x": [-1, 1]})
+    temporal_domain = CartesianDomain({"t": [0, 1]})
 
     # problem condition statement
     conditions = {
-        'gamma1': Condition(
-            location=CartesianDomain({'x': -1, 't': [0, 1]}), 
-            equation=FixedValue(0.)
+        "gamma1": Condition(
+            location=CartesianDomain({"x": -1, "t": [0, 1]}),
+            equation=FixedValue(0.0),
         ),
-        'gamma2': Condition(
-            location=CartesianDomain({'x':  1, 't': [0, 1]}),
-            equation=FixedValue(0.)
+        "gamma2": Condition(
+            location=CartesianDomain({"x": 1, "t": [0, 1]}),
+            equation=FixedValue(0.0),
         ),
-        't0': Condition(
-            location=CartesianDomain({'x': [-1, 1], 't': 0}),
-            equation=Equation(initial_condition)
+        "t0": Condition(
+            location=CartesianDomain({"x": [-1, 1], "t": 0}),
+            equation=Equation(initial_condition),
         ),
-        'D': Condition(
-            location=CartesianDomain({'x': [-1, 1], 't': [0, 1]}),
-            equation=Equation(burger_equation)
+        "D": Condition(
+            location=CartesianDomain({"x": [-1, 1], "t": [0, 1]}),
+            equation=Equation(burger_equation),
         ),
     }
