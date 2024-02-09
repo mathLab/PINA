@@ -1,10 +1,10 @@
 __all__ = [
-    'SystemEquation',
-    'Equation',
-    'FixedValue',
-    'FixedGradient',
-    'FixedFlux',
-    'Laplace',
+    "SystemEquation",
+    "Equation",
+    "FixedValue",
+    "FixedGradient",
+    "FixedFlux",
+    "Laplace",
 ]
 
 from .equation import Equation

@@ -60,7 +60,8 @@ class Stride(object):
 
         if seq_direction != seq_jumps:
             raise IndexError(
-                "direction and jumps must have zero in the same index")
+                "direction and jumps must have zero in the same index"
+            )
 
         if seq_jumps:
             for i in seq_jumps:

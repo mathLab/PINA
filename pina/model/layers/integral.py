@@ -10,9 +10,9 @@ class Integral(object):
         :type param: string
         """
 
-        if param == 'discrete':
+        if param == "discrete":
             self.make_integral = self.integral_param_disc
-        elif param == 'continuous':
+        elif param == "continuous":
             self.make_integral = self.integral_param_cont
         else:
             raise TypeError

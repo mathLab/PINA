@@ -20,7 +20,7 @@ class Difference(OperationInterface):
         the dimension of the geometry space.
 
         :param list geometries: A list of geometries from ``pina.geometry``
-            such as ``EllipsoidDomain`` or ``CartesianDomain``. The first 
+            such as ``EllipsoidDomain`` or ``CartesianDomain``. The first
             geometry in the list is the geometry from which points are
             sampled. The rest of the geometries are the geometries that
             are excluded from the first geometry to find the difference.
@@ -39,7 +39,7 @@ class Difference(OperationInterface):
         Check if a point is inside the ``Difference`` domain.
 
         :param point: Point to be checked.
-        :type point: torch.Tensor   
+        :type point: torch.Tensor
         :param bool check_border: If ``True``, the border is considered inside.
         :return: ``True`` if the point is inside the Exclusion domain, ``False`` otherwise.
         :rtype: bool
@@ -49,7 +49,7 @@ class Difference(OperationInterface):
                 return False
         return self.geometries[0].is_inside(point, check_border)
 
-    def sample(self, n, mode='random', variables='all'):
+    def sample(self, n, mode="random", variables="all"):
         """
         Sample routine for ``Difference`` domain.
 
@@ -77,9 +77,10 @@ class Difference(OperationInterface):
                 5
 
         """
-        if mode != 'random':
+        if mode != "random":
             raise NotImplementedError(
-                f'{mode} is not a valid mode for sampling.')
+                f"{mode} is not a valid mode for sampling."
+            )
 
         sampled = []
 

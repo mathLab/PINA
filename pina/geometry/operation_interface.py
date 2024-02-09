@@ -26,7 +26,7 @@ class OperationInterface(Location, metaclass=ABCMeta):
 
     @property
     def geometries(self):
-        """ 
+        """
         The geometries to perform set operation.
         """
         return self._geometries
@@ -40,15 +40,15 @@ class OperationInterface(Location, metaclass=ABCMeta):
         :rtype: list[str]
         """
         return self.geometries[0].variables
-    
-    @ abstractmethod
+
+    @abstractmethod
     def is_inside(self, point, check_border=False):
         """
         Check if a point is inside the resulting domain after
         a set operation is applied.
 
         :param point: Point to be checked.
-        :type point: torch.Tensor   
+        :type point: torch.Tensor
         :param bool check_border: If ``True``, the border is considered inside.
         :return: ``True`` if the point is inside the Intersection domain, ``False`` otherwise.
         :rtype: bool
@@ -64,4 +64,5 @@ class OperationInterface(Location, metaclass=ABCMeta):
         for geometry in geometries:
             if geometry.variables != geometries[0].variables:
                 raise NotImplementedError(
-                    f'The geometries need to have same dimensions and labels.')
+                    f"The geometries need to have same dimensions and labels."
+                )
