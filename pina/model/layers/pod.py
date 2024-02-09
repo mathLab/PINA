@@ -1,4 +1,5 @@
 """Module for Base Continuous Convolution class."""
+
 from abc import ABCMeta, abstractmethod
 import torch
 from .stride import Stride
@@ -38,17 +39,17 @@ class PODLayer(torch.nn.Module):
         :rtype: int
         """
         return self._rank
-    
+
     @rank.setter
     def rank(self, value):
         if value < 1 or not isinstance(value, int):
-            raise ValueError('The rank must be positive integer')
+            raise ValueError("The rank must be positive integer")
 
         self._rank = value
 
     @property
     def basis(self):
-        """ 
+        """
         The POD basis. It is a matrix whose columns are the first `self.rank` POD modes.
 
         :rtype: torch.Tensor
@@ -56,7 +57,7 @@ class PODLayer(torch.nn.Module):
         if self._basis is None:
             return None
 
-        return self._basis[:self.rank]
+        return self._basis[: self.rank]
 
     @property
     def scaler(self):
@@ -67,10 +68,12 @@ class PODLayer(torch.nn.Module):
         :rtype: dict
         """
         if self._scaler is None:
-            return 
+            return
 
-        return {'mean': self._scaler['mean'][:self.rank],
-                'std': self._scaler['std'][:self.rank]} 
+        return {
+            "mean": self._scaler["mean"][: self.rank],
+            "std": self._scaler["std"][: self.rank],
+        }
 
     @property
     def scale_coefficients(self):
@@ -105,8 +108,9 @@ class PODLayer(torch.nn.Module):
         :param torch.Tensor coeffs: The coefficients to be scaled.
         """
         self._scaler = {
-            'std': torch.std(coeffs, dim=1),
-            'mean': torch.mean(coeffs, dim=1)}
+            "std": torch.std(coeffs, dim=1),
+            "mean": torch.mean(coeffs, dim=1),
+        }
 
     def _fit_pod(self, X):
         """
@@ -114,7 +118,7 @@ class PODLayer(torch.nn.Module):
 
         :param torch.Tensor X: The tensor to be reduced.
         """
-        if X.device.type == 'mps': #  svd_lowrank not arailable for mps
+        if X.device.type == "mps":  #  svd_lowrank not arailable for mps
             self._basis = torch.svd(X.T)[0].T
         else:
             self._basis = torch.svd_lowrank(X.T, q=X.shape[0])[0].T
@@ -142,7 +146,8 @@ class PODLayer(torch.nn.Module):
         """
         if self._basis is None:
             raise RuntimeError(
-                'The POD layer needs to be fitted before being used.')
+                "The POD layer needs to be fitted before being used."
+            )
 
         coeff = torch.matmul(self.basis, X.T)
         if coeff.ndim == 1:
@@ -150,25 +155,26 @@ class PODLayer(torch.nn.Module):
 
         coeff = coeff.T
         if self.__scale_coefficients:
-            coeff = (coeff - self.scaler['mean']) / self.scaler['std']
+            coeff = (coeff - self.scaler["mean"]) / self.scaler["std"]
 
         return coeff
 
     def expand(self, coeff):
-        """ 
+        """
         Expand the given coefficients to the original space. The POD layer needs
         to be fitted before being used.
-        
+
         :param torch.Tensor coeff: The coefficients to be expanded.
         :return: The expanded tensor.
         :rtype: torch.Tensor
         """
         if self._basis is None:
             raise RuntimeError(
-                'The POD layer needs to be trained before being used.')
+                "The POD layer needs to be trained before being used."
+            )
 
         if self.__scale_coefficients:
-            coeff = coeff * self.scaler['std'] + self.scaler['mean']
+            coeff = coeff * self.scaler["std"] + self.scaler["mean"]
         predicted = torch.matmul(self.basis.T, coeff.T).T
 
         if predicted.ndim == 1:

@@ -1,10 +1,10 @@
 __all__ = [
-    'FeedForward',
-    'ResidualFeedForward',
-    'MultiFeedForward',
-    'DeepONet',
-    'MIONet',
-    'FNO',
+    "FeedForward",
+    "ResidualFeedForward",
+    "MultiFeedForward",
+    "DeepONet",
+    "MIONet",
+    "FNO",
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward

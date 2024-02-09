@@ -94,7 +94,7 @@ class SimplexDomain(Location):
             # respective coord bounded by the lowest and highest values
             span_dict[coord] = [
                 float(sorted_vertices[0][i]),
-                float(sorted_vertices[-1][i])
+                float(sorted_vertices[-1][i]),
             ]
 
         return CartesianDomain(span_dict)
@@ -120,16 +120,19 @@ class SimplexDomain(Location):
         """
 
         if not all(label in self.variables for label in point.labels):
-            raise ValueError("Point labels different from constructor"
-                             f" dictionary labels. Got {point.labels},"
-                             f" expected {self.variables}.")
+            raise ValueError(
+                "Point labels different from constructor"
+                f" dictionary labels. Got {point.labels},"
+                f" expected {self.variables}."
+            )
 
         point_shift = point - self._vertices_matrix[-1]
         point_shift = point_shift.tensor.reshape(-1, 1)
 
         # compute barycentric coordinates
-        lambda_ = torch.linalg.solve(self._vectors_shifted * 1.0,
-                                     point_shift * 1.0)
+        lambda_ = torch.linalg.solve(
+            self._vectors_shifted * 1.0, point_shift * 1.0
+        )
         lambda_1 = 1.0 - torch.sum(lambda_)
         lambdas = torch.vstack([lambda_, lambda_1])
 
@@ -137,8 +140,9 @@ class SimplexDomain(Location):
         if not check_border:
             return all(torch.gt(lambdas, 0.0)) and all(torch.lt(lambdas, 1.0))
 
-        return all(torch.ge(lambdas, 0)) and (any(torch.eq(lambdas, 0))
-                                              or any(torch.eq(lambdas, 1)))
+        return all(torch.ge(lambdas, 0)) and (
+            any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
+        )
 
     def _sample_interior_randomly(self, n, variables):
         """
@@ -163,9 +167,9 @@ class SimplexDomain(Location):
 
         sampled_points = []
         while len(sampled_points) < n:
-            sampled_point = self._cartesian_bound.sample(n=1,
-                                                         mode="random",
-                                                         variables=variables)
+            sampled_point = self._cartesian_bound.sample(
+                n=1, mode="random", variables=variables
+            )
 
             if self.is_inside(sampled_point, self._sample_surface):
                 sampled_points.append(sampled_point)
@@ -196,9 +200,9 @@ class SimplexDomain(Location):
             # extract number of vertices
             number_of_vertices = self._vertices_matrix.shape[0]
             # extract idx lambda to set to zero randomly
-            idx_lambda = torch.randint(low=0,
-                                       high=number_of_vertices,
-                                       size=(1, ))
+            idx_lambda = torch.randint(
+                low=0, high=number_of_vertices, size=(1,)
+            )
             # build lambda vector
             # 1. sampling [1, 2)
             lambdas = torch.rand((number_of_vertices, 1))

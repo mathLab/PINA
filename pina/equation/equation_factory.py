@@ -1,4 +1,5 @@
 """ Module """
+
 from .equation import Equation
 from ..operators import grad, div, laplacian
 

@@ -20,7 +20,7 @@ class Union(OperationInterface):
         with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
         the dimension of the geometry space.
 
-        :param list geometries: A list of geometries from ``pina.geometry`` 
+        :param list geometries: A list of geometries from ``pina.geometry``
             such as ``EllipsoidDomain`` or ``CartesianDomain``.
 
         :Example:
@@ -50,7 +50,7 @@ class Union(OperationInterface):
                 return True
         return False
 
-    def sample(self, n, mode='random', variables='all'):
+    def sample(self, n, mode="random", variables="all"):
         """
         Sample routine for ``Union`` domain.
 
@@ -93,8 +93,10 @@ class Union(OperationInterface):
             # different than zero. Notice that len(geometries) is
             # always smaller than remaider.
             sampled_points.append(
-                geometry.sample(num_points + int(i < remainder), mode,
-                                variables))
+                geometry.sample(
+                    num_points + int(i < remainder), mode, variables
+                )
+            )
             # in case number of sampled points is smaller than the number of geometries
             if len(sampled_points) >= n:
                 break

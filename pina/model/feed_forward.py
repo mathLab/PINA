@@ -1,4 +1,5 @@
 """Module for FeedForward model"""
+
 import torch
 import torch.nn as nn
 from ..utils import check_consistency
@@ -29,24 +30,25 @@ class FeedForward(torch.nn.Module):
     :param bool bias: If ``True`` the MLP will consider some bias.
     """
 
-    def __init__(self,
-                 input_dimensions,
-                 output_dimensions,
-                 inner_size=20,
-                 n_layers=2,
-                 func=nn.Tanh,
-                 layers=None,
-                 bias=True):
-        """
-        """
+    def __init__(
+        self,
+        input_dimensions,
+        output_dimensions,
+        inner_size=20,
+        n_layers=2,
+        func=nn.Tanh,
+        layers=None,
+        bias=True,
+    ):
+        """ """
         super().__init__()
 
         if not isinstance(input_dimensions, int):
-            raise ValueError('input_dimensions expected to be int.')
+            raise ValueError("input_dimensions expected to be int.")
         self.input_dimension = input_dimensions
 
         if not isinstance(output_dimensions, int):
-            raise ValueError('output_dimensions expected to be int.')
+            raise ValueError("output_dimensions expected to be int.")
         self.output_dimension = output_dimensions
         if layers is None:
             layers = [inner_size] * n_layers
@@ -58,7 +60,8 @@ class FeedForward(torch.nn.Module):
         self.layers = []
         for i in range(len(tmp_layers) - 1):
             self.layers.append(
-                nn.Linear(tmp_layers[i], tmp_layers[i + 1], bias=bias))
+                nn.Linear(tmp_layers[i], tmp_layers[i + 1], bias=bias)
+            )
 
         if isinstance(func, list):
             self.functions = func
@@ -66,7 +69,7 @@ class FeedForward(torch.nn.Module):
             self.functions = [func for _ in range(len(self.layers) - 1)]
 
         if len(self.layers) != len(self.functions) + 1:
-            raise RuntimeError('uncosistent number of layers and functions')
+            raise RuntimeError("uncosistent number of layers and functions")
 
         unique_list = []
         for layer, func in zip(self.layers[:-1], self.functions):
@@ -97,7 +100,7 @@ class ResidualFeedForward(torch.nn.Module):
 
     .. seealso::
 
-        **Original reference**: Wang, Sifan, Yujun Teng, and Paris Perdikaris. 
+        **Original reference**: Wang, Sifan, Yujun Teng, and Paris Perdikaris.
         *Understanding and mitigating gradient flow pathologies in physics-informed
         neural networks*. SIAM Journal on Scientific Computing 43.5 (2021): A3055-A3081.
         DOI: `10.1137/20M1318043
@@ -124,16 +127,17 @@ class ResidualFeedForward(torch.nn.Module):
         dimension must be the same as ``inner_size``.
     """
 
-    def __init__(self,
-                 input_dimensions,
-                 output_dimensions,
-                 inner_size=20,
-                 n_layers=2,
-                 func=nn.Tanh,
-                 bias=True,
-                 transformer_nets=None):
-        """
-        """
+    def __init__(
+        self,
+        input_dimensions,
+        output_dimensions,
+        inner_size=20,
+        n_layers=2,
+        func=nn.Tanh,
+        bias=True,
+        transformer_nets=None,
+    ):
+        """ """
         super().__init__()
 
         # check type consistency
@@ -148,35 +152,42 @@ class ResidualFeedForward(torch.nn.Module):
         if transformer_nets is None:
             transformer_nets = [
                 EnhancedLinear(
-                    nn.Linear(in_features=input_dimensions,
-                              out_features=inner_size), nn.Tanh()),
+                    nn.Linear(
+                        in_features=input_dimensions, out_features=inner_size
+                    ),
+                    nn.Tanh(),
+                ),
                 EnhancedLinear(
-                    nn.Linear(in_features=input_dimensions,
-                              out_features=inner_size), nn.Tanh())
+                    nn.Linear(
+                        in_features=input_dimensions, out_features=inner_size
+                    ),
+                    nn.Tanh(),
+                ),
             ]
         elif isinstance(transformer_nets, (list, tuple)):
             if len(transformer_nets) != 2:
                 raise ValueError(
-                    'transformer_nets needs to be a list of len two.')
+                    "transformer_nets needs to be a list of len two."
+                )
             for net in transformer_nets:
                 if not isinstance(net, nn.Module):
                     raise ValueError(
-                        'transformer_nets needs to be a list of torch.nn.Module.'
+                        "transformer_nets needs to be a list of torch.nn.Module."
                     )
                 x = torch.rand(10, input_dimensions)
                 try:
                     out = net(x)
                 except RuntimeError:
                     raise ValueError(
-                        'transformer network input incompatible with input_dimensions.'
+                        "transformer network input incompatible with input_dimensions."
                     )
                 if out.shape[-1] != inner_size:
                     raise ValueError(
-                        'transformer network output incompatible with inner_size.'
+                        "transformer network output incompatible with inner_size."
                     )
         else:
             RuntimeError(
-                'Runtime error for transformer nets, check official documentation.'
+                "Runtime error for transformer nets, check official documentation."
             )
 
         # assign variables
@@ -193,10 +204,11 @@ class ResidualFeedForward(torch.nn.Module):
         self.layers = []
         for i in range(len(tmp_layers) - 1):
             self.layers.append(
-                nn.Linear(tmp_layers[i], tmp_layers[i + 1], bias=bias))
-        self.last_layer = nn.Linear(tmp_layers[len(tmp_layers) - 1],
-                                    output_dimensions,
-                                    bias=bias)
+                nn.Linear(tmp_layers[i], tmp_layers[i + 1], bias=bias)
+            )
+        self.last_layer = nn.Linear(
+            tmp_layers[len(tmp_layers) - 1], output_dimensions, bias=bias
+        )
 
         if isinstance(func, list):
             self.functions = func()
@@ -204,7 +216,7 @@ class ResidualFeedForward(torch.nn.Module):
             self.functions = [func() for _ in range(len(self.layers))]
 
         if len(self.layers) != len(self.functions):
-            raise RuntimeError('uncosistent number of layers and functions')
+            raise RuntimeError("uncosistent number of layers and functions")
 
         unique_list = []
         for layer, func in zip(self.layers, self.functions):
@@ -228,7 +240,7 @@ class ResidualFeedForward(torch.nn.Module):
         # skip connections pass
         for layer in self.inner_layers.children():
             x = layer(x)
-            x = (1. - x) * input_[0] + x * input_[1]
+            x = (1.0 - x) * input_[0] + x * input_[1]
 
         # last layer
         return self.last_layer(x)

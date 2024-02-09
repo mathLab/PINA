@@ -1,4 +1,5 @@
 """ Module for Equation. """
+
 from .equation_interface import EquationInterface
 
 
@@ -15,12 +16,14 @@ class Equation(EquationInterface):
         :type equation: Callable
         """
         if not callable(equation):
-            raise ValueError('equation must be a callable function.'
-                             'Expected a callable function, got '
-                             f'{equation}')
+            raise ValueError(
+                "equation must be a callable function."
+                "Expected a callable function, got "
+                f"{equation}"
+            )
         self.__equation = equation
 
-    def residual(self, input_, output_, params_ = None):
+    def residual(self, input_, output_, params_=None):
         """
         Residual computation of the equation.
 
