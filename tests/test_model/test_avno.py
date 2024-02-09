@@ -12,17 +12,35 @@ def test_constructor():
     AVNO(input_channels, output_channels, torch.rand(10000, 2))
 
     #all constructor
-    AVNO(input_channels, output_channels, torch.rand(100, 2), inner_size=5,n_layers=5,func=torch.nn.ReLU)
-
+    AVNO(input_channels,
+         output_channels,
+         torch.rand(100, 2),
+         inner_size=5,
+         n_layers=5,
+         func=torch.nn.ReLU)
 
 
 def test_forward():
     input_channels = 1
     output_channels = 1
     input_ = torch.rand(batch_size, 1000, input_channels)
-    points=torch.rand(1000,2)
+    points = torch.rand(1000, 2)
     ano = AVNO(input_channels, output_channels, points)
     out = ano(input_)
-    assert out.shape == torch.Size([batch_size, points.shape[0], output_channels])
+    assert out.shape == torch.Size(
+        [batch_size, points.shape[0], output_channels])
 
 
+def test_backward():
+    input_channels = 2
+    output_channels = 1
+    input_ = torch.rand(batch_size, 1000, input_channels)
+    input_ = input_.requires_grad_()
+    points = torch.rand(1000, 2)
+    ano = AVNO(input_channels, output_channels, points)
+    out = ano(input_)
+    tmp = torch.linalg.norm(out)
+    tmp.backward()
+    grad = input_.grad
+    assert grad.shape == torch.Size(
+        [batch_size, points.shape[0], input_channels])
