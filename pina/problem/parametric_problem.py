@@ -1,4 +1,5 @@
 """Module for the ParametricProblem class"""
+
 from abc import abstractmethod
 
 from .abstract_problem import AbstractProblem

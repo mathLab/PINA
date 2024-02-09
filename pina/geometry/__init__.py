@@ -1,6 +1,13 @@
 __all__ = [
-    'Location', 'CartesianDomain', 'EllipsoidDomain', 'Union', 'Intersection',
-    'Exclusion', 'Difference', 'OperationInterface', 'SimplexDomain'
+    "Location",
+    "CartesianDomain",
+    "EllipsoidDomain",
+    "Union",
+    "Intersection",
+    "Exclusion",
+    "Difference",
+    "OperationInterface",
+    "SimplexDomain",
 ]
 
 from .location import Location

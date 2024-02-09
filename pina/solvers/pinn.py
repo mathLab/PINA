@@ -1,9 +1,13 @@
 """ Module for PINN """
+
 import torch
+
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
-    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler  # torch < 2.0
+    from torch.optim.lr_scheduler import (
+        _LRScheduler as LRScheduler,
+    )  # torch < 2.0
 
 import sys
 from torch.optim.lr_scheduler import ConstantLR
@@ -39,14 +43,11 @@ class PINN(SolverInterface):
         extra_features=None,
         loss=torch.nn.MSELoss(),
         optimizer=torch.optim.Adam,
-        optimizer_kwargs={'lr': 0.001},
+        optimizer_kwargs={"lr": 0.001},
         scheduler=ConstantLR,
-        scheduler_kwargs={
-            "factor": 1,
-            "total_iters": 0
-        },
+        scheduler_kwargs={"factor": 1, "total_iters": 0},
     ):
-        '''
+        """
         :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
@@ -59,12 +60,14 @@ class PINN(SolverInterface):
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
-        '''
-        super().__init__(models=[model],
-                         problem=problem,
-                         optimizers=[optimizer],
-                         optimizers_kwargs=[optimizer_kwargs],
-                         extra_features=extra_features)
+        """
+        super().__init__(
+            models=[model],
+            problem=problem,
+            optimizers=[optimizer],
+            optimizers_kwargs=[optimizer_kwargs],
+            extra_features=extra_features,
+        )
 
         # check consistency
         check_consistency(scheduler, LRScheduler, subclass=True)
@@ -105,15 +108,21 @@ class PINN(SolverInterface):
         # to the parameters that the optimizer needs to optimize
         if isinstance(self.problem, InverseProblem):
             self.optimizers[0].add_param_group(
-                {'params': [self._params[var] for var in self.problem.unknown_variables]}
-                )
+                {
+                    "params": [
+                        self._params[var]
+                        for var in self.problem.unknown_variables
+                    ]
+                }
+            )
         return self.optimizers, [self.scheduler]
 
     def _clamp_inverse_problem_params(self):
         for v in self._params:
             self._params[v].data.clamp_(
-                    self.problem.unknown_parameter_domain.range_[v][0],
-                    self.problem.unknown_parameter_domain.range_[v][1])
+                self.problem.unknown_parameter_domain.range_[v][0],
+                self.problem.unknown_parameter_domain.range_[v][1],
+            )
 
     def _loss_data(self, input, output):
         return self.loss(self.forward(input), output)
@@ -121,9 +130,15 @@ class PINN(SolverInterface):
     def _loss_phys(self, samples, equation):
         try:
             residual = equation.residual(samples, self.forward(samples))
-        except TypeError: # this occurs when the function has three inputs, i.e. inverse problem
-            residual = equation.residual(samples, self.forward(samples), self._params)
-        return self.loss(torch.zeros_like(residual, requires_grad=True), residual)
+        except (
+            TypeError
+        ):  # this occurs when the function has three inputs, i.e. inverse problem
+            residual = equation.residual(
+                samples, self.forward(samples), self._params
+            )
+        return self.loss(
+            torch.zeros_like(residual, requires_grad=True), residual
+        )
 
     def training_step(self, batch, batch_idx):
         """
@@ -140,23 +155,25 @@ class PINN(SolverInterface):
         dataloader = self.trainer.train_dataloader
         condition_losses = []
 
-        condition_idx = batch['condition']
+        condition_idx = batch["condition"]
 
-        for condition_id in range(condition_idx.min(), condition_idx.max()+1):
+        for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
 
             if sys.version_info >= (3, 8):
                 condition_name = dataloader.condition_names[condition_id]
             else:
-                condition_name = dataloader.loaders.condition_names[condition_id]
+                condition_name = dataloader.loaders.condition_names[
+                    condition_id
+                ]
             condition = self.problem.conditions[condition_name]
-            pts = batch['pts']
+            pts = batch["pts"]
 
             if len(batch) == 2:
                 samples = pts[condition_idx == condition_id]
                 loss = self._loss_phys(samples, condition.equation)
             elif len(batch) == 3:
                 samples = pts[condition_idx == condition_id]
-                ground_truth = batch['output'][condition_idx == condition_id]
+                ground_truth = batch["output"][condition_idx == condition_id]
                 loss = self._loss_data(samples, ground_truth)
             else:
                 raise ValueError("Batch size not supported")
@@ -164,10 +181,16 @@ class PINN(SolverInterface):
             # TODO for users this us hard to remember when creating a new solver, to fix in a smarter way
             loss = loss.as_subclass(torch.Tensor)
 
-#            # add condition losses and accumulate logging for each epoch
+            #            # add condition losses and accumulate logging for each epoch
             condition_losses.append(loss * condition.data_weight)
-            self.log(condition_name + '_loss', float(loss),
-                     prog_bar=True, logger=True, on_epoch=True, on_step=False)
+            self.log(
+                condition_name + "_loss",
+                float(loss),
+                prog_bar=True,
+                logger=True,
+                on_epoch=True,
+                on_step=False,
+            )
 
         # clamp unknown parameters of the InverseProblem to their domain ranges (if needed)
         if isinstance(self.problem, InverseProblem):
@@ -176,8 +199,14 @@ class PINN(SolverInterface):
         # TODO Fix the bug, tot_loss is a label tensor without labels
         # we need to pass it as a torch tensor to make everything work
         total_loss = sum(condition_losses)
-        self.log('mean_loss', float(total_loss / len(condition_losses)),
-                 prog_bar=True, logger=True, on_epoch=True, on_step=False)
+        self.log(
+            "mean_loss",
+            float(total_loss / len(condition_losses)),
+            prog_bar=True,
+            logger=True,
+            on_epoch=True,
+            on_step=False,
+        )
 
         return total_loss
 

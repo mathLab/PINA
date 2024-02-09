@@ -3,8 +3,9 @@ import torch
 
 def check_point(x, current_stride, dim):
     max_stride = current_stride + dim
-    indeces = torch.logical_and(x[..., :-1] < max_stride, x[..., :-1]
-                                >= current_stride).all(dim=-1)
+    indeces = torch.logical_and(
+        x[..., :-1] < max_stride, x[..., :-1] >= current_stride
+    ).all(dim=-1)
     return indeces
 
 
@@ -32,12 +33,12 @@ def optimizing(f):
 
     def wrapper(*args, **kwargs):
 
-        if kwargs['type'] == 'forward':
+        if kwargs["type"] == "forward":
             if not wrapper.has_run_inverse:
                 wrapper.has_run_inverse = True
                 return f(*args, **kwargs)
 
-        if kwargs['type'] == 'inverse':
+        if kwargs["type"] == "inverse":
             if not wrapper.has_run:
                 wrapper.has_run = True
                 return f(*args, **kwargs)

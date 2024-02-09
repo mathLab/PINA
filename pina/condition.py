@@ -1,4 +1,5 @@
 """ Condition module. """
+
 from .label_tensor import LabelTensor
 from .geometry import Location
 from .equation.equation import Equation
@@ -51,7 +52,11 @@ class Condition:
     """
 
     __slots__ = [
-        'input_points', 'output_points', 'location', 'equation', 'data_weight'
+        "input_points",
+        "output_points",
+        "location",
+        "equation",
+        "data_weight",
     ]
 
     def _dictvalue_isinstance(self, dict_, key_, class_):
@@ -65,27 +70,28 @@ class Condition:
         """
         Constructor for the `Condition` class.
         """
-        self.data_weight = kwargs.pop('data_weight', 1.0)
+        self.data_weight = kwargs.pop("data_weight", 1.0)
 
         if len(args) != 0:
             raise ValueError(
-                f'Condition takes only the following keyword arguments: {Condition.__slots__}.'
+                f"Condition takes only the following keyword arguments: {Condition.__slots__}."
             )
 
-        if (sorted(kwargs.keys()) != sorted(['input_points', 'output_points'])
-                and sorted(kwargs.keys()) != sorted(['location', 'equation'])
-                and sorted(kwargs.keys()) != sorted(
-                    ['input_points', 'equation'])):
-            raise ValueError(f'Invalid keyword arguments {kwargs.keys()}.')
+        if (
+            sorted(kwargs.keys()) != sorted(["input_points", "output_points"])
+            and sorted(kwargs.keys()) != sorted(["location", "equation"])
+            and sorted(kwargs.keys()) != sorted(["input_points", "equation"])
+        ):
+            raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")
 
-        if not self._dictvalue_isinstance(kwargs, 'input_points', LabelTensor):
-            raise TypeError('`input_points` must be a torch.Tensor.')
-        if not self._dictvalue_isinstance(kwargs, 'output_points', LabelTensor):
-            raise TypeError('`output_points` must be a torch.Tensor.')
-        if not self._dictvalue_isinstance(kwargs, 'location', Location):
-            raise TypeError('`location` must be a Location.')
-        if not self._dictvalue_isinstance(kwargs, 'equation', Equation):
-            raise TypeError('`equation` must be a Equation.')
+        if not self._dictvalue_isinstance(kwargs, "input_points", LabelTensor):
+            raise TypeError("`input_points` must be a torch.Tensor.")
+        if not self._dictvalue_isinstance(kwargs, "output_points", LabelTensor):
+            raise TypeError("`output_points` must be a torch.Tensor.")
+        if not self._dictvalue_isinstance(kwargs, "location", Location):
+            raise TypeError("`location` must be a Location.")
+        if not self._dictvalue_isinstance(kwargs, "equation", Equation):
+            raise TypeError("`equation` must be a Equation.")
 
         for key, value in kwargs.items():
             setattr(self, key, value)

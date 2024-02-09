@@ -72,17 +72,17 @@ class CartesianDomain(Location):
         :rtype: torch.Tensor
         """
         dim = bounds.shape[0]
-        if mode in ['chebyshev', 'grid'] and dim != 1:
-            raise RuntimeError('Something wrong in Span...')
+        if mode in ["chebyshev", "grid"] and dim != 1:
+            raise RuntimeError("Something wrong in Span...")
 
-        if mode == 'random':
+        if mode == "random":
             pts = torch.rand(size=(n, dim))
-        elif mode == 'chebyshev':
-            pts = chebyshev_roots(n).mul(.5).add(.5).reshape(-1, 1)
-        elif mode == 'grid':
+        elif mode == "chebyshev":
+            pts = chebyshev_roots(n).mul(0.5).add(0.5).reshape(-1, 1)
+        elif mode == "grid":
             pts = torch.linspace(0, 1, n).reshape(-1, 1)
         # elif mode == 'lh' or mode == 'latin':
-        elif mode in ['lh', 'latin']:
+        elif mode in ["lh", "latin"]:
             pts = torch_lhs(n, dim)
 
         pts *= bounds[:, 1] - bounds[:, 0]
@@ -90,7 +90,7 @@ class CartesianDomain(Location):
 
         return pts
 
-    def sample(self, n, mode='random', variables='all'):
+    def sample(self, n, mode="random", variables="all"):
         """Sample routine.
 
         :param n: Number of points to sample, see Note below
@@ -145,7 +145,7 @@ class CartesianDomain(Location):
         """
 
         def _1d_sampler(n, mode, variables):
-            """ Sample independentely the variables and cross the results"""
+            """Sample independentely the variables and cross the results"""
             tmp = []
             for variable in variables:
                 if variable in self.range_.keys():
@@ -158,17 +158,18 @@ class CartesianDomain(Location):
 
             result = tmp[0]
             for i in tmp[1:]:
-                result = result.append(i, mode='cross')
+                result = result.append(i, mode="cross")
 
             for variable in variables:
                 if variable in self.fixed_.keys():
                     value = self.fixed_[variable]
-                    pts_variable = torch.tensor([[value]
-                                                 ]).repeat(result.shape[0], 1)
+                    pts_variable = torch.tensor([[value]]).repeat(
+                        result.shape[0], 1
+                    )
                     pts_variable = pts_variable.as_subclass(LabelTensor)
                     pts_variable.labels = [variable]
 
-                    result = result.append(pts_variable, mode='std')
+                    result = result.append(pts_variable, mode="std")
 
             return result
 
@@ -197,12 +198,13 @@ class CartesianDomain(Location):
             for variable in variables:
                 if variable in self.fixed_.keys():
                     value = self.fixed_[variable]
-                    pts_variable = torch.tensor([[value]
-                                                 ]).repeat(result.shape[0], 1)
+                    pts_variable = torch.tensor([[value]]).repeat(
+                        result.shape[0], 1
+                    )
                     pts_variable = pts_variable.as_subclass(LabelTensor)
                     pts_variable.labels = [variable]
 
-                    result = result.append(pts_variable, mode='std')
+                    result = result.append(pts_variable, mode="std")
             return result
 
         def _single_points_sample(n, variables):
@@ -226,22 +228,22 @@ class CartesianDomain(Location):
 
             result = tmp[0]
             for i in tmp[1:]:
-                result = result.append(i, mode='std')
+                result = result.append(i, mode="std")
 
             return result
 
         if self.fixed_ and (not self.range_):
             return _single_points_sample(n, variables)
 
-        if variables == 'all':
+        if variables == "all":
             variables = list(self.range_.keys()) + list(self.fixed_.keys())
 
-        if mode in ['grid', 'chebyshev']:
+        if mode in ["grid", "chebyshev"]:
             return _1d_sampler(n, mode, variables)
-        elif mode in ['random', 'lh', 'latin']:
+        elif mode in ["random", "lh", "latin"]:
             return _Nd_sampler(n, mode, variables)
         else:
-            raise ValueError(f'mode={mode} is not valid.')
+            raise ValueError(f"mode={mode} is not valid.")
 
     def is_inside(self, point, check_border=False):
         """Check if a point is inside the ellipsoid.

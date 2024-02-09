@@ -1,4 +1,4 @@
-'''PINA Callbacks Implementations'''
+"""PINA Callbacks Implementations"""
 
 from pytorch_lightning.callbacks import Callback
 import torch
@@ -6,7 +6,7 @@ import copy
 
 
 class MetricTracker(Callback):
-    
+
     def __init__(self):
         """
         PINA Implementation of a Lightning Callback for Metric Tracking.
@@ -39,8 +39,9 @@ class MetricTracker(Callback):
         :return: None
         :rtype: None
         """
-        self._collection.append(copy.deepcopy(
-            trainer.logged_metrics))  # track them
+        self._collection.append(
+            copy.deepcopy(trainer.logged_metrics)
+        )  # track them
 
     @property
     def metrics(self):

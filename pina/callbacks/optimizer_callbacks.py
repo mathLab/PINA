@@ -1,4 +1,4 @@
-'''PINA Callbacks Implementations'''
+"""PINA Callbacks Implementations"""
 
 from pytorch_lightning.callbacks import Callback
 import torch
@@ -14,7 +14,7 @@ class SwitchOptimizer(Callback):
         This callback allows for switching between different optimizers during training, enabling
         the exploration of multiple optimization strategies without the need to stop training.
 
-        :param new_optimizers: The model optimizers to switch to. Can be a single 
+        :param new_optimizers: The model optimizers to switch to. Can be a single
                             :class:`torch.optim.Optimizer` or a list of them for multiple model solvers.
         :type new_optimizers: torch.optim.Optimizer | list
         :param new_optimizers_kwargs: The keyword arguments for the new optimizers. Can be a single dictionary
@@ -23,7 +23,7 @@ class SwitchOptimizer(Callback):
         :param epoch_switch: The epoch at which to switch to the new optimizer.
         :type epoch_switch: int
 
-        :raises ValueError: If `epoch_switch` is less than 1 or if there is a mismatch in the number of 
+        :raises ValueError: If `epoch_switch` is less than 1 or if there is a mismatch in the number of
                             optimizers and their corresponding keyword argument dictionaries.
 
         Example:
@@ -39,7 +39,7 @@ class SwitchOptimizer(Callback):
         check_consistency(epoch_switch, int)
 
         if epoch_switch < 1:
-            raise ValueError('epoch_switch must be greater than one.')
+            raise ValueError("epoch_switch must be greater than one.")
 
         if not isinstance(new_optimizers, list):
             new_optimizers = [new_optimizers]
@@ -48,10 +48,12 @@ class SwitchOptimizer(Callback):
         len_optimizer_kwargs = len(new_optimizers_kwargs)
 
         if len_optimizer_kwargs != len_optimizer:
-            raise ValueError('You must define one dictionary of keyword'
-                             ' arguments for each optimizers.'
-                             f' Got {len_optimizer} optimizers, and'
-                             f' {len_optimizer_kwargs} dicitionaries')
+            raise ValueError(
+                "You must define one dictionary of keyword"
+                " arguments for each optimizers."
+                f" Got {len_optimizer} optimizers, and"
+                f" {len_optimizer_kwargs} dicitionaries"
+            )
 
         # save new optimizers
         self._new_optimizers = new_optimizers
@@ -72,9 +74,12 @@ class SwitchOptimizer(Callback):
         if trainer.current_epoch == self._epoch_switch:
             optims = []
             for idx, (optim, optim_kwargs) in enumerate(
-                    zip(self._new_optimizers, self._new_optimizers_kwargs)):
+                zip(self._new_optimizers, self._new_optimizers_kwargs)
+            ):
                 optims.append(
-                    optim(trainer._model.models[idx].parameters(),
-                          **optim_kwargs))
+                    optim(
+                        trainer._model.models[idx].parameters(), **optim_kwargs
+                    )
+                )
 
             trainer.optimizers = optims
