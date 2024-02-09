@@ -1,7 +1,10 @@
 name: Black Formatter
 
-on: push
-
+on:
+  push:
+    branches:
+      - master
+      
 jobs:
   linter:
     name: runner / black
