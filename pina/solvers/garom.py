@@ -1,7 +1,7 @@
 """ Module for GAROM """
 
-import torch
 import sys
+import torch
 
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
@@ -11,10 +11,11 @@ except ImportError:
     )  # torch < 2.0
 
 from torch.optim.lr_scheduler import ConstantLR
+from torch.nn.modules.loss import _Loss
+
 from .solver import SolverInterface
 from ..utils import check_consistency
 from ..loss import LossInterface, PowerLoss
-from torch.nn.modules.loss import _Loss
 
 
 class GAROM(SolverInterface):
@@ -50,7 +51,7 @@ class GAROM(SolverInterface):
         regularizer=False,
     ):
         """
-        :param AbstractProblem problem: The formualation of the problem.
+        :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module generator: The neural network model to use
             for the generator.
         :param torch.nn.Module discriminator: The neural network model to use
@@ -63,28 +64,31 @@ class GAROM(SolverInterface):
             , default is `torch.optim.Adam`.
         :param dict optimizer_generator_kwargs: Optimizer constructor keyword
             args. for the generator.
-        :param torch.optim.Optimizer optimizer_discriminator: The neural
-            network optimizer to use for the discriminator network
-            , default is `torch.optim.Adam`.
-        :param dict optimizer_discriminator_kwargs: Optimizer constructor keyword
-            args. for the discriminator.
+        :param torch.optim.Optimizer optimizer_discriminator: The neural network
+            optimizer to use for the discriminator network , default is
+            `torch.optim.Adam`.
+        :param dict optimizer_discriminator_kwargs: Optimizer constructor
+            keyword args. for the discriminator.
         :param torch.optim.LRScheduler scheduler_generator: Learning
             rate scheduler for the generator.
-        :param dict scheduler_generator_kwargs: LR scheduler constructor keyword args.
+        :param dict scheduler_generator_kwargs: LR scheduler constructor keyword
+            args.
         :param torch.optim.LRScheduler scheduler_discriminator: Learning
             rate scheduler for the discriminator.
-        :param dict scheduler_discriminator_kwargs: LR scheduler constructor keyword args.
-        :param gamma: Ratio of expected loss for generator and discriminator, defaults to 0.3.
-        :type gamma: float
-        :param lambda_k: Learning rate for control theory optimization, defaults to 0.001.
-        :type lambda_k: float
-        :param regularizer: Regularization term in the GAROM loss, defaults to False.
-        :type regularizer: bool
+        :param dict scheduler_discriminator_kwargs: LR scheduler constructor
+            keyword args.
+        :param float gamma: Ratio of expected loss for generator and
+            discriminator, defaults to 0.3.
+        :param float lambda_k: Learning rate for control theory optimization,
+            defaults to 0.001.
+        :param bool regularizer: Regularization term in the GAROM loss, defaults
+            to False.
 
         .. warning::
-            The algorithm works only for data-driven model. Hence in the ``problem`` definition
-            the codition must only contain ``input_points`` (e.g. coefficient parameters, time
-            parameters), and ``output_points``.
+            The algorithm works only for data-driven model. Hence in the
+            ``problem`` definition the codition must only contain
+            ``input_points`` (e.g. coefficient parameters, time parameters), and
+            ``output_points``.
         """
 
         super().__init__(
@@ -139,15 +143,13 @@ class GAROM(SolverInterface):
         """
         Forward step for GAROM solver
 
-        :param x: The input tensor.
-        :type x: torch.Tensor
-        :param mc_steps: Number of montecarlo samples to approximate the
+        :param torch.Tensor x: The input tensor.
+        :param int mc_steps: Number of montecarlo samples to approximate the
             expected value, defaults to 20.
-        :type mc_steps: int
-        :param variance: Returining also the sample variance of the solution, defaults to False.
-        :type variance: bool
-        :return: The expected value of the generator distribution. If ``variance=True`` also the
-            sample variance is returned.
+        :param bool variance: Returining also the sample variance of the
+            solution, defaults to False.
+        :return: The expected value of the generator distribution. If
+            ``variance=True`` also the sample variance is returned.
         :rtype: torch.Tensor | tuple(torch.Tensor, torch.Tensor)
         """
 
@@ -175,7 +177,7 @@ class GAROM(SolverInterface):
         return self.optimizers, self._schedulers
 
     def sample(self, x):
-        # sampling
+        """ Sample from the generator distribution. """
         return self.generator(x)
 
     def _train_generator(self, parameters, snapshots):
