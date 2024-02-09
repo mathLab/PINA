@@ -37,6 +37,7 @@ def test_backward():
     input_ = torch.rand(batch_size, 1000, input_channels)
     input_ = input_.requires_grad_()
     points = torch.rand(1000, 2)
+    points = points.requires_grad_()
     ano = AVNO(input_channels, output_channels, points)
     out = ano(input_)
     tmp = torch.linalg.norm(out)
@@ -44,3 +45,7 @@ def test_backward():
     grad = input_.grad
     assert grad.shape == torch.Size(
         [batch_size, points.shape[0], input_channels])
+
+    grad = points.grad
+    print(grad.shape)
+    assert grad.shape == torch.Size([points.shape[0], 2])
