@@ -1,3 +1,7 @@
+"""
+Fourier Neural Operator Module.
+"""
+
 import torch
 import torch.nn as nn
 from pina import LabelTensor
@@ -8,7 +12,22 @@ from .base_no import KernelNeuralOperator
 
 
 class FourierIntegralKernel(torch.nn.Module):
+    """
+    Implementation of Fourier Integral Kernel network.
 
+    This class implements the Fourier Integral Kernel network, which is a
+    PINA implementation of Fourier Neural Operator kernel network.
+    It performs global convolution by operating in the Fourier space.
+
+    .. seealso::
+
+        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli,
+        K., Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A.
+        (2020). *Fourier neural operator for parametric partial
+        differential equations*.
+        DOI: `arXiv preprint arXiv:2010.08895.
+        <https://arxiv.org/abs/2010.08895>`_
+    """
     def __init__(self,
                  input_numb_fields,
                  output_numb_fields,
@@ -21,40 +40,16 @@ class FourierIntegralKernel(torch.nn.Module):
                  func=nn.Tanh,
                  layers=None):
         """
-        Implementation of Fourier Integral Kernel network.
-
-        This class implements the Fourier Integral Kernel network, which is a
-        PINA implementation of Fourier Neural Operator kernel network.
-        It performs global convolution by operating in the Fourier space.
-
-        .. seealso::
-
-            **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B.,
-            Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). *Fourier neural operator for
-            parametric partial differential equations*.
-            DOI: `arXiv preprint arXiv:2010.08895.
-            <https://arxiv.org/abs/2010.08895>`_
-
-        :param input_numb_fields: Number of input fields.
-        :type input_numb_fields: int
-        :param output_numb_fields: Number of output fields.
-        :type output_numb_fields: int
-        :param n_modes: Number of modes.
-        :type n_modes: int or list[int]
-        :param dimensions: Number of dimensions (1, 2, or 3).
-        :type dimensions: int
-        :param padding: Padding size, defaults to 8.
-        :type padding: int
-        :param padding_type: Type of padding, defaults to "constant".
-        :type padding_type: str
-        :param inner_size: Inner size, defaults to 20.
-        :type inner_size: int
-        :param n_layers: Number of layers, defaults to 2.
-        :type n_layers: int
-        :param func: Activation function, defaults to nn.Tanh.
-        :type func: torch.nn.Module
-        :param layers: List of layer sizes, defaults to None.
-        :type layers: list[int]
+        :param int input_numb_fields: Number of input fields.
+        :param int output_numb_fields: Number of output fields.
+        :param int | list[int] n_modes: Number of modes.
+        :param int dimensions: Number of dimensions (1, 2, or 3).
+        :param int padding: Padding size, defaults to 8.
+        :param str padding_type: Type of padding, defaults to "constant".
+        :param int inner_size: Inner size, defaults to 20.
+        :param int n_layers: Number of layers, defaults to 2.
+        :param torch.nn.Module func: Activation function, defaults to nn.Tanh.
+        :param list[int] layers: List of layer sizes, defaults to None.
         """
         super().__init__()
 
@@ -87,7 +82,9 @@ class FourierIntegralKernel(torch.nn.Module):
         elif dimensions == 3:
             fourier_layer = FourierBlock3D
         else:
-            raise NotImplementedError("FNO implemented only for 1D/2D/3D data.")
+            raise NotImplementedError(
+                "FNO implemented only for 1D/2D/3D data."
+                )
 
         # Here we build the FNO kernels by stacking Fourier Blocks
 
@@ -143,8 +140,9 @@ class FourierIntegralKernel(torch.nn.Module):
         of Fourier Blocks are applied. Finally the output is projected
         to the final dimensionality by the ``projecting_net``.
 
-        :param torch.Tensor x: The input tensor for fourier block, depending on
-            ``dimension`` in the initialization. In particular it is expected:
+        :param torch.Tensor x: The input tensor for fourier block,
+            depending on ``dimension`` in the initialization.
+            In particular it is expected:
 
             * 1D tensors: ``[batch, X, channels]``
             * 2D tensors: ``[batch, X, Y, channels]``
@@ -154,7 +152,8 @@ class FourierIntegralKernel(torch.nn.Module):
         """
         if isinstance(x, LabelTensor):  #TODO remove when Network is fixed
             warnings.warn(
-                'LabelTensor passed as input is not allowed, casting LabelTensor to Torch.Tensor'
+                'LabelTensor passed as input is not allowed,'
+                ' casting LabelTensor to Torch.Tensor'
             )
             x = x.as_subclass(torch.Tensor)
         # permuting the input [batch, channels, x, y, ...]
@@ -179,7 +178,24 @@ class FourierIntegralKernel(torch.nn.Module):
 
 
 class FNO(KernelNeuralOperator):
+    """
+    The PINA implementation of Fourier Neural Operator network.
 
+    Fourier Neural Operator (FNO) is a general architecture for
+    learning Operators. Unlike traditional machine learning methods
+    FNO is designed to map entire functions to other functions. It
+    can be trained with Supervised learning strategies. FNO does global
+    convolution by performing the operation on the Fourier space.
+
+    .. seealso::
+
+        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli,
+        K., Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A.
+        (2020). *Fourier neural operator for parametric partial
+        differential equations*.
+        DOI: `arXiv preprint arXiv:2010.08895.
+        <https://arxiv.org/abs/2010.08895>`_
+    """
     def __init__(self,
                  lifting_net,
                  projecting_net,
@@ -192,42 +208,18 @@ class FNO(KernelNeuralOperator):
                  func=nn.Tanh,
                  layers=None):
         """
-        The PINA implementation of Fourier Neural Operator network.
-
-        Fourier Neural Operator (FNO) is a general architecture for learning Operators.
-        Unlike traditional machine learning methods FNO is designed to map
-        entire functions to other functions. It can be trained both with 
-        Supervised learning strategies. FNO does global convolution by performing the
-        operation on the Fourier space.
-
-        .. seealso::
-
-            **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B.,
-            Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). *Fourier neural operator for
-            parametric partial differential equations*.
-            DOI: `arXiv preprint arXiv:2010.08895.
-            <https://arxiv.org/abs/2010.08895>`_
-
-        :param lifting_net: The neural network for lifting the input.
-        :type lifting_net: torch.nn.Module
-        :param projecting_net: The neural network for projecting the output.
-        :type projecting_net: torch.nn.Module
-        :param n_modes: Number of modes.
-        :type n_modes: int
-        :param dimensions: Number of dimensions (1, 2, or 3), defaults to 3.
-        :type dimensions: int
-        :param padding: Padding size, defaults to 8.
-        :type padding: int
-        :param padding_type: Type of padding, defaults to "constant".
-        :type padding_type: str
-        :param inner_size: Inner size, defaults to 20.
-        :type inner_size: int
-        :param n_layers: Number of layers, defaults to 2.
-        :type n_layers: int
-        :param func: Activation function, defaults to nn.Tanh.
-        :type func: torch.nn.Module
-        :param layers: List of layer sizes, defaults to None.
-        :type layers: list[int]
+        :param torch.nn.Module lifting_net: The neural network for lifting
+            the input.
+        :param torch.nn.Module projecting_net: The neural network for
+            projecting the output.
+        :param int | list[int] n_modes: Number of modes.
+        :param int dimensions: Number of dimensions (1, 2, or 3).
+        :param int padding: Padding size, defaults to 8.
+        :param str padding_type: Type of padding, defaults to `constant`.
+        :param int inner_size: Inner size, defaults to 20.
+        :param int n_layers: Number of layers, defaults to 2.
+        :param torch.nn.Module func: Activation function, defaults to nn.Tanh.
+        :param list[int] layers: List of layer sizes, defaults to None.
         """
         lifting_operator_out = lifting_net(
             torch.rand(size=next(lifting_net.parameters()).size())).shape[-1]
@@ -253,8 +245,9 @@ class FNO(KernelNeuralOperator):
         of Fourier Blocks are applied. Finally the output is projected
         to the final dimensionality by the ``projecting_net``.
 
-        :param torch.Tensor x: The input tensor for fourier block, depending on
-            ``dimension`` in the initialization. In particular it is expected:
+        :param torch.Tensor x: The input tensor for fourier block,
+            depending on ``dimension`` in the initialization. In
+            particular it is expected:
             
             * 1D tensors: ``[batch, X, channels]``
             * 2D tensors: ``[batch, X, Y, channels]``
