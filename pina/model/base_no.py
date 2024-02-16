@@ -1,7 +1,9 @@
 import torch
 from pina.utils import check_consistency
 
+
 class KernelNeuralOperator(torch.nn.Module):
+
     def __init__(self, lifting_operator, integral_kernels, projection_operator):
         r"""
         Base class for composing Neural Operators with integral kernels.
@@ -54,7 +56,7 @@ class KernelNeuralOperator(torch.nn.Module):
 
     @property
     def lifting_operator(self):
-        return self._lifting_operator 
+        return self._lifting_operator
 
     @lifting_operator.setter
     def lifting_operator(self, value):
@@ -63,7 +65,7 @@ class KernelNeuralOperator(torch.nn.Module):
 
     @property
     def projection_operator(self):
-        return self._projection_operator 
+        return self._projection_operator
 
     @projection_operator.setter
     def projection_operator(self, value):
@@ -78,7 +80,6 @@ class KernelNeuralOperator(torch.nn.Module):
     def integral_kernels(self, value):
         check_consistency(value, torch.nn.Module)
         self._integral_kernels = value
-
 
     def forward(self, x):
         r"""
