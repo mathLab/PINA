@@ -4,7 +4,7 @@ from pina import LabelTensor
 import warnings
 from ..utils import check_consistency
 from .layers.fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
-from .base_no import BaseNO
+from .base_no import KernelNeuralOperator
 
 
 class FourierIntegralKernel(torch.nn.Module):
@@ -41,19 +41,19 @@ class FourierIntegralKernel(torch.nn.Module):
         :param n_modes: Number of modes.
         :type n_modes: int or list[int]
         :param dimensions: Number of dimensions (1, 2, or 3).
-        :type dimensions: int, optional
+        :type dimensions: int
         :param padding: Padding size, defaults to 8.
-        :type padding: int, optional
+        :type padding: int
         :param padding_type: Type of padding, defaults to "constant".
-        :type padding_type: str, optional
+        :type padding_type: str
         :param inner_size: Inner size, defaults to 20.
-        :type inner_size: int, optional
+        :type inner_size: int
         :param n_layers: Number of layers, defaults to 2.
-        :type n_layers: int, optional
+        :type n_layers: int
         :param func: Activation function, defaults to nn.Tanh.
-        :type func: torch.nn.Module, optional
+        :type func: torch.nn.Module
         :param layers: List of layer sizes, defaults to None.
-        :type layers: list[int], optional
+        :type layers: list[int]
         """
         super().__init__()
 
@@ -146,11 +146,12 @@ class FourierIntegralKernel(torch.nn.Module):
         to the final dimensionality by the ``projecting_net``.
 
         :param torch.Tensor x: The input tensor for fourier block, depending on
-            ``dimension`` in the initialization. In particular it is expected
+            ``dimension`` in the initialization. In particular it is expected:
+
             * 1D tensors: ``[batch, X, channels]``
             * 2D tensors: ``[batch, X, Y, channels]``
             * 3D tensors: ``[batch, X, Y, Z, channels]``
-        :return: The output tensor obtained from the FNO.
+        :return: The output tensor obtained from the kernels convolution.
         :rtype: torch.Tensor
         """
         if isinstance(x, LabelTensor): #TODO remove when Network is fixed
@@ -176,7 +177,7 @@ class FourierIntegralKernel(torch.nn.Module):
 
         return x
 
-class FNO(BaseNO):
+class FNO(KernelNeuralOperator):
     def __init__(self,
                  lifting_net,
                  projecting_net,
@@ -212,19 +213,19 @@ class FNO(BaseNO):
         :param n_modes: Number of modes.
         :type n_modes: int
         :param dimensions: Number of dimensions (1, 2, or 3), defaults to 3.
-        :type dimensions: int, optional
+        :type dimensions: int
         :param padding: Padding size, defaults to 8.
-        :type padding: int, optional
+        :type padding: int
         :param padding_type: Type of padding, defaults to "constant".
-        :type padding_type: str, optional
+        :type padding_type: str
         :param inner_size: Inner size, defaults to 20.
-        :type inner_size: int, optional
+        :type inner_size: int
         :param n_layers: Number of layers, defaults to 2.
-        :type n_layers: int, optional
+        :type n_layers: int
         :param func: Activation function, defaults to nn.Tanh.
-        :type func: torch.nn.Module, optional
+        :type func: torch.nn.Module
         :param layers: List of layer sizes, defaults to None.
-        :type layers: list[int], optional
+        :type layers: list[int]
         """
         lifting_operator_out = lifting_net(
             torch.rand(size=next(lifting_net.parameters()).size())).shape[-1]
@@ -251,11 +252,12 @@ class FNO(BaseNO):
         to the final dimensionality by the ``projecting_net``.
 
         :param torch.Tensor x: The input tensor for fourier block, depending on
-            ``dimension`` in the initialization. In particular it is expected
+            ``dimension`` in the initialization. In particular it is expected:
+            
             * 1D tensors: ``[batch, X, channels]``
             * 2D tensors: ``[batch, X, Y, channels]``
             * 3D tensors: ``[batch, X, Y, Z, channels]``
-        :return: The output tensor obtained from the FNO.
+        :return: The output tensor obtained from FNO.
         :rtype: torch.Tensor
         """
         return super().forward(x)

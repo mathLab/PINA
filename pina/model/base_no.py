@@ -1,7 +1,7 @@
 import torch
 from pina.utils import check_consistency
 
-class BaseNO(torch.nn.Module):
+class KernelNeuralOperator(torch.nn.Module):
     def __init__(self, lifting_operator, integral_kernels, projection_operator):
         r"""
         Base class for composing Neural Operators with integral kernels.
@@ -11,11 +11,25 @@ class BaseNO(torch.nn.Module):
         from this class. The structure is inspired by the work of Kovachki, N.
         et al. see Figure 2 of the reference for extra details. The Neural
         Operators inheriting from this class can be written as:
-        $$ G_\theta  := P \circ K_L \circ\cdot\circ K_1 \circ L,$$
-        where $L$ is a lifting operator mapping the input to its hidden
-        dimension. The $\{K_i\}_{i=1}^L$ are integral kernels mapping
-        each hidden representation to the next one. Finally $P$ is a projection
-        operator mapping the hidden representation to the output function.
+
+        .. math::
+            G_\theta  := P \circ K_m \circ \cdot \circ K_1 \circ L
+
+        where:
+
+        *   :math:`G_\theta: \mathcal{A}\subset \mathbb{R}^{\rm{in}} \rightarrow
+            \mathcal{D}\subset \mathbb{R}^{\rm{out}}` is the neural operator approximation
+            of the unknown real operator :math:`G`, that is :math:`G \approx G_\theta`
+        *   :math:`L: \mathcal{A}\subset \mathbb{R}^{\rm{in}} \rightarrow 
+            \mathbb{R}^{\rm{emb}}` is a lifting operator mapping the input from its domain
+            :math:`\mathcal{A}\subset \mathbb{R}^{\rm{in}}` to its embedding dimension
+            :math:`\mathbb{R}^{\rm{emb}}`
+        *   :math:`\{K_i : \mathbb{R}^{\rm{emb}} \rightarrow  \mathbb{R}^{\rm{emb}}
+            \}_{i=1}^m` are :math:`m` integral kernels mapping each hidden representation to
+            the next one.
+        *   :math:`P : \mathbb{R}^{\rm{emb}} \rightarrow  \mathcal{D}\subset
+            \mathbb{R}^{\rm{out}}` is a projection operator mapping the hidden
+            representation to the output function.
 
         .. seealso::
 
@@ -67,7 +81,7 @@ class BaseNO(torch.nn.Module):
 
 
     def forward(self, x):
-        """
+        r"""
         Forward computation for Base Neural Operator. It performs a
         lifting of the input by the ``lifting_operator``.
         Then different layers integral kernels are applied using
@@ -75,12 +89,12 @@ class BaseNO(torch.nn.Module):
         to the final dimensionality by the ``projection_operator``.
 
         :param torch.Tensor x: The input tensor for performing the
-            computation. It expects a tensor: $$[B \times \times N \times D]$$
-        where $B$ is the batch_size, $N$ the number of points in the mesh,
-        $D$ the dimension of the problem. In particular  $D$ is the number
-        of spatial/paramtric/temporal variables + field variables.
-        For example for 2D problems with 2 output variables $D=4$.
-
+            computation. It expects a tensor :math:`B \times N \times D`,
+            where :math:`B` is the batch_size, :math:`N` the number of points
+            in the mesh, :math:`D` the dimension of the problem. In particular
+            :math:`D` is the number of spatial/paramtric/temporal variables plus
+            the field variables. For example for 2D problems with 2 output variables
+            :math:`D=4`.
         :return: The output tensor obtained from the NO.
         :rtype: torch.Tensor
         """

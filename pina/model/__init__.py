@@ -6,11 +6,11 @@ __all__ = [
     'MIONet',
     'FNO',
     'FourierIntegralKernel',
-    'BaseNO'
+    'KernelNeuralOperator'
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward
 from .multi_feed_forward import MultiFeedForward
 from .deeponet import DeepONet, MIONet
 from .fno import FNO, FourierIntegralKernel
-from .base_no import BaseNO
+from .base_no import KernelNeuralOperator

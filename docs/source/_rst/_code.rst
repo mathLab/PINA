@@ -48,11 +48,13 @@ Models
     :maxdepth: 5
 
     Network <models/network.rst>
+    KernelNeuralOperator <models/base_no.rst>
     FeedForward <models/fnn.rst>
     MultiFeedForward <models/multifeedforward.rst>
     ResidualFeedForward <models/fnn_residual.rst>
     DeepONet <models/deeponet.rst>
     MIONet <models/mionet.rst>
+    FourierIntegralKernel <models/fourier_kernel.rst>
     FNO <models/fno.rst>
 
 Layers
