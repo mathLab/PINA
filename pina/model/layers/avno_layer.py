@@ -13,7 +13,7 @@ class AVNOLayer(nn.Module):
         super().__init__()
         self.hidden_size = hidden_size
         self.nn = nn.Linear(self.hidden_size, self.hidden_size)
-
+        self.func = func
 
     def forward(self, batch):
         """Forward pass of the layer."""
