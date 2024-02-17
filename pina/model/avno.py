@@ -84,7 +84,7 @@ class AVNO(nn.Module):
     def nn(self):
         "Integral operator of the AVNO"
         return self._nn
-    
+
     @property
     def projection(self):
         "Projection operator of the AVNO"
