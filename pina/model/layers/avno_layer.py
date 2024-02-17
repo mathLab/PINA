@@ -7,9 +7,12 @@ class AVNOLayer(nn.Module):
         of the Averaging Neural Operator . 
 
     :param int hidden_size: size of the layer.
+        Defaults to 100.
     :param func: the activation function to use. 
+        Default to nn.GELU.
+        
     """
-    def __init__(self, hidden_size: int, func=nn.GELU):
+    def __init__(self, hidden_size = 100, func = nn.GELU):
         super().__init__()
         self.hidden_size = hidden_size
         self.nn = nn.Linear(self.hidden_size, self.hidden_size)
