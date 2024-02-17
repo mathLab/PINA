@@ -64,7 +64,7 @@ class AVNO(nn.Module):
         ],
                                  axis=2)
         features_tmp = concatenate([
-            batch.extract(f"{self.features_label}_{i}")  
+            batch.extract(f"{self.features_label}_{i}")
             for i in range(self.input_features)
         ],
                                    axis=2)
@@ -77,12 +77,15 @@ class AVNO(nn.Module):
 
     @property
     def lifting(self):
+        "Lifting operator of the AVNO"
         return self._lifting
     
     @property
     def nn(self):
+        "Integral operator of the AVNO"
         return self._nn
     
     @property
     def projection(self):
+        "Projection operator of the AVNO"
         return self._projection

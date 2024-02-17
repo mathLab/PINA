@@ -24,4 +24,3 @@ from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
 from .pod import PODBlock
 from .embedding import PeriodicBoundaryEmbedding
 from .avno_layer import AVNOLayer
-
