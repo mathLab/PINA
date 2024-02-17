@@ -79,7 +79,7 @@ class AVNO(nn.Module):
     def lifting(self):
         "Lifting operator of the AVNO"
         return self._lifting
-    
+
     @property
     def nn(self):
         "Integral operator of the AVNO"
