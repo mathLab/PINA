@@ -41,11 +41,11 @@ class AVNO(nn.Module):
         self.points_size = points_size
         self.points_label = points_label
         self.features_label = features_label
-        self.lifting = FeedForward(input_features + self.points_size,
+        self._lifting = FeedForward(input_features + self.points_size,
                                    inner_size, inner_size, n_layers, func)
-        self.nn = nn.Sequential(
+        self._nn = nn.Sequential(
             *[AVNOLayer(inner_size, func) for _ in range(n_layers)])
-        self.projection = FeedForward(inner_size + self.points_size,
+        self._projection = FeedForward(inner_size + self.points_size,
                                       output_features, inner_size, n_layers,
                                       func)
 
@@ -69,20 +69,20 @@ class AVNO(nn.Module):
         ],
                                    axis=2)
         new_batch = concatenate((features_tmp, points_tmp), dim=2)
-        new_batch = self.lifting(new_batch)
-        new_batch = self.nn(new_batch)
+        new_batch = self._lifting(new_batch)
+        new_batch = self._nn(new_batch)
         new_batch = concatenate((new_batch, points_tmp), dim=2)
-        new_batch = self.projection(new_batch)
+        new_batch = self._projection(new_batch)
         return new_batch
 
     @property
     def lifting(self):
-        return self.lifting
+        return self._lifting
     
     @property
     def nn(self):
-        return self.nn
+        return self._nn
     
     @property
     def projection(self):
-        return self.projection
+        return self._projection
