@@ -11,10 +11,11 @@
 # 
 # Specifically, the tutorial aims to introduce the following topics:
 # 
-# * Explaining how to build **PINA** Problem,
-# * Showing how to generate data for `PINN` straining
+# * Explaining how to build **PINA** Problems,
+# * Showing how to generate data for `PINN` training
 # 
-# These are the two main steps needed **before** starting the modelling optimization (choose model and solver, and train). We will show each step in detail, and at the end, we will solve a simple Ordinary Differential Equation (ODE) problem busing the `PINN` solver.
+# These are the two main steps needed **before** starting the modelling optimization (choose model and solver, and train). We will show each step in detail, and at the end, we will solve a simple Ordinary Differential Equation (ODE) problem using the `PINN` solver.
+
 
 # ## Build a PINA problem
 
@@ -47,7 +48,7 @@
 # 
 # Notice that we define `output_variables` as a list of symbols, indicating the output variables of our equation (in this case only $u$), this is done because in **PINA** the `torch.Tensor`s are labelled, allowing the user maximal flexibility for the manipulation of the tensor. The `spatial_domain` variable indicates where the sample points are going to be sampled in the domain, in this case $x\in[0,1]$.
 # 
-# What about if our equation is also time dependent? In this case, our `class` will inherit from both `SpatialProblem` and `TimeDependentProblem`:
+# What if our equation is also time-dependent? In this case, our `class` will inherit from both `SpatialProblem` and `TimeDependentProblem`:
 # 
 
 # In[1]:
@@ -122,16 +123,16 @@ class SimpleODE(SpatialProblem):
 problem = SimpleODE()
 
 
-# After we define the `Problem` class, we need to write different class methods, where each method is a function returning a residual. These functions are the ones minimized during PINN optimization, given the initial conditions. For example, in the domain $[0,1]$, the ODE equation (`ode_equation`) must be satisfied. We represent this by returning the difference between subtracting the variable `u` from its gradient (the residual), which we hope to minimize to 0. This is done for all conditions. Notice that we do not pass directly a `python` function, but an `Equation` object, which is initialized with the `python` function. This is done so that all the computations, and internal checks are done inside **PINA**.
+# After we define the `Problem` class, we need to write different class methods, where each method is a function returning a residual. These functions are the ones minimized during PINN optimization, given the initial conditions. For example, in the domain $[0,1]$, the ODE equation (`ode_equation`) must be satisfied. We represent this by returning the difference between subtracting the variable `u` from its gradient (the residual), which we hope to minimize to 0. This is done for all conditions. Notice that we do not pass directly a `python` function, but an `Equation` object, which is initialized with the `python` function. This is done so that all the computations and internal checks are done inside **PINA**.
 # 
 # Once we have defined the function, we need to tell the neural network where these methods are to be applied. To do so, we use the `Condition` class. In the `Condition` class, we pass the location points and the equation we want minimized on those points (other possibilities are allowed, see the documentation for reference).
 # 
-# Finally, it's possible to define a `truth_solution` function, which can be useful if we want to plot the results and see how the real solution compares to the expected (true) solution. Notice that the `truth_solution` function is a method of the `PINN` class, but is not mandatory for problem definition.
+# Finally, it's possible to define a `truth_solution` function, which can be useful if we want to plot the results and see how the real solution compares to the expected (true) solution. Notice that the `truth_solution` function is a method of the `PINN` class, but it is not mandatory for problem definition.
 # 
 
 # ## Generate data 
 # 
-# Data for training can come in form of direct numerical simulation reusults, or points in the domains. In case we do unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in **PINA** is very easy, here we show three examples using the `.discretise_domain` method of the `AbstractProblem` class.
+# Data for training can come in form of direct numerical simulation results, or points in the domains. In case we perform unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in **PINA** is very easy, here we show three examples using the `.discretise_domain` method of the `AbstractProblem` class.
 
 # In[3]:
 
@@ -139,7 +140,7 @@ problem = SimpleODE()
 # sampling 20 points in [0, 1] through discretization in all locations
 problem.discretise_domain(n=20, mode='grid', variables=['x'], locations='all')
 
-# sampling 20 points in (0, 1) through latin hypercube samping in D, and 1 point in x0
+# sampling 20 points in (0, 1) through latin hypercube sampling in D, and 1 point in x0
 problem.discretise_domain(n=20, mode='latin', variables=['x'], locations=['D'])
 problem.discretise_domain(n=1, mode='random', variables=['x'], locations=['x0'])
 
@@ -238,12 +239,12 @@ pl.plot_loss(trainer=trainer, label = 'mean_loss', logy=True)
 
 # ## What's next?
 # 
-# Nice you have completed the introductory tutorial of **PINA**! There are multiple directions you can go now:
+# Congratulations on completing the introductory tutorial of **PINA**! There are several directions you can go now:
 # 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
 # 
 # 2. Train the network using other types of models (see `pina.model`)
 # 
-# 3. GPU trainining and benchmark the speed
+# 3. GPU training and speed benchmarking
 # 
 # 4. Many more...
