@@ -35,3 +35,15 @@ def test_forward():
 
     with pytest.raises(AssertionError):
         net(data)
+
+def test_backward():
+    net = Network(model=torchmodel,
+                input_variables=['x', 'y', 'z'],
+                output_variables=['a', 'b', 'c', 'd'],
+                extra_features=None)
+    data = torch.rand((20, 3))
+    data.requires_grad = True
+    out = net.torchmodel(data)
+    l = torch.mean(out)
+    l.backward()
+    assert data._grad.shape == torch.Size([20, 3])

@@ -35,3 +35,12 @@ def test_forward():
     fnn = FeedForward(dim_in, dim_out)
     output_ = fnn(data)
     assert output_.shape == (data.shape[0], dim_out)
+
+def test_backward():
+    dim_in, dim_out = 3, 2
+    fnn = FeedForward(dim_in, dim_out)
+    data.requires_grad = True
+    output_ = fnn(data)
+    l=torch.mean(output_)
+    l.backward()
+    assert data._grad.shape == torch.Size([20,3])

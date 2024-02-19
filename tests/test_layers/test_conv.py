@@ -106,6 +106,39 @@ def test_forward():
     conv(x)
 
 
+def test_backward():
+    model = MLP
+    
+    x = torch.rand(dim_input)
+    x = make_grid(x)
+    x.requires_grad = True
+    # simple backward
+    conv = ContinuousConvBlock(channel_input,
+                               channel_output,
+                               dim,
+                               stride,
+                               model=model)
+    conv(x)
+    l=torch.mean(conv(x))
+    l.backward()
+    assert x._grad.shape == torch.Size([2, 2, 20, 3])
+    x = torch.rand(dim_input)
+    x = make_grid(x)
+    x.requires_grad = True
+
+    # simple backward with optimization
+    conv = ContinuousConvBlock(channel_input,
+                               channel_output,
+                               dim,
+                               stride,
+                               model=model,
+                               optimize=True)
+    conv(x)
+    l=torch.mean(conv(x))
+    l.backward()
+    assert x._grad.shape == torch.Size([2, 2, 20, 3])
+
+
 def test_transpose():
     model = MLP
 
