@@ -60,6 +60,24 @@ def test_1d_forward():
     assert out.shape == torch.Size([batch_size, resolution[0], output_channels])
 
 
+def test_1d_backward():
+    input_channels = 1
+    input_ = torch.rand(batch_size, resolution[0], input_channels)
+    lifting_net = torch.nn.Linear(input_channels, lifting_dim)
+    projecting_net = torch.nn.Linear(60, output_channels)
+    fno = FNO(lifting_net=lifting_net,
+              projecting_net=projecting_net,
+              n_modes=5,
+              dimensions=1,
+              inner_size=60,
+              n_layers=2)
+    input_.requires_grad = True
+    out = fno(input_)
+    l = torch.mean(out)
+    l.backward()
+    assert input_.grad.shape == torch.Size([batch_size, resolution[0], input_channels])
+
+
 def test_2d_forward():
     input_channels = 2
     input_ = torch.rand(batch_size, resolution[0], resolution[1],
@@ -77,6 +95,27 @@ def test_2d_forward():
         [batch_size, resolution[0], resolution[1], output_channels])
 
 
+def test_2d_backward():
+    input_channels = 2
+    input_ = torch.rand(batch_size, resolution[0], resolution[1],
+                        input_channels)
+    lifting_net = torch.nn.Linear(input_channels, lifting_dim)
+    projecting_net = torch.nn.Linear(60, output_channels)
+    fno = FNO(lifting_net=lifting_net,
+              projecting_net=projecting_net,
+              n_modes=5,
+              dimensions=2,
+              inner_size=60,
+              n_layers=2)
+    input_.requires_grad = True
+    out = fno(input_)
+    l = torch.mean(out)
+    l.backward()
+    assert input_.grad.shape == torch.Size([
+        batch_size, resolution[0], resolution[1], input_channels
+    ])
+
+
 def test_3d_forward():
     input_channels = 3
     input_ = torch.rand(batch_size, resolution[0], resolution[1], resolution[2],
@@ -92,4 +131,25 @@ def test_3d_forward():
     out = fno(input_)
     assert out.shape == torch.Size([
         batch_size, resolution[0], resolution[1], resolution[2], output_channels
+    ])
+
+
+def test_3d_backward():
+    input_channels = 3
+    input_ = torch.rand(batch_size, resolution[0], resolution[1], resolution[2],
+                        input_channels)
+    lifting_net = torch.nn.Linear(input_channels, lifting_dim)
+    projecting_net = torch.nn.Linear(60, output_channels)
+    fno = FNO(lifting_net=lifting_net,
+              projecting_net=projecting_net,
+              n_modes=5,
+              dimensions=3,
+              inner_size=60,
+              n_layers=2)
+    input_.requires_grad = True
+    out = fno(input_)
+    l = torch.mean(out)
+    l.backward()
+    assert input_.grad.shape == torch.Size([
+        batch_size, resolution[0], resolution[1], resolution[2], input_channels
     ])
