@@ -25,11 +25,11 @@ class KernelNeuralOperator(torch.nn.Module):
         \mathcal{D}\subset \mathbb{R}^{\rm{out}}` is the neural operator
         approximation of the unknown real operator :math:`G`, that is
         :math:`G \approx G_\theta`
-    *   :math:`L: \mathcal{A}\subset \mathbb{R}^{\rm{in}} \rightarrow 
+    *   :math:`L: \mathcal{A}\subset \mathbb{R}^{\rm{in}} \rightarrow
         \mathbb{R}^{\rm{emb}}` is a lifting operator mapping the input
         from its domain :math:`\mathcal{A}\subset \mathbb{R}^{\rm{in}}`
         to its embedding dimension :math:`\mathbb{R}^{\rm{emb}}`
-    *   :math:`\{K_i : \mathbb{R}^{\rm{emb}} \rightarrow 
+    *   :math:`\{K_i : \mathbb{R}^{\rm{emb}} \rightarrow
         \mathbb{R}^{\rm{emb}} \}_{i=1}^m` are :math:`m` integral kernels
         mapping each hidden representation to the next one.
     *   :math:`P : \mathbb{R}^{\rm{emb}} \rightarrow  \mathcal{D}\subset
@@ -44,6 +44,7 @@ class KernelNeuralOperator(torch.nn.Module):
         spaces with applications to PDEs*. Journal of Machine Learning
         Research, 24(89), 1-97.
     """
+
     def __init__(self, lifting_operator, integral_kernels, projection_operator):
         """
         :param torch.nn.Module lifting_operator: The lifting operator

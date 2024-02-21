@@ -28,17 +28,20 @@ class FourierIntegralKernel(torch.nn.Module):
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
     """
-    def __init__(self,
-                 input_numb_fields,
-                 output_numb_fields,
-                 n_modes,
-                 dimensions=3,
-                 padding=8,
-                 padding_type="constant",
-                 inner_size=20,
-                 n_layers=2,
-                 func=nn.Tanh,
-                 layers=None):
+
+    def __init__(
+        self,
+        input_numb_fields,
+        output_numb_fields,
+        n_modes,
+        dimensions=3,
+        padding=8,
+        padding_type="constant",
+        inner_size=20,
+        n_layers=2,
+        func=nn.Tanh,
+        layers=None,
+    ):
         """
         :param int input_numb_fields: Number of input fields.
         :param int output_numb_fields: Number of output fields.
@@ -69,7 +72,8 @@ class FourierIntegralKernel(torch.nn.Module):
         if not isinstance(n_modes, (list, tuple, int)):
             raise ValueError(
                 "n_modes must be a int or list or tuple of valid modes."
-                " More information on the official documentation.")
+                " More information on the official documentation."
+            )
 
         # assign padding
         self._padding = padding
@@ -82,9 +86,7 @@ class FourierIntegralKernel(torch.nn.Module):
         elif dimensions == 3:
             fourier_layer = FourierBlock3D
         else:
-            raise NotImplementedError(
-                "FNO implemented only for 1D/2D/3D data."
-                )
+            raise NotImplementedError("FNO implemented only for 1D/2D/3D data.")
 
         # Here we build the FNO kernels by stacking Fourier Blocks
 
@@ -96,7 +98,8 @@ class FourierIntegralKernel(torch.nn.Module):
         if isinstance(func, list):
             if len(layers) != len(func):
                 raise RuntimeError(
-                    'Uncosistent number of layers and functions.')
+                    "Uncosistent number of layers and functions."
+                )
             _functions = func
         else:
             _functions = [func for _ in range(len(layers) - 1)]
@@ -104,10 +107,12 @@ class FourierIntegralKernel(torch.nn.Module):
 
         # 3. Assign modes functions for each FNO layer
         if isinstance(n_modes, list):
-            if all(isinstance(i, list)
-                   for i in n_modes) and len(layers) != len(n_modes):
+            if all(isinstance(i, list) for i in n_modes) and len(layers) != len(
+                n_modes
+            ):
                 raise RuntimeError(
-                    "Uncosistent number of layers and functions.")
+                    "Uncosistent number of layers and functions."
+                )
             elif all(isinstance(i, int) for i in n_modes):
                 n_modes = [n_modes] * len(layers)
         else:
@@ -118,10 +123,13 @@ class FourierIntegralKernel(torch.nn.Module):
         tmp_layers = [input_numb_fields] + layers + [output_numb_fields]
         for i in range(len(layers)):
             _layers.append(
-                fourier_layer(input_numb_fields=tmp_layers[i],
-                              output_numb_fields=tmp_layers[i + 1],
-                              n_modes=n_modes[i],
-                              activation=_functions[i]))
+                fourier_layer(
+                    input_numb_fields=tmp_layers[i],
+                    output_numb_fields=tmp_layers[i + 1],
+                    n_modes=n_modes[i],
+                    activation=_functions[i],
+                )
+            )
         self._layers = nn.Sequential(*_layers)
 
         # 5. Padding values for spectral conv
@@ -150,10 +158,10 @@ class FourierIntegralKernel(torch.nn.Module):
         :return: The output tensor obtained from the kernels convolution.
         :rtype: torch.Tensor
         """
-        if isinstance(x, LabelTensor):  #TODO remove when Network is fixed
+        if isinstance(x, LabelTensor):  # TODO remove when Network is fixed
             warnings.warn(
-                'LabelTensor passed as input is not allowed,'
-                ' casting LabelTensor to Torch.Tensor'
+                "LabelTensor passed as input is not allowed,"
+                " casting LabelTensor to Torch.Tensor"
             )
             x = x.as_subclass(torch.Tensor)
         # permuting the input [batch, channels, x, y, ...]
@@ -196,17 +204,20 @@ class FNO(KernelNeuralOperator):
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
     """
-    def __init__(self,
-                 lifting_net,
-                 projecting_net,
-                 n_modes,
-                 dimensions=3,
-                 padding=8,
-                 padding_type="constant",
-                 inner_size=20,
-                 n_layers=2,
-                 func=nn.Tanh,
-                 layers=None):
+
+    def __init__(
+        self,
+        lifting_net,
+        projecting_net,
+        n_modes,
+        dimensions=3,
+        padding=8,
+        padding_type="constant",
+        inner_size=20,
+        n_layers=2,
+        func=nn.Tanh,
+        layers=None,
+    ):
         """
         :param torch.nn.Module lifting_net: The neural network for lifting
             the input.
@@ -222,21 +233,24 @@ class FNO(KernelNeuralOperator):
         :param list[int] layers: List of layer sizes, defaults to None.
         """
         lifting_operator_out = lifting_net(
-            torch.rand(size=next(lifting_net.parameters()).size())).shape[-1]
-        super().__init__(lifting_operator=lifting_net,
-                         projection_operator=projecting_net,
-                         integral_kernels=FourierIntegralKernel(
-                             input_numb_fields=lifting_operator_out,
-                             output_numb_fields=next(
-                                 projecting_net.parameters()).size(),
-                             n_modes=n_modes,
-                             dimensions=dimensions,
-                             padding=padding,
-                             padding_type=padding_type,
-                             inner_size=inner_size,
-                             n_layers=n_layers,
-                             func=func,
-                             layers=layers))
+            torch.rand(size=next(lifting_net.parameters()).size())
+        ).shape[-1]
+        super().__init__(
+            lifting_operator=lifting_net,
+            projection_operator=projecting_net,
+            integral_kernels=FourierIntegralKernel(
+                input_numb_fields=lifting_operator_out,
+                output_numb_fields=next(projecting_net.parameters()).size(),
+                n_modes=n_modes,
+                dimensions=dimensions,
+                padding=padding,
+                padding_type=padding_type,
+                inner_size=inner_size,
+                n_layers=n_layers,
+                func=func,
+                layers=layers,
+            ),
+        )
 
     def forward(self, x):
         """
@@ -248,7 +262,7 @@ class FNO(KernelNeuralOperator):
         :param torch.Tensor x: The input tensor for fourier block,
             depending on ``dimension`` in the initialization. In
             particular it is expected:
-            
+
             * 1D tensors: ``[batch, X, channels]``
             * 2D tensors: ``[batch, X, Y, channels]``
             * 3D tensors: ``[batch, X, Y, Z, channels]``

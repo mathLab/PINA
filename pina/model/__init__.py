@@ -1,12 +1,12 @@
 __all__ = [
-    'FeedForward',
-    'ResidualFeedForward',
-    'MultiFeedForward',
-    'DeepONet',
-    'MIONet',
-    'FNO',
-    'FourierIntegralKernel',
-    'KernelNeuralOperator'
+    "FeedForward",
+    "ResidualFeedForward",
+    "MultiFeedForward",
+    "DeepONet",
+    "MIONet",
+    "FNO",
+    "FourierIntegralKernel",
+    "KernelNeuralOperator",
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward
