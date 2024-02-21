@@ -1,4 +1,5 @@
 """Module for Averaging Neural Operator Layer class."""
+
 from torch import nn, mean
 
 class AVNOBlock(nn.Module):
