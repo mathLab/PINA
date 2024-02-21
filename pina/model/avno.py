@@ -2,10 +2,11 @@
 
 from torch import nn, concatenate
 from . import FeedForward
-from .layers import AVNOLayer
+from .layers import AVNOBlock
+from .base_no import KernelNeuralOperator
 
 
-class AVNO(nn.Module):
+class AVNO(KernelNeuralOperator):
     """
     The PINA implementation of the inner layer 
         of the Averaging Neural Operator.
@@ -35,57 +36,58 @@ class AVNO(nn.Module):
         func=nn.GELU,
     ):
 
-        super().__init__()
         self.input_features = input_features
         self.output_features = output_features
         self.points_size = points_size
         self.points_label = points_label
         self.features_label = features_label
-        self._lifting = FeedForward(input_features + self.points_size,
-                                   inner_size, inner_size, n_layers, func)
-        self._nn = nn.Sequential(
-            *[AVNOLayer(inner_size, func) for _ in range(n_layers)])
-        self._projection = FeedForward(inner_size + self.points_size,
-                                      output_features, inner_size, n_layers,
-                                      func)
 
-    def forward(self, batch):
-        """
-        Computes the forward pass of the model with the points 
-            specified when calling the function.
+        class Lifting_Net(nn.Module):
+            def __init__(self):
+                super(Lifting_Net, self).__init__()
+                self._lifting = FeedForward(input_features + points_size,
+                                           inner_size, inner_size, n_layers, func)
+                
+            def forward(self, batch):
+                points_tmp = concatenate([
+                    batch.extract(f"{points_label}_{i}")
+                    for i in range(points_size)
+                ],
+                                        axis=2)
+                features_tmp = concatenate([
+                    batch.extract(f"{features_label}_{i}")
+                    for i in range(input_features)
+                ],
+                                        axis=2)
+                new_batch = concatenate((features_tmp, points_tmp), dim=2)
+                new_batch = self._lifting(new_batch)
+                return [new_batch, points_tmp]
+            
+        class NN_Net(nn.Module):
+            def __init__(self):
+                super(NN_Net, self).__init__()
+                self._nn = nn.Sequential(
+                    *[AVNOBlock(inner_size, func) for _ in range(n_layers)])
+                
+            def forward(self, batch):
+                new_batch, points_tmp = batch
+                new_batch = self._nn(new_batch)
+                return [new_batch, points_tmp]
+            
+        class Projection_Net(nn.Module):
+            def __init__(self):
+                super(Projection_Net, self).__init__()
+                self._projection = FeedForward(inner_size + points_size,
+                                              output_features, inner_size, n_layers,
+                                              func)
+                
+            def forward(self, batch):
+                new_batch, points_tmp = batch
+                new_batch = concatenate((new_batch, points_tmp), dim=2)
+                new_batch = self._projection(new_batch)
+                return new_batch
 
-        :param torch.Tensor batch: the input tensor.
-        :param torch.Tensor points: the points tensor.
-        
-        """
-        points_tmp = concatenate([
-            batch.extract(f"{self.points_label}_{i}")
-            for i in range(self.points_size)
-        ],
-                                 axis=2)
-        features_tmp = concatenate([
-            batch.extract(f"{self.features_label}_{i}")
-            for i in range(self.input_features)
-        ],
-                                   axis=2)
-        new_batch = concatenate((features_tmp, points_tmp), dim=2)
-        new_batch = self._lifting(new_batch)
-        new_batch = self._nn(new_batch)
-        new_batch = concatenate((new_batch, points_tmp), dim=2)
-        new_batch = self._projection(new_batch)
-        return new_batch
-
-    @property
-    def lifting(self):
-        "Lifting operator of the AVNO"
-        return self._lifting
-
-    @property
-    def nn(self):
-        "Integral operator of the AVNO"
-        return self._nn
-
-    @property
-    def projection(self):
-        "Projection operator of the AVNO"
-        return self._projection
+        nn_net=NN_Net()
+        lifting_net=Lifting_Net()
+        projection_net=Projection_Net()
+        super().__init__(lifting_net, nn_net, projection_net)

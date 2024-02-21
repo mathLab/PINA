@@ -10,7 +10,7 @@ __all__ = [
     "FourierBlock3D",
     "PODBlock",
     "PeriodicBoundaryEmbedding",
-    "AVNOLayer",
+    "AVNOBlock",
 ]
 
 from .convolution_2d import ContinuousConvBlock
@@ -23,4 +23,4 @@ from .spectral import (
 from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
 from .pod import PODBlock
 from .embedding import PeriodicBoundaryEmbedding
-from .avno_layer import AVNOLayer
+from .avno import AVNOBlock

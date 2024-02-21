@@ -1,7 +1,7 @@
 """Module for Averaging Neural Operator Layer class."""
 from torch import nn, mean
 
-class AVNOLayer(nn.Module):
+class AVNOBlock(nn.Module):
     """
     The PINA implementation of the inner layer 
         of the Averaging Neural Operator . 
