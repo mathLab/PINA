@@ -16,6 +16,7 @@ Building custom geometries with PINA `Location` class|[[.ipynb](tutorial6/tutori
 Two dimensional Poisson problem using Extra Features Learning &nbsp; &nbsp; |[[.ipynb](tutorial2/tutorial.ipynb),&#160;[.py](tutorial2/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial2/tutorial.html)]|
 Two dimensional Wave problem with hard constraint |[[.ipynb](tutorial3/tutorial.ipynb),&#160;[.py](tutorial3/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial3/tutorial.html)]|
 Resolution of a 2D Poisson inverse problem |[[.ipynb](tutorial7/tutorial.ipynb),&#160;[.py](tutorial7/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial7/tutorial.html)]|
+Periodic Boundary Conditions for Helmotz Equation |[[.ipynb](tutorial9/tutorial.ipynb),&#160;[.py](tutorial9/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial9/tutorial.html)]|
 
 ## Neural Operator Learning
 | Description   | Tutorial  |

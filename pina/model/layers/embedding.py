@@ -98,8 +98,10 @@ class PBCEmbedding(torch.nn.Module):
         :return: Fourier embeddings of the input.
         :rtype: torch.Tensor
         """
-        self._omega = torch.stack([torch.pi * 2. / torch.tensor([val]) 
-                                   for val in self._period.values()], dim=-1)
+        self._omega = torch.stack([torch.pi * 2. / torch.tensor([val],
+                                                                device=x.device) 
+                                   for val in self._period.values()],
+                                   dim=-1)
         x = self._get_vars(x, list(self._period.keys()))
         return self._layer(torch.cat([torch.ones_like(x),
                           torch.cos(self._omega * x),
