@@ -6,7 +6,7 @@ from .stride import Stride
 from .utils_convolution import optimizing
 
 
-class PODLayer(torch.nn.Module):
+class PODBlock(torch.nn.Module):
     """
     POD layer: it projects the input field on the proper orthogonal
     decomposition basis.  It needs to be fitted to the data before being used

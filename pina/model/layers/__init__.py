@@ -8,7 +8,7 @@ __all__ = [
     "FourierBlock1D",
     "FourierBlock2D",
     "FourierBlock3D",
-    "PODLayer",
+    "PODBlock",
 ]
 
 from .convolution_2d import ContinuousConvBlock
@@ -19,4 +19,4 @@ from .spectral import (
     SpectralConvBlock3D,
 )
 from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
-from .pod import PODLayer
+from .pod import PODBlock
