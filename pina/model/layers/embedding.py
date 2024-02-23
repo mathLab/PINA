@@ -1,29 +1,71 @@
 import torch
 from pina.utils import check_consistency
-from pina import LabelTensor
 
 
-class FourierEmbedding(torch.nn.Module):
-    """
-    Fourier Embedding for imposing hard constraint periodic boundary conditions.
+class PBCEmbedding(torch.nn.Module):
+    r"""
+    Imposing hard constraint periodic boundary conditions by embedding the
+    input. 
+    
+    A periodic function :math:`u:\mathbb{R}^{\rm{in}}
+    \rightarrow\mathbb{R}^{\rm{out}}` periodic in the spatial
+    coordinates :math:`\mathbf{x}` with periods :math:`\mathbf{L}` is such that:
 
-    The following
+    .. math::
+        u(\mathbf{x})  = u(\mathbf{x} + n \mathbf{L})\;\;
+        \forall n\in\mathbb{N}.
+
+    The :meth:`PBCEmbedding` augments the input such that the periodic conditons
+    is guarantee. The input is augmented by the following formula:
+
+    .. math::
+        \mathbf{x} \rightarrow \tilde{\mathbf{x}} = \left[1,
+        \cos\left(\frac{2\pi}{L_1} x_1 \right),
+        \sin\left(\frac{2\pi}{L_1}x_1\right), \cdots,
+        \cos\left(\frac{2\pi}{L_{\rm{in}}}x_{\rm{in}}\right),
+        \sin\left(\frac{2\pi}{L_{\rm{in}}}x_{\rm{in}}\right)\right],
+
+    where :math:`\text{dim}(\tilde{\mathbf{x}}) = 3\text{dim}(\mathbf{x})`.
+
+    .. seealso::
+        **Original reference**: 
+            1.  Dong, Suchuan, and Naxian Ni (2021). *A method for representing
+                periodic functions and enforcing exactly periodic boundary
+                conditions with deep neural networks*. Journal of Computational
+                Physics 435, 110242.
+                DOI: `10.1016/j.jcp.2021.110242.
+                <https://doi.org/10.1016/j.jcp.2021.110242>`_
+            2.  Wang, S., Sankaran, S., Wang, H., & Perdikaris, P. (2023). *An
+                expert's guide to training physics-informed neural networks*.
+                DOI: `arXiv preprint arXiv:2308.0846.
+                <https://arxiv.org/abs/2308.08468>`_
+    .. warning::
+        The embedding is a truncated fourier expansion, and only ensures
+        function PBC and not for its derivatives. Ensuring approximate
+        periodicity in
+        the derivatives of :math:`u` can be done, and extensive
+        tests have shown (also in the reference papers) that this implementation
+        can correctly compute the PBC on the derivatives up to the order
+        :math:`\sim 2,3`, while it is not guarantee the periodicity for
+        :math:`>3`. The PINA code is tested only for function PBC and not for
+        its derivatives.
     """
     def __init__(self, input_dimension, periods, output_dimension=None):
         """
         :param int input_dimension: The dimension of the input tensor, it can
             be checked with `tensor.ndim` method.
         :param float | int | dict periods: The periodicity in each dimension for
-            the input data. If `float` or `int` is passed, the period is assumed
-            constant for all the dimensions of the data. If a `dict` is passed
-            the `dict.values` represent periods, while the `dict.keys` represent
-            the dimension where the periodicity is applied. The `dict.keys`
-            can either be `int` if working with `torch.Tensors` or `str` if
-            working with `LabelTensor`.
+            the input data. If ``float`` or ``int`` is passed,
+            the period is assumed constant for all the dimensions of the data.
+            If a ``dict`` is passed the `dict.values` represent periods,
+            while the ``dict.keys`` represent the dimension where the
+            periodicity is applied. The `dict.keys` can either be `int`
+            if working with ``torch.Tensor`` or ``str`` if
+            working with ``LabelTensor``.
         :param int output_dimension: The dimension of the output after the
-            fourier embedding. If not `None` a `torch.nn.Linear` layer is
-            applied to the fourier embedding output to match the desired
-            dimensionality, default `None`.
+            fourier embedding. If not ``None`` a ``torch.nn.Linear`` layer
+            is applied to the fourier embedding output to match the desired
+            dimensionality, default ``None``.
         """
         super().__init__()
 
@@ -32,9 +74,9 @@ class FourierEmbedding(torch.nn.Module):
         check_consistency(input_dimension, int)
         if output_dimension is not None:
             check_consistency(output_dimension, int)
-            self.layer = torch.nn.Linear(input_dimension * 3, output_dimension)
+            self._layer = torch.nn.Linear(input_dimension * 3, output_dimension)
         else:
-            self.layer = torch.nn.Identity()
+            self._layer = torch.nn.Identity()
 
         # checks on the periods
         if isinstance(periods, dict):
@@ -49,7 +91,8 @@ class FourierEmbedding(torch.nn.Module):
 
 
     def forward(self, x):
-        """_summary_
+        """
+        Forward pass to compute the periodic boundary conditions embedding.
 
         :param torch.Tensor x: Input tensor.
         :return: Fourier embeddings of the input.
@@ -58,7 +101,7 @@ class FourierEmbedding(torch.nn.Module):
         self._omega = torch.stack([torch.pi * 2. / torch.tensor([val]) 
                                    for val in self._period.values()], dim=-1)
         x = self._get_vars(x, list(self._period.keys()))
-        return self.layer(torch.cat([torch.ones_like(x),
+        return self._layer(torch.cat([torch.ones_like(x),
                           torch.cos(self._omega * x),
                           torch.sin(self._omega * x)], dim=-1))
 
@@ -93,78 +136,3 @@ class FourierEmbedding(torch.nn.Module):
         The period of the periodic function to approximate.
         """
         return 2 * torch.pi / self._omega
-    
-    
-def grad(u, x):
-    """
-    Compute the first derivative of u with respect to x.
-
-    Parameters:
-    - u (torch.Tensor): The tensor for which the derivative is calculated (requires_grad=True).
-    - x (torch.Tensor): The tensor with respect to which the derivative is calculated.
-
-    Returns:
-    - torch.Tensor: The first derivative of u with respect to x.
-    """
-    # Calculate the gradient
-    return torch.autograd.grad(u, x, grad_outputs=torch.ones_like(u), create_graph=True, allow_unused=True, retain_graph=True)[0]
-
-foo_func = torch.nn.Sequential(torch.nn.Linear(1, 10),
-                               torch.nn.Tanh(),
-                               torch.nn.Linear(10, 10),
-                               torch.nn.Tanh(),
-                               torch.nn.Linear(10, 1))
-periodic_foo_func = torch.nn.Sequential(FourierEmbedding(input_dimension=1, periods=1, output_dimension=10),
-                                        torch.nn.Tanh(),
-                                        torch.nn.Linear(10, 10),
-                                        torch.nn.Tanh(),
-                                        torch.nn.Linear(10, 1))
-data = torch.linspace(0, 1, 100).reshape(-1, 1)
-data_1 = 1. + data
-data_2 = 2. + data
-data_10 = 10. + data
-data_100 = 100. + data
-print(data.ndim)
-data.requires_grad = True
-data_1.requires_grad = True
-data_2.requires_grad = True
-data_10.requires_grad = True
-data_100.requires_grad = True
-
-# check periodicity
-output_foo_func = foo_func(data)
-output_foo_func_x = grad(output_foo_func, data)
-output_foo_func_xx = grad(output_foo_func_x, data)
-output_foo_func_xxx = grad(output_foo_func_xx, data)
-output_foo_func_xxxx = grad(output_foo_func_xxx, data)
-for idx, data_new in zip([1, 2, 100], [data_1, data_2, data_100]):
-    output_foo_func_L = foo_func(data_new)
-    output_foo_func_L_x = grad(output_foo_func_L, data_new)
-    output_foo_func_L_xx = grad(output_foo_func_L_x, data_new)
-    output_foo_func_L_xxx = grad(output_foo_func_L_xx, data_new)
-    output_foo_func_L_xxxx = grad(output_foo_func_L_xxx, data_new)
-    print(f'Foo func u(x)=u(x+{idx})', torch.nn.functional.l1_loss(output_foo_func, output_foo_func_L))
-    print(f'Foo func Du(x)=Du(x+{idx})', torch.nn.functional.l1_loss(output_foo_func_x, output_foo_func_L_x))
-    print(f'Foo func D2u(x)=D2u(x+{idx})', torch.nn.functional.l1_loss(output_foo_func_xx, output_foo_func_L_xx))
-    print(f'Foo func D3u(x)=D3u(x+{idx})', torch.nn.functional.l1_loss(output_foo_func_xxx, output_foo_func_L_xxx))
-    print(f'Foo func D4u(x)=D4u(x+{idx})', torch.nn.functional.l1_loss(output_foo_func_xxxx, output_foo_func_L_xxxx))
-
-print()
-# check periodicity
-periodic_output_foo_func = periodic_foo_func(data)
-periodic_output_foo_func_x = grad(periodic_output_foo_func, data)
-periodic_output_foo_func_xx = grad(periodic_output_foo_func_x, data)
-periodic_output_foo_func_xxx = grad(periodic_output_foo_func_xx, data)
-periodic_output_foo_func_xxxx = grad(periodic_output_foo_func_xxx, data)
-for idx, data_new in zip([1, 2, 100], [data_1, data_2, data_100]):
-    periodic_output_foo_func_L = periodic_foo_func(data_new)
-    periodic_output_foo_func_L_x = grad(periodic_output_foo_func_L, data_new)
-    periodic_output_foo_func_L_xx = grad(periodic_output_foo_func_L_x, data_new)
-    periodic_output_foo_func_L_xxx = grad(periodic_output_foo_func_L_xx, data_new)
-    periodic_output_foo_func_L_xxxx = grad(periodic_output_foo_func_L_xxx, data_new)
-    print(f'Periodic func u(x)=u(x+{idx})', torch.nn.functional.l1_loss(periodic_output_foo_func, periodic_output_foo_func_L))
-    print(f'Periodic func Du(x)=Du(x+{idx})', torch.nn.functional.l1_loss(periodic_output_foo_func_x, periodic_output_foo_func_L_x))
-    print(f'Periodic func D2u(x)=D2u(x+{idx})', torch.nn.functional.l1_loss(periodic_output_foo_func_xx, periodic_output_foo_func_L_xx))
-    print(f'Periodic func D3u(x)=D3u(x+{idx})', torch.nn.functional.l1_loss(periodic_output_foo_func_L_xxx, periodic_output_foo_func_xxx))
-    print(f'Periodic func D4u(x)=D4u(x+{idx})', torch.nn.functional.l1_loss(periodic_output_foo_func_L_xxxx, periodic_output_foo_func_xxxx))
-
