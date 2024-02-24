@@ -1,3 +1,5 @@
+""" Embedding modulus. """
+
 import torch
 from pina.utils import check_consistency
 
@@ -80,8 +82,8 @@ class PBCEmbedding(torch.nn.Module):
 
         # checks on the periods
         if isinstance(periods, dict):
-            if not all(isinstance(dim, (str, int)) and 
-                       isinstance(period, (float, int)) 
+            if not all(isinstance(dim, (str, int)) and
+                       isinstance(period, (float, int))
                        for dim, period in periods.items()):
                 raise TypeError('In dictionary periods, keys must be integers'
                                 ' or strings, and values must be float or int.')
@@ -98,14 +100,14 @@ class PBCEmbedding(torch.nn.Module):
         :return: Fourier embeddings of the input.
         :rtype: torch.Tensor
         """
-        self._omega = torch.stack([torch.pi * 2. / torch.tensor([val],
-                                                                device=x.device) 
+        omega = torch.stack([torch.pi * 2. / torch.tensor([val],
+                                                          device=x.device)
                                    for val in self._period.values()],
                                    dim=-1)
         x = self._get_vars(x, list(self._period.keys()))
         return self._layer(torch.cat([torch.ones_like(x),
-                          torch.cos(self._omega * x),
-                          torch.sin(self._omega * x)], dim=-1))
+                          torch.cos(omega * x),
+                          torch.sin(omega * x)], dim=-1))
 
     def _get_vars(self, x, indeces):
         """
@@ -131,10 +133,10 @@ class PBCEmbedding(torch.nn.Module):
             raise RuntimeError(
                 'Not able to extract right indeces for tensor.'
                 ' For more information refer to warning in the documentation.')
-        
+
     @property
     def period(self):
         """
         The period of the periodic function to approximate.
         """
-        return 2 * torch.pi / self._omega
+        return self._period
