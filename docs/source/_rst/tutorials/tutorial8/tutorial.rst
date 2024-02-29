@@ -38,7 +38,7 @@ minimum PINA version to run this tutorial is the ``0.1``.
     from pina.geometry import CartesianDomain
     
     from pina.problem import ParametricProblem
-    from pina.model.layers import PODLayer
+    from pina.model.layers import PODBlock
     from pina import Condition, LabelTensor, Trainer
     from pina.model import FeedForward
     from pina.solvers import SupervisedSolver
@@ -130,7 +130,7 @@ architecture that takes in input the parameter and return the *modal
 coefficients*, so the reduced dimension representation (the coordinates
 in the POD space). Such latent variable is the projected to the original
 space using the POD modes, which are computed and stored in the
-``PODLayer`` object.
+``PODBlock`` object.
 
 .. code:: ipython3
 
@@ -145,7 +145,7 @@ space using the POD modes, which are computed and stored in the
             """
             super().__init__()
             
-            self.pod = PODLayer(pod_rank)
+            self.pod = PODBlock(pod_rank)
             self.nn = FeedForward(
                 input_dimensions=1,
                 output_dimensions=pod_rank,
@@ -168,8 +168,8 @@ space using the POD modes, which are computed and stored in the
     
         def fit_pod(self, x):
             """
-            Just call the :meth:`pina.model.layers.PODLayer.fit` method of the
-            :attr:`pina.model.layers.PODLayer` attribute.
+            Just call the :meth:`pina.model.layers.PODBlock.fit` method of the
+            :attr:`pina.model.layers.PODBlock` attribute.
             """
             self.pod.fit(x)
 

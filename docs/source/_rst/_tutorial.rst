@@ -38,4 +38,4 @@ Supervised Learning
    :titlesonly:
 
    Unstructured convolutional autoencoder via continuous convolution<tutorials/tutorial4/tutorial.rst>
-
+   POD-NN for reduced order modeling<tutorials/tutorial8/tutorial.rst>

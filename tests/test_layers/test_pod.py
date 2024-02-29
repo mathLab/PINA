@@ -1,22 +1,22 @@
 import torch
 import pytest
 
-from pina.model.layers.pod import PODLayer
+from pina.model.layers.pod import PODBlock
 
 x = torch.linspace(-1, 1, 100)
 toy_snapshots = torch.vstack([torch.exp(-x**2)*c for c in torch.linspace(0, 1, 10)])
 
 def test_constructor():
-    pod = PODLayer(2)
-    pod = PODLayer(2, True)
-    pod = PODLayer(2, False)
+    pod = PODBlock(2)
+    pod = PODBlock(2, True)
+    pod = PODBlock(2, False)
     with pytest.raises(TypeError):
-        pod = PODLayer()
+        pod = PODBlock()
 
 
 @pytest.mark.parametrize("rank", [1, 2, 10])
 def test_fit(rank, scale):
-    pod = PODLayer(rank, scale)
+    pod = PODBlock(rank, scale)
     assert pod._basis == None
     assert pod.basis == None
     assert pod._scaler == None
@@ -26,7 +26,7 @@ def test_fit(rank, scale):
 @pytest.mark.parametrize("scale", [True, False])
 @pytest.mark.parametrize("rank", [1, 2, 10])
 def test_fit(rank, scale):
-    pod = PODLayer(rank, scale)
+    pod = PODBlock(rank, scale)
     pod.fit(toy_snapshots)
     n_snap = toy_snapshots.shape[0]
     dof = toy_snapshots.shape[1]
@@ -43,7 +43,7 @@ def test_fit(rank, scale):
         assert pod.scaler == None
 
 def test_forward():
-    pod = PODLayer(1)
+    pod = PODBlock(1)
     pod.fit(toy_snapshots)
     c = pod(toy_snapshots)
     assert c.shape[0] == toy_snapshots.shape[0]
@@ -55,7 +55,7 @@ def test_forward():
     assert c.shape[1] == pod.rank
     assert c.shape[0] == 1
 
-    pod = PODLayer(2, False)
+    pod = PODBlock(2, False)
     pod.fit(toy_snapshots)
     c = pod(toy_snapshots)
     torch.testing.assert_close(c, (pod.basis @ toy_snapshots.T).T)
@@ -66,7 +66,7 @@ def test_forward():
 @pytest.mark.parametrize("scale", [True, False])
 @pytest.mark.parametrize("rank", [1, 2, 10])
 def test_expand(rank, scale):
-    pod = PODLayer(rank, scale)
+    pod = PODBlock(rank, scale)
     pod.fit(toy_snapshots)
     c = pod(toy_snapshots)
     torch.testing.assert_close(pod.expand(c), toy_snapshots)
@@ -75,7 +75,7 @@ def test_expand(rank, scale):
 @pytest.mark.parametrize("scale", [True, False])
 @pytest.mark.parametrize("rank", [1, 2, 10])
 def test_reduce_expand(rank, scale):
-    pod = PODLayer(rank, scale)
+    pod = PODBlock(rank, scale)
     pod.fit(toy_snapshots)
     torch.testing.assert_close(
         pod.expand(pod.reduce(toy_snapshots)),
