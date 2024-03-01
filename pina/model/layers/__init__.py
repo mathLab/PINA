@@ -9,7 +9,7 @@ __all__ = [
     "FourierBlock2D",
     "FourierBlock3D",
     "PODBlock",
-    "PBCEmbedding"
+    "PeriodicBoundaryEmbedding"
 ]
 
 from .convolution_2d import ContinuousConvBlock
@@ -21,4 +21,4 @@ from .spectral import (
 )
 from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
 from .pod import PODBlock
-from .embedding import PBCEmbedding
+from .embedding import PeriodicBoundaryEmbedding

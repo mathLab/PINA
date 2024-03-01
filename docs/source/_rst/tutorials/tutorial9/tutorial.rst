@@ -19,7 +19,7 @@ First of all, some useful imports.
     from pina.problem import SpatialProblem
     from pina.operators import laplacian
     from pina.model import FeedForward
-    from pina.model.layers import PBCEmbedding  # The PBC module
+    from pina.model.layers import PeriodicBoundaryEmbedding  # The PBC module
     from pina.solvers import PINN
     from pina.trainer import Trainer
     from pina.geometry import CartesianDomain
@@ -111,16 +111,16 @@ resulting neural network obtained by composing :math:`f` with :math:`v`
 gives the PINN approximate solution, that is
 :math:`u(x) \approx u_{\theta}(x)=NN_{\theta}(v(x))`.
 
-In **PINA** this translates in using the ``PBCEmbedding`` layer for
+In **PINA** this translates in using the ``PeriodicBoundaryEmbedding`` layer for
 :math:`v`, and any ``pina.model`` for :math:`NN_{\theta}`. Let’s see it
 in action!
 
 .. code:: ipython3
 
     # we encapsulate all modules in a torch.nn.Sequential container
-    model = torch.nn.Sequential(PBCEmbedding(input_dimension=1,
+    model = torch.nn.Sequential(PeriodicBoundaryEmbedding(input_dimension=1,
                                              periods=2),
-                                FeedForward(input_dimensions=3, # output of PBCEmbedding = 3 * input_dimension
+                                FeedForward(input_dimensions=3, # output of PeriodicBoundaryEmbedding = 3 * input_dimension
                                             output_dimensions=1,
                                             layers=[10, 10]))
 
@@ -218,7 +218,7 @@ Nice you have completed the one dimensional Helmotz tutorial of
 1. Train the network for longer or with different layer sizes and assert
    the finaly accuracy
 
-2. Apply the ``PBCEmbedding`` layer for a time-dependent problem (see
+2. Apply the ``PeriodicBoundaryEmbedding`` layer for a time-dependent problem (see
    reference in the documentation)
 
 3. Exploit extrafeature training ?

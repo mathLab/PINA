@@ -1,7 +1,7 @@
 import torch
 import pytest
 
-from pina.model.layers.embedding import PBCEmbedding
+from pina.model.layers import PeriodicBoundaryEmbedding
 from pina import LabelTensor
 
 def check_same_columns(tensor):
@@ -20,24 +20,24 @@ def grad(u, x):
                                retain_graph=True)[0]
 
 def test_constructor():
-    PBCEmbedding(input_dimension=1, periods=2)
-    PBCEmbedding(input_dimension=1, periods={'x': 3, 'y' : 4})
-    PBCEmbedding(input_dimension=1, periods={0: 3, 1 : 4})
-    PBCEmbedding(input_dimension=1, periods=2, output_dimension=10)
+    PeriodicBoundaryEmbedding(input_dimension=1, periods=2)
+    PeriodicBoundaryEmbedding(input_dimension=1, periods={'x': 3, 'y' : 4})
+    PeriodicBoundaryEmbedding(input_dimension=1, periods={0: 3, 1 : 4})
+    PeriodicBoundaryEmbedding(input_dimension=1, periods=2, output_dimension=10)
     with pytest.raises(TypeError):
-        PBCEmbedding()
+        PeriodicBoundaryEmbedding()
     with pytest.raises(ValueError):
-        PBCEmbedding(input_dimension=1., periods=1)
-        PBCEmbedding(input_dimension=1, periods=1, output_dimension=1.)
-        PBCEmbedding(input_dimension=1, periods={'x':'x'})
-        PBCEmbedding(input_dimension=1, periods={0:'x'})
+        PeriodicBoundaryEmbedding(input_dimension=1., periods=1)
+        PeriodicBoundaryEmbedding(input_dimension=1, periods=1, output_dimension=1.)
+        PeriodicBoundaryEmbedding(input_dimension=1, periods={'x':'x'})
+        PeriodicBoundaryEmbedding(input_dimension=1, periods={0:'x'})
 
 
 @pytest.mark.parametrize("period", [1, 4, 10])
 @pytest.mark.parametrize("input_dimension", [1, 2, 3])
 def test_forward_same_period(input_dimension, period):
     func = torch.nn.Sequential(
-        PBCEmbedding(input_dimension=input_dimension,
+        PeriodicBoundaryEmbedding(input_dimension=input_dimension,
                      output_dimension=60, periods=period),
         torch.nn.Tanh(),
         torch.nn.Linear(60, 60),
@@ -59,7 +59,7 @@ def test_forward_same_period(input_dimension, period):
 
 def test_forward_same_period_labels():
     func = torch.nn.Sequential(
-        PBCEmbedding(input_dimension=2,
+        PeriodicBoundaryEmbedding(input_dimension=2,
                      output_dimension=60, periods={'x':1, 'y':2}),
         torch.nn.Tanh(),
         torch.nn.Linear(60, 60),
@@ -79,7 +79,7 @@ def test_forward_same_period_labels():
 
 def test_forward_same_period_index():
     func = torch.nn.Sequential(
-        PBCEmbedding(input_dimension=2,
+        PeriodicBoundaryEmbedding(input_dimension=2,
                      output_dimension=60, periods={0:1, 1:2}),
         torch.nn.Tanh(),
         torch.nn.Linear(60, 60),

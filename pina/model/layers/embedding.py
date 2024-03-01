@@ -1,10 +1,10 @@
-""" Embedding modulus. """
+""" Periodic Boundary Embedding modulus. """
 
 import torch
 from pina.utils import check_consistency
 
 
-class PBCEmbedding(torch.nn.Module):
+class PeriodicBoundaryEmbedding(torch.nn.Module):
     r"""
     Imposing hard constraint periodic boundary conditions by embedding the
     input. 
@@ -17,7 +17,7 @@ class PBCEmbedding(torch.nn.Module):
         u(\mathbf{x})  = u(\mathbf{x} + n \mathbf{L})\;\;
         \forall n\in\mathbb{N}.
 
-    The :meth:`PBCEmbedding` augments the input such that the periodic conditons
+    The :meth:`PeriodicBoundaryEmbedding` augments the input such that the periodic conditons
     is guarantee. The input is augmented by the following formula:
 
     .. math::
