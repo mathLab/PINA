@@ -68,7 +68,8 @@ Layers
     Spectral convolution <layers/spectral.rst>
     Fourier layers <layers/fourier.rst>
     Continuous convolution <layers/convolution.rst>
-    Coordinates embeddings <layers/embedding.rst>
+    Proper Orthogonal Decomposition <layers/pod.rst>
+    Periodic Boundary Condition embeddings <layers/embedding.rst>
     
 
 Equations and Operators
