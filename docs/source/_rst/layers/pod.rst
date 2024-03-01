@@ -1,15 +1,7 @@
-Spectral Convolution
+PODBlock
 ======================
-.. currentmodule:: pina.model.layers.spectral
+.. currentmodule:: pina.model.layers.pod
     
-.. autoclass:: SpectralConvBlock1D
-    :members:
-    :show-inheritance:
-
-.. autoclass:: SpectralConvBlock2D
-    :members:
-    :show-inheritance:
-
-.. autoclass:: SpectralConvBlock3D
+.. autoclass:: PODBlock
     :members:
     :show-inheritance:

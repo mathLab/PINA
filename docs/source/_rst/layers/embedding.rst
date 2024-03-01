@@ -1,8 +1,8 @@
-Coordinates embeddings
-======================
+Periodic Boundary Condition embeddings
+=======================================
 .. currentmodule:: pina.model.layers.embedding
     
-.. autoclass:: PBCEmbedding
+.. autoclass:: PeriodicBoundaryEmbedding
     :members:
     :show-inheritance:
 
