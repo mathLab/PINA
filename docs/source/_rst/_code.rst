@@ -68,6 +68,7 @@ Layers
     Spectral convolution <layers/spectral.rst>
     Fourier layers <layers/fourier.rst>
     Continuous convolution <layers/convolution.rst>
+    Coordinates embeddings <layers/embedding.rst>
     
 
 Equations and Operators
