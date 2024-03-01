@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.model.layers.spectral &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>pina.model.layers.spectral &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -126,18 +128,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span> <span class="o">=</span> <span class="n">output_numb_fields</span>
 
         <span class="c1"># scaling factor</span>
-        <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
-                                                        <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                                                        <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">,</span>
-                                                        <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">))</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">scale</span>
+            <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_compute_mult1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the matrix multiplication of the input</span>
 <span class="sd">        with the linear kernel weights.</span>
 
-<span class="sd">        :param input: The input tensor, expect of size </span>
+<span class="sd">        :param input: The input tensor, expect of size</span>
 <span class="sd">            ``[batch, input_numb_fields, x]``.</span>
 <span class="sd">        :type input: torch.Tensor</span>
 <span class="sd">        :param weights: The kernel weights, expect of</span>
@@ -153,7 +160,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Forward computation for Spectral Convolution.</span>
 
-<span class="sd">        :param x: The input tensor, expect of size </span>
+<span class="sd">        :param x: The input tensor, expect of size</span>
 <span class="sd">            ``[batch, input_numb_fields, x]``.</span>
 <span class="sd">        :type x: torch.Tensor</span>
 <span class="sd">        :return: The output tensor obtained from the</span>
@@ -166,13 +173,16 @@
         <span class="n">x_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="c1"># Multiply relevant Fourier modes</span>
-        <span class="n">out_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span>
-                             <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                             <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-                             <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
-                             <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">)</span>
-        <span class="n">out_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_mult1d</span><span class="p">(</span>
-            <span class="n">x_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">)</span>
+        <span class="n">out_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">out_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_mult1d</span><span class="p">(</span>
+            <span class="n">x_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span>
+        <span class="p">)</span>
 
         <span class="c1"># Return to physical space</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfft</span><span class="p">(</span><span class="n">out_ft</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span></div></div>
@@ -208,17 +218,19 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_modes</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_modes</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s1">&#39;Expected n_modes to be a list or tuple of len two, &#39;</span>
-                    <span class="s1">&#39;with each entry corresponding to the number of modes &#39;</span>
-                    <span class="s1">&#39;for each dimension &#39;</span><span class="p">)</span>
+                    <span class="s2">&quot;Expected n_modes to be a list or tuple of len two, &quot;</span>
+                    <span class="s2">&quot;with each entry corresponding to the number of modes &quot;</span>
+                    <span class="s2">&quot;for each dimension &quot;</span>
+                <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_modes</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">n_modes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n_modes</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;Expected n_modes to be a list or tuple of len two, &#39;</span>
-                <span class="s1">&#39;with each entry corresponding to the number of modes &#39;</span>
-                <span class="s1">&#39;for each dimension; or an int value representing the &#39;</span>
-                <span class="s1">&#39;number of modes for all dimensions&#39;</span><span class="p">)</span>
+                <span class="s2">&quot;Expected n_modes to be a list or tuple of len two, &quot;</span>
+                <span class="s2">&quot;with each entry corresponding to the number of modes &quot;</span>
+                <span class="s2">&quot;for each dimension; or an int value representing the &quot;</span>
+                <span class="s2">&quot;number of modes for all dimensions&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># assign variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span> <span class="o">=</span> <span class="n">n_modes</span>
@@ -226,24 +238,34 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span> <span class="o">=</span> <span class="n">output_numb_fields</span>
 
         <span class="c1"># scaling factor</span>
-        <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weights1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                                         <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weights2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                                         <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">))</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">scale</span>
+            <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">scale</span>
+            <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_compute_mult2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the matrix multiplication of the input</span>
 <span class="sd">        with the linear kernel weights.</span>
 
-<span class="sd">        :param input: The input tensor, expect of size </span>
+<span class="sd">        :param input: The input tensor, expect of size</span>
 <span class="sd">            ``[batch, input_numb_fields, x, y]``.</span>
 <span class="sd">        :type input: torch.Tensor</span>
 <span class="sd">        :param weights: The kernel weights, expect of</span>
@@ -259,7 +281,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Forward computation for Spectral Convolution.</span>
 
-<span class="sd">        :param x: The input tensor, expect of size </span>
+<span class="sd">        :param x: The input tensor, expect of size</span>
 <span class="sd">            ``[batch, input_numb_fields, x, y]``.</span>
 <span class="sd">        :type x: torch.Tensor</span>
 <span class="sd">        :return: The output tensor obtained from the</span>
@@ -273,16 +295,22 @@
         <span class="n">x_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="c1"># Multiply relevant Fourier modes</span>
-        <span class="n">out_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span>
-                             <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                             <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span>
-                             <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-                             <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
-                             <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">)</span>
-        <span class="n">out_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_mult2d</span><span class="p">(</span>
-            <span class="n">x_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights1</span><span class="p">)</span>
-        <span class="n">out_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">]:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">]:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_mult2d</span><span class="p">(</span>
-            <span class="n">x_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">]:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights2</span><span class="p">)</span>
+        <span class="n">out_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">out_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_mult2d</span><span class="p">(</span>
+            <span class="n">x_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights1</span>
+        <span class="p">)</span>
+        <span class="n">out_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compute_mult2d</span><span class="p">(</span>
+                <span class="n">x_ft</span><span class="p">[:,</span> <span class="p">:,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights2</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># Return to physical space</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfft2</span><span class="p">(</span><span class="n">out_ft</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span></div></div>
@@ -319,17 +347,19 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_modes</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_modes</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s1">&#39;Expected n_modes to be a list or tuple of len three, &#39;</span>
-                    <span class="s1">&#39;with each entry corresponding to the number of modes &#39;</span>
-                    <span class="s1">&#39;for each dimension &#39;</span><span class="p">)</span>
+                    <span class="s2">&quot;Expected n_modes to be a list or tuple of len three, &quot;</span>
+                    <span class="s2">&quot;with each entry corresponding to the number of modes &quot;</span>
+                    <span class="s2">&quot;for each dimension &quot;</span>
+                <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_modes</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">n_modes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n_modes</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;Expected n_modes to be a list or tuple of len three, &#39;</span>
-                <span class="s1">&#39;with each entry corresponding to the number of modes &#39;</span>
-                <span class="s1">&#39;for each dimension; or an int value representing the &#39;</span>
-                <span class="s1">&#39;number of modes for all dimensions&#39;</span><span class="p">)</span>
+                <span class="s2">&quot;Expected n_modes to be a list or tuple of len three, &quot;</span>
+                <span class="s2">&quot;with each entry corresponding to the number of modes &quot;</span>
+                <span class="s2">&quot;for each dimension; or an int value representing the &quot;</span>
+                <span class="s2">&quot;number of modes for all dimensions&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># assign variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span> <span class="o">=</span> <span class="n">n_modes</span>
@@ -337,38 +367,58 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span> <span class="o">=</span> <span class="n">output_numb_fields</span>
 
         <span class="c1"># scaling factor</span>
-        <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weights1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                                                         <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weights2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                                                         <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weights3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                                                         <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weights4</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                                                         <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">))</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">scale</span>
+            <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">scale</span>
+            <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">scale</span>
+            <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weights4</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">scale</span>
+            <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_compute_mult3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the matrix multiplication of the input</span>
 <span class="sd">        with the linear kernel weights.</span>
 
-<span class="sd">        :param input: The input tensor, expect of size </span>
+<span class="sd">        :param input: The input tensor, expect of size</span>
 <span class="sd">            ``[batch, input_numb_fields, x, y, z]``.</span>
 <span class="sd">        :type input: torch.Tensor</span>
 <span class="sd">        :param weights: The kernel weights, expect of</span>
@@ -384,7 +434,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Forward computation for Spectral Convolution.</span>
 
-<span class="sd">        :param x: The input tensor, expect of size </span>
+<span class="sd">        :param x: The input tensor, expect of size</span>
 <span class="sd">            ``[batch, input_numb_fields, x, y, z]``.</span>
 <span class="sd">        :type x: torch.Tensor</span>
 <span class="sd">        :return: The output tensor obtained from the</span>
@@ -398,13 +448,15 @@
         <span class="n">x_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfftn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="c1"># Multiply relevant Fourier modes</span>
-        <span class="n">out_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span>
-                             <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
-                             <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">),</span>
-                             <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span>
-                             <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-                             <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
-                             <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">)</span>
+        <span class="n">out_ft</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_channels</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">cfloat</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="n">slice0</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
@@ -453,8 +505,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

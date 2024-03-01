@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.model.deeponet &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.model.deeponet &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -88,6 +90,7 @@
              
   <h1>Source code for pina.model.deeponet</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module for DeepONet model&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span><span class="p">,</span> <span class="n">is_function</span>
@@ -113,12 +116,14 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">networks</span><span class="p">,</span>
-                 <span class="n">aggregator</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
-                 <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
-                 <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">translation</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">networks</span><span class="p">,</span>
+        <span class="n">aggregator</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">translation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param dict networks: The neural networks to use as</span>
 <span class="sd">            models. The ``dict`` takes as key a neural network, and</span>
@@ -210,8 +215,9 @@
             <span class="n">shapes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="n">shapes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shapes</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The passed networks have not the same &#39;</span>
-                             <span class="s1">&#39;output dimension.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The passed networks have not the same &quot;</span> <span class="s2">&quot;output dimension.&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># assign trunk and branch net with their input indeces</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">networks</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -222,10 +228,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_reduction</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
 
         <span class="c1"># scale and translation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-            <span class="p">[</span><span class="mf">1.0</span><span class="p">]))</span> <span class="k">if</span> <span class="n">scale</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_trasl</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-            <span class="p">[</span><span class="mf">1.0</span><span class="p">]))</span> <span class="k">if</span> <span class="n">translation</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">scale</span>
+            <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trasl</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">translation</span>
+            <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+        <span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_symbol_functions</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -269,16 +281,18 @@
                 <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">indeces</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s1">&#39;Not possible to extract input variables from tensor.&#39;</span>
-                    <span class="s1">&#39; Ensure that the passed tensor is a LabelTensor or&#39;</span>
-                    <span class="s1">&#39; pass list of integers to extract variables. For&#39;</span>
-                    <span class="s1">&#39; more information refer to warning in the documentation.&#39;</span><span class="p">)</span>
+                    <span class="s2">&quot;Not possible to extract input variables from tensor.&quot;</span>
+                    <span class="s2">&quot; Ensure that the passed tensor is a LabelTensor or&quot;</span>
+                    <span class="s2">&quot; pass list of integers to extract variables. For&quot;</span>
+                    <span class="s2">&quot; more information refer to warning in the documentation.&quot;</span>
+                <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indeces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">indeces</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s1">&#39;Not able to extract right indeces for tensor.&#39;</span>
-                <span class="s1">&#39; For more information refer to warning in the documentation.&#39;</span><span class="p">)</span>
+                <span class="s2">&quot;Not able to extract right indeces for tensor.&quot;</span>
+                <span class="s2">&quot; For more information refer to warning in the documentation.&quot;</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="MIONet.forward"><a class="viewcode-back" href="../../../_rst/models/mionet.html#pina.model.deeponet.MIONet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -286,7 +300,7 @@
 
 <span class="sd">        :param LabelTensor or torch.Tensor x: The input tensor for the forward call.</span>
 <span class="sd">        :return: The output computed by the DeepONet model.</span>
-<span class="sd">        :rtype: LabelTensor or torch.Tensor </span>
+<span class="sd">        :rtype: LabelTensor or torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># forward pass</span>
@@ -356,7 +370,7 @@
 
 <span class="sd">    DeepONet is a general architecture for learning Operators. Unlike</span>
 <span class="sd">    traditional machine learning methods DeepONet is designed to map</span>
-<span class="sd">    entire functions to other functions. It can be trained both with </span>
+<span class="sd">    entire functions to other functions. It can be trained both with</span>
 <span class="sd">    Physics Informed or Supervised learning strategies.</span>
 
 <span class="sd">    .. seealso::</span>
@@ -369,15 +383,17 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">branch_net</span><span class="p">,</span>
-                 <span class="n">trunk_net</span><span class="p">,</span>
-                 <span class="n">input_indeces_branch_net</span><span class="p">,</span>
-                 <span class="n">input_indeces_trunk_net</span><span class="p">,</span>
-                 <span class="n">aggregator</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
-                 <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
-                 <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">translation</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">branch_net</span><span class="p">,</span>
+        <span class="n">trunk_net</span><span class="p">,</span>
+        <span class="n">input_indeces_branch_net</span><span class="p">,</span>
+        <span class="n">input_indeces_trunk_net</span><span class="p">,</span>
+        <span class="n">aggregator</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">translation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param torch.nn.Module branch_net: The neural network to use as branch</span>
 <span class="sd">            model. It has to take as input a :py:obj:`pina.label_tensor.LabelTensor`</span>
@@ -452,14 +468,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">networks</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">branch_net</span><span class="p">:</span> <span class="n">input_indeces_branch_net</span><span class="p">,</span>
-            <span class="n">trunk_net</span><span class="p">:</span> <span class="n">input_indeces_trunk_net</span>
+            <span class="n">trunk_net</span><span class="p">:</span> <span class="n">input_indeces_trunk_net</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">networks</span><span class="o">=</span><span class="n">networks</span><span class="p">,</span>
-                         <span class="n">aggregator</span><span class="o">=</span><span class="n">aggregator</span><span class="p">,</span>
-                         <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">,</span>
-                         <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
-                         <span class="n">translation</span><span class="o">=</span><span class="n">translation</span><span class="p">)</span>
-        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">networks</span><span class="o">=</span><span class="n">networks</span><span class="p">,</span>
+            <span class="n">aggregator</span><span class="o">=</span><span class="n">aggregator</span><span class="p">,</span>
+            <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span>
+            <span class="n">translation</span><span class="o">=</span><span class="n">translation</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="DeepONet.forward"><a class="viewcode-back" href="../../../_rst/models/deeponet.html#pina.model.deeponet.DeepONet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -467,10 +484,9 @@
 
 <span class="sd">        :param LabelTensor or torch.Tensor x: The input tensor for the forward call.</span>
 <span class="sd">        :return: The output computed by the DeepONet model.</span>
-<span class="sd">        :rtype: LabelTensor or torch.Tensor </span>
+<span class="sd">        :rtype: LabelTensor or torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
-
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">branch_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -494,8 +510,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

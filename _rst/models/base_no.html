@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KernelNeuralOperator &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="FeedForward" href="fnn.html" />
+    <link rel="prev" title="Network" href="network.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0.post2403
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../_code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#pina-features">PINA Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#solvers">Solvers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../_code.html#models">Models</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">KernelNeuralOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fnn.html">FeedForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multifeedforward.html">MultiFeedForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fnn_residual.html">ResidualFeedForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mionet.html">MIONet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fourier_kernel.html">FourierIntegralKernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fno.html">FNO</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometry-set-operations">Geometry set operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#metrics-and-losses">Metrics and Losses</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../_code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">KernelNeuralOperator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/_rst/models/base_no.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="kernelneuraloperator">
+<h1>KernelNeuralOperator<a class="headerlink" href="#kernelneuraloperator" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pina.model.base_no.KernelNeuralOperator">
+<em class="property">class </em><code class="sig-name descname">KernelNeuralOperator</code><span class="sig-paren">(</span><em class="sig-param">lifting_operator</em>, <em class="sig-param">integral_kernels</em>, <em class="sig-param">projection_operator</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/base_no.html#KernelNeuralOperator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.base_no.KernelNeuralOperator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<p>Base class for composing Neural Operators with integral kernels.</p>
+<p>This is a base class for composing neural operators with multiple
+integral kernels. All neural operator models defined in PINA inherit
+from this class. The structure is inspired by the work of Kovachki, N.
+et al. see Figure 2 of the reference for extra details. The Neural
+Operators inheriting from this class can be written as:</p>
+<div class="math notranslate nohighlight">
+\[G_\theta  := P \circ K_m \circ \cdot \circ K_1 \circ L\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(G_\theta: \mathcal{A}\subset \mathbb{R}^{\rm{in}} \rightarrow
+\mathcal{D}\subset \mathbb{R}^{\rm{out}}\)</span> is the neural operator
+approximation of the unknown real operator <span class="math notranslate nohighlight">\(G\)</span>, that is
+<span class="math notranslate nohighlight">\(G \approx G_\theta\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(L: \mathcal{A}\subset \mathbb{R}^{\rm{in}} \rightarrow
+\mathbb{R}^{\rm{emb}}\)</span> is a lifting operator mapping the input
+from its domain <span class="math notranslate nohighlight">\(\mathcal{A}\subset \mathbb{R}^{\rm{in}}\)</span>
+to its embedding dimension <span class="math notranslate nohighlight">\(\mathbb{R}^{\rm{emb}}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\{K_i : \mathbb{R}^{\rm{emb}} \rightarrow
+\mathbb{R}^{\rm{emb}} \}_{i=1}^m\)</span> are <span class="math notranslate nohighlight">\(m\)</span> integral kernels
+mapping each hidden representation to the next one.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P : \mathbb{R}^{\rm{emb}} \rightarrow  \mathcal{D}\subset
+\mathbb{R}^{\rm{out}}\)</span> is a projection operator mapping the hidden
+representation to the output function.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><strong>Original reference</strong>: Kovachki, N., Li, Z., Liu, B.,
+Azizzadenesheli, K., Bhattacharya, K., Stuart, A., &amp; Anandkumar, A.
+(2023). <em>Neural operator: Learning maps between function
+spaces with applications to PDEs</em>. Journal of Machine Learning
+Research, 24(89), 1-97.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lifting_operator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The lifting operator
+mapping the input to its hidden dimension.</p></li>
+<li><p><strong>integral_kernels</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – List of integral kernels
+mapping each hidden representation to the next one.</p></li>
+<li><p><strong>projection_operator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The projection operator
+mapping the hidden representation to the output function.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pina.model.base_no.KernelNeuralOperator.lifting_operator">
+<em class="property">property </em><code class="sig-name descname">lifting_operator</code><a class="headerlink" href="#pina.model.base_no.KernelNeuralOperator.lifting_operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>The lifting operator property.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.model.base_no.KernelNeuralOperator.projection_operator">
+<em class="property">property </em><code class="sig-name descname">projection_operator</code><a class="headerlink" href="#pina.model.base_no.KernelNeuralOperator.projection_operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>The projection operator property.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.model.base_no.KernelNeuralOperator.integral_kernels">
+<em class="property">property </em><code class="sig-name descname">integral_kernels</code><a class="headerlink" href="#pina.model.base_no.KernelNeuralOperator.integral_kernels" title="Permalink to this definition">¶</a></dt>
+<dd><p>The integral kernels operator property.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.model.base_no.KernelNeuralOperator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/base_no.html#KernelNeuralOperator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.base_no.KernelNeuralOperator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward computation for Base Neural Operator. It performs a
+lifting of the input by the <code class="docutils literal notranslate"><span class="pre">lifting_operator</span></code>.
+Then different layers integral kernels are applied using
+<code class="docutils literal notranslate"><span class="pre">integral_kernels</span></code>. Finally the output is projected
+to the final dimensionality by the <code class="docutils literal notranslate"><span class="pre">projection_operator</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – The input tensor for performing the
+computation. It expects a tensor <span class="math notranslate nohighlight">\(B \times N \times D\)</span>,
+where <span class="math notranslate nohighlight">\(B\)</span> is the batch_size, <span class="math notranslate nohighlight">\(N\)</span> the number of points
+in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimension of the problem. In particular
+<span class="math notranslate nohighlight">\(D\)</span> is the number of spatial/paramtric/temporal variables
+plus the field variables. For example for 2D problems with 2
+outputvariables <span class="math notranslate nohighlight">\(D=4\)</span>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output tensor obtained from the NO.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="network.html" class="btn btn-neutral float-left" title="Network" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fnn.html" class="btn btn-neutral float-right" title="FeedForward" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

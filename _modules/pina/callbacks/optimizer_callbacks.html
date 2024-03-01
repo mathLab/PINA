@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.callbacks.optimizer_callbacks &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.callbacks.optimizer_callbacks &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -87,7 +89,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pina.callbacks.optimizer_callbacks</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39;PINA Callbacks Implementations&#39;&#39;&#39;</span>
+<span></span><span class="sd">&quot;&quot;&quot;PINA Callbacks Implementations&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -103,7 +105,7 @@
 <span class="sd">        This callback allows for switching between different optimizers during training, enabling</span>
 <span class="sd">        the exploration of multiple optimization strategies without the need to stop training.</span>
 
-<span class="sd">        :param new_optimizers: The model optimizers to switch to. Can be a single </span>
+<span class="sd">        :param new_optimizers: The model optimizers to switch to. Can be a single</span>
 <span class="sd">                            :class:`torch.optim.Optimizer` or a list of them for multiple model solvers.</span>
 <span class="sd">        :type new_optimizers: torch.optim.Optimizer | list</span>
 <span class="sd">        :param new_optimizers_kwargs: The keyword arguments for the new optimizers. Can be a single dictionary</span>
@@ -112,7 +114,7 @@
 <span class="sd">        :param epoch_switch: The epoch at which to switch to the new optimizer.</span>
 <span class="sd">        :type epoch_switch: int</span>
 
-<span class="sd">        :raises ValueError: If `epoch_switch` is less than 1 or if there is a mismatch in the number of </span>
+<span class="sd">        :raises ValueError: If `epoch_switch` is less than 1 or if there is a mismatch in the number of</span>
 <span class="sd">                            optimizers and their corresponding keyword argument dictionaries.</span>
 
 <span class="sd">        Example:</span>
@@ -128,7 +130,7 @@
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">epoch_switch</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">epoch_switch</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;epoch_switch must be greater than one.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;epoch_switch must be greater than one.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_optimizers</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">new_optimizers</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_optimizers</span><span class="p">]</span>
@@ -137,10 +139,12 @@
         <span class="n">len_optimizer_kwargs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_optimizers_kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">len_optimizer_kwargs</span> <span class="o">!=</span> <span class="n">len_optimizer</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You must define one dictionary of keyword&#39;</span>
-                             <span class="s1">&#39; arguments for each optimizers.&#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39; Got </span><span class="si">{len_optimizer}</span><span class="s1"> optimizers, and&#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{len_optimizer_kwargs}</span><span class="s1"> dicitionaries&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;You must define one dictionary of keyword&quot;</span>
+                <span class="s2">&quot; arguments for each optimizers.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Got </span><span class="si">{len_optimizer}</span><span class="s2"> optimizers, and&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{len_optimizer_kwargs}</span><span class="s2"> dicitionaries&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># save new optimizers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_new_optimizers</span> <span class="o">=</span> <span class="n">new_optimizers</span>
@@ -161,10 +165,13 @@
         <span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_switch</span><span class="p">:</span>
             <span class="n">optims</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">optim</span><span class="p">,</span> <span class="n">optim_kwargs</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                    <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_new_optimizers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_optimizers_kwargs</span><span class="p">)):</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_new_optimizers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_optimizers_kwargs</span><span class="p">)</span>
+            <span class="p">):</span>
                 <span class="n">optims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">optim</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
-                          <span class="o">**</span><span class="n">optim_kwargs</span><span class="p">))</span>
+                    <span class="n">optim</span><span class="p">(</span>
+                        <span class="n">trainer</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="o">**</span><span class="n">optim_kwargs</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
 
             <span class="n">trainer</span><span class="o">.</span><span class="n">optimizers</span> <span class="o">=</span> <span class="n">optims</span></div></div>
 </pre></div>
@@ -176,8 +183,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

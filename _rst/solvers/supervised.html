@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SupervisedSolver &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>SupervisedSolver &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -37,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -119,13 +121,13 @@ using a user specified <code class="docutils literal notranslate"><span class="p
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>problem</strong> (<a class="reference internal" href="../problem/abstractproblem.html#pina.problem.abstract_problem.AbstractProblem" title="pina.problem.abstract_problem.AbstractProblem"><em>AbstractProblem</em></a>) – The formualation of the problem.</p></li>
-<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a>) – The neural network model to use.</p></li>
-<li><p><strong>loss</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a>) – The loss function used as minimizer,
-default <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html#torch.nn.MSELoss" title="(in PyTorch v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.MSELoss</span></code></a>.</p></li>
-<li><p><strong>extra_features</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a>) – The additional input
+<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The neural network model to use.</p></li>
+<li><p><strong>loss</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The loss function used as minimizer,
+default <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html#torch.nn.MSELoss" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.MSELoss</span></code></a>.</p></li>
+<li><p><strong>extra_features</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The additional input
 features to use as augmented input.</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.1)"><em>torch.optim.Optimizer</em></a>) – The neural network optimizer to
-use; default is <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam" title="(in PyTorch v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.Adam</span></code></a>.</p></li>
+<li><p><strong>optimizer</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.2)"><em>torch.optim.Optimizer</em></a>) – The neural network optimizer to
+use; default is <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.Adam</span></code></a>.</p></li>
 <li><p><strong>optimizer_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Optimizer constructor keyword args.</p></li>
 <li><p><strong>lr</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The learning rate; default is 0.001.</p></li>
 <li><p><strong>scheduler</strong> (<em>torch.optim.LRScheduler</em>) – Learning
@@ -140,13 +142,13 @@ rate scheduler.</p></li>
 <dd><p>Forward pass implementation for the solver.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – Input tensor.</p>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – Input tensor.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Solver solution.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -218,8 +220,8 @@ rate scheduler.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

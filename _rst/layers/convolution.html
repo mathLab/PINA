@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Continuous convolution &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>Continuous convolution &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -37,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -142,7 +144,7 @@ Comput Mech 72, 253–265 (2023). DOI <a class="reference external" href="https:
 <li><p><strong>output_numb_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of fields <span class="math notranslate nohighlight">\(N_{out}\)</span>  in the output.</p></li>
 <li><p><strong>filter_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>) </em><em>| list</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>)</em>) – Dimension of the filter.</p></li>
 <li><p><strong>stride</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Stride for the filter.</p></li>
-<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><em>torch.nn.Module</em></a>) – Neural network for inner parametrization,
+<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – Neural network for inner parametrization,
 defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>. If None, a default multilayer perceptron
 of width three and size twenty with ReLU activation is used.</p></li>
 <li><p><strong>optimize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Flag for performing optimization on the continuous
@@ -215,13 +217,13 @@ filter can be used for both <cite>transpose</cite> and <cite>forward</cite> mode
 <dd><p>Forward pass in the convolutional layer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – Input data for the convolution <span class="math notranslate nohighlight">\([B, N_{in}, N,  D]\)</span>.</p>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – Input data for the convolution <span class="math notranslate nohighlight">\([B, N_{in}, N,  D]\)</span>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Convolution output <span class="math notranslate nohighlight">\([B, N_{out}, N,  D]\)</span>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -238,7 +240,7 @@ filter can be used for both <cite>transpose</cite> and <cite>forward</cite> mode
 where B is the batch_size, :math`N_{in}` is the number of input
 fields, <span class="math notranslate nohighlight">\(N\)</span> the number of points in the mesh, D the dimension
 of the problem.</p></li>
-<li><p><strong>X</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – Input data. Expect tensor of shape
+<li><p><strong>X</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – Input data. Expect tensor of shape
 <span class="math notranslate nohighlight">\([B, N_{in}, M,  D]\)</span> where <span class="math notranslate nohighlight">\(B\)</span> is the batch_size,
 :math`N_{in}`is the number of input fields, <span class="math notranslate nohighlight">\(M\)</span> the number of points
 in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimension of the problem.</p></li>
@@ -251,7 +253,7 @@ in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimensi
 in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimension of the problem.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -273,7 +275,7 @@ method is used and <code class="docutils literal notranslate"><span class="pre">
 where B is the batch_size, :math`N_{in}` is the number of input
 fields, <span class="math notranslate nohighlight">\(N\)</span> the number of points in the mesh, D the dimension
 of the problem.</p></li>
-<li><p><strong>X</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><em>torch.Tensor</em></a>) – Input data. Expect tensor of shape
+<li><p><strong>X</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – Input data. Expect tensor of shape
 <span class="math notranslate nohighlight">\([B, N_{in}, M,  D]\)</span> where <span class="math notranslate nohighlight">\(B\)</span> is the batch_size,
 :math`N_{in}`is the number of input fields, <span class="math notranslate nohighlight">\(M\)</span> the number of points
 in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimension of the problem.</p></li>
@@ -286,7 +288,7 @@ in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimensi
 in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimension of the problem.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -311,8 +313,8 @@ method is used and <code class="docutils literal notranslate"><span class="pre">
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

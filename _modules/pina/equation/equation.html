@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.equation.equation &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.equation.equation &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -88,6 +90,7 @@
              
   <h1>Source code for pina.equation.equation</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Module for Equation. &quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">.equation_interface</span> <span class="kn">import</span> <span class="n">EquationInterface</span>
 
 
@@ -104,12 +107,14 @@
 <span class="sd">        :type equation: Callable</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">equation</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;equation must be a callable function.&#39;</span>
-                             <span class="s1">&#39;Expected a callable function, got &#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{equation}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;equation must be a callable function.&quot;</span>
+                <span class="s2">&quot;Expected a callable function, got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{equation}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__equation</span> <span class="o">=</span> <span class="n">equation</span>
 
-<div class="viewcode-block" id="Equation.residual"><a class="viewcode-back" href="../../../_rst/equations.html#pina.equation.equation.Equation.residual">[docs]</a>    <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">,</span> <span class="n">params_</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Equation.residual"><a class="viewcode-back" href="../../../_rst/equations.html#pina.equation.equation.Equation.residual">[docs]</a>    <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">,</span> <span class="n">params_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Residual computation of the equation.</span>
 
@@ -141,8 +146,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MIONet &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>MIONet &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -20,7 +22,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="FNO" href="fno.html" />
+    <link rel="next" title="FourierIntegralKernel" href="fourier_kernel.html" />
     <link rel="prev" title="DeepONet" href="deeponet.html" /> 
 </head>
 
@@ -37,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -54,11 +56,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#solvers">Solvers</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../_code.html#models">Models</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="base_no.html">KernelNeuralOperator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fnn.html">FeedForward</a></li>
 <li class="toctree-l3"><a class="reference internal" href="multifeedforward.html">MultiFeedForward</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fnn_residual.html">ResidualFeedForward</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">MIONet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fourier_kernel.html">FourierIntegralKernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fno.html">FNO</a></li>
 </ul>
 </li>
@@ -115,7 +119,7 @@
 <dl class="class">
 <dt id="pina.model.deeponet.MIONet">
 <em class="property">class </em><code class="sig-name descname">MIONet</code><span class="sig-paren">(</span><em class="sig-param">networks</em>, <em class="sig-param">aggregator='*'</em>, <em class="sig-param">reduction='+'</em>, <em class="sig-param">scale=True</em>, <em class="sig-param">translation=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/deeponet.html#MIONet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.deeponet.MIONet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of MIONet network.</p>
 <p>MIONet is a general architecture for learning Operators defined
 on the tensor product of Banach spaces. Unlike traditional machine
@@ -138,7 +142,7 @@ in the forward pass of the neural network. If a list of <code class="docutils li
 the corresponding columns of the inner most entries are extracted.
 If a list of <code class="docutils literal notranslate"><span class="pre">str</span></code> is passed the variables of the corresponding <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a>
 are extracted. The <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code> model has to take as input a
-<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>.
+<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>.
 Default implementation consist of different branch nets and one trunk nets.</p></li>
 <li><p><strong>or Callable aggregator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Aggregator to be used to aggregate
 partial results from the modules in <cite>nets</cite>. Partial results are
@@ -158,10 +162,10 @@ returning the forward pass, default <code class="docutils literal notranslate"><
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>In the forward pass we do not check if the input is instance of
-<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>. A general rule is
+<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>. A general rule is
 that for a <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a> input both list of integers and
 list of strings can be passed for <code class="docutils literal notranslate"><span class="pre">input_indeces_branch_net</span></code>
-and <code class="docutils literal notranslate"><span class="pre">input_indeces_trunk_net</span></code>. Differently, for a <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>
+and <code class="docutils literal notranslate"><span class="pre">input_indeces_trunk_net</span></code>. Differently, for a <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>
 only a list of integers can be passed for <code class="docutils literal notranslate"><span class="pre">input_indeces_branch_net</span></code>
 and <code class="docutils literal notranslate"><span class="pre">input_indeces_trunk_net</span></code>.</p>
 </div>
@@ -224,7 +228,7 @@ and <code class="docutils literal notranslate"><span class="pre">input_indeces_t
 <dd class="field-even"><p>The output computed by the DeepONet model.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.1)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -274,14 +278,14 @@ and <code class="docutils literal notranslate"><span class="pre">input_indeces_t
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="deeponet.html" class="btn btn-neutral float-left" title="DeepONet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="fno.html" class="btn btn-neutral float-right" title="FNO" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="fourier_kernel.html" class="btn btn-neutral float-right" title="FourierIntegralKernel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

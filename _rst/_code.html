@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Code Documentation &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Code Documentation &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -37,7 +39,7 @@
               <img src="../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -66,11 +68,13 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#models">Models</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="models/network.html">Network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/base_no.html">KernelNeuralOperator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/fnn.html">FeedForward</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/multifeedforward.html">MultiFeedForward</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/fnn_residual.html">ResidualFeedForward</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/deeponet.html">DeepONet</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/mionet.html">MIONet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/fourier_kernel.html">FourierIntegralKernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/fno.html">FNO</a></li>
 </ul>
 </li>
@@ -205,11 +209,13 @@ The high-level structure of the package is depicted in our API.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="models/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/base_no.html">KernelNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models/fnn.html">FeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models/multifeedforward.html">MultiFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models/fnn_residual.html">ResidualFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models/deeponet.html">DeepONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models/mionet.html">MIONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/fourier_kernel.html">FourierIntegralKernel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models/fno.html">FNO</a></li>
 </ul>
 </div>
@@ -302,8 +308,8 @@ The high-level structure of the package is depicted in our API.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

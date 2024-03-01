@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FourierIntegralKernel &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="FNO" href="fno.html" />
+    <link rel="prev" title="MIONet" href="mionet.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0.post2403
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../_code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#pina-features">PINA Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#solvers">Solvers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../_code.html#models">Models</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="base_no.html">KernelNeuralOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fnn.html">FeedForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multifeedforward.html">MultiFeedForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fnn_residual.html">ResidualFeedForward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mionet.html">MIONet</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">FourierIntegralKernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fno.html">FNO</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometry-set-operations">Geometry set operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#metrics-and-losses">Metrics and Losses</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../_code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">FourierIntegralKernel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/_rst/models/fourier_kernel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="fourierintegralkernel">
+<h1>FourierIntegralKernel<a class="headerlink" href="#fourierintegralkernel" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pina.model.fno.FourierIntegralKernel">
+<em class="property">class </em><code class="sig-name descname">FourierIntegralKernel</code><span class="sig-paren">(</span><em class="sig-param">input_numb_fields</em>, <em class="sig-param">output_numb_fields</em>, <em class="sig-param">n_modes</em>, <em class="sig-param">dimensions=3</em>, <em class="sig-param">padding=8</em>, <em class="sig-param">padding_type='constant'</em>, <em class="sig-param">inner_size=20</em>, <em class="sig-param">n_layers=2</em>, <em class="sig-param">func=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em>, <em class="sig-param">layers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/fno.html#FourierIntegralKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.fno.FourierIntegralKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<p>Implementation of Fourier Integral Kernel network.</p>
+<p>This class implements the Fourier Integral Kernel network, which is a
+PINA implementation of Fourier Neural Operator kernel network.
+It performs global convolution by operating in the Fourier space.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><strong>Original reference</strong>: Li, Z., Kovachki, N., Azizzadenesheli,
+K., Liu, B., Bhattacharya, K., Stuart, A., &amp; Anandkumar, A.
+(2020). <em>Fourier neural operator for parametric partial
+differential equations</em>.
+DOI: <a class="reference external" href="https://arxiv.org/abs/2010.08895">arXiv preprint arXiv:2010.08895.</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_numb_fields</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of input fields.</p></li>
+<li><p><strong>output_numb_fields</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of output fields.</p></li>
+<li><p><strong>| list</strong><strong>[</strong><strong>int</strong><strong>] </strong><strong>n_modes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of modes.</p></li>
+<li><p><strong>dimensions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of dimensions (1, 2, or 3).</p></li>
+<li><p><strong>padding</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Padding size, defaults to 8.</p></li>
+<li><p><strong>padding_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Type of padding, defaults to “constant”.</p></li>
+<li><p><strong>inner_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Inner size, defaults to 20.</p></li>
+<li><p><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of layers, defaults to 2.</p></li>
+<li><p><strong>func</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – Activation function, defaults to nn.Tanh.</p></li>
+<li><p><strong>layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>]</em>) – List of layer sizes, defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pina.model.fno.FourierIntegralKernel.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/fno.html#FourierIntegralKernel.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.fno.FourierIntegralKernel.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward computation for Fourier Neural Operator. It performs a
+lifting of the input by the <code class="docutils literal notranslate"><span class="pre">lifting_net</span></code>. Then different layers
+of Fourier Blocks are applied. Finally the output is projected
+to the final dimensionality by the <code class="docutils literal notranslate"><span class="pre">projecting_net</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – <p>The input tensor for fourier block,
+depending on <code class="docutils literal notranslate"><span class="pre">dimension</span></code> in the initialization.
+In particular it is expected:</p>
+<ul class="simple">
+<li><p>1D tensors: <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">X,</span> <span class="pre">channels]</span></code></p></li>
+<li><p>2D tensors: <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">X,</span> <span class="pre">Y,</span> <span class="pre">channels]</span></code></p></li>
+<li><p>3D tensors: <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">X,</span> <span class="pre">Y,</span> <span class="pre">Z,</span> <span class="pre">channels]</span></code></p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output tensor obtained from the kernels convolution.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mionet.html" class="btn btn-neutral float-left" title="MIONet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fno.html" class="btn btn-neutral float-right" title="FNO" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

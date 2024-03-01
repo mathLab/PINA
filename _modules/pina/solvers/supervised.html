@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.solvers.supervised &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.solvers.supervised &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -88,11 +90,16 @@
              
   <h1>Source code for pina.solvers.supervised</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Module for SupervisedSolver &quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">LRScheduler</span>  <span class="c1"># torch &gt;= 2.0</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">_LRScheduler</span> <span class="k">as</span> <span class="n">LRScheduler</span>  <span class="c1"># torch &lt; 2.0</span>
+    <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">_LRScheduler</span> <span class="k">as</span> <span class="n">LRScheduler</span><span class="p">,</span>
+    <span class="p">)</span>  <span class="c1"># torch &lt; 2.0</span>
 
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">ConstantLR</span>
 
@@ -106,7 +113,7 @@
 <div class="viewcode-block" id="SupervisedSolver"><a class="viewcode-back" href="../../../_rst/solvers/supervised.html#pina.solvers.supervised.SupervisedSolver">[docs]</a><span class="k">class</span> <span class="nc">SupervisedSolver</span><span class="p">(</span><span class="n">SolverInterface</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SupervisedSolver solver class. This class implements a SupervisedSolver,</span>
-<span class="sd">    using a user specified ``model`` to solve a specific ``problem``. </span>
+<span class="sd">    using a user specified ``model`` to solve a specific ``problem``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -116,14 +123,11 @@
         <span class="n">extra_features</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">loss</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span>
         <span class="n">optimizer</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
-        <span class="n">optimizer_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">},</span>
+        <span class="n">optimizer_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">},</span>
         <span class="n">scheduler</span><span class="o">=</span><span class="n">ConstantLR</span><span class="p">,</span>
-        <span class="n">scheduler_kwargs</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;total_iters&quot;</span><span class="p">:</span> <span class="mi">0</span>
-        <span class="p">},</span>
+        <span class="n">scheduler_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;total_iters&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
     <span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param AbstractProblem problem: The formualation of the problem.</span>
 <span class="sd">        :param torch.nn.Module model: The neural network model to use.</span>
 <span class="sd">        :param torch.nn.Module loss: The loss function used as minimizer,</span>
@@ -137,12 +141,14 @@
 <span class="sd">        :param torch.optim.LRScheduler scheduler: Learning</span>
 <span class="sd">            rate scheduler.</span>
 <span class="sd">        :param dict scheduler_kwargs: LR scheduler constructor keyword args.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">],</span>
-                         <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
-                         <span class="n">optimizers</span><span class="o">=</span><span class="p">[</span><span class="n">optimizer</span><span class="p">],</span>
-                         <span class="n">optimizers_kwargs</span><span class="o">=</span><span class="p">[</span><span class="n">optimizer_kwargs</span><span class="p">],</span>
-                         <span class="n">extra_features</span><span class="o">=</span><span class="n">extra_features</span><span class="p">)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">],</span>
+            <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+            <span class="n">optimizers</span><span class="o">=</span><span class="p">[</span><span class="n">optimizer</span><span class="p">],</span>
+            <span class="n">optimizers_kwargs</span><span class="o">=</span><span class="p">[</span><span class="n">optimizer_kwargs</span><span class="p">],</span>
+            <span class="n">extra_features</span><span class="o">=</span><span class="n">extra_features</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># check consistency</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">LRScheduler</span><span class="p">,</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -157,7 +163,7 @@
 <div class="viewcode-block" id="SupervisedSolver.forward"><a class="viewcode-back" href="../../../_rst/solvers/supervised.html#pina.solvers.supervised.SupervisedSolver.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Forward pass implementation for the solver.</span>
 
-<span class="sd">        :param torch.Tensor x: Input tensor. </span>
+<span class="sd">        :param torch.Tensor x: Input tensor.</span>
 <span class="sd">        :return: Solver solution.</span>
 <span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -183,29 +189,39 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">train_dataloader</span>
-        <span class="n">condition_idx</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;condition&#39;</span><span class="p">]</span>
+        <span class="n">condition_idx</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;condition&quot;</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">condition_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">condition_idx</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">condition_idx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">condition_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">condition_idx</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">condition_idx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
 
-            <span class="n">condition_name</span> <span class="o">=</span> <span class="n">dataloader</span><span class="o">.</span><span class="n">condition_names</span><span class="p">[</span><span class="n">condition_id</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+                <span class="n">condition_name</span> <span class="o">=</span> <span class="n">dataloader</span><span class="o">.</span><span class="n">condition_names</span><span class="p">[</span><span class="n">condition_id</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">condition_name</span> <span class="o">=</span> <span class="n">dataloader</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">condition_names</span><span class="p">[</span>
+                    <span class="n">condition_id</span>
+                <span class="p">]</span>
             <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span>
-            <span class="n">pts</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;pts&#39;</span><span class="p">]</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;pts&quot;</span><span class="p">]</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">condition_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Something wrong happened.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Something wrong happened.&quot;</span><span class="p">)</span>
 
             <span class="c1"># for data driven mode</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s1">&#39;output_points&#39;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Supervised solver works only in data-driven mode.&#39;</span><span class="p">)</span>
-            
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s2">&quot;output_points&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;Supervised solver works only in data-driven mode.&quot;</span>
+                <span class="p">)</span>
+
             <span class="n">output_pts</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="n">condition_idx</span> <span class="o">==</span> <span class="n">condition_id</span><span class="p">]</span>
             <span class="n">input_pts</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[</span><span class="n">condition_idx</span> <span class="o">==</span> <span class="n">condition_id</span><span class="p">]</span>
 
-            <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input_pts</span><span class="p">),</span> <span class="n">output_pts</span><span class="p">)</span> <span class="o">*</span> <span class="n">condition</span><span class="o">.</span><span class="n">data_weight</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input_pts</span><span class="p">),</span> <span class="n">output_pts</span><span class="p">)</span>
+                <span class="o">*</span> <span class="n">condition</span><span class="o">.</span><span class="n">data_weight</span>
+            <span class="p">)</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;mean_loss&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">loss</span><span class="p">),</span> <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;mean_loss&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">loss</span><span class="p">),</span> <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span></div>
 
     <span class="nd">@property</span>
@@ -237,8 +253,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

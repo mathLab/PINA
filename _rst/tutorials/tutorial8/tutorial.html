@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 8: Reduced order model (PODNN) for parametric problems &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="PINA Team" href="../../../_team.html" />
+    <link rel="prev" title="Tutorial: Unstructured convolutional autoencoder via continuous convolution" href="../tutorial4/tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0.post2403
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../tutorial4/tutorial.html">Unstructured convolutional autoencoder via continuous convolution</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">POD-NN for reduced order modeling</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial 8: Reduced order model (PODNN) for parametric problems</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/_rst/tutorials/tutorial8/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tutorial-8-reduced-order-model-podnn-for-parametric-problems">
+<h1>Tutorial 8: Reduced order model (PODNN) for parametric problems<a class="headerlink" href="#tutorial-8-reduced-order-model-podnn-for-parametric-problems" title="Permalink to this headline">¶</a></h1>
+<p>The tutorial aims to show how to employ the <strong>PINA</strong> library in order to
+apply a reduced order modeling technique [1]. Such methodologies have
+several similarities with machine learning approaches, since the main
+goal consists of predicting the solution of differential equations
+(typically parametric PDEs) in a real-time fashion.</p>
+<p>In particular we are going to use the Proper Orthogonal Decomposition
+with Neural Network (PODNN) [2], which basically perform a dimensional
+reduction using the POD approach, approximating the parametric solution
+manifold (at the reduced space) using a NN. In this example, we use a
+simple multilayer perceptron, but the plenty of different archiutectures
+can be plugged as well.</p>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order
+Methods and Applications in Computational Fluid Dynamics, Society for
+Industrial and Applied Mathematics.</p></li>
+<li><p>Hesthaven, J. S., &amp; Ubbiali, S. (2018). Non-intrusive reduced order
+modeling of nonlinear problems using neural networks. Journal of
+Computational Physics, 363, 55-78.</p></li>
+</ol>
+<p>Let’s start with the necessary imports. It’s important to note the
+minimum PINA version to run this tutorial is the <code class="docutils literal notranslate"><span class="pre">0.1</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+
+import matplotlib.pyplot as plt
+import torch
+import pina
+
+from pina.geometry import CartesianDomain
+
+from pina.problem import ParametricProblem
+from pina.model.layers import PODBlock
+from pina import Condition, LabelTensor, Trainer
+from pina.model import FeedForward
+from pina.solvers import SupervisedSolver
+
+print(f&#39;We are using PINA version {pina.__version__}&#39;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">We</span> <span class="n">are</span> <span class="n">using</span> <span class="n">PINA</span> <span class="n">version</span> <span class="mf">0.1</span>
+</pre></div>
+</div>
+<p>We exploit the <a class="reference external" href="www.github.com/mathLab/Smithers">Smithers</a> library to
+collect the parametric snapshots. In particular, we use the
+<code class="docutils literal notranslate"><span class="pre">NavierStokesDataset</span></code> class that contains a set of parametric
+solutions of the Navier-Stokes equations in a 2D L-shape domain. The
+parameter is the inflow velocity. The dataset is composed by 500
+snapshots of the velocity (along <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span>, and the
+magnitude) and pressure fields, and the corresponding parameter values.</p>
+<p>To visually check the snapshots, let’s plot also the data points and the
+reference solution: this is the expected output of the neural network.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from smithers.dataset import NavierStokesDataset
+dataset = NavierStokesDataset()
+
+fig, axs = plt.subplots(1, 4, figsize=(14, 3))
+for ax, p, u in zip(axs, dataset.params[:4], dataset.snapshots[&#39;mag(v)&#39;][:4]):
+    ax.tricontourf(dataset.triang, u, levels=16)
+    ax.set_title(f&#39;$\mu$ = {p[0]:.2f}&#39;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 0:   0%|          | 0/5 [48:45&lt;?, ?it/s]
+Epoch 0:   0%|          | 0/5 [46:33&lt;?, ?it/s]
+Epoch 0:   0%|          | 0/5 [46:17&lt;?, ?it/s]
+Epoch 0:   0%|          | 0/5 [44:52&lt;?, ?it/s]
+Epoch 0:   0%|          | 0/5 [43:41&lt;?, ?it/s]
+Epoch 0:   0%|          | 0/5 [43:01&lt;?, ?it/s]
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_5_1.png" src="../../../_images/tutorial_5_1.png" />
+<p>The <em>snapshots</em> - aka the numerical solutions computed for several
+parameters - and the corresponding parameters are the only data we need
+to train the model, in order to predict for any new test parameter the
+solution. To properly validate the accuracy, we initially split the 500
+snapshots into the training dataset (90% of the original data) and the
+testing one (the reamining 10%). It must be said that, to plug the
+snapshots into <strong>PINA</strong>, we have to cast them to <code class="docutils literal notranslate"><span class="pre">LabelTensor</span></code>
+objects.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>u = torch.tensor(dataset.snapshots[&#39;mag(v)&#39;]).float()
+p = torch.tensor(dataset.params).float()
+
+p = LabelTensor(p, labels=[&#39;mu&#39;])
+u = LabelTensor(u, labels=[f&#39;s{i}&#39; for i in range(u.shape[1])])
+
+ratio_train_test = 0.9
+n = u.shape
+n_train = int(u.shape[0] * ratio_train_test)
+n_test = u - n_train
+u_train, u_test = u[:n_train], u[n_train:]
+p_train, p_test = p[:n_train], p[n_train:]
+</pre></div>
+</div>
+<p>It is now time to define the problem! We inherit from
+<code class="docutils literal notranslate"><span class="pre">ParametricProblem</span></code> (since the space invariant typically of this
+methodology), just defining a simple <em>input-output</em> condition.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class SnapshotProblem(ParametricProblem):
+    output_variables = [f&#39;s{i}&#39; for i in range(u.shape[1])]
+    parameter_domain = CartesianDomain({&#39;mu&#39;: [0, 100]})
+
+    conditions = {
+        &#39;io&#39;: Condition(input_points=p, output_points=u)
+    }
+</pre></div>
+</div>
+<p>Then, we define the model we want to use: basically we have a MLP
+architecture that takes in input the parameter and return the <em>modal
+coefficients</em>, so the reduced dimension representation (the coordinates
+in the POD space). Such latent variable is the projected to the original
+space using the POD modes, which are computed and stored in the
+<code class="docutils literal notranslate"><span class="pre">PODBlock</span></code> object.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class PODNN(torch.nn.Module):
+    &quot;&quot;&quot;
+    Proper orthogonal decomposition with neural network model.
+    &quot;&quot;&quot;
+
+    def __init__(self, pod_rank, layers, func):
+        &quot;&quot;&quot;
+
+        &quot;&quot;&quot;
+        super().__init__()
+
+        self.pod = PODBlock(pod_rank)
+        self.nn = FeedForward(
+            input_dimensions=1,
+            output_dimensions=pod_rank,
+            layers=layers,
+            func=func
+        )
+
+
+    def forward(self, x):
+        &quot;&quot;&quot;
+        Defines the computation performed at every call.
+
+        :param x: The tensor to apply the forward pass.
+        :type x: torch.Tensor
+        :return: the output computed by the model.
+        :rtype: torch.Tensor
+        &quot;&quot;&quot;
+        coefficents = self.nn(x)
+        return self.pod.expand(coefficents)
+
+    def fit_pod(self, x):
+        &quot;&quot;&quot;
+        Just call the :meth:`pina.model.layers.PODBlock.fit` method of the
+        :attr:`pina.model.layers.PODBlock` attribute.
+        &quot;&quot;&quot;
+        self.pod.fit(x)
+</pre></div>
+</div>
+<p>We highlight that the POD modes are directly computed by means of the
+singular value decomposition (computed over the input data), and not
+trained using the back-propagation approach. Only the weights of the MLP
+are actually trained during the optimization loop.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>poisson_problem = SnapshotProblem()
+
+pod_nn = PODNN(pod_rank=20, layers=[10, 10, 10], func=torch.nn.Tanh)
+pod_nn.fit_pod(u)
+
+pinn_stokes = SupervisedSolver(
+    problem=poisson_problem,
+    model=pod_nn,
+    optimizer=torch.optim.Adam,
+    optimizer_kwargs={&#39;lr&#39;: 0.0001})
+</pre></div>
+</div>
+<p>Now that we set the <code class="docutils literal notranslate"><span class="pre">Problem</span></code> and the <code class="docutils literal notranslate"><span class="pre">Model</span></code>, we have just to train
+the model and use it for predict the test snapshots.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>trainer = Trainer(
+    solver=pinn_stokes,
+    max_epochs=1000,
+    batch_size=100,
+    log_every_n_steps=5,
+    accelerator=&#39;cpu&#39;)
+trainer.train()
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
+<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
+<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
+<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
+
+  <span class="o">|</span> <span class="n">Name</span>        <span class="o">|</span> <span class="n">Type</span>    <span class="o">|</span> <span class="n">Params</span>
+<span class="o">----------------------------------------</span>
+<span class="mi">0</span> <span class="o">|</span> <span class="n">_loss</span>       <span class="o">|</span> <span class="n">MSELoss</span> <span class="o">|</span> <span class="mi">0</span>
+<span class="mi">1</span> <span class="o">|</span> <span class="n">_neural_net</span> <span class="o">|</span> <span class="n">Network</span> <span class="o">|</span> <span class="mi">460</span>
+<span class="o">----------------------------------------</span>
+<span class="mi">460</span>       <span class="n">Trainable</span> <span class="n">params</span>
+<span class="mi">0</span>         <span class="n">Non</span><span class="o">-</span><span class="n">trainable</span> <span class="n">params</span>
+<span class="mi">460</span>       <span class="n">Total</span> <span class="n">params</span>
+<span class="mf">0.002</span>     <span class="n">Total</span> <span class="n">estimated</span> <span class="n">model</span> <span class="n">params</span> <span class="n">size</span> <span class="p">(</span><span class="n">MB</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 999: 100%|██████████| 5/5 [00:00&lt;00:00, 286.50it/s, v_num=20, mean_loss=0.902]
+</pre></div>
+</div>
+<pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1000</cite> reached.</pre>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 999: 100%|██████████| 5/5 [00:00&lt;00:00, 248.36it/s, v_num=20, mean_loss=0.902]
+</pre></div>
+</div>
+<p>Done! Now the computational expensive part is over, we can load in
+future the model to infer new parameters (simply loading the checkpoint
+file automatically created by <code class="docutils literal notranslate"><span class="pre">Lightning</span></code>) or test its performances.
+We measure the relative error for the training and test datasets,
+printing the mean one.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>u_test_pred = pinn_stokes(p_test)
+u_train_pred = pinn_stokes(p_train)
+
+relative_error_train = torch.norm(u_train_pred - u_train)/torch.norm(u_train)
+relative_error_test = torch.norm(u_test_pred - u_test)/torch.norm(u_test)
+
+print(&#39;Error summary:&#39;)
+print(f&#39;  Train: {relative_error_train.item():e}&#39;)
+print(f&#39;  Test:  {relative_error_test.item():e}&#39;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="n">summary</span><span class="p">:</span>
+  <span class="n">Train</span><span class="p">:</span> <span class="mf">3.865598e-02</span>
+  <span class="n">Test</span><span class="p">:</span>  <span class="mf">3.593161e-02</span>
+</pre></div>
+</div>
+<p>We can of course also plot the solutions predicted by the <code class="docutils literal notranslate"><span class="pre">PODNN</span></code>
+model, comparing them to the original ones. We can note here some
+differences, especially for low velocities, but improvements can be
+accomplished thanks to longer training.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>idx = torch.randint(0, len(u_test_pred), (4,))
+u_idx = pinn_stokes(p_test[idx])
+import numpy as np
+import matplotlib
+fig, axs = plt.subplots(3, 4, figsize=(14, 9))
+
+relative_error = np.abs(u_test[idx] - u_idx.detach())
+relative_error = np.where(u_test[idx] &lt; 1e-7, 1e-7, relative_error/u_test[idx])
+
+for i, (idx_, u_, err_) in enumerate(zip(idx, u_idx, relative_error)):
+    cm = axs[0, i].tricontourf(dataset.triang, u_.detach())
+    axs[0, i].set_title(f&#39;$\mu$ = {p_test[idx_].item():.2f}&#39;)
+    plt.colorbar(cm)
+
+    cm = axs[1, i].tricontourf(dataset.triang, u_test[idx_].flatten())
+    plt.colorbar(cm)
+
+    cm = axs[2, i].tripcolor(dataset.triang, err_, norm=matplotlib.colors.LogNorm())
+    plt.colorbar(cm)
+
+
+plt.show()
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_19_0.png" src="../../../_images/tutorial_19_0.png" />
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial4/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Unstructured convolutional autoencoder via continuous convolution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../../_team.html" class="btn btn-neutral float-right" title="PINA Team" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

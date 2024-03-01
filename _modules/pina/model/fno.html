@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.model.fno &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.model.fno &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -87,69 +89,84 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pina.model.fno</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Fourier Neural Operator Module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
-<span class="kn">from</span> <span class="nn">.layers.fourier</span> <span class="kn">import</span> <span class="n">FourierBlock1D</span><span class="p">,</span> <span class="n">FourierBlock2D</span><span class="p">,</span> <span class="n">FourierBlock3D</span>
 <span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+<span class="kn">from</span> <span class="nn">.layers.fourier</span> <span class="kn">import</span> <span class="n">FourierBlock1D</span><span class="p">,</span> <span class="n">FourierBlock2D</span><span class="p">,</span> <span class="n">FourierBlock3D</span>
+<span class="kn">from</span> <span class="nn">.base_no</span> <span class="kn">import</span> <span class="n">KernelNeuralOperator</span>
 
 
-<div class="viewcode-block" id="FNO"><a class="viewcode-back" href="../../../_rst/models/fno.html#pina.model.fno.FNO">[docs]</a><span class="k">class</span> <span class="nc">FNO</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="FourierIntegralKernel"><a class="viewcode-back" href="../../../_rst/models/fourier_kernel.html#pina.model.fno.FourierIntegralKernel">[docs]</a><span class="k">class</span> <span class="nc">FourierIntegralKernel</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The PINA implementation of Fourier Neural Operator network.</span>
+<span class="sd">    Implementation of Fourier Integral Kernel network.</span>
 
-<span class="sd">    Fourier Neural Operator (FNO) is a general architecture for learning Operators.</span>
-<span class="sd">    Unlike traditional machine learning methods FNO is designed to map</span>
-<span class="sd">    entire functions to other functions. It can be trained both with </span>
-<span class="sd">    Supervised learning strategies. FNO does global convolution by performing the</span>
-<span class="sd">    operation on the Fourier space.</span>
+<span class="sd">    This class implements the Fourier Integral Kernel network, which is a</span>
+<span class="sd">    PINA implementation of Fourier Neural Operator kernel network.</span>
+<span class="sd">    It performs global convolution by operating in the Fourier space.</span>
 
 <span class="sd">    .. seealso::</span>
 
-<span class="sd">        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B.,</span>
-<span class="sd">        Bhattacharya, K., Stuart, A., &amp; Anandkumar, A. (2020). *Fourier neural operator for</span>
-<span class="sd">        parametric partial differential equations*.</span>
+<span class="sd">        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli,</span>
+<span class="sd">        K., Liu, B., Bhattacharya, K., Stuart, A., &amp; Anandkumar, A.</span>
+<span class="sd">        (2020). *Fourier neural operator for parametric partial</span>
+<span class="sd">        differential equations*.</span>
 <span class="sd">        DOI: `arXiv preprint arXiv:2010.08895.</span>
 <span class="sd">        &lt;https://arxiv.org/abs/2010.08895&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">lifting_net</span><span class="p">,</span>
-                 <span class="n">projecting_net</span><span class="p">,</span>
-                 <span class="n">n_modes</span><span class="p">,</span>
-                 <span class="n">dimensions</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                 <span class="n">padding</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-                 <span class="n">padding_type</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span>
-                 <span class="n">inner_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-                 <span class="n">n_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                 <span class="n">func</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">,</span>
-                 <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_numb_fields</span><span class="p">,</span>
+        <span class="n">output_numb_fields</span><span class="p">,</span>
+        <span class="n">n_modes</span><span class="p">,</span>
+        <span class="n">dimensions</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">padding</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">padding_type</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span>
+        <span class="n">inner_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">n_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">,</span>
+        <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param int input_numb_fields: Number of input fields.</span>
+<span class="sd">        :param int output_numb_fields: Number of output fields.</span>
+<span class="sd">        :param int | list[int] n_modes: Number of modes.</span>
+<span class="sd">        :param int dimensions: Number of dimensions (1, 2, or 3).</span>
+<span class="sd">        :param int padding: Padding size, defaults to 8.</span>
+<span class="sd">        :param str padding_type: Type of padding, defaults to &quot;constant&quot;.</span>
+<span class="sd">        :param int inner_size: Inner size, defaults to 20.</span>
+<span class="sd">        :param int n_layers: Number of layers, defaults to 2.</span>
+<span class="sd">        :param torch.nn.Module func: Activation function, defaults to nn.Tanh.</span>
+<span class="sd">        :param list[int] layers: List of layer sizes, defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="c1"># check type consistency</span>
-        <span class="n">check_consistency</span><span class="p">(</span><span class="n">lifting_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
-        <span class="n">check_consistency</span><span class="p">(</span><span class="n">projecting_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">dimensions</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">padding</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">padding_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">inner_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">n_layers</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
                 <span class="n">check_consistency</span><span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;layers must be tuple or list of int.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;layers must be tuple or list of int.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_modes</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;n_modes must be a int or list or tuple of valid modes.&#39;</span>
-                <span class="s1">&#39; More information on the official documentation.&#39;</span><span class="p">)</span>
+                <span class="s2">&quot;n_modes must be a int or list or tuple of valid modes.&quot;</span>
+                <span class="s2">&quot; More information on the official documentation.&quot;</span>
+            <span class="p">)</span>
 
-        <span class="c1"># assign variables</span>
-        <span class="c1"># TODO check input lifting net and input projecting net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lifting_net</span> <span class="o">=</span> <span class="n">lifting_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_projecting_net</span> <span class="o">=</span> <span class="n">projecting_net</span>
+        <span class="c1"># assign padding</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_padding</span> <span class="o">=</span> <span class="n">padding</span>
 
         <span class="c1"># initialize fourier layer for each dimension</span>
@@ -160,9 +177,9 @@
         <span class="k">elif</span> <span class="n">dimensions</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">fourier_layer</span> <span class="o">=</span> <span class="n">FourierBlock3D</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;FNO implemented only for 1D/2D/3D data.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;FNO implemented only for 1D/2D/3D data.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Here we build the FNO by stacking Fourier Blocks</span>
+        <span class="c1"># Here we build the FNO kernels by stacking Fourier Blocks</span>
 
         <span class="c1"># 1. Assign output dimensions for each FNO layer</span>
         <span class="k">if</span> <span class="n">layers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -172,37 +189,39 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s1">&#39;Uncosistent number of layers and functions.&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_functions</span> <span class="o">=</span> <span class="n">func</span>
+                    <span class="s2">&quot;Uncosistent number of layers and functions.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">_functions</span> <span class="o">=</span> <span class="n">func</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_functions</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">))]</span>
+            <span class="n">_functions</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">_functions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">)</span>
 
         <span class="c1"># 3. Assign modes functions for each FNO layer</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_modes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-                   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n_modes</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_modes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n_modes</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">n_modes</span>
+            <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s1">&#39;Uncosistent number of layers and functions.&#39;</span><span class="p">)</span>
+                    <span class="s2">&quot;Uncosistent number of layers and functions.&quot;</span>
+                <span class="p">)</span>
             <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n_modes</span><span class="p">):</span>
                 <span class="n">n_modes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n_modes</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">n_modes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n_modes</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
 
         <span class="c1"># 4. Build the FNO network</span>
-        <span class="n">tmp_layers</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">first_parameter</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">lifting_net</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-        <span class="n">input_shape</span> <span class="o">=</span> <span class="n">first_parameter</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
-        <span class="n">out_feats</span> <span class="o">=</span> <span class="n">lifting_net</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">input_shape</span><span class="p">))</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">tmp_layers</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">out_feats</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp_layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">fourier_layer</span><span class="p">(</span><span class="n">input_numb_fields</span><span class="o">=</span><span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                              <span class="n">output_numb_fields</span><span class="o">=</span><span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
-                              <span class="n">n_modes</span><span class="o">=</span><span class="n">n_modes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                              <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_functions</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_layers</span><span class="p">)</span>
+        <span class="n">_layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tmp_layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_numb_fields</span><span class="p">]</span> <span class="o">+</span> <span class="n">layers</span> <span class="o">+</span> <span class="p">[</span><span class="n">output_numb_fields</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)):</span>
+            <span class="n">_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">fourier_layer</span><span class="p">(</span>
+                    <span class="n">input_numb_fields</span><span class="o">=</span><span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">output_numb_fields</span><span class="o">=</span><span class="n">tmp_layers</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                    <span class="n">n_modes</span><span class="o">=</span><span class="n">n_modes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">activation</span><span class="o">=</span><span class="n">_functions</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">_layers</span><span class="p">)</span>
 
         <span class="c1"># 5. Padding values for spectral conv</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">padding</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -213,28 +232,29 @@
             <span class="n">val</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">padding</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">pair</span>
         <span class="p">]</span>
 
-<div class="viewcode-block" id="FNO.forward"><a class="viewcode-back" href="../../../_rst/models/fno.html#pina.model.fno.FNO.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="FourierIntegralKernel.forward"><a class="viewcode-back" href="../../../_rst/models/fourier_kernel.html#pina.model.fno.FourierIntegralKernel.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Forward computation for Fourier Neural Operator. It performs a</span>
 <span class="sd">        lifting of the input by the ``lifting_net``. Then different layers</span>
 <span class="sd">        of Fourier Blocks are applied. Finally the output is projected</span>
 <span class="sd">        to the final dimensionality by the ``projecting_net``.</span>
 
-<span class="sd">        :param torch.Tensor x: The input tensor for fourier block, depending on</span>
-<span class="sd">            ``dimension`` in the initialization. In particular it is expected</span>
+<span class="sd">        :param torch.Tensor x: The input tensor for fourier block,</span>
+<span class="sd">            depending on ``dimension`` in the initialization.</span>
+<span class="sd">            In particular it is expected:</span>
+
 <span class="sd">            * 1D tensors: ``[batch, X, channels]``</span>
 <span class="sd">            * 2D tensors: ``[batch, X, Y, channels]``</span>
 <span class="sd">            * 3D tensors: ``[batch, X, Y, Z, channels]``</span>
-<span class="sd">        :return: The output tensor obtained from the FNO.</span>
+<span class="sd">        :return: The output tensor obtained from the kernels convolution.</span>
 <span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span> <span class="c1">#TODO remove when Network is fixed</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;LabelTensor passed as input is not allowed, casting LabelTensor to Torch.Tensor&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>  <span class="c1"># TODO remove when Network is fixed</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;LabelTensor passed as input is not allowed,&quot;</span>
+                <span class="s2">&quot; casting LabelTensor to Torch.Tensor&quot;</span>
+            <span class="p">)</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
-
-        <span class="c1"># lifting the input in higher dimensional space</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lifting_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
         <span class="c1"># permuting the input [batch, channels, x, y, ...]</span>
         <span class="n">permutation_idx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]]</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="n">permutation_idx</span><span class="p">)</span>
@@ -253,8 +273,94 @@
         <span class="n">permutation_idx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="p">)],</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="n">permutation_idx</span><span class="p">)</span>
 
-        <span class="c1"># apply projecting operator and return</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_projecting_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<div class="viewcode-block" id="FNO"><a class="viewcode-back" href="../../../_rst/models/fno.html#pina.model.fno.FNO">[docs]</a><span class="k">class</span> <span class="nc">FNO</span><span class="p">(</span><span class="n">KernelNeuralOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The PINA implementation of Fourier Neural Operator network.</span>
+
+<span class="sd">    Fourier Neural Operator (FNO) is a general architecture for</span>
+<span class="sd">    learning Operators. Unlike traditional machine learning methods</span>
+<span class="sd">    FNO is designed to map entire functions to other functions. It</span>
+<span class="sd">    can be trained with Supervised learning strategies. FNO does global</span>
+<span class="sd">    convolution by performing the operation on the Fourier space.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli,</span>
+<span class="sd">        K., Liu, B., Bhattacharya, K., Stuart, A., &amp; Anandkumar, A.</span>
+<span class="sd">        (2020). *Fourier neural operator for parametric partial</span>
+<span class="sd">        differential equations*.</span>
+<span class="sd">        DOI: `arXiv preprint arXiv:2010.08895.</span>
+<span class="sd">        &lt;https://arxiv.org/abs/2010.08895&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">lifting_net</span><span class="p">,</span>
+        <span class="n">projecting_net</span><span class="p">,</span>
+        <span class="n">n_modes</span><span class="p">,</span>
+        <span class="n">dimensions</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">padding</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">padding_type</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span>
+        <span class="n">inner_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">n_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">,</span>
+        <span class="n">layers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param torch.nn.Module lifting_net: The neural network for lifting</span>
+<span class="sd">            the input.</span>
+<span class="sd">        :param torch.nn.Module projecting_net: The neural network for</span>
+<span class="sd">            projecting the output.</span>
+<span class="sd">        :param int | list[int] n_modes: Number of modes.</span>
+<span class="sd">        :param int dimensions: Number of dimensions (1, 2, or 3).</span>
+<span class="sd">        :param int padding: Padding size, defaults to 8.</span>
+<span class="sd">        :param str padding_type: Type of padding, defaults to `constant`.</span>
+<span class="sd">        :param int inner_size: Inner size, defaults to 20.</span>
+<span class="sd">        :param int n_layers: Number of layers, defaults to 2.</span>
+<span class="sd">        :param torch.nn.Module func: Activation function, defaults to nn.Tanh.</span>
+<span class="sd">        :param list[int] layers: List of layer sizes, defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lifting_operator_out</span> <span class="o">=</span> <span class="n">lifting_net</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="n">lifting_net</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">lifting_operator</span><span class="o">=</span><span class="n">lifting_net</span><span class="p">,</span>
+            <span class="n">projection_operator</span><span class="o">=</span><span class="n">projecting_net</span><span class="p">,</span>
+            <span class="n">integral_kernels</span><span class="o">=</span><span class="n">FourierIntegralKernel</span><span class="p">(</span>
+                <span class="n">input_numb_fields</span><span class="o">=</span><span class="n">lifting_operator_out</span><span class="p">,</span>
+                <span class="n">output_numb_fields</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="n">projecting_net</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span>
+                <span class="n">n_modes</span><span class="o">=</span><span class="n">n_modes</span><span class="p">,</span>
+                <span class="n">dimensions</span><span class="o">=</span><span class="n">dimensions</span><span class="p">,</span>
+                <span class="n">padding</span><span class="o">=</span><span class="n">padding</span><span class="p">,</span>
+                <span class="n">padding_type</span><span class="o">=</span><span class="n">padding_type</span><span class="p">,</span>
+                <span class="n">inner_size</span><span class="o">=</span><span class="n">inner_size</span><span class="p">,</span>
+                <span class="n">n_layers</span><span class="o">=</span><span class="n">n_layers</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
+                <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FNO.forward"><a class="viewcode-back" href="../../../_rst/models/fno.html#pina.model.fno.FNO.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward computation for Fourier Neural Operator. It performs a</span>
+<span class="sd">        lifting of the input by the ``lifting_net``. Then different layers</span>
+<span class="sd">        of Fourier Blocks are applied. Finally the output is projected</span>
+<span class="sd">        to the final dimensionality by the ``projecting_net``.</span>
+
+<span class="sd">        :param torch.Tensor x: The input tensor for fourier block,</span>
+<span class="sd">            depending on ``dimension`` in the initialization. In</span>
+<span class="sd">            particular it is expected:</span>
+
+<span class="sd">            * 1D tensors: ``[batch, X, channels]``</span>
+<span class="sd">            * 2D tensors: ``[batch, X, Y, channels]``</span>
+<span class="sd">            * 3D tensors: ``[batch, X, Y, Z, channels]``</span>
+<span class="sd">        :return: The output tensor obtained from FNO.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -264,8 +370,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

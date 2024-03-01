@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.problem.abstract_problem &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.problem.abstract_problem &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -88,6 +90,7 @@
              
   <h1>Source code for pina.problem.abstract_problem</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Module for AbstractProblem class &quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">merge_tensors</span><span class="p">,</span> <span class="n">check_consistency</span>
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -129,13 +132,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;spatial_variables&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;spatial_variables&quot;</span><span class="p">):</span>
             <span class="n">variables</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spatial_variables</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;temporal_variable&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;temporal_variable&quot;</span><span class="p">):</span>
             <span class="n">variables</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temporal_variable</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">):</span>
             <span class="n">variables</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;custom_variables&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;custom_variables&quot;</span><span class="p">):</span>
             <span class="n">variables</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_variables</span>
 
         <span class="k">return</span> <span class="n">variables</span>
@@ -151,9 +154,9 @@
 <span class="sd">        :rtype: list[Location]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">domains</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{t}</span><span class="s1">_domain&#39;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;spatial&#39;</span><span class="p">,</span> <span class="s1">&#39;temporal&#39;</span><span class="p">,</span> <span class="s1">&#39;parameter&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{t}</span><span class="s1">_domain&#39;</span><span class="p">)</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{t}</span><span class="s2">_domain&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;spatial&quot;</span><span class="p">,</span> <span class="s2">&quot;temporal&quot;</span><span class="p">,</span> <span class="s2">&quot;parameter&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{t}</span><span class="s2">_domain&quot;</span><span class="p">)</span>
         <span class="p">]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">domains</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -166,7 +169,7 @@
             <span class="p">[</span><span class="n">domain</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">domain</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;different domains&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;different domains&quot;</span><span class="p">)</span>
 
     <span class="nd">@input_variables</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">input_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
@@ -194,24 +197,27 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">condition_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">:</span>
             <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s1">&#39;input_points&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s2">&quot;input_points&quot;</span><span class="p">):</span>
                 <span class="n">samples</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">input_points</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_have_sampled_points</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;unknown_parameter_domain&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;unknown_parameter_domain&quot;</span><span class="p">):</span>
                 <span class="c1"># initialize the unknown parameters of the inverse problem given</span>
                 <span class="c1"># the domain the user gives</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unknown_parameters</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unknown_variables</span><span class="p">):</span>
                     <span class="n">range_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_parameter_domain</span><span class="o">.</span><span class="n">range_</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-                    <span class="n">tensor_var</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">range_var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">range_var</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">unknown_parameters</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">tensor_var</span><span class="p">)</span>
+                    <span class="n">tensor_var</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">range_var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="o">+</span> <span class="n">range_var</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">unknown_parameters</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                        <span class="n">tensor_var</span>
+                    <span class="p">)</span>
 
-<div class="viewcode-block" id="AbstractProblem.discretise_domain"><a class="viewcode-back" href="../../../_rst/problem/abstractproblem.html#pina.problem.abstract_problem.AbstractProblem.discretise_domain">[docs]</a>    <span class="k">def</span> <span class="nf">discretise_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                          <span class="n">n</span><span class="p">,</span>
-                          <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;random&#39;</span><span class="p">,</span>
-                          <span class="n">variables</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
-                          <span class="n">locations</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractProblem.discretise_domain"><a class="viewcode-back" href="../../../_rst/problem/abstractproblem.html#pina.problem.abstract_problem.AbstractProblem.discretise_domain">[docs]</a>    <span class="k">def</span> <span class="nf">discretise_domain</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">locations</span><span class="o">=</span><span class="s2">&quot;all&quot;</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a set of points to span the `Location` of all the conditions of</span>
 <span class="sd">        the problem.</span>
@@ -246,28 +252,32 @@
 
         <span class="c1"># check consistency mode</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="s1">&#39;grid&#39;</span><span class="p">,</span> <span class="s1">&#39;lh&#39;</span><span class="p">,</span> <span class="s1">&#39;chebyshev&#39;</span><span class="p">,</span> <span class="s1">&#39;latin&#39;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mode </span><span class="si">{mode}</span><span class="s1"> not valid.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="s2">&quot;lh&quot;</span><span class="p">,</span> <span class="s2">&quot;chebyshev&quot;</span><span class="p">,</span> <span class="s2">&quot;latin&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mode </span><span class="si">{mode}</span><span class="s2"> not valid.&quot;</span><span class="p">)</span>
 
         <span class="c1"># check consistency variables</span>
-        <span class="k">if</span> <span class="n">variables</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">variables</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
             <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">check_consistency</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span><span class="p">):</span>
-            <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrong variables for sampling. Variables &#39;</span><span class="p">,</span>
-                      <span class="sa">f</span><span class="s1">&#39;should be in </span><span class="si">{self.input_variables}</span><span class="s1">.&#39;</span><span class="p">)</span>
+            <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Wrong variables for sampling. Variables &quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;should be in </span><span class="si">{self.input_variables}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># check consistency location</span>
-        <span class="k">if</span> <span class="n">locations</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">locations</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
             <span class="n">locations</span> <span class="o">=</span> <span class="p">[</span><span class="n">condition</span> <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">check_consistency</span><span class="p">(</span><span class="n">locations</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">):</span>
-            <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrong locations for sampling. Location &#39;</span><span class="p">,</span>
-                      <span class="sa">f</span><span class="s1">&#39;should be in </span><span class="si">{self.conditions}</span><span class="s1">.&#39;</span><span class="p">)</span>
+            <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Wrong locations for sampling. Location &quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;should be in </span><span class="si">{self.conditions}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># sampling</span>
         <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
@@ -297,9 +307,9 @@
 
             <span class="c1"># the condition is sampled if input_pts contains all labels</span>
             <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span>
+            <span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_have_sampled_points</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
-
 
 <div class="viewcode-block" id="AbstractProblem.add_points"><a class="viewcode-back" href="../../../_rst/problem/abstractproblem.html#pina.problem.abstract_problem.AbstractProblem.add_points">[docs]</a>    <span class="k">def</span> <span class="nf">add_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -310,8 +320,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">new_points</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">):</span>
-            <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrong locations for new points. Location &#39;</span><span class="p">,</span>
-                      <span class="sa">f</span><span class="s1">&#39;should be in </span><span class="si">{self.conditions}</span><span class="s1">.&#39;</span><span class="p">)</span>
+            <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Wrong locations for new points. Location &quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;should be in </span><span class="si">{self.conditions}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">new_points</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="c1"># extract old and new points</span>
@@ -320,11 +332,14 @@
 
             <span class="c1"># if they don&#39;t have the same variables error</span>
             <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">old_pts</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">new_pts</span><span class="o">.</span><span class="n">labels</span><span class="p">):</span>
-                <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not matching variables for old and new points &#39;</span>
-                          <span class="sa">f</span><span class="s1">&#39;in condition </span><span class="si">{location}</span><span class="s1">.&#39;</span><span class="p">)</span>
+                <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Not matching variables for old and new points &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;in condition </span><span class="si">{location}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
             <span class="k">if</span> <span class="n">old_pts</span><span class="o">.</span><span class="n">labels</span> <span class="o">!=</span> <span class="n">new_pts</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
                 <span class="n">new_pts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
-                    <span class="p">[</span><span class="n">new_pts</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">old_pts</span><span class="o">.</span><span class="n">labels</span><span class="p">])</span>
+                    <span class="p">[</span><span class="n">new_pts</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">old_pts</span><span class="o">.</span><span class="n">labels</span><span class="p">]</span>
+                <span class="p">)</span>
                 <span class="n">new_pts</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">old_pts</span><span class="o">.</span><span class="n">labels</span>
 
             <span class="c1"># merging</span>
@@ -355,7 +370,6 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_sample</span><span class="p">:</span>
                     <span class="n">not_sampled</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">condition_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">not_sampled</span></div>
-
 </pre></div>
 
            </div>
@@ -365,8 +379,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

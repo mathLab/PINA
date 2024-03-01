@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.plotter &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>pina.plotter &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -100,14 +102,17 @@
 <span class="sd">    Implementation of a plotter class, for easy visualizations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Plotter.plot_samples"><a class="viewcode-back" href="../../_rst/plotter.html#pina.plotter.Plotter.plot_samples">[docs]</a>    <span class="k">def</span> <span class="nf">plot_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Plotter.plot_samples"><a class="viewcode-back" href="../../_rst/plotter.html#pina.plotter.Plotter.plot_samples">[docs]</a>    <span class="k">def</span> <span class="nf">plot_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the training grid samples.</span>
 
-<span class="sd">        :param SolverInterface solver: The ``SolverInterface`` object.</span>
+<span class="sd">        :param AbstractProblem problem: The PINA problem from where to plot</span>
+<span class="sd">            the domain.</span>
 <span class="sd">        :param list(str) variables: Variables to plot. If None, all variables</span>
 <span class="sd">            are plotted. If &#39;spatial&#39;, only spatial variables are plotted. If</span>
 <span class="sd">            &#39;temporal&#39;, only temporal variables are plotted. Defaults to None.</span>
+<span class="sd">        :param str filename: The file name to save the plot. If None, the plot</span>
+<span class="sd">            is shown using the setted matplotlib frontend. Default is None.</span>
 
 <span class="sd">        .. todo::</span>
 <span class="sd">            - Add support for 3D plots.</span>
@@ -120,49 +125,61 @@
 
         <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">variables</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">variables</span>
-        <span class="k">elif</span> <span class="n">variables</span> <span class="o">==</span> <span class="s1">&#39;spatial&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">variables</span> <span class="o">==</span> <span class="s2">&quot;spatial&quot;</span><span class="p">:</span>
             <span class="n">variables</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">spatial_domain</span><span class="o">.</span><span class="n">variables</span>
-        <span class="k">elif</span> <span class="n">variables</span> <span class="o">==</span> <span class="s1">&#39;temporal&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">variables</span> <span class="o">==</span> <span class="s2">&quot;temporal&quot;</span><span class="p">:</span>
             <span class="n">variables</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">temporal_domain</span><span class="o">.</span><span class="n">variables</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Samples can be plotted only in &quot;</span> <span class="s2">&quot;dimensions 1, 2 and 3.&quot;</span>
+            <span class="p">)</span>
 
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-        <span class="n">proj</span> <span class="o">=</span> <span class="s1">&#39;3d&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">proj</span> <span class="o">=</span> <span class="s2">&quot;3d&quot;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">:</span>
             <span class="n">coords</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># 1D samples</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
-                        <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
-                        <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-                        <span class="n">label</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
-                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">coords</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># 1D samples</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">coords</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
+                    <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">coords</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">*</span><span class="n">coords</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
             <span class="k">pass</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
             <span class="k">pass</span>
 
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">_1d_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">truth_solution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_1d_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">truth_solution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot solution for one dimensional function</span>
 
 <span class="sd">        :param pts: Points to plot the solution.</span>
 <span class="sd">        :type pts: torch.Tensor</span>
 <span class="sd">        :param pred: SolverInterface solution evaluated at &#39;pts&#39;.</span>
 <span class="sd">        :type pred: torch.Tensor</span>
+<span class="sd">        :param v: Fixed variables when plotting the solution.</span>
+<span class="sd">        :type v: torch.Tensor</span>
 <span class="sd">        :param method: Not used, kept for code compatibility</span>
 <span class="sd">        :type method: None</span>
 <span class="sd">        :param truth_solution: Real solution evaluated at &#39;pts&#39;,</span>
@@ -171,33 +188,31 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">pred</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Neural Network solution&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Neural Network solution&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">truth_solution</span><span class="p">:</span>
-            <span class="n">truth_output</span> <span class="o">=</span> <span class="n">truth_solution</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">truth_output</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;True solution&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">truth_output</span> <span class="o">=</span> <span class="n">truth_solution</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">pts</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">truth_output</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True solution&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
 
         <span class="c1"># TODO: pred is a torch.Tensor, so no labels is available</span>
         <span class="c1">#      extra variable for labels should be</span>
         <span class="c1">#      passed in the function arguments.</span>
-        <span class="c1"># plt.ylabel(pred.labels[0]) </span>
+        <span class="c1"># plt.ylabel(pred.labels[0])</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_2d_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">pts</span><span class="p">,</span>
-                 <span class="n">pred</span><span class="p">,</span>
-                 <span class="n">v</span><span class="p">,</span>
-                 <span class="n">res</span><span class="p">,</span>
-                 <span class="n">method</span><span class="p">,</span>
-                 <span class="n">truth_solution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_2d_plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">pts</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">truth_solution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot solution for two dimensional function</span>
 
 <span class="sd">        :param pts: Points to plot the solution.</span>
 <span class="sd">        :type pts: torch.Tensor</span>
 <span class="sd">        :param pred: ``SolverInterface`` solution evaluated at &#39;pts&#39;.</span>
 <span class="sd">        :type pred: torch.Tensor</span>
+<span class="sd">        :param v: Fixed variables when plotting the solution.</span>
+<span class="sd">        :type v: torch.Tensor</span>
 <span class="sd">        :param method: Matplotlib method to plot 2-dimensional data,</span>
 <span class="sd">            see https://matplotlib.org/stable/api/axes_api.html for</span>
 <span class="sd">            reference.</span>
@@ -207,48 +222,52 @@
 <span class="sd">        :type truth_solution: torch.Tensor, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">grids</span> <span class="o">=</span> <span class="p">[</span><span class="n">p_</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">p_</span> <span class="ow">in</span> <span class="n">pts</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">]</span>
+        <span class="n">grids</span> <span class="o">=</span> <span class="p">[</span><span class="n">p_</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">p_</span> <span class="ow">in</span> <span class="n">pts</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">]</span>
 
         <span class="n">pred_output</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">truth_solution</span><span class="p">:</span>
-            <span class="n">truth_output</span> <span class="o">=</span> <span class="n">truth_solution</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+            <span class="n">truth_output</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">truth_solution</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">float</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
-            <span class="n">cb</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">grids</span><span class="p">,</span> <span class="n">pred_output</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
-                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">cb</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">grids</span><span class="p">,</span> <span class="n">pred_output</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;Neural Network prediction&#39;</span><span class="p">)</span>
-            <span class="n">cb</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">grids</span><span class="p">,</span> <span class="n">truth_output</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
-                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">&quot;Neural Network prediction&quot;</span><span class="p">)</span>
+            <span class="n">cb</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">grids</span><span class="p">,</span> <span class="n">truth_output</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;True solution&#39;</span><span class="p">)</span>
-            <span class="n">cb</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                         <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">grids</span><span class="p">,</span>
-                                 <span class="p">(</span><span class="n">truth_output</span> <span class="o">-</span> <span class="n">pred_output</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
-                                 <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">&quot;True solution&quot;</span><span class="p">)</span>
+            <span class="n">cb</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">method</span><span class="p">)(</span>
+                <span class="o">*</span><span class="n">grids</span><span class="p">,</span> <span class="p">(</span><span class="n">truth_output</span> <span class="o">-</span> <span class="n">pred_output</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-            <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;Residual&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">&quot;Residual&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-            <span class="n">cb</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">grids</span><span class="p">,</span> <span class="n">pred_output</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
-                                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">cb</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">grids</span><span class="p">,</span> <span class="n">pred_output</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;Neural Network prediction&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">&quot;Neural Network prediction&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Plotter.plot"><a class="viewcode-back" href="../../_rst/plotter.html#pina.plotter.Plotter.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-             <span class="n">solver</span><span class="p">,</span>
-             <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">fixed_variables</span><span class="o">=</span><span class="p">{},</span>
-             <span class="n">method</span><span class="o">=</span><span class="s1">&#39;contourf&#39;</span><span class="p">,</span>
-             <span class="n">res</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-             <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Plotter.plot"><a class="viewcode-back" href="../../_rst/plotter.html#pina.plotter.Plotter.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">solver</span><span class="p">,</span>
+        <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fixed_variables</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;contourf&quot;</span><span class="p">,</span>
+        <span class="n">res</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot sample of SolverInterface output.</span>
 
 <span class="sd">        :param SolverInterface solver: The ``SolverInterface`` object instance.</span>
-<span class="sd">        :param list(str) components: The output variable to plot. If None, all</span>
-<span class="sd">            the output variables of the problem are selected. Default value is None.</span>
+<span class="sd">        :param str | list(str) components: The output variable(s) to plot.</span>
+<span class="sd">            If None, all the output variables of the problem are selected.</span>
+<span class="sd">            Default value is None.</span>
 <span class="sd">        :param dict fixed_variables: A dictionary with all the variables that</span>
 <span class="sd">            should be kept fixed during the plot. The keys of the dictionary</span>
 <span class="sd">            are the variables name whereas the values are the corresponding</span>
@@ -264,15 +283,28 @@
 
         <span class="k">if</span> <span class="n">components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">components</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">output_variables</span>
-        
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">components</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="n">components</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">components</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Output variables must be passed&quot;</span>
+                <span class="s2">&quot;as a string or a list of strings.&quot;</span>
+            <span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Multidimensional plots are not implemented, &#39;</span>
-                                      <span class="s1">&#39;set components to an available components of the problem.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Multidimensional plots are not implemented, &quot;</span>
+                <span class="s2">&quot;set components to an available components of&quot;</span>
+                <span class="s2">&quot; the problem.&quot;</span>
+            <span class="p">)</span>
         <span class="n">v</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span>
+            <span class="n">var</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span>
             <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fixed_variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="p">]</span>
-        <span class="n">pts</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s1">&#39;grid&#39;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
 
         <span class="n">fixed_pts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">fixed_variables</span><span class="p">))</span>
         <span class="n">fixed_pts</span> <span class="o">*=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">fixed_variables</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
@@ -282,29 +314,39 @@
         <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fixed_pts</span><span class="p">)</span>
         <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">solver</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
-        <span class="n">predicted_output</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">components</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
-        <span class="n">truth_solution</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="s1">&#39;truth_solution&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># computing soluting and sending to cpu</span>
+        <span class="n">predicted_output</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
+        <span class="n">predicted_output</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">predicted_output</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+        <span class="n">truth_solution</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="s2">&quot;truth_solution&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_1d_plot</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">predicted_output</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">truth_solution</span><span class="p">,</span>
-                          <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_1d_plot</span><span class="p">(</span>
+                <span class="n">pts</span><span class="p">,</span> <span class="n">predicted_output</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">truth_solution</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_2d_plot</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">predicted_output</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">truth_solution</span><span class="p">,</span>
-                          <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_2d_plot</span><span class="p">(</span>
+                <span class="n">pts</span><span class="p">,</span> <span class="n">predicted_output</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">truth_solution</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
 
         <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Plotter.plot_loss"><a class="viewcode-back" href="../../_rst/plotter.html#pina.plotter.Plotter.plot_loss">[docs]</a>    <span class="k">def</span> <span class="nf">plot_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                  <span class="n">trainer</span><span class="p">,</span>
-                  <span class="n">metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                  <span class="n">logy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                  <span class="n">logx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                  <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Plotter.plot_loss"><a class="viewcode-back" href="../../_rst/plotter.html#pina.plotter.Plotter.plot_loss">[docs]</a>    <span class="k">def</span> <span class="nf">plot_loss</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">trainer</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">logy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">logx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the loss function values during traininig.</span>
 
@@ -322,45 +364,48 @@
 
         <span class="c1"># check that MetricTracker has been used</span>
         <span class="n">list_</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">callbacks</span><span class="p">)</span>
+            <span class="n">idx</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trainer</span><span class="o">.</span><span class="n">callbacks</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">MetricTracker</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                <span class="s1">&#39;MetricTracker should be used as a callback during training to&#39;</span>
-                <span class="s1">&#39; use this method.&#39;</span><span class="p">)</span>
+                <span class="s2">&quot;MetricTracker should be used as a callback during training to&quot;</span>
+                <span class="s2">&quot; use this method.&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># extract trainer metrics</span>
         <span class="n">trainer_metrics</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">callbacks</span><span class="p">[</span><span class="n">list_</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">metrics</span>
         <span class="k">if</span> <span class="n">metrics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean_loss&#39;</span><span class="p">]</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean_loss&quot;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;metrics must be class list.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;metrics must be class list.&quot;</span><span class="p">)</span>
 
         <span class="c1"># loop over metrics to plot</span>
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trainer_metrics</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{metric}</span><span class="s1"> not a valid metric. Available metrics are {list(trainer_metrics.keys())}.&#39;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{metric}</span><span class="s2"> not a valid metric. Available metrics are {list(trainer_metrics.keys())}.&quot;</span>
                 <span class="p">)</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">trainer_metrics</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
             <span class="n">epochs</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">loss</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># plotting</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;epoch&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
         <span class="c1"># log axis</span>
         <span class="k">if</span> <span class="n">logy</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">logx</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 
         <span class="c1"># saving in file</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div></div>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>
@@ -370,8 +415,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

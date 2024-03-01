@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.equation.system_equation &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.equation.system_equation &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -88,6 +90,7 @@
              
   <h1>Source code for pina.equation.system_equation</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Module for SystemEquation. &quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">.equation</span> <span class="kn">import</span> <span class="n">Equation</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
@@ -95,7 +98,7 @@
 
 <div class="viewcode-block" id="SystemEquation"><a class="viewcode-back" href="../../../_rst/equations.html#pina.equation.system_equation.SystemEquation">[docs]</a><span class="k">class</span> <span class="nc">SystemEquation</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_equation</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_equation</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        System of Equation class for specifing any system</span>
 <span class="sd">        of equations in PINA.</span>
@@ -122,15 +125,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">equations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Equation</span><span class="p">(</span><span class="n">equation</span><span class="p">))</span>
 
         <span class="c1"># possible reduction</span>
-        <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span>
-        <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="n">reduction</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="n">reduction</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="n">reduction</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s1">&#39;Only mean and sum reductions implemented.&#39;</span><span class="p">)</span>
+                <span class="s2">&quot;Only mean and sum reductions implemented.&quot;</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="SystemEquation.residual"><a class="viewcode-back" href="../../../_rst/equations.html#pina.equation.system_equation.SystemEquation.residual">[docs]</a>    <span class="k">def</span> <span class="nf">residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">,</span> <span class="n">params_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -153,9 +157,13 @@
 <span class="sd">        :rtype: LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">residual</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">equation</span><span class="o">.</span><span class="n">residual</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">,</span> <span class="n">params_</span><span class="p">)</span> <span class="k">for</span> <span class="n">equation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">equations</span><span class="p">])</span>
+            <span class="p">[</span>
+                <span class="n">equation</span><span class="o">.</span><span class="n">residual</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">,</span> <span class="n">params_</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">equation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">equations</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">residual</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div></div>
@@ -168,8 +176,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

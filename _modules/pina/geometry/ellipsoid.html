@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.geometry.ellipsoid &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.geometry.ellipsoid &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -174,7 +176,7 @@
 
 <span class="sd">        .. note::</span>
 <span class="sd">            When ``sample_surface`` in the ``__init()__``</span>
-<span class="sd">            is set to ``True``, then the method only checks </span>
+<span class="sd">            is set to ``True``, then the method only checks</span>
 <span class="sd">            points on the surface, and not inside the domain.</span>
 
 <span class="sd">        :param point: Point to be checked.</span>
@@ -192,7 +194,7 @@
         <span class="c1"># get axis ellipse as tensors</span>
         <span class="n">list_dict_vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_axis</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">list_dict_vals</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-        <span class="n">ax_sq</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+        <span class="n">ax_sq</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
 
         <span class="c1"># get centers ellipse as tensors</span>
         <span class="n">list_dict_vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_centers</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
@@ -200,16 +202,18 @@
         <span class="n">centers</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">i</span> <span class="ow">in</span> <span class="n">ax_sq</span><span class="o">.</span><span class="n">labels</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">point</span><span class="o">.</span><span class="n">labels</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;point labels different from constructor&#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39; dictionary labels. Got </span><span class="si">{point.labels}</span><span class="s1">,&#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39; expected </span><span class="si">{ax_sq.labels}</span><span class="s1">.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;point labels different from constructor&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; dictionary labels. Got </span><span class="si">{point.labels}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; expected </span><span class="si">{ax_sq.labels}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># point square + shift center</span>
         <span class="n">point_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span> <span class="o">-</span> <span class="n">centers</span><span class="p">)</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">point_sq</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">labels</span>
 
         <span class="c1"># calculate ellispoid equation</span>
-        <span class="n">eqn</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">point_sq</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">ax_sq</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span> <span class="o">/</span> <span class="n">ax_sq</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.</span>
+        <span class="n">eqn</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">point_sq</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">ax_sq</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span> <span class="o">/</span> <span class="n">ax_sq</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
 
         <span class="c1"># if we have sampled only the surface, we check that the</span>
         <span class="c1"># point is inside the surface border only</span>
@@ -249,8 +253,9 @@
         <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
 
         <span class="c1"># get values center</span>
-        <span class="n">pairs_center</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_centers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">]</span>
+        <span class="n">pairs_center</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_centers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">variables</span>
+        <span class="p">]</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">values_center</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pairs_center</span><span class="p">))</span>
         <span class="n">values_center</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">values_center</span><span class="p">)</span>
 
@@ -260,7 +265,7 @@
         <span class="n">values_axis</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">values_axis</span><span class="p">)</span>
 
         <span class="c1"># Sample in the unit sphere</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;random&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
             <span class="c1"># 1. Sample n points from the surface of a unit sphere</span>
             <span class="c1"># 2. Scale each dimension using torch.rand()</span>
             <span class="c1">#    (a random number between 0-1) so that it lies within</span>
@@ -281,7 +286,7 @@
 
         <span class="k">return</span> <span class="n">pts</span>
 
-<div class="viewcode-block" id="EllipsoidDomain.sample"><a class="viewcode-back" href="../../../_rst/geometry/ellipsoid.html#pina.geometry.ellipsoid.EllipsoidDomain.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="EllipsoidDomain.sample"><a class="viewcode-back" href="../../../_rst/geometry/ellipsoid.html#pina.geometry.ellipsoid.EllipsoidDomain.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sample routine.</span>
 
 <span class="sd">        :param int n: Number of points to sample in the shape.</span>
@@ -327,12 +332,13 @@
             <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span>
-                    <span class="n">pts_variable</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">value</span><span class="p">]</span>
-                                                 <span class="p">])</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">pts_variable</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">value</span><span class="p">]])</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span>
+                    <span class="p">)</span>
                     <span class="n">pts_variable</span> <span class="o">=</span> <span class="n">pts_variable</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
                     <span class="n">pts_variable</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">variable</span><span class="p">]</span>
 
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pts_variable</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;std&#39;</span><span class="p">)</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pts_variable</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">result</span>
 
         <span class="k">def</span> <span class="nf">_single_points_sample</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
@@ -356,20 +362,20 @@
 
             <span class="n">result</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;std&#39;</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">result</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">range_</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">_single_points_sample</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">variables</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">variables</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
             <span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">range_</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-        <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;random&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;random&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">_Nd_sampler</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mode=</span><span class="si">{mode}</span><span class="s1"> is not implemented.&#39;</span><span class="p">)</span></div></div>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mode=</span><span class="si">{mode}</span><span class="s2"> is not implemented.&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -379,8 +385,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

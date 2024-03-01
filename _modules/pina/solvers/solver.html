@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.solvers.solver &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.solvers.solver &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -104,12 +106,14 @@
 <span class="sd">    LightningModule methods.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">models</span><span class="p">,</span>
-                 <span class="n">problem</span><span class="p">,</span>
-                 <span class="n">optimizers</span><span class="p">,</span>
-                 <span class="n">optimizers_kwargs</span><span class="p">,</span>
-                 <span class="n">extra_features</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">models</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">,</span>
+        <span class="n">optimizers</span><span class="p">,</span>
+        <span class="n">optimizers_kwargs</span><span class="p">,</span>
+        <span class="n">extra_features</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param models: A torch neural network model instance.</span>
 <span class="sd">        :type models: torch.nn.Module</span>
@@ -119,7 +123,7 @@
 <span class="sd">            use.</span>
 <span class="sd">        :param list(dict) optimizer_kwargs: A list of optimizer constructor keyword args.</span>
 <span class="sd">        :param list(torch.nn.Module) extra_features: The additional input</span>
-<span class="sd">            features to use as augmented input. If ``None`` no extra features </span>
+<span class="sd">            features to use as augmented input. If ``None`` no extra features</span>
 <span class="sd">            are passed. If it is a list of :class:`torch.nn.Module`, the extra feature</span>
 <span class="sd">            list is passed to all models. If it is a list of extra features&#39; lists,</span>
 <span class="sd">            each single list of extra feature is passed to a model.</span>
@@ -146,19 +150,23 @@
 
         <span class="c1"># check length consistency optimizers</span>
         <span class="k">if</span> <span class="n">len_model</span> <span class="o">!=</span> <span class="n">len_optimizer</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You must define one optimizer for each model.&#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39;Got </span><span class="si">{len_model}</span><span class="s1"> models, and </span><span class="si">{len_optimizer}</span><span class="s1">&#39;</span>
-                             <span class="s1">&#39; optimizers.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;You must define one optimizer for each model.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{len_model}</span><span class="s2"> models, and </span><span class="si">{len_optimizer}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot; optimizers.&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># check length consistency optimizers kwargs</span>
         <span class="k">if</span> <span class="n">len_optimizer_kwargs</span> <span class="o">!=</span> <span class="n">len_optimizer</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You must define one dictionary of keyword&#39;</span>
-                             <span class="s1">&#39; arguments for each optimizers.&#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39;Got </span><span class="si">{len_optimizer}</span><span class="s1"> optimizers, and&#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39; </span><span class="si">{len_optimizer_kwargs}</span><span class="s1"> dicitionaries&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;You must define one dictionary of keyword&quot;</span>
+                <span class="s2">&quot; arguments for each optimizers.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{len_optimizer}</span><span class="s2"> optimizers, and&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{len_optimizer_kwargs}</span><span class="s2"> dicitionaries&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># extra features handling</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">extra_features</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">extra_features</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">extra_features</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">extra_features</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
             <span class="n">extra_features</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">len_model</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># if we only have a list of extra features</span>
@@ -167,24 +175,28 @@
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># if we have a list of list extra features</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extra_features</span><span class="p">)</span> <span class="o">!=</span> <span class="n">len_model</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s1">&#39;You passed a list of extrafeatures list with len&#39;</span>
-                        <span class="sa">f</span><span class="s1">&#39;different of models len. Expected </span><span class="si">{len_model}</span><span class="s1"> &#39;</span>
-                        <span class="sa">f</span><span class="s1">&#39;got {len(extra_features)}. If you want to use &#39;</span>
-                        <span class="s1">&#39;the same list of extra features for all models, &#39;</span>
-                        <span class="s1">&#39;just pass a list of extrafeatures and not a list &#39;</span>
-                        <span class="s1">&#39;of list of extra features.&#39;</span><span class="p">)</span>
+                        <span class="s2">&quot;You passed a list of extrafeatures list with len&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;different of models len. Expected </span><span class="si">{len_model}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;got {len(extra_features)}. If you want to use &quot;</span>
+                        <span class="s2">&quot;the same list of extra features for all models, &quot;</span>
+                        <span class="s2">&quot;just pass a list of extrafeatures and not a list &quot;</span>
+                        <span class="s2">&quot;of list of extra features.&quot;</span>
+                    <span class="p">)</span>
 
         <span class="c1"># assigning model and optimizers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_model</span><span class="p">):</span>
-            <span class="n">model_</span> <span class="o">=</span> <span class="n">Network</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">models</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-                             <span class="n">input_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span><span class="p">,</span>
-                             <span class="n">output_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">output_variables</span><span class="p">,</span>
-                             <span class="n">extra_features</span><span class="o">=</span><span class="n">extra_features</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
-            <span class="n">optim_</span> <span class="o">=</span> <span class="n">optimizers</span><span class="p">[</span><span class="n">idx</span><span class="p">](</span><span class="n">model_</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
-                                     <span class="o">**</span><span class="n">optimizers_kwargs</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">model_</span> <span class="o">=</span> <span class="n">Network</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">models</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                <span class="n">input_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span><span class="p">,</span>
+                <span class="n">output_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">output_variables</span><span class="p">,</span>
+                <span class="n">extra_features</span><span class="o">=</span><span class="n">extra_features</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">optim_</span> <span class="o">=</span> <span class="n">optimizers</span><span class="p">[</span><span class="n">idx</span><span class="p">](</span>
+                <span class="n">model_</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="o">**</span><span class="n">optimizers_kwargs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optim_</span><span class="p">)</span>
 
@@ -243,8 +255,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 

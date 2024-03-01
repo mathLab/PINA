@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.loss &mdash; PINA 0.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>pina.loss &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -35,7 +37,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1
+                0.1.0.post2403
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -94,7 +96,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LossInterface&#39;</span><span class="p">,</span> <span class="s1">&#39;LpLoss&#39;</span><span class="p">,</span> <span class="s1">&#39;PowerLoss&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LossInterface&quot;</span><span class="p">,</span> <span class="s2">&quot;LpLoss&quot;</span><span class="p">,</span> <span class="s2">&quot;PowerLoss&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="LossInterface"><a class="viewcode-back" href="../../_rst/loss/loss_interface.html#pina.loss.LossInterface">[docs]</a><span class="k">class</span> <span class="nc">LossInterface</span><span class="p">(</span><span class="n">_Loss</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
@@ -103,10 +105,10 @@
 <span class="sd">    should be inheritied from this class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param str reduction: Specifies the reduction to apply to the output:</span>
-<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction </span>
+<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction</span>
 <span class="sd">            will be applied, ``mean``: the sum of the output will be divided</span>
 <span class="sd">            by the number of elements in the output, ``sum``: the output will</span>
 <span class="sd">            be summed. Note: ``size_average`` and ``reduce`` are in the</span>
@@ -130,7 +132,7 @@
         <span class="sd">&quot;&quot;&quot;Simple helper function to check reduction</span>
 
 <span class="sd">        :param reduction: Specifies the reduction to apply to the output:</span>
-<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction </span>
+<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction</span>
 <span class="sd">            will be applied, ``mean``: the sum of the output will be divided</span>
 <span class="sd">            by the number of elements in the output, ``sum``: the output will</span>
 <span class="sd">            be summed. Note: ``size_average`` and ``reduce`` are in the</span>
@@ -190,14 +192,14 @@
 <span class="sd">    The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param int p: Degree of Lp norm. It specifies the type of norm to</span>
 <span class="sd">            be calculated. See `list of possible orders in torch linalg</span>
 <span class="sd">            &lt;https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm&gt;`_ to</span>
 <span class="sd">            for possible degrees. Default 2 (euclidean norm).</span>
 <span class="sd">        :param str reduction: Specifies the reduction to apply to the output:</span>
-<span class="sd">            ``none`` | ``mean`` | ``sum``. ``none``: no reduction </span>
+<span class="sd">            ``none`` | ``mean`` | ``sum``. ``none``: no reduction</span>
 <span class="sd">            will be applied, ``mean``: the sum of the output will be divided</span>
 <span class="sd">            by the number of elements in the output, ``sum``: the output will</span>
 <span class="sd">            be summed.</span>
@@ -206,7 +208,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
 
         <span class="c1"># check consistency</span>
-        <span class="n">check_consistency</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">))</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">relative</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
@@ -263,14 +265,14 @@
 <span class="sd">    The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param int p: Degree of Lp norm. It specifies the type of norm to</span>
 <span class="sd">            be calculated. See `list of possible orders in torch linalg</span>
 <span class="sd">            &lt;https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm&gt;`_ to</span>
 <span class="sd">            see the possible degrees. Default 2 (euclidean norm).</span>
 <span class="sd">        :param str reduction: Specifies the reduction to apply to the output:</span>
-<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction </span>
+<span class="sd">            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction</span>
 <span class="sd">            will be applied, ``mean``: the sum of the output will be divided</span>
 <span class="sd">            by the number of elements in the output, ``sum``: the output will</span>
 <span class="sd">            be summed.</span>
@@ -305,8 +307,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2023, PINA Contributors.
-      <span class="lastupdated">Last updated on Nov 17, 2023.
+    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Mar 01, 2024.
       </span></p>
   </div>
 
