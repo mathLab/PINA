@@ -9,7 +9,7 @@ __all__ = [
     "FourierBlock2D",
     "FourierBlock3D",
     "PODBlock",
-    "PeriodicBoundaryEmbedding"
+    "PeriodicBoundaryEmbedding",
 ]
 
 from .convolution_2d import ContinuousConvBlock
