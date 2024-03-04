@@ -2,6 +2,7 @@
 
 from torch import nn, mean
 
+
 class AVNOBlock(nn.Module):
     """
     The PINA implementation of the inner layer 
@@ -13,15 +14,15 @@ class AVNOBlock(nn.Module):
         Default to nn.GELU.
         
     """
-    def __init__(self, hidden_size = 100, func = nn.GELU):
+
+    def __init__(self, hidden_size=100, func=nn.GELU):
         super().__init__()
-        self.hidden_size = hidden_size
-        self.nn = nn.Linear(self.hidden_size, self.hidden_size)
-        self.func = func
+        self.nn = nn.Linear(hidden_size, hidden_size)
+        self.func = func()
 
     def forward(self, batch):
         """Forward pass of the layer."""
-        return self.func()(self.nn(batch) + mean(batch, dim=1).unsqueeze(1))
+        return self.func(self.nn(batch) + mean(batch, dim=1, keepdim=True))
 
     def linear_component(self, batch):
         """Linear component of the layer."""
