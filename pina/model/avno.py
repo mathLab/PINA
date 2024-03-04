@@ -6,7 +6,7 @@ from .layers import AVNOBlock
 from .base_no import KernelNeuralOperator
 
 
-class AVNO(KernelNeuralOperator):
+class AveragingNeuralOperator(KernelNeuralOperator):
     """
     Implementation of Averaging Neural Operator.
 
@@ -34,19 +34,19 @@ class AVNO(KernelNeuralOperator):
         func=nn.GELU,
     ):
         """
-        :param int input_features: The number of input components of the model.
-        :param int output_features: The number of output components 
+        :param int input_numb_fields: The number of input components 
             of the model.
-        :param int points_size: the dimension of the domain of the functions.
+        :param int output_numb_fields: The number of output components 
+            of the model.
+        :param int dimension: the dimension of the domain of the functions.
         :param int inner_size: number of neurons in the hidden layer(s). 
             Defaults to 100.
         :param int n_layers: number of hidden layers. Default is 4.
         :param func: the activation function to use. Default to nn.GELU.
-        :param str features_label: the label of the features 
+        :param str field_indices: the label of the fields 
             in the input tensor. 
-            Defaults to 'v'.
-        :param str points_label: the label of the points in the input tensor. 
-            Defaults to 'p'.
+        :param str coordinates_indices: the label of the 
+            coordinates in the input tensor. 
         """
 
         self.input_numb_fields = input_numb_fields

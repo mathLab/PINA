@@ -56,6 +56,7 @@ Models
     MIONet <models/mionet.rst>
     FourierIntegralKernel <models/fourier_kernel.rst>
     FNO <models/fno.rst>
+    AveragingNeuralOperator <models/avno.rst>
 
 Layers
 -------------
@@ -70,7 +71,7 @@ Layers
     Continuous convolution <layers/convolution.rst>
     Proper Orthogonal Decomposition <layers/pod.rst>
     Periodic Boundary Condition embeddings <layers/embedding.rst>
-    
+    Averaging Neural Operator block <layers/avno_layer.rst>
 
 Equations and Operators
 -------------------------

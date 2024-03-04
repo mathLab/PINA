@@ -15,4 +15,4 @@ from .multi_feed_forward import MultiFeedForward
 from .deeponet import DeepONet, MIONet
 from .fno import FNO, FourierIntegralKernel
 from .base_no import KernelNeuralOperator
-from .avno import AVNO
+from .avno import AveragingNeuralOperator

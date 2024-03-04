@@ -1,5 +1,5 @@
 import torch
-from pina.model import AVNO
+from pina.model import AveragingNeuralOperator
 from pina import LabelTensor
 
 output_numb_fields = 5
@@ -10,13 +10,13 @@ def test_constructor():
     input_numb_fields = 1
     output_numb_fields = 1
     #minimuum constructor
-    AVNO(input_numb_fields,
+    AveragingNeuralOperator(input_numb_fields,
          output_numb_fields,
          coordinates_indices=['p'],
          field_indices=['v'])
 
     #all constructor
-    AVNO(input_numb_fields,
+    AveragingNeuralOperator(input_numb_fields,
          output_numb_fields,
          inner_size=5,
          n_layers=5,
@@ -31,7 +31,7 @@ def test_forward():
     dimension = 1
     input_ = LabelTensor(
         torch.rand(batch_size, 1000, input_numb_fields + dimension), ['p', 'v'])
-    ano = AVNO(input_numb_fields,
+    ano = AveragingNeuralOperator(input_numb_fields,
                output_numb_fields,
                dimension=dimension,
                coordinates_indices=['p'],
@@ -46,9 +46,10 @@ def test_backward():
     dimension = 1
     output_numb_fields = 1
     input_ = LabelTensor(
-        torch.rand(batch_size, 1000, dimension + input_numb_fields), ['p', 'v'])
+        torch.rand(batch_size, 1000, dimension + input_numb_fields), 
+        ['p', 'v'])
     input_ = input_.requires_grad_()
-    avno = AVNO(input_numb_fields,
+    avno = AveragingNeuralOperator(input_numb_fields,
                 output_numb_fields,
                 dimension=dimension,
                 coordinates_indices=['p'],
