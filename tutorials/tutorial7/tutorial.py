@@ -14,12 +14,12 @@
 # \end{cases}
 # \end{equation}
 # where $\Omega$ is a square domain $[-2, 2] \times [-2, 2]$, and $\partial \Omega=\Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4$ is the union of the boundaries of the domain.
-#
+# 
 # This kind of problem, namely the "inverse problem", has two main goals:
 # - find the solution $u$ that satisfies the Poisson equation;
 # - find the unknown parameters ($\mu_1$, $\mu_2$) that better fit some given data (third equation in the system above).
-#
-# In order to achieve both the goals we will need to define an `InverseProblem` in PINA.
+# 
+# In order to achieve both goals we will need to define an `InverseProblem` in PINA.
 
 # Let's start with useful imports.
 
@@ -63,7 +63,7 @@ plt.show()
 
 # ### Inverse problem definition in PINA
 
-# Then, we initialize the Poisson problem, that is inherited from the `SpatialProblem` and from the `InverseProblem` classes. We here have to define all the variables, and the domain where our unknown parameters ($\mu_1$, $\mu_2$) belong. Notice that the laplace equation takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
+# Then, we initialize the Poisson problem, that is inherited from the `SpatialProblem` and from the `InverseProblem` classes. We here have to define all the variables, and the domain where our unknown parameters ($\mu_1$, $\mu_2$) belong. Notice that the Laplace equation takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
 
 # In[4]:
 
@@ -117,7 +117,7 @@ class Poisson(SpatialProblem, InverseProblem):
 problem = Poisson()
 
 
-# Then, we define the model of the neural network we want to use. Here we used a model which impose hard constrains on the boundary conditions, as also done in the Wave tutorial!
+# Then, we define the neural network model we want to use. Here we used a model which imposes hard constrains on the boundary conditions, as also done in the Wave tutorial!
 
 # In[5]:
 
@@ -160,7 +160,7 @@ class SaveParameters(Callback):
 
 # Then, we define the `PINN` object and train the solver using the `Trainer`.
 
-# In[8]:
+# In[ ]:
 
 
 ### train the problem with PINN
@@ -181,7 +181,7 @@ epochs_saved = range(99, max_epochs, 100)
 parameters = torch.empty((int(max_epochs/100), 2))
 for i, epoch in enumerate(epochs_saved):
     params_torch = torch.load('{}/parameters_epoch{}'.format(tmp_dir, epoch))
-    for e, var in enumerate(pinn.problem.unknown_variables):
+    for e, var in enumerate(pinn.problem.unknown_variables):         
         parameters[i, e] = params_torch[var].data
 
 # Plot parameters

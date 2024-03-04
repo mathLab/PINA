@@ -4,7 +4,7 @@
 # # Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator
 
 # In this tutorial we are going to solve the Darcy flow problem in two dimensions, presented in [*Fourier Neural Operator for
-# Parametric Partial Differential Equation*](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input output operations.
+# Parametric Partial Differential Equation*](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input-output operations.
 
 # In[1]:
 
@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 
 # ## Data Generation
 # 
-# We will focus on solving the a specfic PDE, the **Darcy Flow** equation. The Darcy PDE is a second order, elliptic PDE with the following form:
+# We will focus on solving a specific PDE, the **Darcy Flow** equation. The Darcy PDE is a second-order elliptic PDE with the following form:
 # 
 # $$
 # -\nabla\cdot(k(x, y)\nabla u(x, y)) = f(x) \quad (x, y) \in D.
@@ -112,7 +112,7 @@ err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)
 print(f'Final error testing {err:.2f}%')
 
 
-# ## Solving the problem with a Fuorier Neural Operator (FNO)
+# ## Solving the problem with a Fourier Neural Operator (FNO)
 # 
 # We will now move to solve the problem using a FNO. Since we are learning operator this approach is better suited, as we shall see.
 
