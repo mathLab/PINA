@@ -7,7 +7,7 @@ __all__ = [
     "FNO",
     "FourierIntegralKernel",
     "KernelNeuralOperator",
-    "AVNO",
+    "AveragingNeuralOperator",
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward
