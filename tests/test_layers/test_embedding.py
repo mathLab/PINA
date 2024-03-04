@@ -8,7 +8,7 @@ def check_same_columns(tensor):
     # Get the first column
     first_column = tensor[0]
     # Compare each column with the first column
-    all_same = torch.allclose(tensor, first_column)
+    all_same = torch.allclose(tensor, first_column, rtol=0.)
     return all_same
 
 def grad(u, x):
