@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions
+# # Tutorial: One dimensional Helmholtz equation using Periodic Boundary Conditions
 # This tutorial presents how to solve with Physics-Informed Neural Networks (PINNs)
-# a one dimensional Helmotz equation with periodic boundary conditions (PBC).
+# a one dimensional Helmholtz equation with periodic boundary conditions (PBC).
 # We will train with standard PINN's training by augmenting the input with
-# periodic expasion as presented in [*An expert’s guide to training
+# periodic expansion as presented in [*An expert’s guide to training
 # physics-informed neural networks*](
 # https://arxiv.org/abs/2308.08468).
 # 
@@ -30,7 +30,7 @@ from pina.equation import Equation
 
 # ## The problem definition
 # 
-# The one-dimensional Helmotz problem is mathematically written as:
+# The one-dimensional Helmholtz problem is mathematically written as:
 # $$
 # \begin{cases}
 # \frac{d^2}{dx^2}u(x) - \lambda u(x) -f(x) &=  0 \quad x\in(0,2)\\
@@ -38,9 +38,9 @@ from pina.equation import Equation
 # \end{cases}
 # $$
 # In this case we are asking the solution to be $C^{\infty}$ periodic with
-# period $2$, on the inifite domain $x\in(-\infty, \infty)$. Notice that the
-# classical PINN would need inifinite conditions to evaluate the PBC loss function,
-# one for each derivative, which is of course infeasable... 
+# period $2$, on the infinite domain $x\in(-\infty, \infty)$. Notice that the
+# classical PINN would need infinite conditions to evaluate the PBC loss function,
+# one for each derivative, which is of course infeasible... 
 # A possible solution, diverging from the original PINN formulation,
 # is to use *coordinates augmentation*. In coordinates augmentation you seek for
 # a coordinates transformation $v$ such that $x\rightarrow v(x)$ such that
@@ -54,11 +54,11 @@ from pina.equation import Equation
 # In[2]:
 
 
-class Helmotz(SpatialProblem):
+class Helmholtz(SpatialProblem):
     output_variables = ['u']
     spatial_domain = CartesianDomain({'x': [0, 2]})
 
-    def helmotz_equation(input_, output_):
+    def Helmholtz_equation(input_, output_):
         x = input_.extract('x')
         u_xx = laplacian(output_, input_, components=['u'], d=['x'])
         f = - 6.*torch.pi**2 * torch.sin(3*torch.pi*x)*torch.cos(torch.pi*x)
@@ -68,21 +68,21 @@ class Helmotz(SpatialProblem):
     # here we write the problem conditions
     conditions = {
         'D': Condition(location=spatial_domain,
-                       equation=Equation(helmotz_equation)),
+                       equation=Equation(Helmholtz_equation)),
     }
 
-    def helmotz_sol(self, pts):
+    def Helmholtz_sol(self, pts):
         return torch.sin(torch.pi * pts) * torch.cos(3. * torch.pi * pts)
     
-    truth_solution = helmotz_sol
+    truth_solution = Helmholtz_sol
 
-problem = Helmotz()
+problem = Helmholtz()
 
 # let's discretise the domain
 problem.discretise_domain(200, 'grid', locations=['D'])
 
 
-# As usual the Helmotz problem is written in **PINA** code as a class. 
+# As usual the Helmholtz problem is written in **PINA** code as a class. 
 # The equations are written as `conditions` that should be satisfied in the
 # corresponding domains. The `truth_solution`
 # is the exact solution which will be compared with the predicted one. We used
@@ -129,7 +129,7 @@ model = torch.nn.Sequential(PeriodicBoundaryEmbedding(input_dimension=1,
 # 
 # We will now sole the problem as usually with the `PINN` and `Trainer` class.
 
-# In[5]:
+# In[ ]:
 
 
 pinn = PINN(problem=problem, model=model)
@@ -180,7 +180,7 @@ with torch.no_grad():
 # 
 # ## What's next?
 # 
-# Nice you have completed the one dimensional Helmotz tutorial of **PINA**! There are multiple directions you can go now:
+# Nice you have completed the one dimensional Helmholtz tutorial of **PINA**! There are multiple directions you can go now:
 # 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
 # 
