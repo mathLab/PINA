@@ -52,20 +52,22 @@ input_dense = compute_input(data_dense, theta_dataset).unsqueeze(-1)
 data_coarse = data_coarse.unsqueeze(0).repeat(300, 1, 1)
 data_dense = data_dense.unsqueeze(0).repeat(300, 1, 1)
 x_coarse = LabelTensor(torch.concatenate((data_coarse, input_coarse), axis=2),
-                       ['p_0', 'p_1', 'v_0'])
+                       ['x', 'y', 'v'])
 x_dense = LabelTensor(torch.concatenate((data_dense, input_dense), axis=2),
-                      ['p_0', 'p_1', 'v_0'])
+                      ['x', 'y', 'v'])
 
 print(x_coarse.shape)
-model = AVNO(input_features=1,
-             output_features=1,
+model = AVNO(input_numb_fields=1,
+             output_numb_fields=1,
              inner_size=500,
              n_layers=4,
-             points_size=2,field_indices='v', coordinates_indices='p')
+             dimension=2,
+             field_indices=['v'],
+             coordinates_indices=['x', 'y'])
 
 
 class ANOProblem(AbstractProblem):
-    input_variables = ['p_0', 'p_1', 'v_0']
+    input_variables = ['x', 'y', 'v']
     input_points = x_coarse
     output_variables = ['output']
     output_points = LabelTensor(output_coarse, output_variables)
@@ -73,6 +75,7 @@ class ANOProblem(AbstractProblem):
         "data": Condition(input_points=input_points,
                           output_points=output_points)
     }
+
 
 batch_size = 1
 problem = ANOProblem()
@@ -96,7 +99,7 @@ num = 0
 dem = 0
 
 for i in range(300):
-    input_tmp = LabelTensor(x_coarse[i].unsqueeze(0), ['p_0', 'p_1', 'v_0'])
+    input_tmp = LabelTensor(x_coarse[i].unsqueeze(0), ['x', 'y', 'v'])
     tmp = model(input_tmp).detach().squeeze(0)
     num = num + torch.linalg.norm(tmp - output_coarse[i])**2
     dem = dem + torch.linalg.norm(output_coarse[i])**2
@@ -105,7 +108,7 @@ print("Training mse loss is", torch.sqrt(num / dem))
 num = 0
 dem = 0
 for i in range(300):
-    input_tmp = LabelTensor(x_coarse[i].unsqueeze(0), ['p_0', 'p_1', 'v_0'])
+    input_tmp = LabelTensor(x_coarse[i].unsqueeze(0), ['x', 'y', 'v'])
     tmp = model(input_tmp).detach().squeeze(0)
     num = num + torch.linalg.norm(tmp - output_dense[i])**2
     dem = dem + torch.linalg.norm(output_dense[i])**2

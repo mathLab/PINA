@@ -23,7 +23,3 @@ class AVNOBlock(nn.Module):
     def forward(self, batch):
         """Forward pass of the layer."""
         return self.func(self.nn(batch) + mean(batch, dim=1, keepdim=True))
-
-    def linear_component(self, batch):
-        """Linear component of the layer."""
-        return self.nn(batch)
