@@ -1,4 +1,4 @@
-"""Module for Averaging Neural Operator class."""
+"""Module for Averaging Neural Operator Layer class."""
 from torch import nn, mean
 
 
@@ -17,4 +17,5 @@ class AVNOLayer(nn.Module):
         self.func = func
 
     def forward(self, batch):
+        """Forward pass of the layer."""
         return self.func()(self.nn(batch) + mean(batch, dim=1).unsqueeze(1))

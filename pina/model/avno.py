@@ -1,6 +1,6 @@
 """Module Averaging Neural Operator."""
 
-from torch import nn, mean, concatenate
+from torch import nn, concatenate
 from . import FeedForward
 from .layers import AVNOLayer
 
