@@ -35,13 +35,15 @@ class AVNO(KernelNeuralOperator):
     ):
         """
         :param int input_features: The number of input components of the model.
-        :param int output_features: The number of output components of the model.
+        :param int output_features: The number of output components 
+            of the model.
         :param int points_size: the dimension of the domain of the functions.
         :param int inner_size: number of neurons in the hidden layer(s). 
             Defaults to 100.
         :param int n_layers: number of hidden layers. Default is 4.
         :param func: the activation function to use. Default to nn.GELU.
-        :param str features_label: the label of the features in the input tensor. 
+        :param str features_label: the label of the features 
+            in the input tensor. 
             Defaults to 'v'.
         :param str points_label: the label of the points in the input tensor. 
             Defaults to 'p'.

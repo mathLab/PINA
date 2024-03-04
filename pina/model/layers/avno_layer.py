@@ -17,9 +17,9 @@ class AVNOBlock(nn.Module):
 
     def __init__(self, hidden_size=100, func=nn.GELU):
         super().__init__()
-        self.nn = nn.Linear(hidden_size, hidden_size)
-        self.func = func()
+        self._nn = nn.Linear(hidden_size, hidden_size)
+        self._func = func()
 
     def forward(self, batch):
         """Forward pass of the layer."""
-        return self.func(self.nn(batch) + mean(batch, dim=1, keepdim=True))
+        return self._func(self._nn(batch) + mean(batch, dim=1, keepdim=True))
