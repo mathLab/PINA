@@ -27,7 +27,7 @@ class AVNOBlock(nn.Module):
 
     .. seealso::
 
-        **Original reference**: Lanthaler S. Li, Z., Kovachki, 
+        **Original reference**: Lanthaler S. Li, Z., Kovachki,
         Stuart, A. (2020). *The Nonlocal Neural Operator: Universal
         Approximation*.
         DOI: `arXiv preprint arXiv:2304.13221.
