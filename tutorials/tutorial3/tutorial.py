@@ -34,7 +34,7 @@ from pina import Condition, Plotter
 # \end{cases}
 # \end{equation}
 # 
-# where $D$ is a square domain $[0,1]^2$, and $\Gamma_i$, with $i=1,...,4$, are the boundaries of the square, and the velocity in the standard wave equation is fixed to one.
+# where $D$ is a squared domain $[0,1]^2$, and $\Gamma_i$, with $i=1,...,4$, are the boundaries of the square, and the velocity in the standard wave equation is fixed to one.
 
 # Now, the wave problem is written in PINA code as a class, inheriting from `SpatialProblem` and `TimeDependentProblem` since we deal with spatial, and time dependent variables. The equations are written as `conditions` that should be satisfied in the corresponding domains. `truth_solution` is the exact solution which will be compared with the predicted one.
 
@@ -142,7 +142,7 @@ print('Plotting at t=1')
 plotter.plot(pinn, fixed_variables={'t': 1.0})
 
 
-# The results are not so great, and we can clearly see that as time progress the solution get worse.... Can we do better?
+# The results are not so great, and we can clearly see that as time progress the solution gets worse.... Can we do better?
 # 
 # A valid option is to impose the initial condition as hard constraint as well. Specifically, our solution is written as:
 # 
@@ -207,11 +207,11 @@ print('Plotting at t=1')
 plotter.plot(pinn, fixed_variables={'t': 1.0})
 
 
-# We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when the time evolved. By imposing the initial condition the network is able to correctly solve the problem.
+# We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem.
 
 # ## What's next?
 # 
-# Nice you have completed the two dimensional Wave tutorial of **PINA**! There are multiple directions you can go now:
+# Congratulations on completing the two dimensional Wave tutorial of **PINA**! There are multiple directions you can go now:
 # 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
 # 

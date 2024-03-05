@@ -25,7 +25,7 @@ def plot_scatter(ax, pts, title):
 
 # ## Built-in Geometries
 
-# We will create one cartesian and two ellipsoids. For the sake of simplicity, we show here the 2-dimensional, but it's trivial the extension to 3D (and higher) cases. The geometries allows also the generation of samples belonging to the boundary. So, we will create one ellipsoid with the border and one without.
+# We will create one cartesian and two ellipsoids. For the sake of simplicity, we show here the 2-dimensional case, but the extension to 3D (and higher) cases is trivial. The geometries allow also the generation of samples belonging to the boundary. So, we will create one ellipsoid with the border and one without.
 
 # In[2]:
 
@@ -37,7 +37,7 @@ ellipsoid_border = EllipsoidDomain({'x': [2, 4], 'y': [2, 4]}, sample_surface=Tr
 
 # The `{'x': [0, 2], 'y': [0, 2]}` are the bounds of the `CartesianDomain` being created. 
 # 
-# To visualize these shapes, we need to sample points on them. We will use the `sample` method of the `CartesianDomain` and `EllipsoidDomain` classes. This method takes a `n` argument which is the number of points to sample. It also takes different modes to sample such as random.
+# To visualize these shapes, we need to sample points on them. We will use the `sample` method of the `CartesianDomain` and `EllipsoidDomain` classes. This method takes a `n` argument which is the number of points to sample. It also takes different modes to sample, such as `'random'`.
 
 # In[3]:
 
@@ -47,7 +47,7 @@ ellipsoid_no_border_samples = ellipsoid_no_border.sample(n=1000, mode='random')
 ellipsoid_border_samples = ellipsoid_border.sample(n=1000, mode='random')
 
 
-# We can see the samples of each of the geometries to see what we are working with.
+# We can see the samples of each geometry to see what we are working with.
 
 # In[4]:
 
@@ -118,7 +118,7 @@ cart_ellipse_b_union = Union([cartesian, ellipsoid_border])
 three_domain_union = Union([cartesian, ellipsoid_no_border, ellipsoid_border])
 
 
-# We can of course sample points over the new geometries, by using the `sample` method as before. We highlihgt that the available sample strategy here is only *random*.
+# We can of course sample points over the new geometries, by using the `sample` method as before. We highlight that the available sample strategy here is only *random*.
 
 # In[8]:
 
@@ -180,7 +180,7 @@ class Heart(Location):
         
 
 
-# Because the `Location` class we are inherting from requires both a `sample` method and `is_inside` method, we will create them and just add in "pass" for the moment.
+# Because the `Location` class we are inheriting from requires both a `sample` method and `is_inside` method, we will create them and just add in "pass" for the moment.
 
 # In[13]:
 
