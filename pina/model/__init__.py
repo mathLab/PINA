@@ -7,6 +7,7 @@ __all__ = [
     "FNO",
     "FourierIntegralKernel",
     "KernelNeuralOperator",
+    "AveragingNeuralOperator",
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward
@@ -14,3 +15,4 @@ from .multi_feed_forward import MultiFeedForward
 from .deeponet import DeepONet, MIONet
 from .fno import FNO, FourierIntegralKernel
 from .base_no import KernelNeuralOperator
+from .avno import AveragingNeuralOperator
