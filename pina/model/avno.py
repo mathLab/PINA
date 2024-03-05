@@ -18,10 +18,10 @@ class AveragingNeuralOperator(KernelNeuralOperator):
     AveragingNeuralOperator does convolution by performing a field average.
 
     .. seealso::
+
         **Original reference**: Lanthaler S. Li, Z., Kovachki,
-        Stuart, A.
-        (2020). *The Nonlocal Neural Operator:
-            Universal Approximation*.
+        Stuart, A. (2020). *The Nonlocal Neural Operator:
+        Universal Approximation*.
         DOI: `arXiv preprint arXiv:2304.13221.
         <https://arxiv.org/abs/2304.13221>`_
     """

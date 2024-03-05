@@ -10,7 +10,7 @@ class AVNOBlock(nn.Module):
 
     The operator layer performs an affine transformation where the convolution
     is approximated with a local average. Given the input function
-    :math:`v(x)\in\mathbb{R}^{\rm{emb}` the :meth:`AVNOBlock` computes
+    :math:`v(x)\in\mathbb{R}^{\rm{emb}}` the layer computes
     the operator update :math:`K(v)` as:
 
     .. math::
@@ -37,13 +37,11 @@ class AVNOBlock(nn.Module):
 
     def __init__(self, hidden_size=100, func=nn.GELU):
         """
-        Initialize AVNOBlock.
-
         :param int hidden_size: Size of the hidden layer, defaults to 100.
         :param func: The activation function, default to nn.GELU.
         """
-
         super().__init__()
+
         # Check type consistency
         check_consistency(hidden_size, int)
         check_consistency(func, nn.Module, subclass=True)
@@ -52,7 +50,7 @@ class AVNOBlock(nn.Module):
         self._func = func()
 
     def forward(self, x):
-        """
+        r"""
         Forward pass of the layer, it performs a sum of local average
         and an affine transformation of the field.
 
@@ -63,7 +61,7 @@ class AVNOBlock(nn.Module):
             :math:`D` is the codomain of the function :math:`v`. For example
             a scalar function has :math:`D=1`, a 4-dimensional vector function
             :math:`D=4`.
-        :return: The output tensor obtained from the :meth:`AVNOBlock`.
+        :return: The output tensor obtained from Average Neural Operator Block.
         :rtype: torch.Tensor
         """
         return self._func(self._nn(x) + mean(x, dim=1, keepdim=True))
