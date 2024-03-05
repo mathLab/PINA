@@ -1,5 +1,5 @@
-Averaging Neural Operator block
-=========================
+Averaging layers
+====================
 .. currentmodule:: pina.model.layers.avno_layer
 
 .. autoclass:: AVNOBlock

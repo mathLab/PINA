@@ -68,10 +68,10 @@ Layers
     EnhancedLinear layer <layers/enhanced_linear.rst>
     Spectral convolution <layers/spectral.rst>
     Fourier layers <layers/fourier.rst>
+    Averaging layer <layers/avno_layer.rst>
     Continuous convolution <layers/convolution.rst>
     Proper Orthogonal Decomposition <layers/pod.rst>
     Periodic Boundary Condition embeddings <layers/embedding.rst>
-    Averaging Neural Operator block <layers/avno_layer.rst>
 
 Equations and Operators
 -------------------------
