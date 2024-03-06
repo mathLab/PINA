@@ -261,7 +261,7 @@ add in “pass” for the moment.
         def sample(self):
             pass
 
-Now we have the skeleton for our ``Heart`` class. The ``is_inside``
+Now we have the skeleton for our ``Heart`` class. The ``sample``
 method is where most of the work is done so let’s fill it out.
 
 .. code:: ipython3
