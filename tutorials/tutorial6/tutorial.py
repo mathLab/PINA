@@ -198,7 +198,7 @@ class Heart(Location):
         pass
 
 
-# Now we have the skeleton for our `Heart` class. The `is_inside` method is where most of the work is done so let's fill it out.
+# Now we have the skeleton for our `Heart` class. The `sample` method is where most of the work is done so let's fill it out.
 
 # In[14]:
 
