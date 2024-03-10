@@ -46,8 +46,8 @@ derivative, which is of course infeasable… A possible solution,
 diverging from the original PINN formulation, is to use *coordinates
 augmentation*. In coordinates augmentation you seek for a coordinates
 transformation :math:`v` such that :math:`x\rightarrow v(x)` such that
-the periodicity condition $ u^{(m)}(x=0) - u^{(m)}(x=2) = 0
-:raw-latex:`\quad `m:raw-latex:`\in[0, 1, \cdots] `$ is satisfied.
+the periodicity condition
+:math:`u^{(m)}(x=0) - u^{(m)}(x=2) = 0 \quad, m\in[0, 1, \cdots]` is satisfied.
 
 For demonstration porpuses the problem specifics are
 :math:`\lambda=-10\pi^2`, and

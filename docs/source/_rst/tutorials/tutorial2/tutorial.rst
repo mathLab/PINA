@@ -31,12 +31,17 @@ The problem definition
 ----------------------
 
 The two-dimensional Poisson problem is mathematically written as:
-:raw-latex:`\begin{equation}
-\begin{cases}
-\Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
-u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
-\end{cases}
-\end{equation}` where :math:`D` is a square domain :math:`[0,1]^2`, and
+
+.. math::
+
+    \begin{equation}
+    \begin{cases}
+    \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
+    u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+    \end{cases}
+    \end{equation}
+
+where :math:`D` is a square domain :math:`[0,1]^2`, and
 :math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
 square.
 
@@ -112,19 +117,6 @@ These parameters can be modified as desired. We use the
     # train
     trainer.train()
 
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 999: : 1it [00:00, 158.53it/s, v_num=3, gamma1_loss=5.29e-5, gamma2_loss=4.09e-5, gamma3_loss=4.73e-5, gamma4_loss=4.18e-5, D_loss=0.00134, mean_loss=0.000304]    
-
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
@@ -158,9 +150,11 @@ is now defined, with an additional input variable, named extra-feature,
 which coincides with the forcing term in the Laplace equation. The set
 of input variables to the neural network is:
 
-:raw-latex:`\begin{equation}
-[x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
-\end{equation}`
+.. math:: 
+
+    \begin{equation}
+    [x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
+    \end{equation}
 
 where :math:`x` and :math:`y` are the spatial coordinates and
 :math:`k(x, y)` is the added feature.
@@ -203,19 +197,6 @@ new extra feature.
     # train
     trainer_feat.train()
 
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 999: : 1it [00:00, 111.88it/s, v_num=4, gamma1_loss=2.54e-7, gamma2_loss=2.17e-7, gamma3_loss=1.94e-7, gamma4_loss=2.69e-7, D_loss=9.2e-6, mean_loss=2.03e-6]     
-
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
@@ -249,9 +230,11 @@ Another way to exploit the extra features is the addition of learnable
 parameter inside them. In this way, the added parameters are learned
 during the training phase of the neural network. In this case, we use:
 
-:raw-latex:`\begin{equation}
-k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
-\end{equation}`
+.. math:: 
+
+    \begin{equation}
+    k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
+    \end{equation}
 
 where :math:`\alpha` and :math:`\beta` are the abovementioned
 parameters. Their implementation is quite trivial: by using the class
@@ -289,19 +272,6 @@ need, and they are managed by ``autograd`` module!
     # train
     trainer_learn.train()
 
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 999: : 1it [00:00, 119.29it/s, v_num=5, gamma1_loss=3.26e-8, gamma2_loss=7.84e-8, gamma3_loss=1.13e-7, gamma4_loss=3.02e-8, D_loss=2.66e-6, mean_loss=5.82e-7]  
-
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
@@ -337,19 +307,6 @@ removing all the hidden layers in the ``FeedForward``, keeping only the
     
     # train
     trainer_learn.train()
-
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 0: : 0it [00:00, ?it/s]Epoch 999: : 1it [00:00, 131.20it/s, v_num=6, gamma1_loss=2.55e-16, gamma2_loss=4.76e-17, gamma3_loss=2.55e-16, gamma4_loss=4.76e-17, D_loss=1.74e-13, mean_loss=3.5e-14] 
 
 .. parsed-literal::
 

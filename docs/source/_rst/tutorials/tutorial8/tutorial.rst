@@ -1,4 +1,4 @@
-Tutorial 8: Reduced order model (PODNN) for parametric problems
+Tutorial: Reduced order model (PODNN) for parametric problems
 ===============================================================
 
 The tutorial aims to show how to employ the **PINA** library in order to
@@ -71,17 +71,6 @@ reference solution: this is the expected output of the neural network.
     for ax, p, u in zip(axs, dataset.params[:4], dataset.snapshots['mag(v)'][:4]):
         ax.tricontourf(dataset.triang, u, levels=16)
         ax.set_title(f'$\mu$ = {p[0]:.2f}')
-
-
-.. parsed-literal::
-
-    Epoch 0:   0%|          | 0/5 [48:45<?, ?it/s]
-    Epoch 0:   0%|          | 0/5 [46:33<?, ?it/s]
-    Epoch 0:   0%|          | 0/5 [46:17<?, ?it/s]
-    Epoch 0:   0%|          | 0/5 [44:52<?, ?it/s]
-    Epoch 0:   0%|          | 0/5 [43:41<?, ?it/s]
-    Epoch 0:   0%|          | 0/5 [43:01<?, ?it/s]
-
 
 
 .. image:: tutorial_files/tutorial_5_1.png
@@ -204,28 +193,6 @@ the model and use it for predict the test snapshots.
         accelerator='cpu')
     trainer.train()
 
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-    
-      | Name        | Type    | Params
-    ----------------------------------------
-    0 | _loss       | MSELoss | 0     
-    1 | _neural_net | Network | 460   
-    ----------------------------------------
-    460       Trainable params
-    0         Non-trainable params
-    460       Total params
-    0.002     Total estimated model params size (MB)
-
-
-.. parsed-literal::
-
-    Epoch 999: 100%|██████████| 5/5 [00:00<00:00, 286.50it/s, v_num=20, mean_loss=0.902]
 
 .. parsed-literal::
 
