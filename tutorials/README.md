@@ -6,8 +6,8 @@ In this folder we collect useful tutorials in order to understand the principles
 
 | Description   | Tutorial |
 |---------------|-----------|
-Introduction to PINA for Physics Informed Neural Networks training|[[.ipynb](tutorial1/tutorial.ipynb),&#160;[.py](tutorial1/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorial1/tutorial.html)]|
-Building custom geometries with PINA `Location` class|[[.ipynb](tutorial6/tutorial.ipynb),&#160;[.py](tutorial6/tutorial.py),&#160;[.html](https://mathlab.github.io/PINA/_rst/tutorials/tutorial6/tutorial.html)]|
+Introduction to PINA for Physics Informed Neural Networks training|[[.ipynb](tutorial1/tutorial.ipynb),&#160;[.py](tutorial1/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial1/tutorial.html)]|
+Building custom geometries with PINA `Location` class|[[.ipynb](tutorial6/tutorial.ipynb),&#160;[.py](tutorial6/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial6/tutorial.html)]|
 
 
 ## Physics Informed Neural Networks

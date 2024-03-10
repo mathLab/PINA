@@ -28,8 +28,12 @@ Build a PINA problem
 Problem definition in the **PINA** framework is done by building a
 python ``class``, which inherits from one or more problem classes
 (``SpatialProblem``, ``TimeDependentProblem``, ``ParametricProblem``, …)
-depending on the nature of the problem. Below is an example: ### Simple
-Ordinary Differential Equation Consider the following:
+depending on the nature of the problem. Below is an example: 
+
+Simple Ordinary Differential Equation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Consider the following:
 
 .. math::
 
@@ -83,12 +87,6 @@ will inherit from both ``SpatialProblem`` and ``TimeDependentProblem``:
         # other stuff ...
 
 
-.. parsed-literal::
-
-    Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
-    Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
-
-
 where we have included the ``temporal_domain`` variable, indicating the
 time domain wanted for the solution.
 
@@ -96,12 +94,12 @@ In summary, using **PINA**, we can initialize a problem with a class
 which inherits from different base classes: ``SpatialProblem``,
 ``TimeDependentProblem``, ``ParametricProblem``, and so on depending on
 the type of problem we are considering. Here are some examples (more on
-the official documentation): \* ``SpatialProblem`` :math:`\rightarrow` a
-differential equation with spatial variable(s) \*
-``TimeDependentProblem`` :math:`\rightarrow` a time-dependent
-differential equation \* ``ParametricProblem`` :math:`\rightarrow` a
-parametrized differential equation \* ``AbstractProblem``
-:math:`\rightarrow` any **PINA** problem inherits from here
+the official documentation):
+
+* ``SpatialProblem`` :math:`\rightarrow` a differential equation with spatial variable(s) ``spatial_domain``
+* ``TimeDependentProblem`` :math:`\rightarrow` a time-dependent differential equation with temporal variable(s) ``temporal_domain``
+* ``ParametricProblem`` :math:`\rightarrow` a parametrized differential equation with parametric variable(s) ``parameter_domain``
+* ``AbstractProblem`` :math:`\rightarrow` any **PINA** problem inherits from here
 
 Write the problem class
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -300,31 +298,6 @@ If you want to track the metric by yourself without a logger, use
     # train
     trainer.train()
 
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-    /Users/alessio/opt/anaconda3/envs/pina/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/logger_connector/logger_connector.py:67: Starting from v1.9.0, `tensorboardX` has been removed as a dependency of the `pytorch_lightning` package, due to potential conflicts with other packages in the ML ecosystem. For this reason, `logger=True` will use `CSVLogger` as the default logger, unless the `tensorboard` or `tensorboardX` packages are found. Please `pip install lightning[extra]` or one of them to enable TensorBoard support by default
-    Missing logger folder: /Users/alessio/Downloads/lightning_logs
-
-
-.. parsed-literal::
-
-    Epoch 1499: |          | 1/? [00:00<00:00, 167.08it/s, v_num=0, x0_loss=1.07e-5, D_loss=0.000792, mean_loss=0.000401]
-
-.. parsed-literal::
-
-    `Trainer.fit` stopped: `max_epochs=1500` reached.
-
-
-.. parsed-literal::
-
-    Epoch 1499: |          | 1/? [00:00<00:00, 102.49it/s, v_num=0, x0_loss=1.07e-5, D_loss=0.000792, mean_loss=0.000401]
-
-
 After the training we can inspect trainer logged metrics (by default
 **PINA** logs mean square error residual loss). The logged metrics can
 be accessed online using one of the ``Lightinig`` loggers. The final
@@ -353,11 +326,6 @@ quatitative plots of the solution.
 
     # plotting the solution
     pl.plot(solver=pinn)
-
-
-.. parsed-literal::
-
-    Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
 
 
 

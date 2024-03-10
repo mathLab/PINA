@@ -68,10 +68,13 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 # where we have included the `temporal_domain` variable, indicating the time domain wanted for the solution.
 # 
 # In summary, using **PINA**, we can initialize a problem with a class which inherits from different base classes: `SpatialProblem`, `TimeDependentProblem`, `ParametricProblem`, and so on depending on the type of problem we are considering. Here are some examples (more on the official documentation):
-# * `SpatialProblem` $\rightarrow$ a differential equation with spatial variable(s)
-# * `TimeDependentProblem` $\rightarrow$ a time-dependent differential equation
-# * `ParametricProblem` $\rightarrow$ a parametrized differential equation
-# * `AbstractProblem` $\rightarrow$ any **PINA** problem inherits from here
+# SpatialProblem  →  a differential equation with spatial variable(s)
+#    spatial_domain
+# TimeDependentProblem  →  a time-dependent differential equation
+#    with temporal variable(s) temporal_domain
+# ParametricProblem  →  a parametrized differential equation with
+#  parametric variable(s) parameter_domain
+# AbstractProblem  →  any PINA problem inherits from here
 
 # ### Write the problem class
 # 

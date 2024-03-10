@@ -1,4 +1,4 @@
-Tutorial 7: Resolution of an inverse problem
+Tutorial: Resolution of an inverse problem
 ============================================
 
 Introduction to the inverse problem
@@ -7,26 +7,29 @@ Introduction to the inverse problem
 This tutorial shows how to solve an inverse Poisson problem with
 Physics-Informed Neural Networks. The problem definition is that of a
 Poisson problem with homogeneous boundary conditions and it reads:
-:raw-latex:`\begin{equation}
-\begin{cases}
-\Delta u = e^{-2(x-\mu_1)^2-2(y-\mu_2)^2} \text{ in } \Omega\, ,\\
-u = 0 \text{ on }\partial \Omega,\\
-u(\mu_1, \mu_2) = \text{ data}
-\end{cases}
-\end{equation}` where :math:`\Omega` is a square domain
+
+.. math:: 
+
+    \begin{equation}
+    \begin{cases}
+    \Delta u = e^{-2(x-\mu_1)^2-2(y-\mu_2)^2} \text{ in } \Omega\, ,\\
+    u = 0 \text{ on }\partial \Omega,\\
+    u(\mu_1, \mu_2) = \text{ data}
+    \end{cases}
+    \end{equation}
+
+where :math:`\Omega` is a square domain
 :math:`[-2, 2] \times [-2, 2]`, and
 :math:`\partial \Omega=\Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4`
 is the union of the boundaries of the domain.
 
 This kind of problem, namely the “inverse problem”, has two main goals:
-- find the solution :math:`u` that satisfies the Poisson equation; -
-find the unknown parameters (:math:`\mu_1`, :math:`\mu_2`) that better
-fit some given data (third equation in the system above).
+
+* find the solution :math:`u` that satisfies the Poisson equation
+* find the unknown parameters (:math:`\mu_1`, :math:`\mu_2`) that better fit some given data (third equation in the system above).
 
 In order to achieve both the goals we will need to define an
-``InverseProblem`` in PINA.
-
-Let’s start with useful imports.
+``InverseProblem`` in PINA. Let’s start with useful imports.
 
 .. code:: ipython3
 
