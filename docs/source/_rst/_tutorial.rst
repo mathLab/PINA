@@ -30,6 +30,7 @@ Neural Operator Learning
    :titlesonly:
 
    Two dimensional Darcy flow using the Fourier Neural Operator<tutorials/tutorial5/tutorial.rst>
+   Time dependent Kuramoto Sivashinsky equation using the Averaging Neural Operator<tutorials/tutorial10/tutorial.rst>
 
 Supervised Learning
 -------------------

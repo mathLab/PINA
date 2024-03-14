@@ -22,6 +22,7 @@ Periodic Boundary Conditions for Helmotz Equation |[[.ipynb](tutorial9/tutorial.
 | Description   | Tutorial  |
 |---------------|-----------|
 Two dimensional Darcy flow using the Fourier Neural Operator  &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;|[[.ipynb](tutorial5/tutorial.ipynb),&#160;[.py](tutorial5/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial5/tutorial.html)]|
+Time dependent Kuramoto Sivashinsky equation using the Averaging Neural Operator  &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;|[[.ipynb](tutorial10/tutorial.ipynb),&#160;[.py](tutorial10/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial10/tutorial.html)]|
 
 ## Supervised Learning
 | Description   | Tutorial  |
