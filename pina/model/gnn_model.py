@@ -1,6 +1,6 @@
 import torch
 from torch.nn import Sequential, Linear, SiLU, ModuleList, Conv1d
-from gnn_layer import GNN_Layer
+from layers.gnn_layer import GNN_Layer
 
 class GNN(torch.nn.Module):
     """

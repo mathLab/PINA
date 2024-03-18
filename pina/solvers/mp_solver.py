@@ -6,12 +6,8 @@ from pina.problem import InverseProblem
 from pina.solvers import SolverInterface
 from pina.utils import check_consistency
 from torch.nn.modules.loss import _Loss
-from torch.optim.lr_scheduler import ConstantLR
-from graph_handler import GraphHandler
-try:
-    from torch.optim.lr_scheduler import LRScheduler
-except ImportError:
-    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
+from pina.model.graph_handler import GraphHandler
+from torch.optim.lr_scheduler import MultiStepLR
 
 class MessagePassing(SolverInterface):
     """
@@ -23,28 +19,28 @@ class MessagePassing(SolverInterface):
     def __init__(self,
                  problem,
                  model,
-                 neighbors=2,
-                 unrolling=2,
+                 neighbors=3,
+                 unrolling=1,
                  extra_features = None,
-                 loss=torch.nn.MSELoss(reduction='mean'),
-                 optimizer=torch.optim.Adam, 
-                 optimizer_kwargs={'lr': 0.001},
-                 scheduler = ConstantLR,
-                 scheduler_kwargs={'factor': 1, 'total_iters': 0}):
+                 loss=torch.nn.MSELoss(reduction='sum'),
+                 optimizer=torch.optim.AdamW, 
+                 optimizer_kwargs={'lr': 0.001, 'weight_decay': 1e-8},
+                 scheduler = MultiStepLR,
+                 scheduler_kwargs={'milestones': [1, 5, 10, 15, 20, 25, 30, 40], 'gamma': 0.4}):
         """
         Initialization.
         
         :param AbstractProblem problem: formualation of the problem.
         :param torch.nn.Module model: neural network model.
         :param int neighbors: number of neighbors in the graph. Default: 2.
-        :param int unrolling: number of times the model is run without back
-            propagation since the previous occurrence. Default: 2.
+        :param int unrolling: maximum number of times the model is run without
+            back propagation since the previous occurrence. Default: 2.
         :param torch.nn.Module extra_features: additional input features to be
             used as augmented input.
         :param torch.nn.Module loss: loss function to be minimized.
             Default: class:`torch.nn.MSELoss`.
         :param torch.optim.Optimizer optimizer: neural network optimizer.
-            Default: class:`torch.optim.Adam`.
+            Default: class:`torch.optim.AdamW`.
         :param dict optimizer_kwargs: optimizer constructor keyword args.
         :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
@@ -55,8 +51,8 @@ class MessagePassing(SolverInterface):
                          optimizers=[optimizer],
                          optimizers_kwargs=[optimizer_kwargs],
                          extra_features=extra_features)
-        
-        check_consistency(scheduler, LRScheduler, subclass=True)
+
+        check_consistency(scheduler, MultiStepLR, subclass=True)
         check_consistency(scheduler_kwargs, dict)
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
 
@@ -69,7 +65,7 @@ class MessagePassing(SolverInterface):
         self._neural_net = self.models[0]
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self.automatic_optimization = False
-        
+
         self.unrolling = unrolling
         self.time_window = model.time_window
         self.dt = torch.Tensor(self.problem.input_pts['data'].extract(['t'])[0,0,1] - self.problem.input_pts['data'].extract(['t'])[0,0,0])
@@ -141,10 +137,15 @@ class MessagePassing(SolverInterface):
             
             input_pts = pts[condition_idx == condition_id]
 
-            
+            # Unrolling
+            epoch = self.trainer.current_epoch
+            max_unrolling = (epoch//self.t_res) if (epoch//self.t_res) <= self.unrolling else self.unrolling
+            unrolling_list = [r for r in range(max_unrolling + 1)]
+            unrolling = random.choice(unrolling_list)
+
             # List of candidate time steps
-            steps = [t for t in range(self.time_window, self.t_res - self.time_window - (self.time_window*self.unrolling) +1)]
-            
+            steps = [t for t in range(self.time_window, self.t_res - self.time_window - (self.time_window*unrolling) +1)]
+
             # List of randomly sampled time steps
             random_steps = random.choices(steps, k=batch_size)
             
@@ -154,7 +155,7 @@ class MessagePassing(SolverInterface):
             
             # Unrolling
             with torch.no_grad():
-                for _ in range(self.unrolling):
+                for _ in range(unrolling):
                     random_steps = [rs + self.time_window for rs in random_steps]
                     labels = self.create_labels(input_pts, random_steps)
                     pred = self.forward(graph)
@@ -163,6 +164,7 @@ class MessagePassing(SolverInterface):
             # Computation of the loss
             pred = self.forward(graph)
             loss = self.loss(pred, graph.y) * condition.data_weight
+            loss = torch.sqrt(loss)
             loss = loss.as_subclass(torch.Tensor)
             loss.backward()
             optimizer.step()
@@ -194,8 +196,9 @@ class MessagePassing(SolverInterface):
         loss = self.trainer.logged_metrics['mean_loss']
         self.tot_loss += loss
         self.count += 1
-        if (self.trainer.current_epoch + 1) % 250 == 0:
-            print(f'External epoch {(self.trainer.current_epoch + 1)//250} - Loss {self.tot_loss/self.count}')
+        if (self.trainer.current_epoch + 1) % self.t_res == 0:
+            self.scheduler.step()
+            print(f'External epoch {(self.trainer.current_epoch + 1)//self.t_res} - Loss {self.tot_loss/self.count}')
             self.count = 0
             self.tot_loss = 0
     
