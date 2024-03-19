@@ -1,13 +1,13 @@
 """ Module for PINN """
 
-import torch
 import sys
-
 from abc import ABCMeta, abstractmethod
-from ..solver import SolverInterface
-from ...utils import check_consistency
-from ...loss import LossInterface
-from ...problem import InverseProblem
+import torch
+
+from ...solvers.solver import SolverInterface
+from pina.utils import check_consistency
+from pina.loss import LossInterface
+from pina.problem import InverseProblem
 from torch.nn.modules.loss import _Loss
 
 
@@ -24,22 +24,24 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         problem,
         optimizers,
         optimizers_kwargs,
-        extra_features=None,
-        loss=torch.nn.MSELoss(),
+        extra_features,
+        loss,
     ):
         """
         :param models: A torch neural network model instance.
         :type models: torch.nn.Module
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
-        :param list(torch.optim.Optimizer) optimizer: A list of neural network optimizers to
-            use.
-        :param list(dict) optimizer_kwargs: A list of optimizer constructor keyword args.
+        :param list(torch.optim.Optimizer) optimizer: A list of neural network
+            optimizers to use.
+        :param list(dict) optimizer_kwargs: A list of optimizer constructor
+            keyword args.
         :param list(torch.nn.Module) extra_features: The additional input
             features to use as augmented input. If ``None`` no extra features
-            are passed. If it is a list of :class:`torch.nn.Module`, the extra feature
-            list is passed to all models. If it is a list of extra features' lists,
-            each single list of extra feature is passed to a model.
+            are passed. If it is a list of :class:`torch.nn.Module`,
+            the extra feature list is passed to all models. If it is a list
+            of extra features' lists, each single list of extra feature
+            is passed to a model.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default :class:`torch.nn.MSELoss`.
         """
@@ -89,7 +91,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         return super().on_train_start()
 
 
-    def training_step(self, batch, batch_idx):
+    def training_step(self, batch, _):
         """
         PINN solver training step.
 
@@ -128,25 +130,25 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         self._clamp_params()
 
         # storing logs
-        self._store_log('mean_loss',
+        self.store_log('mean_loss',
                         sum(self.__res_losses)/len(self.__res_losses))
         self.__res_losses = []
         total_loss = sum(condition_losses)
         return total_loss
 
 
-    def loss_data(self, input, output):
+    def loss_data(self, input_tensor, output_tensor):
         """
         The data loss for the PINN solver. It computes the loss between
         the network output against the true solution.
 
-        :param LabelTensor input: The input to the neural networks.
-        :param LabelTensor output: The true solution to compare the network
+        :param LabelTensor input_tensor: The input to the neural networks.
+        :param LabelTensor output_tensor: The true solution to compare the network
             solution
         :return: The residual loss averaged on the input coordinates
         :rtype: torch.Tensor
         """
-        return self.loss(self.forward(input), output)
+        return self.loss(self.forward(input_tensor), output_tensor)
 
 
     @abstractmethod
@@ -177,21 +179,21 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             )
 
 
-    def _loss_data(self, input, output, condition_name):
+    def _loss_data(self, input_tensor, output_tensor, condition_name):
         """
         Computes the data loss for the PINN solver based on input,
         output, and condition name. This function is a wrapper of the function
         :meth:`loss_data` used internally in PINA to handle the logging step.
 
-        :param LabelTensor input: The input to the neural networks.
-        :param LabelTensor output: The true solution to compare the network
+        :param LabelTensor input_tensor: The input to the neural networks.
+        :param LabelTensor output_tensor: The true solution to compare the network
             solution
         :param str condition_name: The condition name for tracking purposes.
         :return: The computed data loss.
         :rtype: torch.Tensor
         """
-        loss_val = self.loss_data(input, output)
-        self._store_log(name=condition_name+'_loss', loss_val=float(loss_val))
+        loss_val = self.loss_data(input_tensor, output_tensor)
+        self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
         return loss_val.as_subclass(torch.Tensor)
 
 
@@ -209,11 +211,11 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :rtype: torch.Tensor
         """
         loss_val = self.loss_phys(samples, equation)
-        self._store_log(name=condition_name+'_loss', loss_val=float(loss_val))
+        self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
         return loss_val.as_subclass(torch.Tensor)
 
 
-    def _store_log(self, name, loss_val):
+    def store_log(self, name, loss_val):
         """
         Stores the loss value in the logger.
 

@@ -12,10 +12,8 @@ except ImportError:
 from torch.optim.lr_scheduler import ConstantLR
 
 from .basepinn import PINNInterface
-from ...utils import check_consistency
-from ...loss import LossInterface
-from ...problem import InverseProblem
-from torch.nn.modules.loss import _Loss
+from pina.utils import check_consistency
+from pina.problem import InverseProblem
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
@@ -30,7 +28,7 @@ class PINN(PINNInterface):
 
         **Original reference**: Karniadakis, G. E., Kevrekidis, I. G., Lu, L.,
         Perdikaris, P., Wang, S., & Yang, L. (2021).
-        Physics-informed machine learning. Nature Reviews Physics, 3(6), 422-440.
+        Physics-informed machine learning. Nature Reviews Physics, 3, 422-440.
         <https://doi.org/10.1038/s42254-021-00314-5>`_.
     """
 
@@ -65,6 +63,7 @@ class PINN(PINNInterface):
             optimizers=[optimizer],
             optimizers_kwargs=[optimizer_kwargs],
             extra_features=extra_features,
+            loss=loss
         )
 
         # check consistency
