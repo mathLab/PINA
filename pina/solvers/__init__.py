@@ -1,6 +1,6 @@
 __all__ = [
     "PINN",
-    "GPINN"
+    "GPINN",
     "GAROM",
     "SupervisedSolver",
     "SolverInterface"

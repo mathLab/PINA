@@ -6,8 +6,8 @@ import torch
 from torch.optim.lr_scheduler import ConstantLR
 
 from .pinn import PINN
-from ...operators import grad
-from ...problem import SpatialProblem
+from pina.operators import grad
+from pina.problem import SpatialProblem
 
 
 class GPINN(PINN):
@@ -83,7 +83,7 @@ class GPINN(PINN):
         """
         # classical PINN loss
         loss_val = self.loss_phys(samples, equation)
-        self._store_log(name=condition_name+'_loss', loss_val=float(loss_val))
+        self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
         # gradient PINN loss
         loss_val = loss_val.reshape(-1, 1)
         loss_val.labels = ['LOSS']
