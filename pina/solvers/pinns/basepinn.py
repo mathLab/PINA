@@ -62,8 +62,10 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         # inverse problem handling
         if isinstance(self.problem, InverseProblem):
             self._params = self.problem.unknown_parameters
+            self._clamp_params = self._clamp_inverse_problem_params
         else:
             self._params = None
+            self._clamp_params = lambda : None
 
         # variable used internally to store residual losses at each epoch
         # this variable save the residual at each iteration (not weighted)
@@ -81,12 +83,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         if sys.version_info < (3, 8):
             dataloader = dataloader.loaders
         self._dataloader = dataloader
-
-        # 2. Check if we are dealing with inverse problem
-        if isinstance(self.problem, InverseProblem):
-            self._clamp_params = self._clamp_inverse_problem_params
-        else:
-            self._clamp_params = lambda : None
 
         return super().on_train_start()
 

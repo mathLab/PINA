@@ -90,13 +90,17 @@ class PINN(PINNInterface):
 
 
     def loss_phys(self, samples, equation):
-        residual = equation.residual(
+        try:
+            residual = equation.residual(samples, self.forward(samples))
+        except (
+            TypeError
+        ):  # this occurs when the function has three inputs, i.e. inverse problem
+            residual = equation.residual(
                 samples, self.forward(samples), self._params
             )
-        loss_phys =  self.loss(
+        return self.loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
-        return loss_phys
 
 
     def configure_optimizers(self):
