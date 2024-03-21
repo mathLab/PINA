@@ -5,7 +5,7 @@ import torch
 
 from torch.optim.lr_scheduler import ConstantLR
 
-from .pinn import PINN
+from pina.solvers import PINN
 from pina.problem import TimeDependentProblem
 from pina.utils import check_consistency
 
@@ -16,13 +16,17 @@ class CausalPINN(PINN):
     Neural Network solvers, using a user specified ``model`` to solve a specific
     ``problem``. It can be used for solving both forward and inverse problems.
 
-    .. seealso:: TODO
+    .. seealso::
 
-        **Original reference**: Yu, Jeremy, et al. "Gradient-enhanced
-        physics-informed neural networks for forward and inverse
-        PDE problems." Computer Methods in Applied Mechanics
-        and Engineering 393 (2022): 114823.
-        <https://doi.org/10.1016/j.cma.2022.114823>`_.
+        **Original reference**: Wang, Sifan, Shyam Sankaran, and Paris
+        Perdikaris. "Respecting causality for training physics-informed
+        neural networks." Computer Methods in Applied Mechanics
+        and Engineering 421 (2024): 116813.
+        <https://doi.org/10.1016/j.cma.2024.116813>`_.
+
+    .. note::
+        This class can only work for problems inheriting
+        from ``TimeDependentProblem`` class.
     """
 
     def __init__(
@@ -78,7 +82,7 @@ class CausalPINN(PINN):
         The exponential decay parameter
         """
         return self._eps
-    
+
     @eps.setter
     def eps(self, value):
         """
