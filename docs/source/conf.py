@@ -15,14 +15,13 @@
 import sys
 import os
 import sphinx_rtd_theme
-import time
-import seaborn
+import pina
 
 # -- Project information -----------------------------------------------------
 
-project = 'PINA'
-copyright = f'2012-{time.strftime("%Y")}'
-author = 'Nicola Demo'
+project = pina.__project__
+copyright = pina.__copyright__
+author = pina.__author__
 version = release ='1.0.0' 
 
 
