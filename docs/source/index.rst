@@ -1,6 +1,11 @@
 Welcome to PINA's documentation!
 ===================================================
 
+.. figure:: index_files/API_color.png
+    :alt: PINA application program interface
+    :align: center
+    :width: 700
+
 Physics Informed Neural network for Advanced modeling (**PINA**) is
 an open-source Python library providing an intuitive interface for
 solving differential equations using PINNs, NOs or both together.
@@ -19,32 +24,12 @@ underlying code.
 The high-level structure of the package is depicted in our API. The pipeline to solve differential equations
 with PINA follows just five steps: problem definition, model selection, data generation, solver selection, and training.
 
-.. figure:: index_files/API_color.png
-    :alt: PINA application program interface
-    :align: center
-    :width: 600
-
 |
 
-Physics-informed neural network
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`PINN <https://www.sciencedirect.com/science/article/abs/pii/S0021999118307125>`_ is a novel approach that
-involves neural networks to solve differential equations in an unsupervised manner, while respecting
-any given law of physics described by general differential equations. Proposed in "*Physics-informed neural
-networks: A deep learning framework for solving forward and inverse problems
-involving nonlinear partial differential equations*", such framework aims to
-solve problems in a continuous and nonlinear settings. 
-
-Neural operator learning
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Neural Operators <https://www.jmlr.org/papers/v24/21-1524.html>`_ is a novel approach involving neural networks
-to learn differential operators using supervised learning strategies. By learning the differential operator, the
-neural network is able to generalize across different instances of the differential equations (e.g. different forcing
-terms), without the need of re-training. 
-
-
+.. grid-item-card:: Contents
+    :columns: 12 12 2 2
+    :class-title: sd-fs-5
+    :class-body: sd-pl-4
 
 .. toctree::
    :maxdepth: 1
