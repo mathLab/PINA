@@ -2,8 +2,10 @@
 
 import torch
 from torch import nn, concatenate
-from .base_no import KernelNeuralOperator
+
 from pina.utils import check_consistency
+
+from .base_no import KernelNeuralOperator
 from .layers.lowrank_layer import LowRankBlock
 
 

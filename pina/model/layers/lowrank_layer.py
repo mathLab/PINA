@@ -51,7 +51,8 @@ class LowRankBlock(torch.nn.Module):
                  func=torch.nn.Tanh,
                  bias=True):
         """
-        :param int input_dimensions: The number of input components of the model.
+        :param int input_dimensions: The number of input components of the
+            model.
             Expected tensor shape of the form :math:`(*, d)`, where *
             means any number of dimensions including none,
             and :math:`d` the ``input_dimensions``.
@@ -82,7 +83,7 @@ class LowRankBlock(torch.nn.Module):
                                     inner_size=inner_size, n_layers=n_layers,
                                     func=func, bias=bias)
         self._nn = torch.nn.Linear(embedding_dimenion, embedding_dimenion)
-        
+
         check_consistency(rank, int)
         self._rank = rank
         self._func = func()
