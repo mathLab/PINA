@@ -126,7 +126,7 @@ def test_backward():
         coordinates_indices=coordinates_indices,
         field_indices=field_indices,
         n_kernel_layers=n_kernel_layers,
-        func=func)
+        rank=rank)
     input_ = LabelTensor(
         torch.rand(batch_size, 100,
                    len(coordinates_indices) + len(field_indices)),

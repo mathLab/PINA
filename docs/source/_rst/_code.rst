@@ -57,6 +57,7 @@ Models
     FourierIntegralKernel <models/fourier_kernel.rst>
     FNO <models/fno.rst>
     AveragingNeuralOperator <models/avno.rst>
+    LowRankNeuralOperator <models/lno.rst>
 
 Layers
 -------------
@@ -69,6 +70,7 @@ Layers
     Spectral convolution <layers/spectral.rst>
     Fourier layers <layers/fourier.rst>
     Averaging layer <layers/avno_layer.rst>
+    Low Rank layer <layers/lowrank_layer.rst>
     Continuous convolution <layers/convolution.rst>
     Proper Orthogonal Decomposition <layers/pod.rst>
     Periodic Boundary Condition embeddings <layers/embedding.rst>

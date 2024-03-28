@@ -14,30 +14,10 @@ class LowRankNeuralOperator(KernelNeuralOperator):
     LowRank Neural Operator is a general architecture for
     learning Operators. Unlike traditional machine learning methods
     LowRankNeuralOperator is designed to map entire functions
-    to other functions. It can be trained with Supervised learning strategies.
-    LowRankNeuralOperator does convolution by performing a field average.
-
-    The operator layer performs an affine transformation where the convolution
-    is approximated with a local average. Given the input function
-    :math:`v(x)\in\mathbb{R}^{\rm{emb}}` the layer computes
-    the operator update :math:`K(v)` as:
-
-    .. math::
-        K(v) = \sigma\left(Wv(x) + b + \sum_{i=1}^r \langle
-        \psi^{(i)} , v(x) \rangle \phi^{(i)} \right)
-
-    where:
-
-    *   :math:`\mathbb{R}^{\rm{emb}}` is the embedding (hidden) size
-        corresponding to the ``hidden_size`` object
-    *   :math:`\sigma` is a non-linear activation, corresponding to the
-        ``func`` object
-    *   :math:`W\in\mathbb{R}^{\rm{emb}\times\rm{emb}}` is a tunable matrix.
-    *   :math:`b\in\mathbb{R}^{\rm{emb}}` is a tunable bias.
-    *   :math:`\psi^{(i)}\in\mathbb{R}^{\rm{emb}}` and
-        :math:`\phi^{(i)}\in\mathbb{R}^{\rm{emb}}` are :math:`r` a low rank
-        basis functions mapping.
-    *   :math:`b\in\mathbb{R}^{\rm{emb}}` is a tunable bias.
+    to other functions. It can be trained with Supervised or PINN based
+    learning strategies.
+    LowRankNeuralOperator does convolution by performing a low rank
+    approximation, see :class:`~pina.model.layers.lowrank_layer.LowRankBlock`.
 
     .. seealso::
 
