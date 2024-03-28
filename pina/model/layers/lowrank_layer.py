@@ -3,7 +3,7 @@
 import torch
 
 from pina.utils import check_consistency
-from pina.model import FeedForward
+import pina.model as pm                     # avoid circular import
 
 
 class LowRankBlock(torch.nn.Module):
@@ -77,14 +77,15 @@ class LowRankBlock(torch.nn.Module):
         super().__init__()
 
         # Assignment (check consistency inside FeedForward)
-        self._basis = FeedForward(input_dimensions=input_dimensions,
-                                  output_dimensions=2*rank*embedding_dimenion,
-                                  inner_size=inner_size, n_layers=n_layers,
-                                  func=func, bias=bias)
+        self._basis = pm.FeedForward(input_dimensions=input_dimensions,
+                                    output_dimensions=2*rank*embedding_dimenion,
+                                    inner_size=inner_size, n_layers=n_layers,
+                                    func=func, bias=bias)
         self._nn = torch.nn.Linear(embedding_dimenion, embedding_dimenion)
         
         check_consistency(rank, int)
         self._rank = rank
+        self._func = func()
 
     def forward(self, x, coords):
         r"""
@@ -113,15 +114,17 @@ class LowRankBlock(torch.nn.Module):
         # extract basis
         basis = self._basis(coords)
         # reshape [B, N, D, 2*rank]
-        shape = list(basis.shape[:-1], 2*self.rank)
+        shape = list(basis.shape[:-1]) + [-1, 2*self.rank]
         basis = basis.reshape(shape)
         # divide
         psi = basis[..., :self.rank]
         phi = basis[..., self.rank:]
         # compute dot product
         coeff = torch.einsum('...dr,...d->...r', psi,x)
-        return self._func(self._nn(x) + torch.sum(coeff*phi,
-                                                  dim=-1, keepdim=True))
+        # expand the basis
+        expansion = torch.einsum('...r,...dr->...d', coeff,phi)
+        # apply linear layer and return
+        return self._func(self._nn(x) + expansion)
 
     @property
     def rank(self):

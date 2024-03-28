@@ -113,7 +113,7 @@ class LowRankNeuralOperator(KernelNeuralOperator):
             != projecting_net_input
         ):
             raise ValueError(
-                "The projecting_net input must be equal to"
+                "The projecting_net input must be equal to "
                 "the embedding dimension (which is the output) "
                 "of the lifting_net plus the dimension of the "
                 "coordinates, i.e. len(coordinates_indices)."
@@ -155,6 +155,7 @@ class LowRankNeuralOperator(KernelNeuralOperator):
         # lifting
         x = self._lifting_operator(x)
         # kernel
-        x = self._integral_kernels(x, coords)
+        for module in self._integral_kernels:
+            x = module(x, coords)
         # projecting
         return self._projection_operator(concatenate((x, coords), dim=-1))
