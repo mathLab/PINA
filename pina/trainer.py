@@ -12,7 +12,7 @@ class Trainer(pytorch_lightning.Trainer):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
 
-        :param solver: A pina:class:`SolverInterface` solver for the differential problem.
+        :param solver: A :class:`~pina.solvers.solver.SolverInterface` solver for the differential problem.
         :type solver: SolverInterface
         :param batch_size: How many samples per batch to load. If ``batch_size=None`` all
             samples are loaded and data are not batched, defaults to None.

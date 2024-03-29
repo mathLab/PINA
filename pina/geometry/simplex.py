@@ -222,7 +222,7 @@ class SimplexDomain(Location):
         :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
         :param variables: Variables to be sampled, defaults to ``all``.
         :type variables: str | list[str]
-        :return: Returns ``LabelTensor`` of n sampled points.
+        :return: Returns :class:`~pina.label_tensor.LabelTensor` of n sampled points.
         :rtype: LabelTensor
 
         .. warning::

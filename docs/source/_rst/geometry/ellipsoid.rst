@@ -7,4 +7,3 @@ EllipsoidDomain
 .. autoclass:: EllipsoidDomain
     :members:
     :show-inheritance:
-    :noindex:

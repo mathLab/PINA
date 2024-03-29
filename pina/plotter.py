@@ -118,7 +118,7 @@ class Plotter:
 
         :param pts: Points to plot the solution.
         :type pts: torch.Tensor
-        :param pred: ``SolverInterface`` solution evaluated at 'pts'.
+        :param pred: :class:`~pina.solvers.solver.SolverInterface` solution evaluated at 'pts'.
         :type pred: torch.Tensor
         :param v: Fixed variables when plotting the solution.
         :type v: torch.Tensor
@@ -173,7 +173,7 @@ class Plotter:
         """
         Plot sample of SolverInterface output.
 
-        :param SolverInterface solver: The ``SolverInterface`` object instance.
+        :param SolverInterface solver: The :class:`~pina.solvers.solver.SolverInterface` object instance.
         :param str | list(str) components: The output variable(s) to plot.
             If None, all the output variables of the problem are selected.
             Default value is None.

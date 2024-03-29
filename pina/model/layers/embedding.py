@@ -64,7 +64,7 @@ class PeriodicBoundaryEmbedding(torch.nn.Module):
             while the ``dict.keys`` represent the dimension where the
             periodicity is applied. The `dict.keys` can either be `int`
             if working with ``torch.Tensor`` or ``str`` if
-            working with ``LabelTensor``.
+            working with :class:`~pina.label_tensor.LabelTensor`.
         :param int output_dimension: The dimension of the output after the
             fourier embedding. If not ``None`` a ``torch.nn.Linear`` layer
             is applied to the fourier embedding output to match the desired

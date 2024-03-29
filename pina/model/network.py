@@ -17,9 +17,9 @@ class Network(torch.nn.Module):
 
         :param model: The torch model to convert in a PINA model.
         :type model: torch.nn.Module
-        :param list(str) input_variables: The input variables of the :class:`AbstractProblem`, whose type depends on the
+        :param list(str) input_variables: The input variables of the :class:`~pina.problem.abstract_problem.AbstractProblem`, whose type depends on the
             type of domain (spatial, temporal, and parameter).
-        :param list(str) output_variables: The output variables of the :class:`AbstractProblem`, whose type depends on the
+        :param list(str) output_variables: The output variables of the :class:`~pina.problem.abstract_problem.AbstractProblem`, whose type depends on the
             problem setting.
         :param extra_features: List of torch models to augment the input, defaults to None.
         :type extra_features: list(torch.nn.Module)
@@ -52,7 +52,7 @@ class Network(torch.nn.Module):
         implements the standard forward method, and
         it adds the possibility to pass extra features.
         All the PINA models ``forward`` s are overriden
-        by this class, to enable :class:`pina.label_tensor.LabelTensor` labels
+        by this class, to enable :class:`~pina.label_tensor.LabelTensor` labels
         extraction.
 
         :param torch.Tensor x: Input of the network.
@@ -87,7 +87,7 @@ class Network(torch.nn.Module):
         a tuple. This class is simply a forward with the input casted as a
         tuple or list :class`torch.Tensor`.
         All the PINA models ``forward`` s are overriden
-        by this class, to enable :class:`pina.label_tensor.LabelTensor` labels
+        by this class, to enable :class:`~pina.label_tensor.LabelTensor` labels
         extraction.
 
         :param list (torch.Tensor) | tuple(torch.Tensor) x: Input of the network.

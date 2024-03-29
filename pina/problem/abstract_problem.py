@@ -150,10 +150,10 @@ class AbstractProblem(metaclass=ABCMeta):
 
         .. warning::
             ``random`` is currently the only implemented ``mode`` for all geometries, i.e.
-            ``EllipsoidDomain``, ``CartesianDomain``, ``SimplexDomain`` and the geometries
-            compositions ``Union``, ``Difference``, ``Exclusion``, ``Intersection``. The
+            :class:`~pina.geometry.ellipsoid.EllipsoidDomain`, :class:`~pina.geometry.cartesian.CartesianDomain`, :class:`~pina.geometry.simplex.SimplexDomain` and the geometries
+            compositions :class:`~pina.geometry.union_domain.Union`, :class:`~pina.geometry.difference_domain.Difference`, :class:`~pina.geometry.exclusion_domain.Exclusion`, :class:`~pina.geometry.intersection_domain.Intersection`. The
             modes ``latin`` or ``lh``,  ``chebyshev``, ``grid`` are only implemented for
-            ``CartesianDomain``.
+            :class:`~pina.geometry.cartesian.CartesianDomain`.
         """
 
         # check consistecy n
@@ -260,7 +260,7 @@ class AbstractProblem(metaclass=ABCMeta):
     def have_sampled_points(self):
         """
         Check if all points for
-        ``Location`` are sampled.
+        :class:`~pina.geometry.location.Location` are sampled.
         """
         return all(self._have_sampled_points.values())
 

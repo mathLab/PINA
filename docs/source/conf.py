@@ -25,15 +25,6 @@ author = pina.__author__
 version = release ='1.0.0' 
 
 
-sys.path.insert(0, os.path.abspath('sphinxext'))
-
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../..'))
-import pina
-
 sys.path.insert(0, os.path.abspath('../sphinx_extensions')) # extension to remove paramref link from lightinig
 
 # -- General configuration ------------------------------------------------
@@ -62,9 +53,6 @@ extensions = [
     'paramref_extension',    # this extension is made to remove paramref links from lightining doc
     'sphinx_copybutton', 
 ]
-
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
 
 # The root document.
 root_doc = 'index'
@@ -98,7 +86,6 @@ nitpick_ignore = [
     ('py:func', 'torch.inference_mode'),
     ('py:func', 'torch.no_grad'),
     ('py:class', 'torch.utils.data.DistributedSampler'),
-    ('py:class', 'CartesianDomain'), # TO FIX
     ('py:class', 'pina.model.layers.convolution.BaseContinuousConv'),
     ('py:class', 'Module'),
     ('py:class', 'torch.nn.modules.loss._Loss'), # TO FIX

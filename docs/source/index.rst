@@ -24,12 +24,6 @@ underlying code.
 The high-level structure of the package is depicted in our API. The pipeline to solve differential equations
 with PINA follows just five steps: problem definition, model selection, data generation, solver selection, and training.
 
-|
-
-.. grid-item-card:: Contents
-    :columns: 12 12 2 2
-    :class-title: sd-fs-5
-    :class-body: sd-pl-4
 
 .. toctree::
    :maxdepth: 1

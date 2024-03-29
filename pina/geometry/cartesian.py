@@ -39,9 +39,9 @@ class CartesianDomain(Location):
         return list(self.fixed_.keys()) + list(self.range_.keys())
 
     def update(self, new_domain):
-        """Adding new dimensions on the ``CartesianDomain``
+        """Adding new dimensions on the :class:`~pina.geometry.cartesian.CartesianDomain`
 
-        :param CartesianDomain new_domain: A new ``CartesianDomain`` object to merge
+        :param CartesianDomain new_domain: A new :class:`~pina.geometry.cartesian.CartesianDomain` object to merge
 
         :Example:
             >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
@@ -103,7 +103,7 @@ class CartesianDomain(Location):
         :type mode: str
         :param variables: pinn variable to be sampled, defaults to ``all``.
         :type variables: str | list[str]
-        :return: Returns ``LabelTensor`` of n sampled points.
+        :return: Returns :class:`~pina.label_tensor.LabelTensor` of n sampled points.
         :rtype: LabelTensor
 
         .. note::
