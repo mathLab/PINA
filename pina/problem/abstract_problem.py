@@ -2,6 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 from ..utils import merge_tensors, check_consistency
+from copy import deepcopy
 import torch
 
 
@@ -28,6 +29,23 @@ class AbstractProblem(metaclass=ABCMeta):
 
         # put in self.input_pts all the points that we don't need to sample
         self._span_condition_points()
+
+    def __deepcopy__(self, memo):
+        """
+        Implements deepcopy for the
+        :class:`~pina.problem.abstract_problem.AbstractProblem` class.
+
+        :param dict memo: Memory dictionary, to avoid excess copy
+        :return: The deep copy of the
+            :class:`~pina.problem.abstract_problem.AbstractProblem` class
+        :rtype: AbstractProblem
+        """
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+        return result
 
     @property
     def input_variables(self):

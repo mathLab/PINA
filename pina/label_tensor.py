@@ -1,6 +1,6 @@
 """ Module for LabelTensor """
 
-from typing import Any
+from copy import deepcopy
 import torch
 from torch import Tensor
 
@@ -79,6 +79,21 @@ class LabelTensor(torch.Tensor):
             )
         self._labels = labels
 
+    def __deepcopy__(self, __):
+        """
+        Implements deepcopy for label tensor. By default it stores the
+        current labels and use the :meth:`~torch._tensor.Tensor.__deepcopy__`
+        method for creating a new :class:`pina.label_tensor.LabelTensor`.
+
+        :param __: Placeholder parameter.
+        :type __: None
+        :return: The deep copy of the :class:`pina.label_tensor.LabelTensor`.
+        :rtype: LabelTensor
+        """
+        labels = self.labels
+        copy_tensor = deepcopy(self.tensor)
+        return LabelTensor(copy_tensor, labels)
+    
     @property
     def labels(self):
         """Property decorator for labels
