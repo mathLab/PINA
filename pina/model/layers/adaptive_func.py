@@ -1,8 +1,3 @@
-
-
-
-
-
 """ Module for adaptive functions. """
 
 import torch
