@@ -11,7 +11,7 @@ __all__ = [
     "PODBlock",
     "PeriodicBoundaryEmbedding",
     "AVNOBlock",
-    "AdaptiveActivationFunction"
+    "AdaptiveActivationFunction",
 ]
 
 from .convolution_2d import ContinuousConvBlock
