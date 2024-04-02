@@ -79,7 +79,7 @@ class AdaptiveActivationFunction(torch.nn.Module):
             check_consistency(fixed, str)
             if not all(key in ["alpha", "beta", "gamma"] for key in fixed):
                 raise TypeError(
-                    "Fixed keys must be in " "['alpha', 'beta', 'gamma']."
+                    "Fixed keys must be in [`alpha`, `beta`, `gamma`]."
                 )
 
         # initialize alpha, beta, gamma if they are None
