@@ -8,7 +8,7 @@ __all__ = [
     "FourierIntegralKernel",
     "KernelNeuralOperator",
     "AveragingNeuralOperator",
-    "LowRankNeuralOperator"
+    "LowRankNeuralOperator",
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward

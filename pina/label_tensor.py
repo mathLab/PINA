@@ -93,7 +93,7 @@ class LabelTensor(torch.Tensor):
         labels = self.labels
         copy_tensor = deepcopy(self.tensor)
         return LabelTensor(copy_tensor, labels)
-    
+
     @property
     def labels(self):
         """Property decorator for labels

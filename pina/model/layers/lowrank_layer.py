@@ -3,7 +3,7 @@
 import torch
 
 from pina.utils import check_consistency
-import pina.model as pm                     # avoid circular import
+import pina.model as pm  # avoid circular import
 
 
 class LowRankBlock(torch.nn.Module):
@@ -42,14 +42,16 @@ class LowRankBlock(torch.nn.Module):
 
     """
 
-    def __init__(self,
-                 input_dimensions,
-                 embedding_dimenion,
-                 rank,
-                 inner_size=20,
-                 n_layers=2,
-                 func=torch.nn.Tanh,
-                 bias=True):
+    def __init__(
+        self,
+        input_dimensions,
+        embedding_dimenion,
+        rank,
+        inner_size=20,
+        n_layers=2,
+        func=torch.nn.Tanh,
+        bias=True,
+    ):
         """
         :param int input_dimensions: The number of input components of the
             model.
@@ -78,10 +80,14 @@ class LowRankBlock(torch.nn.Module):
         super().__init__()
 
         # Assignment (check consistency inside FeedForward)
-        self._basis = pm.FeedForward(input_dimensions=input_dimensions,
-                                    output_dimensions=2*rank*embedding_dimenion,
-                                    inner_size=inner_size, n_layers=n_layers,
-                                    func=func, bias=bias)
+        self._basis = pm.FeedForward(
+            input_dimensions=input_dimensions,
+            output_dimensions=2 * rank * embedding_dimenion,
+            inner_size=inner_size,
+            n_layers=n_layers,
+            func=func,
+            bias=bias,
+        )
         self._nn = torch.nn.Linear(embedding_dimenion, embedding_dimenion)
 
         check_consistency(rank, int)
@@ -115,15 +121,15 @@ class LowRankBlock(torch.nn.Module):
         # extract basis
         basis = self._basis(coords)
         # reshape [B, N, D, 2*rank]
-        shape = list(basis.shape[:-1]) + [-1, 2*self.rank]
+        shape = list(basis.shape[:-1]) + [-1, 2 * self.rank]
         basis = basis.reshape(shape)
         # divide
-        psi = basis[..., :self.rank]
-        phi = basis[..., self.rank:]
+        psi = basis[..., : self.rank]
+        phi = basis[..., self.rank :]
         # compute dot product
-        coeff = torch.einsum('...dr,...d->...r', psi,x)
+        coeff = torch.einsum("...dr,...d->...r", psi, x)
         # expand the basis
-        expansion = torch.einsum('...r,...dr->...d', coeff,phi)
+        expansion = torch.einsum("...r,...dr->...d", coeff, phi)
         # apply linear layer and return
         return self._func(self._nn(x) + expansion)
 
