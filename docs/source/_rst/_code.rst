@@ -72,6 +72,7 @@ Layers
     Continuous convolution <layers/convolution.rst>
     Proper Orthogonal Decomposition <layers/pod.rst>
     Periodic Boundary Condition embeddings <layers/embedding.rst>
+    Adpative Activation Function <layers/adaptive_func.rst>
 
 Equations and Operators
 -------------------------
