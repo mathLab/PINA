@@ -11,6 +11,7 @@ __all__ = [
     "PODBlock",
     "PeriodicBoundaryEmbedding",
     "AVNOBlock",
+    "LowRankBlock",
     "AdaptiveActivationFunction",
 ]
 
@@ -25,4 +26,5 @@ from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
 from .pod import PODBlock
 from .embedding import PeriodicBoundaryEmbedding
 from .avno_layer import AVNOBlock
+from .lowrank_layer import LowRankBlock
 from .adaptive_func import AdaptiveActivationFunction
