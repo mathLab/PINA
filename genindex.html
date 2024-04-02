@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Index &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
 
@@ -38,7 +38,7 @@
               <img src="_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2403
+                0.1.0.post2404
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -59,7 +59,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Community:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_team.html">Team &amp; Fundings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_rst/_contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_LICENSE.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_cite.html">Cite PINA</a></li>
@@ -121,19 +121,25 @@
 </li>
       <li><a href="_rst/problem/abstractproblem.html#pina.problem.abstract_problem.AbstractProblem.add_points">add_points() (AbstractProblem method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_rst/operators.html#pina.operators.advection">advection() (in module pina.operators)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_rst/models/mionet.html#pina.model.deeponet.MIONet.aggregator">aggregator() (MIONet property)</a>
 </li>
       <li><a href="_rst/label_tensor.html#pina.label_tensor.LabelTensor.append">append() (LabelTensor method)</a>
+</li>
+      <li><a href="_rst/models/avno.html#pina.model.avno.AveragingNeuralOperator">AveragingNeuralOperator (class in pina.model.avno)</a>
 </li>
   </ul></td>
 </tr></table>
 
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.basis">basis() (PODBlock property)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_rst/models/deeponet.html#pina.model.deeponet.DeepONet.branch_net">branch_net() (DeepONet property)</a>
 </li>
@@ -199,6 +205,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_rst/geometry/exclusion_domain.html#pina.geometry.exclusion_domain.Exclusion">Exclusion (class in pina.geometry.exclusion_domain)</a>
 </li>
+      <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.expand">expand() (PODBlock method)</a>
+</li>
       <li><a href="_rst/label_tensor.html#pina.label_tensor.LabelTensor.extract">extract() (LabelTensor method)</a>
 </li>
   </ul></td>
@@ -209,6 +217,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_rst/models/fnn.html#pina.model.feed_forward.FeedForward">FeedForward (class in pina.model.feed_forward)</a>
 </li>
+      <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.fit">fit() (PODBlock method)</a>
+</li>
       <li><a href="_rst/equations.html#pina.equation.equation_factory.FixedFlux">FixedFlux (class in pina.equation.equation_factory)</a>
 </li>
       <li><a href="_rst/equations.html#pina.equation.equation_factory.FixedGradient">FixedGradient (class in pina.equation.equation_factory)</a>
@@ -217,9 +227,11 @@
 </li>
       <li><a href="_rst/models/fno.html#pina.model.fno.FNO">FNO (class in pina.model.fno)</a>
 </li>
-      <li><a href="_rst/models/deeponet.html#pina.model.deeponet.DeepONet.forward">forward() (DeepONet method)</a>
+      <li><a href="_rst/models/avno.html#pina.model.avno.AveragingNeuralOperator.forward">forward() (AveragingNeuralOperator method)</a>
 
       <ul>
+        <li><a href="_rst/models/deeponet.html#pina.model.deeponet.DeepONet.forward">(DeepONet method)</a>
+</li>
         <li><a href="_rst/models/fnn.html#pina.model.feed_forward.FeedForward.forward">(FeedForward method)</a>
 </li>
         <li><a href="_rst/models/fno.html#pina.model.fno.FNO.forward">(FNO method)</a>
@@ -244,7 +256,11 @@
 </li>
         <li><a href="_rst/models/network.html#pina.model.network.Network.forward">(Network method)</a>
 </li>
+        <li><a href="_rst/layers/embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding.forward">(PeriodicBoundaryEmbedding method)</a>
+</li>
         <li><a href="_rst/solvers/pinn.html#pina.solvers.pinn.PINN.forward">(PINN method)</a>
+</li>
+        <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.forward">(PODBlock method)</a>
 </li>
         <li><a href="_rst/loss/powerloss.html#pina.loss.PowerLoss.forward">(PowerLoss method)</a>
 </li>
@@ -437,6 +453,10 @@
 </li>
       <li><a href="_rst/problem/parametricproblem.html#pina.problem.parametric_problem.ParametricProblem">ParametricProblem (class in pina.problem.parametric_problem)</a>
 </li>
+      <li><a href="_rst/layers/embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding.period">period() (PeriodicBoundaryEmbedding property)</a>
+</li>
+      <li><a href="_rst/layers/embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding">PeriodicBoundaryEmbedding (class in pina.model.layers.embedding)</a>
+</li>
       <li><a href="_rst/geometry/cartesian.html#module-pina.geometry.cartesian">pina.geometry.cartesian (module)</a>
 </li>
       <li><a href="_rst/geometry/difference_domain.html#module-pina.geometry.difference_domain">pina.geometry.difference_domain (module)</a>
@@ -453,10 +473,10 @@
 </li>
       <li><a href="_rst/geometry/simplex.html#module-pina.geometry.simplex">pina.geometry.simplex (module)</a>
 </li>
-      <li><a href="_rst/geometry/union_domain.html#module-pina.geometry.union_domain">pina.geometry.union_domain (module)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_rst/geometry/union_domain.html#module-pina.geometry.union_domain">pina.geometry.union_domain (module)</a>
+</li>
       <li><a href="_rst/loss/loss_interface.html#module-pina.loss">pina.loss (module)</a>
 </li>
       <li><a href="_rst/models/network.html#module-pina.model.network">pina.model.network (module)</a>
@@ -475,6 +495,8 @@
 </li>
       <li><a href="_rst/solvers/pinn.html#pina.solvers.pinn.PINN">PINN (class in pina.solvers.pinn)</a>
 </li>
+      <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock">PODBlock (class in pina.model.layers.pod)</a>
+</li>
       <li><a href="_rst/loss/powerloss.html#pina.loss.PowerLoss">PowerLoss (class in pina.loss)</a>
 </li>
       <li><a href="_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface.problem">problem() (SolverInterface property)</a>
@@ -489,10 +511,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_rst/callbacks/adaptive_refinment_callbacks.html#pina.callbacks.adaptive_refinment_callbacks.R3Refinement">R3Refinement (class in pina.callbacks.adaptive_refinment_callbacks)</a>
 </li>
+      <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.rank">rank() (PODBlock property)</a>
+</li>
+      <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.reduce">reduce() (PODBlock method)</a>
+</li>
       <li><a href="_rst/models/mionet.html#pina.model.deeponet.MIONet.reduction">reduction() (MIONet property)</a>
 </li>
       <li><a href="_rst/label_tensor.html#pina.label_tensor.LabelTensor.requires_grad_">requires_grad_() (LabelTensor method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_rst/equations.html#pina.equation.equation.Equation.residual">residual() (Equation method)</a>
 
       <ul>
@@ -501,8 +529,6 @@
         <li><a href="_rst/equations.html#pina.equation.system_equation.SystemEquation.residual">(SystemEquation method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_rst/layers/residual.html#pina.model.layers.residual.ResidualBlock">ResidualBlock (class in pina.model.layers.residual)</a>
 </li>
       <li><a href="_rst/models/fnn_residual.html#pina.model.feed_forward.ResidualFeedForward">ResidualFeedForward (class in pina.model.feed_forward)</a>
@@ -527,6 +553,10 @@
       </ul></li>
       <li><a href="_rst/models/mionet.html#pina.model.deeponet.MIONet.scale">scale() (MIONet property)</a>
 </li>
+      <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.scale_coefficients">scale_coefficients() (PODBlock property)</a>
+</li>
+      <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.scaler">scaler() (PODBlock property)</a>
+</li>
       <li><a href="_rst/solvers/pinn.html#pina.solvers.pinn.PINN.scheduler">scheduler() (PINN property)</a>
 
       <ul>
@@ -535,10 +565,10 @@
       </ul></li>
       <li><a href="_rst/label_tensor.html#pina.label_tensor.LabelTensor.select">select() (LabelTensor method)</a>
 </li>
-      <li><a href="_rst/trainer.html#pina.trainer.Trainer.solver">solver() (Trainer property)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_rst/trainer.html#pina.trainer.Trainer.solver">solver() (Trainer property)</a>
+</li>
       <li><a href="_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface">SolverInterface (class in pina.solvers.solver)</a>
 </li>
       <li><a href="_rst/problem/spatialproblem.html#pina.problem.spatial_problem.SpatialProblem.spatial_domain">spatial_domain() (SpatialProblem method)</a>
@@ -625,8 +655,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Mar 28, 2024.
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Apr 02, 2024.
       </span></p>
   </div>
 

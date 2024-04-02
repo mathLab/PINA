@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial: Two dimensional Poisson problem using Extra Features Learning &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>Tutorial: Two dimensional Poisson problem using Extra Features Learning &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2403
+                0.1.0.post2404
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -69,6 +69,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../tutorial3/tutorial.html">Two dimensional Wave problem with hard constraint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../tutorial7/tutorial.html">Resolution of a 2D Poisson inverse problem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial9/tutorial.html">Periodic Boundary Conditions for Helmotz Equation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
@@ -78,7 +79,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Community:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
@@ -136,13 +137,15 @@ from pina.callbacks import MetricTracker
 </div>
 <div class="section" id="the-problem-definition">
 <h2>The problem definition<a class="headerlink" href="#the-problem-definition" title="Permalink to this headline">¶</a></h2>
-<p>The two-dimensional Poisson problem is mathematically written as:
-<a href="#id1"><span class="problematic" id="id2">:raw-latex:`\begin{equation}
+<p>The two-dimensional Poisson problem is mathematically written as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation}
 \begin{cases}
 \Delta u = \sin{(\pi x)} \sin{(\pi y)} \text{ in } D, \\
 u = 0 \text{ on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
 \end{cases}
-\end{equation}`</span></a> where <span class="math notranslate nohighlight">\(D\)</span> is a square domain <span class="math notranslate nohighlight">\([0,1]^2\)</span>, and
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(D\)</span> is a square domain <span class="math notranslate nohighlight">\([0,1]^2\)</span>, and
 <span class="math notranslate nohighlight">\(\Gamma_i\)</span>, with <span class="math notranslate nohighlight">\(i=1,...,4\)</span>, are the boundaries of the
 square.</p>
 <p>The Poisson problem is written in <strong>PINA</strong> code as a class. The
@@ -212,15 +215,6 @@ trainer = Trainer(pinn, max_epochs=1000, callbacks=[MetricTracker()], accelerato
 trainer.train()
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
-<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
-<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
-<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">999</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">158.53</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">gamma1_loss</span><span class="o">=</span><span class="mf">5.29e-5</span><span class="p">,</span> <span class="n">gamma2_loss</span><span class="o">=</span><span class="mf">4.09e-5</span><span class="p">,</span> <span class="n">gamma3_loss</span><span class="o">=</span><span class="mf">4.73e-5</span><span class="p">,</span> <span class="n">gamma4_loss</span><span class="o">=</span><span class="mf">4.18e-5</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">0.00134</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.000304</span><span class="p">]</span>
-</pre></div>
-</div>
 <pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1000</cite> reached.</pre>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">999</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">105.33</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">gamma1_loss</span><span class="o">=</span><span class="mf">5.29e-5</span><span class="p">,</span> <span class="n">gamma2_loss</span><span class="o">=</span><span class="mf">4.09e-5</span><span class="p">,</span> <span class="n">gamma3_loss</span><span class="o">=</span><span class="mf">4.73e-5</span><span class="p">,</span> <span class="n">gamma4_loss</span><span class="o">=</span><span class="mf">4.18e-5</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">0.00134</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.000304</span><span class="p">]</span>
 </pre></div>
@@ -241,9 +235,10 @@ plotter.plot(solver=pinn)
 is now defined, with an additional input variable, named extra-feature,
 which coincides with the forcing term in the Laplace equation. The set
 of input variables to the neural network is:</p>
-<p><a href="#id3"><span class="problematic" id="id4">:raw-latex:`\begin{equation}
+<div class="math notranslate nohighlight">
+\[\begin{equation}
 [x, y, k(x, y)], \text{ with } k(x, y)=\sin{(\pi x)}\sin{(\pi y)},
-\end{equation}`</span></a></p>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are the spatial coordinates and
 <span class="math notranslate nohighlight">\(k(x, y)\)</span> is the added feature.</p>
 <p>This feature is initialized in the class <code class="docutils literal notranslate"><span class="pre">SinSin</span></code>, which needs to be
@@ -281,15 +276,6 @@ trainer_feat = Trainer(pinn_feat, max_epochs=1000, callbacks=[MetricTracker()], 
 trainer_feat.train()
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
-<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
-<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
-<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">999</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">111.88</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">gamma1_loss</span><span class="o">=</span><span class="mf">2.54e-7</span><span class="p">,</span> <span class="n">gamma2_loss</span><span class="o">=</span><span class="mf">2.17e-7</span><span class="p">,</span> <span class="n">gamma3_loss</span><span class="o">=</span><span class="mf">1.94e-7</span><span class="p">,</span> <span class="n">gamma4_loss</span><span class="o">=</span><span class="mf">2.69e-7</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">9.2e-6</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">2.03e-6</span><span class="p">]</span>
-</pre></div>
-</div>
 <pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1000</cite> reached.</pre>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">999</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">85.62</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">gamma1_loss</span><span class="o">=</span><span class="mf">2.54e-7</span><span class="p">,</span> <span class="n">gamma2_loss</span><span class="o">=</span><span class="mf">2.17e-7</span><span class="p">,</span> <span class="n">gamma3_loss</span><span class="o">=</span><span class="mf">1.94e-7</span><span class="p">,</span> <span class="n">gamma4_loss</span><span class="o">=</span><span class="mf">2.69e-7</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">9.2e-6</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">2.03e-6</span><span class="p">]</span>
 </pre></div>
@@ -309,9 +295,10 @@ of magnitudes in accuracy.</p>
 <p>Another way to exploit the extra features is the addition of learnable
 parameter inside them. In this way, the added parameters are learned
 during the training phase of the neural network. In this case, we use:</p>
-<p><a href="#id5"><span class="problematic" id="id6">:raw-latex:`\begin{equation}
+<div class="math notranslate nohighlight">
+\[\begin{equation}
 k(x, \mathbf{y}) = \beta \sin{(\alpha x)} \sin{(\alpha y)},
-\end{equation}`</span></a></p>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are the abovementioned
 parameters. Their implementation is quite trivial: by using the class
 <code class="docutils literal notranslate"><span class="pre">torch.nn.Parameter</span></code> we cam define all the learnable parameters we
@@ -346,15 +333,6 @@ trainer_learn = Trainer(pinn_lean, max_epochs=1000, accelerator=&#39;cpu&#39;, e
 trainer_learn.train()
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
-<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
-<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
-<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">999</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">119.29</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">gamma1_loss</span><span class="o">=</span><span class="mf">3.26e-8</span><span class="p">,</span> <span class="n">gamma2_loss</span><span class="o">=</span><span class="mf">7.84e-8</span><span class="p">,</span> <span class="n">gamma3_loss</span><span class="o">=</span><span class="mf">1.13e-7</span><span class="p">,</span> <span class="n">gamma4_loss</span><span class="o">=</span><span class="mf">3.02e-8</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">2.66e-6</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">5.82e-7</span><span class="p">]</span>
-</pre></div>
-</div>
 <pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1000</cite> reached.</pre>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">999</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">85.94</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">gamma1_loss</span><span class="o">=</span><span class="mf">3.26e-8</span><span class="p">,</span> <span class="n">gamma2_loss</span><span class="o">=</span><span class="mf">7.84e-8</span><span class="p">,</span> <span class="n">gamma3_loss</span><span class="o">=</span><span class="mf">1.13e-7</span><span class="p">,</span> <span class="n">gamma4_loss</span><span class="o">=</span><span class="mf">3.02e-8</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">2.66e-6</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">5.82e-7</span><span class="p">]</span>
 </pre></div>
@@ -383,15 +361,6 @@ trainer_learn = Trainer(pinn_learn, max_epochs=1000, callbacks=[MetricTracker()]
 trainer_learn.train()
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
-<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
-<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
-<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 0: : 0it [00:00, ?it/s]Epoch 999: : 1it [00:00, 131.20it/s, v_num=6, gamma1_loss=2.55e-16, gamma2_loss=4.76e-17, gamma3_loss=2.55e-16, gamma4_loss=4.76e-17, D_loss=1.74e-13, mean_loss=3.5e-14]
-</pre></div>
-</div>
 <pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1000</cite> reached.</pre>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">999</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">98.81</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">gamma1_loss</span><span class="o">=</span><span class="mf">2.55e-16</span><span class="p">,</span> <span class="n">gamma2_loss</span><span class="o">=</span><span class="mf">4.76e-17</span><span class="p">,</span> <span class="n">gamma3_loss</span><span class="o">=</span><span class="mf">2.55e-16</span><span class="p">,</span> <span class="n">gamma4_loss</span><span class="o">=</span><span class="mf">4.76e-17</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">1.74e-13</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">3.5e-14</span><span class="p">]</span>
 </pre></div>
@@ -416,7 +385,7 @@ plotter.plot_loss(trainer_feat, logy=True,label=&#39;Static Features&#39;)
 plotter.plot_loss(trainer_learn, logy=True, label=&#39;Learnable Features&#39;)
 </pre></div>
 </div>
-<img alt="../../../_images/tutorial_23_01.png" src="../../../_images/tutorial_23_01.png" />
+<img alt="../../../_images/tutorial_23_0.png" src="../../../_images/tutorial_23_0.png" />
 </div>
 <div class="section" id="whats-next">
 <h2>What’s next?<a class="headerlink" href="#whats-next" title="Permalink to this headline">¶</a></h2>
@@ -444,8 +413,8 @@ learning</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Mar 28, 2024.
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Apr 02, 2024.
       </span></p>
   </div>
 

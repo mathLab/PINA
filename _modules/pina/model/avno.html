@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pina.model.avno &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0.post2404
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pina.model.avno</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pina.model.avno</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module Averaging Neural Operator.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">concatenate</span>
+<span class="kn">from</span> <span class="nn">.layers</span> <span class="kn">import</span> <span class="n">AVNOBlock</span>
+<span class="kn">from</span> <span class="nn">.base_no</span> <span class="kn">import</span> <span class="n">KernelNeuralOperator</span>
+<span class="kn">from</span> <span class="nn">pina.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+
+
+<div class="viewcode-block" id="AveragingNeuralOperator"><a class="viewcode-back" href="../../../_rst/models/avno.html#pina.model.avno.AveragingNeuralOperator">[docs]</a><span class="k">class</span> <span class="nc">AveragingNeuralOperator</span><span class="p">(</span><span class="n">KernelNeuralOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of Averaging Neural Operator.</span>
+
+<span class="sd">    Averaging Neural Operator is a general architecture for</span>
+<span class="sd">    learning Operators. Unlike traditional machine learning methods</span>
+<span class="sd">    AveragingNeuralOperator is designed to map entire functions</span>
+<span class="sd">    to other functions. It can be trained with Supervised learning strategies.</span>
+<span class="sd">    AveragingNeuralOperator does convolution by performing a field average.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        **Original reference**: Lanthaler S. Li, Z., Kovachki,</span>
+<span class="sd">        Stuart, A. (2020). *The Nonlocal Neural Operator:</span>
+<span class="sd">        Universal Approximation*.</span>
+<span class="sd">        DOI: `arXiv preprint arXiv:2304.13221.</span>
+<span class="sd">        &lt;https://arxiv.org/abs/2304.13221&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">lifting_net</span><span class="p">,</span>
+        <span class="n">projecting_net</span><span class="p">,</span>
+        <span class="n">field_indices</span><span class="p">,</span>
+        <span class="n">coordinates_indices</span><span class="p">,</span>
+        <span class="n">n_layers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param torch.nn.Module lifting_net: The neural network for lifting</span>
+<span class="sd">            the input. It must take as input the input field and the coordinates</span>
+<span class="sd">            at which the input field is avaluated. The output of the lifting</span>
+<span class="sd">            net is chosen as embedding dimension of the problem</span>
+<span class="sd">        :param torch.nn.Module projecting_net: The neural network for</span>
+<span class="sd">            projecting the output. It must take as input the embedding dimension</span>
+<span class="sd">            (output of the ``lifting_net``) plus the dimension</span>
+<span class="sd">            of the coordinates.</span>
+<span class="sd">        :param list[str] field_indices: the label of the fields</span>
+<span class="sd">            in the input tensor.</span>
+<span class="sd">        :param list[str] coordinates_indices: the label of the</span>
+<span class="sd">            coordinates in the input tensor.</span>
+<span class="sd">        :param int n_layers: number of hidden layers. Default is 4.</span>
+<span class="sd">        :param torch.nn.Module func: the activation function to use,</span>
+<span class="sd">            default to torch.nn.GELU.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">field_indices</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">coordinates_indices</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">n_layers</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># check hidden dimensions match</span>
+        <span class="n">input_lifting_net</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">lifting_net</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">output_lifting_net</span> <span class="o">=</span> <span class="n">lifting_net</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="n">lifting_net</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">projecting_net_input</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">projecting_net</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">field_indices</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates_indices</span><span class="p">)</span> <span class="o">!=</span> <span class="n">input_lifting_net</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The lifting_net must take as input the &quot;</span>
+                <span class="s2">&quot;coordinates vector and the field vector.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">output_lifting_net</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates_indices</span><span class="p">)</span>
+            <span class="o">!=</span> <span class="n">projecting_net_input</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The projecting_net input must be equal to&quot;</span>
+                <span class="s2">&quot;the embedding dimension (which is the output) &quot;</span>
+                <span class="s2">&quot;of the lifting_net plus the dimension of the &quot;</span>
+                <span class="s2">&quot;coordinates, i.e. len(coordinates_indices).&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># assign</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates_indices</span> <span class="o">=</span> <span class="n">coordinates_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_indices</span> <span class="o">=</span> <span class="n">field_indices</span>
+        <span class="n">integral_net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="o">*</span><span class="p">[</span><span class="n">AVNOBlock</span><span class="p">(</span><span class="n">output_lifting_net</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_layers</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">lifting_net</span><span class="p">,</span> <span class="n">integral_net</span><span class="p">,</span> <span class="n">projecting_net</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AveragingNeuralOperator.forward"><a class="viewcode-back" href="../../../_rst/models/avno.html#pina.model.avno.AveragingNeuralOperator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward computation for Averaging Neural Operator. It performs a</span>
+<span class="sd">        lifting of the input by the ``lifting_net``. Then different layers</span>
+<span class="sd">        of Averaging Neural Operator Blocks are applied.</span>
+<span class="sd">        Finally the output is projected to the final dimensionality</span>
+<span class="sd">        by the ``projecting_net``.</span>
+
+<span class="sd">        :param torch.Tensor x: The input tensor for fourier block,</span>
+<span class="sd">            depending on ``dimension`` in the initialization. It expects</span>
+<span class="sd">            a tensor :math:`B \times N \times D`,</span>
+<span class="sd">            where :math:`B` is the batch_size, :math:`N` the number of points</span>
+<span class="sd">            in the mesh, :math:`D` the dimension of the problem, i.e. the sum</span>
+<span class="sd">            of ``len(coordinates_indices)+len(field_indices)``.</span>
+<span class="sd">        :return: The output tensor obtained from Average Neural Operator.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">points_tmp</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coordinates_indices</span><span class="p">)</span>
+        <span class="n">new_batch</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_indices</span><span class="p">)</span>
+        <span class="n">new_batch</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">((</span><span class="n">new_batch</span><span class="p">,</span> <span class="n">points_tmp</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">new_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lifting_operator</span><span class="p">(</span><span class="n">new_batch</span><span class="p">)</span>
+        <span class="n">new_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integral_kernels</span><span class="p">(</span><span class="n">new_batch</span><span class="p">)</span>
+        <span class="n">new_batch</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">((</span><span class="n">new_batch</span><span class="p">,</span> <span class="n">points_tmp</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">new_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_projection_operator</span><span class="p">(</span><span class="n">new_batch</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_batch</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Apr 02, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial: Physics Informed Neural Networks on PINA &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>Tutorial: Physics Informed Neural Networks on PINA &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2403
+                0.1.0.post2404
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -76,7 +76,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Community:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
@@ -113,20 +113,22 @@
 a toy problem, following the standard API procedure.</p>
 <p align="center"></p><p>Specifically, the tutorial aims to introduce the following topics:</p>
 <ul class="simple">
-<li><p>Explaining how to build <strong>PINA</strong> Problem,</p></li>
-<li><p>Showing how to generate data for <code class="docutils literal notranslate"><span class="pre">PINN</span></code> straining</p></li>
+<li><p>Explaining how to build <strong>PINA</strong> Problems,</p></li>
+<li><p>Showing how to generate data for <code class="docutils literal notranslate"><span class="pre">PINN</span></code> training</p></li>
 </ul>
 <p>These are the two main steps needed <strong>before</strong> starting the modelling
 optimization (choose model and solver, and train). We will show each
 step in detail, and at the end, we will solve a simple Ordinary
-Differential Equation (ODE) problem busing the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> solver.</p>
+Differential Equation (ODE) problem using the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> solver.</p>
 <div class="section" id="build-a-pina-problem">
 <h2>Build a PINA problem<a class="headerlink" href="#build-a-pina-problem" title="Permalink to this headline">¶</a></h2>
 <p>Problem definition in the <strong>PINA</strong> framework is done by building a
 python <code class="docutils literal notranslate"><span class="pre">class</span></code>, which inherits from one or more problem classes
 (<code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code>, <code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code>, <code class="docutils literal notranslate"><span class="pre">ParametricProblem</span></code>, …)
-depending on the nature of the problem. Below is an example: ### Simple
-Ordinary Differential Equation Consider the following:</p>
+depending on the nature of the problem. Below is an example:</p>
+<div class="section" id="simple-ordinary-differential-equation">
+<h3>Simple Ordinary Differential Equation<a class="headerlink" href="#simple-ordinary-differential-equation" title="Permalink to this headline">¶</a></h3>
+<p>Consider the following:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{equation}
 \begin{cases}
@@ -156,9 +158,8 @@ labelled, allowing the user maximal flexibility for the manipulation of
 the tensor. The <code class="docutils literal notranslate"><span class="pre">spatial_domain</span></code> variable indicates where the sample
 points are going to be sampled in the domain, in this case
 <span class="math notranslate nohighlight">\(x\in[0,1]\)</span>.</p>
-<p>What about if our equation is also time dependent? In this case, our
-<code class="docutils literal notranslate"><span class="pre">class</span></code> will inherit from both <code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> and
-<code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code>:</p>
+<p>What if our equation is also time-dependent? In this case, our <code class="docutils literal notranslate"><span class="pre">class</span></code>
+will inherit from both <code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> and <code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code>:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.geometry import CartesianDomain
 
@@ -177,12 +178,14 @@ time domain wanted for the solution.</p>
 which inherits from different base classes: <code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code>,
 <code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code>, <code class="docutils literal notranslate"><span class="pre">ParametricProblem</span></code>, and so on depending on
 the type of problem we are considering. Here are some examples (more on
-the official documentation): * <code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a
-differential equation with spatial variable(s) *
-<code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a time-dependent
-differential equation * <code class="docutils literal notranslate"><span class="pre">ParametricProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a
-parametrized differential equation * <code class="docutils literal notranslate"><span class="pre">AbstractProblem</span></code>
-<span class="math notranslate nohighlight">\(\rightarrow\)</span> any <strong>PINA</strong> problem inherits from here</p>
+the official documentation):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SpatialProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a differential equation with spatial variable(s) <code class="docutils literal notranslate"><span class="pre">spatial_domain</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TimeDependentProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a time-dependent differential equation with temporal variable(s) <code class="docutils literal notranslate"><span class="pre">temporal_domain</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ParametricProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> a parametrized differential equation with parametric variable(s) <code class="docutils literal notranslate"><span class="pre">parameter_domain</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AbstractProblem</span></code> <span class="math notranslate nohighlight">\(\rightarrow\)</span> any <strong>PINA</strong> problem inherits from here</p></li>
+</ul>
+</div>
 <div class="section" id="write-the-problem-class">
 <h3>Write the problem class<a class="headerlink" href="#write-the-problem-class" title="Permalink to this headline">¶</a></h3>
 <p>Once the <code class="docutils literal notranslate"><span class="pre">Problem</span></code> class is initialized, we need to represent the
@@ -240,7 +243,7 @@ returning the difference between subtracting the variable <code class="docutils 
 gradient (the residual), which we hope to minimize to 0. This is done
 for all conditions. Notice that we do not pass directly a <code class="docutils literal notranslate"><span class="pre">python</span></code>
 function, but an <code class="docutils literal notranslate"><span class="pre">Equation</span></code> object, which is initialized with the
-<code class="docutils literal notranslate"><span class="pre">python</span></code> function. This is done so that all the computations, and
+<code class="docutils literal notranslate"><span class="pre">python</span></code> function. This is done so that all the computations and
 internal checks are done inside <strong>PINA</strong>.</p>
 <p>Once we have defined the function, we need to tell the neural network
 where these methods are to be applied. To do so, we use the
@@ -250,22 +253,22 @@ possibilities are allowed, see the documentation for reference).</p>
 <p>Finally, it’s possible to define a <code class="docutils literal notranslate"><span class="pre">truth_solution</span></code> function, which
 can be useful if we want to plot the results and see how the real
 solution compares to the expected (true) solution. Notice that the
-<code class="docutils literal notranslate"><span class="pre">truth_solution</span></code> function is a method of the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> class, but is
+<code class="docutils literal notranslate"><span class="pre">truth_solution</span></code> function is a method of the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> class, but it is
 not mandatory for problem definition.</p>
 </div>
 </div>
 <div class="section" id="generate-data">
 <h2>Generate data<a class="headerlink" href="#generate-data" title="Permalink to this headline">¶</a></h2>
 <p>Data for training can come in form of direct numerical simulation
-reusults, or points in the domains. In case we do unsupervised learning,
-we just need the collocation points for training, i.e. points where we
-want to evaluate the neural network. Sampling point in <strong>PINA</strong> is very
-easy, here we show three examples using the <code class="docutils literal notranslate"><span class="pre">.discretise_domain</span></code>
-method of the <code class="docutils literal notranslate"><span class="pre">AbstractProblem</span></code> class.</p>
+results, or points in the domains. In case we perform unsupervised
+learning, we just need the collocation points for training, i.e. points
+where we want to evaluate the neural network. Sampling point in <strong>PINA</strong>
+is very easy, here we show three examples using the
+<code class="docutils literal notranslate"><span class="pre">.discretise_domain</span></code> method of the <code class="docutils literal notranslate"><span class="pre">AbstractProblem</span></code> class.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># sampling 20 points in [0, 1] through discretization in all locations
 problem.discretise_domain(n=20, mode=&#39;grid&#39;, variables=[&#39;x&#39;], locations=&#39;all&#39;)
 
-# sampling 20 points in (0, 1) through latin hypercube samping in D, and 1 point in x0
+# sampling 20 points in (0, 1) through latin hypercube sampling in D, and 1 point in x0
 problem.discretise_domain(n=20, mode=&#39;latin&#39;, variables=[&#39;x&#39;], locations=[&#39;D&#39;])
 problem.discretise_domain(n=1, mode=&#39;random&#39;, variables=[&#39;x&#39;], locations=[&#39;x0&#39;])
 
@@ -358,19 +361,6 @@ trainer = Trainer(solver=pinn, max_epochs=1500, callbacks=[MetricTracker()], acc
 trainer.train()
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
-<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
-<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
-<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">1499</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">272.55</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">x0_loss</span><span class="o">=</span><span class="mf">7.71e-6</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">0.000734</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.000371</span><span class="p">]</span>
-</pre></div>
-</div>
-<pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1500</cite> reached.</pre>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Epoch</span> <span class="mi">1499</span><span class="p">:</span> <span class="p">:</span> <span class="mi">1</span><span class="n">it</span> <span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span> <span class="mf">167.14</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">v_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">x0_loss</span><span class="o">=</span><span class="mf">7.71e-6</span><span class="p">,</span> <span class="n">D_loss</span><span class="o">=</span><span class="mf">0.000734</span><span class="p">,</span> <span class="n">mean_loss</span><span class="o">=</span><span class="mf">0.000371</span><span class="p">]</span>
-</pre></div>
-</div>
 <p>After the training we can inspect trainer logged metrics (by default
 <strong>PINA</strong> logs mean square error residual loss). The logged metrics can
 be accessed online using one of the <code class="docutils literal notranslate"><span class="pre">Lightinig</span></code> loggers. The final
@@ -379,8 +369,8 @@ loss can be accessed by <code class="docutils literal notranslate"><span class="
 trainer.logged_metrics
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;x0_loss&#39;</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">7.7149e-06</span><span class="p">),</span>
- <span class="s1">&#39;D_loss&#39;</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">0.0007</span><span class="p">),</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;x0_loss&#39;</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">1.0674e-05</span><span class="p">),</span>
+ <span class="s1">&#39;D_loss&#39;</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">0.0008</span><span class="p">),</span>
  <span class="s1">&#39;mean_loss&#39;</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mf">0.0004</span><span class="p">)}</span>
 </pre></div>
 </div>
@@ -390,7 +380,7 @@ quatitative plots of the solution.</p>
 pl.plot(solver=pinn)
 </pre></div>
 </div>
-<img alt="../../../_images/tutorial_23_0.png" src="../../../_images/tutorial_23_0.png" />
+<img alt="../../../_images/tutorial_23_1.png" src="../../../_images/tutorial_23_1.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Figure</span> <span class="n">size</span> <span class="mi">640</span><span class="n">x480</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">Axes</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -405,13 +395,13 @@ could train for longer</p>
 </div>
 <div class="section" id="whats-next">
 <h2>What’s next?<a class="headerlink" href="#whats-next" title="Permalink to this headline">¶</a></h2>
-<p>Nice you have completed the introductory tutorial of <strong>PINA</strong>! There are
-multiple directions you can go now:</p>
+<p>Congratulations on completing the introductory tutorial of <strong>PINA</strong>!
+There are several directions you can go now:</p>
 <ol class="arabic simple">
 <li><p>Train the network for longer or with different layer sizes and assert
 the finaly accuracy</p></li>
 <li><p>Train the network using other types of models (see <code class="docutils literal notranslate"><span class="pre">pina.model</span></code>)</p></li>
-<li><p>GPU trainining and benchmark the speed</p></li>
+<li><p>GPU training and speed benchmarking</p></li>
 <li><p>Many more…</p></li>
 </ol>
 </div>
@@ -428,8 +418,8 @@ the finaly accuracy</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Mar 28, 2024.
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Apr 02, 2024.
       </span></p>
   </div>
 

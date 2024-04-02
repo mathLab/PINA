@@ -415,15 +415,6 @@ juts 1 epoch using Adam optimizer with a :math:`0.001` learning rate.
                 running_loss = 0.0
 
 
-
-.. parsed-literal::
-
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/autograd/__init__.py:200: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:109.)
-      Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
-    /u/d/dcoscia/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:546: UserWarning: Can't initialize NVML
-      warnings.warn("Can't initialize NVML")
-
-
 .. parsed-literal::
 
     batch [50/750] loss[0.161]
@@ -636,21 +627,6 @@ and the problem is a simple problem created by inheriting from
     trainer = Trainer(solver, max_epochs=150, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     trainer.train()
             
-
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-
-
-
-.. parsed-literal::
-
-    Training: 0it [00:00, ?it/s]
-
 
 .. parsed-literal::
 

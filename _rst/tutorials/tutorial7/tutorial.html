@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial 7: Resolution of an inverse problem &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>Tutorial: Resolution of an inverse problem &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -22,7 +22,7 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" href="../tutorial5/tutorial.html" />
+    <link rel="next" title="Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions" href="../tutorial9/tutorial.html" />
     <link rel="prev" title="Tutorial: Two dimensional Wave problem with hard constraint" href="../tutorial3/tutorial.html" /> 
 </head>
 
@@ -39,7 +39,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2403
+                0.1.0.post2404
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -66,6 +66,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inverse-problem-definition-in-pina">Inverse problem definition in PINA</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial9/tutorial.html">Periodic Boundary Conditions for Helmotz Equation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
@@ -75,7 +76,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Community:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
@@ -96,7 +97,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
-      <li class="breadcrumb-item active">Tutorial 7: Resolution of an inverse problem</li>
+      <li class="breadcrumb-item active">Tutorial: Resolution of an inverse problem</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/_rst/tutorials/tutorial7/tutorial.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -106,30 +107,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="tutorial-7-resolution-of-an-inverse-problem">
-<h1>Tutorial 7: Resolution of an inverse problem<a class="headerlink" href="#tutorial-7-resolution-of-an-inverse-problem" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tutorial-resolution-of-an-inverse-problem">
+<h1>Tutorial: Resolution of an inverse problem<a class="headerlink" href="#tutorial-resolution-of-an-inverse-problem" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction-to-the-inverse-problem">
 <h2>Introduction to the inverse problem<a class="headerlink" href="#introduction-to-the-inverse-problem" title="Permalink to this headline">¶</a></h2>
 <p>This tutorial shows how to solve an inverse Poisson problem with
 Physics-Informed Neural Networks. The problem definition is that of a
-Poisson problem with homogeneous boundary conditions and it reads:
-<a href="#id1"><span class="problematic" id="id2">:raw-latex:`\begin{equation}
+Poisson problem with homogeneous boundary conditions and it reads:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation}
 \begin{cases}
 \Delta u = e^{-2(x-\mu_1)^2-2(y-\mu_2)^2} \text{ in } \Omega\, ,\\
 u = 0 \text{ on }\partial \Omega,\\
 u(\mu_1, \mu_2) = \text{ data}
 \end{cases}
-\end{equation}`</span></a> where <span class="math notranslate nohighlight">\(\Omega\)</span> is a square domain
+\end{equation}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Omega\)</span> is a square domain
 <span class="math notranslate nohighlight">\([-2, 2] \times [-2, 2]\)</span>, and
 <span class="math notranslate nohighlight">\(\partial \Omega=\Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4\)</span>
 is the union of the boundaries of the domain.</p>
-<p>This kind of problem, namely the “inverse problem”, has two main goals:
-- find the solution <span class="math notranslate nohighlight">\(u\)</span> that satisfies the Poisson equation; -
-find the unknown parameters (<span class="math notranslate nohighlight">\(\mu_1\)</span>, <span class="math notranslate nohighlight">\(\mu_2\)</span>) that better
-fit some given data (third equation in the system above).</p>
+<p>This kind of problem, namely the “inverse problem”, has two main goals:</p>
+<ul class="simple">
+<li><p>find the solution <span class="math notranslate nohighlight">\(u\)</span> that satisfies the Poisson equation</p></li>
+<li><p>find the unknown parameters (<span class="math notranslate nohighlight">\(\mu_1\)</span>, <span class="math notranslate nohighlight">\(\mu_2\)</span>) that better fit some given data (third equation in the system above).</p></li>
+</ul>
 <p>In order to achieve both the goals we will need to define an
-<code class="docutils literal notranslate"><span class="pre">InverseProblem</span></code> in PINA.</p>
-<p>Let’s start with useful imports.</p>
+<code class="docutils literal notranslate"><span class="pre">InverseProblem</span></code> in PINA. Let’s start with useful imports.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
 import torch
 from pytorch_lightning.callbacks import Callback
@@ -300,14 +303,14 @@ plt.show()
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../tutorial3/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Two dimensional Wave problem with hard constraint" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../tutorial5/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../tutorial9/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Mar 28, 2024.
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Apr 02, 2024.
       </span></p>
   </div>
 

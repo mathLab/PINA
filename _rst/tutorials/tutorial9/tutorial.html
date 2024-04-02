@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" href="../tutorial5/tutorial.html" />
+    <link rel="prev" title="Tutorial: Resolution of an inverse problem" href="../tutorial7/tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0.post2404
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../tutorial2/tutorial.html">Two dimensional Poisson problem using Extra Features Learning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial3/tutorial.html">Two dimensional Wave problem with hard constraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial7/tutorial.html">Resolution of a 2D Poisson inverse problem</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Periodic Boundary Conditions for Helmotz Equation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-problem-definition">The problem definition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#solving-the-problem-with-a-periodic-network">Solving the problem with a Periodic Network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#whats-next">What’s next?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/_rst/tutorials/tutorial9/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tutorial-one-dimensional-helmotz-equation-using-periodic-boundary-conditions">
+<h1>Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions<a class="headerlink" href="#tutorial-one-dimensional-helmotz-equation-using-periodic-boundary-conditions" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial presents how to solve with Physics-Informed Neural
+Networks (PINNs) a one dimensional Helmotz equation with periodic
+boundary conditions (PBC). We will train with standard PINN’s training
+by augmenting the input with periodic expasion as presented in <a class="reference external" href="https://arxiv.org/abs/2308.08468">An
+expert’s guide to training physics-informed neural
+networks</a>.</p>
+<p>First of all, some useful imports.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import torch
+import matplotlib.pyplot as plt
+
+from pina import Condition, Plotter
+from pina.problem import SpatialProblem
+from pina.operators import laplacian
+from pina.model import FeedForward
+from pina.model.layers import PeriodicBoundaryEmbedding  # The PBC module
+from pina.solvers import PINN
+from pina.trainer import Trainer
+from pina.geometry import CartesianDomain
+from pina.equation import Equation
+</pre></div>
+</div>
+<div class="section" id="the-problem-definition">
+<h2>The problem definition<a class="headerlink" href="#the-problem-definition" title="Permalink to this headline">¶</a></h2>
+<p>The one-dimensional Helmotz problem is mathematically written as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{cases}
+\frac{d^2}{dx^2}u(x) - \lambda u(x) -f(x) &amp;=  0 \quad x\in(0,2)\\
+u^{(m)}(x=0) - u^{(m)}(x=2) &amp;= 0 \quad m\in[0, 1, \cdots]\\
+\end{cases}\end{split}\]</div>
+<p>In this case we are asking the solution to be <span class="math notranslate nohighlight">\(C^{\infty}\)</span>
+periodic with period <span class="math notranslate nohighlight">\(2\)</span>, on the inifite domain
+<span class="math notranslate nohighlight">\(x\in(-\infty, \infty)\)</span>. Notice that the classical PINN would need
+inifinite conditions to evaluate the PBC loss function, one for each
+derivative, which is of course infeasable… A possible solution,
+diverging from the original PINN formulation, is to use <em>coordinates
+augmentation</em>. In coordinates augmentation you seek for a coordinates
+transformation <span class="math notranslate nohighlight">\(v\)</span> such that <span class="math notranslate nohighlight">\(x\rightarrow v(x)\)</span> such that
+the periodicity condition
+<span class="math notranslate nohighlight">\(u^{(m)}(x=0) - u^{(m)}(x=2) = 0 \quad, m\in[0, 1, \cdots]\)</span> is satisfied.</p>
+<p>For demonstration porpuses the problem specifics are
+<span class="math notranslate nohighlight">\(\lambda=-10\pi^2\)</span>, and
+<span class="math notranslate nohighlight">\(f(x)=-6\pi^2\sin(3\pi x)\cos(\pi x)\)</span> which gives a solution that
+can be computed analytically <span class="math notranslate nohighlight">\(u(x) = \sin(\pi x)\cos(3\pi x)\)</span>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class Helmotz(SpatialProblem):
+    output_variables = [&#39;u&#39;]
+    spatial_domain = CartesianDomain({&#39;x&#39;: [0, 2]})
+
+    def helmotz_equation(input_, output_):
+        x = input_.extract(&#39;x&#39;)
+        u_xx = laplacian(output_, input_, components=[&#39;u&#39;], d=[&#39;x&#39;])
+        f = - 6.*torch.pi**2 * torch.sin(3*torch.pi*x)*torch.cos(torch.pi*x)
+        lambda_ = - 10. * torch.pi ** 2
+        return u_xx - lambda_ * output_ - f
+
+    # here we write the problem conditions
+    conditions = {
+        &#39;D&#39;: Condition(location=spatial_domain,
+                       equation=Equation(helmotz_equation)),
+    }
+
+    def helmotz_sol(self, pts):
+        return torch.sin(torch.pi * pts) * torch.cos(3. * torch.pi * pts)
+
+    truth_solution = helmotz_sol
+
+problem = Helmotz()
+
+# let&#39;s discretise the domain
+problem.discretise_domain(200, &#39;grid&#39;, locations=[&#39;D&#39;])
+</pre></div>
+</div>
+<p>As usual the Helmotz problem is written in <strong>PINA</strong> code as a class. The
+equations are written as <code class="docutils literal notranslate"><span class="pre">conditions</span></code> that should be satisfied in the
+corresponding domains. The <code class="docutils literal notranslate"><span class="pre">truth_solution</span></code> is the exact solution
+which will be compared with the predicted one. We used latin hypercube
+sampling for choosing the collocation points.</p>
+</div>
+<div class="section" id="solving-the-problem-with-a-periodic-network">
+<h2>Solving the problem with a Periodic Network<a class="headerlink" href="#solving-the-problem-with-a-periodic-network" title="Permalink to this headline">¶</a></h2>
+<p>Any <span class="math notranslate nohighlight">\(\mathcal{C}^{\infty}\)</span> periodic function
+<span class="math notranslate nohighlight">\(u : \mathbb{R} \rightarrow \mathbb{R}\)</span> with period
+<span class="math notranslate nohighlight">\(L\in\mathbb{N}\)</span> can be constructed by composition of an arbitrary
+smooth function <span class="math notranslate nohighlight">\(f : \mathbb{R}^n \rightarrow \mathbb{R}\)</span> and a
+given smooth periodic function
+<span class="math notranslate nohighlight">\(v : \mathbb{R} \rightarrow \mathbb{R}^n\)</span> with period <span class="math notranslate nohighlight">\(L\)</span>,
+that is <span class="math notranslate nohighlight">\(u(x) = f(v(x))\)</span>. The formulation is generalizable for
+arbitrary dimension, see <a class="reference external" href="https://arxiv.org/pdf/2007.07442">A method for representing periodic functions
+and enforcing exactly periodic boundary conditions with deep neural
+networks</a>.</p>
+<p>In our case, we rewrite
+<span class="math notranslate nohighlight">\(v(x) = \left[1, \cos\left(\frac{2\pi}{L} x\right), \sin\left(\frac{2\pi}{L} x\right)\right]\)</span>,
+i.e the coordinates augmentation, and
+<span class="math notranslate nohighlight">\(f(\cdot) = NN_{\theta}(\cdot)\)</span> i.e. a neural network. The
+resulting neural network obtained by composing <span class="math notranslate nohighlight">\(f\)</span> with <span class="math notranslate nohighlight">\(v\)</span>
+gives the PINN approximate solution, that is
+<span class="math notranslate nohighlight">\(u(x) \approx u_{\theta}(x)=NN_{\theta}(v(x))\)</span>.</p>
+<p>In <strong>PINA</strong> this translates in using the <code class="docutils literal notranslate"><span class="pre">PeriodicBoundaryEmbedding</span></code> layer for
+<span class="math notranslate nohighlight">\(v\)</span>, and any <code class="docutils literal notranslate"><span class="pre">pina.model</span></code> for <span class="math notranslate nohighlight">\(NN_{\theta}\)</span>. Let’s see it
+in action!</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># we encapsulate all modules in a torch.nn.Sequential container
+model = torch.nn.Sequential(PeriodicBoundaryEmbedding(input_dimension=1,
+                                         periods=2),
+                            FeedForward(input_dimensions=3, # output of PeriodicBoundaryEmbedding = 3 * input_dimension
+                                        output_dimensions=1,
+                                        layers=[10, 10]))
+</pre></div>
+</div>
+<p>As simple as that! Notice in higher dimension you can specify different
+periods for all dimensions using a dictionary,
+e.g. <code class="docutils literal notranslate"><span class="pre">periods={'x':2,</span> <span class="pre">'y':3,</span> <span class="pre">...}</span></code> would indicate a periodicity of
+<span class="math notranslate nohighlight">\(2\)</span> in <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(3\)</span> in <span class="math notranslate nohighlight">\(y\)</span>, and so on…</p>
+<p>We will now sole the problem as usually with the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Trainer</span></code> class.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pinn = PINN(problem=problem, model=model)
+trainer = Trainer(pinn, max_epochs=5000, accelerator=&#39;cpu&#39;, enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer.train()
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">True</span> <span class="p">(</span><span class="n">mps</span><span class="p">),</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
+<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
+<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
+<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
+</pre></div>
+</div>
+<pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=5000</cite> reached.</pre>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 4999: 100%|██████████| 1/1 [00:00&lt;00:00, 155.47it/s, v_num=20, D_loss=0.0123, mean_loss=0.0123]
+</pre></div>
+</div>
+<p>We are going to plot the solution now!</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pl = Plotter()
+pl.plot(pinn)
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_11_01.png" src="../../../_images/tutorial_11_01.png" />
+<p>Great, they overlap perfectly! This seeams a good result, considering
+the simple neural network used to some this (complex) problem. We will
+now test the neural network on the domain <span class="math notranslate nohighlight">\([-4, 4]\)</span> without
+retraining. In principle the periodicity should be present since the
+<span class="math notranslate nohighlight">\(v\)</span> function ensures the periodicity in <span class="math notranslate nohighlight">\((-\infty, \infty)\)</span>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># plotting solution
+with torch.no_grad():
+    # Notice here we put [-4, 4]!!!
+    new_domain = CartesianDomain({&#39;x&#39; : [0, 4]})
+    x = new_domain.sample(1000, mode=&#39;grid&#39;)
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    # Plot 1
+    axes[0].plot(x, problem.truth_solution(x), label=r&#39;$u(x)$&#39;, color=&#39;blue&#39;)
+    axes[0].set_title(r&#39;True solution $u(x)$&#39;)
+    axes[0].legend(loc=&quot;upper right&quot;)
+    # Plot 2
+    axes[1].plot(x, pinn(x), label=r&#39;$u_{\theta}(x)$&#39;, color=&#39;green&#39;)
+    axes[1].set_title(r&#39;PINN solution $u_{\theta}(x)$&#39;)
+    axes[1].legend(loc=&quot;upper right&quot;)
+    # Plot 3
+    diff = torch.abs(problem.truth_solution(x) - pinn(x))
+    axes[2].plot(x, diff, label=r&#39;$|u(x) - u_{\theta}(x)|$&#39;, color=&#39;red&#39;)
+    axes[2].set_title(r&#39;Absolute difference $|u(x) - u_{\theta}(x)|$&#39;)
+    axes[2].legend(loc=&quot;upper right&quot;)
+    # Adjust layout
+    plt.tight_layout()
+    # Show the plots
+    plt.show()
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_13_01.png" src="../../../_images/tutorial_13_01.png" />
+<p>It is pretty clear that the network is periodic, with also the error
+following a periodic pattern. Obviusly a longer training, and a more
+expressive neural network could improve the results!</p>
+</div>
+<div class="section" id="whats-next">
+<h2>What’s next?<a class="headerlink" href="#whats-next" title="Permalink to this headline">¶</a></h2>
+<p>Nice you have completed the one dimensional Helmotz tutorial of
+<strong>PINA</strong>! There are multiple directions you can go now:</p>
+<ol class="arabic simple">
+<li><p>Train the network for longer or with different layer sizes and assert
+the finaly accuracy</p></li>
+<li><p>Apply the <code class="docutils literal notranslate"><span class="pre">PeriodicBoundaryEmbedding</span></code> layer for a time-dependent problem (see
+reference in the documentation)</p></li>
+<li><p>Exploit extrafeature training ?</p></li>
+<li><p>Many more…</p></li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial7/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Resolution of an inverse problem" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial5/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Apr 02, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial: Unstructured convolutional autoencoder via continuous convolution &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>Tutorial: Unstructured convolutional autoencoder via continuous convolution &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -22,8 +22,8 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Tutorial 8: Reduced order model (PODNN) for parametric problems" href="../tutorial8/tutorial.html" />
-    <link rel="prev" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" href="../tutorial5/tutorial.html" /> 
+    <link rel="next" title="Tutorial: Reduced order model (PODNN) for parametric problems" href="../tutorial8/tutorial.html" />
+    <link rel="prev" title="Tutorial: Averaging Neural Operator for solving Kuramoto Sivashinsky equation" href="../tutorial10/tutorial.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,7 +39,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2403
+                0.1.0.post2404
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -76,7 +76,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Community:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
@@ -466,12 +466,6 @@ for epoch in range(1):  # loop over the dataset multiple times
             running_loss = 0.0
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">u</span><span class="o">/</span><span class="n">d</span><span class="o">/</span><span class="n">dcoscia</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">9</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">torch</span><span class="o">/</span><span class="n">autograd</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">200</span><span class="p">:</span> <span class="ne">UserWarning</span><span class="p">:</span> <span class="n">CUDA</span> <span class="n">initialization</span><span class="p">:</span> <span class="n">CUDA</span> <span class="n">unknown</span> <span class="n">error</span> <span class="o">-</span> <span class="n">this</span> <span class="n">may</span> <span class="n">be</span> <span class="n">due</span> <span class="n">to</span> <span class="n">an</span> <span class="n">incorrectly</span> <span class="nb">set</span> <span class="n">up</span> <span class="n">environment</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">changing</span> <span class="n">env</span> <span class="n">variable</span> <span class="n">CUDA_VISIBLE_DEVICES</span> <span class="n">after</span> <span class="n">program</span> <span class="n">start</span><span class="o">.</span> <span class="n">Setting</span> <span class="n">the</span> <span class="n">available</span> <span class="n">devices</span> <span class="n">to</span> <span class="n">be</span> <span class="n">zero</span><span class="o">.</span> <span class="p">(</span><span class="n">Triggered</span> <span class="n">internally</span> <span class="n">at</span> <span class="o">../</span><span class="n">c10</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="n">CUDAFunctions</span><span class="o">.</span><span class="n">cpp</span><span class="p">:</span><span class="mf">109.</span><span class="p">)</span>
-  <span class="n">Variable</span><span class="o">.</span><span class="n">_execution_engine</span><span class="o">.</span><span class="n">run_backward</span><span class="p">(</span>  <span class="c1"># Calls into the C++ engine to run the backward pass</span>
-<span class="o">/</span><span class="n">u</span><span class="o">/</span><span class="n">d</span><span class="o">/</span><span class="n">dcoscia</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">9</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">torch</span><span class="o">/</span><span class="n">cuda</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">546</span><span class="p">:</span> <span class="ne">UserWarning</span><span class="p">:</span> <span class="n">Can</span><span class="s1">&#39;t initialize NVML</span>
-  <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Can&#39;t initialize NVML&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">batch</span> <span class="p">[</span><span class="mi">50</span><span class="o">/</span><span class="mi">750</span><span class="p">]</span> <span class="n">loss</span><span class="p">[</span><span class="mf">0.161</span><span class="p">]</span>
 <span class="n">batch</span> <span class="p">[</span><span class="mi">100</span><span class="o">/</span><span class="mi">750</span><span class="p">]</span> <span class="n">loss</span><span class="p">[</span><span class="mf">0.073</span><span class="p">]</span>
 <span class="n">batch</span> <span class="p">[</span><span class="mi">150</span><span class="o">/</span><span class="mi">750</span><span class="p">]</span> <span class="n">loss</span><span class="p">[</span><span class="mf">0.063</span><span class="p">]</span>
@@ -661,15 +655,6 @@ trainer = Trainer(solver, max_epochs=150, accelerator=&#39;cpu&#39;, enable_mode
 trainer.train()
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
-<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
-<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
-<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Training: 0it [00:00, ?it/s]
-</pre></div>
-</div>
 <pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=150</cite> reached.</pre>
 <p>Let’s visualize the two solutions side by side!</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>net.eval()
@@ -813,15 +798,15 @@ reduced order modelling</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../tutorial5/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../tutorial8/tutorial.html" class="btn btn-neutral float-right" title="Tutorial 8: Reduced order model (PODNN) for parametric problems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../tutorial10/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Averaging Neural Operator for solving Kuramoto Sivashinsky equation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial8/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: Reduced order model (PODNN) for parametric problems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Mar 28, 2024.
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Apr 02, 2024.
       </span></p>
   </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial 8: Reduced order model (PODNN) for parametric problems &mdash; PINA 0.1.0.post2403 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>Tutorial: Reduced order model (PODNN) for parametric problems &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2403
+                0.1.0.post2404
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -73,7 +73,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Community:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
@@ -94,7 +94,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
-      <li class="breadcrumb-item active">Tutorial 8: Reduced order model (PODNN) for parametric problems</li>
+      <li class="breadcrumb-item active">Tutorial: Reduced order model (PODNN) for parametric problems</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/_rst/tutorials/tutorial8/tutorial.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -104,8 +104,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="tutorial-8-reduced-order-model-podnn-for-parametric-problems">
-<h1>Tutorial 8: Reduced order model (PODNN) for parametric problems<a class="headerlink" href="#tutorial-8-reduced-order-model-podnn-for-parametric-problems" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tutorial-reduced-order-model-podnn-for-parametric-problems">
+<h1>Tutorial: Reduced order model (PODNN) for parametric problems<a class="headerlink" href="#tutorial-reduced-order-model-podnn-for-parametric-problems" title="Permalink to this headline">¶</a></h1>
 <p>The tutorial aims to show how to employ the <strong>PINA</strong> library in order to
 apply a reduced order modeling technique [1]. Such methodologies have
 several similarities with machine learning approaches, since the main
@@ -165,14 +165,6 @@ fig, axs = plt.subplots(1, 4, figsize=(14, 3))
 for ax, p, u in zip(axs, dataset.params[:4], dataset.snapshots[&#39;mag(v)&#39;][:4]):
     ax.tricontourf(dataset.triang, u, levels=16)
     ax.set_title(f&#39;$\mu$ = {p[0]:.2f}&#39;)
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 0:   0%|          | 0/5 [48:45&lt;?, ?it/s]
-Epoch 0:   0%|          | 0/5 [46:33&lt;?, ?it/s]
-Epoch 0:   0%|          | 0/5 [46:17&lt;?, ?it/s]
-Epoch 0:   0%|          | 0/5 [44:52&lt;?, ?it/s]
-Epoch 0:   0%|          | 0/5 [43:41&lt;?, ?it/s]
-Epoch 0:   0%|          | 0/5 [43:01&lt;?, ?it/s]
 </pre></div>
 </div>
 <img alt="../../../_images/tutorial_5_1.png" src="../../../_images/tutorial_5_1.png" />
@@ -283,25 +275,6 @@ the model and use it for predict the test snapshots.</p>
 trainer.train()
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">used</span><span class="p">:</span> <span class="kc">False</span>
-<span class="n">TPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">TPU</span> <span class="n">cores</span>
-<span class="n">IPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">IPUs</span>
-<span class="n">HPU</span> <span class="n">available</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="n">using</span><span class="p">:</span> <span class="mi">0</span> <span class="n">HPUs</span>
-
-  <span class="o">|</span> <span class="n">Name</span>        <span class="o">|</span> <span class="n">Type</span>    <span class="o">|</span> <span class="n">Params</span>
-<span class="o">----------------------------------------</span>
-<span class="mi">0</span> <span class="o">|</span> <span class="n">_loss</span>       <span class="o">|</span> <span class="n">MSELoss</span> <span class="o">|</span> <span class="mi">0</span>
-<span class="mi">1</span> <span class="o">|</span> <span class="n">_neural_net</span> <span class="o">|</span> <span class="n">Network</span> <span class="o">|</span> <span class="mi">460</span>
-<span class="o">----------------------------------------</span>
-<span class="mi">460</span>       <span class="n">Trainable</span> <span class="n">params</span>
-<span class="mi">0</span>         <span class="n">Non</span><span class="o">-</span><span class="n">trainable</span> <span class="n">params</span>
-<span class="mi">460</span>       <span class="n">Total</span> <span class="n">params</span>
-<span class="mf">0.002</span>     <span class="n">Total</span> <span class="n">estimated</span> <span class="n">model</span> <span class="n">params</span> <span class="n">size</span> <span class="p">(</span><span class="n">MB</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 999: 100%|██████████| 5/5 [00:00&lt;00:00, 286.50it/s, v_num=20, mean_loss=0.902]
-</pre></div>
-</div>
 <pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1000</cite> reached.</pre>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 999: 100%|██████████| 5/5 [00:00&lt;00:00, 248.36it/s, v_num=20, mean_loss=0.902]
 </pre></div>
@@ -370,8 +343,8 @@ plt.show()
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Mar 28, 2024.
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Apr 02, 2024.
       </span></p>
   </div>
 
