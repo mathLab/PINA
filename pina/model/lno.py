@@ -41,7 +41,7 @@ class LowRankNeuralOperator(KernelNeuralOperator):
         inner_size=20,
         n_layers=2,
         func=torch.nn.Tanh,
-        bias=True
+        bias=True,
     ):
         """
         :param torch.nn.Module lifting_net: The neural network for lifting
@@ -105,13 +105,18 @@ class LowRankNeuralOperator(KernelNeuralOperator):
         self.coordinates_indices = coordinates_indices
         self.field_indices = field_indices
         integral_net = nn.Sequential(
-            *[LowRankBlock(input_dimensions=len(coordinates_indices),
-                           embedding_dimenion=output_lifting_net,
-                           rank=rank,
-                           inner_size=inner_size,
-                           n_layers=n_layers,
-                           func=func,
-                           bias=bias) for _ in range(n_kernel_layers)]
+            *[
+                LowRankBlock(
+                    input_dimensions=len(coordinates_indices),
+                    embedding_dimenion=output_lifting_net,
+                    rank=rank,
+                    inner_size=inner_size,
+                    n_layers=n_layers,
+                    func=func,
+                    bias=bias,
+                )
+                for _ in range(n_kernel_layers)
+            ]
         )
         super().__init__(lifting_net, integral_net, projecting_net)
 
