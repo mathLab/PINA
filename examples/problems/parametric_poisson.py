@@ -33,7 +33,7 @@ class ParametricPoisson(SpatialProblem, ParametricProblem):
         force_term = torch.exp(
                 - 2*(input_.extract(['x']) - input_.extract(['mu1']))**2
                 - 2*(input_.extract(['y']) - input_.extract(['mu2']))**2)
-        return laplacian(output_.extract(['u']), input_) - force_term
+        return laplacian(output_.extract(['u']), input_, d=['x','y']) - force_term
 
     # problem condition statement
     conditions = {
