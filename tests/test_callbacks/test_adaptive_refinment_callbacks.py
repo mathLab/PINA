@@ -73,3 +73,14 @@ def test_r3refinment_routine():
                       callbacks=[R3Refinement(sample_every=1)],
                       max_epochs=5)
     trainer.train()
+
+def test_r3refinment_routine_double_precision():
+    model = FeedForward(len(poisson_problem.input_variables),
+                    len(poisson_problem.output_variables))
+    solver = PINN(problem=poisson_problem, model=model)
+    trainer = Trainer(solver=solver,
+                      precision='64-true',
+                      accelerator='cpu',
+                      callbacks=[R3Refinement(sample_every=2)],
+                      max_epochs=5)
+    trainer.train()
