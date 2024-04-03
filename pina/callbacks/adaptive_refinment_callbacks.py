@@ -1,8 +1,8 @@
 """PINA Callbacks Implementations"""
 
-# from lightning.pytorch.callbacks import Callback
-from pytorch_lightning.callbacks import Callback
 import torch
+from pytorch_lightning.callbacks import Callback
+from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 
 
@@ -100,13 +100,13 @@ class R3Refinement(Callback):
         for location in self._sampling_locations:
             pts = trainer._model.problem.input_pts[location]
             labels = pts.labels
-            pts = pts.cpu().detach()
+            pts = pts.cpu().detach().as_subclass(torch.Tensor)
             residuals = res_loss[location].cpu()
             mask = (residuals > avg).flatten()
             if any(
                 mask
             ):  # if there are residuals greater than averge we append them
-                pts = pts[mask]  # TODO masking remove labels
+                pts = (pts[mask]).as_subclass(LabelTensor)  # TODO masking remove labels
                 pts.labels = labels
                 old_pts[location] = pts
                 tot_points += len(pts)
