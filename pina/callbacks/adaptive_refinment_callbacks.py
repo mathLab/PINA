@@ -72,7 +72,7 @@ class R3Refinement(Callback):
             pts = pts.to(device=device, dtype=precision)
             pts = pts.requires_grad_(True)
             pts.retain_grad()
-            # PINN loss: equation evaluated only on locations where sampling is needed
+            # PINN loss: equation evaluated only for sampling locations
             target = condition.equation.residual(pts, solver.forward(pts))
             res_loss[location] = torch.abs(target).as_subclass(torch.Tensor)
             tot_loss.append(torch.abs(target))
@@ -106,7 +106,8 @@ class R3Refinement(Callback):
             if any(
                 mask
             ):  # if there are residuals greater than averge we append them
-                pts = (pts[mask]).as_subclass(LabelTensor)  # TODO masking remove labels
+                # Fix the issue, masking remove labels
+                pts = (pts[mask]).as_subclass(LabelTensor)
                 pts.labels = labels
                 old_pts[location] = pts
                 tot_points += len(pts)
