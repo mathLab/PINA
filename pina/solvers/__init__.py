@@ -1,10 +1,4 @@
-__all__ = [
-    'PINN',
-    'GAROM',
-    'SupervisedSolver',
-    'SolverInterface'
-
-]
+__all__ = ["PINN", "GAROM", "SupervisedSolver", "SolverInterface"]
 
 from .garom import GAROM
 from .pinn import PINN

@@ -14,13 +14,13 @@ a toy problem, following the standard API procedure.
 
 Specifically, the tutorial aims to introduce the following topics:
 
--  Explaining how to build **PINA** Problem,
--  Showing how to generate data for ``PINN`` straining
+-  Explaining how to build **PINA** Problems,
+-  Showing how to generate data for ``PINN`` training
 
 These are the two main steps needed **before** starting the modelling
 optimization (choose model and solver, and train). We will show each
 step in detail, and at the end, we will solve a simple Ordinary
-Differential Equation (ODE) problem busing the ``PINN`` solver.
+Differential Equation (ODE) problem using the ``PINN`` solver.
 
 Build a PINA problem
 --------------------
@@ -28,8 +28,12 @@ Build a PINA problem
 Problem definition in the **PINA** framework is done by building a
 python ``class``, which inherits from one or more problem classes
 (``SpatialProblem``, ``TimeDependentProblem``, ``ParametricProblem``, …)
-depending on the nature of the problem. Below is an example: ### Simple
-Ordinary Differential Equation Consider the following:
+depending on the nature of the problem. Below is an example: 
+
+Simple Ordinary Differential Equation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Consider the following:
 
 .. math::
 
@@ -66,9 +70,8 @@ the tensor. The ``spatial_domain`` variable indicates where the sample
 points are going to be sampled in the domain, in this case
 :math:`x\in[0,1]`.
 
-What about if our equation is also time dependent? In this case, our
-``class`` will inherit from both ``SpatialProblem`` and
-``TimeDependentProblem``:
+What if our equation is also time-dependent? In this case, our ``class``
+will inherit from both ``SpatialProblem`` and ``TimeDependentProblem``:
 
 .. code:: ipython3
 
@@ -83,6 +86,7 @@ What about if our equation is also time dependent? In this case, our
     
         # other stuff ...
 
+
 where we have included the ``temporal_domain`` variable, indicating the
 time domain wanted for the solution.
 
@@ -90,12 +94,12 @@ In summary, using **PINA**, we can initialize a problem with a class
 which inherits from different base classes: ``SpatialProblem``,
 ``TimeDependentProblem``, ``ParametricProblem``, and so on depending on
 the type of problem we are considering. Here are some examples (more on
-the official documentation): \* ``SpatialProblem`` :math:`\rightarrow` a
-differential equation with spatial variable(s) \*
-``TimeDependentProblem`` :math:`\rightarrow` a time-dependent
-differential equation \* ``ParametricProblem`` :math:`\rightarrow` a
-parametrized differential equation \* ``AbstractProblem``
-:math:`\rightarrow` any **PINA** problem inherits from here
+the official documentation):
+
+* ``SpatialProblem`` :math:`\rightarrow` a differential equation with spatial variable(s) ``spatial_domain``
+* ``TimeDependentProblem`` :math:`\rightarrow` a time-dependent differential equation with temporal variable(s) ``temporal_domain``
+* ``ParametricProblem`` :math:`\rightarrow` a parametrized differential equation with parametric variable(s) ``parameter_domain``
+* ``AbstractProblem`` :math:`\rightarrow` any **PINA** problem inherits from here
 
 Write the problem class
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,7 +161,7 @@ returning the difference between subtracting the variable ``u`` from its
 gradient (the residual), which we hope to minimize to 0. This is done
 for all conditions. Notice that we do not pass directly a ``python``
 function, but an ``Equation`` object, which is initialized with the
-``python`` function. This is done so that all the computations, and
+``python`` function. This is done so that all the computations and
 internal checks are done inside **PINA**.
 
 Once we have defined the function, we need to tell the neural network
@@ -169,25 +173,25 @@ possibilities are allowed, see the documentation for reference).
 Finally, it’s possible to define a ``truth_solution`` function, which
 can be useful if we want to plot the results and see how the real
 solution compares to the expected (true) solution. Notice that the
-``truth_solution`` function is a method of the ``PINN`` class, but is
+``truth_solution`` function is a method of the ``PINN`` class, but it is
 not mandatory for problem definition.
 
 Generate data
 -------------
 
 Data for training can come in form of direct numerical simulation
-reusults, or points in the domains. In case we do unsupervised learning,
-we just need the collocation points for training, i.e. points where we
-want to evaluate the neural network. Sampling point in **PINA** is very
-easy, here we show three examples using the ``.discretise_domain``
-method of the ``AbstractProblem`` class.
+results, or points in the domains. In case we perform unsupervised
+learning, we just need the collocation points for training, i.e. points
+where we want to evaluate the neural network. Sampling point in **PINA**
+is very easy, here we show three examples using the
+``.discretise_domain`` method of the ``AbstractProblem`` class.
 
 .. code:: ipython3
 
     # sampling 20 points in [0, 1] through discretization in all locations
     problem.discretise_domain(n=20, mode='grid', variables=['x'], locations='all')
     
-    # sampling 20 points in (0, 1) through latin hypercube samping in D, and 1 point in x0
+    # sampling 20 points in (0, 1) through latin hypercube sampling in D, and 1 point in x0
     problem.discretise_domain(n=20, mode='latin', variables=['x'], locations=['D'])
     problem.discretise_domain(n=1, mode='random', variables=['x'], locations=['x0'])
     
@@ -294,29 +298,6 @@ If you want to track the metric by yourself without a logger, use
     # train
     trainer.train()
 
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 1499: : 1it [00:00, 272.55it/s, v_num=3, x0_loss=7.71e-6, D_loss=0.000734, mean_loss=0.000371]
-
-.. parsed-literal::
-
-    `Trainer.fit` stopped: `max_epochs=1500` reached.
-
-
-.. parsed-literal::
-
-    Epoch 1499: : 1it [00:00, 167.14it/s, v_num=3, x0_loss=7.71e-6, D_loss=0.000734, mean_loss=0.000371]
-
-
 After the training we can inspect trainer logged metrics (by default
 **PINA** logs mean square error residual loss). The logged metrics can
 be accessed online using one of the ``Lightinig`` loggers. The final
@@ -332,8 +313,8 @@ loss can be accessed by ``trainer.logged_metrics``
 
 .. parsed-literal::
 
-    {'x0_loss': tensor(7.7149e-06),
-     'D_loss': tensor(0.0007),
+    {'x0_loss': tensor(1.0674e-05),
+     'D_loss': tensor(0.0008),
      'mean_loss': tensor(0.0004)}
 
 
@@ -348,7 +329,7 @@ quatitative plots of the solution.
 
 
 
-.. image:: tutorial_files/tutorial_23_0.png
+.. image:: tutorial_files/tutorial_23_1.png
 
 
 
@@ -375,14 +356,16 @@ could train for longer
 What’s next?
 ------------
 
-Nice you have completed the introductory tutorial of **PINA**! There are
-multiple directions you can go now:
+Congratulations on completing the introductory tutorial of **PINA**!
+There are several directions you can go now:
 
 1. Train the network for longer or with different layer sizes and assert
    the finaly accuracy
 
 2. Train the network using other types of models (see ``pina.model``)
 
-3. GPU trainining and benchmark the speed
+3. GPU training and speed benchmarking
 
 4. Many more…
+
+

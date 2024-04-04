@@ -1,4 +1,5 @@
 """ Module for plotting. """
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -11,7 +12,7 @@ class Writer:
     Implementation of a writer class, for textual output.
     """
 
-    def __init__(self, frequency_print=10, header='any') -> None:
+    def __init__(self, frequency_print=10, header="any") -> None:
         """
         The constructor of the class.
 
@@ -28,7 +29,7 @@ class Writer:
         """
         header = []
         for condition_name in trainer.problem.conditions:
-            header.append(f'{condition_name}')
+            header.append(f"{condition_name}")
 
         return header
 
@@ -46,4 +47,4 @@ class Writer:
         """
 
         if trainer.trained_epoch % self._frequency_print == 0:
-            print(f'Epoch {trainer.trained_epoch:05d}: {loss.item():.5e}')
+            print(f"Epoch {trainer.trained_epoch:05d}: {loss.item():.5e}")

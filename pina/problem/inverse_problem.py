@@ -1,4 +1,5 @@
 """Module for the ParametricProblem class"""
+
 from abc import abstractmethod
 
 from .abstract_problem import AbstractProblem
@@ -68,4 +69,3 @@ class InverseProblem(AbstractProblem):
     @unknown_parameters.setter
     def unknown_parameters(self, value):
         self.__unknown_parameters = value
-

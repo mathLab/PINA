@@ -85,7 +85,7 @@ class EllipsoidDomain(Location):
 
         .. note::
             When ``sample_surface`` in the ``__init()__``
-            is set to ``True``, then the method only checks 
+            is set to ``True``, then the method only checks
             points on the surface, and not inside the domain.
 
         :param point: Point to be checked.
@@ -103,7 +103,7 @@ class EllipsoidDomain(Location):
         # get axis ellipse as tensors
         list_dict_vals = list(self._axis.values())
         tmp = torch.tensor(list_dict_vals, dtype=torch.float)
-        ax_sq = LabelTensor(tmp.reshape(1, -1)**2, self.variables)
+        ax_sq = LabelTensor(tmp.reshape(1, -1) ** 2, self.variables)
 
         # get centers ellipse as tensors
         list_dict_vals = list(self._centers.values())
@@ -111,16 +111,18 @@ class EllipsoidDomain(Location):
         centers = LabelTensor(tmp.reshape(1, -1), self.variables)
 
         if not all([i in ax_sq.labels for i in point.labels]):
-            raise ValueError('point labels different from constructor'
-                             f' dictionary labels. Got {point.labels},'
-                             f' expected {ax_sq.labels}.')
+            raise ValueError(
+                "point labels different from constructor"
+                f" dictionary labels. Got {point.labels},"
+                f" expected {ax_sq.labels}."
+            )
 
         # point square + shift center
         point_sq = (point - centers).pow(2)
         point_sq.labels = point.labels
 
         # calculate ellispoid equation
-        eqn = torch.sum(point_sq.extract(ax_sq.labels) / ax_sq) - 1.
+        eqn = torch.sum(point_sq.extract(ax_sq.labels) / ax_sq) - 1.0
 
         # if we have sampled only the surface, we check that the
         # point is inside the surface border only
@@ -160,8 +162,9 @@ class EllipsoidDomain(Location):
         dim = len(variables)
 
         # get values center
-        pairs_center = [(k, v) for k, v in self._centers.items()
-                        if k in variables]
+        pairs_center = [
+            (k, v) for k, v in self._centers.items() if k in variables
+        ]
         _, values_center = map(list, zip(*pairs_center))
         values_center = torch.tensor(values_center)
 
@@ -171,7 +174,7 @@ class EllipsoidDomain(Location):
         values_axis = torch.tensor(values_axis)
 
         # Sample in the unit sphere
-        if mode == 'random':
+        if mode == "random":
             # 1. Sample n points from the surface of a unit sphere
             # 2. Scale each dimension using torch.rand()
             #    (a random number between 0-1) so that it lies within
@@ -192,7 +195,7 @@ class EllipsoidDomain(Location):
 
         return pts
 
-    def sample(self, n, mode='random', variables='all'):
+    def sample(self, n, mode="random", variables="all"):
         """Sample routine.
 
         :param int n: Number of points to sample in the shape.
@@ -238,12 +241,13 @@ class EllipsoidDomain(Location):
             for variable in variables:
                 if variable in self.fixed_.keys():
                     value = self.fixed_[variable]
-                    pts_variable = torch.tensor([[value]
-                                                 ]).repeat(result.shape[0], 1)
+                    pts_variable = torch.tensor([[value]]).repeat(
+                        result.shape[0], 1
+                    )
                     pts_variable = pts_variable.as_subclass(LabelTensor)
                     pts_variable.labels = [variable]
 
-                    result = result.append(pts_variable, mode='std')
+                    result = result.append(pts_variable, mode="std")
             return result
 
         def _single_points_sample(n, variables):
@@ -267,17 +271,17 @@ class EllipsoidDomain(Location):
 
             result = tmp[0]
             for i in tmp[1:]:
-                result = result.append(i, mode='std')
+                result = result.append(i, mode="std")
 
             return result
 
         if self.fixed_ and (not self.range_):
             return _single_points_sample(n, variables)
 
-        if variables == 'all':
+        if variables == "all":
             variables = list(self.range_.keys()) + list(self.fixed_.keys())
 
-        if mode in ['random']:
+        if mode in ["random"]:
             return _Nd_sampler(n, mode, variables)
         else:
-            raise NotImplementedError(f'mode={mode} is not implemented.')
+            raise NotImplementedError(f"mode={mode} is not implemented.")

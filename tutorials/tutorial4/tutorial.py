@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial 4: continuous convolutional filter
+# # Tutorial: Unstructured convolutional autoencoder via continuous convolution
 
-# In this tutorial, we will show how to use the Continuous Convolutional Filter, and how to build common Deep Learning architectures with it. The implementation of the filter follows the original work [**A Continuous Convolutional Trainable Filter for Modelling Unstructured Data**](https://arxiv.org/abs/2210.13416).
+# In this tutorial, we will show how to use the Continuous Convolutional Filter, and how to build common Deep Learning architectures with it. The implementation of the filter follows the original work [*A Continuous Convolutional Trainable Filter for Modelling Unstructured Data*](https://arxiv.org/abs/2210.13416).
 
-# First of all we import the modules needed for the tutorial, which include:
-# 
-# * `ContinuousConv` class from `pina.model.layers` which implements the continuous convolutional filter
-# * `PyTorch` and `Matplotlib` for tensorial operations and visualization respectively
+# First of all we import the modules needed for the tutorial:
 
 # In[1]:
 
 
 import torch 
 import matplotlib.pyplot as plt 
+from pina.problem import AbstractProblem
+from pina.solvers import SupervisedSolver
+from pina.trainer import Trainer
+from pina import Condition, LabelTensor
 from pina.model.layers import ContinuousConvBlock 
 import torchvision # for MNIST dataset
 from pina.model import FeedForward # for building AE and MNIST classification
@@ -54,7 +55,7 @@ from pina.model import FeedForward # for building AE and MNIST classification
 # f(x, y) = [\sin(\pi x) \sin(\pi y), -\sin(\pi x) \sin(\pi y)] \quad (x,y)\in[0,1]\times[0,1]
 # $$
 # 
-# using a batch size of one.
+# using a batch size equal to 1.
 
 # In[2]:
 
@@ -65,14 +66,14 @@ batch_size = 1
 # points in the mesh fixed to 200
 N = 200
 
-# vectorial 2 dimensional function, number_input_fileds=2
-number_input_fileds = 2
+# vectorial 2 dimensional function, number_input_fields=2
+number_input_fields = 2
 
 # 2 dimensional spatial variables, D = 2 + 1 = 3
 D = 3
 
 # create the function f domain as random 2d points in [0, 1]
-domain = torch.rand(size=(batch_size, number_input_fileds, N, D-1))
+domain = torch.rand(size=(batch_size, number_input_fields, N, D-1))
 print(f"Domain has shape: {domain.shape}")
 
 # create the functions
@@ -81,7 +82,7 @@ f1 = torch.sin(pi * domain[:, 0, :, 0]) * torch.sin(pi * domain[:, 0, :, 1])
 f2 = - torch.sin(pi * domain[:, 1, :, 0]) * torch.sin(pi * domain[:, 1, :, 1])
 
 # stacking the input domain and field values
-data = torch.empty(size=(batch_size, number_input_fileds, N, D))
+data = torch.empty(size=(batch_size, number_input_fields, N, D))
 data[..., :-1] = domain # copy the domain
 data[:, 0, :, -1] = f1 # copy first field value
 data[:, 1, :, -1] = f1  # copy second field value
@@ -104,7 +105,7 @@ print(f"Filter input data has shape: {data.shape}")
 # 1. `domain`: square domain (the only implemented) $[0,1]\times[0,5]$. The minimum value is always zero, while the maximum is specified by the user
 # 2. `start`: start position of the filter, coordinate $(0, 0)$
 # 3. `jump`: the jumps of the centroid of the filter to the next position $(0.1, 0.3)$
-# 4. `direction`: the directions of the jump, with `1 = right`, `0 = no jump`,`-1 = left` with respect to the current position
+# 4. `direction`: the directions of the jump, with `1 = right`, `0 = no jump`, `-1 = left` with respect to the current position
 # 
 # **Note**
 # 
@@ -112,9 +113,9 @@ print(f"Filter input data has shape: {data.shape}")
 
 # ### Filter definition
 # 
-# Having defined all the previous blocks we are able to construct the continuous filter.
+# Having defined all the previous blocks, we are now able to construct the continuous filter.
 # 
-# Suppose we would like to get an ouput with only one field, and let us fix the filter dimension to be $[0.1, 0.1]$.
+# Suppose we would like to get an output with only one field, and let us fix the filter dimension to be $[0.1, 0.1]$.
 
 # In[3]:
 
@@ -130,7 +131,7 @@ stride = {"domain": [1, 1],
           }
 
 # creating the filter         
-cConv = ContinuousConvBlock(input_numb_field=number_input_fileds,
+cConv = ContinuousConvBlock(input_numb_field=number_input_fields,
                         output_numb_field=1,
                         filter_dim=filter_dim,
                         stride=stride)
@@ -142,14 +143,14 @@ cConv = ContinuousConvBlock(input_numb_field=number_input_fileds,
 
 
 # creating the filter + optimization
-cConv = ContinuousConvBlock(input_numb_field=number_input_fileds,
+cConv = ContinuousConvBlock(input_numb_field=number_input_fields,
                        output_numb_field=1,
                        filter_dim=filter_dim,
                        stride=stride,
                        optimize=True)
 
 
-# Let's try to do a forward pass
+# Let's try to do a forward pass:
 
 # In[5]:
 
@@ -182,7 +183,7 @@ class SimpleKernel(torch.nn.Module):
         return self.model(x)
 
 
-cConv = ContinuousConvBlock(input_numb_field=number_input_fileds,
+cConv = ContinuousConvBlock(input_numb_field=number_input_fields,
                        output_numb_field=1,
                        filter_dim=filter_dim,
                        stride=stride,
@@ -231,7 +232,7 @@ test_loader = DataLoader(train_data, batch_size=batch_size,
                           sampler=SubsetRandomSampler(subsample_train_indices))
 
 
-# Let's now build a simple classifier. The MNIST dataset is composed by vectors of shape `[batch, 1, 28, 28]`, but we can image them as one field functions where the pixels $ij$ are the coordinate $x=i, y=j$ in a $[0, 27]\times[0,27]$ domain, and the pixels value are the field values. We just need a function to transform the regular tensor in a tensor compatible for the continuous filter:
+# Let's now build a simple classifier. The MNIST dataset is composed by vectors of shape `[batch, 1, 28, 28]`, but we can image them as one field functions where the pixels $ij$ are the coordinate $x=i, y=j$ in a $[0, 27]\times[0,27]$ domain, and the pixels values are the field values. We just need a function to transform the regular tensor in a tensor compatible for the continuous filter:
 
 # In[8]:
 
@@ -300,7 +301,7 @@ class ContinuousClassifier(torch.nn.Module):
 net = ContinuousClassifier()
 
 
-# Let's try to train it using a simple pytorch training loop. We train for juts 1 epoch using Adam optimizer with a $0.001$ learning rate.
+# Let's try to train it using a simple pytorch training loop. We train for just 1 epoch using Adam optimizer with a $0.001$ learning rate.
 
 # In[10]:
 
@@ -336,7 +337,7 @@ for epoch in range(1):  # loop over the dataset multiple times
             running_loss = 0.0
 
 
-# Let's see the performance on the train set!
+# Let's see the performance on the test set!
 
 # In[11]:
 
@@ -357,7 +358,7 @@ print(
     f'Accuracy of the network on the 1000 test images: {(correct / total):.3%}')
 
 
-# As we can see we have very good performance for having traing only for 1 epoch! Nevertheless, we are still using structured data... Let's see how we can build an autoencoder for unstructured data now.
+# As we can see we have very good performance for having trained only for 1 epoch! Nevertheless, we are still using structured data... Let's see how we can build an autoencoder for unstructured data now.
 
 # ## Building a Continuous Convolutional Autoencoder
 # 
@@ -463,7 +464,7 @@ class Decoder(torch.nn.Module):
 
 # Very good! Notice that in the `Decoder` class in the `forward` pass we have used the `.transpose()` method of the `ContinuousConvolution` class. This method accepts the `weights` for upsampling and the `grid` on where to upsample. Let's now build the autoencoder! We set the hidden dimension in the `hidden_dimension` variable. We apply the sigmoid on the output since the field value is between $[0, 1]$. 
 
-# In[14]:
+# In[17]:
 
 
 class Autoencoder(torch.nn.Module):
@@ -482,42 +483,32 @@ class Autoencoder(torch.nn.Module):
         out = self.decoder(weights, grid)
         return out
 
-
 net = Autoencoder()
 
 
-# Let's now train the autoencoder, minimizing the mean square error loss and optimizing using Adam.
+# Let's now train the autoencoder, minimizing the mean square error loss and optimizing using Adam. We use the `SupervisedSolver` as solver, and the problem is a simple problem created by inheriting from `AbstractProblem`. It takes approximately two minutes to train on CPU.
 
-# In[15]:
+# In[19]:
 
 
-# setting the seed
-torch.manual_seed(seed)
+# define the problem
+class CircleProblem(AbstractProblem):
+    input_variables = ['x', 'y', 'f']
+    output_variables = input_variables
+    conditions = {'data' : Condition(input_points=LabelTensor(input_data, input_variables), output_points=LabelTensor(input_data, output_variables))}
 
-# optimizer and loss function
-optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
-criterion = torch.nn.MSELoss()
-max_epochs = 150
+# define the solver
+solver = SupervisedSolver(problem=CircleProblem(), model=net, loss=torch.nn.MSELoss())          
 
-for epoch in range(max_epochs):  # loop over the dataset multiple times
-
-    # zero the parameter gradients
-    optimizer.zero_grad()
-
-    # forward + backward + optimize
-    outputs = net(input_data)
-    loss = criterion(outputs[..., -1], input_data[..., -1])
-    loss.backward()
-    optimizer.step()
-
-    # print statistics
-    if epoch % 10 ==9:
-        print(f'epoch [{epoch + 1}/{max_epochs}] loss [{loss.item():.2}]')
+# train
+trainer = Trainer(solver, max_epochs=150, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer.train()
+        
 
 
 # Let's visualize the two solutions side by side!
 
-# In[16]:
+# In[20]:
 
 
 net.eval()
@@ -538,9 +529,9 @@ plt.tight_layout()
 plt.show()
 
 
-# As we can see the two are really similar! We can compute the $l_2$ error quite easily as well:
+# As we can see, the two solutions are really similar! We can compute the $l_2$ error quite easily as well:
 
-# In[17]:
+# In[21]:
 
 
 def l2_error(input_, target):
@@ -554,9 +545,9 @@ print(f'l2 error: {l2_error(input_data[0, 0, :, -1], output[0, 0, :, -1]):.2%}')
 
 # ### Filter for upsampling
 # 
-# Suppose we have already the hidden dimension and we want to upsample on a differen grid with more points. Let's see how to do it:
+# Suppose we have already the hidden representation and we want to upsample on a differen grid with more points. Let's see how to do it:
 
-# In[18]:
+# In[22]:
 
 
 # setting the seed
@@ -568,7 +559,7 @@ input_data2[0, 0, :, :-1] = grid2
 input_data2[0, 0, :, -1] = torch.sin(pi *
                                     grid2[:, 0]) * torch.sin(pi * grid2[:, 1])
 
-# get the hidden dimension representation from original input
+# get the hidden representation from original input
 latent = net.encoder(input_data)
 
 # upsample on the second input_data2
@@ -589,16 +580,16 @@ plt.show()
 
 # As we can see we have a very good approximation of the original function, even thought some noise is present. Let's calculate the error now:
 
-# In[19]:
+# In[23]:
 
 
 print(f'l2 error: {l2_error(input_data2[0, 0, :, -1], output[0, 0, :, -1]):.2%}')
 
 
-# ### Autoencoding at different resolution
-# In the previous example we already had the hidden dimension (of original input) and we used it to upsample. Sometimes however we have a more fine mesh solution and we simply want to encode it. This can be done without retraining! This procedure can be useful in case we have many points in the mesh and just a smaller part of them are needed for training. Let's see the results of this:
+# ### Autoencoding at different resolutions
+# In the previous example we already had the hidden representation (of the original input) and we used it to upsample. Sometimes however we could have a finer mesh solution and we would simply want to encode it. This can be done without retraining! This procedure can be useful in case we have many points in the mesh and just a smaller part of them are needed for training. Let's see the results of this:
 
-# In[20]:
+# In[ ]:
 
 
 # setting the seed
@@ -610,7 +601,7 @@ input_data2[0, 0, :, :-1] = grid2
 input_data2[0, 0, :, -1] = torch.sin(pi *
                                      grid2[:, 0]) * torch.sin(pi * grid2[:, 1])
 
-# get the hidden dimension representation from more fine mesh input
+# get the hidden representation from finer mesh input
 latent = net.encoder(input_data2)
 
 # upsample on the second input_data2
@@ -635,4 +626,10 @@ print(
 
 # ## What's next?
 # 
-# We have shown the basic usage of a convolutional filter. In the next tutorials we will show how to combine the PINA framework with the convolutional filter to train in few lines and efficiently a Neural Network!
+# We have shown the basic usage of a convolutional filter. There are additional extensions possible:
+# 
+# 1. Train using Physics Informed strategies
+# 
+# 2. Use the filter to build an unstructured convolutional autoencoder for reduced order modelling
+# 
+# 3. Many more...

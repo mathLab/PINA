@@ -67,7 +67,7 @@ terms), without the need of re-training.
     :maxdepth: 1
     :caption: Community:
 
-    Team & Foundings <_team.rst>
+    Team & Fundings <_team.rst>
     Contributing <_rst/_contributing>
     License <_LICENSE.rst>
     Cite PINA <_cite.rst>

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial 8: Reduced order model (PODNN) for parametric problems
+# # Tutorial: Reduced order model (PODNN) for parametric problems
 
 # The tutorial aims to show how to employ the **PINA** library in order to apply a reduced order modeling technique [1]. Such methodologies have several similarities with machine learning approaches, since the main goal consists of predicting the solution of differential equations (typically parametric PDEs) in a real-time fashion.
 # 
@@ -26,7 +26,7 @@ import pina
 from pina.geometry import CartesianDomain
 
 from pina.problem import ParametricProblem
-from pina.model.layers import PODLayer
+from pina.model.layers import PODBlock
 from pina import Condition, LabelTensor, Trainer
 from pina.model import FeedForward
 from pina.solvers import SupervisedSolver
@@ -85,7 +85,7 @@ class SnapshotProblem(ParametricProblem):
     }
 
 
-# Then, we define the model we want to use: basically we have a MLP architecture that takes in input the parameter and return the *modal coefficients*, so the reduced dimension representation (the coordinates in the POD space). Such latent variable is the projected to the original space using the POD modes, which are computed and stored in the `PODLayer` object.
+# Then, we define the model we want to use: basically we have a MLP architecture that takes in input the parameter and return the *modal coefficients*, so the reduced dimension representation (the coordinates in the POD space). Such latent variable is the projected to the original space using the POD modes, which are computed and stored in the `PODBlock` object.
 
 # In[33]:
 
@@ -101,7 +101,7 @@ class PODNN(torch.nn.Module):
         """
         super().__init__()
         
-        self.pod = PODLayer(pod_rank)
+        self.pod = PODBlock(pod_rank)
         self.nn = FeedForward(
             input_dimensions=1,
             output_dimensions=pod_rank,
@@ -124,8 +124,8 @@ class PODNN(torch.nn.Module):
 
     def fit_pod(self, x):
         """
-        Just call the :meth:`pina.model.layers.PODLayer.fit` method of the
-        :attr:`pina.model.layers.PODLayer` attribute.
+        Just call the :meth:`pina.model.layers.PODBlock.fit` method of the
+        :attr:`pina.model.layers.PODBlock` attribute.
         """
         self.pod.fit(x)
 

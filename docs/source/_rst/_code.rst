@@ -48,12 +48,16 @@ Models
     :maxdepth: 5
 
     Network <models/network.rst>
+    KernelNeuralOperator <models/base_no.rst>
     FeedForward <models/fnn.rst>
     MultiFeedForward <models/multifeedforward.rst>
     ResidualFeedForward <models/fnn_residual.rst>
     DeepONet <models/deeponet.rst>
     MIONet <models/mionet.rst>
+    FourierIntegralKernel <models/fourier_kernel.rst>
     FNO <models/fno.rst>
+    AveragingNeuralOperator <models/avno.rst>
+    LowRankNeuralOperator <models/lno.rst>
 
 Layers
 -------------
@@ -65,8 +69,12 @@ Layers
     EnhancedLinear layer <layers/enhanced_linear.rst>
     Spectral convolution <layers/spectral.rst>
     Fourier layers <layers/fourier.rst>
+    Averaging layer <layers/avno_layer.rst>
+    Low Rank layer <layers/lowrank_layer.rst>
     Continuous convolution <layers/convolution.rst>
-    
+    Proper Orthogonal Decomposition <layers/pod.rst>
+    Periodic Boundary Condition embeddings <layers/embedding.rst>
+    Adpative Activation Function <layers/adaptive_func.rst>
 
 Equations and Operators
 -------------------------

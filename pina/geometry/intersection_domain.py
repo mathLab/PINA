@@ -20,7 +20,7 @@ class Intersection(OperationInterface):
         with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
         the dimension of the geometry space.
 
-        :param list geometries: A list of geometries from ``pina.geometry`` 
+        :param list geometries: A list of geometries from ``pina.geometry``
             such as ``EllipsoidDomain`` or ``CartesianDomain``. The intersection
             will be taken between all the geometries in the list. The resulting
             geometry will be the intersection of all the geometries in the list.
@@ -39,7 +39,7 @@ class Intersection(OperationInterface):
         Check if a point is inside the ``Intersection`` domain.
 
         :param point: Point to be checked.
-        :type point: torch.Tensor   
+        :type point: torch.Tensor
         :param bool check_border: If ``True``, the border is considered inside.
         :return: ``True`` if the point is inside the Intersection domain, ``False`` otherwise.
         :rtype: bool
@@ -50,7 +50,7 @@ class Intersection(OperationInterface):
                 flag += 1
         return flag == len(self.geometries)
 
-    def sample(self, n, mode='random', variables='all'):
+    def sample(self, n, mode="random", variables="all"):
         """
         Sample routine for ``Intersection`` domain.
 
@@ -78,9 +78,10 @@ class Intersection(OperationInterface):
                 5
 
         """
-        if mode != 'random':
+        if mode != "random":
             raise NotImplementedError(
-                f'{mode} is not a valid mode for sampling.')
+                f"{mode} is not a valid mode for sampling."
+            )
 
         sampled = []
 

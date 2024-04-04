@@ -25,13 +25,14 @@ The problem definition
 
 The problem is written in the following form:
 
-:raw-latex:`\begin{equation}
-\begin{cases}
-\Delta u(x,y,t) = \frac{\partial^2}{\partial t^2} u(x,y,t) \quad \text{in } D, \\\\
-u(x, y, t=0) = \sin(\pi x)\sin(\pi y), \\\\
-u(x, y, t) = 0 \quad \text{on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
-\end{cases}
-\end{equation}`
+.. math:: 
+    \begin{equation}
+    \begin{cases}
+    \Delta u(x,y,t) = \frac{\partial^2}{\partial t^2} u(x,y,t) \quad \text{in } D, \\\\
+    u(x, y, t=0) = \sin(\pi x)\sin(\pi y), \\\\
+    u(x, y, t) = 0 \quad \text{on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
+    \end{cases}
+    \end{equation}
 
 where :math:`D` is a square domain :math:`[0,1]^2`, and
 :math:`\Gamma_i`, with :math:`i=1,...,4`, are the boundaries of the
@@ -136,20 +137,6 @@ approximately 3 minutes.
     trainer = Trainer(pinn, max_epochs=1000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     trainer.train()
 
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-    Missing logger folder: /Users/dariocoscia/Desktop/PINA/tutorials/tutorial3/lightning_logs
-
-
-.. parsed-literal::
-
-    Epoch 999: : 1it [00:00, 84.47it/s, v_num=0, gamma1_loss=0.000, gamma2_loss=0.000, gamma3_loss=0.000, gamma4_loss=0.000, t0_loss=0.0419, D_loss=0.0307, mean_loss=0.0121]
-
 .. parsed-literal::
 
     `Trainer.fit` stopped: `max_epochs=1000` reached.
@@ -214,7 +201,7 @@ progress the solution get worse…. Can we do better?
 A valid option is to impose the initial condition as hard constraint as
 well. Specifically, our solution is written as:
 
-.. math::  u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)\cdot t + \cos(\sqrt{2}\pi t)sin(\pi x)\sin(\pi y), 
+.. math::  u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)\cdot t + \cos(\sqrt{2}\pi t)\sin(\pi x)\sin(\pi y), 
 
 Let us build the network first
 
@@ -251,18 +238,6 @@ Now let’s train with the same configuration as thre previous test
     trainer = Trainer(pinn, max_epochs=1000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
     trainer.train()
 
-
-.. parsed-literal::
-
-    GPU available: False, used: False
-    TPU available: False, using: 0 TPU cores
-    IPU available: False, using: 0 IPUs
-    HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 0: : 0it [00:00, ?it/s]Epoch 999: : 1it [00:00, 52.10it/s, v_num=1, gamma1_loss=1.97e-15, gamma2_loss=0.000, gamma3_loss=2.14e-15, gamma4_loss=0.000, t0_loss=0.000, D_loss=1.25e-7, mean_loss=2.09e-8]
 
 .. parsed-literal::
 

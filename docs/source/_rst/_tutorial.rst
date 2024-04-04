@@ -10,6 +10,7 @@ Getting started with PINA
    :titlesonly:
 
    Introduction to PINA for Physics Informed Neural Networks training <tutorials/tutorial1/tutorial.rst>
+   PINA and PyTorch Lightning, training tips and visualizations <tutorials/tutorial11/tutorial.rst>
    Building custom geometries with PINA Location class <tutorials/tutorial6/tutorial.rst>
 
 Physics Informed Neural Networks
@@ -21,7 +22,7 @@ Physics Informed Neural Networks
    Two dimensional Poisson problem using Extra Features Learning<tutorials/tutorial2/tutorial.rst>
    Two dimensional Wave problem with hard constraint<tutorials/tutorial3/tutorial.rst>
    Resolution of a 2D Poisson inverse problem<tutorials/tutorial7/tutorial.rst>
-
+   Periodic Boundary Conditions for Helmotz Equation<tutorials/tutorial9/tutorial.rst>
 
 Neural Operator Learning
 ------------------------
@@ -30,6 +31,7 @@ Neural Operator Learning
    :titlesonly:
 
    Two dimensional Darcy flow using the Fourier Neural Operator<tutorials/tutorial5/tutorial.rst>
+   Time dependent Kuramoto Sivashinsky equation using the Averaging Neural Operator<tutorials/tutorial10/tutorial.rst>
 
 Supervised Learning
 -------------------
@@ -38,4 +40,4 @@ Supervised Learning
    :titlesonly:
 
    Unstructured convolutional autoencoder via continuous convolution<tutorials/tutorial4/tutorial.rst>
-
+   POD-NN for reduced order modeling<tutorials/tutorial8/tutorial.rst>

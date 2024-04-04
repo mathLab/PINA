@@ -37,7 +37,7 @@ class Exclusion(OperationInterface):
         Check if a point is inside the ``Exclusion`` domain.
 
         :param point: Point to be checked.
-        :type point: torch.Tensor   
+        :type point: torch.Tensor
         :param bool check_border: If ``True``, the border is considered inside.
         :return: ``True`` if the point is inside the Exclusion domain, ``False`` otherwise.
         :rtype: bool
@@ -48,7 +48,7 @@ class Exclusion(OperationInterface):
                 flag += 1
         return flag == 1
 
-    def sample(self, n, mode='random', variables='all'):
+    def sample(self, n, mode="random", variables="all"):
         """
         Sample routine for ``Exclusion`` domain.
 
@@ -76,9 +76,10 @@ class Exclusion(OperationInterface):
                 5
 
         """
-        if mode != 'random':
+        if mode != "random":
             raise NotImplementedError(
-                f'{mode} is not a valid mode for sampling.')
+                f"{mode} is not a valid mode for sampling."
+            )
 
         sampled = []
 

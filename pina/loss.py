@@ -5,7 +5,7 @@ from torch.nn.modules.loss import _Loss
 import torch
 from .utils import check_consistency
 
-__all__ = ['LossInterface', 'LpLoss', 'PowerLoss']
+__all__ = ["LossInterface", "LpLoss", "PowerLoss"]
 
 
 class LossInterface(_Loss, metaclass=ABCMeta):
@@ -14,10 +14,10 @@ class LossInterface(_Loss, metaclass=ABCMeta):
     should be inheritied from this class.
     """
 
-    def __init__(self, reduction='mean'):
+    def __init__(self, reduction="mean"):
         """
         :param str reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction 
+            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction
             will be applied, ``mean``: the sum of the output will be divided
             by the number of elements in the output, ``sum``: the output will
             be summed. Note: ``size_average`` and ``reduce`` are in the
@@ -41,7 +41,7 @@ class LossInterface(_Loss, metaclass=ABCMeta):
         """Simple helper function to check reduction
 
         :param reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction 
+            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction
             will be applied, ``mean``: the sum of the output will be divided
             by the number of elements in the output, ``sum``: the output will
             be summed. Note: ``size_average`` and ``reduce`` are in the
@@ -101,14 +101,14 @@ class LpLoss(LossInterface):
     The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.
     """
 
-    def __init__(self, p=2, reduction='mean', relative=False):
+    def __init__(self, p=2, reduction="mean", relative=False):
         """
         :param int p: Degree of Lp norm. It specifies the type of norm to
             be calculated. See `list of possible orders in torch linalg
             <https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm>`_ to
             for possible degrees. Default 2 (euclidean norm).
         :param str reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``. ``none``: no reduction 
+            ``none`` | ``mean`` | ``sum``. ``none``: no reduction
             will be applied, ``mean``: the sum of the output will be divided
             by the number of elements in the output, ``sum``: the output will
             be summed.
@@ -117,7 +117,7 @@ class LpLoss(LossInterface):
         super().__init__(reduction=reduction)
 
         # check consistency
-        check_consistency(p, (str,int,float))
+        check_consistency(p, (str, int, float))
         check_consistency(relative, bool)
 
         self.p = p
@@ -174,14 +174,14 @@ class PowerLoss(LossInterface):
     The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.
     """
 
-    def __init__(self, p=2, reduction='mean', relative=False):
+    def __init__(self, p=2, reduction="mean", relative=False):
         """
         :param int p: Degree of Lp norm. It specifies the type of norm to
             be calculated. See `list of possible orders in torch linalg
             <https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm>`_ to
             see the possible degrees. Default 2 (euclidean norm).
         :param str reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction 
+            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction
             will be applied, ``mean``: the sum of the output will be divided
             by the number of elements in the output, ``sum``: the output will
             be summed.

@@ -80,7 +80,7 @@ problem.discretise_domain(25, 'grid', locations=['gamma1', 'gamma2', 'gamma3', '
 
 # After the problem, the feed-forward neural network is defined, through the class `FeedForward`. This neural network takes as input the coordinates (in this case $x$ and $y$) and provides the unkwown field of the Poisson problem. The residual of the equations are evaluated at several sampling points (which the user can manipulate using the method `CartesianDomain_pts`) and the loss minimized by the neural network is the sum of the residuals.
 # 
-# In this tutorial, the neural network is composed by two hidden layers of 10 neurons each, and it is trained for 1000 epochs with a learning rate of 0.006 and $l_2$ weight regularization set to $10^{-7}$. These parameters can be modified as desired. We use the `MetricTracker` class to track the metrics during training.
+# In this tutorial, the neural network is composed by two hidden layers of 10 neurons each, and it is trained for 1000 epochs with a learning rate of 0.006 and $l_2$ weight regularization set to $10^{-8}$. These parameters can be modified as desired. We use the `MetricTracker` class to track the metrics during training.
 
 # In[3]:
 
@@ -252,7 +252,7 @@ plotter.plot_loss(trainer_learn, logy=True, label='Learnable Features')
 
 # ## What's next?
 # 
-# Nice you have completed the two dimensional Poisson tutorial of **PINA**! There are multiple directions you can go now:
+# Congratulations on completing the two dimensional Poisson tutorial of **PINA**! There are multiple directions you can go now:
 # 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
 # 
