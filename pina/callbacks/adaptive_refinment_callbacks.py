@@ -56,11 +56,12 @@ class R3Refinement(Callback):
         elif precision == "32-true":
             precision = torch.float32
         else:
-            raise RuntimeError("Currently R3Refinement is only implemented "
-                               "for precision '32-true' and '64-true', set "
-                               "Trainer precision to match one of the "
-                               "available precisions.")
-
+            raise RuntimeError(
+                "Currently R3Refinement is only implemented "
+                "for precision '32-true' and '64-true', set "
+                "Trainer precision to match one of the "
+                "available precisions."
+            )
 
         # compute residual
         res_loss = {}
