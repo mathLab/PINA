@@ -74,7 +74,27 @@ Layers
     Continuous convolution <layers/convolution.rst>
     Proper Orthogonal Decomposition <layers/pod.rst>
     Periodic Boundary Condition embeddings <layers/embedding.rst>
-    Adpative Activation Function <layers/adaptive_func.rst>
+
+Adaptive Activation Functions
+-------------------------------
+
+.. toctree::
+    :titlesonly:
+    
+    Adaptive Function Interface <adaptive_functions/AdaptiveFunctionInterface.rst>
+    Adaptive ReLU <adaptive_functions/AdaptiveReLU.rst>
+    Adaptive Sigmoid <adaptive_functions/AdaptiveSigmoid.rst>
+    Adaptive Tanh <adaptive_functions/AdaptiveTanh.rst>
+    Adaptive SiLU <adaptive_functions/AdaptiveSiLU.rst>
+    Adaptive Mish <adaptive_functions/AdaptiveMish.rst>
+    Adaptive ELU <adaptive_functions/AdaptiveELU.rst>
+    Adaptive CELU <adaptive_functions/AdaptiveCELU.rst>
+    Adaptive GELU <adaptive_functions/AdaptiveGELU.rst>
+    Adaptive Softmin <adaptive_functions/AdaptiveSoftmin.rst>
+    Adaptive Softmax <adaptive_functions/AdaptiveSoftmax.rst>
+    Adaptive SIREN <adaptive_functions/AdaptiveSIREN.rst>
+    Adaptive Exp <adaptive_functions/AdaptiveExp.rst>
+    
 
 Equations and Operators
 -------------------------
