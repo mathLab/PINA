@@ -1,14 +1,18 @@
 """ Module for adaptive functions. """
 
 import torch
+
 from pina.utils import check_consistency
+from abc import ABCMeta
 
 
-class AdaptiveActivationFunction(torch.nn.Module):
+class AdaptiveActivationFunctionInterface(torch.nn.Module, metaclass=ABCMeta):
     r"""
-    The :class:`~pina.model.layers.adaptive_func.AdaptiveActivationFunction`
+    The
+    :class:`~pina.adaptive_functions.adaptive_func_interface.AdaptiveActivationFunctionInterface`
     class makes a :class:`torch.nn.Module` activation function into an adaptive
-    trainable activation function.
+    trainable activation function. If one wants to create an adpative activation
+    function, this class must be use as base class.
 
     Given a function :math:`f:\mathbb{R}^n\rightarrow\mathbb{R}^m`, the adaptive
     function :math:`f_{\text{adaptive}}:\mathbb{R}^n\rightarrow\mathbb{R}^m`
@@ -18,28 +22,6 @@ class AdaptiveActivationFunction(torch.nn.Module):
         f_{\text{adaptive}}(\mathbf{x}) = \alpha\,f(\beta\mathbf{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters.
-
-    :Example:
-        >>> import torch
-        >>> from pina.model.layers import AdaptiveActivationFunction
-        >>>
-        >>> # simple adaptive function with all trainable parameters
-        >>> AdaptiveTanh = AdaptiveActivationFunction(torch.nn.Tanh())
-        >>> AdaptiveTanh(torch.rand(3))
-        tensor([0.1084, 0.3931, 0.7294], grad_fn=<MulBackward0>)
-        >>> AdaptiveTanh.alpha
-        Parameter containing:
-        tensor(1., requires_grad=True)
-        >>>
-        >>> # simple adaptive function with trainable parameters fixed alpha
-        >>> AdaptiveTanh = AdaptiveActivationFunction(torch.nn.Tanh(),
-        ...                                           fixed=['alpha'])
-        >>> AdaptiveTanh.alpha
-        tensor(1.)
-        >>> AdaptiveTanh.beta
-        Parameter containing:
-        tensor(1., requires_grad=True)
-        >>>
 
     .. seealso::
 
@@ -51,14 +33,18 @@ class AdaptiveActivationFunction(torch.nn.Module):
         Vol. 1. IEEE, 2015. DOI: `arXiv preprint arXiv:1602.01321.
         <https://arxiv.org/abs/1602.01321>`_.
 
+        Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
+        activation functions accelerate convergence in deep and
+        physics-informed neural networks*. Journal of
+        Computational Physics 404 (2020): 109136. 
+        DOI: `JCP 10.1016
+        <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
 
-    def __init__(self, func, alpha=None, beta=None, gamma=None, fixed=None):
+    def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         """
-        Initializes the AdaptiveActivationFunction module.
+        Initializes the Adaptive Function.
 
-        :param callable func: The original collable function. It could be an
-            initialized :meth:`torch.nn.Module`, or a python callable function.
         :param float | complex alpha: Scaling parameter alpha.
             Defaults to ``None``. When ``None`` is passed,
             the variable is initialized to 1.
@@ -70,7 +56,7 @@ class AdaptiveActivationFunction(torch.nn.Module):
             the variable is initialized to 1.
         :param list fixed: List of parameters to fix during training,
             i.e. not optimized (``requires_grad`` set to ``False``).
-            Options are ['alpha', 'beta', 'gamma']. Defaults to None.
+            Options are ``alpha``, ``beta``, ``gamma``. Defaults to None.
         """
         super().__init__()
 
@@ -94,8 +80,6 @@ class AdaptiveActivationFunction(torch.nn.Module):
         check_consistency(alpha, (float, complex))
         check_consistency(beta, (float, complex))
         check_consistency(gamma, (float, complex))
-        if not callable(func):
-            raise ValueError("Function must be a callable function.")
 
         # registering as tensors
         alpha = torch.tensor(alpha, requires_grad=False)
@@ -119,34 +103,44 @@ class AdaptiveActivationFunction(torch.nn.Module):
             self._gamma = torch.nn.Parameter(gamma, requires_grad=True)
         else:
             self.register_buffer("gamma", gamma)
-
-        # registering function
-        self._func = func
+        
+        # storing the activation
+        self._func = None
 
     def forward(self, x):
         """
-        Forward pass of the function.
-        Applies the function to the input elementwise.
+        Define the computation performed at every call.
+        The function to the input elementwise.
+
+        :param x: The input tensor to evaluate the activation function.
+        :type x: torch.Tensor | LabelTensor
         """
         return self.alpha * (self._func(self.beta * x + self.gamma))
 
     @property
     def alpha(self):
         """
-        The alpha variable
+        The alpha variable.
         """
         return self._alpha
 
     @property
     def beta(self):
         """
-        The alpha variable
+        The beta variable.
         """
         return self._beta
 
     @property
     def gamma(self):
         """
-        The alpha variable
+        The gamma variable.
         """
         return self._gamma
+    
+    @property
+    def func(self):
+        """
+        The callable activation function.
+        """
+        return self._func
