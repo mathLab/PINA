@@ -36,7 +36,7 @@ class AdaptiveActivationFunctionInterface(torch.nn.Module, metaclass=ABCMeta):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
@@ -103,7 +103,7 @@ class AdaptiveActivationFunctionInterface(torch.nn.Module, metaclass=ABCMeta):
             self._gamma = torch.nn.Parameter(gamma, requires_grad=True)
         else:
             self.register_buffer("gamma", gamma)
-        
+
         # storing the activation
         self._func = None
 
@@ -137,7 +137,7 @@ class AdaptiveActivationFunctionInterface(torch.nn.Module, metaclass=ABCMeta):
         The gamma variable.
         """
         return self._gamma
-    
+
     @property
     def func(self):
         """
