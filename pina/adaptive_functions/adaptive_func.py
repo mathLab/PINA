@@ -19,7 +19,7 @@ class AdaptiveReLU(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     ReLU function is defined as:
-    
+
     .. math::
         \text{ReLU}(x)  = \max(0, x)
 
@@ -36,10 +36,11 @@ class AdaptiveReLU(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.ReLU()
@@ -59,7 +60,7 @@ class AdaptiveSigmoid(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Sigmoid function is defined as:
-    
+
     .. math::
         \text{Sigmoid}(x) = \frac{1}{1 + \exp(-x)}
 
@@ -76,10 +77,11 @@ class AdaptiveSigmoid(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.Sigmoid()
@@ -99,7 +101,7 @@ class AdaptiveTanh(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Tanh function is defined as:
-    
+
     .. math::
         \text{Tanh}(x) = \frac{\exp(x) - \exp(-x)} {\exp(x) + \exp(-x)}
 
@@ -116,10 +118,11 @@ class AdaptiveTanh(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.Tanh()
@@ -139,7 +142,7 @@ class AdaptiveSiLU(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     SiLU function is defined as:
-    
+
     .. math::
         \text{SiLU}(x) = x * \sigma(x), \text{where }\sigma(x)
         \text{ is the logistic sigmoid.}
@@ -157,10 +160,11 @@ class AdaptiveSiLU(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.SiLU()
@@ -180,7 +184,7 @@ class AdaptiveMish(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Mish function is defined as:
-    
+
     .. math::
         \text{Mish}(x) = x * \text{Tanh}(x)
 
@@ -197,10 +201,11 @@ class AdaptiveMish(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.Mish()
@@ -244,6 +249,7 @@ class AdaptiveELU(AdaptiveActivationFunctionInterface):
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.ELU()
@@ -263,7 +269,7 @@ class AdaptiveCELU(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     CELU function is defined as:
-    
+
     .. math::
         \text{CELU}(x) = \max(0,x) + \min(0, \alpha * (\exp(x) - 1))
 
@@ -280,13 +286,15 @@ class AdaptiveCELU(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.CELU()
+
 
 class AdaptiveGELU(AdaptiveActivationFunctionInterface):
     r"""
@@ -302,7 +310,7 @@ class AdaptiveGELU(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     GELU function is defined as:
-    
+
     .. math::
         \text{GELU}(x) =  0.5 * x * (1 + \text{Tanh}(\sqrt{2 / \pi} * (x + 0.044715 * x^3)))
 
@@ -320,10 +328,11 @@ class AdaptiveGELU(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.GELU()
@@ -343,7 +352,7 @@ class AdaptiveSoftmin(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Softmin function is defined as:
-    
+
     .. math::
         \text{Softmin}(x_{i}) = \frac{\exp(-x_i)}{\sum_j \exp(-x_j)}
 
@@ -360,10 +369,11 @@ class AdaptiveSoftmin(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.Softmin()
@@ -383,7 +393,7 @@ class AdaptiveSoftmax(AdaptiveActivationFunctionInterface):
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Softmax function is defined as:
-    
+
     .. math::
         \text{Softmax}(x_{i}) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 
@@ -400,13 +410,15 @@ class AdaptiveSoftmax(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.nn.Softmax()
+
 
 class AdaptiveSIREN(AdaptiveActivationFunctionInterface):
     r"""
@@ -435,13 +447,15 @@ class AdaptiveSIREN(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):
         super().__init__(alpha, beta, gamma, fixed)
         self._func = torch.sin
+
 
 class AdaptiveExp(AdaptiveActivationFunctionInterface):
     r"""
@@ -470,19 +484,20 @@ class AdaptiveExp(AdaptiveActivationFunctionInterface):
         Jagtap, Ameya D., Kenji Kawaguchi, and George Em Karniadakis. *Adaptive
         activation functions accelerate convergence in deep and
         physics-informed neural networks*. Journal of
-        Computational Physics 404 (2020): 109136. 
+        Computational Physics 404 (2020): 109136.
         DOI: `JCP 10.1016
         <https://doi.org/10.1016/j.jcp.2019.109136>`_.
     """
+
     def __init__(self, alpha=None, beta=None, fixed=None):
 
         # only alpha, and beta parameters (gamma=0 fixed)
         if fixed is None:
-            fixed = ['gamma']
+            fixed = ["gamma"]
         else:
             check_consistency(fixed, str)
-            fixed = list(fixed) + ['gamma']
+            fixed = list(fixed) + ["gamma"]
 
         # calling super
-        super().__init__(alpha, beta, 0., fixed)
+        super().__init__(alpha, beta, 0.0, fixed)
         self._func = torch.exp
