@@ -26,7 +26,8 @@ class CausalPINN(PINN):
 
     .. note::
         This class can only work for problems inheriting
-        from ``TimeDependentProblem`` class.
+        from at least
+        :class:`~pina.problem.timedep_problem.TimeDependentProblem` class.
     """
 
     def __init__(
@@ -141,6 +142,5 @@ class CausalPINN(PINN):
     def _compute_weights(self, loss):
         # compute comulative loss and multiply by epsilos
         cumulative_loss = self._eps * torch.cumsum(loss, dim=0)
-        # print(torch.exp(-cumulative_loss), cumulative_loss)
         # return the exponential of the weghited negative cumulative sum
         return torch.exp(-cumulative_loss)
