@@ -64,7 +64,5 @@ model = FeedForward(
 sapinn = SAPINN(
     problem,
     model,
-    mask_type={"type" : "sigmoid", "coefficient": [100, 1, 1]}
+    mask_type={"type" : "sigmoid", "coefficient": [2, 1, 1]}
 )
-
-print(sapinn.weights)
