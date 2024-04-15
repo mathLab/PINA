@@ -24,6 +24,11 @@ class GPINN(PINN):
         PDE problems." Computer Methods in Applied Mechanics
         and Engineering 393 (2022): 114823.
         <https://doi.org/10.1016/j.cma.2022.114823>`_.
+
+    .. note::
+        This class can only work for problems inheriting
+        from at least :class:`~pina.problem.spatial_problem.SpatialProblem`
+        class.
     """
 
     def __init__(
@@ -38,7 +43,10 @@ class GPINN(PINN):
         scheduler_kwargs={"factor": 1, "total_iters": 0},
     ):
         """
-        :param AbstractProblem problem: The formulation of the problem.
+        :param AbstractProblem problem: The formulation of the problem. It must
+            inherit from at least
+            :class:`~pina.problem.spatial_problem.SpatialProblem` in order to
+            compute the gradient of the loss.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default :class:`torch.nn.MSELoss`.
@@ -86,6 +94,9 @@ class GPINN(PINN):
         self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
         # gradient PINN loss
         loss_val = loss_val.reshape(-1, 1)
-        loss_val.labels = ['LOSS']
-        g_loss_phys = grad(loss_val, samples, d=self.problem.spatial_variables)
-        return (loss_val + g_loss_phys.pow(2).mean()).as_subclass(torch.Tensor)
+        loss_val.labels = ['__LOSS']
+        loss_grad = grad(loss_val, samples, d=self.problem.spatial_variables)
+        g_loss_phys = self.loss(
+            torch.zeros_like(loss_grad, requires_grad=True), loss_grad
+        )
+        return (loss_val + g_loss_phys).as_subclass(torch.Tensor)
