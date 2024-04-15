@@ -90,14 +90,18 @@ class PINN(PINNInterface):
 
 
     def loss_phys(self, samples, equation):
-        try:
-            residual = equation.residual(samples, self.forward(samples))
-        except (
-            TypeError
-        ):  # this occurs when the function has three inputs, i.e. inverse problem
-            residual = equation.residual(
-                samples, self.forward(samples), self._params
-            )
+        """
+        Computes the physics loss for the PINN solver based on given
+        samples and equation.
+
+        :param LabelTensor samples: The samples to evaluate the physics loss.
+        :param EquationInterface equation: The governing equation
+            representing the physics.
+        :return: The physics loss calculated based on given
+            samples and equation.
+        :rtype: LabelTensor
+        """
+        residual = self.compute_residual(samples=samples, equation=equation)
         return self.loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )

@@ -15,7 +15,11 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     """
     Base PINN solver class. This class implements the Solver Interface
     for Physics Informed Neural Network solvers. It is used internally in PINA
-    to buld new PINNs solvers by inheriting from it.
+    to buld new PINNs solvers by inheriting from it. This class can be used to
+    define PINNs with multiple optimizers, and/or models. By default it takes
+    an :class:`~pina.problem.abstract_problem.AbstractProblem`, so it is up
+    to the user to choose which problem the implemented solver inheriting from
+    this class is suitable for.
     """
 
     def __init__(
@@ -28,8 +32,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         loss,
     ):
         """
-        :param models: A torch neural network model instance.
-        :type models: torch.nn.Module
+        :param models: Multiple torch neural network models instances.
+        :type models: list(torch.nn.Module)
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
         :param list(torch.optim.Optimizer) optimizer: A list of neural network
@@ -69,7 +73,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
 
         # variable used internally to store residual losses at each epoch
         # this variable save the residual at each iteration (not weighted)
-        self.__res_losses = []
+        self.__logged_res_losses = []
 
 
     def on_train_start(self):
@@ -127,8 +131,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
 
         # storing logs
         self.store_log('mean_loss',
-                        sum(self.__res_losses)/len(self.__res_losses))
-        self.__res_losses = []
+                        sum(self.__logged_res_losses)/len(self.__logged_res_losses))
+        self.__logged_res_losses = []
         total_loss = sum(condition_losses)
         return total_loss
 
@@ -147,6 +151,30 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         return self.loss(self.forward(input_tensor), output_tensor)
 
 
+    def compute_residual(self, samples, equation):
+        """
+        Compute the residual for Physics Informed learning. Given a function
+        :math:`f(\mathbf{x})` the residual of the neural network is
+        :math:`\mathcal{R}_{\theta}(\mathbf{x})=f(\mathbf{x})-
+        \text{NN}_{\theta}(\mathbf{x})`
+
+        :param LabelTensor samples: The samples to evaluate the physics loss.
+        :param EquationInterface equation: The governing equation
+            representing the physics.
+        :return: The residual of the neural network solution.
+        :rtype: LabelTensor
+        """
+        try:
+            residual = equation.residual(samples, self.forward(samples))
+        except (
+            TypeError
+        ):  # this occurs when the function has three inputs, i.e. inverse problem
+            residual = equation.residual(
+                samples, self.forward(samples), self._params
+            )
+        return residual
+
+
     @abstractmethod
     def loss_phys(self, samples, equation):
         """
@@ -158,7 +186,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             representing the physics.
         :return: The physics loss calculated based on given
             samples and equation.
-        :rtype: torch.Tensor
+        :rtype: LabelTensor
         """
         pass
 
@@ -226,9 +254,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                 on_epoch=True,
                 on_step=False,
             )
-        self.__res_losses.append(loss_val)
+        self.__logged_res_losses.append(loss_val)
         
-
 
     @property
     def loss(self):
