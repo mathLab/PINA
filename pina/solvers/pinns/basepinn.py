@@ -76,21 +76,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         self.__logged_res_losses = []
 
 
-    def on_train_start(self):
-        """
-        On training epoch start this function is call to do global checks for
-        the PINN training.
-        """
-        
-        # 1. Check the verison for dataloader
-        dataloader = self.trainer.train_dataloader
-        if sys.version_info < (3, 8):
-            dataloader = dataloader.loaders
-        self._dataloader = dataloader
-
-        return super().on_train_start()
-
-
     def training_step(self, batch, _):
         """
         PINN solver training step.
