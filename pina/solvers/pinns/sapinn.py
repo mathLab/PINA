@@ -21,35 +21,35 @@ class SAPINNWeightsModel(torch.nn.Module):
     """
 
     def __init__(self, dict_mask : dict, size : tuple) -> None:
+        """
+        :param dict dict_mask: Dict of keys "type" and "coefficient"
+        :param tuple size: The size of the self-adaptive weights coefficients.
+        """
         super().__init__()
         self.type_mask = dict_mask["type"]
+        self.coefficient = self._type_coefficient()
         self.weigth_of_mask = dict_mask["coefficient"]
+        self._consistency()
         self.sa_weights = torch.nn.Parameter(torch.randn(size=size))
-
-        if self.type_mask == "polynomial" and self._polynomial_consistency():
-            self.func = self._polynomial_func
-        elif self.type_mask == "sigmoid" and self._sigmoidal_consistency():
-            self.func = self._sigmoid_func
-            pass
-        else:
-            raise ValueError("type key of dict_mask not allowed")
     
-    def _polynomial_consistency(self):
+    def _type_coefficient(self):
+        if self.type_mask == "polynomial":
+            self.func = self._polynomial_func
+            return 1
+        if self.type_mask == "sigmoid":
+            self.func = self._sigmoid_func
+            return 3
+        raise ValueError("Type of mask_type not allowed")
+    
+    def _consistency(self):
         if not isinstance(self.weigth_of_mask, list):
             self.weigth_of_mask = [self.weigth_of_mask]
-        if len(self.weigth_of_mask) != 1:
-            raise ValueError("coefficient key of dict_mask not coherent with type key. Polynomial mask type requires only one coefficient")
+        if len(self.weigth_of_mask) != self.coefficient:
+            raise ValueError("coefficient key of dict_mask not coherent with type key.")
         return True
     
     def _polynomial_func(self, x):
         return x ** self.weigth_of_mask[0]
-    
-    def _sigmoidal_consistency(self):
-        if not isinstance(self.weigth_of_mask, list):
-            raise ValueError('Sigmoid mask type has to be a list of coefficients')
-        if len(self.weigth_of_mask) != 3:
-            raise ValueError('Sigmoid mask type requires three elements in the list')
-        return True
     
     def _sigmoid_func(self, x):
         return self.weigth_of_mask[0]*torch.nn.Sigmoid(self.weigth_of_mask[1]*x+ self.weigth_of_mask[2])
@@ -95,12 +95,17 @@ class SAPINN(PINNInterface):
             mask_type["type"] -> polynomial, sigmoid
             mask_type["coefficient"] -> list of coefficient
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param dict optimizer_kwargs: Optimizer constructor keyword args.
+            use for the model; default is :class:`torch.optim.Adam`.
+        :param torch.optim.Optimizer optimizer_weights: The neural network optimizer
+            to use for self-adaptive weights; default is :class `torch.optim.Adam`.
+        :param dict optimizer_kwargs: Optimizer constructor keyword args for the model.
+        :param dict optimizer_weights_kwargs: Optimizer constructor keyword
+            args for the self-adaptive weights.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         """
+
         super().__init__(
             models=self._interface_models(problem, model, mask_type),
             problem=problem,
@@ -116,6 +121,9 @@ class SAPINN(PINNInterface):
                 self.optimizers[idx].maximize = True
         except:
             raise ValueError("Select an optimizer with the maximize attribute")
+        
+        # set automatic optimization
+        self.automatic_optimization = False
 
         # check consistency
         check_consistency(scheduler, LRScheduler, subclass=True)

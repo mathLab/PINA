@@ -62,7 +62,7 @@ model = FeedForward(
 
 # Inizializzazione SAPINN()
 """weights_model = SAPINNWeightsModel(
-    dict_mask={"type" : "polynomial", "coefficient": [2]},
+    dict_mask={"type" : "sigmoid", "coefficient": [2, 2, 1]},
     size=(250, 2)
 )"""
 
@@ -72,6 +72,7 @@ sapinn = SAPINN(
     mask_type={"type" : "sigmoid", "coefficient": [2, 1, 1]}
 )
 
+
 # Creaimo il trainer
 trainer = Trainer(
 solver=sapinn,
@@ -79,5 +80,6 @@ max_epochs=10,
 accelerator='cpu',
 enable_model_summary=False
 )
+
 
 trainer.train()
