@@ -14,7 +14,48 @@ from pina.problem import InverseProblem
 
 from torch.optim.lr_scheduler import ConstantLR
 
+class SAPINNWeightsModel(torch.nn.Module):
+    """
+    This class aims to implements the weights of the Self-Adaptive
+    PINN solver.
+    """
 
+    def __init__(self, dict_mask : dict, size : tuple) -> None:
+        super().__init__()
+        self.type_mask = dict_mask["type"]
+        self.weigth_of_mask = dict_mask["coefficient"]
+        self.sa_weights = torch.nn.Parameter(torch.randn(size=size))
+
+        if self.type_mask == "polynomial" and self._polynomial_consistency():
+            self.func = self._polynomial_func
+        elif self.type_mask == "sigmoid" and self._sigmoidal_consistency():
+            self.func = self._sigmoid_func
+            pass
+        else:
+            raise ValueError("type key of dict_mask not allowed")
+    
+    def _polynomial_consistency(self):
+        if not isinstance(self.weigth_of_mask, list):
+            self.weigth_of_mask = [self.weigth_of_mask]
+        if len(self.weigth_of_mask) != 1:
+            raise ValueError("coefficient key of dict_mask not coherent with type key. Polynomial mask type requires only one coefficient")
+        return True
+    
+    def _polynomial_func(self, x):
+        return x ** self.weigth_of_mask[0]
+    
+    def _sigmoidal_consistency(self):
+        if not isinstance(self.weigth_of_mask, list):
+            raise ValueError('Sigmoid mask type has to be a list of coefficients')
+        if len(self.weigth_of_mask) != 3:
+            raise ValueError('Sigmoid mask type requires three elements in the list')
+        return True
+    
+    def _sigmoid_func(self, x):
+        return self.weigth_of_mask[0]*torch.nn.Sigmoid(self.weigth_of_mask[1]*x+ self.weigth_of_mask[2])
+    
+    def forward(self, x):
+        return self.func(self.sa_weights * x)
 
 class SAPINN(PINNInterface):
     """
@@ -60,24 +101,22 @@ class SAPINN(PINNInterface):
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         """
-
-        # Attributes for inputs
-        self.mask_type = mask_type
-
-        # Attributes
-        self.mask_model = self._initialize_mask()
-
         super().__init__(
-            models=[model, model],
+            models=self._interface_models(problem, model, mask_type),
             problem=problem,
-            optimizers=[optimizer, optimizer_weights],
-            optimizers_kwargs=[optimizer_kwargs, optimizer_weights_kwargs],
+            optimizers=self._interface_optimizers(problem, optimizer, optimizer_weights),
+            optimizers_kwargs=self._interface_optimizers_kwargs(problem, optimizer_kwargs, optimizer_weights_kwargs),
             extra_features=extra_features,
             loss=loss
         )
-        
-        ####################################################################
-        # Da PINN
+
+        # Controllo massimizzazione
+        try:
+            for idx in range(1, len(self.optimizers)):
+                self.optimizers[idx].maximize = True
+        except:
+            raise ValueError("Select an optimizer with the maximize attribute")
+
         # check consistency
         check_consistency(scheduler, LRScheduler, subclass=True)
         check_consistency(scheduler_kwargs, dict)
@@ -85,92 +124,39 @@ class SAPINN(PINNInterface):
         # assign variables
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self._neural_net = self.models[0]
-        ####################################################################
 
-        self.weights = self._generate_weigths()
-
-        # Controllo massimizzazione
-        try:
-            optimizer_weights.maximize = True
-        except:
-            raise ValueError("Select an optimizer with the maximize attribute")
-        
-        self.configure_optimizers_weights()
-    
-    def _initialize_mask(self):
-        if self.mask_type["type"] == "polynomial":
-            if not isinstance(self.mask_type["coefficient"], list):
-                self.mask_type["coefficient"] = [self.mask_type["coefficient"]]
-            if len(self.mask_type["coefficient"]) != 1:
-                raise ValueError('Polynomial mask type requires only one coefficient')
-            return lambda x: x ** self.mask_type["coefficient"][0]
-        if self.mask_type["type"] == "sigmoid":
-            if not isinstance(self.mask_type["coefficient"], list):
-                raise ValueError('Sigmoid mask type has to be a list of coefficients')
-            if len(self.mask_type["coefficient"]) != 3:
-                raise ValueError('Sigmoid mask type requires three elements in the list')
-            coeffs = self.mask_type["coefficient"]
-            return lambda x: coeffs[0]*torch.nn.Sigmoid(coeffs[1]*x+ coeffs[2])
-        raise ValueError("key type of mask_type Error")
-    
-    def _generate_weigths(self):
-        weigths_initilization = dict()
+        # dict - condition_name : index in self.models
+        self.dict_condition_idx = dict()
+        i = 0
         for key in self.problem.input_pts.keys():
-            weigths_initilization[key] = torch.nn.Parameter(
-                torch.rand(size = self.problem.input_pts[key].tensor.shape)
+            self.dict_condition_idx[key] = 1+i
+            i += 1
+    
+    def _interface_models(self, problem, model, mask_type):
+        weights_models = [
+            SAPINNWeightsModel(
+                dict_mask=mask_type,
+                size=value.tensor.shape
             )
-        return weigths_initilization
+            for _, value in problem.input_pts.items()
+        ]
+        interface_models = [model]
+        interface_models.extend(weights_models)
+        return interface_models
     
-    def _loss_phys(self, samples, equation, condition_name):
-        """
-        Computes the physics loss for the PINN solver based on input,
-        output, and condition name. This function is a wrapper of the function
-        :meth:`loss_phys` used internally in PINA to handle the logging step.
-
-        :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation
-            representing the physics.
-        :param str condition_name: The condition name for tracking purposes.
-        :return: The computed data loss.
-        :rtype: torch.Tensor
-        """
-        loss_val = self.loss_phys(samples, equation, self.weights[condition_name])
-        self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
-        return loss_val.as_subclass(torch.Tensor)
+    def _interface_optimizers(self, problem, optimizer, optimizer_weights):
+        interface_optimizers = [optimizer]
+        interface_optimizers.extend([optimizer_weights for _, _ in problem.input_pts.items()])
+        return interface_optimizers
     
-    def loss_phys(self, samples, equation, weights):
-        try:
-            residual = weights * equation.residual(samples, self.forward(samples))
-        except (
-            TypeError
-        ):  # this occurs when the function has three inputs, i.e. inverse problem
-            residual = weights * equation.residual(
-                samples, self.forward(samples), self._params
-            )
-        return self.loss(
-            torch.zeros_like(residual, requires_grad=True), residual
-        )
+    def _interface_optimizers_kwargs(self, problem, optimizer_kwargs, optimizer_weights_kwargs):
+        interface_optimizers_kwargs = [optimizer_kwargs]
+        interface_optimizers_kwargs.extend([optimizer_weights_kwargs for _, _ in problem.input_pts.items()])
+        return interface_optimizers_kwargs
     
-    def configure_optimizers_weights(self):
-        """
-        Optimizer configuration for the SA-PINN
-        solver related to adaptive weights.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple(list, list)
-        """
-        self.optimizers[1].add_param_group(
-            {
-                "params": [
-                    self.weights[key]
-                    for key in self.weights.keys()
-                ]
-            }
-        )
-        return self.optimizers, [self.scheduler]
+    ###########################################################################################################
+    # DA pinn.py
     
-    #######################################################################
-    # DA PINN
     def forward(self, x):
         """
         Forward pass implementation for the PINN
@@ -219,4 +205,35 @@ class SAPINN(PINNInterface):
         Neural network for the PINN training.
         """
         return self._neural_net
-    #######################################################################
+    
+    ###########################################################################################################
+
+    def _loss_phys(self, samples, equation, condition_name):
+        """
+        Computes the physics loss for the PINN solver based on input,
+        output, and condition name. This function is a wrapper of the function
+        :meth:`loss_phys` used internally in PINA to handle the logging step.
+
+        :param LabelTensor samples: The samples to evaluate the physics loss.
+        :param EquationInterface equation: The governing equation
+            representing the physics.
+        :param str condition_name: The condition name for tracking purposes.
+        :return: The computed data loss.
+        :rtype: torch.Tensor
+        """
+        loss_val = self.loss_phys(samples, equation, self.models[self.dict_condition_idx[condition_name]])
+        self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
+        return loss_val.as_subclass(torch.Tensor)
+    
+    def loss_phys(self, samples, equation, weight_model):
+        try:
+            residual = weight_model(equation.residual(samples, self.forward(samples)))
+        except (
+            TypeError
+        ):  # this occurs when the function has three inputs, i.e. inverse problem
+            residual = weight_model(equation.residual(
+                samples, self.forward(samples), self._params
+            ))
+        return self.loss(
+            torch.zeros_like(residual, requires_grad=True), residual
+        )

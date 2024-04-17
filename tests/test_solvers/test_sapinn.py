@@ -1,10 +1,10 @@
 import torch
 import matplotlib.pyplot as plt
 
-from pina.solvers.pinns.sapinn import SAPINN
+from pina.solvers.pinns.sapinn import SAPINN, SAPINNWeightsModel
 from pina.operators import laplacian
 from pina.geometry import CartesianDomain
-from pina import Condition, LabelTensor
+from pina import Condition, Trainer
 from pina.problem import SpatialProblem
 from pina.model import FeedForward
 from pina.equation.equation import Equation
@@ -61,8 +61,23 @@ model = FeedForward(
 )
 
 # Inizializzazione SAPINN()
+"""weights_model = SAPINNWeightsModel(
+    dict_mask={"type" : "polynomial", "coefficient": [2]},
+    size=(250, 2)
+)"""
+
 sapinn = SAPINN(
     problem,
     model,
     mask_type={"type" : "sigmoid", "coefficient": [2, 1, 1]}
 )
+
+# Creaimo il trainer
+trainer = Trainer(
+solver=sapinn,
+max_epochs=10,
+accelerator='cpu',
+enable_model_summary=False
+)
+
+trainer.train()
