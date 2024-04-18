@@ -6,7 +6,7 @@ PINA. Specifically, we will see how use the Class and its inherited
 classes to enforce residuals minimization in PINNs.
 
 Example: The Burgers 1D equation
-================================
+--------------------------------
 
 We will start implementing the viscous Burgers 1D problem Class,
 described as follows:
@@ -22,7 +22,7 @@ described as follows:
    \end{cases}
    \end{equation}
 
-where we set $ :raw-latex:`\nu `= :raw-latex:`\frac{0.01}{\pi}`$.
+where we set :math:`\nu = \frac{0.01}{\pi}` .
 
 In the class that models this problem we will see in action the
 ``Equation`` class and one of its inherited classes, the ``FixedValue``
@@ -97,7 +97,7 @@ same subdomain through this class, passing a list of residual equations
 defined in the problem.
 
 Defining a new Equation class
-=============================
+-----------------------------
 
 ``Equation`` classes can be also inherited to define a new class. As
 example, we can see how to rewrite the above problem introducing a new
@@ -151,7 +151,7 @@ setting :math:`\nu= \frac{0.01}{\pi}`:
         }
 
 What’s next?
-============
+------------
 
 Congratulations on completing the ``Equation`` class tutorial of
 **PINA**! As we have seen, you can build new classes that inherits
