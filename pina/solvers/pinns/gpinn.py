@@ -1,4 +1,4 @@
-""" Module for PINN """
+""" Module for GPINN """
 
 import torch
 
@@ -76,27 +76,29 @@ class GPINN(PINN):
                              'a SpatialProblem.')
 
     
-    def _loss_phys(self, samples, equation, condition_name):
+    def loss_phys(self, samples, equation):
         """
-        Computes the physics loss for the PINN solver based on input,
-        output, and condition name. This function is a wrapper of the function
-        :meth:`loss_phys` used internally in PINA to handle the logging step.
+        Computes the physics loss for the GPINN solver based on given
+        samples and equation.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
         :param EquationInterface equation: The governing equation
             representing the physics.
-        :param str condition_name: The condition name for tracking purposes.
-        :return: The computed data loss.
-        :rtype: torch.Tensor
+        :return: The physics loss calculated based on given
+            samples and equation.
+        :rtype: LabelTensor
         """
         # classical PINN loss
-        loss_val = self.loss_phys(samples, equation)
-        self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
+        residual = self.compute_residual(samples=samples, equation=equation)
+        loss_value = self.loss(
+            torch.zeros_like(residual, requires_grad=True), residual
+        )
+        self.store_log(loss_value=float(loss_value))
         # gradient PINN loss
-        loss_val = loss_val.reshape(-1, 1)
-        loss_val.labels = ['__LOSS']
-        loss_grad = grad(loss_val, samples, d=self.problem.spatial_variables)
+        loss_value = loss_value.reshape(-1, 1)
+        loss_value.labels = ['__LOSS']
+        loss_grad = grad(loss_value, samples, d=self.problem.spatial_variables)
         g_loss_phys = self.loss(
             torch.zeros_like(loss_grad, requires_grad=True), loss_grad
         )
-        return (loss_val + g_loss_phys).as_subclass(torch.Tensor)
+        return loss_value + g_loss_phys
