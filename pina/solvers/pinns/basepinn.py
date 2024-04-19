@@ -10,6 +10,7 @@ from pina.loss import LossInterface
 from pina.problem import InverseProblem
 from torch.nn.modules.loss import _Loss
 
+torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
 class PINNInterface(SolverInterface, metaclass=ABCMeta):
     """
@@ -75,10 +76,29 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         # this variable save the residual at each iteration (not weighted)
         self.__logged_res_losses = []
 
+        # variable used internally in pina for logging. This variable points to
+        # the current condition during the training step and returns the
+        # condition name. Whenever :meth:`store_log` is called the logged
+        # variable will be stored with name = self.__logged_metric
+        self.__logged_metric = None
+
+    def on_train_epoch_end(self):
+        """
+        At the end of each epoch we free the stored losses.
+        """
+        if self.__logged_res_losses:
+            # storing mean loss
+            self.__logged_metric = 'mean'
+            self.store_log(
+                sum(self.__logged_res_losses)/len(self.__logged_res_losses)
+                )
+            # free the logged losses
+            self.__logged_res_losses = []
+        return super().on_train_epoch_end()
 
     def training_step(self, batch, _):
         """
-        PINN solver training step.
+        The Physics Informed Solver Training Step.
 
         :param batch: The batch element in the dataloader.
         :type batch: tuple
@@ -96,15 +116,16 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             condition_name = self._dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
             pts = batch["pts"]
+            # condition name is logged (if logs enabled)
+            self.__logged_metric = condition_name 
 
             if len(batch) == 2:
                 samples = pts[condition_idx == condition_id]
-                loss = self._loss_phys(samples, condition.equation,
-                                       condition_name)
+                loss = self.loss_phys(samples, condition.equation)
             elif len(batch) == 3:
                 samples = pts[condition_idx == condition_id]
                 ground_truth = batch["output"][condition_idx == condition_id]
-                loss = self._loss_data(samples, ground_truth, condition_name)
+                loss = self.loss_data(samples, ground_truth)
             else:
                 raise ValueError("Batch size not supported")
 
@@ -114,13 +135,9 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         # clamp unknown parameters in InverseProblem (if needed)
         self._clamp_params()
 
-        # storing logs
-        self.store_log('mean_loss',
-                        sum(self.__logged_res_losses)/len(self.__logged_res_losses))
-        self.__logged_res_losses = []
+        # total loss (must be a torch.Tensor)
         total_loss = sum(condition_losses)
-        return total_loss
-
+        return total_loss.as_subclass(torch.Tensor)
 
     def loss_data(self, input_tensor, output_tensor):
         """
@@ -128,14 +145,30 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         the network output against the true solution.
 
         :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the network
-            solution
+        :param LabelTensor output_tensor: The true solution to compare the
+            network solution.
         :return: The residual loss averaged on the input coordinates
         :rtype: torch.Tensor
         """
+        loss_value = self.loss(self.forward(input_tensor), output_tensor)
+        self.store_log(loss_value=float(loss_value))
         return self.loss(self.forward(input_tensor), output_tensor)
 
+    @abstractmethod
+    def loss_phys(self, samples, equation):
+        """
+        Computes the physics loss for the PINN solver based on given
+        samples and equation.
 
+        :param LabelTensor samples: The samples to evaluate the physics loss.
+        :param EquationInterface equation: The governing equation
+            representing the physics.
+        :return: The physics loss calculated based on given
+            samples and equation.
+        :rtype: LabelTensor
+        """
+        pass
+        
     def compute_residual(self, samples, equation):
         """
         Compute the residual for Physics Informed learning. Given a function
@@ -158,23 +191,24 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                 samples, self.forward(samples), self._params
             )
         return residual
-
-
-    @abstractmethod
-    def loss_phys(self, samples, equation):
+    
+    def store_log(self, loss_value):
         """
-        Computes the physics loss for the PINN solver based on given
-        samples and equation.
+        Stores the loss value in the logger. This function is called for all
+        conditions, and automatically handles the storing names.
 
-        :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation
-            representing the physics.
-        :return: The physics loss calculated based on given
-            samples and equation.
-        :rtype: LabelTensor
+        :param str name: The name of the loss.
+        :param torch.Tensor loss_value: The value of the loss.
         """
-        pass
-
+        self.log(
+                self.__logged_metric+'_loss',
+                loss_value,
+                prog_bar=True,
+                logger=True,
+                on_epoch=True,
+                on_step=False,
+            )
+        self.__logged_res_losses.append(loss_value)
 
     def _clamp_inverse_problem_params(self):
         """
@@ -187,64 +221,18 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                 self.problem.unknown_parameter_domain.range_[v][1],
             )
 
-
-    def _loss_data(self, input_tensor, output_tensor, condition_name):
-        """
-        Computes the data loss for the PINN solver based on input,
-        output, and condition name. This function is a wrapper of the function
-        :meth:`loss_data` used internally in PINA to handle the logging step.
-
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the network
-            solution
-        :param str condition_name: The condition name for tracking purposes.
-        :return: The computed data loss.
-        :rtype: torch.Tensor
-        """
-        loss_val = self.loss_data(input_tensor, output_tensor)
-        self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
-        return loss_val.as_subclass(torch.Tensor)
-
-
-    def _loss_phys(self, samples, equation, condition_name):
-        """
-        Computes the physics loss for the PINN solver based on input,
-        output, and condition name. This function is a wrapper of the function
-        :meth:`loss_phys` used internally in PINA to handle the logging step.
-
-        :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation
-            representing the physics.
-        :param str condition_name: The condition name for tracking purposes.
-        :return: The computed data loss.
-        :rtype: torch.Tensor
-        """
-        loss_val = self.loss_phys(samples, equation)
-        self.store_log(name=condition_name+'_loss', loss_val=float(loss_val))
-        return loss_val.as_subclass(torch.Tensor)
-
-
-    def store_log(self, name, loss_val):
-        """
-        Stores the loss value in the logger.
-
-        :param str name: The name of the loss.
-        :param torch.Tensor loss_val: The value of the loss.
-        """
-        self.log(
-                name,
-                loss_val,
-                prog_bar=True,
-                logger=True,
-                on_epoch=True,
-                on_step=False,
-            )
-        self.__logged_res_losses.append(loss_val)
-        
-
     @property
     def loss(self):
         """
-        Loss for the PINN training.
+        Loss used for training.
         """
         return self._loss
+
+    @property
+    def current_condition_name(self):
+        """
+        Returns the condition name. This function can be used inside the
+        :meth:`loss_phys` to extract the condition at which the loss is
+        computed.
+        """
+        return self.__logged_metric

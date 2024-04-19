@@ -15,8 +15,6 @@ from .basepinn import PINNInterface
 from pina.utils import check_consistency
 from pina.problem import InverseProblem
 
-torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
-
 
 class PINN(PINNInterface):
     """
@@ -102,9 +100,11 @@ class PINN(PINNInterface):
         :rtype: LabelTensor
         """
         residual = self.compute_residual(samples=samples, equation=equation)
-        return self.loss(
+        loss_value = self.loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
+        self.store_log(loss_value=float(loss_value))
+        return loss_value
 
 
     def configure_optimizers(self):
