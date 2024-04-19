@@ -1,4 +1,4 @@
-""" Module for PINN """
+""" Module for CompetitivePINN """
 
 import torch
 import copy
@@ -21,7 +21,7 @@ class CompetitivePINN(PINNInterface):
     """
     TODO
 
-    .. warning Condition Data Weight Not Suppoerted
+    .. warning Does Not Support Extra Features
     """
 
     def __init__(
@@ -76,7 +76,7 @@ class CompetitivePINN(PINNInterface):
                 optimizer_model_kwargs,
                 optimizer_discriminator_kwargs,
             ],
-            extra_features=None,  # PIGAN doesn't take extra features
+            extra_features=None,  # CompetitivePINN doesn't take extra features
             loss=loss
         )
 
@@ -106,7 +106,6 @@ class CompetitivePINN(PINNInterface):
     def forward(self, x):
         """
         Forward pass implementation for the PINN solver.
-
         :param LabelTensor x: Input tensor for the PINN solver. It expects
             a tensor :math:`N \times D`, where :math:`N` the number of points
             in the mesh, :math:`D` the dimension of the problem,
@@ -116,58 +115,6 @@ class CompetitivePINN(PINNInterface):
         return self.neural_net(x)
 
 
-    def training_step(self, batch, _):
-        """
-        PINN solver training step.
-
-        :param batch: The batch element in the dataloader.
-        :type batch: tuple
-        :param batch_idx: The batch index.
-        :type batch_idx: int
-        :return: The sum of the loss functions.
-        :rtype: LabelTensor
-        """
-
-        condition_idx = batch["condition"]
-
-        for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
-
-            condition_name = self._dataloader.condition_names[condition_id]
-            condition = self.problem.conditions[condition_name]
-            pts = batch["pts"]
-
-            if len(batch) == 2:
-                samples = pts[condition_idx == condition_id]
-                self.loss_phys(samples=samples,
-                               equation=condition.equation,
-                               condition_name=condition_name)
-            elif len(batch) == 3:
-                samples = pts[condition_idx == condition_id]
-                ground_truth = batch["output"][condition_idx == condition_id]
-                self._loss_data(samples, ground_truth, condition_name)
-            else:
-                raise ValueError("Batch size not supported")
-
-        # clamp unknown parameters in InverseProblem (if needed), otherwise
-        # it returns None
-        self._clamp_params()
-        return
-    
-    def loss_phys(self, samples, equation):
-        """
-        Computes the physics loss for the PINN solver based on given
-        samples and equation.
-
-        :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation
-            representing the physics.
-        :return: The physics residual calculated based on given
-            samples and equation.
-        :rtype: LabelTensor
-        """
-        return self.compute_residual(samples=samples,  equation=equation)
-        
-    
     def configure_optimizers(self):
         """
         Optimizer configuration for the Competitive PINN solver.
@@ -189,7 +136,7 @@ class CompetitivePINN(PINNInterface):
         return self.optimizers, self._schedulers
 
 
-    def _loss_phys(self, samples, equation, condition_name):
+    def loss_phys(self, samples, equation):
         # train one step of discriminator
         discriminator_bets = self.discriminator(samples.clone())
         self._train_discriminator(samples, equation, discriminator_bets)
@@ -199,7 +146,9 @@ class CompetitivePINN(PINNInterface):
         samples = samples.detach()
         samples.requires_grad = True
         # train one step of the model
-        self._train_model(samples, equation, condition_name, discriminator_bets)
+        loss_val = self._train_model(samples, equation, discriminator_bets)
+        self.store_log(loss_value=float(loss_val))
+        return loss_val
     
     def _train_discriminator(self, samples, equation, discriminator_bets):
         """
@@ -215,8 +164,8 @@ class CompetitivePINN(PINNInterface):
         self.optimizer_discriminator.zero_grad()
         # compute residual, we detach because the weights of the generator
         # model are fixed
-        residual = self.loss_phys(samples=samples,
-                                  equation=equation).detach()
+        residual = self.compute_residual(samples=samples,
+                                         equation=equation).detach()
         # compute competitive residual, the minus is because we maximise
         competitive_residual = residual * discriminator_bets
         loss_val = - self.loss(
@@ -228,30 +177,28 @@ class CompetitivePINN(PINNInterface):
         self.optimizer_discriminator.step()
         return
 
-    def _train_model(self, samples, equation,
-                     condition_name, discriminator_bets):
+    def _train_model(self, samples, equation, discriminator_bets):
         """
         Trains the model network of the Competitive PINN.
 
         :param LabelTensor samples: Input samples to evaluate the physics loss.
         :param EquationInterface equation: The governing equation representing
             the physics.
-        :param str condition_name: The condition name for tracking purposes.
-        :param Tensor discriminator_bets: Predictions made by the discriminator
+        :param Tensor discriminator_bets: Predictions made by the discriminator.
             network.
+        :return: The computed data loss.
+        :rtype: torch.Tensor
         """
         # manual optimization
         self.optimizer_model.zero_grad()
         # compute residual (detached for discriminator) and log
-        residual = self.loss_phys(samples=samples, equation=equation)
+        residual = self.compute_residual(samples=samples, equation=equation)
         # store logging
         with torch.no_grad():
             loss_residual = self.loss(
                                 torch.zeros_like(residual),
                                 residual
-                                ).as_subclass(torch.Tensor)
-            self.store_log(name=condition_name+f'_loss',
-                        loss_val=float(loss_residual))
+                                )
         # compute competitive residual, discriminator_bets are detached becase
         # we optimize only the generator model
         competitive_residual = residual * discriminator_bets.detach()
@@ -262,9 +209,9 @@ class CompetitivePINN(PINNInterface):
         # backprop
         loss_val.backward()
         self.optimizer_model.step()
-        return
+        return loss_residual
 
-    def _loss_data(self, input_tensor, output_tensor, condition_name):
+    def loss_data(self, input_tensor, output_tensor):
         """
         Computes the data loss for the PINN solver based on input,
         output, and condition name. This function is a wrapper of the function
@@ -273,16 +220,15 @@ class CompetitivePINN(PINNInterface):
         :param LabelTensor input_tensor: The input to the neural networks.
         :param LabelTensor output_tensor: The true solution to compare the
             network solution.
-        :param str condition_name: The condition name for tracking purposes.
         :return: The computed data loss.
         :rtype: torch.Tensor
         """
         self.optimizer_model.zero_grad()
-        loss_val = super()._loss_data(input_tensor,
-                                      output_tensor, condition_name)
+        loss_val = super().loss_data(
+            input_tensor, output_tensor).as_subclass(torch.Tensor)
         loss_val.backward()
         self.optimizer_model.step()
-        return
+        return loss_val
 
     
     @property
