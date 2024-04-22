@@ -19,9 +19,20 @@ from pina.problem import InverseProblem
 
 class CompetitivePINN(PINNInterface):
     """
-    TODO
+    CompetitivePINN solver class. This class implements Physics Informed Neural
+    Network solvers, using a user specified ``model`` to solve a specific
+    ``problem``. It can be used for solving both forward and inverse problems.
 
-    .. warning Does Not Support Extra Features
+    .. seealso::
+
+        **Original reference**: Zeng, Qi, et al.
+        "Competitive physics informed networks." International Conference on
+        Learning Representations, ICLR 2022
+        OpenReview Preprint <https://openreview.net/forum?id=z9SIj-IM7tn>`_.
+
+    .. warning::
+        This solver does not currently support the possibility to pass
+        ``extra_feature``.
     """
 
     def __init__(
@@ -102,7 +113,25 @@ class CompetitivePINN(PINNInterface):
         self._model = self.models[0]
         self._discriminator = self.models[1]
 
+    def on_train_batch_end(self,outputs, batch, batch_idx):
+        """
+        This method is called at the end of each training batch, and ovverides
+        the PytorchLightining implementation for logging the checkpoints.
 
+        :param outputs: The output from the model for the current batch.
+        :type outputs: Any
+        :param batch: The current batch of data.
+        :type batch: Any
+        :param batch_idx: The index of the current batch.
+        :type batch_idx: int
+        :return: Whatever is returned by the parent
+            method ``on_train_batch_end``.
+        :rtype: Any
+        """
+        # increase by one the counter of optimization to save loggers
+        self.trainer.fit_loop.epoch_loop.manual_optimization.optim_step_progress.total.completed += 1
+        return super().on_train_batch_end(outputs, batch, batch_idx)
+    
     def forward(self, x):
         """
         Forward pass implementation for the PINN solver.
@@ -113,7 +142,6 @@ class CompetitivePINN(PINNInterface):
         :rtype: LabelTensor
         """
         return self.neural_net(x)
-
 
     def configure_optimizers(self):
         """
@@ -135,8 +163,17 @@ class CompetitivePINN(PINNInterface):
             )
         return self.optimizers, self._schedulers
 
-
     def loss_phys(self, samples, equation):
+        """
+        Computes the physics loss for the PINN solver based on given
+        samples and equation.
+
+        :param LabelTensor samples: The samples to evaluate the physics loss.
+        :param EquationInterface equation: The governing equation
+            representing the physics.
+        :return: The physics loss calculated based on given
+            samples and equation.
+        :rtype: LabelTensor"""
         # train one step of discriminator
         discriminator_bets = self.discriminator(samples.clone())
         self._train_discriminator(samples, equation, discriminator_bets)
@@ -173,7 +210,7 @@ class CompetitivePINN(PINNInterface):
             competitive_residual
         ).as_subclass(torch.Tensor)
         # backprop
-        loss_val.backward()
+        self.manual_backward(loss_val)
         self.optimizer_discriminator.step()
         return
 
@@ -207,7 +244,7 @@ class CompetitivePINN(PINNInterface):
             competitive_residual
         ).as_subclass(torch.Tensor)
         # backprop
-        loss_val.backward()
+        self.manual_backward(loss_val)
         self.optimizer_model.step()
         return loss_residual
 
@@ -230,27 +267,62 @@ class CompetitivePINN(PINNInterface):
         self.optimizer_model.step()
         return loss_val
 
-    
     @property
     def neural_net(self):
+        """
+        Returns the neural network model.
+
+        :return: The neural network model.
+        :rtype: torch.nn.Module
+        """
         return self._model
 
     @property
     def discriminator(self):
+        """
+        Returns the discriminator model (if applicable).
+
+        :return: The discriminator model.
+        :rtype: torch.nn.Module
+        """
         return self._discriminator
 
     @property
     def optimizer_model(self):
+        """
+        Returns the optimizer associated with the neural network model.
+
+        :return: The optimizer for the neural network model.
+        :rtype: torch.optim.Optimizer
+        """
         return self.optimizers[0]
 
     @property
     def optimizer_discriminator(self):
+        """
+        Returns the optimizer associated with the discriminator (if applicable).
+
+        :return: The optimizer for the discriminator.
+        :rtype: torch.optim.Optimizer
+        """
         return self.optimizers[1]
 
     @property
     def scheduler_model(self):
+        """
+        Returns the scheduler associated with the neural network model.
+
+        :return: The scheduler for the neural network model.
+        :rtype: torch.optim.lr_scheduler._LRScheduler
+        """
         return self._schedulers[0]
 
     @property
     def scheduler_discriminator(self):
+        """
+        Returns the scheduler associated with the discriminator (if applicable).
+
+        :return: The scheduler for the discriminator.
+        :rtype: torch.optim.lr_scheduler._LRScheduler
+        """
         return self._schedulers[1]
