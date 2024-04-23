@@ -15,9 +15,11 @@ torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 class PINNInterface(SolverInterface, metaclass=ABCMeta):
     """
     Base PINN solver class. This class implements the Solver Interface
-    for Physics Informed Neural Network solvers. It is used internally in PINA
-    to buld new PINNs solvers by inheriting from it. This class can be used to
-    define PINNs with multiple optimizers, and/or models. By default it takes
+    for Physics Informed Neural Network solvers.
+    
+    This class can be used to
+    define PINNs with multiple ``optimizers``, and/or ``models``.
+    By default it takes
     an :class:`~pina.problem.abstract_problem.AbstractProblem`, so it is up
     to the user to choose which problem the implemented solver inheriting from
     this class is suitable for.
@@ -82,28 +84,16 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         # variable will be stored with name = self.__logged_metric
         self.__logged_metric = None
 
-    def on_train_epoch_end(self):
-        """
-        At the end of each epoch we free the stored losses.
-        """
-        if self.__logged_res_losses:
-            # storing mean loss
-            self.__logged_metric = 'mean'
-            self.store_log(
-                sum(self.__logged_res_losses)/len(self.__logged_res_losses)
-                )
-            # free the logged losses
-            self.__logged_res_losses = []
-        return super().on_train_epoch_end()
-
     def training_step(self, batch, _):
         """
-        The Physics Informed Solver Training Step.
+        The Physics Informed Solver Training Step. This function takes care
+        of the physics informed training step, and it must not be override
+        if not intentionally. It handles the batching mechanism, the workload
+        division for the various conditions, the inverse problem clamping,
+        and loggers.
 
-        :param batch: The batch element in the dataloader.
-        :type batch: tuple
-        :param batch_idx: The batch index.
-        :type batch_idx: int
+        :param tuple batch: The batch element in the dataloader.
+        :param int batch_idx: The batch index.
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
@@ -142,7 +132,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     def loss_data(self, input_tensor, output_tensor):
         """
         The data loss for the PINN solver. It computes the loss between
-        the network output against the true solution.
+        the network output against the true solution. This function
+        should not be override if not intentionally.
 
         :param LabelTensor input_tensor: The input to the neural networks.
         :param LabelTensor output_tensor: The true solution to compare the
@@ -157,8 +148,9 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     @abstractmethod
     def loss_phys(self, samples, equation):
         """
-        Computes the physics loss for the PINN solver based on given
-        samples and equation.
+        Computes the physics loss for the physics informed solver based on given
+        samples and equation. This method must be override by all inherited
+        classes and it is the core to define a new physics informed solver.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
         :param EquationInterface equation: The governing equation
@@ -171,10 +163,9 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         
     def compute_residual(self, samples, equation):
         """
-        Compute the residual for Physics Informed learning. Given a function
-        :math:`f(\mathbf{x})` the residual of the neural network is
-        :math:`\mathcal{R}_{\theta}(\mathbf{x})=f(\mathbf{x})-
-        \text{NN}_{\theta}(\mathbf{x})`
+        Compute the residual for Physics Informed learning. This function
+        returns the :obj:`~pina.equation.equation.Equation` specified in the
+        :obj:`~pina.condition.Condition` evaluated at the ``samples`` points.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
         :param EquationInterface equation: The governing equation
@@ -194,8 +185,11 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     
     def store_log(self, loss_value):
         """
-        Stores the loss value in the logger. This function is called for all
-        conditions, and automatically handles the storing names.
+        Stores the loss value in the logger. This function should be
+        called for all conditions. It automatically handles the storing
+        conditions names. It must be used
+        anytime a specific variable wants to be stored for a specific condition.
+        A simple example is to use the variable to store the residual.
 
         :param str name: The name of the loss.
         :param torch.Tensor loss_value: The value of the loss.
@@ -209,6 +203,21 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                 on_step=False,
             )
         self.__logged_res_losses.append(loss_value)
+
+    def on_train_epoch_end(self):
+        """
+        At the end of each epoch we free the stored losses. This function
+        should not be override if not intentionally.
+        """
+        if self.__logged_res_losses:
+            # storing mean loss
+            self.__logged_metric = 'mean'
+            self.store_log(
+                sum(self.__logged_res_losses)/len(self.__logged_res_losses)
+                )
+            # free the logged losses
+            self.__logged_res_losses = []
+        return super().on_train_epoch_end()
 
     def _clamp_inverse_problem_params(self):
         """

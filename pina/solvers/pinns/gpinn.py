@@ -11,11 +11,41 @@ from pina.problem import SpatialProblem
 
 
 class GPINN(PINN):
-    """
-    Gradient enhanced PINN solver class. This class implements
-    Gradient enhanced Physics Informed Neural
+    r"""
+    Gradient Physics Informed Neural Network (GPINN) solver class.
+    This class implements Gradient Physics Informed Neural
     Network solvers, using a user specified ``model`` to solve a specific
     ``problem``. It can be used for solving both forward and inverse problems.
+
+    The Gradient Physics Informed Network aims to find
+    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`
+    of the differential problem:
+
+    .. math::
+
+        \begin{cases}
+        \mathcal{A}[\mathbf{u}](\mathbf{x})=0\quad,\mathbf{x}\in\Omega\\
+        \mathcal{B}[\mathbf{u}](\mathbf{x})=0\quad,
+        \mathbf{x}\in\partial\Omega
+        \end{cases}
+
+    minimizing the loss function
+
+    .. math::
+        \mathcal{L}_{\rm{problem}} =& \frac{1}{N}\sum_{i=1}^N
+        \mathcal{L}(\mathcal{A}[\mathbf{u}](\mathbf{x}_i)) +
+        \frac{1}{N}\sum_{i=1}^N
+        \mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i)) + \\
+        &\frac{1}{N}\sum_{i=1}^N
+        \nabla_{\mathbf{x}}\mathcal{L}(\mathcal{A}[\mathbf{u}](\mathbf{x}_i)) +
+        \frac{1}{N}\sum_{i=1}^N
+        \nabla_{\mathbf{x}}\mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i))
+
+
+    where :math:`\mathcal{L}` is a specific loss function, default Mean Square Error:
+
+    .. math::
+        \mathcal{L}(v) = \| v \|^2_2.
 
     .. seealso::
 
@@ -23,7 +53,7 @@ class GPINN(PINN):
         physics-informed neural networks for forward and inverse
         PDE problems." Computer Methods in Applied Mechanics
         and Engineering 393 (2022): 114823.
-        <https://doi.org/10.1016/j.cma.2022.114823>`_.
+        DOI: `10.1016 <https://doi.org/10.1016/j.cma.2022.114823>`_.
 
     .. note::
         This class can only work for problems inheriting

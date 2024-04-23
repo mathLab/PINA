@@ -18,17 +18,46 @@ from pina.problem import InverseProblem
 
 
 class CompetitivePINN(PINNInterface):
-    """
-    CompetitivePINN solver class. This class implements Physics Informed Neural
+    r"""
+    Competitive Physics Informed Neural Network (PINN) solver class.
+    This class implements Competitive Physics Informed Neural
     Network solvers, using a user specified ``model`` to solve a specific
     ``problem``. It can be used for solving both forward and inverse problems.
+
+    The Competitive Physics Informed Network aims to find
+    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`
+    of the differential problem:
+
+    .. math::
+
+        \begin{cases}
+        \mathcal{A}[\mathbf{u}](\mathbf{x})=0\quad,\mathbf{x}\in\Omega\\
+        \mathcal{B}[\mathbf{u}](\mathbf{x})=0\quad,
+        \mathbf{x}\in\partial\Omega
+        \end{cases}
+
+    with a minimization (on ``model`` parameters) maximation (
+    on ``discriminator`` parameters) of the loss function
+
+    .. math::
+        \mathcal{L}_{\rm{problem}} = \frac{1}{N}\sum_{i=1}^N
+        \mathcal{L}(D(\mathbf{x}_i)\mathcal{A}[\mathbf{u}](\mathbf{x}_i))+
+        \frac{1}{N}\sum_{i=1}^N
+        \mathcal{L}(D(\mathbf{x}_i)\mathcal{B}[\mathbf{u}](\mathbf{x}_i))
+
+    where :math:`D` is the discriminator network, which tries to find the points
+    where the network performs worst, and :math:`\mathcal{L}` is a specific loss
+    function, default Mean Square Error:
+
+    .. math::
+        \mathcal{L}(v) = \| v \|^2_2.
 
     .. seealso::
 
         **Original reference**: Zeng, Qi, et al.
         "Competitive physics informed networks." International Conference on
         Learning Representations, ICLR 2022
-        OpenReview Preprint <https://openreview.net/forum?id=z9SIj-IM7tn>`_.
+        `OpenReview Preprint <https://openreview.net/forum?id=z9SIj-IM7tn>`_.
 
     .. warning::
         This solver does not currently support the possibility to pass
@@ -112,36 +141,65 @@ class CompetitivePINN(PINNInterface):
 
         self._model = self.models[0]
         self._discriminator = self.models[1]
-
-    def on_train_batch_end(self,outputs, batch, batch_idx):
-        """
-        This method is called at the end of each training batch, and ovverides
-        the PytorchLightining implementation for logging the checkpoints.
-
-        :param outputs: The output from the model for the current batch.
-        :type outputs: Any
-        :param batch: The current batch of data.
-        :type batch: Any
-        :param batch_idx: The index of the current batch.
-        :type batch_idx: int
-        :return: Whatever is returned by the parent
-            method ``on_train_batch_end``.
-        :rtype: Any
-        """
-        # increase by one the counter of optimization to save loggers
-        self.trainer.fit_loop.epoch_loop.manual_optimization.optim_step_progress.total.completed += 1
-        return super().on_train_batch_end(outputs, batch, batch_idx)
     
     def forward(self, x):
-        """
-        Forward pass implementation for the PINN solver.
+        r"""
+        Forward pass implementation for the PINN solver. It returns the function
+        evaluation :math:`\mathbf{u}(\mathbf{x})` at the control points
+        :math:`\mathbf{x}`.
+
         :param LabelTensor x: Input tensor for the PINN solver. It expects
             a tensor :math:`N \times D`, where :math:`N` the number of points
             in the mesh, :math:`D` the dimension of the problem,
-        :return: PINN solution evaluated at the input points.
+        :return: PINN solution evaluated at contro points.
         :rtype: LabelTensor
         """
         return self.neural_net(x)
+
+    def loss_phys(self, samples, equation):
+        """
+        Computes the physics loss for the Competitive PINN solver based on given
+        samples and equation.
+
+        :param LabelTensor samples: The samples to evaluate the physics loss.
+        :param EquationInterface equation: The governing equation
+            representing the physics.
+        :return: The physics loss calculated based on given
+            samples and equation.
+        :rtype: LabelTensor
+        """
+        # train one step of the model
+        with torch.no_grad():
+            discriminator_bets = self.discriminator(samples)
+        loss_val = self._train_model(samples, equation, discriminator_bets)
+        self.store_log(loss_value=float(loss_val))
+        # detaching samples from the computational graph to erase it and setting
+        # the gradient to true to create a new computational graph.
+        # In alternative set `retain_graph=True`.
+        samples = samples.detach()
+        samples.requires_grad = True
+        # train one step of discriminator
+        discriminator_bets = self.discriminator(samples)
+        self._train_discriminator(samples, equation, discriminator_bets)
+        return loss_val
+
+    def loss_data(self, input_tensor, output_tensor):
+        """
+        The data loss for the PINN solver. It computes the loss between the
+        network output against the true solution.
+
+        :param LabelTensor input_tensor: The input to the neural networks.
+        :param LabelTensor output_tensor: The true solution to compare the
+            network solution.
+        :return: The computed data loss.
+        :rtype: torch.Tensor
+        """
+        self.optimizer_model.zero_grad()
+        loss_val = super().loss_data(
+            input_tensor, output_tensor).as_subclass(torch.Tensor)
+        loss_val.backward()
+        self.optimizer_model.step()
+        return loss_val
 
     def configure_optimizers(self):
         """
@@ -163,32 +221,23 @@ class CompetitivePINN(PINNInterface):
             )
         return self.optimizers, self._schedulers
 
-    def loss_phys(self, samples, equation):
+    def on_train_batch_end(self,outputs, batch, batch_idx):
         """
-        Computes the physics loss for the PINN solver based on given
-        samples and equation.
+        This method is called at the end of each training batch, and ovverides
+        the PytorchLightining implementation for logging the checkpoints.
 
-        :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation
-            representing the physics.
-        :return: The physics loss calculated based on given
-            samples and equation.
-        :rtype: LabelTensor"""
-        # train one step of the model
-        with torch.no_grad():
-            discriminator_bets = self.discriminator(samples)
-        loss_val = self._train_model(samples, equation, discriminator_bets)
-        self.store_log(loss_value=float(loss_val))
-        # detaching samples from the computational graph to erase it and setting
-        # the gradient to true to create a new computational graph.
-        # In alternative set `retain_graph=True`.
-        samples = samples.detach()
-        samples.requires_grad = True
-        # train one step of discriminator
-        discriminator_bets = self.discriminator(samples)
-        self._train_discriminator(samples, equation, discriminator_bets)
-        return loss_val
-    
+        :param torch.Tensor outputs: The output from the model for the
+            current batch.
+        :param tuple batch: The current batch of data.
+        :param int batch_idx: The index of the current batch.
+        :return: Whatever is returned by the parent
+            method ``on_train_batch_end``.
+        :rtype: Any
+        """
+        # increase by one the counter of optimization to save loggers
+        self.trainer.fit_loop.epoch_loop.manual_optimization.optim_step_progress.total.completed += 1
+        return super().on_train_batch_end(outputs, batch, batch_idx)
+
     def _train_discriminator(self, samples, equation, discriminator_bets):
         """
         Trains the discriminator network of the Competitive PINN.
@@ -249,25 +298,6 @@ class CompetitivePINN(PINNInterface):
         self.manual_backward(loss_val)
         self.optimizer_model.step()
         return loss_residual
-
-    def loss_data(self, input_tensor, output_tensor):
-        """
-        Computes the data loss for the PINN solver based on input,
-        output, and condition name. This function is a wrapper of the function
-        :meth:`loss_data` used internally in PINA to handle the logging step.
-
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
-            network solution.
-        :return: The computed data loss.
-        :rtype: torch.Tensor
-        """
-        self.optimizer_model.zero_grad()
-        loss_val = super().loss_data(
-            input_tensor, output_tensor).as_subclass(torch.Tensor)
-        loss_val.backward()
-        self.optimizer_model.step()
-        return loss_val
 
     @property
     def neural_net(self):
