@@ -1,4 +1,4 @@
-""" Module for PINN """
+""" Module for Physics Informed Neural Network. """
 
 import torch
 
@@ -17,17 +17,43 @@ from pina.problem import InverseProblem
 
 
 class PINN(PINNInterface):
-    """
-    PINN solver class. This class implements Physics Informed Neural
+    r"""
+    Physics Informed Neural Network (PINN) solver class.
+    This class implements Physics Informed Neural
     Network solvers, using a user specified ``model`` to solve a specific
     ``problem``. It can be used for solving both forward and inverse problems.
+
+    The Physics Informed Network aims to find
+    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`
+    of the differential problem:
+
+    .. math::
+
+        \begin{cases}
+        \mathcal{A}[\mathbf{u}](\mathbf{x})=0\quad,\mathbf{x}\in\Omega\\
+        \mathcal{B}[\mathbf{u}](\mathbf{x})=0\quad,
+        \mathbf{x}\in\partial\Omega
+        \end{cases}
+
+    minimizing the loss function
+
+    .. math::
+        \mathcal{L}_{\rm{problem}} = \frac{1}{N}\sum_{i=1}^N
+        \mathcal{L}(\mathcal{A}[\mathbf{u}](\mathbf{x}_i)) +
+        \frac{1}{N}\sum_{i=1}^N
+        \mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i))
+
+    where :math:`\mathcal{L}` is a specific loss function, default Mean Square Error:
+
+    .. math::
+        \mathcal{L}(v) = \| v \|^2_2.
 
     .. seealso::
 
         **Original reference**: Karniadakis, G. E., Kevrekidis, I. G., Lu, L.,
         Perdikaris, P., Wang, S., & Yang, L. (2021).
         Physics-informed machine learning. Nature Reviews Physics, 3, 422-440.
-        <https://doi.org/10.1038/s42254-021-00314-5>`_.
+        DOI: `10.1038 <https://doi.org/10.1038/s42254-021-00314-5>`_.
     """
 
     def __init__(
@@ -72,20 +98,19 @@ class PINN(PINNInterface):
         self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
         self._neural_net = self.models[0]
 
-
     def forward(self, x):
-        """
-        Forward pass implementation for the PINN
-        solver.
+        r"""
+        Forward pass implementation for the PINN solver. It returns the function
+        evaluation :math:`\mathbf{u}(\mathbf{x})` at the control points
+        :math:`\mathbf{x}`.
 
         :param LabelTensor x: Input tensor for the PINN solver. It expects
             a tensor :math:`N \times D`, where :math:`N` the number of points
             in the mesh, :math:`D` the dimension of the problem,
-        :return: PINN solution.
+        :return: PINN solution evaluated at contro points.
         :rtype: LabelTensor
         """
         return self.neural_net(x)
-
 
     def loss_phys(self, samples, equation):
         """
