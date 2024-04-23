@@ -22,7 +22,7 @@ my_laplace = Equation(laplace_equation)"""
 class Burgers(SpatialProblem,TimeDependentProblem):
     output_variables = ['u']
     spatial_domain = CartesianDomain({'x': [-1, 1]})
-    temporal_domanin = CartesianDomain({'t' : [0, 1]})
+    temporal_domain = CartesianDomain({'t' : [0, 1]})
 
     def initial_condition(input_, output_):
         u_expected = - torch.sin(torch.pi * input_.extract('x'))
@@ -77,7 +77,7 @@ sapinn = SAPINN(
 # Creaimo il trainer
 trainer = Trainer(
 solver=sapinn,
-max_epochs=10,
+max_epochs=10000,
 accelerator='cpu',
 enable_model_summary=False
 )
@@ -90,7 +90,7 @@ pl = Plotter()
 pl.plot(sapinn)
 
 for key, value in sapinn.models[1].torchmodel.items():
-    plt.scatter(problem.input_pts[key].extract('x').tensor.detach().numpy(), problem.input_pts[key].extract('y').tensor.detach().numpy(), c=value.forward().detach().numpy())
+    plt.scatter(problem.input_pts[key].extract('t').tensor.detach().numpy(), problem.input_pts[key].extract('x').tensor.detach().numpy(), c=value.forward().detach().numpy())
 plt.colorbar()
 
 plt.show()
