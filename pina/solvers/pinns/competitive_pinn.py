@@ -174,17 +174,19 @@ class CompetitivePINN(PINNInterface):
         :return: The physics loss calculated based on given
             samples and equation.
         :rtype: LabelTensor"""
-        # train one step of discriminator
-        discriminator_bets = self.discriminator(samples.clone())
-        self._train_discriminator(samples, equation, discriminator_bets)
+        # train one step of the model
+        with torch.no_grad():
+            discriminator_bets = self.discriminator(samples)
+        loss_val = self._train_model(samples, equation, discriminator_bets)
+        self.store_log(loss_value=float(loss_val))
         # detaching samples from the computational graph to erase it and setting
         # the gradient to true to create a new computational graph.
         # In alternative set `retain_graph=True`.
         samples = samples.detach()
         samples.requires_grad = True
-        # train one step of the model
-        loss_val = self._train_model(samples, equation, discriminator_bets)
-        self.store_log(loss_value=float(loss_val))
+        # train one step of discriminator
+        discriminator_bets = self.discriminator(samples)
+        self._train_discriminator(samples, equation, discriminator_bets)
         return loss_val
     
     def _train_discriminator(self, samples, equation, discriminator_bets):
