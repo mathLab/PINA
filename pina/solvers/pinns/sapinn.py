@@ -221,7 +221,8 @@ class SAPINN(PINNInterface):
             representing the physics.
         :return: The physics loss calculated based on given
             samples and equation.
-        :rtype: LabelTensor"""
+        :rtype: torch.Tensor
+        """
         # train weights
         self.optimizer_weights.zero_grad()
         weighted_loss, _ = self._loss_phys(samples, equation)
@@ -345,8 +346,8 @@ class SAPINN(PINNInterface):
         :param EquationInterface equation: the governing equation representing
             the physics.
         
-        :return: the scalar physical loss for the trainign step
-        :rtype: torch.Tensor
+        :return: tuple with weighted and not weighted scalar loss
+        :rtype: List[LabelTensor, LabelTensor]
         """
         residual = self.compute_residual(samples, equation)
         return self._compute_loss(residual)
@@ -359,8 +360,8 @@ class SAPINN(PINNInterface):
         :param LabelTensor output_tensor: The true solution to compare the
             network solution.
         
-        :return: the scalar data loss for the trainign step
-        :rtype: torch.Tensor
+        :return: tuple with weighted and not weighted scalar loss
+        :rtype: List[LabelTensor, LabelTensor]
         """
         residual = self.forward(input_tensor) - output_tensor
         return self._compute_loss(residual)
@@ -373,7 +374,7 @@ class SAPINN(PINNInterface):
         :param LabelTensor residual: the matrix of residuals that have to be weighted
 
         :return: tuple with weighted and not weighted loss
-        :rtype List[torch.Tensor, torch.Tensor]
+        :rtype List[LabelTensor, LabelTensor]
         """
         weights = self.weights_dict.torchmodel[self.current_condition_name].forward()
         loss_value = self._vectorial_loss(torch.zeros_like(residual, requires_grad=True), residual)
@@ -384,10 +385,10 @@ class SAPINN(PINNInterface):
         Elaboration of the pointwise loss through the mask model and the
         self adaptive weights
 
-        :param torch.Tensor loss_value: the matrix of pointwise loss
+        :param LabelTensor loss_value: the matrix of pointwise loss
 
         :return: the scalar loss
-        :rtype torch.Tensor, torch.Tensor
+        :rtype LabelTensor
         """
         if self.loss.reduction == "mean":
             ret = torch.mean(loss_value)
