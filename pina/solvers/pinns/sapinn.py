@@ -16,13 +16,14 @@ from torch.optim.lr_scheduler import ConstantLR
 
 class Weights(torch.nn.Module):
     """
-    This class aims to implements the weights of the Self-Adaptive
+    This class aims to implements the mask model for
+    self adaptive weights of the Self-Adaptive
     PINN solver.
     """
 
     def __init__(self, func):
         """
-        TODO
+        :param torch.nn.Module func: the mask module of SAPINN
         """
         super().__init__()
         check_consistency(func, torch.nn.Module)
@@ -32,6 +33,14 @@ class Weights(torch.nn.Module):
         self.func = func
     
     def forward(self):
+        """
+        Forward pass implementation for the mask module.
+        It returns the function on the weights
+        evaluation.
+
+        :return: evaluation of self adaptive weights through the mask.
+        :rtype: torch.Tensor
+        """
         return self.func(self.sa_weights)
 
 class SAPINN(PINNInterface):
