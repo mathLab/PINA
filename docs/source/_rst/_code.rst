@@ -42,6 +42,7 @@ Solvers
     CompetitivePINN <solvers/competitivepinn.rst>
     SAPINN <solvers/sapinn.rst>
     Supervised solver <solvers/supervised.rst>
+    ROM solver <solvers/rom.rst>
     GAROM <solvers/garom.rst>
 
 
