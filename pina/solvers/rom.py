@@ -76,6 +76,10 @@ class ROMe2eSolver(SupervisedSolver):
         This solver works only for data-driven model. Hence in the ``problem``
         definition the codition must only contain ``input_points``
         (e.g. coefficient parameters, time parameters), and ``output_points``.
+
+    .. warning::
+        This solver does not currently support the possibility to pass
+        ``extra_feature``.
     """
 
     def __init__(
@@ -126,11 +130,11 @@ class ROMe2eSolver(SupervisedSolver):
 
         # assert reduction object contains encode/ decode
         if not hasattr(self.neural_net['reduction_network'], 'encode'):
-            return SyntaxError('reduction_network must have encode method. '
+            raise SyntaxError('reduction_network must have encode method. '
                                'The encode method should return a lower '
                                'dimensional representation of the input.')
         if not hasattr(self.neural_net['reduction_network'], 'decode'):
-            return SyntaxError('reduction_network must have decode method. '
+            raise SyntaxError('reduction_network must have decode method. '
                                'The decode method should return a high '
                                'dimensional representation of the encoding.')
 
