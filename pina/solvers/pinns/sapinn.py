@@ -278,8 +278,8 @@ class SAPINN(PINNInterface):
         # detaching samples from the computational graph to erase it and setting
         # the gradient to true to create a new computational graph.
         # In alternative set `retain_graph=True`.
-        samples = samples.detach()
-        samples.requires_grad = True
+        input_tensor = input_tensor.detach()
+        input_tensor.requires_grad = True
 
         # train model
         self.optimizer_model.zero_grad()
@@ -339,14 +339,30 @@ class SAPINN(PINNInterface):
             method ``on_train_start``.
         :rtype: Any
         """
+        device = torch.device(
+            self.trainer._accelerator_connector._accelerator_flag
+        )
         for condition_name, tensor in self.problem.input_pts.items():
             self.weights_dict.torchmodel[condition_name].sa_weights.data = torch.rand(
                 (tensor.shape[0], 1),
-                dtype = tensor.dtype,
-                device = tensor.device
+                device = device
             )
         return super().on_train_start()
     
+    def on_load_checkpoint(self, checkpoint):
+        """
+        Overriding the Pytorch Lightning ``on_load_checkpoint`` to handle
+        checkpoints for Self Adaptive Weights. This method should not be
+        overridden if not intentionally.
+
+        :param dict checkpoint: Pytorch Lightning checkpoint dict.
+        """
+        for condition_name, tensor in self.problem.input_pts.items():
+            self.weights_dict.torchmodel[condition_name].sa_weights.data = torch.rand(
+                (tensor.shape[0], 1)
+            )
+        return super().on_load_checkpoint(checkpoint)
+
     def _loss_phys(self, samples, equation):
         """
         Elaboration of the physical loss for the SAPINN solver.
