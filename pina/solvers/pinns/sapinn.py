@@ -75,7 +75,7 @@ class SAPINN(PINNInterface):
         \sum_{i=1}^{N_{\partial\Omega}}
         m \left( \lambda_{\partial\Omega}^{i} \right) \mathcal{L} 
         \left( \mathcal{B}[\mathbf{u}](\mathbf{x})
-        \right), ,
+        \right),
     
 
     denoting the self adaptive weights as
