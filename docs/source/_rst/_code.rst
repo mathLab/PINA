@@ -40,6 +40,7 @@ Solvers
     GPINN <solvers/gpinn.rst>
     CausalPINN <solvers/causalpinn.rst>
     CompetitivePINN <solvers/competitivepinn.rst>
+    SAPINN <solvers/sapinn.rst>
     Supervised solver <solvers/supervised.rst>
     GAROM <solvers/garom.rst>
 
