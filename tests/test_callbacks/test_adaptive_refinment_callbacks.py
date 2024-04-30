@@ -71,6 +71,7 @@ def test_r3refinment_routine():
     # make the trainer
     trainer = Trainer(solver=solver,
                       callbacks=[R3Refinement(sample_every=1)],
+                      accelerator='cpu',
                       max_epochs=5)
     trainer.train()
 
