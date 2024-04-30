@@ -1,4 +1,4 @@
-""" Navier Stokes Problem """
+""" Steady Stokes Problem """
 
 import torch
 from pina.problem import SpatialProblem
