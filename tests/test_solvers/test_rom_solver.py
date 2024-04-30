@@ -3,7 +3,7 @@ import pytest
 
 from pina.problem import AbstractProblem
 from pina import Condition, LabelTensor
-from pina.solvers import ROMe2eSolver
+from pina.solvers import ReducedOrderModelSolver
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.loss import LpLoss
@@ -42,21 +42,21 @@ interpolation_net = FeedForward(len(problem.input_variables),
 reduction_net = AE(len(problem.output_variables), rank)
 
 def test_constructor():
-    ROMe2eSolver(problem=problem,reduction_network=reduction_net,
+    ReducedOrderModelSolver(problem=problem,reduction_network=reduction_net,
     interpolation_network=interpolation_net)
     with pytest.raises(SyntaxError):
-        ROMe2eSolver(problem=problem,
+        ReducedOrderModelSolver(problem=problem,
                      reduction_network=AE_missing_encode(
                          len(problem.output_variables), rank),
                      interpolation_network=interpolation_net)
-        ROMe2eSolver(problem=problem,
+        ReducedOrderModelSolver(problem=problem,
                      reduction_network=AE_missing_decode(
                          len(problem.output_variables), rank),
                      interpolation_network=interpolation_net)
 
 
 def test_train_cpu():
-    solver = ROMe2eSolver(problem = problem,reduction_network=reduction_net,
+    solver = ReducedOrderModelSolver(problem = problem,reduction_network=reduction_net,
     interpolation_network=interpolation_net, loss=LpLoss())
     trainer = Trainer(solver=solver, max_epochs=3, accelerator='cpu', batch_size=20)
     trainer.train()
@@ -64,7 +64,7 @@ def test_train_cpu():
 
 def test_train_restore():
     tmpdir = "tests/tmp_restore"
-    solver = ROMe2eSolver(problem=problem,
+    solver = ReducedOrderModelSolver(problem=problem,
                reduction_network=reduction_net,
                interpolation_network=interpolation_net,
                loss=LpLoss())
@@ -82,7 +82,7 @@ def test_train_restore():
 
 def test_train_load():
     tmpdir = "tests/tmp_load"
-    solver = ROMe2eSolver(problem=problem,
+    solver = ReducedOrderModelSolver(problem=problem,
                reduction_network=reduction_net,
                interpolation_network=interpolation_net,
                loss=LpLoss())
@@ -91,7 +91,7 @@ def test_train_load():
                       accelerator='cpu',
                       default_root_dir=tmpdir)
     trainer.train()
-    new_solver = ROMe2eSolver.load_from_checkpoint(
+    new_solver = ReducedOrderModelSolver.load_from_checkpoint(
         f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=14-step=15.ckpt',
         problem = problem,reduction_network=reduction_net,
         interpolation_network=interpolation_net)

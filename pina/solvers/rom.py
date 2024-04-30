@@ -1,13 +1,13 @@
-""" Module for ROMe2eSolver """
+""" Module for ReducedOrderModelSolver """
 
 import torch
 
 from pina.solvers import SupervisedSolver
 
-class ROMe2eSolver(SupervisedSolver):
+class ReducedOrderModelSolver(SupervisedSolver):
     r"""
-    ROMe2eSolver solver class. This class implements a Reduced Order Model
-    solver, using user specified ``reduction_network`` and
+    ReducedOrderModelSolver solver class. This class implements a
+    Reduced Order Model solver, using user specified ``reduction_network`` and
     ``interpolation_network`` to solve a specific ``problem``.
 
     The  Reduced Order Model approach aims to find
@@ -155,7 +155,7 @@ class ROMe2eSolver(SupervisedSolver):
 
     def loss_data(self, input_pts, output_pts):
         """
-        The data loss for the ROMe2eSolver solver.
+        The data loss for the ReducedOrderModelSolver solver.
         It computes the loss between
         the network output against the true solution. This function
         should not be override if not intentionally.
