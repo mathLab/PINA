@@ -69,28 +69,19 @@ class SAPINN(PINNInterface):
 
     .. math::
 
-        \mathcal{L} = \mathcal{L}_\Omega
-        + \mathcal{L}_{\partial \Omega} ,
+        \mathcal{L}_{\rm{problem}} = \frac{1}{N} \sum_{i=1}^{N_\Omega} m
+        \left( \lambda_{\Omega}^{i} \right) \mathcal{L} \left( \mathcal{A}
+        [\mathbf{u}](\mathbf{x}) \right) + \frac{1}{N} 
+        \sum_{i=1}^{N_{\partial\Omega}}
+        m \left( \lambda_{\partial\Omega}^{i} \right) \mathcal{L} 
+        \left( \mathcal{B}[\mathbf{u}](\mathbf{x})
+        \right), ,
     
-    where
-
-    .. math::
-
-        \mathcal{L}_\Omega = \frac{1}{N} \sum_{i=1}^{N_\Omega} m
-        \left( \lambda_{\Omega}^{i} \right) \left| \mathcal{A}[\mathbf{u}](\mathbf{x})
-        \right|^2
-    
-    and
-
-    .. math::
-
-        \mathcal{L}_{\partial\Omega} = \frac{1}{N} \sum_{i=1}^{N_{\partial\Omega}} 
-        m \left( \lambda_{\partial\Omega}^{i} \right) \left| \mathcal{B}[\mathbf{u}](\mathbf{x})
-        \right|^2 ,
 
     denoting the self adaptive weights as
     :math:`\lambda_{\Omega}^1, \dots, \lambda_{\Omega}^{N_\Omega}` and
-    :math:`\lambda_{\partial \Omega}^1, \dots, \lambda_{\Omega}^{N_\partial \Omega}`
+    :math:`\lambda_{\partial \Omega}^1, \dots, 
+    \lambda_{\Omega}^{N_\partial \Omega}`
     for :math:`\Omega` and :math:`\partial \Omega`, respectively.
 
     Self Adaptive Physics Informed Neural Network identifies the solution
@@ -101,13 +92,19 @@ class SAPINN(PINNInterface):
         \min_{w} \max_{\lambda_{\Omega}^k, \lambda_{\partial \Omega}^s}
         \mathcal{L} ,
     
-    where :math:`w` denotes the network parameters.
+    where :math:`w` denotes the network parameters, and
+    :math:`\mathcal{L}` is a specific loss
+    function, default Mean Square Error:
+
+    .. math::
+        \mathcal{L}(v) = \| v \|^2_2.
 
     .. seealso::
         **Original reference**: McClenny, Levi D., and Ulisses M. Braga-Neto.
         "Self-adaptive physics-informed neural networks."
         Journal of Computational Physics 474 (2023): 111722.
-        DOI: `10.1016/j.jcp.2022.111722 <https://doi.org/10.1016/j.jcp.2022.111722>`_.
+        DOI: `10.1016/
+        j.jcp.2022.111722 <https://doi.org/10.1016/j.jcp.2022.111722>`_.
     """
     
     def __init__(
@@ -175,7 +172,10 @@ class SAPINN(PINNInterface):
             models=[model, weights_dict],
             problem=problem,
             optimizers=[optimizer_model, optimizer_weights],
-            optimizers_kwargs=[optimizer_model_kwargs, optimizer_weights_kwargs],
+            optimizers_kwargs=[
+                optimizer_model_kwargs,
+                optimizer_weights_kwargs
+            ],
             extra_features=extra_features,
             loss=loss
         )
@@ -213,7 +213,7 @@ class SAPINN(PINNInterface):
         :math:`\mathbf{x}`.
 
         :param LabelTensor x: Input tensor for the SAPINN solver. It expects
-            a tensor :math:`N \times D`, where :math:`N` the number of points
+            a tensor :math:`N \\times D`, where :math:`N` the number of points
             in the mesh, :math:`D` the dimension of the problem,
         :return: PINN solution.
         :rtype: LabelTensor
@@ -380,14 +380,20 @@ class SAPINN(PINNInterface):
         Elaboration of the pointwise loss through the mask model and the
         self adaptive weights
 
-        :param LabelTensor residual: the matrix of residuals that have to be weighted
+        :param LabelTensor residual: the matrix of residuals that have to 
+            be weighted
 
         :return: tuple with weighted and not weighted loss
         :rtype List[LabelTensor, LabelTensor]
         """
-        weights = self.weights_dict.torchmodel[self.current_condition_name].forward()
-        loss_value = self._vectorial_loss(torch.zeros_like(residual, requires_grad=True), residual)
-        return self._vect_to_scalar(weights * loss_value), self._vect_to_scalar(loss_value)
+        weights = self.weights_dict.torchmodel[
+            self.current_condition_name].forward()
+        loss_value = self._vectorial_loss(torch.zeros_like(
+            residual, requires_grad=True), residual)
+        return (
+            self._vect_to_scalar(weights * loss_value),
+            self._vect_to_scalar(loss_value)
+        )
 
     def _vect_to_scalar(self, loss_value):
         """
@@ -404,7 +410,8 @@ class SAPINN(PINNInterface):
         elif self.loss.reduction == "sum":
             ret = torch.sum(loss_value)
         else:
-            raise RuntimeError(f"Invalid reduction, got {self.loss.reduction} but expected mean or sum.")
+            raise RuntimeError(f"Invalid reduction, got {self.loss.reduction} "
+                               "but expected mean or sum.")
         return ret
         
 
