@@ -104,10 +104,10 @@ class SAPINN(PINNInterface):
     where :math:`w` denotes the network parameters.
 
     .. seealso::
-    **Original reference**: McClenny, Levi D., and Ulisses M. Braga-Neto.
-    "Self-adaptive physics-informed neural networks."
-    Journal of Computational Physics 474 (2023): 111722.
-    <https://doi.org/10.1016/j.jcp.2022.111722>`_.
+        **Original reference**: McClenny, Levi D., and Ulisses M. Braga-Neto.
+        "Self-adaptive physics-informed neural networks."
+        Journal of Computational Physics 474 (2023): 111722.
+        <https://doi.org/10.1016/j.jcp.2022.111722>`_.
     """
     
     def __init__(
