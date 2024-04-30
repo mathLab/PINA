@@ -107,7 +107,7 @@ class SAPINN(PINNInterface):
         **Original reference**: McClenny, Levi D., and Ulisses M. Braga-Neto.
         "Self-adaptive physics-informed neural networks."
         Journal of Computational Physics 474 (2023): 111722.
-        <https://doi.org/10.1016/j.jcp.2022.111722>`_.
+        DOI: `10.1016/j.jcp.2022.111722 <https://doi.org/10.1016/j.jcp.2022.111722>`_.
     """
     
     def __init__(
@@ -132,7 +132,7 @@ class SAPINN(PINNInterface):
             for the model.
         :param torch.nn.Module weights_function: The neural network model
             related to the mask of SAPINN.
-            default :class:`torch.nn.Sigmoid()`.
+            default :obj:`~torch.nn.Sigmoid`.
         :param list(torch.nn.Module) extra_features: The additional input
             features to use as augmented input. If ``None`` no extra features
             are passed. If it is a list of :class:`torch.nn.Module`,
