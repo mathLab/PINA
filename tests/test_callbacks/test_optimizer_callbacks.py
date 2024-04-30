@@ -84,5 +84,6 @@ def test_switch_optimizer_routine():
                                           new_optimizers_kwargs={'lr': 0.01},
                                           epoch_switch=3)
                       ],
+                      accelerator='cpu',
                       max_epochs=5)
     trainer.train()
