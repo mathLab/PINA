@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial: The Equation Class &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Tutorial: PINA and PyTorch Lightning, training tips and visualizations" href="../tutorial11/tutorial.html" />
+    <link rel="prev" title="Tutorial: Physics Informed Neural Networks on PINA" href="../tutorial1/tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.0.post2405
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../tutorial1/tutorial.html">Introduction to PINA for Physics Informed Neural Networks training</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Introduction to PINA Equation class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#example-the-burgers-1d-equation">Example: The Burgers 1D equation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#defining-a-new-equation-class">Defining a new Equation class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#whats-next">What’s next?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial11/tutorial.html">PINA and PyTorch Lightning, training tips and visualizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial6/tutorial.html">Building custom geometries with PINA Location class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial: The <code class="docutils literal notranslate"><span class="pre">Equation</span></code> Class</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/_rst/tutorials/tutorial12/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tutorial-the-equation-class">
+<h1>Tutorial: The <code class="docutils literal notranslate"><span class="pre">Equation</span></code> Class<a class="headerlink" href="#tutorial-the-equation-class" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we will show how to use the <code class="docutils literal notranslate"><span class="pre">Equation</span></code> Class in
+PINA. Specifically, we will see how use the Class and its inherited
+classes to enforce residuals minimization in PINNs.</p>
+<div class="section" id="example-the-burgers-1d-equation">
+<h2>Example: The Burgers 1D equation<a class="headerlink" href="#example-the-burgers-1d-equation" title="Permalink to this headline">¶</a></h2>
+<p>We will start implementing the viscous Burgers 1D problem Class,
+described as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation}
+\begin{cases}
+\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} &amp;= \nu \frac{\partial^2 u}{ \partial x^2}, \quad x\in(0,1), \quad t&gt;0\\
+u(x,0) &amp;= -\sin (\pi x)\\
+u(x,t) &amp;= 0 \quad x = \pm 1\\
+\end{cases}
+\end{equation}\end{split}\]</div>
+<p>where we set <span class="math notranslate nohighlight">\(\nu = \frac{0.01}{\pi}\)</span> .</p>
+<p>In the class that models this problem we will see in action the
+<code class="docutils literal notranslate"><span class="pre">Equation</span></code> class and one of its inherited classes, the <code class="docutils literal notranslate"><span class="pre">FixedValue</span></code>
+class.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#useful imports
+from pina.problem import SpatialProblem, TimeDependentProblem
+from pina.equation import Equation, FixedValue, FixedGradient, FixedFlux
+from pina.geometry import CartesianDomain
+import torch
+from pina.operators import grad, laplacian
+from pina import Condition
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class Burgers1D(TimeDependentProblem, SpatialProblem):
+
+    # define the burger equation
+    def burger_equation(input_, output_):
+        du = grad(output_, input_)
+        ddu = grad(du, input_, components=[&#39;dudx&#39;])
+        return (
+            du.extract([&#39;dudt&#39;]) +
+            output_.extract([&#39;u&#39;])*du.extract([&#39;dudx&#39;]) -
+            (0.01/torch.pi)*ddu.extract([&#39;ddudxdx&#39;])
+        )
+
+    # define initial condition
+    def initial_condition(input_, output_):
+        u_expected = -torch.sin(torch.pi*input_.extract([&#39;x&#39;]))
+        return output_.extract([&#39;u&#39;]) - u_expected
+
+    # assign output/ spatial and temporal variables
+    output_variables = [&#39;u&#39;]
+    spatial_domain = CartesianDomain({&#39;x&#39;: [-1, 1]})
+    temporal_domain = CartesianDomain({&#39;t&#39;: [0, 1]})
+
+    # problem condition statement
+    conditions = {
+        &#39;gamma1&#39;: Condition(location=CartesianDomain({&#39;x&#39;: -1, &#39;t&#39;: [0, 1]}), equation=FixedValue(0.)),
+        &#39;gamma2&#39;: Condition(location=CartesianDomain({&#39;x&#39;:  1, &#39;t&#39;: [0, 1]}), equation=FixedValue(0.)),
+        &#39;t0&#39;: Condition(location=CartesianDomain({&#39;x&#39;: [-1, 1], &#39;t&#39;: 0}), equation=Equation(initial_condition)),
+        &#39;D&#39;: Condition(location=CartesianDomain({&#39;x&#39;: [-1, 1], &#39;t&#39;: [0, 1]}), equation=Equation(burger_equation)),
+    }
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Equation</span></code> class takes as input a function (in this case it
+happens twice, with <code class="docutils literal notranslate"><span class="pre">initial_condition</span></code> and <code class="docutils literal notranslate"><span class="pre">burger_equation</span></code>) which
+computes a residual of an equation, such as a PDE. In a problem class
+such as the one above, the <code class="docutils literal notranslate"><span class="pre">Equation</span></code> class with such a given input is
+passed as a parameter in the specified <code class="docutils literal notranslate"><span class="pre">Condition</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">FixedValue</span></code> class takes as input a value of same dimensions of
+the output functions; this class can be used to enforced a fixed value
+for a specific condition, e.g. Dirichlet boundary conditions, as it
+happens for instance in our example.</p>
+<p>Once the equations are set as above in the problem conditions, the PINN
+solver will aim to minimize the residuals described in each equation in
+the training phase.</p>
+<p>Available classes of equations include also: - <code class="docutils literal notranslate"><span class="pre">FixedGradient</span></code> and
+<code class="docutils literal notranslate"><span class="pre">FixedFlux</span></code>: they work analogously to <code class="docutils literal notranslate"><span class="pre">FixedValue</span></code> class, where we
+can require a constant value to be enforced, respectively, on the
+gradient of the solution or the divergence of the solution; -
+<code class="docutils literal notranslate"><span class="pre">Laplace</span></code>: it can be used to enforce the laplacian of the solution to
+be zero; - <code class="docutils literal notranslate"><span class="pre">SystemEquation</span></code>: we can enforce multiple conditions on the
+same subdomain through this class, passing a list of residual equations
+defined in the problem.</p>
+</div>
+<div class="section" id="defining-a-new-equation-class">
+<h2>Defining a new Equation class<a class="headerlink" href="#defining-a-new-equation-class" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Equation</span></code> classes can be also inherited to define a new class. As
+example, we can see how to rewrite the above problem introducing a new
+class <code class="docutils literal notranslate"><span class="pre">Burgers1D</span></code>; during the class call, we can pass the viscosity
+parameter <span class="math notranslate nohighlight">\(\nu\)</span>:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class Burgers1DEquation(Equation):
+
+    def __init__(self, nu = 0.):
+        &quot;&quot;&quot;
+        Burgers1D class. This class can be
+        used to enforce the solution u to solve the viscous Burgers 1D Equation.
+
+        :param torch.float32 nu: the viscosity coefficient. Default value is set to 0.
+        &quot;&quot;&quot;
+        self.nu = nu
+
+        def equation(input_, output_):
+                return grad(output_, input_, d=&#39;x&#39;) +\
+                       output_*grad(output_, input_, d=&#39;t&#39;) -\
+                       self.nu*laplacian(output_, input_, d=&#39;x&#39;)
+
+
+        super().__init__(equation)
+</pre></div>
+</div>
+<p>Now we can just pass the above class as input for the last condition,
+setting <span class="math notranslate nohighlight">\(\nu= \frac{0.01}{\pi}\)</span>:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class Burgers1D(TimeDependentProblem, SpatialProblem):
+
+    # define initial condition
+    def initial_condition(input_, output_):
+        u_expected = -torch.sin(torch.pi*input_.extract([&#39;x&#39;]))
+        return output_.extract([&#39;u&#39;]) - u_expected
+
+    # assign output/ spatial and temporal variables
+    output_variables = [&#39;u&#39;]
+    spatial_domain = CartesianDomain({&#39;x&#39;: [-1, 1]})
+    temporal_domain = CartesianDomain({&#39;t&#39;: [0, 1]})
+
+    # problem condition statement
+    conditions = {
+        &#39;gamma1&#39;: Condition(location=CartesianDomain({&#39;x&#39;: -1, &#39;t&#39;: [0, 1]}), equation=FixedValue(0.)),
+        &#39;gamma2&#39;: Condition(location=CartesianDomain({&#39;x&#39;:  1, &#39;t&#39;: [0, 1]}), equation=FixedValue(0.)),
+        &#39;t0&#39;: Condition(location=CartesianDomain({&#39;x&#39;: [-1, 1], &#39;t&#39;: 0}), equation=Equation(initial_condition)),
+        &#39;D&#39;: Condition(location=CartesianDomain({&#39;x&#39;: [-1, 1], &#39;t&#39;: [0, 1]}), equation=Burgers1DEquation(0.01/torch.pi)),
+    }
+</pre></div>
+</div>
+</div>
+<div class="section" id="whats-next">
+<h2>What’s next?<a class="headerlink" href="#whats-next" title="Permalink to this headline">¶</a></h2>
+<p>Congratulations on completing the <code class="docutils literal notranslate"><span class="pre">Equation</span></code> class tutorial of
+<strong>PINA</strong>! As we have seen, you can build new classes that inherits
+<code class="docutils literal notranslate"><span class="pre">Equation</span></code> to store more complex equations, as the Burgers 1D
+equation, only requiring to pass the characteristic coefficients of the
+problem. From now on, you can: - define additional complex equation
+classes (e.g. <code class="docutils literal notranslate"><span class="pre">SchrodingerEquation</span></code>, <code class="docutils literal notranslate"><span class="pre">NavierStokeEquation</span></code>..) -
+define more <code class="docutils literal notranslate"><span class="pre">FixedOperator</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">FixedCurl</span></code>)</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial1/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Physics Informed Neural Networks on PINA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial11/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: PINA and PyTorch Lightning, training tips and visualizations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on May 02, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

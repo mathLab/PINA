@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DeepONet &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>DeepONet &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2404
+                0.1.0.post2405
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -65,9 +65,11 @@
 <li class="toctree-l3"><a class="reference internal" href="fourier_kernel.html">FourierIntegralKernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fno.html">FNO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="avno.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lno.html">LowRankNeuralOperator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
@@ -136,13 +138,13 @@ DOI: <a class="reference external" href="https://doi.org/10.1038/s42256-021-0030
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>branch_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The neural network to use as branch
+<li><p><strong>branch_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a>) – The neural network to use as branch
 model. It has to take as input a <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a>
-or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>. The number of dimensions of the output has
+or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>. The number of dimensions of the output has
 to be the same of the <code class="docutils literal notranslate"><span class="pre">trunk_net</span></code>.</p></li>
-<li><p><strong>trunk_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The neural network to use as trunk
+<li><p><strong>trunk_net</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a>) – The neural network to use as trunk
 model. It has to take as input a <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a>
-or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>. The number of dimensions of the output
+or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>. The number of dimensions of the output
 has to be the same of the <code class="docutils literal notranslate"><span class="pre">branch_net</span></code>.</p></li>
 <li><p><strong>or list</strong><strong>(</strong><strong>str</strong><strong>) </strong><strong>input_indeces_branch_net</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>)</em>) – List of indeces
 to extract from the input variable in the forward pass for the
@@ -172,10 +174,10 @@ returning the forward pass, default True.</p></li>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>In the forward pass we do not check if the input is instance of
-<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>. A general rule is
+<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>. A general rule is
 that for a <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pina.label_tensor.LabelTensor</span></code></a> input both list of integers and
 list of strings can be passed for <code class="docutils literal notranslate"><span class="pre">input_indeces_branch_net</span></code>
-and <code class="docutils literal notranslate"><span class="pre">input_indeces_trunk_net</span></code>. Differently, for a <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>
+and <code class="docutils literal notranslate"><span class="pre">input_indeces_trunk_net</span></code>. Differently, for a <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>
 only a list of integers can be passed for <code class="docutils literal notranslate"><span class="pre">input_indeces_branch_net</span></code>
 and <code class="docutils literal notranslate"><span class="pre">input_indeces_trunk_net</span></code>.</p>
 </div>
@@ -226,7 +228,7 @@ and <code class="docutils literal notranslate"><span class="pre">input_indeces_t
 <dd class="field-even"><p>The output computed by the DeepONet model.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a> or <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -259,7 +261,7 @@ and <code class="docutils literal notranslate"><span class="pre">input_indeces_t
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Apr 02, 2024.
+      <span class="lastupdated">Last updated on May 02, 2024.
       </span></p>
   </div>
 

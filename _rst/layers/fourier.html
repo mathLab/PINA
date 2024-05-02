@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fourier Layers &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>Fourier Layers &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2404
+                0.1.0.post2405
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -61,11 +61,13 @@
 <li class="toctree-l3"><a class="reference internal" href="spectral.html">Spectral convolution</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Fourier layers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="avno_layer.html">Averaging layer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lowrank_layer.html">Low Rank layer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="convolution.html">Continuous convolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pod.html">Proper Orthogonal Decomposition</a></li>
 <li class="toctree-l3"><a class="reference internal" href="embedding.html">Periodic Boundary Condition embeddings</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
@@ -118,7 +120,7 @@
 <dl class="class">
 <dt id="pina.model.layers.fourier.FourierBlock1D">
 <em class="property">class </em><code class="sig-name descname">FourierBlock1D</code><span class="sig-paren">(</span><em class="sig-param">input_numb_fields</em>, <em class="sig-param">output_numb_fields</em>, <em class="sig-param">n_modes</em>, <em class="sig-param">activation=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/layers/fourier.html#FourierBlock1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.layers.fourier.FourierBlock1D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>Fourier block implementation for three dimensional
 input tensor. The combination of Fourier blocks
 make up the Fourier Neural Operator</p>
@@ -138,7 +140,7 @@ convolution and a linear transformation of the input and sum the
 results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – The input tensor for fourier block, expect of size
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><em>torch.Tensor</em></a>) – The input tensor for fourier block, expect of size
 <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">input_numb_fields,</span> <span class="pre">x]</span></code>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -146,7 +148,7 @@ results.</p>
 fourier block of size <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">output_numb_fields,</span> <span class="pre">x]</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -156,7 +158,7 @@ fourier block of size <code class="docutils literal notranslate"><span class="pr
 <dl class="class">
 <dt id="pina.model.layers.fourier.FourierBlock2D">
 <em class="property">class </em><code class="sig-name descname">FourierBlock2D</code><span class="sig-paren">(</span><em class="sig-param">input_numb_fields</em>, <em class="sig-param">output_numb_fields</em>, <em class="sig-param">n_modes</em>, <em class="sig-param">activation=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/layers/fourier.html#FourierBlock2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.layers.fourier.FourierBlock2D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>Fourier block implementation for two dimensional
 input tensor. The combination of Fourier blocks
 make up the Fourier Neural Operator</p>
@@ -183,7 +185,7 @@ and returns an output of size <code class="docutils literal notranslate"><span c
 <li><p><strong>output_numb_fields</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The number of channels for the output.</p></li>
 <li><p><strong>| tuple n_modes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – Number of modes to select for each dimension.
 It must be at most equal to the <code class="docutils literal notranslate"><span class="pre">floor(Nx/2)+1</span></code> and <code class="docutils literal notranslate"><span class="pre">floor(Ny/2)+1</span></code>.</p></li>
-<li><p><strong>activation</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The activation function.</p></li>
+<li><p><strong>activation</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a>) – The activation function.</p></li>
 </ul>
 </dd>
 </dl>
@@ -195,7 +197,7 @@ convolution and a linear transformation of the input and sum the
 results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – The input tensor for fourier block, expect of size
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><em>torch.Tensor</em></a>) – The input tensor for fourier block, expect of size
 <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">input_numb_fields,</span> <span class="pre">x,</span> <span class="pre">y]</span></code>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -203,7 +205,7 @@ results.</p>
 fourier block of size <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">output_numb_fields,</span> <span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">z]</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -213,7 +215,7 @@ fourier block of size <code class="docutils literal notranslate"><span class="pr
 <dl class="class">
 <dt id="pina.model.layers.fourier.FourierBlock3D">
 <em class="property">class </em><code class="sig-name descname">FourierBlock3D</code><span class="sig-paren">(</span><em class="sig-param">input_numb_fields</em>, <em class="sig-param">output_numb_fields</em>, <em class="sig-param">n_modes</em>, <em class="sig-param">activation=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/layers/fourier.html#FourierBlock3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.layers.fourier.FourierBlock3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>Fourier block implementation for three dimensional
 input tensor. The combination of Fourier blocks
 make up the Fourier Neural Operator</p>
@@ -241,7 +243,7 @@ and returns an output of size <code class="docutils literal notranslate"><span c
 <li><p><strong>| tuple n_modes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – Number of modes to select for each dimension.
 It must be at most equal to the <code class="docutils literal notranslate"><span class="pre">floor(Nx/2)+1</span></code>, <code class="docutils literal notranslate"><span class="pre">floor(Ny/2)+1</span></code>
 and <code class="docutils literal notranslate"><span class="pre">floor(Nz/2)+1</span></code>.</p></li>
-<li><p><strong>activation</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The activation function.</p></li>
+<li><p><strong>activation</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a>) – The activation function.</p></li>
 </ul>
 </dd>
 </dl>
@@ -253,7 +255,7 @@ convolution and a linear transformation of the input and sum the
 results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – The input tensor for fourier block, expect of size
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><em>torch.Tensor</em></a>) – The input tensor for fourier block, expect of size
 <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">input_numb_fields,</span> <span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">z]</span></code>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -261,7 +263,7 @@ results.</p>
 fourier block of size <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">output_numb_fields,</span> <span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">z]</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -282,7 +284,7 @@ fourier block of size <code class="docutils literal notranslate"><span class="pr
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Apr 02, 2024.
+      <span class="lastupdated">Last updated on May 02, 2024.
       </span></p>
   </div>
 

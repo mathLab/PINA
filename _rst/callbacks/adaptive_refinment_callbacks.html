@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Adaptive Refinments callbacks &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>Adaptive Refinments callbacks &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2404
+                0.1.0.post2405
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -56,6 +56,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#solvers">Solvers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
@@ -115,12 +116,16 @@
 <em class="property">class </em><code class="sig-name descname">R3Refinement</code><span class="sig-paren">(</span><em class="sig-param">sample_every</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/callbacks/adaptive_refinment_callbacks.html#R3Refinement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.callbacks.adaptive_refinment_callbacks.R3Refinement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pytorch_lightning.callbacks.callback.Callback</span></code></p>
 <p>PINA Implementation of an R3 Refinement Callback.</p>
-<p>This callback implements the R3 (Retain-Resample-Release) routine for sampling new points based on adaptive search.
-The algorithm incrementally accumulates collocation points in regions of high PDE residuals, and releases those
-with low residuals. Points are sampled uniformly in all regions where sampling is needed.</p>
+<p>This callback implements the R3 (Retain-Resample-Release) routine for
+sampling new points based on adaptive search.
+The algorithm incrementally accumulates collocation points in regions
+of high PDE residuals, and releases those
+with low residuals. Points are sampled uniformly in all regions
+where sampling is needed.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>Original Reference: Daw, Arka, et al. <em>Mitigating Propagation Failures in Physics-informed Neural Networks
+<p>Original Reference: Daw, Arka, et al. <em>Mitigating Propagation
+Failures in Physics-informed Neural Networks
 using Retain-Resample-Release (R3) Sampling. (2023)</em>.
 DOI: <a class="reference external" href="https://doi.org/10.48550/arXiv.2207.02338">10.48550/arXiv.2207.02338</a></p>
 </div>
@@ -140,7 +145,8 @@ DOI: <a class="reference external" href="https://doi.org/10.48550/arXiv.2207.023
 <dt id="pina.callbacks.adaptive_refinment_callbacks.R3Refinement.on_train_start">
 <code class="sig-name descname">on_train_start</code><span class="sig-paren">(</span><em class="sig-param">trainer</em>, <em class="sig-param">_</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/callbacks/adaptive_refinment_callbacks.html#R3Refinement.on_train_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.callbacks.adaptive_refinment_callbacks.R3Refinement.on_train_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback function called at the start of training.</p>
-<p>This method extracts the locations for sampling from the problem conditions and calculates the total population.</p>
+<p>This method extracts the locations for sampling from the problem
+conditions and calculates the total population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -161,7 +167,8 @@ DOI: <a class="reference external" href="https://doi.org/10.48550/arXiv.2207.023
 <dt id="pina.callbacks.adaptive_refinment_callbacks.R3Refinement.on_train_epoch_end">
 <code class="sig-name descname">on_train_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">trainer</em>, <em class="sig-param">__</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/callbacks/adaptive_refinment_callbacks.html#R3Refinement.on_train_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.callbacks.adaptive_refinment_callbacks.R3Refinement.on_train_epoch_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callback function called at the end of each training epoch.</p>
-<p>This method triggers the R3 routine for refinement if the current epoch is a multiple of <cite>_sample_every</cite>.</p>
+<p>This method triggers the R3 routine for refinement if the current
+epoch is a multiple of <cite>_sample_every</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -194,7 +201,7 @@ DOI: <a class="reference external" href="https://doi.org/10.48550/arXiv.2207.023
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Apr 02, 2024.
+      <span class="lastupdated">Last updated on May 02, 2024.
       </span></p>
   </div>
 

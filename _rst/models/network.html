@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Network &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>Network &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2404
+                0.1.0.post2405
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -65,9 +65,11 @@
 <li class="toctree-l3"><a class="reference internal" href="fourier_kernel.html">FourierIntegralKernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fno.html">FNO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="avno.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lno.html">LowRankNeuralOperator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
@@ -120,20 +122,20 @@
 <dl class="class">
 <dt id="pina.model.network.Network">
 <em class="property">class </em><code class="sig-name descname">Network</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">input_variables</em>, <em class="sig-param">output_variables</em>, <em class="sig-param">extra_features=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/network.html#Network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.network.Network" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>Network class with standard forward method
 and possibility to pass extra features. This
 class is used internally in PINA to convert
-any <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a> s in a PINA module.</p>
+any <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a> s in a PINA module.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a>) – The torch model to convert in a PINA model.</p></li>
+<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a>) – The torch model to convert in a PINA model.</p></li>
 <li><p><strong>input_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – The input variables of the <code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractProblem</span></code>, whose type depends on the
 type of domain (spatial, temporal, and parameter).</p></li>
 <li><p><strong>output_variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>)</em>) – The output variables of the <code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractProblem</span></code>, whose type depends on the
 problem setting.</p></li>
-<li><p><strong>extra_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><em>torch.nn.Module</em></a><em>)</em>) – List of torch models to augment the input, defaults to None.</p></li>
+<li><p><strong>extra_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>(</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a><em>)</em>) – List of torch models to augment the input, defaults to None.</p></li>
 </ul>
 </dd>
 </dl>
@@ -148,7 +150,7 @@ by this class, to enable <a class="reference internal" href="../label_tensor.htm
 extraction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.2)"><em>torch.Tensor</em></a>) – Input of the network.</p>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><em>torch.Tensor</em></a>) – Input of the network.</p>
 </dd>
 <dt class="field-even">Return torch.Tensor</dt>
 <dd class="field-even"><p>Output of the network.</p>
@@ -196,7 +198,7 @@ are used for both tensors. Output variables are correctly applied.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Apr 02, 2024.
+      <span class="lastupdated">Last updated on May 02, 2024.
       </span></p>
   </div>
 

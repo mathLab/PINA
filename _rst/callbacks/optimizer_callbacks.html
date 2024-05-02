@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Optimizer callbacks &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>Optimizer callbacks &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2404
+                0.1.0.post2405
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -56,6 +56,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#solvers">Solvers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
@@ -121,7 +122,7 @@ the exploration of multiple optimization strategies without the need to stop tra
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>new_optimizers</strong> (<em>torch.optim.Optimizer | list</em>) – The model optimizers to switch to. Can be a single
-<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.Optimizer</span></code></a> or a list of them for multiple model solvers.</p></li>
+<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.Optimizer</span></code></a> or a list of them for multiple model solvers.</p></li>
 <li><p><strong>new_optimizers_kwargs</strong> (<em>dict | list</em>) – The keyword arguments for the new optimizers. Can be a single dictionary
 or a list of dictionaries corresponding to each optimizer.</p></li>
 <li><p><strong>epoch_switch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The epoch at which to switch to the new optimizer.</p></li>
@@ -174,7 +175,7 @@ optimizers and their corresponding keyword argument dictionaries.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Apr 02, 2024.
+      <span class="lastupdated">Last updated on May 02, 2024.
       </span></p>
   </div>
 

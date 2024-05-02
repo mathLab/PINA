@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.callbacks.adaptive_refinment_callbacks &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.callbacks.adaptive_refinment_callbacks &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -37,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2404
+                0.1.0.post2405
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -91,9 +91,9 @@
   <h1>Source code for pina.callbacks.adaptive_refinment_callbacks</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;PINA Callbacks Implementations&quot;&quot;&quot;</span>
 
-<span class="c1"># from lightning.pytorch.callbacks import Callback</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="kn">import</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">..label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
 
 
@@ -103,19 +103,22 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        PINA Implementation of an R3 Refinement Callback.</span>
 
-<span class="sd">        This callback implements the R3 (Retain-Resample-Release) routine for sampling new points based on adaptive search.</span>
-<span class="sd">        The algorithm incrementally accumulates collocation points in regions of high PDE residuals, and releases those</span>
-<span class="sd">        with low residuals. Points are sampled uniformly in all regions where sampling is needed.</span>
+<span class="sd">        This callback implements the R3 (Retain-Resample-Release) routine for</span>
+<span class="sd">        sampling new points based on adaptive search.</span>
+<span class="sd">        The algorithm incrementally accumulates collocation points in regions</span>
+<span class="sd">        of high PDE residuals, and releases those</span>
+<span class="sd">        with low residuals. Points are sampled uniformly in all regions</span>
+<span class="sd">        where sampling is needed.</span>
 
 <span class="sd">        .. seealso::</span>
 
-<span class="sd">            Original Reference: Daw, Arka, et al. *Mitigating Propagation Failures in Physics-informed Neural Networks</span>
+<span class="sd">            Original Reference: Daw, Arka, et al. *Mitigating Propagation</span>
+<span class="sd">            Failures in Physics-informed Neural Networks</span>
 <span class="sd">            using Retain-Resample-Release (R3) Sampling. (2023)*.</span>
 <span class="sd">            DOI: `10.48550/arXiv.2207.02338</span>
 <span class="sd">            &lt;https://doi.org/10.48550/arXiv.2207.02338&gt;`_</span>
 
 <span class="sd">        :param int sample_every: Frequency for sampling.</span>
-
 <span class="sd">        :raises ValueError: If `sample_every` is not an integer.</span>
 
 <span class="sd">        Example:</span>
@@ -138,6 +141,18 @@
         <span class="c1"># extract the solver and device from trainer</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">_model</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">_accelerator_connector</span><span class="o">.</span><span class="n">_accelerator_flag</span>
+        <span class="n">precision</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">precision</span>
+        <span class="k">if</span> <span class="n">precision</span> <span class="o">==</span> <span class="s2">&quot;64-true&quot;</span><span class="p">:</span>
+            <span class="n">precision</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float64</span>
+        <span class="k">elif</span> <span class="n">precision</span> <span class="o">==</span> <span class="s2">&quot;32-true&quot;</span><span class="p">:</span>
+            <span class="n">precision</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Currently R3Refinement is only implemented &quot;</span>
+                <span class="s2">&quot;for precision &#39;32-true&#39; and &#39;64-true&#39;, set &quot;</span>
+                <span class="s2">&quot;Trainer precision to match one of the &quot;</span>
+                <span class="s2">&quot;available precisions.&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># compute residual</span>
         <span class="n">res_loss</span> <span class="o">=</span> <span class="p">{}</span>
@@ -146,10 +161,10 @@
             <span class="n">condition</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">location</span><span class="p">]</span>
             <span class="n">pts</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span>
             <span class="c1"># send points to correct device</span>
-            <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">precision</span><span class="p">)</span>
             <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">pts</span><span class="o">.</span><span class="n">retain_grad</span><span class="p">()</span>
-            <span class="c1"># PINN loss: equation evaluated only on locations where sampling is needed</span>
+            <span class="c1"># PINN loss: equation evaluated only for sampling locations</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">equation</span><span class="o">.</span><span class="n">residual</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">solver</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">pts</span><span class="p">))</span>
             <span class="n">res_loss</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
             <span class="n">tot_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
@@ -177,13 +192,14 @@
         <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampling_locations</span><span class="p">:</span>
             <span class="n">pts</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">labels</span>
-            <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
             <span class="n">residuals</span> <span class="o">=</span> <span class="n">res_loss</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">residuals</span> <span class="o">&gt;</span> <span class="n">avg</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
                 <span class="n">mask</span>
             <span class="p">):</span>  <span class="c1"># if there are residuals greater than averge we append them</span>
-                <span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>  <span class="c1"># TODO masking remove labels</span>
+                <span class="c1"># Fix the issue, masking remove labels</span>
+                <span class="n">pts</span> <span class="o">=</span> <span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
                 <span class="n">pts</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
                 <span class="n">old_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="n">pts</span>
                 <span class="n">tot_points</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
@@ -213,7 +229,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function called at the start of training.</span>
 
-<span class="sd">        This method extracts the locations for sampling from the problem conditions and calculates the total population.</span>
+<span class="sd">        This method extracts the locations for sampling from the problem</span>
+<span class="sd">        conditions and calculates the total population.</span>
 
 <span class="sd">        :param trainer: The trainer object managing the training process.</span>
 <span class="sd">        :type trainer: pytorch_lightning.Trainer</span>
@@ -242,7 +259,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Callback function called at the end of each training epoch.</span>
 
-<span class="sd">        This method triggers the R3 routine for refinement if the current epoch is a multiple of `_sample_every`.</span>
+<span class="sd">        This method triggers the R3 routine for refinement if the current</span>
+<span class="sd">        epoch is a multiple of `_sample_every`.</span>
 
 <span class="sd">        :param trainer: The trainer object managing the training process.</span>
 <span class="sd">        :type trainer: pytorch_lightning.Trainer</span>
@@ -263,7 +281,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Apr 02, 2024.
+      <span class="lastupdated">Last updated on May 02, 2024.
       </span></p>
   </div>
 

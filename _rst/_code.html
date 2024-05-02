@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Code Documentation &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Code Documentation &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2404
+                0.1.0.post2405
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -77,6 +77,7 @@
 <li class="toctree-l3"><a class="reference internal" href="models/fourier_kernel.html">FourierIntegralKernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/fno.html">FNO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="models/avno.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models/lno.html">LowRankNeuralOperator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#layers">Layers</a><ul>
@@ -85,9 +86,26 @@
 <li class="toctree-l3"><a class="reference internal" href="layers/spectral.html">Spectral convolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="layers/fourier.html">Fourier layers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="layers/avno_layer.html">Averaging layer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers/lowrank_layer.html">Low Rank layer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="layers/convolution.html">Continuous convolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="layers/pod.html">Proper Orthogonal Decomposition</a></li>
 <li class="toctree-l3"><a class="reference internal" href="layers/embedding.html">Periodic Boundary Condition embeddings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adaptive-activation-functions">Adaptive Activation Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveFunctionInterface.html">Adaptive Function Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveReLU.html">Adaptive ReLU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveSigmoid.html">Adaptive Sigmoid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveTanh.html">Adaptive Tanh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveSiLU.html">Adaptive SiLU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveMish.html">Adaptive Mish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveELU.html">Adaptive ELU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveCELU.html">Adaptive CELU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveGELU.html">Adaptive GELU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveSoftmin.html">Adaptive Softmin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveSoftmax.html">Adaptive Softmax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveSIREN.html">Adaptive SIREN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_functions/AdaptiveExp.html">Adaptive Exp</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#equations-and-operators">Equations and Operators</a><ul>
@@ -222,6 +240,7 @@ The high-level structure of the package is depicted in our API.</p>
 <li class="toctree-l1"><a class="reference internal" href="models/fourier_kernel.html">FourierIntegralKernel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models/fno.html">FNO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models/avno.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/lno.html">LowRankNeuralOperator</a></li>
 </ul>
 </div>
 </div>
@@ -234,9 +253,30 @@ The high-level structure of the package is depicted in our API.</p>
 <li class="toctree-l1"><a class="reference internal" href="layers/spectral.html">Spectral convolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="layers/fourier.html">Fourier layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="layers/avno_layer.html">Averaging layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers/lowrank_layer.html">Low Rank layer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="layers/convolution.html">Continuous convolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="layers/pod.html">Proper Orthogonal Decomposition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="layers/embedding.html">Periodic Boundary Condition embeddings</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="adaptive-activation-functions">
+<h2>Adaptive Activation Functions<a class="headerlink" href="#adaptive-activation-functions" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveFunctionInterface.html">Adaptive Function Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveReLU.html">Adaptive ReLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveSigmoid.html">Adaptive Sigmoid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveTanh.html">Adaptive Tanh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveSiLU.html">Adaptive SiLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveMish.html">Adaptive Mish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveELU.html">Adaptive ELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveCELU.html">Adaptive CELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveGELU.html">Adaptive GELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveSoftmin.html">Adaptive Softmin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveSoftmax.html">Adaptive Softmax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveSIREN.html">Adaptive SIREN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_functions/AdaptiveExp.html">Adaptive Exp</a></li>
 </ul>
 </div>
 </div>
@@ -317,7 +357,7 @@ The high-level structure of the package is depicted in our API.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Apr 02, 2024.
+      <span class="lastupdated">Last updated on May 02, 2024.
       </span></p>
   </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MultiFeedForward &mdash; PINA 0.1.0.post2404 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>MultiFeedForward &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2404
+                0.1.0.post2405
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -65,9 +65,11 @@
 <li class="toctree-l3"><a class="reference internal" href="fourier_kernel.html">FourierIntegralKernel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fno.html">FNO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="avno.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lno.html">LowRankNeuralOperator</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
@@ -120,7 +122,7 @@
 <dl class="class">
 <dt id="pina.model.multi_feed_forward.MultiFeedForward">
 <em class="property">class </em><code class="sig-name descname">MultiFeedForward</code><span class="sig-paren">(</span><em class="sig-param">ffn_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/multi_feed_forward.html#MultiFeedForward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.multi_feed_forward.MultiFeedForward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></a></p>
 <p>The PINA implementation of MultiFeedForward network.</p>
 <p>This model allows to create a network with multiple FeedForward combined
 together. The user has to define the <cite>forward</cite> method choosing how to
@@ -147,7 +149,7 @@ combine the different FeedForward networks.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Apr 02, 2024.
+      <span class="lastupdated">Last updated on May 02, 2024.
       </span></p>
   </div>
 
