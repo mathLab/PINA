@@ -1,4 +1,5 @@
 import logging
+import warnings
 
 from abc import ABCMeta, abstractmethod
 from pina.solvers import SolverInterface
@@ -7,11 +8,13 @@ from pina.trainer import Trainer
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-class BenchmarkInterface(metaclass=ABCMeta):
+
+# TODO check problem is from BenchmarkProblemInterface otherwise some functions are not available
+class Benchmark(metaclass=ABCMeta):
 
     def __init__(self, solvers):
         """
-        BenchmarkInferfance class in PINA. All the benchmarks in PINA must
+        Benchmark class in PINA. All the benchmarks in PINA must
         inherit from this class. A benchmark is an object which encapsulate
         PINA problems, providing mathematical description, data to assess
         if a model is correctly trained, statistics of the trained model and
@@ -50,74 +53,39 @@ class BenchmarkInterface(metaclass=ABCMeta):
         self._solvers = solvers
         # is the benchmark completed
         self._benchmarkcompleted = False
-    
-    @property
-    @abstractmethod
-    def description(self):
-        """
-        A brief description of the benchmark.
-        """
-        pass
 
-    @property
-    @abstractmethod
-    def resume(self):
+    @staticmethod
+    def benchmark_not_completed_warning(function):
         """
-        The resume of the considered problem. It must provide the mathematical
-        formulation of the problem in LaTex format using Phython str, defining
-        each input/output variable(s) and the physical domain of the problem.
+        Raises an error if the benchmark is not completed.
+        The benchmark is completed after :meth:`start` returns.
         """
-        pass
+        def inner(self, *args, **kwargs):
+            if not self._benchmarkcompleted:
+                raise warnings.warn(
+                    'The benchmark is not completed but you are '
+                    'trying to compute statistics. The results '
+                    'are not reliable, please run '
+                    'Benchmark.start() before computing statistics.'
+                    , RuntimeWarning)
+            return function(self, *args, **kwargs)
+        return inner
 
-    @property
-    @abstractmethod
-    def problem_type(self):
-        """
-        Return a Python str with the problem type. Each problem could be either
-        `physics-informed`, `data-driven` or `mixed` (if both).
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def problem(self):
-        """
-        Return the PINA problem.
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def data_directory(self):
-        """
-        Returns the data path from where to retrieve the high fiedelity solution
-        data. Regardless the type of problem, all benchmarks have high fidelity
-        solution data to compute statistics and perform visualization.
-        """
-        pass
-
-    @property
-    def start(self, *args, **kwargs):
-        print(args, kwargs)
+    def start(self, **kwargs):
         logging.info('PINA benchmark starting')
         # start the benchmark
         for solver_name, solver in self.solvers.items():
+            print()
             logging.info(f'Solver {solver_name} benchmark')
             kwargs['default_root_dir'] = f'{type(self).__name__}/{solver_name}'
             trainer = Trainer(solver, **kwargs)
             trainer.train()
         # benchmark completed
+        print()
         logging.info(f'PINA benchmark completed')
         self._benchmarkcompleted = True
-
-    @property
-    def is_benchmark_completed(self):
-        """
-        Return if the benchmark is completed. The benchmark is completed
-        after :meth:`start` is called.
-        """
         return self._benchmarkcompleted
-    
+     
     @property
     def solvers(self):
         """
@@ -125,14 +93,14 @@ class BenchmarkInterface(metaclass=ABCMeta):
         """
         return self._solvers
     
-    # TODO
-    @property
-    def compute_statistics(self):
-        self.is_benchmark_completed()
-        raise NotImplementedError
+    # # TODO
+    # @property
+    # @benchmark_not_completed_warning
+    # def compute_statistics(self):
+    #     pass
     
-    # TODO
-    @property
-    def visualize(self):
-        self.is_benchmark_completed()
-        raise NotImplementedError
+    # # TODO
+    # @property
+    # @benchmark_not_completed_warning
+    # def visualize(self):
+    #     pass
