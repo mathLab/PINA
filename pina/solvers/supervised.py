@@ -1,7 +1,6 @@
 """ Module for SupervisedSolver """
 
 import torch
-import sys
 
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
@@ -20,9 +19,32 @@ from torch.nn.modules.loss import _Loss
 
 
 class SupervisedSolver(SolverInterface):
-    """
+    r"""
     SupervisedSolver solver class. This class implements a SupervisedSolver,
     using a user specified ``model`` to solve a specific ``problem``.
+
+    The  Supervised Solver class aims to find
+    a map between the input :math:`\mathbf{s}:\Omega\rightarrow\mathbb{R}^m`
+    and the output :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`. The input
+    can be discretised in space (as in :obj:`~pina.solvers.rom.ROMe2eSolver`),
+    or not (e.g. when training Neural Operators).
+
+    Given a model :math:`\mathcal{M}`, the following loss function is
+    minimized during training:
+
+    .. math::
+        \mathcal{L}_{\rm{problem}} = \frac{1}{N}\sum_{i=1}^N
+        \mathcal{L}(\mathbf{u}_i - \mathcal{M}(\mathbf{v}_i))
+
+    where :math:`\mathcal{L}` is a specific loss function,
+    default Mean Square Error:
+
+    .. math::
+        \mathcal{L}(v) = \| v \|^2_2.
+
+    In this context :math:`\mathbf{u}_i` and :math:`\mathbf{v}_i` means that
+    we are seeking to approximate multiple (discretised) functions given
+    multiple (discretised) input functions.
     """
 
     def __init__(
@@ -112,14 +134,14 @@ class SupervisedSolver(SolverInterface):
             # for data driven mode
             if not hasattr(condition, "output_points"):
                 raise NotImplementedError(
-                    "Supervised solver works only in data-driven mode."
+                    f"{type(self).__name__} works only in data-driven mode."
                 )
 
             output_pts = out[condition_idx == condition_id]
             input_pts = pts[condition_idx == condition_id]
 
             loss = (
-                self.loss(self.forward(input_pts), output_pts)
+                self.loss_data(input_pts=input_pts, output_pts=output_pts)
                 * condition.data_weight
             )
             loss = loss.as_subclass(torch.Tensor)
@@ -127,6 +149,20 @@ class SupervisedSolver(SolverInterface):
         self.log("mean_loss", float(loss), prog_bar=True, logger=True)
         return loss
 
+    def loss_data(self, input_pts, output_pts):
+        """
+        The data loss for the Supervised solver. It computes the loss between
+        the network output against the true solution. This function
+        should not be override if not intentionally.
+
+        :param LabelTensor input_tensor: The input to the neural networks.
+        :param LabelTensor output_tensor: The true solution to compare the
+            network solution.
+        :return: The residual loss averaged on the input coordinates
+        :rtype: torch.Tensor
+        """
+        return self.loss(self.forward(input_pts), output_pts)
+    
     @property
     def scheduler(self):
         """
