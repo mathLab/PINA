@@ -5,7 +5,7 @@ import torch
 
 from torch.optim.lr_scheduler import ConstantLR
 
-from pina.solvers import PINN
+from .pinn import PINN
 from pina.problem import TimeDependentProblem
 from pina.utils import check_consistency
 
