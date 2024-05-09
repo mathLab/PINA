@@ -1,8 +1,8 @@
 __all__ = [
     "BenchmarkProblemInterface",
-    "Poissson1DParametric",
+    "Poisson1DParametric",
 ]
 
 from .benchmark_problem import BenchmarkProblemInterface
-from .poisson import Poissson1DParametric
+from .poisson import Poisson1DParametric
 
