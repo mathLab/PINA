@@ -38,7 +38,7 @@ class PoissonEquation(Equation):
 
 
 ################################################################################
-class Poissson1DParametric(BenchmarkProblemInterface,
+class Poisson1DParametric(BenchmarkProblemInterface,
                            SpatialProblem,
                            ParametricProblem):
     r"""
