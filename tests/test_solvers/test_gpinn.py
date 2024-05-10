@@ -4,7 +4,7 @@ from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
 from pina.geometry import CartesianDomain
 from pina import Condition, LabelTensor
-from pina.solvers import PINN
+from pina.solvers import GPINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.equation.equation import Equation
@@ -58,12 +58,10 @@ class InversePoisson(SpatialProblem, InverseProblem):
             'y':  y_max}),
             equation=FixedValue(0.0, components=['u'])),
         'gamma2': Condition(location=CartesianDomain(
-            {'x': [x_min, x_max], 'y': y_min
-            }),
+            {'x': [x_min, x_max], 'y': y_min}),
             equation=FixedValue(0.0, components=['u'])),
         'gamma3': Condition(location=CartesianDomain(
-            {'x':  x_max, 'y': [y_min, y_max]
-            }),
+            {'x':  x_max, 'y': [y_min, y_max]}),
             equation=FixedValue(0.0, components=['u'])),
         'gamma4': Condition(location=CartesianDomain(
             {'x': x_min, 'y': [y_min, y_max]
@@ -73,8 +71,9 @@ class InversePoisson(SpatialProblem, InverseProblem):
             {'x': [x_min, x_max], 'y': [y_min, y_max]
             }),
         equation=Equation(laplace_equation)),
-        'data': Condition(input_points=data_input.extract(['x', 'y']),
-                          output_points=data_output)
+        'data': Condition(
+            input_points=data_input.extract(['x', 'y']),
+            output_points=data_output)
     }
 
 
@@ -138,14 +137,14 @@ extra_feats = [myFeature()]
 
 
 def test_constructor():
-    PINN(problem=poisson_problem, model=model, extra_features=None)
+    GPINN(problem=poisson_problem, model=model, extra_features=None)
 
 
 def test_constructor_extra_feats():
     model_extra_feats = FeedForward(
         len(poisson_problem.input_variables) + 1,
         len(poisson_problem.output_variables))
-    PINN(problem=poisson_problem,
+    GPINN(problem=poisson_problem,
          model=model_extra_feats,
          extra_features=extra_feats)
 
@@ -155,8 +154,8 @@ def test_train_cpu():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    pinn = PINN(problem = poisson_problem, model=model,
-                extra_features=None, loss=LpLoss())
+    pinn = GPINN(problem = poisson_problem,
+                 model=model, extra_features=None, loss=LpLoss())
     trainer = Trainer(solver=pinn, max_epochs=1,
                       accelerator='cpu', batch_size=20)
     trainer.train()
@@ -168,7 +167,7 @@ def test_train_restore():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    pinn = PINN(problem=poisson_problem,
+    pinn = GPINN(problem=poisson_problem,
                 model=model,
                 extra_features=None,
                 loss=LpLoss())
@@ -191,7 +190,7 @@ def test_train_load():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    pinn = PINN(problem=poisson_problem,
+    pinn = GPINN(problem=poisson_problem,
                 model=model,
                 extra_features=None,
                 loss=LpLoss())
@@ -200,7 +199,7 @@ def test_train_load():
                       accelerator='cpu',
                       default_root_dir=tmpdir)
     trainer.train()
-    new_pinn = PINN.load_from_checkpoint(
+    new_pinn = GPINN.load_from_checkpoint(
         f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=14-step=30.ckpt',
         problem = poisson_problem, model=model)
     test_pts = CartesianDomain({'x': [0, 1], 'y': [0, 1]}).sample(10)
@@ -218,8 +217,8 @@ def test_train_inverse_problem_cpu():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4', 'D']
     n = 100
     poisson_problem.discretise_domain(n, 'random', locations=boundaries)
-    pinn = PINN(problem = poisson_problem, model=model,
-                extra_features=None, loss=LpLoss())
+    pinn = GPINN(problem = poisson_problem,
+                 model=model, extra_features=None, loss=LpLoss())
     trainer = Trainer(solver=pinn, max_epochs=1,
                       accelerator='cpu', batch_size=20)
     trainer.train()
@@ -232,7 +231,7 @@ def test_train_inverse_problem_cpu():
 #     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4', 'D']
 #     n = 100
 #     poisson_problem.discretise_domain(n, 'random', locations=boundaries)
-#     pinn = PINN(problem=poisson_problem,
+#     pinn = GPINN(problem=poisson_problem,
 #                 model=model,
 #                 extra_features=None,
 #                 loss=LpLoss())
@@ -254,7 +253,7 @@ def test_train_inverse_problem_load():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4', 'D']
     n = 100
     poisson_problem.discretise_domain(n, 'random', locations=boundaries)
-    pinn = PINN(problem=poisson_problem,
+    pinn = GPINN(problem=poisson_problem,
                 model=model,
                 extra_features=None,
                 loss=LpLoss())
@@ -263,7 +262,7 @@ def test_train_inverse_problem_load():
                       accelerator='cpu',
                       default_root_dir=tmpdir)
     trainer.train()
-    new_pinn = PINN.load_from_checkpoint(
+    new_pinn = GPINN.load_from_checkpoint(
         f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=14-step=30.ckpt',
         problem = poisson_problem, model=model)
     test_pts = CartesianDomain({'x': [0, 1], 'y': [0, 1]}).sample(10)
@@ -288,7 +287,7 @@ def test_train_inverse_problem_load():
 #     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
 #     poisson_problem.discretise_domain(n, 'random', locations=['gamma4'], variables=['x'])
 #     poisson_problem.discretise_domain(n, 'random', locations=['gamma4'], variables=['y'])
-#     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
+#     pinn = GPINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
 #     trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'cpu'})
 #     trainer.train()
 
@@ -298,7 +297,7 @@ def test_train_extra_feats_cpu():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    pinn = PINN(problem=poisson_problem,
+    pinn = GPINN(problem=poisson_problem,
                 model=model_extra_feats,
                 extra_features=extra_feats)
     trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu')
@@ -311,7 +310,7 @@ def test_train_extra_feats_cpu():
 #     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
 #     n = 10
 #     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-#     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
+#     pinn = GPINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
 #     trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'gpu'})
 #     trainer.train()
 
@@ -321,7 +320,7 @@ def test_train_extra_feats_cpu():
 #     n = 10
 #     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
 #     poisson_problem.conditions.pop('data') # The input/output pts are allocated on cpu
-#     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
+#     pinn = GPINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
 #     trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'gpu'})
 #     trainer.train()
 
@@ -331,7 +330,7 @@ def test_train_extra_feats_cpu():
 #     expected_keys = [[], list(range(0, 50, 3))]
 #     param = [0, 3]
 #     for i, truth_key in zip(param, expected_keys):
-#         pinn = PINN(problem, model)
+#         pinn = GPINN(problem, model)
 #         pinn.discretise_domain(n, 'grid', locations=boundaries)
 #         pinn.discretise_domain(n, 'grid', locations=['D'])
 #         pinn.train(50, save_loss=i)
@@ -339,7 +338,7 @@ def test_train_extra_feats_cpu():
 
 
 # def test_train_extra_feats():
-#     pinn = PINN(problem, model_extra_feat, [myFeature()])
+#     pinn = GPINN(problem, model_extra_feat, [myFeature()])
 #     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
 #     n = 10
 #     pinn.discretise_domain(n, 'grid', locations=boundaries)
@@ -353,7 +352,7 @@ def test_train_extra_feats_cpu():
 #     expected_keys = [[], list(range(0, 50, 3))]
 #     param = [0, 3]
 #     for i, truth_key in zip(param, expected_keys):
-#         pinn = PINN(problem, model_extra_feat, [myFeature()])
+#         pinn = GPINN(problem, model_extra_feat, [myFeature()])
 #         pinn.discretise_domain(n, 'grid', locations=boundaries)
 #         pinn.discretise_domain(n, 'grid', locations=['D'])
 #         pinn.train(50, save_loss=i)
@@ -366,7 +365,7 @@ def test_train_extra_feats_cpu():
 #     expected_keys = [[], list(range(0, 50, 3))]
 #     param = [0, 3]
 #     for i, truth_key in zip(param, expected_keys):
-#         pinn = PINN(problem, model, optimizer_kwargs={'lr' : 0.3})
+#         pinn = GPINN(problem, model, optimizer_kwargs={'lr' : 0.3})
 #         pinn.discretise_domain(n, 'grid', locations=boundaries)
 #         pinn.discretise_domain(n, 'grid', locations=['D'])
 #         pinn.train(50, save_loss=i)
@@ -379,7 +378,7 @@ def test_train_extra_feats_cpu():
 #     expected_keys = [[], list(range(0, 50, 3))]
 #     param = [0, 3]
 #     for i, truth_key in zip(param, expected_keys):
-#         pinn = PINN(
+#         pinn = GPINN(
 #             problem,
 #             model,
 #             lr_scheduler_type=torch.optim.lr_scheduler.CyclicLR,
@@ -392,7 +391,7 @@ def test_train_extra_feats_cpu():
 
 
 # # def test_train_batch():
-# #     pinn = PINN(problem, model, batch_size=6)
+# #     pinn = GPINN(problem, model, batch_size=6)
 # #     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
 # #     n = 10
 # #     pinn.discretise_domain(n, 'grid', locations=boundaries)
@@ -406,7 +405,7 @@ def test_train_extra_feats_cpu():
 # #     expected_keys = [[], list(range(0, 50, 3))]
 # #     param = [0, 3]
 # #     for i, truth_key in zip(param, expected_keys):
-# #         pinn = PINN(problem, model, batch_size=6)
+# #         pinn = GPINN(problem, model, batch_size=6)
 # #         pinn.discretise_domain(n, 'grid', locations=boundaries)
 # #         pinn.discretise_domain(n, 'grid', locations=['D'])
 # #         pinn.train(50, save_loss=i)
@@ -416,7 +415,7 @@ def test_train_extra_feats_cpu():
 # if torch.cuda.is_available():
 
 #     # def test_gpu_train():
-#     #     pinn = PINN(problem, model, batch_size=20, device='cuda')
+#     #     pinn = GPINN(problem, model, batch_size=20, device='cuda')
 #     #     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
 #     #     n = 100
 #     #     pinn.discretise_domain(n, 'grid', locations=boundaries)
@@ -424,7 +423,7 @@ def test_train_extra_feats_cpu():
 #     #     pinn.train(5)
 
 #     def test_gpu_train_nobatch():
-#         pinn = PINN(problem, model, batch_size=None, device='cuda')
+#         pinn = GPINN(problem, model, batch_size=None, device='cuda')
 #         boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
 #         n = 100
 #         pinn.discretise_domain(n, 'grid', locations=boundaries)
