@@ -118,7 +118,7 @@ class SupervisedSolver(SolverInterface):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-        
+
         condition_idx = batch["condition"]
 
         for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
@@ -162,7 +162,7 @@ class SupervisedSolver(SolverInterface):
         :rtype: torch.Tensor
         """
         return self.loss(self.forward(input_pts), output_pts)
-    
+
     @property
     def scheduler(self):
         """
