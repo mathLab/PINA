@@ -253,18 +253,11 @@ class GAROM(SolverInterface):
         :rtype: LabelTensor
         """
 
-        dataloader = self.trainer.train_dataloader
         condition_idx = batch["condition"]
 
         for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
 
-            if sys.version_info >= (3, 8):
-                condition_name = dataloader.condition_names[condition_id]
-            else:
-                condition_name = dataloader.loaders.condition_names[
-                    condition_id
-                ]
-
+            condition_name = self._dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
             pts = batch["pts"].detach()
             out = batch["output"]
