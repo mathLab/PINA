@@ -12,11 +12,12 @@ from torch.nn.modules.loss import _Loss
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
 
+
 class PINNInterface(SolverInterface, metaclass=ABCMeta):
     """
     Base PINN solver class. This class implements the Solver Interface
     for Physics Informed Neural Network solvers.
-    
+
     This class can be used to
     define PINNs with multiple ``optimizers``, and/or ``models``.
     By default it takes
@@ -72,7 +73,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             self._clamp_params = self._clamp_inverse_problem_params
         else:
             self._params = None
-            self._clamp_params = lambda : None
+            self._clamp_params = lambda: None
 
         # variable used internally to store residual losses at each epoch
         # this variable save the residual at each iteration (not weighted)
@@ -107,7 +108,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             condition = self.problem.conditions[condition_name]
             pts = batch["pts"]
             # condition name is logged (if logs enabled)
-            self.__logged_metric = condition_name 
+            self.__logged_metric = condition_name
 
             if len(batch) == 2:
                 samples = pts[condition_idx == condition_id]
@@ -160,7 +161,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :rtype: LabelTensor
         """
         pass
-        
+
     def compute_residual(self, samples, equation):
         """
         Compute the residual for Physics Informed learning. This function
@@ -182,7 +183,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                 samples, self.forward(samples), self._params
             )
         return residual
-    
+
     def store_log(self, loss_value):
         """
         Stores the loss value in the logger. This function should be
@@ -195,13 +196,13 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :param torch.Tensor loss_value: The value of the loss.
         """
         self.log(
-                self.__logged_metric+'_loss',
-                loss_value,
-                prog_bar=True,
-                logger=True,
-                on_epoch=True,
-                on_step=False,
-            )
+            self.__logged_metric + "_loss",
+            loss_value,
+            prog_bar=True,
+            logger=True,
+            on_epoch=True,
+            on_step=False,
+        )
         self.__logged_res_losses.append(loss_value)
 
     def on_train_epoch_end(self):
@@ -211,10 +212,10 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         """
         if self.__logged_res_losses:
             # storing mean loss
-            self.__logged_metric = 'mean'
+            self.__logged_metric = "mean"
             self.store_log(
-                sum(self.__logged_res_losses)/len(self.__logged_res_losses)
-                )
+                sum(self.__logged_res_losses) / len(self.__logged_res_losses)
+            )
             # free the logged losses
             self.__logged_res_losses = []
         return super().on_train_epoch_end()

@@ -67,9 +67,9 @@ class Trainer(pytorch_lightning.Trainer):
         pb = self._model.problem
         if hasattr(pb, "unknown_parameters"):
             for key in pb.unknown_parameters:
-                pb.unknown_parameters[key] = torch.nn.Parameter(pb.unknown_parameters[key].data.to(device))
-
-
+                pb.unknown_parameters[key] = torch.nn.Parameter(
+                    pb.unknown_parameters[key].data.to(device)
+                )
 
     def train(self, **kwargs):
         """

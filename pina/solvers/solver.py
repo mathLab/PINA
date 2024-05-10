@@ -142,13 +142,13 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         """
         The problem formulation."""
         return self._pina_problem
-    
+
     def on_train_start(self):
         """
         On training epoch start this function is call to do global checks for
         the different solvers.
         """
-        
+
         # 1. Check the verison for dataloader
         dataloader = self.trainer.train_dataloader
         if sys.version_info < (3, 8):
