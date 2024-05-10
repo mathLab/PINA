@@ -6,6 +6,7 @@ import pytorch_lightning
 from ..utils import check_consistency
 from ..problem import AbstractProblem
 import torch
+import sys
 
 
 class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
@@ -141,6 +142,20 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         """
         The problem formulation."""
         return self._pina_problem
+    
+    def on_train_start(self):
+        """
+        On training epoch start this function is call to do global checks for
+        the different solvers.
+        """
+        
+        # 1. Check the verison for dataloader
+        dataloader = self.trainer.train_dataloader
+        if sys.version_info < (3, 8):
+            dataloader = dataloader.loaders
+        self._dataloader = dataloader
+
+        return super().on_train_start()
 
     # @model.setter
     # def model(self, new_model):

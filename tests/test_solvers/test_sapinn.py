@@ -1,10 +1,11 @@
 import torch
+import pytest
 
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
 from pina.geometry import CartesianDomain
 from pina import Condition, LabelTensor
-from pina.solvers import PINN
+from pina.solvers import SAPINN as PINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.equation.equation import Equation
@@ -139,6 +140,9 @@ extra_feats = [myFeature()]
 
 def test_constructor():
     PINN(problem=poisson_problem, model=model, extra_features=None)
+    with pytest.raises(ValueError):
+        PINN(problem=poisson_problem, model=model, extra_features=None,
+             weights_function=1)
 
 
 def test_constructor_extra_feats():

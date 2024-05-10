@@ -1,10 +1,11 @@
 import torch
+import pytest 
 
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
 from pina.geometry import CartesianDomain
 from pina import Condition, LabelTensor
-from pina.solvers import PINN
+from pina.solvers import CompetitivePINN as PINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.equation.equation import Equation
@@ -138,16 +139,18 @@ extra_feats = [myFeature()]
 
 
 def test_constructor():
-    PINN(problem=poisson_problem, model=model, extra_features=None)
+    PINN(problem=poisson_problem, model=model)
+    PINN(problem=poisson_problem, model=model, discriminator = model)
 
 
 def test_constructor_extra_feats():
-    model_extra_feats = FeedForward(
-        len(poisson_problem.input_variables) + 1,
-        len(poisson_problem.output_variables))
-    PINN(problem=poisson_problem,
-         model=model_extra_feats,
-         extra_features=extra_feats)
+    with pytest.raises(TypeError):
+        model_extra_feats = FeedForward(
+            len(poisson_problem.input_variables) + 1,
+            len(poisson_problem.output_variables))
+        PINN(problem=poisson_problem,
+            model=model_extra_feats,
+            extra_features=extra_feats)
 
 
 def test_train_cpu():
@@ -155,8 +158,7 @@ def test_train_cpu():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    pinn = PINN(problem = poisson_problem, model=model,
-                extra_features=None, loss=LpLoss())
+    pinn = PINN(problem = poisson_problem, model=model, loss=LpLoss())
     trainer = Trainer(solver=pinn, max_epochs=1,
                       accelerator='cpu', batch_size=20)
     trainer.train()
@@ -170,7 +172,6 @@ def test_train_restore():
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     pinn = PINN(problem=poisson_problem,
                 model=model,
-                extra_features=None,
                 loss=LpLoss())
     trainer = Trainer(solver=pinn,
                       max_epochs=5,
@@ -193,7 +194,6 @@ def test_train_load():
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     pinn = PINN(problem=poisson_problem,
                 model=model,
-                extra_features=None,
                 loss=LpLoss())
     trainer = Trainer(solver=pinn,
                       max_epochs=15,
@@ -218,8 +218,7 @@ def test_train_inverse_problem_cpu():
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4', 'D']
     n = 100
     poisson_problem.discretise_domain(n, 'random', locations=boundaries)
-    pinn = PINN(problem = poisson_problem, model=model,
-                extra_features=None, loss=LpLoss())
+    pinn = PINN(problem = poisson_problem, model=model, loss=LpLoss())
     trainer = Trainer(solver=pinn, max_epochs=1,
                       accelerator='cpu', batch_size=20)
     trainer.train()
@@ -234,7 +233,6 @@ def test_train_inverse_problem_cpu():
 #     poisson_problem.discretise_domain(n, 'random', locations=boundaries)
 #     pinn = PINN(problem=poisson_problem,
 #                 model=model,
-#                 extra_features=None,
 #                 loss=LpLoss())
 #     trainer = Trainer(solver=pinn,
 #                       max_epochs=5,
@@ -256,7 +254,6 @@ def test_train_inverse_problem_load():
     poisson_problem.discretise_domain(n, 'random', locations=boundaries)
     pinn = PINN(problem=poisson_problem,
                 model=model,
-                extra_features=None,
                 loss=LpLoss())
     trainer = Trainer(solver=pinn,
                       max_epochs=15,
@@ -291,18 +288,6 @@ def test_train_inverse_problem_load():
 #     pinn = PINN(problem = poisson_problem, model=model, extra_features=None, loss=LpLoss())
 #     trainer = Trainer(solver=pinn, kwargs={'max_epochs' : 5, 'accelerator':'cpu'})
 #     trainer.train()
-
-
-def test_train_extra_feats_cpu():
-    poisson_problem = Poisson()
-    boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-    n = 10
-    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-    pinn = PINN(problem=poisson_problem,
-                model=model_extra_feats,
-                extra_features=extra_feats)
-    trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu')
-    trainer.train()
 
 
 # TODO, fix GitHub actions to run also on GPU

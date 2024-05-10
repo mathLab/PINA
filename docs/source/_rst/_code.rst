@@ -35,8 +35,14 @@ Solvers
     :titlesonly:
     
     SolverInterface <solvers/solver_interface.rst>
+    PINNInterface <solvers/basepinn.rst>
     PINN <solvers/pinn.rst>
+    GPINN <solvers/gpinn.rst>
+    CausalPINN <solvers/causalpinn.rst>
+    CompetitivePINN <solvers/competitivepinn.rst>
+    SAPINN <solvers/sapinn.rst>
     Supervised solver <solvers/supervised.rst>
+    ReducedOrderModelSolver <solvers/rom.rst>
     GAROM <solvers/garom.rst>
 
 
