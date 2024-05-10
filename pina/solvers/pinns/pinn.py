@@ -87,7 +87,7 @@ class PINN(PINNInterface):
             optimizers=[optimizer],
             optimizers_kwargs=[optimizer_kwargs],
             extra_features=extra_features,
-            loss=loss
+            loss=loss,
         )
 
         # check consistency
@@ -131,7 +131,6 @@ class PINN(PINNInterface):
         self.store_log(loss_value=float(loss_value))
         return loss_value
 
-
     def configure_optimizers(self):
         """
         Optimizer configuration for the PINN
@@ -153,14 +152,12 @@ class PINN(PINNInterface):
             )
         return self.optimizers, [self.scheduler]
 
-
     @property
     def scheduler(self):
         """
         Scheduler for the PINN training.
         """
         return self._scheduler
-
 
     @property
     def neural_net(self):
