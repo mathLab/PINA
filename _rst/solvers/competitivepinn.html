@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CompetitivePINN &mdash; PINA 0.1.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="SAPINN" href="sapinn.html" />
+    <link rel="prev" title="CausalPINN" href="causalpinn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../_code.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#pina-features">PINA Features</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../_code.html#solvers">Solvers</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="solver_interface.html">SolverInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basepinn.html">PINNInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pinn.html">PINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpinn.html">GPINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="causalpinn.html">CausalPINN</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">CompetitivePINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sapinn.html">SAPINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="supervised.html">Supervised solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rom.html">ReducedOrderModelSolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="garom.html">GAROM</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometries">Geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometry-set-operations">Geometry set operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_code.html#metrics-and-losses">Metrics and Losses</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_team.html">Team &amp; Fundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../_code.html">Code Documentation</a></li>
+      <li class="breadcrumb-item active">CompetitivePINN</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/_rst/solvers/competitivepinn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="competitivepinn">
+<h1>CompetitivePINN<a class="headerlink" href="#competitivepinn" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN">
+<em class="property">class </em><code class="sig-name descname">CompetitivePINN</code><span class="sig-paren">(</span><em class="sig-param">problem</em>, <em class="sig-param">model</em>, <em class="sig-param">discriminator=None</em>, <em class="sig-param">loss=MSELoss()</em>, <em class="sig-param">optimizer_model=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optimizer_model_kwargs={'lr': 0.001}</em>, <em class="sig-param">optimizer_discriminator=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optimizer_discriminator_kwargs={'lr': 0.001}</em>, <em class="sig-param">scheduler_model=&lt;class 'torch.optim.lr_scheduler.ConstantLR'&gt;</em>, <em class="sig-param">scheduler_model_kwargs={'factor': 1</em>, <em class="sig-param">'total_iters': 0}</em>, <em class="sig-param">scheduler_discriminator=&lt;class 'torch.optim.lr_scheduler.ConstantLR'&gt;</em>, <em class="sig-param">scheduler_discriminator_kwargs={'factor': 1</em>, <em class="sig-param">'total_iters': 0}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/pinns/competitive_pinn.html#CompetitivePINN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="basepinn.html#pina.solvers.pinns.basepinn.PINNInterface" title="pina.solvers.pinns.basepinn.PINNInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.solvers.pinns.basepinn.PINNInterface</span></code></a></p>
+<p>Competitive Physics Informed Neural Network (PINN) solver class.
+This class implements Competitive Physics Informed Neural
+Network solvers, using a user specified <code class="docutils literal notranslate"><span class="pre">model</span></code> to solve a specific
+<code class="docutils literal notranslate"><span class="pre">problem</span></code>. It can be used for solving both forward and inverse problems.</p>
+<p>The Competitive Physics Informed Network aims to find
+the solution <span class="math notranslate nohighlight">\(\mathbf{u}:\Omega\rightarrow\mathbb{R}^m\)</span>
+of the differential problem:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{cases}
+\mathcal{A}[\mathbf{u}](\mathbf{x})=0\quad,\mathbf{x}\in\Omega\\
+\mathcal{B}[\mathbf{u}](\mathbf{x})=0\quad,
+\mathbf{x}\in\partial\Omega
+\end{cases}\end{split}\]</div>
+<p>with a minimization (on <code class="docutils literal notranslate"><span class="pre">model</span></code> parameters) maximation (
+on <code class="docutils literal notranslate"><span class="pre">discriminator</span></code> parameters) of the loss function</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}_{\rm{problem}} = \frac{1}{N}\sum_{i=1}^N
+\mathcal{L}(D(\mathbf{x}_i)\mathcal{A}[\mathbf{u}](\mathbf{x}_i))+
+\frac{1}{N}\sum_{i=1}^N
+\mathcal{L}(D(\mathbf{x}_i)\mathcal{B}[\mathbf{u}](\mathbf{x}_i))\]</div>
+<p>where <span class="math notranslate nohighlight">\(D\)</span> is the discriminator network, which tries to find the points
+where the network performs worst, and <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> is a specific loss
+function, default Mean Square Error:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}(v) = \| v \|^2_2.\]</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><strong>Original reference</strong>: Zeng, Qi, et al.
+“Competitive physics informed networks.” International Conference on
+Learning Representations, ICLR 2022
+<a class="reference external" href="https://openreview.net/forum?id=z9SIj-IM7tn">OpenReview Preprint</a>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This solver does not currently support the possibility to pass
+<code class="docutils literal notranslate"><span class="pre">extra_feature</span></code>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="../problem/abstractproblem.html#pina.problem.abstract_problem.AbstractProblem" title="pina.problem.abstract_problem.AbstractProblem"><em>AbstractProblem</em></a>) – The formualation of the problem.</p></li>
+<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a>) – The neural network model to use
+for the model.</p></li>
+<li><p><strong>discriminator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a>) – The neural network model to use
+for the discriminator. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the discriminator network will
+have the same architecture as the model network.</p></li>
+<li><p><strong>loss</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)"><em>torch.nn.Module</em></a>) – The loss function used as minimizer,
+default <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html#torch.nn.MSELoss" title="(in PyTorch v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.MSELoss</span></code></a>.</p></li>
+<li><p><strong>optimizer_model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.3)"><em>torch.optim.Optimizer</em></a>) – The neural
+network optimizer to use for the model network
+, default is <cite>torch.optim.Adam</cite>.</p></li>
+<li><p><strong>optimizer_model_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Optimizer constructor keyword
+args. for the model.</p></li>
+<li><p><strong>optimizer_discriminator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.3)"><em>torch.optim.Optimizer</em></a>) – The neural
+network optimizer to use for the discriminator network
+, default is <cite>torch.optim.Adam</cite>.</p></li>
+<li><p><strong>optimizer_discriminator_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Optimizer constructor
+keyword args. for the discriminator.</p></li>
+<li><p><strong>scheduler_model</strong> (<em>torch.optim.LRScheduler</em>) – Learning
+rate scheduler for the model.</p></li>
+<li><p><strong>scheduler_model_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – LR scheduler constructor
+keyword args.</p></li>
+<li><p><strong>scheduler_discriminator</strong> (<em>torch.optim.LRScheduler</em>) – Learning
+rate scheduler for the discriminator.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/pinns/competitive_pinn.html#CompetitivePINN.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward pass implementation for the PINN solver. It returns the function
+evaluation <span class="math notranslate nohighlight">\(\mathbf{u}(\mathbf{x})\)</span> at the control points
+<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Input tensor for the PINN solver. It expects
+a tensor <span class="math notranslate nohighlight">\(N \times D\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> the number of points
+in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimension of the problem,</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PINN solution evaluated at contro points.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.loss_phys">
+<code class="sig-name descname">loss_phys</code><span class="sig-paren">(</span><em class="sig-param">samples</em>, <em class="sig-param">equation</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/pinns/competitive_pinn.html#CompetitivePINN.loss_phys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.loss_phys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the physics loss for the Competitive PINN solver based on given
+samples and equation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The samples to evaluate the physics loss.</p></li>
+<li><p><strong>equation</strong> (<a class="reference internal" href="../equations.html#pina.equation.equation_interface.EquationInterface" title="pina.equation.equation_interface.EquationInterface"><em>EquationInterface</em></a>) – The governing equation
+representing the physics.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The physics loss calculated based on given
+samples and equation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.loss_data">
+<code class="sig-name descname">loss_data</code><span class="sig-paren">(</span><em class="sig-param">input_tensor</em>, <em class="sig-param">output_tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/pinns/competitive_pinn.html#CompetitivePINN.loss_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.loss_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data loss for the PINN solver. It computes the loss between the
+network output against the true solution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_tensor</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The input to the neural networks.</p></li>
+<li><p><strong>output_tensor</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The true solution to compare the
+network solution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The computed data loss.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.configure_optimizers">
+<code class="sig-name descname">configure_optimizers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/pinns/competitive_pinn.html#CompetitivePINN.configure_optimizers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.configure_optimizers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizer configuration for the Competitive PINN solver.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The optimizers and the schedulers</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)">tuple</a>(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.on_train_batch_end">
+<code class="sig-name descname">on_train_batch_end</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">batch</em>, <em class="sig-param">batch_idx</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/pinns/competitive_pinn.html#CompetitivePINN.on_train_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.on_train_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called at the end of each training batch, and ovverides
+the PytorchLightining implementation for logging the checkpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><em>torch.Tensor</em></a>) – The output from the model for the
+current batch.</p></li>
+<li><p><strong>batch</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><em>tuple</em></a>) – The current batch of data.</p></li>
+<li><p><strong>batch_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The index of the current batch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whatever is returned by the parent
+method <code class="docutils literal notranslate"><span class="pre">on_train_batch_end</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.neural_net">
+<em class="property">property </em><code class="sig-name descname">neural_net</code><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.neural_net" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the neural network model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The neural network model.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)">torch.nn.Module</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.discriminator">
+<em class="property">property </em><code class="sig-name descname">discriminator</code><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.discriminator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the discriminator model (if applicable).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The discriminator model.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.3)">torch.nn.Module</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.optimizer_model">
+<em class="property">property </em><code class="sig-name descname">optimizer_model</code><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.optimizer_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer associated with the neural network model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The optimizer for the neural network model.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.3)">torch.optim.Optimizer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.optimizer_discriminator">
+<em class="property">property </em><code class="sig-name descname">optimizer_discriminator</code><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.optimizer_discriminator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer associated with the discriminator (if applicable).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The optimizer for the discriminator.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/optim.html#torch.optim.Optimizer" title="(in PyTorch v2.3)">torch.optim.Optimizer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.scheduler_model">
+<em class="property">property </em><code class="sig-name descname">scheduler_model</code><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.scheduler_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the scheduler associated with the neural network model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The scheduler for the neural network model.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>torch.optim.lr_scheduler._LRScheduler</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pina.solvers.pinns.competitive_pinn.CompetitivePINN.scheduler_discriminator">
+<em class="property">property </em><code class="sig-name descname">scheduler_discriminator</code><a class="headerlink" href="#pina.solvers.pinns.competitive_pinn.CompetitivePINN.scheduler_discriminator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the scheduler associated with the discriminator (if applicable).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The scheduler for the discriminator.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>torch.optim.lr_scheduler._LRScheduler</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="causalpinn.html" class="btn btn-neutral float-left" title="CausalPINN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sapinn.html" class="btn btn-neutral float-right" title="SAPINN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on May 11, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

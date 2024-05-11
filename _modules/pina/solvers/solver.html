@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.solvers.solver &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.solvers.solver &mdash; PINA 0.1.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -37,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2405
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -97,6 +97,7 @@
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
 <span class="kn">from</span> <span class="nn">..problem</span> <span class="kn">import</span> <span class="n">AbstractProblem</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
 
 <div class="viewcode-block" id="SolverInterface"><a class="viewcode-back" href="../../../_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface">[docs]</a><span class="k">class</span> <span class="nc">SolverInterface</span><span class="p">(</span><span class="n">pytorch_lightning</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
@@ -231,7 +232,21 @@
     <span class="k">def</span> <span class="nf">problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The problem formulation.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span>
+
+<div class="viewcode-block" id="SolverInterface.on_train_start"><a class="viewcode-back" href="../../../_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface.on_train_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On training epoch start this function is call to do global checks for</span>
+<span class="sd">        the different solvers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 1. Check the verison for dataloader</span>
+        <span class="n">dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">train_dataloader</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+            <span class="n">dataloader</span> <span class="o">=</span> <span class="n">dataloader</span><span class="o">.</span><span class="n">loaders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span> <span class="o">=</span> <span class="n">dataloader</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_start</span><span class="p">()</span></div></div>
 
     <span class="c1"># @model.setter</span>
     <span class="c1"># def model(self, new_model):</span>
@@ -256,7 +271,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on May 02, 2024.
+      <span class="lastupdated">Last updated on May 11, 2024.
       </span></p>
   </div>
 

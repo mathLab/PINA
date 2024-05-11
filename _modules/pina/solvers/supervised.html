@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.solvers.supervised &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.solvers.supervised &mdash; PINA 0.1.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -37,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2405
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -92,7 +92,6 @@
 <span></span><span class="sd">&quot;&quot;&quot; Module for SupervisedSolver &quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">LRScheduler</span>  <span class="c1"># torch &gt;= 2.0</span>
@@ -111,9 +110,32 @@
 
 
 <div class="viewcode-block" id="SupervisedSolver"><a class="viewcode-back" href="../../../_rst/solvers/supervised.html#pina.solvers.supervised.SupervisedSolver">[docs]</a><span class="k">class</span> <span class="nc">SupervisedSolver</span><span class="p">(</span><span class="n">SolverInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SupervisedSolver solver class. This class implements a SupervisedSolver,</span>
 <span class="sd">    using a user specified ``model`` to solve a specific ``problem``.</span>
+
+<span class="sd">    The  Supervised Solver class aims to find</span>
+<span class="sd">    a map between the input :math:`\mathbf{s}:\Omega\rightarrow\mathbb{R}^m`</span>
+<span class="sd">    and the output :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`. The input</span>
+<span class="sd">    can be discretised in space (as in :obj:`~pina.solvers.rom.ROMe2eSolver`),</span>
+<span class="sd">    or not (e.g. when training Neural Operators).</span>
+
+<span class="sd">    Given a model :math:`\mathcal{M}`, the following loss function is</span>
+<span class="sd">    minimized during training:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathcal{L}_{\rm{problem}} = \frac{1}{N}\sum_{i=1}^N</span>
+<span class="sd">        \mathcal{L}(\mathbf{u}_i - \mathcal{M}(\mathbf{v}_i))</span>
+
+<span class="sd">    where :math:`\mathcal{L}` is a specific loss function,</span>
+<span class="sd">    default Mean Square Error:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathcal{L}(v) = \| v \|^2_2.</span>
+
+<span class="sd">    In this context :math:`\mathbf{u}_i` and :math:`\mathbf{v}_i` means that</span>
+<span class="sd">    we are seeking to approximate multiple (discretised) functions given</span>
+<span class="sd">    multiple (discretised) input functions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -188,17 +210,11 @@
 <span class="sd">        :rtype: LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">train_dataloader</span>
         <span class="n">condition_idx</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;condition&quot;</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">condition_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">condition_idx</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">condition_idx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
 
-            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-                <span class="n">condition_name</span> <span class="o">=</span> <span class="n">dataloader</span><span class="o">.</span><span class="n">condition_names</span><span class="p">[</span><span class="n">condition_id</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">condition_name</span> <span class="o">=</span> <span class="n">dataloader</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">condition_names</span><span class="p">[</span>
-                    <span class="n">condition_id</span>
-                <span class="p">]</span>
+            <span class="n">condition_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataloader</span><span class="o">.</span><span class="n">condition_names</span><span class="p">[</span><span class="n">condition_id</span><span class="p">]</span>
             <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span>
             <span class="n">pts</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;pts&quot;</span><span class="p">]</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
@@ -209,20 +225,34 @@
             <span class="c1"># for data driven mode</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s2">&quot;output_points&quot;</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                    <span class="s2">&quot;Supervised solver works only in data-driven mode.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;{type(self).__name__} works only in data-driven mode.&quot;</span>
                 <span class="p">)</span>
 
             <span class="n">output_pts</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="n">condition_idx</span> <span class="o">==</span> <span class="n">condition_id</span><span class="p">]</span>
             <span class="n">input_pts</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[</span><span class="n">condition_idx</span> <span class="o">==</span> <span class="n">condition_id</span><span class="p">]</span>
 
             <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input_pts</span><span class="p">),</span> <span class="n">output_pts</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">loss_data</span><span class="p">(</span><span class="n">input_pts</span><span class="o">=</span><span class="n">input_pts</span><span class="p">,</span> <span class="n">output_pts</span><span class="o">=</span><span class="n">output_pts</span><span class="p">)</span>
                 <span class="o">*</span> <span class="n">condition</span><span class="o">.</span><span class="n">data_weight</span>
             <span class="p">)</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;mean_loss&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">loss</span><span class="p">),</span> <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span></div>
+
+<div class="viewcode-block" id="SupervisedSolver.loss_data"><a class="viewcode-back" href="../../../_rst/solvers/supervised.html#pina.solvers.supervised.SupervisedSolver.loss_data">[docs]</a>    <span class="k">def</span> <span class="nf">loss_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_pts</span><span class="p">,</span> <span class="n">output_pts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The data loss for the Supervised solver. It computes the loss between</span>
+<span class="sd">        the network output against the true solution. This function</span>
+<span class="sd">        should not be override if not intentionally.</span>
+
+<span class="sd">        :param LabelTensor input_tensor: The input to the neural networks.</span>
+<span class="sd">        :param LabelTensor output_tensor: The true solution to compare the</span>
+<span class="sd">            network solution.</span>
+<span class="sd">        :return: The residual loss averaged on the input coordinates</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input_pts</span><span class="p">),</span> <span class="n">output_pts</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -254,7 +284,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on May 02, 2024.
+      <span class="lastupdated">Last updated on May 11, 2024.
       </span></p>
   </div>
 

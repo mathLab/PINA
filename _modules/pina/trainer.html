@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.trainer &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>pina.trainer &mdash; PINA 0.1.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -37,7 +37,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2405
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -91,6 +91,7 @@
   <h1>Source code for pina.trainer</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Trainer module. &quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">pytorch_lightning</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
 <span class="kn">from</span> <span class="nn">.dataset</span> <span class="kn">import</span> <span class="n">SamplePointDataset</span><span class="p">,</span> <span class="n">SamplePointLoader</span><span class="p">,</span> <span class="n">DataPointDataset</span>
@@ -154,6 +155,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span> <span class="o">=</span> <span class="n">SamplePointLoader</span><span class="p">(</span>
             <span class="n">dataset_phys</span><span class="p">,</span> <span class="n">dataset_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
+        <span class="n">pb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">problem</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pb</span><span class="p">,</span> <span class="s2">&quot;unknown_parameters&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pb</span><span class="o">.</span><span class="n">unknown_parameters</span><span class="p">:</span>
+                <span class="n">pb</span><span class="o">.</span><span class="n">unknown_parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                    <span class="n">pb</span><span class="o">.</span><span class="n">unknown_parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="p">)</span>
 
 <div class="viewcode-block" id="Trainer.train"><a class="viewcode-back" href="../../_rst/trainer.html#pina.trainer.Trainer.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -179,7 +186,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on May 02, 2024.
+      <span class="lastupdated">Last updated on May 11, 2024.
       </span></p>
   </div>
 

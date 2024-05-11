@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pina.solvers.pinns.pinn &mdash; PINA 0.1.1 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+        <script src="../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_rst/_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_rst/_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_rst/_tutorial.html">Tutorials</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_team.html">Team &amp; Fundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_rst/_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pina.solvers.pinns.pinn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pina.solvers.pinns.pinn</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Module for Physics Informed Neural Network. &quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">LRScheduler</span>  <span class="c1"># torch &gt;= 2.0</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">_LRScheduler</span> <span class="k">as</span> <span class="n">LRScheduler</span><span class="p">,</span>
+    <span class="p">)</span>  <span class="c1"># torch &lt; 2.0</span>
+
+<span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">ConstantLR</span>
+
+<span class="kn">from</span> <span class="nn">.basepinn</span> <span class="kn">import</span> <span class="n">PINNInterface</span>
+<span class="kn">from</span> <span class="nn">pina.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+<span class="kn">from</span> <span class="nn">pina.problem</span> <span class="kn">import</span> <span class="n">InverseProblem</span>
+
+
+<div class="viewcode-block" id="PINN"><a class="viewcode-back" href="../../../../_rst/solvers/pinn.html#pina.solvers.pinns.pinn.PINN">[docs]</a><span class="k">class</span> <span class="nc">PINN</span><span class="p">(</span><span class="n">PINNInterface</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Physics Informed Neural Network (PINN) solver class.</span>
+<span class="sd">    This class implements Physics Informed Neural</span>
+<span class="sd">    Network solvers, using a user specified ``model`` to solve a specific</span>
+<span class="sd">    ``problem``. It can be used for solving both forward and inverse problems.</span>
+
+<span class="sd">    The Physics Informed Network aims to find</span>
+<span class="sd">    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`</span>
+<span class="sd">    of the differential problem:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \begin{cases}</span>
+<span class="sd">        \mathcal{A}[\mathbf{u}](\mathbf{x})=0\quad,\mathbf{x}\in\Omega\\</span>
+<span class="sd">        \mathcal{B}[\mathbf{u}](\mathbf{x})=0\quad,</span>
+<span class="sd">        \mathbf{x}\in\partial\Omega</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    minimizing the loss function</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathcal{L}_{\rm{problem}} = \frac{1}{N}\sum_{i=1}^N</span>
+<span class="sd">        \mathcal{L}(\mathcal{A}[\mathbf{u}](\mathbf{x}_i)) +</span>
+<span class="sd">        \frac{1}{N}\sum_{i=1}^N</span>
+<span class="sd">        \mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i))</span>
+
+<span class="sd">    where :math:`\mathcal{L}` is a specific loss function, default Mean Square Error:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathcal{L}(v) = \| v \|^2_2.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        **Original reference**: Karniadakis, G. E., Kevrekidis, I. G., Lu, L.,</span>
+<span class="sd">        Perdikaris, P., Wang, S., &amp; Yang, L. (2021).</span>
+<span class="sd">        Physics-informed machine learning. Nature Reviews Physics, 3, 422-440.</span>
+<span class="sd">        DOI: `10.1038 &lt;https://doi.org/10.1038/s42254-021-00314-5&gt;`_.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">extra_features</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">loss</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span>
+        <span class="n">optimizer</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+        <span class="n">optimizer_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">},</span>
+        <span class="n">scheduler</span><span class="o">=</span><span class="n">ConstantLR</span><span class="p">,</span>
+        <span class="n">scheduler_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;total_iters&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param AbstractProblem problem: The formulation of the problem.</span>
+<span class="sd">        :param torch.nn.Module model: The neural network model to use.</span>
+<span class="sd">        :param torch.nn.Module loss: The loss function used as minimizer,</span>
+<span class="sd">            default :class:`torch.nn.MSELoss`.</span>
+<span class="sd">        :param torch.nn.Module extra_features: The additional input</span>
+<span class="sd">            features to use as augmented input.</span>
+<span class="sd">        :param torch.optim.Optimizer optimizer: The neural network optimizer to</span>
+<span class="sd">            use; default is :class:`torch.optim.Adam`.</span>
+<span class="sd">        :param dict optimizer_kwargs: Optimizer constructor keyword args.</span>
+<span class="sd">        :param torch.optim.LRScheduler scheduler: Learning</span>
+<span class="sd">            rate scheduler.</span>
+<span class="sd">        :param dict scheduler_kwargs: LR scheduler constructor keyword args.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">],</span>
+            <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+            <span class="n">optimizers</span><span class="o">=</span><span class="p">[</span><span class="n">optimizer</span><span class="p">],</span>
+            <span class="n">optimizers_kwargs</span><span class="o">=</span><span class="p">[</span><span class="n">optimizer_kwargs</span><span class="p">],</span>
+            <span class="n">extra_features</span><span class="o">=</span><span class="n">extra_features</span><span class="p">,</span>
+            <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">LRScheduler</span><span class="p">,</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">scheduler_kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+
+        <span class="c1"># assign variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="o">=</span> <span class="n">scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">scheduler_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_neural_net</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PINN.forward"><a class="viewcode-back" href="../../../../_rst/solvers/pinn.html#pina.solvers.pinns.pinn.PINN.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass implementation for the PINN solver. It returns the function</span>
+<span class="sd">        evaluation :math:`\mathbf{u}(\mathbf{x})` at the control points</span>
+<span class="sd">        :math:`\mathbf{x}`.</span>
+
+<span class="sd">        :param LabelTensor x: Input tensor for the PINN solver. It expects</span>
+<span class="sd">            a tensor :math:`N \times D`, where :math:`N` the number of points</span>
+<span class="sd">            in the mesh, :math:`D` the dimension of the problem,</span>
+<span class="sd">        :return: PINN solution evaluated at contro points.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">neural_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PINN.loss_phys"><a class="viewcode-back" href="../../../../_rst/solvers/pinn.html#pina.solvers.pinns.pinn.PINN.loss_phys">[docs]</a>    <span class="k">def</span> <span class="nf">loss_phys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">equation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the physics loss for the PINN solver based on given</span>
+<span class="sd">        samples and equation.</span>
+
+<span class="sd">        :param LabelTensor samples: The samples to evaluate the physics loss.</span>
+<span class="sd">        :param EquationInterface equation: The governing equation</span>
+<span class="sd">            representing the physics.</span>
+<span class="sd">        :return: The physics loss calculated based on given</span>
+<span class="sd">            samples and equation.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_residual</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">equation</span><span class="p">)</span>
+        <span class="n">loss_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">residual</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span><span class="n">loss_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">loss_value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">loss_value</span></div>
+
+<div class="viewcode-block" id="PINN.configure_optimizers"><a class="viewcode-back" href="../../../../_rst/solvers/pinn.html#pina.solvers.pinns.pinn.PINN.configure_optimizers">[docs]</a>    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optimizer configuration for the PINN</span>
+<span class="sd">        solver.</span>
+
+<span class="sd">        :return: The optimizers and the schedulers</span>
+<span class="sd">        :rtype: tuple(list, list)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if the problem is an InverseProblem, add the unknown parameters</span>
+        <span class="c1"># to the parameters that the optimizer needs to optimize</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">InverseProblem</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_param_group</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">unknown_variables</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="p">]</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scheduler for the PINN training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">neural_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Neural network for the PINN training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_neural_net</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on May 11, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

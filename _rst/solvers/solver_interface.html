@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SolverInterface &mdash; PINA 0.1.0.post2405 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>SolverInterface &mdash; PINA 0.1.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -22,7 +22,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="PINN" href="pinn.html" />
+    <link rel="next" title="PINNInterface" href="basepinn.html" />
     <link rel="prev" title="Plotter" href="../plotter.html" /> 
 </head>
 
@@ -39,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.0.post2405
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -55,8 +55,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#pina-features">PINA Features</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../_code.html#solvers">Solvers</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">SolverInterface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basepinn.html">PINNInterface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pinn.html">PINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpinn.html">GPINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="causalpinn.html">CausalPINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="competitivepinn.html">CompetitivePINN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sapinn.html">SAPINN</a></li>
 <li class="toctree-l3"><a class="reference internal" href="supervised.html">Supervised solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rom.html">ReducedOrderModelSolver</a></li>
 <li class="toctree-l3"><a class="reference internal" href="garom.html">GAROM</a></li>
 </ul>
 </li>
@@ -334,6 +340,13 @@ yourself.</p></li>
 <dd><p>The problem formulation.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="pina.solvers.solver.SolverInterface.on_train_start">
+<code class="sig-name descname">on_train_start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solvers/solver.html#SolverInterface.on_train_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.solvers.solver.SolverInterface.on_train_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>On training epoch start this function is call to do global checks for
+the different solvers.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -343,14 +356,14 @@ yourself.</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../plotter.html" class="btn btn-neutral float-left" title="Plotter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pinn.html" class="btn btn-neutral float-right" title="PINN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="basepinn.html" class="btn btn-neutral float-right" title="PINNInterface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on May 02, 2024.
+      <span class="lastupdated">Last updated on May 11, 2024.
       </span></p>
   </div>
 
