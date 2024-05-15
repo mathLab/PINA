@@ -97,9 +97,11 @@ class R3Refinement(Callback):
 
         # points to keep
         old_pts = {}
-        tot_points = 0
+        left_pts = {}
         for location in self._sampling_locations:
+            tot_points = 0
             pts = trainer._model.problem.input_pts[location]
+            Nloc = len(pts)
             labels = pts.labels
             pts = pts.cpu().detach().as_subclass(torch.Tensor)
             residuals = res_loss[location].cpu()
@@ -112,19 +114,14 @@ class R3Refinement(Callback):
                 pts.labels = labels
                 old_pts[location] = pts
                 tot_points += len(pts)
+            left_pts[location] = Nloc - tot_points
+        
+            assert left_pts[location] + tot_points == Nloc
 
-        # extract new points to sample uniformally for each location
-        n_points = (self._tot_pop_numb - tot_points) // len(
-            self._sampling_locations
-        )
-        remainder = (self._tot_pop_numb - tot_points) % len(
-            self._sampling_locations
-        )
-        n_uniform_points = [n_points] * len(self._sampling_locations)
-        n_uniform_points[-1] += remainder
 
         # sample new points
-        for numb_pts, loc in zip(n_uniform_points, self._sampling_locations):
+        for  loc in self._sampling_locations:
+            numb_pts = left_pts[loc]
             trainer._model.problem.discretise_domain(
                 numb_pts, "random", locations=[loc]
             )
