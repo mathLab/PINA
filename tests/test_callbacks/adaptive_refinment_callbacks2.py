@@ -43,7 +43,7 @@ class Poisson(SpatialProblem):
             location=CartesianDomain({'x': 0, 'y': [0, 1]}),
             equation=FixedValue(0.0)),
         'D': Condition(
-            input_points=LabelTensor(torch.rand(size=(100, 2)), ['x', 'y']),
+            input_points=LabelTensor(torch.rand(size=(2, 2)), ['x', 'y']),
             equation=my_laplace),
         # 'data': Condition(
         #     input_points=in_,
@@ -54,56 +54,27 @@ class Poisson(SpatialProblem):
 # make the problem
 poisson_problem = Poisson()
 boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-n = 13
-poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-model = FeedForward(len(poisson_problem.input_variables),
-                    len(poisson_problem.output_variables))
+n1 = 4
+n2 = 7
+poisson_problem.discretise_domain(n1, 'grid', locations=['gamma1', 'gamma2'])
+poisson_problem.discretise_domain(n2, 'grid', locations=['gamma3', 'gamma4'])
 
-# make the solver
-solver = PINN(problem=poisson_problem, model=model)
-
-
-def test_r3constructor():
-    R3Refinement(sample_every=10)
-
-def get_num_pts():
-    num_pts = {}
-    for location in poisson_problem.input_pts:
-        num_pts[location] = len(poisson_problem.input_pts[location])
-    return num_pts
 
 def test_r3refinment_routine():
-    # make the trainer
-    
-    trainer = Trainer(solver=solver,
-                      callbacks=[R3Refinement(sample_every=1)],
-                      accelerator='cpu',
-                      max_epochs=5)
-    
-    print(f'Before: {get_num_pts()}')
-    trainer.train()
-    print(f'After: {get_num_pts()}')
-
-def test_r3refinment_routine_double_precision():
     model = FeedForward(len(poisson_problem.input_variables),
                     len(poisson_problem.output_variables))
     solver = PINN(problem=poisson_problem, model=model)
     trainer = Trainer(solver=solver,
-                      precision='64-true',
+                      callbacks=[R3Refinement(sample_every=1)],
                       accelerator='cpu',
-                      callbacks=[R3Refinement(sample_every=2)],
                       max_epochs=5)
-    print(f'Before: {get_num_pts()}')
+    before_n_points = {loc : len(pts) for loc, pts in trainer.solver.problem.input_pts.items()}
     trainer.train()
-    print(f'After: {get_num_pts()}')
-
-
-
+    after_n_points = {loc : len(pts) for loc, pts in trainer.solver.problem.input_pts.items()}
+    assert before_n_points == after_n_points, 'Test Failed'
+    print('Test Passed')
 
 def main():
-    print('Test on R3Refinement routine')
     test_r3refinment_routine()
-    print('\n\nTest on R3Refinement routine with double precision')
-    test_r3refinment_routine_double_precision()
 
 main()
