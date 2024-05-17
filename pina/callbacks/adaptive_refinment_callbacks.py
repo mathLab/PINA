@@ -96,12 +96,12 @@ class R3Refinement(Callback):
         avg = (tot_loss.mean()).to("cpu")
 
         # points to keep
-        old_pts = {}
-        left_pts = {}
+        old_pts = {} # points to retain
+        left_pts = {} # number of points to be uniformly sampled from the respective location
         for location in self._sampling_locations:
             tot_points = 0
             pts = trainer._model.problem.input_pts[location]
-            Nloc = len(pts)
+            #Nloc = len(pts)
             labels = pts.labels
             pts = pts.cpu().detach().as_subclass(torch.Tensor)
             residuals = res_loss[location].cpu()
@@ -114,17 +114,17 @@ class R3Refinement(Callback):
                 pts.labels = labels
                 old_pts[location] = pts
                 tot_points += len(pts)
-            left_pts[location] = Nloc - tot_points
+            left_pts[location] = self._const_pts[location] - tot_points
         
-            assert left_pts[location] + tot_points == Nloc
+            assert left_pts[location] + tot_points == self._const_pts[location] # this check improve code robustness
 
-
-        # sample new points
+        # sample new points uniformly in the respective location
         for  loc in self._sampling_locations:
             numb_pts = left_pts[loc]
             trainer._model.problem.discretise_domain(
                 numb_pts, "random", locations=[loc]
             )
+
         # adding previous population points
         trainer._model.problem.add_points(old_pts)
 
@@ -155,11 +155,13 @@ class R3Refinement(Callback):
         self._sampling_locations = locations
 
         # extract total population
-        total_population = 0
+        const_pts = {}  # for each location, store the total number of points that must be kept constant during training
         for location in self._sampling_locations:
             pts = trainer._model.problem.input_pts[location]
-            total_population += len(pts)
-        self._tot_pop_numb = total_population
+            const_pts[location] = len(pts)
+        self._const_pts = const_pts
+
+
 
     def on_train_epoch_end(self, trainer, __):
         """
