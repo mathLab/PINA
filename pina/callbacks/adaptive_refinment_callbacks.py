@@ -94,37 +94,31 @@ class R3Refinement(Callback):
 
         # average loss
         avg = (tot_loss.mean()).to("cpu")
-
-        # points to keep
-        old_pts = {} # points to retain
-        left_pts = {} # number of points to be uniformly sampled from the respective location
+        
+        old_pts = {} # points to be retained
         for location in self._sampling_locations:
-            tot_points = 0
             pts = trainer._model.problem.input_pts[location]
-            #Nloc = len(pts)
             labels = pts.labels
             pts = pts.cpu().detach().as_subclass(torch.Tensor)
             residuals = res_loss[location].cpu()
             mask = (residuals > avg).flatten()
-            if any(
-                mask
-            ):  # if there are residuals greater than averge we append them
-                # Fix the issue, masking remove labels
+            if any(mask):  # if there are residuals greater than averge we append them
                 pts = (pts[mask]).as_subclass(LabelTensor)
                 pts.labels = labels
                 old_pts[location] = pts
-                tot_points += len(pts)
-            left_pts[location] = self._const_pts[location] - tot_points
-        
-            assert left_pts[location] + tot_points == self._const_pts[location] # this check improve code robustness
+                numb_pts =  self._const_pts[location] - len(old_pts[location])
+                # sample new points
+                trainer._model.problem.discretise_domain(
+                    numb_pts, "random", locations=[location]
+                    )
 
-        # sample new points uniformly in the respective location
-        for  loc in self._sampling_locations:
-            numb_pts = left_pts[loc]
-            trainer._model.problem.discretise_domain(
-                numb_pts, "random", locations=[loc]
-            )
-
+            else: # if there are no residuals greater than average we sample all points uniformly
+                numb_pts = self._const_pts[location]
+                # sample new points
+                trainer._model.problem.discretise_domain(
+                    numb_pts, "random", locations=[location]
+                    )
+            
         # adding previous population points
         trainer._model.problem.add_points(old_pts)
 
