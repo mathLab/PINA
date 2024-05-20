@@ -38,6 +38,7 @@ class R3Refinement(Callback):
         # sample every
         check_consistency(sample_every, int)
         self._sample_every = sample_every
+        self._const_pts = None
 
     def _compute_residual(self, trainer):
         """
@@ -94,7 +95,6 @@ class R3Refinement(Callback):
 
         # average loss
         avg = (tot_loss.mean()).to("cpu")
-        
         old_pts = {} # points to be retained
         for location in self._sampling_locations:
             pts = trainer._model.problem.input_pts[location]
