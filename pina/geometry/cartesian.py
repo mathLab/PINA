@@ -36,7 +36,7 @@ class CartesianDomain(Location):
         :return: Spatial variables defined in ``__init__()``
         :rtype: list[str]
         """
-        return list(self.fixed_.keys()) + list(self.range_.keys())
+        return sorted(list(self.fixed_.keys()) + list(self.range_.keys()))
 
     def update(self, new_domain):
         """Adding new dimensions on the ``CartesianDomain``

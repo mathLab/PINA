@@ -76,7 +76,7 @@ class SimplexDomain(Location):
 
     @property
     def variables(self):
-        return self._vertices_matrix.labels
+        return sorted(self._vertices_matrix.labels)
 
     def _build_cartesian(self, vertices):
         """

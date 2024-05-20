@@ -67,12 +67,9 @@ class Poisson(SpatialProblem):
     truth_solution = poisson_sol
 
 
-# make the problem
-poisson_problem = Poisson()
-
-
 def test_discretise_domain():
     n = 10
+    poisson_problem = Poisson()
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
     for b in boundaries:
@@ -95,6 +92,7 @@ def test_discretise_domain():
 
 def test_sampling_few_variables():
     n = 10
+    poisson_problem = Poisson()
     poisson_problem.discretise_domain(n,
                                       'grid',
                                       locations=['D'],
@@ -103,20 +101,33 @@ def test_sampling_few_variables():
     assert poisson_problem._have_sampled_points['D'] is False
 
 
-# def test_sampling_all_args():
-#     n = 10
-#     poisson_problem.discretise_domain(n, 'grid', locations=['D'])
-
-# def test_sampling_all_kwargs():
-#     n = 10
-#     poisson_problem.discretise_domain(n=n, mode='latin', locations=['D'])
-
-# def test_sampling_dict():
-#     n = 10
-#     poisson_problem.discretise_domain(
-#         {'variables': ['x', 'y'], 'mode': 'grid', 'n': n}, locations=['D'])
-
-# def test_sampling_mixed_args_kwargs():
-#     n = 10
-#     with pytest.raises(ValueError):
-#         poisson_problem.discretise_domain(n, mode='latin', locations=['D'])
+def test_variables_correct_order_sampling():
+    n = 10
+    poisson_problem = Poisson()
+    poisson_problem.discretise_domain(n,
+                                      'grid',
+                                      locations=['D'],
+                                      variables=['x'])
+    poisson_problem.discretise_domain(n,
+                                      'grid',
+                                      locations=['D'],
+                                      variables=['y'])
+    assert poisson_problem.input_pts['D'].labels == sorted(
+        poisson_problem.input_variables)
+    
+    poisson_problem.discretise_domain(n,
+                                      'grid',
+                                      locations=['D'])
+    assert poisson_problem.input_pts['D'].labels == sorted(
+        poisson_problem.input_variables)
+    
+    poisson_problem.discretise_domain(n,
+                                      'grid',
+                                      locations=['D'],
+                                      variables=['y'])
+    poisson_problem.discretise_domain(n,
+                                      'grid',
+                                      locations=['D'],
+                                      variables=['x'])
+    assert poisson_problem.input_pts['D'].labels == sorted(
+        poisson_problem.input_variables)
