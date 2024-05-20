@@ -78,7 +78,7 @@ class EllipsoidDomain(Location):
         :return: Spatial variables defined in '__init__()'
         :rtype: list[str]
         """
-        return list(self.fixed_.keys()) + list(self.range_.keys())
+        return sorted(list(self.fixed_.keys()) + list(self.range_.keys()))
 
     def is_inside(self, point, check_border=False):
         """Check if a point is inside the ellipsoid domain.
@@ -279,7 +279,7 @@ class EllipsoidDomain(Location):
             return _single_points_sample(n, variables)
 
         if variables == "all":
-            variables = list(self.range_.keys()) + list(self.fixed_.keys())
+            variables = self.variables
 
         if mode in ["random"]:
             return _Nd_sampler(n, mode, variables)

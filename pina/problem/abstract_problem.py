@@ -237,6 +237,9 @@ class AbstractProblem(metaclass=ABCMeta):
                 self.input_variables
             ):
                 self._have_sampled_points[location] = True
+                self.input_pts[location] = self.input_pts[location].extract(
+                    sorted(self.input_variables)
+                )
 
     def add_points(self, new_points):
         """
