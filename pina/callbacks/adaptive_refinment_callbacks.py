@@ -102,8 +102,7 @@ class R3Refinement(Callback):
             pts = pts.cpu().detach().as_subclass(torch.Tensor)
             residuals = res_loss[location].cpu()
             mask = (residuals > avg).flatten()
-            if any(mask):  # if there are residuals greater 
-                # than averge we append them
+            if any(mask):  # append residuals greater than average
                 pts = (pts[mask]).as_subclass(LabelTensor)
                 pts.labels = labels
                 old_pts[location] = pts
@@ -113,8 +112,7 @@ class R3Refinement(Callback):
                     numb_pts, "random", locations=[location]
                     )
 
-            else: # if there are no residuals greater 
-                # than average we sample all points uniformly
+            else: # if no res greater than average, samples all uniformly
                 numb_pts = self._const_pts[location]
                 # sample new points
                 trainer._model.problem.discretise_domain(
@@ -150,8 +148,7 @@ class R3Refinement(Callback):
         self._sampling_locations = locations
 
         # extract total population
-        const_pts = {}  # for each location, store the total number 
-        # of points that must be kept constant during training
+        const_pts = {}  # for each location, store the # of pts to keep constant
         for location in self._sampling_locations:
             pts = trainer._model.problem.input_pts[location]
             const_pts[location] = len(pts)
