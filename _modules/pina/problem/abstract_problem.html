@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.problem.abstract_problem &mdash; PINA 0.1.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.problem.abstract_problem &mdash; PINA 0.1.1.post2406 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -37,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.1
+                0.1.1.post2406
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -327,7 +327,10 @@
             <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span>
             <span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_have_sampled_points</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_have_sampled_points</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span>
+                    <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span><span class="p">)</span>
+                <span class="p">)</span></div>
 
 <div class="viewcode-block" id="AbstractProblem.add_points"><a class="viewcode-back" href="../../../_rst/problem/abstractproblem.html#pina.problem.abstract_problem.AbstractProblem.add_points">[docs]</a>    <span class="k">def</span> <span class="nf">add_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -398,7 +401,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on May 11, 2024.
+      <span class="lastupdated">Last updated on Jun 01, 2024.
       </span></p>
   </div>
 
