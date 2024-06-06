@@ -65,35 +65,27 @@ def test_forward_backward_same_period_PeriodicBoundaryEmbedding(input_dimension,
 
 def test_constructor_FourierFeatureEmbedding():
     FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
-                            sigmas=1)
-    FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
-                            sigmas=[0.01, 0.1, 1])
-    FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
-                            sigmas=[0.01, 0.1, 1])
-    FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
-                            sigmas=1, embedding_output_dimension=20)
+                            sigma=1)
     with pytest.raises(TypeError): 
         FourierFeatureEmbedding()
+    with pytest.raises(RuntimeError): 
+        FourierFeatureEmbedding(input_dimension=1, output_dimension=3, sigma=1)
     with pytest.raises(ValueError):
         FourierFeatureEmbedding(input_dimension='x', output_dimension=20,
-                                sigmas=1)
+                                sigma=1)
         FourierFeatureEmbedding(input_dimension=1, output_dimension='x',
-                                sigmas=1)
+                                sigma=1)
         FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
-                                sigmas='x')
-        FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
-                                sigmas=1, embedding_output_dimension='x')
+                                sigma='x')
 
-@pytest.mark.parametrize("output_dimension", [1, 2, 2])
+@pytest.mark.parametrize("output_dimension", [2, 4, 6])
 @pytest.mark.parametrize("input_dimension", [1, 2, 3])
-@pytest.mark.parametrize("sigmas", [1, [0.01, 0.1, 1]])
-@pytest.mark.parametrize("embedding_output_dimension", [1, 2, 3])
+@pytest.mark.parametrize("sigma", [10, 1, 0.1])
 def test_forward_backward_FourierFeatureEmbedding(input_dimension,
-                                         output_dimension,
-                                         sigmas,
-                                         embedding_output_dimension):
+                                                  output_dimension,
+                                                  sigma):
     func = FourierFeatureEmbedding(input_dimension, output_dimension,
-                                   sigmas, embedding_output_dimension)
+                                   sigma)
     # coordinates
     x = torch.rand((10, input_dimension), requires_grad=True)
     # output
