@@ -79,7 +79,8 @@ Layers
     Low Rank layer <layers/lowrank_layer.rst>
     Continuous convolution <layers/convolution.rst>
     Proper Orthogonal Decomposition <layers/pod.rst>
-    Periodic Boundary Condition embeddings <layers/embedding.rst>
+    Periodic Boundary Condition Embedding <layers/pbc_embedding.rst>
+    Fourier Feature Embedding <layers/fourier_embedding.rst>
 
 Adaptive Activation Functions
 -------------------------------
