@@ -1,8 +1,7 @@
 import torch
 import pytest
 
-from pina.model.layers import PeriodicBoundaryEmbedding
-from pina import LabelTensor
+from pina.model.layers import PeriodicBoundaryEmbedding, FourierFeatureEmbedding
 
 # test tolerance
 tol = 1e-6
@@ -23,7 +22,7 @@ def grad(u, x):
                                create_graph=True, allow_unused=True,
                                retain_graph=True)[0]
 
-def test_constructor():
+def test_constructor_PeriodicBoundaryEmbedding():
     PeriodicBoundaryEmbedding(input_dimension=1, periods=2)
     PeriodicBoundaryEmbedding(input_dimension=1, periods={'x': 3, 'y' : 4})
     PeriodicBoundaryEmbedding(input_dimension=1, periods={0: 3, 1 : 4})
@@ -32,14 +31,16 @@ def test_constructor():
         PeriodicBoundaryEmbedding()
     with pytest.raises(ValueError):
         PeriodicBoundaryEmbedding(input_dimension=1., periods=1)
-        PeriodicBoundaryEmbedding(input_dimension=1, periods=1, output_dimension=1.)
+        PeriodicBoundaryEmbedding(input_dimension=1, periods=1,
+                                  output_dimension=1.)
         PeriodicBoundaryEmbedding(input_dimension=1, periods={'x':'x'})
         PeriodicBoundaryEmbedding(input_dimension=1, periods={0:'x'})
 
 
 @pytest.mark.parametrize("period", [1, 4, 10])
 @pytest.mark.parametrize("input_dimension", [1, 2, 3])
-def test_forward_same_period(input_dimension, period):
+def test_forward_backward_same_period_PeriodicBoundaryEmbedding(input_dimension,
+                                                                period):
     func = torch.nn.Sequential(
         PeriodicBoundaryEmbedding(input_dimension=input_dimension,
                      output_dimension=60, periods=period),
@@ -58,46 +59,46 @@ def test_forward_same_period(input_dimension, period):
     # output
     f = func(x)
     assert check_same_columns(f)
+    # compute backward
+    loss = f.mean()
+    loss.backward()
 
+def test_constructor_FourierFeatureEmbedding():
+    FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
+                            sigmas=1)
+    FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
+                            sigmas=[0.01, 0.1, 1])
+    FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
+                            sigmas=[0.01, 0.1, 1])
+    FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
+                            sigmas=1, embedding_output_dimension=20)
+    with pytest.raises(TypeError): 
+        FourierFeatureEmbedding()
+    with pytest.raises(ValueError):
+        FourierFeatureEmbedding(input_dimension='x', output_dimension=20,
+                                sigmas=1)
+        FourierFeatureEmbedding(input_dimension=1, output_dimension='x',
+                                sigmas=1)
+        FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
+                                sigmas='x')
+        FourierFeatureEmbedding(input_dimension=1, output_dimension=20,
+                                sigmas=1, embedding_output_dimension='x')
 
-
-# def test_forward_same_period_labels():
-#     func = torch.nn.Sequential(
-#         PeriodicBoundaryEmbedding(input_dimension=2,
-#                      output_dimension=60, periods={'x':1, 'y':2}),
-#         torch.nn.Tanh(),
-#         torch.nn.Linear(60, 60),
-#         torch.nn.Tanh(),
-#         torch.nn.Linear(60, 1)
-#     )
-#     # coordinates
-#     tensor = torch.tensor([[0., 0.], [0., 2.], [1., 0.], [1., 2.]])
-#     with pytest.raises(RuntimeError):
-#         func(tensor)
-#     tensor = tensor.as_subclass(LabelTensor)
-#     tensor.labels = ['x', 'y']
-#     tensor.requires_grad = True
-#     # output
-#     f = func(tensor)
-#     assert check_same_columns(f)
-
-# def test_forward_same_period_index():
-#     func = torch.nn.Sequential(
-#         PeriodicBoundaryEmbedding(input_dimension=2,
-#                      output_dimension=60, periods={0:1, 1:2}),
-#         torch.nn.Tanh(),
-#         torch.nn.Linear(60, 60),
-#         torch.nn.Tanh(),
-#         torch.nn.Linear(60, 1)
-#     )
-#     # coordinates
-#     tensor = torch.tensor([[0., 0.], [0., 2.], [1., 0.], [1., 2.]])
-#     tensor.requires_grad = True
-#     # output
-#     f = func(tensor)
-#     assert check_same_columns(f)
-#     tensor = tensor.as_subclass(LabelTensor)
-#     tensor.labels = ['x', 'y']
-#     # output
-#     f = func(tensor)
-#     assert check_same_columns(f)
+@pytest.mark.parametrize("output_dimension", [1, 2, 2])
+@pytest.mark.parametrize("input_dimension", [1, 2, 3])
+@pytest.mark.parametrize("sigmas", [1, [0.01, 0.1, 1]])
+@pytest.mark.parametrize("embedding_output_dimension", [1, 2, 3])
+def test_forward_backward_FourierFeatureEmbedding(input_dimension,
+                                         output_dimension,
+                                         sigmas,
+                                         embedding_output_dimension):
+    func = FourierFeatureEmbedding(input_dimension, output_dimension,
+                                   sigmas, embedding_output_dimension)
+    # coordinates
+    x = torch.rand((10, input_dimension), requires_grad=True)
+    # output
+    f = func(x)
+    assert f.shape[-1] == output_dimension
+    # compute backward
+    loss = f.mean()
+    loss.backward()

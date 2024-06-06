@@ -10,6 +10,7 @@ __all__ = [
     "FourierBlock3D",
     "PODBlock",
     "PeriodicBoundaryEmbedding",
+    "FourierFeatureEmbedding",
     "AVNOBlock",
     "LowRankBlock",
 ]
@@ -23,6 +24,6 @@ from .spectral import (
 )
 from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
 from .pod import PODBlock
-from .embedding import PeriodicBoundaryEmbedding
+from .embedding import PeriodicBoundaryEmbedding, FourierFeatureEmbedding
 from .avno_layer import AVNOBlock
 from .lowrank_layer import LowRankBlock
