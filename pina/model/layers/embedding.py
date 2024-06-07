@@ -235,7 +235,7 @@ class FourierFeatureEmbedding(torch.nn.Module):
                         size = (input_dimension,
                                 output_dimension // 2),
                         requires_grad = False
-                                )
+                                ) * self.sigma
 
     def forward(self, x):
         """
@@ -248,7 +248,7 @@ class FourierFeatureEmbedding(torch.nn.Module):
         # compute random matrix multiplication
         out = torch.mm(x, self._matrix)
         # return embedding
-        return torch.cat([torch.cos(out), torch.sin(out)], dim=-1)
+        return torch.cat([torch.cos(2*torch.pi*out), torch.sin(2*torch.pi*out)], dim=-1)
     
 
     @property

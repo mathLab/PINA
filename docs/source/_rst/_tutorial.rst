@@ -25,6 +25,7 @@ Physics Informed Neural Networks
    Two dimensional Wave problem with hard constraint<tutorials/tutorial3/tutorial.rst>
    Resolution of a 2D Poisson inverse problem<tutorials/tutorial7/tutorial.rst>
    Periodic Boundary Conditions for Helmotz Equation<tutorials/tutorial9/tutorial.rst>
+   Multiscale PDE learning with Fourier Feature Network<tutorials/tutorial13/tutorial.rst>
 
 Neural Operator Learning
 ------------------------
