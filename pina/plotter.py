@@ -168,6 +168,7 @@ class Plotter:
         method="contourf",
         res=256,
         filename=None,
+        title=None,
         **kwargs,
     ):
         """
@@ -186,6 +187,8 @@ class Plotter:
             Default is 'contourf'.
         :param int res: The resolution, aka the number of points used for
             plotting in each axis. Default is 256.
+        :param str title: The title for the plot. If None, the plot
+            is shown without a title. Default is None.
         :param str filename: The file name to save the plot. If None, the plot
             is shown using the setted matplotlib frontend. Default is None.
         """
@@ -241,6 +244,9 @@ class Plotter:
             )
 
         plt.tight_layout()
+        if title is not None:
+            plt.title(title)
+            
         if filename:
             plt.savefig(filename)
             plt.close()
