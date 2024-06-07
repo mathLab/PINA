@@ -34,12 +34,14 @@ networks <https://doi.org/10.1016/j.cma.2021.113938>`__. The
 one-dimensional Poisson problem we aim to solve is mathematically
 written as:
 
-:raw-latex:`\begin{equation}
-\begin{cases}
-\Delta u (x) + f(x) = 0 \quad x \in [0,1], \\
-u(x) = 0 \quad x \in \partial[0,1], \\
-\end{cases}
-\end{equation}`
+.. math::
+
+    \begin{equation}
+    \begin{cases}
+    \Delta u (x) + f(x) = 0 \quad x \in [0,1], \\
+    u(x) = 0 \quad x \in \partial[0,1], \\
+    \end{cases}
+    \end{equation}
 
 We impose the solution as
 :math:`u(x) = \sin(2\pi x) + 0.1 \sin(50\pi x)` and obtain the force
@@ -95,8 +97,7 @@ scales.
 
 Below we run a simulation using the ``PINN`` solver and the self
 adaptive ``SAPINN`` solver, using a
-```FeedForward`` <https://mathlab.github.io/PINA/_modules/pina/model/feed_forward.html#FeedForward>`__
-model. We used a ``MultiStepLR`` scheduler to decrease the learning rate
+``FeedForward`` model. We used a ``MultiStepLR`` scheduler to decrease the learning rate
 slowly during training (it takes around 2 minutes to run on CPU).
 
 .. code:: ipython3
@@ -130,19 +131,6 @@ slowly during training (it takes around 2 minutes to run on CPU).
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 4999: 100%|██████████| 1/1 [00:00<00:00, 150.58it/s, v_num=69, gamma0_loss=2.61e+3, gamma1_loss=2.61e+3, D_loss=409.0, mean_loss=1.88e+3]  
-
-.. parsed-literal::
-
-    `Trainer.fit` stopped: `max_epochs=5000` reached.
-
-
-.. parsed-literal::
-
     Epoch 4999: 100%|██████████| 1/1 [00:00<00:00, 97.66it/s, v_num=69, gamma0_loss=2.61e+3, gamma1_loss=2.61e+3, D_loss=409.0, mean_loss=1.88e+3] 
 
 
@@ -152,19 +140,6 @@ slowly during training (it takes around 2 minutes to run on CPU).
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 4999: 100%|██████████| 1/1 [00:00<00:00, 88.18it/s, v_num=70, gamma0_loss=151.0, gamma1_loss=148.0, D_loss=6.38e+5, mean_loss=2.13e+5]    
-
-.. parsed-literal::
-
-    `Trainer.fit` stopped: `max_epochs=5000` reached.
-
-
-.. parsed-literal::
-
     Epoch 4999: 100%|██████████| 1/1 [00:00<00:00, 65.77it/s, v_num=70, gamma0_loss=151.0, gamma1_loss=148.0, D_loss=6.38e+5, mean_loss=2.13e+5]
 
 
@@ -290,19 +265,6 @@ feel free to try also with our PINN variants (``SAPINN``, ``GPINN``,
     TPU available: False, using: 0 TPU cores
     IPU available: False, using: 0 IPUs
     HPU available: False, using: 0 HPUs
-
-
-.. parsed-literal::
-
-    Epoch 4999: 100%|██████████| 1/1 [00:00<00:00, 94.64it/s, v_num=71, gamma0_loss=3.91e-5, gamma1_loss=3.91e-5, D_loss=0.000151, mean_loss=0.000113]   
-
-.. parsed-literal::
-
-    `Trainer.fit` stopped: `max_epochs=5000` reached.
-
-
-.. parsed-literal::
-
     Epoch 4999: 100%|██████████| 1/1 [00:00<00:00, 72.21it/s, v_num=71, gamma0_loss=3.91e-5, gamma1_loss=3.91e-5, D_loss=0.000151, mean_loss=0.000113]
 
 
