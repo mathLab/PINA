@@ -246,7 +246,7 @@ class Plotter:
         plt.tight_layout()
         if title is not None:
             plt.title(title)
-            
+
         if filename:
             plt.savefig(filename)
             plt.close()
