@@ -127,7 +127,7 @@ class RBAPINN(PINN):
         """
         residual = self.compute_residual(samples=samples, equation=equation)
         cond = self.current_condition_name
-        
+
         r_norm = self.eta*torch.abs(residual)/torch.max(torch.abs(residual))
         self.weights[cond] = (self.gamma*self.weights[cond] + r_norm).detach()
         residual = self.weights[cond]*residual
