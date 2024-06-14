@@ -23,7 +23,7 @@ class RBAPINN(PINN):
         \mathcal{B}[\mathbf{u}](\mathbf{x})=0\quad,
         \mathbf{x}\in\partial\Omega
         \end{cases}
-    
+
     minimizing the loss function
 
     .. math::
@@ -35,7 +35,7 @@ class RBAPINN(PINN):
         \lambda_{\partial\Omega}^{i} \mathcal{L} 
         \left( \mathcal{B}[\mathbf{u}](\mathbf{x})
         \right),
-    
+
     denoting the weights as
     :math:`\lambda_{\Omega}^1, \dots, \lambda_{\Omega}^{N_\Omega}` and
     :math:`\lambda_{\partial \Omega}^1, \dots, 
@@ -49,7 +49,7 @@ class RBAPINN(PINN):
 
         \lambda_i^{k+1} \leftarrow \gamma\lambda_i^{k} + 
         \eta\frac{\lvert r_i\rvert}{\max_j \lvert r_j\rvert},
-    
+
     where :math:`r_i` denotes the residual at point :math:`i`, 
     math:`\gamma` denotes the decay rate, and :math:`\eta` is
     the learning rate for the weights' update.
@@ -131,10 +131,10 @@ class RBAPINN(PINN):
         r_norm = self.eta*torch.abs(residual)/torch.max(torch.abs(residual))
         self.weights[cond] = (self.gamma*self.weights[cond] + r_norm).detach()
         residual = self.weights[cond]*residual
-        
+
         loss_value = self.loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
         self.store_log(loss_value=float(loss_value))
-        
+
         return loss_value
