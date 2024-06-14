@@ -59,7 +59,8 @@ class RBAPINN(PINN):
         Nikolaos Stergiopulos, and George E. Karniadakis.
         "Residual-based attention and connection to information 
         bottleneck theory in PINNs".
-        Computer Methods in Applied Mechanics and Engineering 421 (2024): 116805.
+        Computer Methods in Applied Mechanics and Engineering 
+        421 (2024): 116805.
         DOI: `10.1016/
         j.cma.2024.116805 <https://doi.org/10.1016/j.cma.2024.116805>`_.
     """
@@ -137,4 +138,3 @@ class RBAPINN(PINN):
         self.store_log(loss_value=float(loss_value))
         
         return loss_value
-    
