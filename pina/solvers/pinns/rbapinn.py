@@ -4,6 +4,7 @@ from copy import deepcopy
 import torch
 from torch.optim.lr_scheduler import ConstantLR
 from .pinn import PINN
+from ...utils import check_consistency
 
 
 class RBAPINN(PINN):
@@ -91,8 +92,9 @@ class RBAPINN(PINN):
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
-        :param float eta: The learning rate for the weights of the residual.
-        :param float gamma: The decay parameter in the update of the weights
+        :param float | int eta: The learning rate for the
+            weights of the residual.
+        :param float  gamma: The decay parameter in the update of the weights
             of the residual.
         """
         super().__init__(
@@ -106,12 +108,18 @@ class RBAPINN(PINN):
             scheduler_kwargs=scheduler_kwargs,
         )
 
+        # check consistency
+        check_consistency(eta, (float, int))
+        check_consistency(gamma, float)
         self.eta = eta
         self.gamma = gamma
+
+        # initialize weights
         self.weights = {}
         for condition_name in problem.conditions:
             self.weights[condition_name] = 0
 
+        # define vectorial loss
         self._vectorial_loss = deepcopy(loss)
         self._vectorial_loss.reduction = "none"
 

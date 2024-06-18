@@ -5,6 +5,7 @@ __all__ = [
     "CausalPINN",
     "CompetitivePINN",
     "SAPINN",
+    "RBAPINN",
 ]
 
 from .basepinn import PINNInterface
@@ -13,3 +14,4 @@ from .gpinn import GPINN
 from .causalpinn import CausalPINN
 from .competitive_pinn import CompetitivePINN
 from .sapinn import SAPINN
+from .rbapinn import RBAPINN
