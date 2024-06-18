@@ -53,7 +53,7 @@ class RBAPINN(PINN):
         \eta\frac{\lvert r_i\rvert}{\max_j \lvert r_j\rvert},
 
     where :math:`r_i` denotes the residual at point :math:`i`, 
-    math:`\gamma` denotes the decay rate, and :math:`\eta` is
+    :math:`\gamma` denotes the decay rate, and :math:`\eta` is
     the learning rate for the weights' update.
 
     .. seealso::
