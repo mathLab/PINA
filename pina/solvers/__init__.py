@@ -6,6 +6,7 @@ __all__ = [
     "CausalPINN",
     "CompetitivePINN",
     "SAPINN",
+    "RBAPINN",
     "SupervisedSolver",
     "ReducedOrderModelSolver",
     "GAROM",
