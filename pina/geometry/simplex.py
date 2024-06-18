@@ -1,7 +1,7 @@
 import torch
 from .location import Location
 from pina.geometry import CartesianDomain
-from pina import LabelTensor
+from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 
 

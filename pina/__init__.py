@@ -9,7 +9,7 @@ __all__ = [
 ]
 
 from .meta import *
-from .label_tensor import LabelTensor
+#from .label_tensor import LabelTensor
 from .solvers.solver import SolverInterface
 from .trainer import Trainer
 from .plotter import Plotter
