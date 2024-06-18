@@ -4,7 +4,7 @@ Fourier Neural Operator Module.
 
 import torch
 import torch.nn as nn
-from pina import LabelTensor
+from ..label_tensor import LabelTensor
 import warnings
 from ..utils import check_consistency
 from .layers.fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
