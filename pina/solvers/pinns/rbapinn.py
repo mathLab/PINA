@@ -1,8 +1,8 @@
-""" Module for RBAPINN """
+""" Module for RBAPINN. """
 
+from copy import deepcopy
 import torch
 from torch.optim.lr_scheduler import ConstantLR
-from copy import deepcopy
 from .pinn import PINN
 
 
@@ -60,7 +60,7 @@ class RBAPINN(PINN):
         Nikolaos Stergiopulos, and George E. Karniadakis.
         "Residual-based attention and connection to information 
         bottleneck theory in PINNs".
-        Computer Methods in Applied Mechanics and Engineering 421 (2024): 116805.
+        Computer Methods in Applied Mechanics and Engineering 421 (2024): 116805
         DOI: `10.1016/
         j.cma.2024.116805 <https://doi.org/10.1016/j.cma.2024.116805>`_.
     """
@@ -75,8 +75,8 @@ class RBAPINN(PINN):
         optimizer_kwargs={"lr": 0.001},
         scheduler=ConstantLR,
         scheduler_kwargs={"factor": 1, "total_iters": 0},
-        eta = 0.001,
-        gamma = 0.999,
+        eta=0.001,
+        gamma=0.999,
     ):
         """
         :param AbstractProblem problem: The formulation of the problem.
@@ -115,7 +115,6 @@ class RBAPINN(PINN):
         self._vectorial_loss = deepcopy(loss)
         self._vectorial_loss.reduction = "none"
 
-
     def _vect_to_scalar(self, loss_value):
         """
         Elaboration of the pointwise loss.
@@ -136,10 +135,9 @@ class RBAPINN(PINN):
             )
         return ret
 
-
     def loss_phys(self, samples, equation):
         """
-        Computes the physics loss for the residual-based attention PINN 
+        Computes the physics loss for the residual-based attention PINN
         solver based on given samples and equation.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
@@ -152,8 +150,8 @@ class RBAPINN(PINN):
         residual = self.compute_residual(samples=samples, equation=equation)
         cond = self.current_condition_name
 
-        r_norm = self.eta*torch.abs(residual)/torch.max(torch.abs(residual))
-        self.weights[cond] = (self.gamma*self.weights[cond] + r_norm).detach()
+        r_norm = self.eta * torch.abs(residual) / torch.max(torch.abs(residual))
+        self.weights[cond] = (self.gamma * self.weights[cond] + r_norm).detach()
 
         loss_value = self._vectorial_loss(
             torch.zeros_like(residual, requires_grad=True), residual
@@ -161,4 +159,4 @@ class RBAPINN(PINN):
 
         self.store_log(loss_value=float(self._vect_to_scalar(loss_value)))
 
-        return self._vect_to_scalar(self.weights[cond]**2*loss_value)
+        return self._vect_to_scalar(self.weights[cond] ** 2 * loss_value)
