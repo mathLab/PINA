@@ -21,7 +21,7 @@ class Exclusion(OperationInterface):
         the dimension of the geometry space.
 
         :param list geometries: A list of geometries from ``pina.geometry``
-            such as ``EllipsoidDomain`` or ``CartesianDomain``.
+            such as :class:`~pina.geometry.ellipsoid.EllipsoidDomain` or :class:`~pina.geometry.cartesian.CartesianDomain`.
 
         :Example:
             >>> # Create two ellipsoid domains
@@ -34,7 +34,7 @@ class Exclusion(OperationInterface):
 
     def is_inside(self, point, check_border=False):
         """
-        Check if a point is inside the ``Exclusion`` domain.
+        Check if a point is inside the :class:`~pina.geometry.exclusion_domain.Exclusion` domain.
 
         :param point: Point to be checked.
         :type point: torch.Tensor
@@ -50,13 +50,13 @@ class Exclusion(OperationInterface):
 
     def sample(self, n, mode="random", variables="all"):
         """
-        Sample routine for ``Exclusion`` domain.
+        Sample routine for :class:`~pina.geometry.exclusion_domain.Exclusion` domain.
 
         :param int n: Number of points to sample in the shape.
         :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
         :param variables: Variables to be sampled, defaults to ``all``.
         :type variables: str | list[str]
-        :return: Returns ``LabelTensor`` of n sampled points.
+        :return: Returns :class:`~pina.label_tensor.LabelTensor` of n sampled points.
         :rtype: LabelTensor
 
         :Example:

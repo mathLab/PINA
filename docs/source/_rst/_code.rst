@@ -124,6 +124,7 @@ Problem
     SpatialProblem <problem/spatialproblem.rst>
     TimeDependentProblem <problem/timedepproblem.rst>
     ParametricProblem <problem/parametricproblem.rst>
+    InverseProblem <problem/invproblem.rst>
 
 Geometries
 -----------------

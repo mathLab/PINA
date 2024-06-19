@@ -14,7 +14,7 @@ class Condition:
     """
     The class ``Condition`` is used to represent the constraints (physical
     equations, boundary conditions, etc.) that should be satisfied in the
-    problem at hand. Condition objects are used to formulate the PINA :obj:`pina.problem.abstract_problem.AbstractProblem` object.
+    problem at hand. Condition objects are used to formulate the PINA :class:`~pina.problem.abstract_problem.AbstractProblem` object.
     Conditions can be specified in three ways:
 
         1. By specifying the input and output points of the condition; in such a

@@ -7,4 +7,3 @@ SimplexDomain
 .. autoclass:: SimplexDomain
     :members:
     :show-inheritance:
-    :noindex:

@@ -12,7 +12,7 @@ class OperationInterface(Location, metaclass=ABCMeta):
         Abstract set operation class. Any geometry operation entity must inherit from this class.
 
         :param list geometries: A list of geometries from ``pina.geometry``
-            such as ``EllipsoidDomain`` or ``CartesianDomain``.
+            such as :class:`~pina.geometry.ellipsoid.EllipsoidDomain` or :class:`~pina.geometry.cartesian.CartesianDomain`.
         """
         # check consistency geometries
         check_consistency(geometries, Location)

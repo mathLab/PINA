@@ -15,12 +15,15 @@
 import sys
 import os
 import sphinx_rtd_theme
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../..'))
 import pina
+
+# -- Project information -----------------------------------------------------
+
+project = pina.__project__
+copyright = pina.__copyright__
+author = pina.__author__
+version = release ='1.0.0' 
+
 
 sys.path.insert(0, os.path.abspath('../sphinx_extensions')) # extension to remove paramref link from lightinig
 
@@ -51,6 +54,21 @@ extensions = [
     'sphinx_copybutton', 
 ]
 
+# The root document.
+root_doc = 'index'
+
+# List of patterns, relative to source directory, that match files and
+# directories to ignore when looking for source files.
+# This pattern also affects html_static_path and html_extra_path.
+exclude_patterns = ['_build', 'docstrings', 'nextgen', 'Thumbs.db', '.DS_Store']
+
+# The reST default role (used for this markup: `text`) to use for all documents.
+default_role = 'literal'
+
+# Generate the API documentation when building
+autosummary_generate = True
+numpydoc_show_class_members = False
+
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3', None),
     # 'numpy': ('http://docs.scipy.org/doc/numpy/', None),
@@ -68,7 +86,6 @@ nitpick_ignore = [
     ('py:func', 'torch.inference_mode'),
     ('py:func', 'torch.no_grad'),
     ('py:class', 'torch.utils.data.DistributedSampler'),
-    ('py:class', 'CartesianDomain'), # TO FIX
     ('py:class', 'pina.model.layers.convolution.BaseContinuousConv'),
     ('py:class', 'Module'),
     ('py:class', 'torch.nn.modules.loss._Loss'), # TO FIX
@@ -162,7 +179,7 @@ viewcode_import = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "sphinx_rtd_theme"
+html_theme = 'pydata_sphinx_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -181,12 +198,32 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "index_files/pina_logo.png"
+html_logo = "index_files/pina_logo_pina.png"
 html_theme_options = {
-    'logo_only': True,
-    'display_version': True,
-    'prev_next_buttons_location': 'bottom',
-
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/mathLab/PINA",
+            "icon": "fab fa-github",
+            "type": "fontawesome",
+        },
+        {
+            "name": "StackOverflow",
+            "url": "https://github.com/mathLab/PINA",
+            "icon": "fab fa-stack-overflow",
+            "type": "fontawesome",
+        },
+        {
+            "name": "Twitter",
+            "url": "http://twitter.com/rozzagroup",
+            "icon": "fab fa-twitter",
+            "type": "fontawesome",
+        },
+    ],
+    "show_prev_next": False,
+    "navbar_start": ["navbar-logo"],
+    "navbar_end": ["navbar-icon-links"],
+    "header_links_before_dropdown": 8,
 }
 
 # The name of an image file (within the static path) to use as favicon of the
@@ -195,8 +232,7 @@ html_theme_options = {
 # html_favicon = None
 
 # Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+# relative to this directory. They are copied after the builtin static files,# so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or

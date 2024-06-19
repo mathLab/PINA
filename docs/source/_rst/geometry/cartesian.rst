@@ -7,4 +7,3 @@ CartesianDomain
 .. autoclass:: CartesianDomain
     :members:
     :show-inheritance:
-    :noindex:

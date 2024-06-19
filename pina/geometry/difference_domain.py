@@ -20,7 +20,7 @@ class Difference(OperationInterface):
         the dimension of the geometry space.
 
         :param list geometries: A list of geometries from ``pina.geometry``
-            such as ``EllipsoidDomain`` or ``CartesianDomain``. The first
+            such as :class:`~pina.geometry.ellipsoid.EllipsoidDomain` or :class:`~pina.geometry.cartesian.CartesianDomain`. The first
             geometry in the list is the geometry from which points are
             sampled. The rest of the geometries are the geometries that
             are excluded from the first geometry to find the difference.
@@ -36,7 +36,7 @@ class Difference(OperationInterface):
 
     def is_inside(self, point, check_border=False):
         """
-        Check if a point is inside the ``Difference`` domain.
+        Check if a point is inside the :class:`~pina.geometry.difference_domain.Difference` domain.
 
         :param point: Point to be checked.
         :type point: torch.Tensor
@@ -51,13 +51,13 @@ class Difference(OperationInterface):
 
     def sample(self, n, mode="random", variables="all"):
         """
-        Sample routine for ``Difference`` domain.
+        Sample routine for :class:`~pina.geometry.difference_domain.Difference` domain.
 
         :param int n: Number of points to sample in the shape.
         :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
         :param variables: Variables to be sampled, defaults to ``all``.
         :type variables: str | list[str]
-        :return: Returns ``LabelTensor`` of n sampled points.
+        :return: Returns :class:`~pina.label_tensor.LabelTensor` of n sampled points.
         :rtype: LabelTensor
 
         :Example:

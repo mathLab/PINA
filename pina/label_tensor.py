@@ -14,7 +14,7 @@ class LabelTensor(torch.Tensor):
 
     def __init__(self, x, labels):
         """
-        Construct a `LabelTensor` by passing a tensor and a list of column
+        Construct a :class:`~pina.label_tensor.LabelTensor` by passing a tensor and a list of column
         labels. Such labels uniquely identify the columns of the tensor,
         allowing for an easier manipulation.
 
