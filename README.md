@@ -9,10 +9,13 @@
 
 <div align="center">
 
-[![PyPi][pypi-shield]][pypi-url]
+[![Docs][docs-shield]][docs-url]
 [![PyPi][pypiversion-shield]][pypi-url]
-[![PyPi][downloads-shield]][downloads-url]
+[![PyPi][pypi-shield]][pypi-url]
+
 [![License][license-shield]][license-url]
+[![PyPi][downloads-shield]][downloads-url]
+[![Joss][joss-shield]][joss-url]
 
 </div>
 <!-- [![Contributors][contributors-shield]][contributors-url] -->
@@ -21,6 +24,10 @@
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[docs-shield]: https://img.shields.io/badge/PINA-docs-blue?style=for-the-badge
+
+[docs-url]: https://mathlab.github.io/PINA/
 
 [pypi-shield]: https://img.shields.io/pypi/pyversions/pina-mathlab?style=for-the-badge
 
@@ -43,6 +50,10 @@
 [license-shield]: https://img.shields.io/github/license/mathLab/pina?style=for-the-badge
 
 [license-url]: https://github.com/mathLab/PINA/blob/main/LICENSE.rst
+
+[joss-shield]: https://img.shields.io/badge/JOSS-10.21105/joss.05352-red?style=for-the-badge
+
+[joss-url]: https://joss.theoj.org/papers/10.21105/joss.05352
 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 
