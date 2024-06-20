@@ -131,3 +131,14 @@ def test_variables_correct_order_sampling():
                                       variables=['x'])
     assert poisson_problem.input_pts['D'].labels == sorted(
         poisson_problem.input_variables)
+
+def test_add_points():
+    poisson_problem = Poisson()
+    poisson_problem.discretise_domain(0,
+                                      'random',
+                                      locations=['D'],
+                                      variables=['x','y'])
+    new_pts = LabelTensor(torch.tensor([[0.5,-0.5]]),labels=['x','y'])
+    poisson_problem.add_points({'D': new_pts})
+    assert torch.isclose(poisson_problem.input_pts['D'].extract('x'),new_pts.extract('x'))
+    assert torch.isclose(poisson_problem.input_pts['D'].extract('y'),new_pts.extract('y'))

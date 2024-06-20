@@ -273,7 +273,7 @@ class AbstractProblem(metaclass=ABCMeta):
                 new_pts.labels = old_pts.labels
 
             # merging
-            merged_pts = torch.vstack([old_pts, new_points[location]])
+            merged_pts = torch.vstack([old_pts, new_pts])
             merged_pts.labels = old_pts.labels
             self.input_pts[location] = merged_pts
 
