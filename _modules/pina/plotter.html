@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.plotter &mdash; PINA 0.1.1.post2406 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>pina.plotter &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -37,7 +37,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.1.post2406
+                0.1.1.post2407
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -259,6 +259,7 @@
         <span class="n">method</span><span class="o">=</span><span class="s2">&quot;contourf&quot;</span><span class="p">,</span>
         <span class="n">res</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
         <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -277,6 +278,8 @@
 <span class="sd">            Default is &#39;contourf&#39;.</span>
 <span class="sd">        :param int res: The resolution, aka the number of points used for</span>
 <span class="sd">            plotting in each axis. Default is 256.</span>
+<span class="sd">        :param str title: The title for the plot. If None, the plot</span>
+<span class="sd">            is shown without a title. Default is None.</span>
 <span class="sd">        :param str filename: The file name to save the plot. If None, the plot</span>
 <span class="sd">            is shown using the setted matplotlib frontend. Default is None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -332,6 +335,9 @@
             <span class="p">)</span>
 
         <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -416,7 +422,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jun 01, 2024.
+      <span class="lastupdated">Last updated on Jul 01, 2024.
       </span></p>
   </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plotter &mdash; PINA 0.1.1.post2406 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>Plotter &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
 
@@ -39,7 +39,7 @@
               <img src="../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.1.post2406
+                0.1.1.post2407
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -154,7 +154,7 @@ is shown using the setted matplotlib frontend. Default is None.</p></li>
 
 <dl class="method">
 <dt>
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">solver</em>, <em class="sig-param">components=None</em>, <em class="sig-param">fixed_variables={}</em>, <em class="sig-param">method='contourf'</em>, <em class="sig-param">res=256</em>, <em class="sig-param">filename=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/plotter.html#Plotter.plot"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">solver</em>, <em class="sig-param">components=None</em>, <em class="sig-param">fixed_variables={}</em>, <em class="sig-param">method='contourf'</em>, <em class="sig-param">res=256</em>, <em class="sig-param">filename=None</em>, <em class="sig-param">title=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/plotter.html#Plotter.plot"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Plot sample of SolverInterface output.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -172,6 +172,8 @@ plotting the solution. Available methods are {‘contourf’, ‘pcolor’}.
 Default is ‘contourf’.</p></li>
 <li><p><strong>res</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The resolution, aka the number of points used for
 plotting in each axis. Default is 256.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The title for the plot. If None, the plot
+is shown without a title. Default is None.</p></li>
 <li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The file name to save the plot. If None, the plot
 is shown using the setted matplotlib frontend. Default is None.</p></li>
 </ul>
@@ -216,7 +218,7 @@ is shown using the setted matplotlib frontend. Default is None.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jun 01, 2024.
+      <span class="lastupdated">Last updated on Jul 01, 2024.
       </span></p>
   </div>
 

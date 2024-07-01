@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.model.layers.embedding &mdash; PINA 0.1.1.post2406 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>pina.model.layers.embedding &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css" />
 
@@ -37,7 +37,7 @@
               <img src="../../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.1.post2406
+                0.1.1.post2407
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -89,13 +89,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pina.model.layers.embedding</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Periodic Boundary Embedding modulus. &quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot; Embedding modulus. &quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">pina.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
 
 
-<div class="viewcode-block" id="PeriodicBoundaryEmbedding"><a class="viewcode-back" href="../../../../_rst/layers/embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding">[docs]</a><span class="k">class</span> <span class="nc">PeriodicBoundaryEmbedding</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="PeriodicBoundaryEmbedding"><a class="viewcode-back" href="../../../../_rst/layers/pbc_embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding">[docs]</a><span class="k">class</span> <span class="nc">PeriodicBoundaryEmbedding</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Imposing hard constraint periodic boundary conditions by embedding the</span>
 <span class="sd">    input.</span>
@@ -186,12 +187,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_period</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">periods</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">input_dimension</span><span class="p">)}</span>
 
-<div class="viewcode-block" id="PeriodicBoundaryEmbedding.forward"><a class="viewcode-back" href="../../../../_rst/layers/embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="PeriodicBoundaryEmbedding.forward"><a class="viewcode-back" href="../../../../_rst/layers/pbc_embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Forward pass to compute the periodic boundary conditions embedding.</span>
 
 <span class="sd">        :param torch.Tensor x: Input tensor.</span>
-<span class="sd">        :return: Fourier embeddings of the input.</span>
+<span class="sd">        :return: Periodic embedding of the input.</span>
 <span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">omega</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
@@ -246,6 +247,109 @@
 <span class="sd">        The period of the periodic function to approximate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_period</span></div>
+
+
+<div class="viewcode-block" id="FourierFeatureEmbedding"><a class="viewcode-back" href="../../../../_rst/layers/fourier_embedding.html#pina.model.layers.embedding.FourierFeatureEmbedding">[docs]</a><span class="k">class</span> <span class="nc">FourierFeatureEmbedding</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dimension</span><span class="p">,</span> <span class="n">output_dimension</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fourier Feature Embedding class for encoding input features</span>
+<span class="sd">        using random Fourier features.This class applies a Fourier</span>
+<span class="sd">        transformation to the input features,</span>
+<span class="sd">        which can help in learning high-frequency variations in data.</span>
+<span class="sd">        If multiple sigma are provided, the class</span>
+<span class="sd">        supports multiscale feature embedding, creating embeddings for</span>
+<span class="sd">        each scale specified by the sigma.</span>
+
+<span class="sd">        The :obj:`FourierFeatureEmbedding` augments the input</span>
+<span class="sd">        by the following formula (3.10 of original paper):</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{x} \rightarrow \tilde{\mathbf{x}} = \left[</span>
+<span class="sd">            \cos\left( \mathbf{B} \mathbf{x} \right),</span>
+<span class="sd">            \sin\left( \mathbf{B} \mathbf{x} \right)\right],</span>
+
+<span class="sd">        where :math:`\mathbf{B}_{ij} \sim \mathcal{N}(0, \sigma^2)`.</span>
+
+<span class="sd">        In case multiple ``sigma`` are passed, the resulting embeddings</span>
+<span class="sd">        are concateneted:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \mathbf{x} \rightarrow \tilde{\mathbf{x}} = \left[</span>
+<span class="sd">            \cos\left( \mathbf{B}^1 \mathbf{x} \right),</span>
+<span class="sd">            \sin\left( \mathbf{B}^1 \mathbf{x} \right),</span>
+<span class="sd">            \cos\left( \mathbf{B}^2 \mathbf{x} \right),</span>
+<span class="sd">            \sin\left( \mathbf{B}^3 \mathbf{x} \right),</span>
+<span class="sd">            \dots,</span>
+<span class="sd">            \cos\left( \mathbf{B}^M \mathbf{x} \right),</span>
+<span class="sd">            \sin\left( \mathbf{B}^M \mathbf{x} \right)\right],</span>
+
+<span class="sd">        where :math:`\mathbf{B}^k_{ij} \sim \mathcal{N}(0, \sigma_k^2) \quad</span>
+<span class="sd">        k \in (1, \dots, M)`.</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            **Original reference**:</span>
+<span class="sd">            Wang, Sifan, Hanwen Wang, and Paris Perdikaris. *On the eigenvector</span>
+<span class="sd">            bias of Fourier feature networks: From regression to solving</span>
+<span class="sd">            multi-scale PDEs with physics-informed neural networks.*</span>
+<span class="sd">            Computer Methods in Applied Mechanics and</span>
+<span class="sd">            Engineering 384 (2021): 113938.</span>
+<span class="sd">            DOI: `10.1016/j.cma.2021.113938.</span>
+<span class="sd">            &lt;https://doi.org/10.1016/j.cma.2021.113938&gt;`_</span>
+
+<span class="sd">        :param int input_dimension: The input vector dimension of the layer.</span>
+<span class="sd">        :param int output_dimension: The output dimension of the layer. The</span>
+<span class="sd">            output is obtained as a concatenation of the cosine and sine</span>
+<span class="sd">            embedding, hence it must be a multiple of two (even number).</span>
+<span class="sd">        :param int | float sigma: The standard deviation used for the</span>
+<span class="sd">            Fourier Embedding. This value must reflect the granularity of the</span>
+<span class="sd">            scale in the differential equation solution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">output_dimension</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">input_dimension</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_dimension</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Expected output_dimension to be a even number, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{output_dimension}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># assign sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+
+        <span class="c1"># create non-trainable matrices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">input_dimension</span><span class="p">,</span> <span class="n">output_dimension</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FourierFeatureEmbedding.forward"><a class="viewcode-back" href="../../../../_rst/layers/fourier_embedding.html#pina.model.layers.embedding.FourierFeatureEmbedding.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass to compute the fourier embedding.</span>
+
+<span class="sd">        :param torch.Tensor x: Input tensor.</span>
+<span class="sd">        :return: Fourier embeddings of the input.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># compute random matrix multiplication</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+        <span class="c1"># return embedding</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">out</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">out</span><span class="p">)],</span>
+            <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returning the variance of the sampled matrix for Fourier Embedding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span></div>
 </pre></div>
 
            </div>
@@ -256,7 +360,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jun 01, 2024.
+      <span class="lastupdated">Last updated on Jul 01, 2024.
       </span></p>
   </div>
 

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial: Multiscale PDE learning with Fourier Feature Network &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" href="../tutorial5/tutorial.html" />
+    <link rel="prev" title="Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions" href="../tutorial9/tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.1.1.post2407
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../tutorial2/tutorial.html">Two dimensional Poisson problem using Extra Features Learning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial3/tutorial.html">Two dimensional Wave problem with hard constraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial7/tutorial.html">Resolution of a 2D Poisson inverse problem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorial9/tutorial.html">Periodic Boundary Conditions for Helmotz Equation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Multiscale PDE learning with Fourier Feature Network</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#multiscale-problem">Multiscale Problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fourier-feature-embedding-in-pina">Fourier Feature Embedding in PINA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#whats-next">What’s next?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Community:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PINA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
+      <li class="breadcrumb-item active">Tutorial: Multiscale PDE learning with Fourier Feature Network</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/_rst/tutorials/tutorial13/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tutorial-multiscale-pde-learning-with-fourier-feature-network">
+<h1>Tutorial: Multiscale PDE learning with Fourier Feature Network<a class="headerlink" href="#tutorial-multiscale-pde-learning-with-fourier-feature-network" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial presents how to solve with Physics-Informed Neural
+Networks (PINNs) a PDE characterized by multiscale behaviour, as
+presented in <a class="reference external" href="https://doi.org/10.1016/j.cma.2021.113938">On the eigenvector bias of Fourier feature networks: From
+regression to solving multi-scale PDEs with physics-informed neural
+networks</a>.</p>
+<p>First of all, some useful imports.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import torch
+
+from pina import Condition, Plotter, Trainer, Plotter
+from pina.problem import SpatialProblem
+from pina.operators import laplacian
+from pina.solvers import PINN, SAPINN
+from pina.model.layers import FourierFeatureEmbedding
+from pina.loss import LpLoss
+from pina.geometry import CartesianDomain
+from pina.equation import Equation, FixedValue
+from pina.model import FeedForward
+</pre></div>
+</div>
+<div class="section" id="multiscale-problem">
+<h2>Multiscale Problem<a class="headerlink" href="#multiscale-problem" title="Permalink to this headline">¶</a></h2>
+<p>We begin by presenting the problem which also can be found in Section 2
+of <a class="reference external" href="https://doi.org/10.1016/j.cma.2021.113938">On the eigenvector bias of Fourier feature networks: From regression
+to solving multi-scale PDEs with physics-informed neural
+networks</a>. The
+one-dimensional Poisson problem we aim to solve is mathematically
+written as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{equation}
+\begin{cases}
+\Delta u (x) + f(x) = 0 \quad x \in [0,1], \\
+u(x) = 0 \quad x \in \partial[0,1], \\
+\end{cases}
+\end{equation}\end{split}\]</div>
+<p>We impose the solution as
+<span class="math notranslate nohighlight">\(u(x) = \sin(2\pi x) + 0.1 \sin(50\pi x)\)</span> and obtain the force
+term
+<span class="math notranslate nohighlight">\(f(x) = (2\pi)^2 \sin(2\pi x) + 0.1 (50 \pi)^2 \sin(50\pi x)\)</span>.
+Though this example is simple and pedagogical, it is worth noting that
+the solution exhibits low frequency in the macro-scale and high
+frequency in the micro-scale, which resembles many practical scenarios.</p>
+<p>In <strong>PINA</strong> this problem is written, as always, as a class <a class="reference external" href="https://mathlab.github.io/PINA/_rst/tutorials/tutorial1/tutorial.html">see here for
+a tutorial on the Problem
+class</a>.
+Below you can find the <code class="docutils literal notranslate"><span class="pre">Poisson</span></code> problem which is mathmatically
+described above.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class Poisson(SpatialProblem):
+    output_variables = [&#39;u&#39;]
+    spatial_domain = CartesianDomain({&#39;x&#39;: [0, 1]})
+
+    def poisson_equation(input_, output_):
+        x = input_.extract(&#39;x&#39;)
+        u_xx = laplacian(output_, input_, components=[&#39;u&#39;], d=[&#39;x&#39;])
+        f = ((2*torch.pi)**2)*torch.sin(2*torch.pi*x) + 0.1*((50*torch.pi)**2)*torch.sin(50*torch.pi*x)
+        return u_xx + f
+
+    # here we write the problem conditions
+    conditions = {
+        &#39;gamma0&#39; : Condition(location=CartesianDomain({&#39;x&#39;: 0}),
+                             equation=FixedValue(0)),
+        &#39;gamma1&#39; : Condition(location=CartesianDomain({&#39;x&#39;: 1}),
+                             equation=FixedValue(0)),
+        &#39;D&#39;:       Condition(location=spatial_domain,
+                             equation=Equation(poisson_equation)),
+    }
+
+    def truth_solution(self, x):
+        return torch.sin(2*torch.pi*x) + 0.1*torch.sin(50*torch.pi*x)
+
+problem = Poisson()
+
+# let&#39;s discretise the domain
+problem.discretise_domain(128, &#39;grid&#39;)
+</pre></div>
+</div>
+<p>A standard PINN approach would be to fit this model using a Feed Forward
+(fully connected) Neural Network. For a conventional fully-connected
+neural network is easy to approximate a function <span class="math notranslate nohighlight">\(u\)</span>, given
+sufficient data inside the computational domain. However solving
+high-frequency or multi-scale problems presents great challenges to
+PINNs especially when the number of data cannot capture the different
+scales.</p>
+<p>Below we run a simulation using the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> solver and the self
+adaptive <code class="docutils literal notranslate"><span class="pre">SAPINN</span></code> solver, using a
+<code class="docutils literal notranslate"><span class="pre">FeedForward</span></code> model. We used a <code class="docutils literal notranslate"><span class="pre">MultiStepLR</span></code> scheduler to decrease the learning rate
+slowly during training (it takes around 2 minutes to run on CPU).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># training with PINN and visualize results
+pinn = PINN(problem=problem,
+            model=FeedForward(input_dimensions=1, output_dimensions=1, layers=[100, 100, 100]),
+            scheduler=torch.optim.lr_scheduler.MultiStepLR,
+            scheduler_kwargs={&#39;milestones&#39; : [1000, 2000, 3000, 4000], &#39;gamma&#39;:0.9})
+trainer = Trainer(pinn, max_epochs=5000, accelerator=&#39;cpu&#39;, enable_model_summary=False)
+trainer.train()
+
+# training with PINN and visualize results
+sapinn = SAPINN(problem=problem,
+                model=FeedForward(input_dimensions=1, output_dimensions=1, layers=[100, 100, 100]),
+                scheduler_model=torch.optim.lr_scheduler.MultiStepLR,
+                scheduler_model_kwargs={&#39;milestones&#39; : [1000, 2000, 3000, 4000], &#39;gamma&#39;:0.9})
+trainer_sapinn = Trainer(sapinn, max_epochs=5000, accelerator=&#39;cpu&#39;, enable_model_summary=False)
+trainer_sapinn.train()
+
+# plot results
+pl = Plotter()
+pl.plot(pinn, title=&#39;PINN Solution&#39;)
+pl.plot(sapinn, title=&#39;Self Adaptive PINN Solution&#39;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GPU available: True (mps), used: False
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Epoch 4999: 100%|██████████| 1/1 [00:00&lt;00:00, 97.66it/s, v_num=69, gamma0_loss=2.61e+3, gamma1_loss=2.61e+3, D_loss=409.0, mean_loss=1.88e+3]
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GPU available: True (mps), used: False
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Epoch 4999: 100%|██████████| 1/1 [00:00&lt;00:00, 65.77it/s, v_num=70, gamma0_loss=151.0, gamma1_loss=148.0, D_loss=6.38e+5, mean_loss=2.13e+5]
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_5_8.png" src="../../../_images/tutorial_5_8.png" />
+<img alt="../../../_images/tutorial_5_9.png" src="../../../_images/tutorial_5_9.png" />
+<p>We can clearly see that the solution has not been learned by the two
+different solvers. Indeed the big problem is not in the optimization
+strategy (i.e. the solver), but in the model used to solve the problem.
+A simple <code class="docutils literal notranslate"><span class="pre">FeedForward</span></code> network can hardly handle multiscales if not
+enough collocation points are used!</p>
+<p>We can also compute the <span class="math notranslate nohighlight">\(l_2\)</span> relative error for the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> and
+<code class="docutils literal notranslate"><span class="pre">SAPINN</span></code> solutions:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># l2 loss from PINA losses
+l2_loss = LpLoss(p=2, relative=True)
+
+# sample new test points
+pts = pts = problem.spatial_domain.sample(100, &#39;grid&#39;)
+print(f&#39;Relative l2 error PINN      {l2_loss(pinn(pts), problem.truth_solution(pts)).item():.2%}&#39;)
+print(f&#39;Relative l2 error SAPINN    {l2_loss(sapinn(pts), problem.truth_solution(pts)).item():.2%}&#39;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Relative</span> <span class="n">l2</span> <span class="n">error</span> <span class="n">PINN</span>      <span class="mf">95.76</span><span class="o">%</span>
+<span class="n">Relative</span> <span class="n">l2</span> <span class="n">error</span> <span class="n">SAPINN</span>    <span class="mf">124.26</span><span class="o">%</span>
+</pre></div>
+</div>
+<p>Which is indeed very high!</p>
+</div>
+<div class="section" id="fourier-feature-embedding-in-pina">
+<h2>Fourier Feature Embedding in PINA<a class="headerlink" href="#fourier-feature-embedding-in-pina" title="Permalink to this headline">¶</a></h2>
+<p>Fourier Feature Embedding is a way to transform the input features, to
+help the network in learning multiscale variations in the output. It was
+first introduced in <a class="reference external" href="https://doi.org/10.1016/j.cma.2021.113938">On the eigenvector bias of Fourier feature
+networks: From regression to solving multi-scale PDEs with
+physics-informed neural
+networks</a> showing great
+results for multiscale problems. The basic idea is to map the input
+<span class="math notranslate nohighlight">\(\mathbf{x}\)</span> into an embedding <span class="math notranslate nohighlight">\(\tilde{\mathbf{x}}\)</span> where:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{\mathbf{x}} =\left[\cos\left( \mathbf{B} \mathbf{x} \right), \sin\left( \mathbf{B} \mathbf{x} \right)\right]\]</div>
+<p>and <span class="math notranslate nohighlight">\(\mathbf{B}_{ij} \sim \mathcal{N}(0, \sigma^2)\)</span>. This simple
+operation allow the network to learn on multiple scales!</p>
+<p>In PINA we already have implemented the feature as a <code class="docutils literal notranslate"><span class="pre">layer</span></code> called
+<code class="docutils literal notranslate"><span class="pre">`FourierFeatureEmbedding</span></code> &lt;<a class="reference external" href="https://mathlab.github.io/PINA/_rst/layers/fourier_embedding.html">https://mathlab.github.io/PINA/_rst/layers/fourier_embedding.html</a>&gt;`__.
+Below we will build the <em>Multi-scale Fourier Feature Architecture</em>. In
+this architecture multiple Fourier feature embeddings (initialized with
+different <span class="math notranslate nohighlight">\(\sigma\)</span>) are applied to input coordinates and then
+passed through the same fully-connected neural network, before the
+outputs are finally concatenated with a linear layer.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class MultiscaleFourierNet(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.embedding1 = FourierFeatureEmbedding(input_dimension=1,
+                                                  output_dimension=100,
+                                                  sigma=1)
+        self.embedding2 = FourierFeatureEmbedding(input_dimension=1,
+                                                  output_dimension=100,
+                                                  sigma=10)
+        self.layers = FeedForward(input_dimensions=100, output_dimensions=100, layers=[100])
+        self.final_layer = torch.nn.Linear(2*100, 1)
+
+    def forward(self, x):
+        e1 = self.layers(self.embedding1(x))
+        e2 = self.layers(self.embedding2(x))
+        return self.final_layer(torch.cat([e1, e2], dim=-1))
+
+MultiscaleFourierNet()
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MultiscaleFourierNet</span><span class="p">(</span>
+  <span class="p">(</span><span class="n">embedding1</span><span class="p">):</span> <span class="n">FourierFeatureEmbedding</span><span class="p">()</span>
+  <span class="p">(</span><span class="n">embedding2</span><span class="p">):</span> <span class="n">FourierFeatureEmbedding</span><span class="p">()</span>
+  <span class="p">(</span><span class="n">layers</span><span class="p">):</span> <span class="n">FeedForward</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">model</span><span class="p">):</span> <span class="n">Sequential</span><span class="p">(</span>
+      <span class="p">(</span><span class="mi">0</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+      <span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">Tanh</span><span class="p">()</span>
+      <span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+  <span class="p">)</span>
+  <span class="p">(</span><span class="n">final_layer</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>We will train the <code class="docutils literal notranslate"><span class="pre">MultiscaleFourierNet</span></code> with the <code class="docutils literal notranslate"><span class="pre">PINN</span></code> solver (and
+feel free to try also with our PINN variants (<code class="docutils literal notranslate"><span class="pre">SAPINN</span></code>, <code class="docutils literal notranslate"><span class="pre">GPINN</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CompetitivePINN</span></code>, …).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>multiscale_pinn = PINN(problem=problem,
+                       model=MultiscaleFourierNet(),
+                       scheduler=torch.optim.lr_scheduler.MultiStepLR,
+                       scheduler_kwargs={&#39;milestones&#39; : [1000, 2000, 3000, 4000], &#39;gamma&#39;:0.9})
+trainer = Trainer(multiscale_pinn, max_epochs=5000, accelerator=&#39;cpu&#39;, enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer.train()
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GPU available: True (mps), used: False
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Epoch 4999: 100%|██████████| 1/1 [00:00&lt;00:00, 72.21it/s, v_num=71, gamma0_loss=3.91e-5, gamma1_loss=3.91e-5, D_loss=0.000151, mean_loss=0.000113]
+</pre></div>
+</div>
+<p>Let us now plot the solution and compute the relative <span class="math notranslate nohighlight">\(l_2\)</span> again!</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># plot the solution
+pl.plot(multiscale_pinn, title=&#39;Solution PINN with MultiscaleFourierNet&#39;)
+
+# sample new test points
+pts = pts = problem.spatial_domain.sample(100, &#39;grid&#39;)
+print(f&#39;Relative l2 error PINN with MultiscaleFourierNet      {l2_loss(multiscale_pinn(pts), problem.truth_solution(pts)).item():.2%}&#39;)
+</pre></div>
+</div>
+<img alt="../../../_images/tutorial_15_0.png" src="../../../_images/tutorial_15_0.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Relative</span> <span class="n">l2</span> <span class="n">error</span> <span class="n">PINN</span> <span class="k">with</span> <span class="n">MultiscaleFourierNet</span>      <span class="mf">2.72</span><span class="o">%</span>
+</pre></div>
+</div>
+<p>It is pretty clear that the network has learned the correct solution,
+with also a very law error. Obviously a longer training and a more
+expressive neural network could improve the results!</p>
+</div>
+<div class="section" id="whats-next">
+<h2>What’s next?<a class="headerlink" href="#whats-next" title="Permalink to this headline">¶</a></h2>
+<p>Congratulations on completing the one dimensional Poisson tutorial of
+<strong>PINA</strong> using <code class="docutils literal notranslate"><span class="pre">FourierFeatureEmbedding</span></code>! There are multiple
+directions you can go now:</p>
+<ol class="arabic simple">
+<li><p>Train the network for longer or with different layer sizes and assert
+the finaly accuracy</p></li>
+<li><p>Understand the role of <code class="docutils literal notranslate"><span class="pre">sigma</span></code> in <code class="docutils literal notranslate"><span class="pre">FourierFeatureEmbedding</span></code> (see
+original paper for a nice reference)</p></li>
+<li><p>Code the <em>Spatio-temporal multi-scale Fourier feature architecture</em>
+for a more complex time dependent PDE (section 3 of the original
+reference)</p></li>
+<li><p>Many more…</p></li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial9/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial5/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-2024, PINA Contributors.
+      <span class="lastupdated">Last updated on Jul 01, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

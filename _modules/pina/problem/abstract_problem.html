@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pina.problem.abstract_problem &mdash; PINA 0.1.1.post2406 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>pina.problem.abstract_problem &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
 
@@ -37,7 +37,7 @@
               <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.1.post2406
+                0.1.1.post2407
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -364,7 +364,7 @@
                 <span class="n">new_pts</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">old_pts</span><span class="o">.</span><span class="n">labels</span>
 
             <span class="c1"># merging</span>
-            <span class="n">merged_pts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">old_pts</span><span class="p">,</span> <span class="n">new_points</span><span class="p">[</span><span class="n">location</span><span class="p">]])</span>
+            <span class="n">merged_pts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">old_pts</span><span class="p">,</span> <span class="n">new_pts</span><span class="p">])</span>
             <span class="n">merged_pts</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">old_pts</span><span class="o">.</span><span class="n">labels</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged_pts</span></div>
 
@@ -401,7 +401,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jun 01, 2024.
+      <span class="lastupdated">Last updated on Jul 01, 2024.
       </span></p>
   </div>
 

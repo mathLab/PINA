@@ -1,4 +1,4 @@
-Periodic Boundary Condition embeddings
+Periodic Boundary Condition Embedding
 =======================================
 .. currentmodule:: pina.model.layers.embedding
     

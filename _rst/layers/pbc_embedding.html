@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Periodic Boundary Condition embeddings &mdash; PINA 0.1.1.post2406 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>Periodic Boundary Condition Embedding &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
 
@@ -22,7 +22,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="AdaptiveActivationFunctionInterface" href="../adaptive_functions/AdaptiveFunctionInterface.html" />
+    <link rel="next" title="Fourier Feature Embedding" href="fourier_embedding.html" />
     <link rel="prev" title="PODBlock" href="pod.html" /> 
 </head>
 
@@ -39,7 +39,7 @@
               <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.1.post2406
+                0.1.1.post2407
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -64,7 +64,8 @@
 <li class="toctree-l3"><a class="reference internal" href="lowrank_layer.html">Low Rank layer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="convolution.html">Continuous convolution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pod.html">Proper Orthogonal Decomposition</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Periodic Boundary Condition embeddings</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Periodic Boundary Condition Embedding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fourier_embedding.html">Fourier Feature Embedding</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
@@ -105,9 +106,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../_code.html">Code Documentation</a></li>
-      <li class="breadcrumb-item active">Periodic Boundary Condition embeddings</li>
+      <li class="breadcrumb-item active">Periodic Boundary Condition Embedding</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/_rst/layers/embedding.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/_rst/layers/pbc_embedding.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -115,8 +116,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="periodic-boundary-condition-embeddings">
-<h1>Periodic Boundary Condition embeddings<a class="headerlink" href="#periodic-boundary-condition-embeddings" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="periodic-boundary-condition-embedding">
+<h1>Periodic Boundary Condition Embedding<a class="headerlink" href="#periodic-boundary-condition-embedding" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pina.model.layers.embedding.PeriodicBoundaryEmbedding">
 <em class="property">class </em><code class="sig-name descname">PeriodicBoundaryEmbedding</code><span class="sig-paren">(</span><em class="sig-param">input_dimension</em>, <em class="sig-param">periods</em>, <em class="sig-param">output_dimension=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/layers/embedding.html#PeriodicBoundaryEmbedding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pina.model.layers.embedding.PeriodicBoundaryEmbedding" title="Permalink to this definition">¶</a></dt>
@@ -195,7 +196,7 @@ dimensionality, default <code class="docutils literal notranslate"><span class="
 <dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)"><em>torch.Tensor</em></a>) – Input tensor.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Fourier embeddings of the input.</p>
+<dd class="field-even"><p>Periodic embedding of the input.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.3)">torch.Tensor</a></p>
@@ -218,14 +219,14 @@ dimensionality, default <code class="docutils literal notranslate"><span class="
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="pod.html" class="btn btn-neutral float-left" title="PODBlock" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../adaptive_functions/AdaptiveFunctionInterface.html" class="btn btn-neutral float-right" title="AdaptiveActivationFunctionInterface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="fourier_embedding.html" class="btn btn-neutral float-right" title="Fourier Feature Embedding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jun 01, 2024.
+      <span class="lastupdated">Last updated on Jul 01, 2024.
       </span></p>
   </div>
 

@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; PINA 0.1.1.post2406 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Index &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
 
@@ -38,7 +38,7 @@
               <img src="_static/pina_logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.1.1.post2406
+                0.1.1.post2407
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -681,6 +681,8 @@
 </li>
         <li><a href="_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock3D.forward">(FourierBlock3D method)</a>
 </li>
+        <li><a href="_rst/layers/fourier_embedding.html#pina.model.layers.embedding.FourierFeatureEmbedding.forward">(FourierFeatureEmbedding method)</a>
+</li>
         <li><a href="_rst/models/fourier_kernel.html#pina.model.fno.FourierIntegralKernel.forward">(FourierIntegralKernel method)</a>
 </li>
         <li><a href="_rst/solvers/garom.html#pina.solvers.garom.GAROM.forward">(GAROM method)</a>
@@ -697,7 +699,7 @@
 </li>
         <li><a href="_rst/models/network.html#pina.model.network.Network.forward">(Network method)</a>
 </li>
-        <li><a href="_rst/layers/embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding.forward">(PeriodicBoundaryEmbedding method)</a>
+        <li><a href="_rst/layers/pbc_embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding.forward">(PeriodicBoundaryEmbedding method)</a>
 </li>
         <li><a href="_rst/solvers/pinn.html#pina.solvers.pinns.pinn.PINN.forward">(PINN method)</a>
 </li>
@@ -733,6 +735,8 @@
       <li><a href="_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock2D">FourierBlock2D (class in pina.model.layers.fourier)</a>
 </li>
       <li><a href="_rst/layers/fourier.html#pina.model.layers.fourier.FourierBlock3D">FourierBlock3D (class in pina.model.layers.fourier)</a>
+</li>
+      <li><a href="_rst/layers/fourier_embedding.html#pina.model.layers.embedding.FourierFeatureEmbedding">FourierFeatureEmbedding (class in pina.model.layers.embedding)</a>
 </li>
       <li><a href="_rst/models/fourier_kernel.html#pina.model.fno.FourierIntegralKernel">FourierIntegralKernel (class in pina.model.fno)</a>
 </li>
@@ -1087,6 +1091,8 @@
 </li>
         <li><a href="_rst/solvers/basepinn.html#pina.solvers.pinns.basepinn.PINNInterface.loss_phys">(PINNInterface method)</a>
 </li>
+        <li><a href="_rst/solvers/rba_pinn.html#pina.solvers.pinns.rbapinn.RBAPINN.loss_phys">(RBAPINN method)</a>
+</li>
         <li><a href="_rst/solvers/sapinn.html#pina.solvers.pinns.sapinn.SAPINN.loss_phys">(SAPINN method)</a>
 </li>
       </ul></li>
@@ -1358,9 +1364,9 @@
       </ul></li>
       <li><a href="_rst/problem/parametricproblem.html#pina.problem.parametric_problem.ParametricProblem">ParametricProblem (class in pina.problem.parametric_problem)</a>
 </li>
-      <li><a href="_rst/layers/embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding.period">period() (PeriodicBoundaryEmbedding property)</a>
+      <li><a href="_rst/layers/pbc_embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding.period">period() (PeriodicBoundaryEmbedding property)</a>
 </li>
-      <li><a href="_rst/layers/embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding">PeriodicBoundaryEmbedding (class in pina.model.layers.embedding)</a>
+      <li><a href="_rst/layers/pbc_embedding.html#pina.model.layers.embedding.PeriodicBoundaryEmbedding">PeriodicBoundaryEmbedding (class in pina.model.layers.embedding)</a>
 </li>
       <li><a href="_rst/adaptive_functions/AdaptiveFunctionInterface.html#module-pina.adaptive_functions.adaptive_func_interface">pina.adaptive_functions.adaptive_func_interface (module)</a>
 </li>
@@ -1421,6 +1427,8 @@
       <li><a href="_rst/callbacks/adaptive_refinment_callbacks.html#pina.callbacks.adaptive_refinment_callbacks.R3Refinement">R3Refinement (class in pina.callbacks.adaptive_refinment_callbacks)</a>
 </li>
       <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.rank">rank() (PODBlock property)</a>
+</li>
+      <li><a href="_rst/solvers/rba_pinn.html#pina.solvers.pinns.rbapinn.RBAPINN">RBAPINN (class in pina.solvers.pinns.rbapinn)</a>
 </li>
       <li><a href="_rst/layers/pod.html#pina.model.layers.pod.PODBlock.reduce">reduce() (PODBlock method)</a>
 </li>
@@ -1828,6 +1836,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_rst/layers/fourier_embedding.html#pina.model.layers.embedding.FourierFeatureEmbedding.sigma">sigma() (FourierFeatureEmbedding property)</a>
+</li>
       <li><a href="_rst/trainer.html#pina.trainer.Trainer.solver">solver() (Trainer property)</a>
 </li>
       <li><a href="_rst/solvers/solver_interface.html#pina.solvers.solver.SolverInterface">SolverInterface (class in pina.solvers.solver)</a>
@@ -2121,7 +2131,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jun 01, 2024.
+      <span class="lastupdated">Last updated on Jul 01, 2024.
       </span></p>
   </div>
 
