@@ -32,4 +32,4 @@ Time dependent Kuramoto Sivashinsky equation using the Averaging Neural Operator
 | Description   | Tutorial  |
 |---------------|-----------|
 Unstructured convolutional autoencoder via continuous convolution |[[.ipynb](tutorial4/tutorial.ipynb),&#160;[.py](tutorial4/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial4/tutorial.html)]|
-POD-NN for reduced order modeling| [[.ipynb](tutorial8/tutorial.ipynb),&#160;[.py](tutorial8/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial8/tutorial.html)]|
+POD-RBF and POD-NN for reduced order modeling| [[.ipynb](tutorial8/tutorial.ipynb),&#160;[.py](tutorial8/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial8/tutorial.html)]|
