@@ -14,6 +14,12 @@ import matplotlib.pyplot as plt
 
 torch.manual_seed(20)
 
+def err(snap, snap_pred):
+    # relative errors
+    errs = torch.linalg.norm(snap - snap_pred, dim=1)/torch.linalg.norm(snap, dim=1)
+    err = float(torch.mean(errs))
+    return err
+
 class PODRBF(torch.nn.Module):
     """
     Non-intrusive ROM using POD as reduction and RBF as approximation.
@@ -30,8 +36,18 @@ class PODRBF(torch.nn.Module):
         self.params = params
 
     def forward(self, param_test):
-        snaps_test = self.pod.expand(self.rbf(param_test))
-        return snaps_test
+        snaps_pred_test = self.pod.expand(self.rbf(param_test))
+        return snaps_pred_test
+
+class POD(PODBlock, torch.nn.Module):
+    def __init__(self, pod_rank):
+        super().__init__(pod_rank)
+
+    def encode(self, X):
+        return self.reduce(X)
+
+    def decode(self, X):
+        return self.expand(X)
 
 if __name__ == "__main__":
     # Parse arguments
@@ -66,40 +82,50 @@ if __name__ == "__main__":
 
     # Define ROM problem with only data
     class SnapshotProblem(ParametricProblem):
-        input_variables = [f's{i}' for i in range(Nparams)]
-        output_variables = [field]
+        input_variables = [f'mu']
+        output_variables = [f's{i}' for i in range(Ndof)]
         parameter_domain = CartesianDomain({'mu':[0, 100]})
         conditions = {'data': Condition(input_points=params_train,
             output_points=snapshots_train)}
 
     problem = SnapshotProblem()
+    print(snapshots_train.shape, snapshots_test.shape)
 
-    rom = PODRBF(pod_rank=reddim, rbf_kernel='thin_plate_spline')
-    rom.fit(params_train, snapshots_train)
-    predicted_snaps_test = rom(params_test)
-    predicted_snaps_train = rom(params_train)
-
-    def err(snap, snap_pred):
-        errs = torch.linalg.norm(snap - snap_pred, dim=1)/torch.linalg.norm(snap, dim=1)
-        err = float(torch.mean(errs))
-        return err
+    # POD model
+    rom = POD(reddim)
+    rom.fit(snapshots_train)
+    predicted_snaps_train = rom.decode(rom.encode(snapshots_train))
+    predicted_snaps_test = rom.decode(rom.encode(snapshots_test))
 
     error_train = err(snapshots_train, predicted_snaps_train)
     error_test = err(snapshots_test, predicted_snaps_test)
+    print('POD model')
     print('Train relative error:', error_train)
     print('Test relative error:', error_test)
+
+    # POD-RBF model
+    rom_rbf = PODRBF(pod_rank=reddim, rbf_kernel='thin_plate_spline')
+    rom_rbf.fit(params_train, snapshots_train)
+    predicted_snaps_test_rbf = rom_rbf(params_test)
+    predicted_snaps_train_rbf = rom_rbf(params_train)
+
+    error_train_rbf = err(snapshots_train, predicted_snaps_train_rbf)
+    error_test_rbf = err(snapshots_test, predicted_snaps_test_rbf)
+    print('POD-RBF')
+    print('Train relative error:', error_train_rbf)
+    print('Test relative error:', error_test_rbf)
 
     # Plot the results
     fig, axs = plt.subplots(1, 3, figsize=(15, 3))
     ind_test = 2
-    snap = snapshots_test[ind_test].detach().numpy().reshape(-1)
-    pred_snap = predicted_snaps_test[ind_test].detach().numpy().reshape(-1)
+    snap = snapshots_train[ind_test].detach().numpy().reshape(-1)
+    pred_snap = predicted_snaps_train[ind_test].detach().numpy().reshape(-1)
     a0 = axs[0].tricontourf(data.triang, snap, levels=16,
             cmap='viridis')
-    axs[0].set_title('Truth (mu test={})'.format(params_test[ind_test].detach().numpy()[0]))
+    axs[0].set_title('Truth (mu test={})'.format(params_train[ind_test].detach().numpy()[0]))
     a1 = axs[1].tricontourf(data.triang, pred_snap, levels=16,
             cmap='viridis')
-    axs[1].set_title('Prediction (mu test={})'.format(params_test[ind_test].detach().numpy()[0]))
+    axs[1].set_title('Prediction (mu test={})'.format(params_train[ind_test].detach().numpy()[0]))
     a2 = axs[2].tricontourf(data.triang, snap - pred_snap, levels=16,
             cmap='viridis')
     axs[2].set_title('Error')
