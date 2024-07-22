@@ -53,4 +53,4 @@ def test_residual():
 
     eq_1 = SystemEquation([eq1, eq2])
     res = eq_1.residual(pts, u)
-    assert res.shape == torch.Size([10])
+    assert res.shape == torch.Size([10, 3])
