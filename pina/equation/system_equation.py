@@ -7,7 +7,7 @@ from ..utils import check_consistency
 
 class SystemEquation(Equation):
 
-    def __init__(self, list_equation, reduction="mean"):
+    def __init__(self, list_equation, reduction="none"):
         """
         System of Equation class for specifing any system
         of equations in PINA.
