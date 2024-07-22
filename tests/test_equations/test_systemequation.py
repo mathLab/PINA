@@ -39,7 +39,7 @@ def test_residual():
     u = torch.pow(pts, 2)
     u.labels = ['u1', 'u2']
 
-    eq_1 = SystemEquation([eq1, eq2])
+    eq_1 = SystemEquation([eq1, eq2], reduction = 'mean')
     res = eq_1.residual(pts, u)
     assert res.shape == torch.Size([10])
 
@@ -50,3 +50,7 @@ def test_residual():
     eq_1 = SystemEquation([eq1, eq2], reduction='none')
     res = eq_1.residual(pts, u)
     assert res.shape == torch.Size([10, 3])
+
+    eq_1 = SystemEquation([eq1, eq2])
+    res = eq_1.residual(pts, u)
+    assert res.shape == torch.Size([10])
