@@ -252,7 +252,7 @@ are actually trained during the optimization loop.
     pod_nn = PODNN(pod_rank=20, layers=[10, 10, 10], func=torch.nn.Tanh)
     pod_nn.fit_pod(u_train)
 
-    pinn_stokes = SupervisedSolver(
+    pod_nn_stokes = SupervisedSolver(
         problem=poisson_problem,
         model=pod_nn,
         optimizer=torch.optim.Adam,
@@ -264,7 +264,7 @@ train the model and use it for predicting the test snapshots.
 .. code:: ipython3
 
     trainer = Trainer(
-        solver=pinn_stokes,
+        solver=pod_nn_stokes,
         max_epochs=1000,
         batch_size=100,
         log_every_n_steps=5,
@@ -316,8 +316,8 @@ printing the mean one.
 
 .. code:: ipython3
 
-    u_test_nn = pinn_stokes(p_test)
-    u_train_nn = pinn_stokes(p_train)
+    u_test_nn = pod_nn_stokes(p_test)
+    u_train_nn = pod_nn_stokes(p_train)
 
     relative_error_train = torch.norm(u_train_nn - u_train)/torch.norm(u_train)
     relative_error_test = torch.norm(u_test_nn - u_test)/torch.norm(u_test)
@@ -346,7 +346,7 @@ but improvements can be accomplished thanks to longer training.
 
     idx = torch.randint(0, len(u_test), (4,))
     u_idx_rbf = pod_rbf(p_test[idx])
-    u_idx_nn = pinn_stokes(p_test[idx])
+    u_idx_nn = pod_nn_stokes(p_test[idx])
 
     import numpy as np
     import matplotlib

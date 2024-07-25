@@ -1,35 +1,56 @@
-"""Module for Radial Basis kernel (RBF) interpolation class."""
-
-from abc import ABC, abstractmethod
-import torch
 import math
 import warnings
-from ...label_tensor import LabelTensor
 from itertools import combinations_with_replacement
+import torch
+from ...utils import check_consistency
 
 def linear(r):
+    '''
+    Linear radial basis function.
+    '''
     return -r
 
 def thin_plate_spline(r, eps=1e-7):
+    '''
+    Thin plate spline radial basis function.
+    '''
     r = torch.clamp(r, min=eps)
     return r**2 * torch.log(r)
 
 def cubic(r):
+    '''
+    Cubic radial basis function.
+    '''
     return r**3
 
 def quintic(r):
+    '''
+    Quintic radial basis function.
+    '''
     return -r**5
 
 def multiquadric(r):
+    '''
+    Multiquadric radial basis function.
+    '''
     return -torch.sqrt(r**2 + 1)
 
 def inverse_multiquadric(r):
+    '''
+    Inverse multiquadric radial basis function.
+    '''
     return 1/torch.sqrt(r**2 + 1)
 
 def inverse_quadratic(r):
+    '''
+    Inverse quadratic radial basis function.
+    '''
     return 1/(r**2 + 1)
 
 def gaussian(r):
+    '''
+    Gaussian radial basis function.
+    '''
     return torch.exp(-r**2)
 
 RADIAL_FUNCS = {
@@ -56,54 +77,14 @@ MIN_DEGREE = {
 
 class RBFLayer(torch.nn.Module):
     """
-    Radial Basis Function (RBF) interpolation layer.
+    Radial Basis Function (RBF) interpolation layer. It need to be fitted with
+    the data with the method :meth:`fit`, before it can be used to interpolate
+    new points. The layer is not trainable.
 
-    Parameters
-    ----------
-    neighbors : int or None
-        Number of neighbors to use in the interpolation. If None, all points
-        are used.
-    smoothing : float or tensor
-        Smoothing parameter for the RBF interpolation. If a scalar, the same
-        smoothing is used for all points. If a tensor, it must have the same
-        length as the first dimension of `y`.
-    kernel : str
-        Radial basis function to use. Must be one of "linear", "thin_plate_spline",
-        "cubic", "quintic", "multiquadric", "inverse_multiquadric", "inverse_quadratic",
-        or "gaussian".
-    epsilon : float
-        Scaling parameter for the kernel. Must be specified for some kernels.
-    degree : int or None
-        Degree of the polynomial to include in the interpolation. If None, the
-        degree is chosen automatically.
-    device : str
-        Device on which to perform calculations. Default is "cpu".
-
-    Attributes
-    ----------
-    y : (n, d) tensor
-        Data points.
-    d : (n, m) tensor
-        Data values.
-    smoothing : (n,) tensor
-        Smoothing parameter for each data point.
-    kernel : str
-        Radial basis function to use.
-    epsilon : float
-        Scaling parameter for the kernel.
-    degree : int
-        Degree of the polynomial to include in the interpolation.
-    device : str
-        Device on which to perform calculations.
-    powers : (r, d) tensor
-        Powers for each monomial in the polynomial.
-    _shift : (d,) tensor
-        Shift for the data.
-    _scale : (d,) tensor
-        Scale for the data.
-    _coeffs : (n + r, m) tensor
-        Coefficients for the RBF interpolation.
-
+    .. note::
+        It reproduces the implementation of ``scipy.interpolate.RBFLayer`` and
+        it is inspired from the implementation in `torchrbf.
+        <https://github.com/ArmanMaesumi/torchrbf>`_
     """
     def __init__(
         self,
@@ -112,89 +93,173 @@ class RBFLayer(torch.nn.Module):
         kernel="thin_plate_spline",
         epsilon=None,
         degree=None,
-        device="cpu",
     ):
         super().__init__()
+        """
+        :param int | None neighbors: Number of neighbors to use for the
+            interpolation.
+            If ``None``, use all data points.
+        :param float smoothing: Smoothing parameter for the interpolation.
+            if 0.0, the interpolation is exact and no smoothing is applied.
+        :param str kernel: Radial basis function to use. Must be one of
+            ``linear``, ``thin_plate_spline``, ``cubic``, ``quintic``,
+            ``multiquadric``, ``inverse_multiquadric``, ``inverse_quadratic``,
+            or ``gaussian``.
+        :param float | None epsilon: Shape parameter that scaled the input to
+            the RBF. This defaults to 1 for kernels in ``SCALE_INVARIANT``
+            dictionary, and must be specified for other kernels.
+        :param int | None degree: Degree of the added polynomial.
+            For some kernels, there exists a minimum degree of the polynomial
+            such that the RBF is well-posed. Those minimum degrees are specified
+            in the `MIN_DEGREE` dictionary above. If `degree` is less than the
+            minimum degree, a warning is raised and the degree is set to the
+            minimum value.
+        """
 
-        self.device = device
-        self.smoothing = smoothing
+        check_consistency(neighbors, (int, type(None)))
+        check_consistency(smoothing, (int, float, torch.Tensor))
+        check_consistency(kernel, str)
+        check_consistency(epsilon, (float, type(None)))
+        check_consistency(degree, (int, type(None)))
+
         self.neighbors = neighbors
+        self.smoothing = smoothing
         self.kernel = kernel
         self.epsilon = epsilon
         self.degree = degree
+        self.powers = None
+        # initialize data points and values
+        self.y = None
+        self.d = None
+        # initialize attributes for the fitted model
+        self._shift = None
+        self._scale = None
+        self._coeffs = None
+
+    @property
+    def smoothing(self):
+        """
+        Smoothing parameter for the interpolation.
+
+        :rtype: float
+        """
+        return self._smoothing
+
+    @smoothing.setter
+    def smoothing(self, value):
+        self._smoothing = value
+
+    @property
+    def kernel(self):
+        """
+        Radial basis function to use.
+
+        :rtype: str
+        """
+        return self._kernel
+
+    @kernel.setter
+    def kernel(self, value):
+        if value not in RADIAL_FUNCS:
+            raise ValueError(f"Unknown kernel: {value}")
+        self._kernel = value.lower()
+
+    @property
+    def epsilon(self):
+        """
+        Shape parameter that scaled the input to the RBF.
+
+        :rtype: float
+        """
+        return self._epsilon
+
+    @epsilon.setter
+    def epsilon(self, value):
+        if value is None:
+            if self.kernel in SCALE_INVARIANT:
+                value = 1.0
+            else:
+                raise ValueError("Must specify `epsilon` for this kernel.")
+        else:
+            value = float(value)
+        self._epsilon = value
+
+    @property
+    def degree(self):
+        """
+        Degree of the added polynomial.
+
+        :rtype: int
+        """
+        return self._degree
+
+    @degree.setter
+    def degree(self, value):
+        min_degree = MIN_DEGREE.get(self.kernel, -1)
+        if value is None:
+            value = max(min_degree, 0)
+        else:
+            value = int(value)
+            if value < -1:
+                raise ValueError("`degree` must be at least -1.")
+            elif value < min_degree:
+                warnings.warn(
+                    "`degree` is too small for this kernel. Setting to "
+                    f"{min_degree}.", UserWarning,
+                )
+        self._degree = value
 
     def _check_data(self, y, d):
         if y.ndim != 2:
             raise ValueError("y must be a 2-dimensional tensor.")
 
-        self.ny, self.ndim = y.shape
-        if d.shape[0] != self.ny:
+        if d.shape[0] != y.shape[0]:
             raise ValueError(
-                "The first dim of d must have the same length as the first dim of y."
+                "The first dim of d must have the same length as "
+                "the first dim of y."
             )
 
-        self.d_shape = d.shape[1:]
-        d = d.reshape((self.ny, -1))
-
         if isinstance(self.smoothing, (int, float)):
-            self.smoothing = torch.full((self.ny,), self.smoothing,
-                    device=self.device).float()
-        elif not isinstance(self.smoothing, torch.Tensor):
-            raise ValueError("`smoothing` must be a scalar or a 1-dimensional tensor.")
-
-        self.kernel = self.kernel.lower()
-        if self.kernel not in RADIAL_FUNCS:
-            raise ValueError(f"Unknown kernel: {self.kernel}")
-
-        if self.epsilon is None:
-            if self.kernel in SCALE_INVARIANT:
-                self.epsilon = 1.0
-            else:
-                raise ValueError("Must specify `epsilon` for this kernel.")
-        else:
-            self.epsilon = float(self.epsilon)
-
-        min_degree = MIN_DEGREE.get(self.kernel, -1)
-        if self.degree is None:
-            self.degree = max(min_degree, 0)
-        else:
-            self.degree = int(self.degree)
-            if self.degree < -1:
-                raise ValueError("`degree` must be at least -1.")
-            elif self.degree < min_degree:
-                warnings.warn(
-                    f"`degree` is too small for this kernel. Setting to {min_degree}.",
-                    UserWarning,
-                )
+            self.smoothing = torch.full((y.shape[0],), self.smoothing
+                    ).float().to(y.device)
 
     def fit(self, y, d):
+        """
+        Fit the RBF interpolator to the data.
+
+        :param torch.Tensor y: (n, d) tensor of data points.
+        :param torch.Tensor d: (n, m) tensor of data values.
+        """
         self._check_data(y, d)
+
+        self.y = y
+        self.d = d
+
         if self.neighbors is None:
-            nobs = self.ny
+            nobs = self.y.shape[0]
         else:
-            raise ValueError("neighbors currently not supported")
+            raise NotImplementedError("neighbors currently not supported")
 
-        powers = monomial_powers(self.ndim, self.degree).to(device=self.device)
+        powers = RBFLayer.monomial_powers(self.y.shape[1], self.degree).to(y.device)
         if powers.shape[0] > nobs:
-            raise ValueError("The data is not compatible with the requested degree.")
+            raise ValueError("The data is not compatible with the "
+                "requested degree.")
 
         if self.neighbors is None:
-            self._shift, self._scale, self._coeffs = solve(y, d,
+            self._shift, self._scale, self._coeffs = RBFLayer.solve(self.y,
+                    self.d.reshape((self.y.shape[0], -1)),
                     self.smoothing, self.kernel, self.epsilon, powers)
 
         self.powers = powers
-        self.y = y
-        self.d = d
 
     def forward(self, x):
         """
         Returns the interpolated data at the given points `x`.
 
-        @param x: (n, d) tensor of points at which to query the interpolator
-        @param use_grad (optional): bool, whether to use Torch autograd when
-            querying the interpolator. Default is False.
+        :param torch.Tensor x: `(n, d)` tensor of points at which
+            to query the interpolator
 
-        Returns a (n, m) tensor of interpolated data.
+        :rtype: `(n, m)` torch.Tensor of interpolated data.
         """
         if x.ndim != 2:
             raise ValueError("`x` must be a 2-dimensional tensor.")
@@ -212,100 +277,142 @@ class RBFLayer(torch.nn.Module):
         xeps = x * self.epsilon
         xhat = (x - self._shift) / self._scale
 
-        kv = kernel_vector(xeps, yeps, kernel_func)
-        p = polynomial_matrix(xhat, self.powers)
+        kv = RBFLayer.kernel_vector(xeps, yeps, kernel_func)
+        p = RBFLayer.polynomial_matrix(xhat, self.powers)
         vec = torch.cat([kv, p], dim=1)
         out = torch.matmul(vec, self._coeffs)
-        out = out.reshape((nx,) + self.d_shape)
+        out = out.reshape((nx,) + self.d.shape[1:])
         return out
 
+    @staticmethod
+    def kernel_vector(x, y, kernel_func):
+        """
+        Evaluate radial functions with centers `y` for all points in `x`.
 
-def kernel_vector(x, y, kernel_func):
-    """Evaluate radial functions with centers `y` for all points in `x`."""
-    return kernel_func(torch.cdist(x, y))
+        :param torch.Tensor x: `(n, d)` tensor of points.
+        :param torch.Tensor y: `(m, d)` tensor of centers.
+        :param str kernel_func: Radial basis function to use.
 
+        :rtype: `(n, m)` torch.Tensor of radial function values.
+        """
+        return kernel_func(torch.cdist(x, y))
 
-def polynomial_matrix(x, powers):
-    """Evaluate monomials at `x` with given `powers`"""
-    x_ = torch.repeat_interleave(x, repeats=powers.shape[0], dim=0)
-    powers_ = powers.repeat(x.shape[0], 1)
-    return torch.prod(x_**powers_, dim=1).view(x.shape[0], powers.shape[0])
+    @staticmethod
+    def polynomial_matrix(x, powers):
+        """
+        Evaluate monomials at `x` with given `powers`.
 
+        :param torch.Tensor x: `(n, d)` tensor of points.
+        :param torch.Tensor powers: `(r, d)` tensor of powers for each monomial.
 
-def kernel_matrix(x, kernel_func):
-    """Returns radial function values for all pairs of points in `x`."""
-    return kernel_func(torch.cdist(x, x))
+        :rtype: `(n, r)` torch.Tensor of monomial values.
+        """
+        x_ = torch.repeat_interleave(x, repeats=powers.shape[0], dim=0)
+        powers_ = powers.repeat(x.shape[0], 1)
+        return torch.prod(x_**powers_, dim=1).view(x.shape[0], powers.shape[0])
 
+    @staticmethod
+    def kernel_matrix(x, kernel_func):
+        """
+        Returns radial function values for all pairs of points in `x`.
 
-def monomial_powers(ndim, degree):
-    """Return the powers for each monomial in a polynomial.
+        :param torch.Tensor x: `(n, d`) tensor of points.
+        :param str kernel_func: Radial basis function to use.
 
-    Parameters
-    ----------
-    ndim : int
-        Number of variables in the polynomial.
-    degree : int
-        Degree of the polynomial.
+        :rtype: `(n, n`) torch.Tensor of radial function values.
+        """
+        return kernel_func(torch.cdist(x, x))
 
-    Returns
-    -------
-    (nmonos, ndim) int ndarray
-        Array where each row contains the powers for each variable in a
-        monomial.
+    @staticmethod
+    def monomial_powers(ndim, degree):
+        """
+        Return the powers for each monomial in a polynomial.
 
-    """
-    nmonos = math.comb(degree + ndim, ndim)
-    out = torch.zeros((nmonos, ndim), dtype=torch.int32)
-    count = 0
-    for deg in range(degree + 1):
-        for mono in combinations_with_replacement(range(ndim), deg):
-            for var in mono:
-                out[count, var] += 1
-            count += 1
+        :param int ndim: Number of variables in the polynomial.
+        :param int degree: Degree of the polynomial.
 
-    return out
+        :rtype: `(nmonos, ndim)` torch.Tensor where each row contains the powers
+            for each variable in a monomial.
 
+        """
+        nmonos = math.comb(degree + ndim, ndim)
+        out = torch.zeros((nmonos, ndim), dtype=torch.int32)
+        count = 0
+        for deg in range(degree + 1):
+            for mono in combinations_with_replacement(range(ndim), deg):
+                for var in mono:
+                    out[count, var] += 1
+                count += 1
+        return out
 
-def build(y, d, smoothing, kernel, epsilon, powers):
-    """Build the RBF linear system"""
+    @staticmethod
+    def build(y, d, smoothing, kernel, epsilon, powers):
+        """
+        Build the RBF linear system.
 
-    p = d.shape[0]
-    s = d.shape[1]
-    r = powers.shape[0]
-    kernel_func = RADIAL_FUNCS[kernel]
+        :param torch.Tensor y: (n, d) tensor of data points.
+        :param torch.Tensor d: (n, m) tensor of data values.
+        :param torch.Tensor smoothing: (n,) tensor of smoothing parameters.
+        :param str kernel: Radial basis function to use.
+        :param float epsilon: Shape parameter that scaled the input to the RBF.
+        :param torch.Tensor powers: (r, d) tensor of powers for each monomial.
 
-    mins = torch.min(y, dim=0).values
-    maxs = torch.max(y, dim=0).values
-    shift = (maxs + mins) / 2
-    scale = (maxs - mins) / 2
+        :rtype: (lhs, rhs, shift, scale) where `lhs` and `rhs` are the
+            left-hand side and right-hand side of the linear system, and
+            `shift` and `scale` are the shift and scale parameters.
+        """
+        p = d.shape[0]
+        s = d.shape[1]
+        r = powers.shape[0]
+        kernel_func = RADIAL_FUNCS[kernel]
 
-    scale[scale == 0.0] = 1.0
+        mins = torch.min(y, dim=0).values
+        maxs = torch.max(y, dim=0).values
+        shift = (maxs + mins) / 2
+        scale = (maxs - mins) / 2
 
-    yeps = y * epsilon
-    yhat = (y - shift) / scale
+        scale[scale == 0.0] = 1.0
 
-    lhs = torch.empty((p + r, p + r), device=d.device).float()
-    lhs[:p, :p] = kernel_matrix(yeps, kernel_func)
-    lhs[:p, p:] = polynomial_matrix(yhat, powers)
-    lhs[p:, :p] = lhs[:p, p:].T
-    lhs[p:, p:] = 0.0
-    lhs[:p, :p] += torch.diag(smoothing)
+        yeps = y * epsilon
+        yhat = (y - shift) / scale
 
-    rhs = torch.empty((r + p, s), device=d.device).float()
-    rhs[:p] = d
-    rhs[p:] = 0.0
+        lhs = torch.empty((p + r, p + r), device=d.device).float()
+        lhs[:p, :p] = RBFLayer.kernel_matrix(yeps, kernel_func)
+        lhs[:p, p:] = RBFLayer.polynomial_matrix(yhat, powers)
+        lhs[p:, :p] = lhs[:p, p:].T
+        lhs[p:, p:] = 0.0
+        lhs[:p, :p] += torch.diag(smoothing)
 
-    return lhs, rhs, shift, scale
+        rhs = torch.empty((r + p, s), device=d.device).float()
+        rhs[:p] = d
+        rhs[p:] = 0.0
+        return lhs, rhs, shift, scale
 
+    @staticmethod
+    def solve(y, d, smoothing, kernel, epsilon, powers):
+        """
+        Build then solve the RBF linear system.
 
-def solve(y, d, smoothing, kernel, epsilon, powers):
-    """Build then solve the RBF linear system"""
+        :param torch.Tensor y: (n, d) tensor of data points.
+        :param torch.Tensor d: (n, m) tensor of data values.
+        :param torch.Tensor smoothing: (n,) tensor of smoothing parameters.
 
-    lhs, rhs, shift, scale = build(y, d, smoothing, kernel, epsilon, powers)
-    try:
-        coeffs = torch.linalg.solve(lhs, rhs)
-    except RuntimeError:  # singular matrix
-        if coeffs is None:
+        :param str kernel: Radial basis function to use.
+        :param float epsilon: Shape parameter that scaled the input to the RBF.
+        :param torch.Tensor powers: (r, d) tensor of powers for each monomial.
+
+        :raises ValueError: If the linear system is singular.
+
+        :rtype: (shift, scale, coeffs) where `shift` and `scale` are the
+            shift and scale parameters, and `coeffs` are the coefficients
+            of the interpolator
+        """
+
+        lhs, rhs, shift, scale = RBFLayer.build(y, d, smoothing, kernel, epsilon,
+                powers)
+        try:
+            coeffs = torch.linalg.solve(lhs, rhs)
+        except RuntimeError as e:
             msg = "Singular matrix."
             nmonos = powers.shape[0]
             if nmonos > 0:
@@ -318,6 +425,6 @@ def solve(y, d, smoothing, kernel, epsilon, powers):
                         f"rank ({rank}/{nmonos})."
                     )
 
-            raise ValueError(msg)
+            raise ValueError(msg) from e
 
-    return shift, scale, coeffs
+        return shift, scale, coeffs
