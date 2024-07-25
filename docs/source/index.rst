@@ -4,7 +4,7 @@ Welcome to PINA’s documentation!
 =======================================
 
 .. grid:: 6
-  :gutter: 1
+  :gutter: 2
 
   .. grid-item::
 
@@ -53,8 +53,7 @@ Welcome to PINA’s documentation!
 
     Contact us by email for further information or questions about **PINA**, or suggest pull requests. 
 
-
-    
+   
 
   .. grid-item-card:: Contents
     :class-title: sd-fs-5
@@ -66,17 +65,9 @@ Welcome to PINA’s documentation!
       Installing <_rst/_installation>
       Tutorial <_rst/_tutorial>
       API <_rst/_code>
+      Team & Foundings <_team.rst>
+      Contributing <_rst/_contributing>
+      License <_LICENSE.rst>
+      Cite PINA <_cite.rst>
 
-..   .. grid-item-card:: Features
-..     :columns: 12 12 4 4
-..     :class-title: sd-fs-5
-..     :class-body: sd-pl-3
 
-..     * :bdg-secondary:`New` Objects: :ref:`API <objects_api>` | :doc:`Tutorial <tutorial/objects_interface>`
-..     * Relational plots: :ref:`API <relational_api>` | :doc:`Tutorial <tutorial/relational>`
-..     * Distribution plots: :ref:`API <distribution_api>` | :doc:`Tutorial <tutorial/distributions>`
-..     * Categorical plots: :ref:`API <categorical_api>` | :doc:`Tutorial <tutorial/categorical>`
-..     * Regression plots: :ref:`API <regression_api>` | :doc:`Tutorial <tutorial/regression>`
-..     * Multi-plot grids: :ref:`API <grid_api>` | :doc:`Tutorial <tutorial/axis_grids>`
-..     * Figure theming: :ref:`API <style_api>` | :doc:`Tutorial <tutorial/aesthetics>`
-..     * Color palettes: :ref:`API <palette_api>` | :doc:`Tutorial <tutorial/color_palettes>`
