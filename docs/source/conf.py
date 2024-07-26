@@ -52,7 +52,8 @@ extensions = [
     'sphinx.ext.intersphinx',
     'paramref_extension',    # this extension is made to remove paramref links from lightining doc
     'sphinx_copybutton', 
-    'sphinx_design'
+    'sphinx_design',
+    'sphinx_rtd_theme'
 ]
 
 # The root document.
@@ -200,7 +201,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "index_files/pina_logo_pina.png"
+html_logo = "index_files/PINA_logo.png"
 html_theme_options = {
     "icon_links": [
         {
@@ -211,7 +212,7 @@ html_theme_options = {
         },
         {
             "name": "Twitter",
-            "url": "http://twitter.com/rozzagroup",
+            "url": "https://x.com/pina_mathlab?s=21",
             "icon": "fab fa-twitter",
             "type": "fontawesome",
         },
