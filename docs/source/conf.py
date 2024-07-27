@@ -22,7 +22,7 @@ import pina
 project = pina.__project__
 copyright = pina.__copyright__
 author = pina.__author__
-version = release ='1.0.0' 
+version = pina.__version__ 
 
 
 sys.path.insert(0, os.path.abspath('../sphinx_extensions')) # extension to remove paramref link from lightinig
