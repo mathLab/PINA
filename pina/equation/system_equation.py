@@ -19,11 +19,11 @@ class SystemEquation(Equation):
         :param Callable equation: A ``torch`` callable equation to
             evaluate the residual
         :param str reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``  | ``callable``. ``none``: no reduction
-            will be applied, ``mean``: the sum of the output will be divided
+            None | ``mean`` | ``sum``  | callable. None: no reduction
+            will be applied, ``mean``: the output sum will be divided
             by the number of elements in the output, ``sum``: the output will
-            be summed. ``callable`` a callable function to perform reduction,
-            no checks guaranteed. Default: ``mean``.
+            be summed. *callable* is a callable function to perform reduction,
+            no checks guaranteed. Default: None.
         """
         check_consistency([list_equation], list)
         check_consistency(reduction, str)
