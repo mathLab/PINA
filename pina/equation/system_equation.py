@@ -26,7 +26,6 @@ class SystemEquation(Equation):
             no checks guaranteed. Default: None.
         """
         check_consistency([list_equation], list)
-        check_consistency(reduction, str)
 
         # equations definition
         self.equations = []
