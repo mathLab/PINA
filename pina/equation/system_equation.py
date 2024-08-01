@@ -7,7 +7,7 @@ from ..utils import check_consistency
 
 class SystemEquation(Equation):
 
-    def __init__(self, list_equation, reduction="None"):
+    def __init__(self, list_equation, reduction=None):
         """
         System of Equation class for specifing any system
         of equations in PINA.
@@ -38,7 +38,7 @@ class SystemEquation(Equation):
             self.reduction = torch.mean
         elif reduction == "sum":
             self.reduction = torch.sum
-        elif (reduction == "None") or callable(reduction):
+        elif (reduction == None) or callable(reduction):
             self.reduction = reduction
         else:
             raise NotImplementedError(
@@ -72,7 +72,7 @@ class SystemEquation(Equation):
             ]
         )
 
-        if self.reduction == "None":
+        if self.reduction is None:
             return residual
 
         return self.reduction(residual, dim=-1)
