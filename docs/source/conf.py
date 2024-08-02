@@ -52,8 +52,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'paramref_extension',    # this extension is made to remove paramref links from lightining doc
     'sphinx_copybutton', 
-    'sphinx_design',
-    'sphinx_rtd_theme'
+    'sphinx_design'
 ]
 
 # The root document.
