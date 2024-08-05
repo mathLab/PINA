@@ -1,7 +1,7 @@
 import torch
 import pytest
 
-from pina.dataset import SamplePointDataset, SamplePointLoader, DataPointDataset
+from pina.data.dataset import SamplePointDataset, SamplePointLoader, DataPointDataset
 from pina import LabelTensor, Condition
 from pina.equation import Equation
 from pina.geometry import CartesianDomain
