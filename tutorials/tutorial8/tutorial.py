@@ -26,7 +26,7 @@ import pina
 from pina.geometry import CartesianDomain
 
 from pina.problem import ParametricProblem
-from pina.model.layers import PODBlock, RBFLayer
+from pina.model.layers import PODBlock, RBFBlock
 from pina import Condition, LabelTensor, Trainer
 from pina.model import FeedForward
 from pina.solvers import SupervisedSolver
@@ -91,7 +91,7 @@ poisson_problem = SnapshotProblem()
 
 # ## POD-RBF reduced order model
 
-# Then, we define the model we want to use, with the POD (`PODBlock`) and the RBF (`RBFLayer`) objects.
+# Then, we define the model we want to use, with the POD (`PODBlock`) and the RBF (`RBFBlock`) objects.
 
 # In[5]:
 
@@ -108,7 +108,7 @@ class PODRBF(torch.nn.Module):
         super().__init__()
 
         self.pod = PODBlock(pod_rank)
-        self.rbf = RBFLayer(kernel=rbf_kernel)
+        self.rbf = RBFBlock(kernel=rbf_kernel)
 
 
     def forward(self, x):
@@ -127,8 +127,8 @@ class PODRBF(torch.nn.Module):
         """
         Call the :meth:`pina.model.layers.PODBlock.fit` method of the
         :attr:`pina.model.layers.PODBlock` attribute to perform the POD,
-        and the :meth:`pina.model.layers.RBFLayer.fit` method of the
-        :attr:`pina.model.layers.RBFLayer` attribute to fit the interpolation.
+        and the :meth:`pina.model.layers.RBFBlock.fit` method of the
+        :attr:`pina.model.layers.RBFBlock` attribute to fit the interpolation.
         """
         self.pod.fit(x)
         self.rbf.fit(p, self.pod.reduce(x))

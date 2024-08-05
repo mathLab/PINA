@@ -1,7 +1,7 @@
-RBFLayer
+RBFBlock
 ======================
 .. currentmodule:: pina.model.layers.rbf_layer
 
-.. autoclass:: RBFLayer
+.. autoclass:: RBFBlock
     :members:
     :show-inheritance:

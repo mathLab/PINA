@@ -40,7 +40,7 @@ minimum PINA version to run this tutorial is the ``0.1``.
     from pina.geometry import CartesianDomain
 
     from pina.problem import ParametricProblem
-    from pina.model.layers import PODBlock, RBFLayer
+    from pina.model.layers import PODBlock, RBFBlock
     from pina import Condition, LabelTensor, Trainer
     from pina.model import FeedForward
     from pina.solvers import SupervisedSolver
@@ -127,7 +127,7 @@ POD-RBF reduced order model
 ---------------------------
 
 Then, we define the model we want to use, with the POD (``PODBlock``)
-and the RBF (``RBFLayer``) objects.
+and the RBF (``RBFBlock``) objects.
 
 .. code:: ipython3
 
@@ -143,7 +143,7 @@ and the RBF (``RBFLayer``) objects.
             super().__init__()
 
             self.pod = PODBlock(pod_rank)
-            self.rbf = RBFLayer(kernel=rbf_kernel)
+            self.rbf = RBFBlock(kernel=rbf_kernel)
 
 
         def forward(self, x):
@@ -162,8 +162,8 @@ and the RBF (``RBFLayer``) objects.
             """
             Call the :meth:`pina.model.layers.PODBlock.fit` method of the
             :attr:`pina.model.layers.PODBlock` attribute to perform the POD,
-            and the :meth:`pina.model.layers.RBFLayer.fit` method of the
-            :attr:`pina.model.layers.RBFLayer` attribute to fit the interpolation.
+            and the :meth:`pina.model.layers.RBFBlock.fit` method of the
+            :attr:`pina.model.layers.RBFBlock` attribute to fit the interpolation.
             """
             self.pod.fit(x)
             self.rbf.fit(p, self.pod.reduce(x))

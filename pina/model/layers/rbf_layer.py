@@ -77,14 +77,14 @@ min_degree_funcs = {
     }
 
 
-class RBFLayer(torch.nn.Module):
+class RBFBlock(torch.nn.Module):
     """
     Radial Basis Function (RBF) interpolation layer. It need to be fitted with
     the data with the method :meth:`fit`, before it can be used to interpolate
     new points. The layer is not trainable.
 
     .. note::
-        It reproduces the implementation of ``scipy.interpolate.RBFLayer`` and
+        It reproduces the implementation of ``scipy.interpolate.RBFBlock`` and
         it is inspired from the implementation in `torchrbf.
         <https://github.com/ArmanMaesumi/torchrbf>`_
     """
@@ -242,14 +242,14 @@ class RBFLayer(torch.nn.Module):
         else:
             raise NotImplementedError("neighbors currently not supported")
 
-        powers = RBFLayer.monomial_powers(self.y.shape[1], self.degree).to(
+        powers = RBFBlock.monomial_powers(self.y.shape[1], self.degree).to(
                 y.device)
         if powers.shape[0] > nobs:
             raise ValueError("The data is not compatible with the "
                 "requested degree.")
 
         if self.neighbors is None:
-            self._shift, self._scale, self._coeffs = RBFLayer.solve(self.y,
+            self._shift, self._scale, self._coeffs = RBFBlock.solve(self.y,
                     self.d.reshape((self.y.shape[0], -1)),
                     self.smoothing, self.kernel, self.epsilon, powers)
 
@@ -280,8 +280,8 @@ class RBFLayer(torch.nn.Module):
         xeps = x * self.epsilon
         xhat = (x - self._shift) / self._scale
 
-        kv = RBFLayer.kernel_vector(xeps, yeps, kernel_func)
-        p = RBFLayer.polynomial_matrix(xhat, self.powers)
+        kv = RBFBlock.kernel_vector(xeps, yeps, kernel_func)
+        p = RBFBlock.polynomial_matrix(xhat, self.powers)
         vec = torch.cat([kv, p], dim=1)
         out = torch.matmul(vec, self._coeffs)
         out = out.reshape((nx,) + self.d.shape[1:])
@@ -380,8 +380,8 @@ class RBFLayer(torch.nn.Module):
         yhat = (y - shift) / scale
 
         lhs = torch.empty((p + r, p + r), device=d.device).float()
-        lhs[:p, :p] = RBFLayer.kernel_matrix(yeps, kernel_func)
-        lhs[:p, p:] = RBFLayer.polynomial_matrix(yhat, powers)
+        lhs[:p, :p] = RBFBlock.kernel_matrix(yeps, kernel_func)
+        lhs[:p, p:] = RBFBlock.polynomial_matrix(yhat, powers)
         lhs[p:, :p] = lhs[:p, p:].T
         lhs[p:, p:] = 0.0
         lhs[:p, :p] += torch.diag(smoothing)
@@ -411,7 +411,7 @@ class RBFLayer(torch.nn.Module):
             of the interpolator
         """
 
-        lhs, rhs, shift, scale = RBFLayer.build(y, d, smoothing, kernel,
+        lhs, rhs, shift, scale = RBFBlock.build(y, d, smoothing, kernel,
                 epsilon, powers)
         try:
             coeffs = torch.linalg.solve(lhs, rhs)
@@ -419,7 +419,7 @@ class RBFLayer(torch.nn.Module):
             msg = "Singular matrix."
             nmonos = powers.shape[0]
             if nmonos > 0:
-                pmat = RBFLayer.polynomial_matrix((y - shift) / scale, powers)
+                pmat = RBFBlock.polynomial_matrix((y - shift) / scale, powers)
                 rank = torch.linalg.matrix_rank(pmat)
                 if rank < nmonos:
                     msg = (
