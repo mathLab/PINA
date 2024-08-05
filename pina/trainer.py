@@ -3,7 +3,7 @@
 import torch
 import pytorch_lightning
 from .utils import check_consistency
-from .dataset import SamplePointDataset, SamplePointLoader, DataPointDataset
+from .data.dataset import SamplePointDataset, SamplePointLoader, DataPointDataset
 from .solvers.solver import SolverInterface
 
 
