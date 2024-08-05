@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
 import torch
-from .label_tensor import LabelTensor
+from ..label_tensor import LabelTensor
 
 
 class SamplePointDataset(Dataset):
