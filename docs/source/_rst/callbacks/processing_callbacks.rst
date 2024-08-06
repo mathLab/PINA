@@ -5,3 +5,7 @@ Processing callbacks
 .. autoclass:: MetricTracker
    :members:
    :show-inheritance:
+
+.. autoclass:: PINAProgressBar
+   :members:
+   :show-inheritance:

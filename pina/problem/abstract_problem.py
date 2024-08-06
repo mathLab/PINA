@@ -195,15 +195,20 @@ class AbstractProblem(metaclass=ABCMeta):
             )
 
         # check consistency location
+        locations_to_sample = [
+                condition for condition in self.conditions
+                if hasattr(self.conditions[condition], 'location')
+                ]
         if locations == "all":
-            locations = [condition for condition in self.conditions]
+            # only locations that can be sampled
+            locations = locations_to_sample
         else:
             check_consistency(locations, str)
 
-        if sorted(locations) != sorted(self.conditions):
+        if sorted(locations) != sorted(locations_to_sample):
             TypeError(
                 f"Wrong locations for sampling. Location ",
-                f"should be in {self.conditions}.",
+                f"should be in {locations_to_sample}.",
             )
 
         # sampling
