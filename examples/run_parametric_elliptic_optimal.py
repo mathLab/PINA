@@ -82,8 +82,8 @@ if __name__ == "__main__":
     if args.load:
         pinn = PINN.load_from_checkpoint(checkpoint_path=args.load, problem=opc, model=model, extra_features=feat)
         plotter = Plotter()
-        plotter.plot(pinn, fixed_variables={'mu' : 3 , 'alpha' : 1}, components='y')
         plotter.plot(pinn, fixed_variables={'mu' : 3 , 'alpha' : 1}, components='u')
         plotter.plot(pinn, fixed_variables={'mu' : 3 , 'alpha' : 1}, components='z')
+        plotter.plot(pinn, fixed_variables={'mu' : 3 , 'alpha' : 1}, components='y')
     else:
         trainer.train()
