@@ -15,7 +15,7 @@ The pipeline to solve differential equations with PINA follows just five steps:
     2. Generate data using built in `Geometries`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
     3. Choose or build one or more `Models`_ to solve the problem
     4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solvers/solver_interface>`
-    5. Train the model with the PINA :doc:`Trainer <solvers/solver_interface>`, enhance the train with `Callbacks_`
+    5. Train the model with the PINA :doc:`Trainer <solvers/solver_interface>`, enhance the train with `Callbacks`_
 
 PINA Features
 --------------
@@ -155,9 +155,9 @@ Callbacks
 .. toctree::
     :titlesonly:
 
-    Metric tracking <callbacks/processing_callbacks.rst>
-    Optimizer callbacks <callbacks/optimizer_callbacks.rst>
-    Adaptive Refinments <callbacks/adaptive_refinment_callbacks.rst>
+    Processing Callbacks <callbacks/processing_callbacks.rst>
+    Optimizer Callbacks <callbacks/optimizer_callbacks.rst>
+    Adaptive Refinment Callback <callbacks/adaptive_refinment_callbacks.rst>
 
 Metrics and Losses
 --------------------
