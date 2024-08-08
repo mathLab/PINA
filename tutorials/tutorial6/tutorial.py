@@ -15,7 +15,7 @@
 
 
 import matplotlib.pyplot as plt
-from pina.geometry import EllipsoidDomain, Difference, CartesianDomain, Union, SimplexDomain
+from pina.domain import EllipsoidDomain, Difference, CartesianDomain, Union, SimplexDomain
 from pina.label_tensor import LabelTensor
 
 def plot_scatter(ax, pts, title):

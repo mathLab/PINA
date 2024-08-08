@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 import torch
 import pina
 
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 
 from pina.problem import ParametricProblem
 from pina.model.layers import PODBlock

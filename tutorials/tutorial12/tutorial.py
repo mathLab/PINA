@@ -30,7 +30,7 @@
 #useful imports
 from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.equation import Equation, FixedValue, FixedGradient, FixedFlux
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 import torch
 from pina.operators import grad, laplacian
 from pina import Condition
