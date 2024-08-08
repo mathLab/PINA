@@ -1,6 +1,6 @@
 PINN
 ======
-.. currentmodule:: pina.solvers.pinn
+.. currentmodule:: pina.solvers.pinns.pinn
 
 .. autoclass:: PINN
    :members:

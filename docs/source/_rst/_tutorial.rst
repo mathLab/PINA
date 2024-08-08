@@ -10,8 +10,10 @@ Getting started with PINA
    :titlesonly:
 
    Introduction to PINA for Physics Informed Neural Networks training <tutorials/tutorial1/tutorial.rst>
+   Introduction to PINA Equation class <tutorials/tutorial12/tutorial.rst>
    PINA and PyTorch Lightning, training tips and visualizations <tutorials/tutorial11/tutorial.rst>
    Building custom geometries with PINA Location class <tutorials/tutorial6/tutorial.rst>
+
 
 Physics Informed Neural Networks
 --------------------------------

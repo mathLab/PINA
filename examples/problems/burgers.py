@@ -15,7 +15,7 @@
 
 
 import torch
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina import Condition
 from pina.problem import TimeDependentProblem, SpatialProblem
 from pina.operators import grad

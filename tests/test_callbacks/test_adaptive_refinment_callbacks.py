@@ -4,7 +4,7 @@ import pytest
 
 from pina.problem import SpatialProblem
 from pina.operators import laplacian
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina import Condition, LabelTensor
 from pina.solvers import PINN
 from pina.trainer import Trainer
@@ -71,6 +71,7 @@ def test_r3refinment_routine():
     # make the trainer
     trainer = Trainer(solver=solver,
                       callbacks=[R3Refinement(sample_every=1)],
+                      accelerator='cpu',
                       max_epochs=5)
     trainer.train()
 

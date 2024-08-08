@@ -12,7 +12,6 @@ __all__ = [
     "PeriodicBoundaryEmbedding",
     "AVNOBlock",
     "LowRankBlock",
-    "AdaptiveActivationFunction",
 ]
 
 from .convolution_2d import ContinuousConvBlock
@@ -27,4 +26,3 @@ from .pod import PODBlock
 from .embedding import PeriodicBoundaryEmbedding
 from .avno_layer import AVNOBlock
 from .lowrank_layer import LowRankBlock
-from .adaptive_func import AdaptiveActivationFunction

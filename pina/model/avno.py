@@ -110,9 +110,9 @@ class AveragingNeuralOperator(KernelNeuralOperator):
         """
         points_tmp = x.extract(self.coordinates_indices)
         new_batch = x.extract(self.field_indices)
-        new_batch = concatenate((new_batch, points_tmp), dim=2)
+        new_batch = concatenate((new_batch, points_tmp), dim=-1)
         new_batch = self._lifting_operator(new_batch)
         new_batch = self._integral_kernels(new_batch)
-        new_batch = concatenate((new_batch, points_tmp), dim=2)
+        new_batch = concatenate((new_batch, points_tmp), dim=-1)
         new_batch = self._projection_operator(new_batch)
         return new_batch

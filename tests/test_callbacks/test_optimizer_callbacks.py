@@ -4,7 +4,7 @@ import pytest
 
 from pina.problem import SpatialProblem
 from pina.operators import laplacian
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina import Condition, LabelTensor
 from pina.solvers import PINN
 from pina.trainer import Trainer
@@ -84,5 +84,6 @@ def test_switch_optimizer_routine():
                                           new_optimizers_kwargs={'lr': 0.01},
                                           epoch_switch=3)
                       ],
+                      accelerator='cpu',
                       max_epochs=5)
     trainer.train()

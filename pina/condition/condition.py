@@ -1,8 +1,10 @@
 """ Condition module. """
 
-from .label_tensor import LabelTensor
-from .geometry import Location
-from .equation.equation import Equation
+from ..label_tensor import LabelTensor
+from ..domain import DomainInterface
+from ..equation.equation import Equation
+
+from . import DomainOutputCondition, DomainEquationCondition
 
 
 def dummy(a):
@@ -51,32 +53,38 @@ class Condition:
 
     """
 
-    __slots__ = [
-        "input_points",
-        "output_points",
-        "location",
-        "equation",
-        "data_weight",
-    ]
+    # def _dictvalue_isinstance(self, dict_, key_, class_):
+    #     """Check if the value of a dictionary corresponding to `key` is an instance of `class_`."""
+    #     if key_ not in dict_.keys():
+    #         return True
 
-    def _dictvalue_isinstance(self, dict_, key_, class_):
-        """Check if the value of a dictionary corresponding to `key` is an instance of `class_`."""
-        if key_ not in dict_.keys():
-            return True
+    #     return isinstance(dict_[key_], class_)
 
-        return isinstance(dict_[key_], class_)
+    # def __init__(self, *args, **kwargs):
+    #     """
+    #     Constructor for the `Condition` class.
+    #     """
+    #     self.data_weight = kwargs.pop("data_weight", 1.0)
 
-    def __init__(self, *args, **kwargs):
-        """
-        Constructor for the `Condition` class.
-        """
-        self.data_weight = kwargs.pop("data_weight", 1.0)
+    #     if len(args) != 0:
+    #         raise ValueError(
+    #             f"Condition takes only the following keyword arguments: {Condition.__slots__}."
+    #         )
 
-        if len(args) != 0:
-            raise ValueError(
-                f"Condition takes only the following keyword arguments: {Condition.__slots__}."
+    def __new__(cls, *args, **kwargs):
+
+        if sorted(kwargs.keys()) == sorted(["input_points", "output_points"]):
+            return DomainOutputCondition(
+                domain=kwargs["input_points"],
+                output_points=kwargs["output_points"]
             )
-
+        elif sorted(kwargs.keys()) == sorted(["domain", "output_points"]):
+            return DomainOutputCondition(**kwargs)
+        elif sorted(kwargs.keys()) == sorted(["domain", "equation"]):
+            return DomainEquationCondition(**kwargs)
+        else:
+            raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")
+        
         if (
             sorted(kwargs.keys()) != sorted(["input_points", "output_points"])
             and sorted(kwargs.keys()) != sorted(["location", "equation"])

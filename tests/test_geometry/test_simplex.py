@@ -2,7 +2,7 @@ import torch
 import pytest
 
 from pina import LabelTensor
-from pina.geometry import SimplexDomain
+from pina.domain import SimplexDomain
 
 
 def test_constructor():

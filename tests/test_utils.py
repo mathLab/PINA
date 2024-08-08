@@ -3,10 +3,10 @@ import torch
 from pina.utils import merge_tensors
 from pina.label_tensor import LabelTensor
 from pina import LabelTensor
-from pina.geometry import EllipsoidDomain, CartesianDomain
+from pina.domain import EllipsoidDomain, CartesianDomain
 from pina.utils import check_consistency
 import pytest
-from pina.geometry import Location
+from pina.domain import Location
 
 
 def test_merge_tensors():
