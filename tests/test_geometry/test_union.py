@@ -1,7 +1,7 @@
 import torch
 
 from pina import LabelTensor
-from pina.geometry import Union, EllipsoidDomain, CartesianDomain
+from pina.domain import Union, EllipsoidDomain, CartesianDomain
 
 
 def test_constructor_two_CartesianDomains():

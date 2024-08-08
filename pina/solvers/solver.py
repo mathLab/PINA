@@ -205,6 +205,8 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         # put everything in a list if only one input
         if not isinstance(model, list):
             model = [model]
+        if not isinstance(scheduler, list):
+            scheduler = [scheduler]
         if not isinstance(optimizer, list):
             optimizer = [optimizer]
 

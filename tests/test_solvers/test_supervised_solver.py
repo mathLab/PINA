@@ -11,10 +11,17 @@ from pina.loss import LpLoss
 class NeuralOperatorProblem(AbstractProblem):
     input_variables = ['u_0', 'u_1']
     output_variables = ['u']
+    domains = {
+        'pts': LabelTensor(torch.rand(100, 2), labels={1: {'name': 'space', 'dof': ['u_0', 'u_1']}})
+    }
     conditions = {
-        # 'data' : Condition(
-        #     input_points=LabelTensor(torch.rand(100, 2), input_variables), 
-        #     output_points=LabelTensor(torch.rand(100, 1), output_variables))
+        'data' : Condition(
+            domain='pts', 
+            output_points=LabelTensor(
+                torch.rand(100, 1), 
+                labels={1: {'name': 'output', 'dof': ['u']}}
+            )
+        )
     }
 
 class myFeature(torch.nn.Module):
@@ -31,8 +38,8 @@ class myFeature(torch.nn.Module):
         return LabelTensor(t, ['sin(x)sin(y)'])
 
 
-# make the problem + extra feats
 problem = NeuralOperatorProblem()
+# make the problem + extra feats
 extra_feats = [myFeature()]
 model = FeedForward(len(problem.input_variables),
                     len(problem.output_variables))

@@ -3,7 +3,7 @@ import pytest
 
 from pina.problem import TimeDependentProblem, InverseProblem, SpatialProblem
 from pina.operators import grad
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina import Condition, LabelTensor
 from pina.solvers import CausalPINN
 from pina.trainer import Trainer
