@@ -1,11 +1,11 @@
 import torch
 
-from .location import Location
+from .domain_interface import DomainInterface
 from ..label_tensor import LabelTensor
 from ..utils import torch_lhs, chebyshev_roots
 
 
-class CartesianDomain(Location):
+class CartesianDomain(DomainInterface):
     """PINA implementation of Hypercube domain."""
 
     def __init__(self, cartesian_dict):

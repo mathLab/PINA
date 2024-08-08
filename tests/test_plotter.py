@@ -1,4 +1,4 @@
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina import Condition, Plotter
 from matplotlib.testing.decorators import image_comparison
 import matplotlib.pyplot as plt

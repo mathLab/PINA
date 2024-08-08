@@ -3,7 +3,7 @@ import pytest
 
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina import Condition, LabelTensor
 from pina.solvers import CompetitivePINN as PINN
 from pina.trainer import Trainer

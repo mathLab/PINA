@@ -51,7 +51,7 @@ from pina.model import FeedForward
 from pina.equation import Equation, FixedValue
 from pina import Condition, Trainer
 from pina.solvers import PINN
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 
 
 # Then, we import the pre-saved data, for ($\mu_1$, $\mu_2$)=($0.5$, $0.5$). These two values are the optimal parameters that we want to find through the neural network training. In particular, we import the `input_points`(the spatial coordinates), and the `output_points` (the corresponding $u$ values evaluated at the `input_points`).

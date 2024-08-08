@@ -36,7 +36,7 @@ from pina.model import FeedForward
 from pina.model.layers import PeriodicBoundaryEmbedding  # The PBC module
 from pina.solvers import PINN
 from pina.trainer import Trainer
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina.equation import Equation
 
 

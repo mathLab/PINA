@@ -1,11 +1,11 @@
 import torch
 
-from .location import Location
+from .domain_interface import DomainInterface
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 
 
-class EllipsoidDomain(Location):
+class EllipsoidDomain(DomainInterface):
     """PINA implementation of Ellipsoid domain."""
 
     def __init__(self, ellipsoid_dict, sample_surface=False):
