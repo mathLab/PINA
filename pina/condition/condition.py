@@ -1,8 +1,10 @@
 """ Condition module. """
 
 from ..label_tensor import LabelTensor
-from ..geometry import Location
+from ..domain import DomainInterface
 from ..equation.equation import Equation
+
+from . import DomainOutputCondition, DomainEquationCondition
 
 
 def dummy(a):
@@ -51,14 +53,6 @@ class Condition:
 
     """
 
-    __slots__ = [
-        "input_points",
-        "output_points",
-        "location",
-        "equation",
-        "data_weight",
-    ]
-
     # def _dictvalue_isinstance(self, dict_, key_, class_):
     #     """Check if the value of a dictionary corresponding to `key` is an instance of `class_`."""
     #     if key_ not in dict_.keys():
@@ -77,11 +71,17 @@ class Condition:
     #             f"Condition takes only the following keyword arguments: {Condition.__slots__}."
     #         )
 
-    from . import InputOutputCondition
     def __new__(cls, *args, **kwargs):
 
         if sorted(kwargs.keys()) == sorted(["input_points", "output_points"]):
-            return InputOutputCondition(**kwargs)
+            return DomainOutputCondition(
+                domain=kwargs["input_points"],
+                output_points=kwargs["output_points"]
+            )
+        elif sorted(kwargs.keys()) == sorted(["domain", "output_points"]):
+            return DomainOutputCondition(**kwargs)
+        elif sorted(kwargs.keys()) == sorted(["domain", "equation"]):
+            return DomainEquationCondition(**kwargs)
         else:
             raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")
         

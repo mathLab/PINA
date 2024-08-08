@@ -2,7 +2,7 @@ import torch
 import pytest
 
 from pina import LabelTensor
-from pina.geometry import EllipsoidDomain
+from pina.domain import EllipsoidDomain
 
 
 def test_constructor():

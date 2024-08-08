@@ -1,5 +1,5 @@
 __all__ = [
-    "Location",
+    "DomainInterface",
     "CartesianDomain",
     "EllipsoidDomain",
     "Union",
@@ -10,7 +10,7 @@ __all__ = [
     "SimplexDomain",
 ]
 
-from .location import Location
+from .domain_interface import DomainInterface
 from .cartesian import CartesianDomain
 from .ellipsoid import EllipsoidDomain
 from .exclusion_domain import Exclusion
