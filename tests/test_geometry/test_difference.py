@@ -1,7 +1,7 @@
 import torch
 
 from pina import LabelTensor
-from pina.geometry import Difference, EllipsoidDomain, CartesianDomain
+from pina.domain import Difference, EllipsoidDomain, CartesianDomain
 
 
 def test_constructor_two_CartesianDomains():

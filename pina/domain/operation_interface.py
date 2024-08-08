@@ -1,11 +1,11 @@
 """ Module for OperationInterface class. """
 
-from .location import Location
+from .domain_interface import DomainInterface
 from ..utils import check_consistency
 from abc import ABCMeta, abstractmethod
 
 
-class OperationInterface(Location, metaclass=ABCMeta):
+class OperationInterface(DomainInterface, metaclass=ABCMeta):
 
     def __init__(self, geometries):
         """
@@ -15,7 +15,7 @@ class OperationInterface(Location, metaclass=ABCMeta):
             such as ``EllipsoidDomain`` or ``CartesianDomain``.
         """
         # check consistency geometries
-        check_consistency(geometries, Location)
+        check_consistency(geometries, DomainInterface)
 
         # check we are passing always different
         # geometries with the same labels.

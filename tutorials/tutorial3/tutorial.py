@@ -25,7 +25,7 @@ import torch
 
 from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.operators import laplacian, grad
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina.solvers import PINN
 from pina.trainer import Trainer
 from pina.equation import Equation
