@@ -2,7 +2,7 @@ import torch
 
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina import Condition, LabelTensor
 from pina.solvers import GPINN
 from pina.trainer import Trainer

@@ -1,7 +1,7 @@
 
 from . import ConditionInterface
 
-class InputOutputCondition(ConditionInterface):
+class InputEquationCondition(ConditionInterface):
     """
     Condition for input/output data.
     """

@@ -4,6 +4,9 @@ from abc import ABCMeta, abstractmethod
 
 class ConditionInterface(metaclass=ABCMeta):
 
+    def __init__(self) -> None:
+        self._problem = None
+
     @abstractmethod
     def residual(self, model):
         """

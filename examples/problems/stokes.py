@@ -4,7 +4,7 @@ import torch
 from pina.problem import SpatialProblem
 from pina.operators import laplacian, grad, div
 from pina import Condition, LabelTensor
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina.equation import SystemEquation, Equation
 
 # ===================================================== #

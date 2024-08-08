@@ -2,7 +2,7 @@
 
 
 from pina import Condition
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina.equation import SystemEquation, FixedValue
 from pina.problem import SpatialProblem, ParametricProblem
 from pina.operators import laplacian

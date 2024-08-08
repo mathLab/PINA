@@ -1,11 +1,11 @@
 import torch
-from .location import Location
-from pina.geometry import CartesianDomain
+from .domain_interface import DomainInterface
+from pina.domain import CartesianDomain
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 
 
-class SimplexDomain(Location):
+class SimplexDomain(DomainInterface):
     """PINA implementation of a Simplex."""
 
     def __init__(self, simplex_matrix, sample_surface=False):

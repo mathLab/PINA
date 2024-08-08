@@ -229,10 +229,6 @@ from torch import Tensor
 #             detached._labels = self._labels
 #         return detached
 
-#     def requires_grad_(self, mode=True):
-#         lt = super().requires_grad_(mode)
-#         lt.labels = self.labels
-#         return lt
 
 #     def append(self, lt, mode="std"):
 #         """
@@ -406,7 +402,6 @@ class LabelTensor(torch.Tensor):
 
         return LabelTensor(new_tensor, label_to_extract)
         
-
     def __str__(self):
         s = ''
         for key, value in self.labels.items():
@@ -414,3 +409,22 @@ class LabelTensor(torch.Tensor):
         s += '\n' 
         s += super().__str__()
         return s
+    
+    @staticmethod
+    def stack(tensors):
+        """ 
+        """
+        if len(tensors) == 0:
+            return []
+
+        if len(tensors) == 1:
+            return tensors[0]
+        
+        raise NotImplementedError
+        labels = [tensor.labels for tensor in tensors]
+        print(labels)
+
+    def requires_grad_(self, mode=True):
+        lt = super().requires_grad_(mode)
+        lt.labels = self.labels
+        return lt

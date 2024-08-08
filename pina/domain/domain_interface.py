@@ -1,9 +1,9 @@
-"""Module for Location class."""
+"""Module for the DomainInterface class."""
 
 from abc import ABCMeta, abstractmethod
 
 
-class Location(metaclass=ABCMeta):
+class DomainInterface(metaclass=ABCMeta):
     """
     Abstract Location class.
     Any geometry entity should inherit from this class.

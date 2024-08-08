@@ -1,7 +1,7 @@
 import torch
 
 from pina import LabelTensor
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 
 def test_constructor():
     CartesianDomain({'x': [0, 1], 'y': [0, 1]})
