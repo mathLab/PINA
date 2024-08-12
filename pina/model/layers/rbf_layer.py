@@ -259,7 +259,7 @@ class RBFBlock(torch.nn.Module):
         )
         if powers.shape[0] > nobs:
             raise ValueError(
-                "The data is not compatible with the " "requested degree."
+                "The data is not compatible with the requested degree."
             )
 
         if self.neighbors is None:
