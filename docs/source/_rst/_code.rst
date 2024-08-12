@@ -1,7 +1,7 @@
 Code Documentation
 ==================
 Welcome to PINA documentation! Here you can find the modules of the package divided in different sections.
-The high-level structure of the package is depicted in our API. 
+The high-level structure of the package is depicted in our API.
 
 .. figure:: ../index_files/API_color.png
     :alt: PINA application program interface
@@ -33,7 +33,7 @@ Solvers
 
 .. toctree::
     :titlesonly:
-    
+
     SolverInterface <solvers/solver_interface.rst>
     PINNInterface <solvers/basepinn.rst>
     PINN <solvers/pinn.rst>
@@ -82,13 +82,14 @@ Layers
     Proper Orthogonal Decomposition <layers/pod.rst>
     Periodic Boundary Condition Embedding <layers/pbc_embedding.rst>
     Fourier Feature Embedding <layers/fourier_embedding.rst>
+    Radial Basis Function Interpolation <layers/rbf_layer.rst>
 
 Adaptive Activation Functions
 -------------------------------
 
 .. toctree::
     :titlesonly:
-    
+
     Adaptive Function Interface <adaptive_functions/AdaptiveFunctionInterface.rst>
     Adaptive ReLU <adaptive_functions/AdaptiveReLU.rst>
     Adaptive Sigmoid <adaptive_functions/AdaptiveSigmoid.rst>
@@ -102,14 +103,14 @@ Adaptive Activation Functions
     Adaptive Softmax <adaptive_functions/AdaptiveSoftmax.rst>
     Adaptive SIREN <adaptive_functions/AdaptiveSIREN.rst>
     Adaptive Exp <adaptive_functions/AdaptiveExp.rst>
-    
+
 
 Equations and Operators
 -------------------------
 
 .. toctree::
     :titlesonly:
-    
+
     Equations <equations.rst>
     Differential Operators <operators.rst>
 
