@@ -196,9 +196,10 @@ class AbstractProblem(metaclass=ABCMeta):
 
         # check consistency location
         locations_to_sample = [
-                condition for condition in self.conditions
-                if hasattr(self.conditions[condition], 'location')
-                ]
+            condition
+            for condition in self.conditions
+            if hasattr(self.conditions[condition], "location")
+        ]
         if locations == "all":
             # only locations that can be sampled
             locations = locations_to_sample
