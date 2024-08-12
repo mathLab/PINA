@@ -13,7 +13,7 @@ __all__ = [
     "FourierFeatureEmbedding",
     "AVNOBlock",
     "LowRankBlock",
-    "RBFBlock"
+    "RBFBlock",
 ]
 
 from .convolution_2d import ContinuousConvBlock
