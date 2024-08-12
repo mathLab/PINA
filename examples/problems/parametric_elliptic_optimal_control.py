@@ -32,45 +32,40 @@ class ParametricEllipticOptimalControl(SpatialProblem, ParametricProblem):
     x_range = [xmin, xmax]
     y_range = [ymin, ymax]
     # setting parameters range
-    amin, amax = 0.0001, 1
+    amin, amax = 0.01, 1
     mumin, mumax = 0.5, 3
     mu_range = [mumin, mumax]
     a_range = [amin, amax]
     # setting field variables
-    output_variables = ['u', 'p', 'y']
+    output_variables = ['u', 'y', 'z']
     # setting spatial and parameter domain
     spatial_domain = CartesianDomain({'x1': x_range, 'x2': y_range})
     parameter_domain = CartesianDomain({'mu': mu_range, 'alpha': a_range})
 
     # equation terms as in https://arxiv.org/pdf/2110.13530.pdf
     def term1(input_, output_):
-        laplace_p = laplacian(output_, input_, components=['p'], d=['x1', 'x2'])
-        return output_.extract(['y']) - input_.extract(['mu']) - laplace_p
+        laplace_z = laplacian(output_, input_, components=['z'], d=['x1', 'x2'])
+        return output_.extract(['y']) - input_.extract(['mu']) - laplace_z
 
     def term2(input_, output_):
         laplace_y = laplacian(output_, input_, components=['y'], d=['x1', 'x2'])
         return - laplace_y - output_.extract(['u'])
     
-    def fixed_y(input_, output_):
-        return output_.extract(['y'])
-
-    def fixed_p(input_, output_):
-        return output_.extract(['p']) 
 
     # setting problem condition formulation
     conditions = {
         'gamma1': Condition(
             location=CartesianDomain({'x1': x_range, 'x2':  1, 'mu': mu_range, 'alpha': a_range}),
-            equation=SystemEquation([fixed_y, fixed_p])),
+            equation=FixedValue(0, ['y',])),
         'gamma2': Condition(
             location=CartesianDomain({'x1': x_range, 'x2': -1, 'mu': mu_range, 'alpha': a_range}),
-            equation=SystemEquation([fixed_y, fixed_p])),
+            equation=FixedValue(0, ['y', 'z'])),
         'gamma3': Condition(
             location=CartesianDomain({'x1':  1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
-            equation=SystemEquation([fixed_y, fixed_p])),
+            equation=FixedValue(0, ['y', 'z'])),
         'gamma4': Condition(
             location=CartesianDomain({'x1': -1, 'x2': y_range, 'mu': mu_range, 'alpha': a_range}),
-            equation=SystemEquation([fixed_y, fixed_p])),
+            equation=FixedValue(0, ['y', 'z'])),
         'D': Condition(
             location=CartesianDomain(
                 {'x1': x_range, 'x2': y_range,

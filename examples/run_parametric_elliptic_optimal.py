@@ -5,7 +5,7 @@ from torch.nn import Softplus
 
 from pina import LabelTensor
 from pina.solvers import PINN
-from pina.model import MultiFeedForward
+from pina.model import MultiFeedForward, FeedForward
 from pina.plotter import Plotter
 from pina.trainer import Trainer
 from problems.parametric_elliptic_optimal_control import (
@@ -25,18 +25,17 @@ class myFeature(torch.nn.Module):
         return LabelTensor(t, ['k0'])
 
 
-class CustomMultiDFF(MultiFeedForward):
+class PIArch(MultiFeedForward):
 
     def __init__(self, dff_dict):
         super().__init__(dff_dict)
 
     def forward(self, x):
-        out = self.uu(x)
+        out = self.uy(x)
         out.labels = ['u', 'y']
-        p = LabelTensor(
-            (out.extract(['u']) * x.extract(['alpha'])), ['p'])
-        return out.append(p)
-
+        z = LabelTensor(
+            (out.extract(['u']) * x.extract(['alpha'])), ['z'])
+        return out.append(z)
 
 if __name__ == "__main__":
 
@@ -55,15 +54,15 @@ if __name__ == "__main__":
 
     # create problem and discretise domain
     opc = ParametricEllipticOptimalControl()
-    opc.discretise_domain(n= 100, mode='random', variables=['x1', 'x2'], locations=['D'])
-    opc.discretise_domain(n= 5, mode='random', variables=['mu', 'alpha'], locations=['D'])
-    opc.discretise_domain(n= 20, mode='random', variables=['x1', 'x2'], locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
-    opc.discretise_domain(n= 5, mode='random', variables=['mu', 'alpha'], locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    opc.discretise_domain(n= 900, mode='random', variables=['x1', 'x2'], locations=['D'])
+    opc.discretise_domain(n= 5,   mode='random', variables=['mu', 'alpha'], locations=['D'])
+    opc.discretise_domain(n= 200, mode='random', variables=['x1', 'x2'], locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+    opc.discretise_domain(n= 5,   mode='random', variables=['mu', 'alpha'], locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
 
     # create model
-    model = CustomMultiDFF(
+    model = PIArch(
         {
-            'uu': {
+            'uy': {
                 'input_dimensions': 4 + len(feat),
                 'output_dimensions': 2,
                 'layers': [40, 40, 20],
@@ -83,6 +82,8 @@ if __name__ == "__main__":
     if args.load:
         pinn = PINN.load_from_checkpoint(checkpoint_path=args.load, problem=opc, model=model, extra_features=feat)
         plotter = Plotter()
-        plotter.plot(pinn, fixed_variables={'mu' : 1 , 'alpha' : 0.001}, components='y')
+        plotter.plot(pinn, fixed_variables={'mu' : 3 , 'alpha' : 1}, components='u')
+        plotter.plot(pinn, fixed_variables={'mu' : 3 , 'alpha' : 1}, components='z')
+        plotter.plot(pinn, fixed_variables={'mu' : 3 , 'alpha' : 1}, components='y')
     else:
         trainer.train()
