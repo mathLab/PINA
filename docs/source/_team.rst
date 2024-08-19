@@ -1,8 +1,7 @@
 PINA Team
 ==============
 
-PINA is currently developed by `Dario Coscia <https://github.com/dario-coscia>`_, `Nicola Demo <https://github.com/ndem0>`_, and `Anna Ivagnes <https://github.com/annaivagnes>`_
-under the supervision of `Prof. Gianluigi Rozza <https://mathlab.sissa.it/people/gianluigi-rozza>`_ in the `SISSA MathLab <https://mathlab.sissa.it/>`_ group.
+PINA is currently developed in the `SISSA MathLab <https://mathlab.sissa.it/>`_, in colaboration with `Fast Computing <https://www.fastcomputing.net/>`_.
 
 A significant part of PINA has been written either as a by-product for other projects people were funded for, or by people on university-funded positions.
 There are probably many of such projects that have led to some development of PINA. We are very grateful for this support!
