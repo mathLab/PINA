@@ -4,7 +4,7 @@ Welcome to PINA’s documentation!
 =======================================
 
 .. grid:: 6
-  :gutter: 2
+  :gutter: 1
 
   .. grid-item::
 
@@ -28,13 +28,14 @@ Welcome to PINA’s documentation!
 
   .. grid-item::
 
-      .. image:: index_files/tutorial_36_0.png
-        :target: _rst/tutorials/tutorial6/tutorial.html
+      .. image:: index_files/tutorial_15_0.png
+        :target: _rst/tutorials/tutorial13/tutorial.html
+
 
   .. grid-item::
 
-      .. image:: index_files/tutorial_15_0.png
-        :target: _rst/tutorials/tutorial13/tutorial.html
+      .. image:: index_files/tutorial_36_0.png
+        :target: _rst/tutorials/tutorial6/tutorial.html
 
 .. grid:: 1 1 3 3
 
@@ -52,6 +53,7 @@ Welcome to PINA’s documentation!
  
 
     Contact us by email for further information or questions about **PINA**, or suggest pull requests. 
+    
 
    
 
@@ -69,5 +71,7 @@ Welcome to PINA’s documentation!
       Contributing <_rst/_contributing>
       License <_LICENSE.rst>
       Cite PINA <_cite.rst>
+
+
 
 

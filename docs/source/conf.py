@@ -215,6 +215,12 @@ html_theme_options = {
             "icon": "fab fa-twitter",
             "type": "fontawesome",
         },
+        {
+            "name": "Email",
+            "url": "pina.mathlab@gmail.com",  
+            "icon": "fas fa-envelope",
+            "type": "fontawesome",
+        },
     ],
     "show_prev_next": False,
     "navbar_start": ["navbar-logo"],
