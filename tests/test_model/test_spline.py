@@ -11,7 +11,7 @@ valid_args = [
     {'control_points': {'n': 5, 'dim': 1}, 'order': 3},
     {'control_points': {'n': 8, 'dim': 1}, 'order': 3}
 ]
-
+ 
 def scipy_check(model, x, y):
 
     from scipy.interpolate._bsplines import BSpline
@@ -38,7 +38,7 @@ def test_constructor_wrong():
 def test_forward(args):
     xi = torch.linspace(0, 1, 100)
     model = Spline(**args)
-    yi = model(xi)
+    yi = model(xi).squeeze()
     scipy_check(model, xi, yi)
     
 

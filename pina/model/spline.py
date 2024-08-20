@@ -3,7 +3,7 @@
 import torch
 import torch.nn as nn
 from ..utils import check_consistency
-
+ 
 class Spline(torch.nn.Module):
 
     def __init__(self, order, knots=None, control_points=None) -> None:
@@ -154,13 +154,13 @@ class Spline(torch.nn.Module):
             n = value.get('n', 10)
 
             if type_ == 'uniform':
-                value = torch.linspace(min_, max_, n + 1)
+                value = torch.linspace(min_, max_, n + k + 1)
             elif type_ == 'auto':
                 k = self.order - 1
                 value = torch.concatenate(
                     (
                         torch.ones(k)*min_,
-                        torch.linspace(min_, max_, n - k),
+                        torch.linspace(min_, max_, n - k +1),
                         torch.ones(k)*max_,
                         # [self.max] * (k-1)
                     )
@@ -186,7 +186,7 @@ class Spline(torch.nn.Module):
         #     print(self.B(x_, k, i, t), c[i])
         #     print(self.B(x, k, i, t), c[i])
         tmp_result = torch.concatenate([
-            (c[i] * Spline.B(x_, k-1, i, t, self.order)).reshape(
+            (c[i] * Spline.B(x_, k, i, t, self.order)).reshape(
                 1, x_.shape[0], -1) 
             for i in range(len(c))], axis=0
         )
