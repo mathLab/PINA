@@ -1,7 +1,7 @@
 Installation
 ============
 
-**PINA** requires requires `numpy`, `scipy`, `matplotlib`, `future`, `torch`, `sphinx` (for the documentation) and `pytest` (for local test). The code is tested for Python 3, while compatibility of Python 2 is not guaranteed anymore. It can be installed using `pip` or directly from the source code.
+**PINA** requires requires `numpy`, `matplotlib`, `torch`, `lightning`, `sphinx` (for the documentation) and `pytest` (for local test). The code is tested for Python 3, while compatibility of Python 2 is not guaranteed anymore. It can be installed using `pip` or directly from the source code.
 
 Installing via PIP
 __________________
@@ -11,13 +11,13 @@ To install the package just type:
 
 .. code-block:: bash
 
-    $ pip install git+https://github.com/mathLab/PINA.git
+    $ pip install pina-mathlab
 
 To uninstall the package:
 
 .. code-block:: bash
 
-    $ pip uninstall pina
+    $ pip uninstall pina-mathlab
 
 Installing from source
 ______________________

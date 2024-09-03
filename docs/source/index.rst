@@ -40,7 +40,7 @@ Welcome to PINA’s documentation!
 .. grid:: 1 1 3 3
 
   .. grid-item::
-    :columns: 12 12 6 6
+    :columns: 12 12 8 8
 
     Physics Informed Neural network for Advanced modeling (**PINA**) is
     an open-source Python library providing an intuitive interface for
@@ -52,7 +52,7 @@ Welcome to PINA’s documentation!
 
  
 
-    Contact us by email for further information or questions about **PINA**, or suggest pull requests. 
+    For further information or questions about **PINA** contact us by email. 
     
 
    

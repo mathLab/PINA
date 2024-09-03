@@ -74,8 +74,7 @@ intersphinx_mapping = {
     'python': ('http://docs.python.org/3', None),
     # 'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     # 'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
-    'matplotlib': ('http://matplotlib.sourceforge.net/', None),
-    # 'matplotlib': ('https://matplotlib.org/stable', None),
+    'matplotlib': ('https://matplotlib.org/stable', None),
     'torch': ('https://pytorch.org/docs/stable/', None), 
     'pytorch_lightning': ("https://lightning.ai/docs/pytorch/stable/", None),
     }
@@ -217,7 +216,7 @@ html_theme_options = {
         },
         {
             "name": "Email",
-            "url": "pina.mathlab@gmail.com",  
+            "url": "mailto:pina.mathlab@gmail.com",  
             "icon": "fas fa-envelope",
             "type": "fontawesome",
         },
