@@ -19,7 +19,13 @@ REQUIRED = [
 ]
 
 EXTRAS = {
-    'docs': ['sphinx', 'sphinx_rtd_theme', 'sphinx_copybutton', 'sphinx_design'],
+    'docs': [
+        'sphinx',
+        'sphinx_rtd_theme',
+        'sphinx_copybutton',
+        'sphinx_design',
+        'pydata_sphinx_theme'
+        ],
     'test': ['pytest', 'pytest-cov'],
 }
 
