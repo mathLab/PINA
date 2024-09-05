@@ -6,7 +6,7 @@ from ..utils import check_consistency
  
 class Spline(torch.nn.Module):
 
-    def __init__(self, order, knots=None, control_points=None) -> None:
+    def __init__(self, order=4, knots=None, control_points=None) -> None:
         """
         Spline model.
 
@@ -14,7 +14,6 @@ class Spline(torch.nn.Module):
 
         """
         super().__init__()
-
         check_consistency(order, int)
         if order < 0:
             raise ValueError("Spline order cannot be negative.")
@@ -22,10 +21,11 @@ class Spline(torch.nn.Module):
             raise ValueError("Knots and control points cannot be both None.")
 
         self.order = order
+        self.k = order-1
 
         if knots is not None:
             self.knots = knots
-            n = len(knots) - order - 1
+            n = len(knots) - order
             self.control_points = torch.nn.Parameter(
                 torch.zeros(n), requires_grad=True)
             
@@ -36,13 +36,12 @@ class Spline(torch.nn.Module):
                 'type': 'auto',
                 'min': 0,
                 'max': 1,
-                'n': n + order + 1}
+                'n': n}
 
         else:
             self.knots = knots
             self.control_points = control_points
 
-        print(self.knots)
 
         if self.knots.ndim != 1:
             raise ValueError("Knot vector must be one-dimensional.")
@@ -93,7 +92,7 @@ class Spline(torch.nn.Module):
         # plt.show()
 
     @staticmethod
-    def B(x, k, i, t, order):
+    def B(x, k, i, t):
         '''
         x: points to be evaluated
         k: spline degree
@@ -102,8 +101,8 @@ class Spline(torch.nn.Module):
         '''
         if k == 0:
             a = torch.where(torch.logical_and(t[i] <= x, x < t[i+1]), 1.0, 0.0)
-            if i == len(t) - order - 1:
-                a = torch.where(x == t[-1], 1.0, a)
+            if i == len(t) - k - 1:
+                 a = torch.where(x == t[-1], 1.0, a)
             a.requires_grad_(True)
             return a
 
@@ -111,12 +110,12 @@ class Spline(torch.nn.Module):
         if t[i+k] == t[i]:
             c1 = torch.tensor([0.0], requires_grad=True)
         else:
-            c1 = (x - t[i])/(t[i+k] - t[i]) * Spline.B(x, k-1, i, t, order=order)
+            c1 = (x - t[i])/(t[i+k] - t[i]) * Spline.B(x, k-1, i, t)
 
         if t[i+k+1] == t[i+1]:
             c2 = torch.tensor([0.0], requires_grad=True)
         else:
-            c2 = (t[i+k+1] - x)/(t[i+k+1] - t[i+1]) * Spline.B(x, k-1, i+1, t, order=order)
+            c2 = (t[i+k+1] - x)/(t[i+k+1] - t[i+1]) * Spline.B(x, k-1, i+1, t)
 
         return c1 + c2
     
@@ -134,7 +133,6 @@ class Spline(torch.nn.Module):
             dim = value.get('dim', 1)
             value = torch.zeros(n, dim)
 
-        print(value)
         if not isinstance(value, torch.Tensor):
             raise ValueError('Invalid value for control_points')
 
@@ -154,14 +152,13 @@ class Spline(torch.nn.Module):
             n = value.get('n', 10)
 
             if type_ == 'uniform':
-                value = torch.linspace(min_, max_, n + k + 1)
+                value = torch.linspace(min_, max_, n + self.k + 1)
             elif type_ == 'auto':
-                k = self.order - 1
                 value = torch.concatenate(
                     (
-                        torch.ones(k)*min_,
-                        torch.linspace(min_, max_, n - k +1),
-                        torch.ones(k)*max_,
+                        torch.ones(self.k)*min_,
+                        torch.linspace(min_, max_, n - self.k +1),
+                        torch.ones(self.k)*max_,
                         # [self.max] * (k-1)
                     )
                 )
@@ -173,7 +170,7 @@ class Spline(torch.nn.Module):
 
     def forward(self, x_):
         t = self.knots
-        k = self.order
+        k = self.k
         c = self.control_points
 
         # return LabelTensor((x_**2).reshape(-1, 1), ['v'])
@@ -186,7 +183,7 @@ class Spline(torch.nn.Module):
         #     print(self.B(x_, k, i, t), c[i])
         #     print(self.B(x, k, i, t), c[i])
         tmp_result = torch.concatenate([
-            (c[i] * Spline.B(x_, k, i, t, self.order)).reshape(
+            (c[i] * Spline.B(x_, k, i, t)).reshape(
                 1, x_.shape[0], -1) 
             for i in range(len(c))], axis=0
         )

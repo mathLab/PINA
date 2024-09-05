@@ -19,12 +19,11 @@ def scipy_check(model, x, y):
     spline = BSpline(
         t=model.knots.detach(),
         c=model.control_points.detach(),
-        k=model.order
+        k=model.order-1
     )
-    y_numpy = spline(x)
+    y_scipy = spline(x)
     y = y.detach().numpy()
-    print(y)
-    np.testing.assert_allclose(y, y_numpy, atol=1e-5)
+    np.testing.assert_allclose(y, y_scipy, atol=1e-5)
 
 def test_constructor():
     Spline()
@@ -37,9 +36,10 @@ def test_constructor_wrong():
 @pytest.mark.parametrize("args", valid_args)
 def test_forward(args):
     xi = torch.linspace(0, 1, 100)
-    model = Spline(**args)
+    model = Spline(*args)
     yi = model(xi).squeeze()
     scipy_check(model, xi, yi)
+    return 
     
 
 def test_backward():
