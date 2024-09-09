@@ -116,7 +116,7 @@ trainer.train()
 # In[19]:
 
 
-from pina.loss import LpLoss
+from pina.loss.loss_interface import LpLoss
 
 # make the metric
 metric_err = LpLoss(relative=True)

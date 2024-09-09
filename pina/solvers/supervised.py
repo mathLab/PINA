@@ -8,7 +8,7 @@ from ..optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
-from ..loss import LossInterface
+from ..loss.loss_interface import LossInterface
 
 
 class SupervisedSolver(SolverInterface):
@@ -172,10 +172,6 @@ class SupervisedSolver(SolverInterface):
         :return: The residual loss averaged on the input coordinates
         :rtype: torch.Tensor
         """
-        print(input_pts)
-        print(output_pts)
-        print(self.loss)
-        print(self.forward(input_pts))
         return self.loss(self.forward(input_pts), output_pts)
 
     @property

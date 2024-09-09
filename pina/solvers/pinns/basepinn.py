@@ -6,7 +6,7 @@ import torch
 
 from ...solvers.solver import SolverInterface
 from pina.utils import check_consistency
-from pina.loss import LossInterface
+from pina.loss.loss_interface import LossInterface
 from pina.problem import InverseProblem
 from torch.nn.modules.loss import _Loss
 
