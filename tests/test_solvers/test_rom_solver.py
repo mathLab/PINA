@@ -6,7 +6,7 @@ from pina import Condition, LabelTensor
 from pina.solvers import ReducedOrderModelSolver
 from pina.trainer import Trainer
 from pina.model import FeedForward
-from pina.loss import LpLoss
+from pina.loss.loss_interface import LpLoss
 
 
 class NeuralOperatorProblem(AbstractProblem):
