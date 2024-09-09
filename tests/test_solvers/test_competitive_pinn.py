@@ -10,7 +10,7 @@ from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.equation.equation import Equation
 from pina.equation.equation_factory import FixedValue
-from pina.loss import LpLoss
+from pina.loss.loss_interface import LpLoss
 
 
 def laplace_equation(input_, output_):
