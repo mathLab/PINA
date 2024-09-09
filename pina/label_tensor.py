@@ -428,3 +428,7 @@ class LabelTensor(torch.Tensor):
         lt = super().requires_grad_(mode)
         lt.labels = self.labels
         return lt
+
+    @property
+    def dtype(self):
+        return super().dtype
