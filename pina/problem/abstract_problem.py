@@ -20,7 +20,6 @@ class AbstractProblem(metaclass=ABCMeta):
 
     def __init__(self):
 
-
         self._discretized_domains = {}
 
         for name, domain in self.domains.items():
@@ -28,7 +27,8 @@ class AbstractProblem(metaclass=ABCMeta):
                 self._discretized_domains[name] = domain
 
         for condition_name in self.conditions:
-            self.conditions[condition_name]._problem = self
+            self.conditions[condition_name].set_problem(self)
+
         # # variable storing all points
         # self.input_pts = {}
 
@@ -141,7 +141,7 @@ class AbstractProblem(metaclass=ABCMeta):
                     )
 
     def discretise_domain(
-        self, n, mode="random", variables="all", locations="all"
+        self, n, mode="random", variables="all", domains="all"
     ):
         """
         Generate a set of points to span the `Location` of all the conditions of
@@ -193,24 +193,24 @@ class AbstractProblem(metaclass=ABCMeta):
             )
 
         # check consistency location
-        if locations == "all":
-            locations = [condition for condition in self.conditions]
+        if domains == "all":
+            domains = [condition for condition in self.conditions]
         else:
-            check_consistency(locations, str)
-
-        if sorted(locations) != sorted(self.conditions):
+            check_consistency(domains, str)
+        print(domains)
+        if sorted(domains) != sorted(self.conditions):
             TypeError(
                 f"Wrong locations for sampling. Location ",
                 f"should be in {self.conditions}.",
             )
 
         # sampling
-        for location in locations:
-            condition = self.conditions[location]
+        for domain in domains:
+            condition = self.conditions[domain]
 
             # we try to check if we have already sampled
             try:
-                already_sampled = [self.input_pts[location]]
+                already_sampled = [self.input_pts[domain]]
             # if we have not sampled, a key error is thrown
             except KeyError:
                 already_sampled = []
@@ -219,9 +219,9 @@ class AbstractProblem(metaclass=ABCMeta):
             # but we want to sample again we set already_sampled
             # to an empty list since we need to sample again, and
             # self._have_sampled_points to False.
-            if self._have_sampled_points[location]:
+            if self._have_sampled_points[domain]:
                 already_sampled = []
-                self._have_sampled_points[location] = False
+                self._have_sampled_points[domain] = False
 
             # build samples
             samples = [
