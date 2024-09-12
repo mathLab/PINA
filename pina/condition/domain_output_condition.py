@@ -40,4 +40,5 @@ class DomainOutputCondition(ConditionInterface):
         :param torch.Tensor input_points: The input points.
         :param torch.Tensor output_points: The output points.
         """
+
         return output_points - model(input_points)
