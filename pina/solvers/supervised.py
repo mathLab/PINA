@@ -134,8 +134,6 @@ class SupervisedSolver(SolverInterface):
             condition = self.problem.conditions[condition_name]
             pts = batch.input
             out = batch.output
-            print(out)
-            print(pts)
 
             if condition_name not in self.problem.conditions:
                 raise RuntimeError("Something wrong happened.")
