@@ -5,7 +5,7 @@ from pina import Condition, LabelTensor
 from pina.solvers import SupervisedSolver
 from pina.trainer import Trainer
 from pina.model import FeedForward
-from pina.loss.loss_interface import LpLoss
+from pina.loss import LpLoss
 
 
 class NeuralOperatorProblem(AbstractProblem):
@@ -94,17 +94,16 @@ class GraphModel(torch.nn.Module):
         return x
 
 def test_graph():
-
     solver = AutoSolver(problem = problem, model=GraphModel(2, 1), loss=LpLoss())
     trainer = Trainer(solver=solver, max_epochs=30, accelerator='cpu', batch_size=20)
     trainer.train()
-    assert False
 
 
 def test_train_cpu():
     solver = SupervisedSolver(problem = problem, model=model, loss=LpLoss())
     trainer = Trainer(solver=solver, max_epochs=300, accelerator='cpu', batch_size=20)
     trainer.train()
+
 
 
 # def test_train_restore():
