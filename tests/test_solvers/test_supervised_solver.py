@@ -104,9 +104,6 @@ def test_train_cpu():
     trainer = Trainer(solver=solver, max_epochs=300, accelerator='cpu', batch_size=20)
     trainer.train()
 
-test_train_cpu()
-test_graph()
-test_constructor()
 
 
 # def test_train_restore():
