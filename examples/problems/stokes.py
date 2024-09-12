@@ -49,11 +49,19 @@ class Stokes(SpatialProblem):
         value = 0.0
         return output_.extract(['ux', 'uy']) - value
 
+    domains = {
+        'gamma_top': CartesianDomain({'x': [-2, 2], 'y':  1}),
+        'gamma_bot': CartesianDomain({'x': [-2, 2], 'y': -1}),
+        'gamma_out': CartesianDomain({'x':  2, 'y': [-1, 1]}),
+        'gamma_in':  CartesianDomain({'x': -2, 'y': [-1, 1]}),
+        'D': CartesianDomain({'x': [-2, 2], 'y': [-1, 1]})
+    }
+
     # problem condition statement
     conditions = {
-        'gamma_top': Condition(location=CartesianDomain({'x': [-2, 2], 'y':  1}), equation=Equation(wall)),
-        'gamma_bot': Condition(location=CartesianDomain({'x': [-2, 2], 'y': -1}), equation=Equation(wall)),
-        'gamma_out': Condition(location=CartesianDomain({'x':  2, 'y': [-1, 1]}), equation=Equation(outlet)),
-        'gamma_in':  Condition(location=CartesianDomain({'x': -2, 'y': [-1, 1]}), equation=Equation(inlet)),
-        'D': Condition(location=CartesianDomain({'x': [-2, 2], 'y': [-1, 1]}), equation=SystemEquation([momentum, continuity]))
+        'gamma_top': Condition(domain='gamma_top', equation=Equation(wall)),
+        'gamma_bot': Condition(domain='gamma_bot', equation=Equation(wall)),
+        'gamma_out': Condition(domain='gamma_out', equation=Equation(outlet)),
+        'gamma_in':  Condition(domain='gamma_in', equation=Equation(inlet)),
+        'D': Condition(domain='D', equation=SystemEquation([momentum, continuity]))
     }

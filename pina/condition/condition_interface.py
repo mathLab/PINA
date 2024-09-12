@@ -16,3 +16,6 @@ class ConditionInterface(metaclass=ABCMeta):
         :return: The residual of the condition.
         """
         pass
+
+    def set_problem(self, problem):
+        self._problem = problem
