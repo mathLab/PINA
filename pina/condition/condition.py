@@ -84,14 +84,15 @@ class Condition:
             return DomainEquationCondition(**kwargs)
         else:
             raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")
-        
+        # TODO: remove, not used anymore
+        '''
         if (
             sorted(kwargs.keys()) != sorted(["input_points", "output_points"])
             and sorted(kwargs.keys()) != sorted(["location", "equation"])
             and sorted(kwargs.keys()) != sorted(["input_points", "equation"])
         ):
             raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")
-
+        # TODO: remove, not used anymore
         if not self._dictvalue_isinstance(kwargs, "input_points", LabelTensor):
             raise TypeError("`input_points` must be a torch.Tensor.")
         if not self._dictvalue_isinstance(kwargs, "output_points", LabelTensor):
@@ -103,3 +104,4 @@ class Condition:
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+        '''

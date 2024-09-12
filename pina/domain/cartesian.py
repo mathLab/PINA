@@ -1,4 +1,5 @@
 import torch
+import torch
 
 from .domain_interface import DomainInterface
 from ..label_tensor import LabelTensor
