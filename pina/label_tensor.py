@@ -425,7 +425,7 @@ class LabelTensor(torch.Tensor):
         
         raise NotImplementedError
         labels = [tensor.labels for tensor in tensors]
-        print(labels)
+
 
     def requires_grad_(self, mode=True):
         lt = super().requires_grad_(mode)
@@ -436,7 +436,6 @@ class LabelTensor(torch.Tensor):
     def dtype(self):
         return super().dtype
 
-
     def to(self, *args, **kwargs):
         """
         Performs Tensor dtype and/or device conversion. For more details, see
@@ -446,7 +445,6 @@ class LabelTensor(torch.Tensor):
         new = self.__class__.clone(self)
         new.data = tmp.data
         return new
-
 
     def clone(self, *args, **kwargs):
         """
