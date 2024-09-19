@@ -118,7 +118,7 @@ from pina.loss import LpLoss
 # make the metric
 metric_err = LpLoss(relative=True)
 
-model = solver.models
+model = solver.models[0]
 err = float(metric_err(u_train.squeeze(-1), model(k_train).squeeze(-1)).mean())*100
 print(f'Final error training {err:.2f}%')
 
@@ -157,7 +157,7 @@ trainer.train()
 # In[9]:
 
 
-model = solver.models
+model = solver.models[0]
 
 err = float(metric_err(u_train.squeeze(-1), model(k_train).squeeze(-1)).mean())*100
 print(f'Final error training {err:.2f}%')
@@ -171,3 +171,9 @@ print(f'Final error testing {err:.2f}%')
 # ## What's next?
 # 
 # We have made a very simple example on how to use the `FNO` for learning neural operator. Currently in **PINA** we implement 1D/2D/3D cases. We suggest to extend the tutorial using more complex problems and train for longer, to see the full potential of neural operators.
+
+# In[ ]:
+
+
+
+
