@@ -32,6 +32,3 @@ class GraphSupervisedSolver(SupervisedSolver):
         g = self.model(input.data, edge_index=input.data.edge_index)
         g.labels = {1: {'name': 'output', 'dof': ['u']}}
         return g
-        du_dt_new = LabelTensor(self.model(graph).reshape(-1,1), labels = ['du'])
-
-        return du_dt_new
