@@ -6,7 +6,7 @@ from pina.solvers import SupervisedSolver
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.loss import LpLoss
-
+from pina.solvers import GraphSupervisedSolver
 
 class NeuralOperatorProblem(AbstractProblem):
     input_variables = ['u_0', 'u_1']
@@ -27,6 +27,25 @@ class NeuralOperatorProblem(AbstractProblem):
         )
     }
 
+class NeuralOperatorProblemGraph(AbstractProblem):
+    input_variables = ['x', 'y', 'u_0', 'u_1']
+    output_variables = ['u']
+    domains = {
+        'pts': LabelTensor(
+            torch.rand(100, 4),
+            labels={1: {'name': 'space', 'dof': ['x', 'y', 'u_0', 'u_1']}}
+        )
+    }
+    conditions = {
+        'data' : Condition(
+            domain='pts',
+            output_points=LabelTensor(
+                torch.rand(100, 1),
+                labels={1: {'name': 'output', 'dof': ['u']}}
+            )
+        )
+    }
+
 class myFeature(torch.nn.Module):
     """
     Feature: sin(x)
@@ -42,6 +61,7 @@ class myFeature(torch.nn.Module):
 
 
 problem = NeuralOperatorProblem()
+problem_graph = NeuralOperatorProblemGraph()
 # make the problem + extra feats
 extra_feats = [myFeature()]
 model = FeedForward(len(problem.input_variables),
@@ -58,7 +78,7 @@ def test_constructor():
 # def test_constructor_extra_feats():
 #     SupervisedSolver(problem=problem, model=model_extra_feats, extra_features=extra_feats)
 
-
+'''
 class AutoSolver(SupervisedSolver):
 
     def forward(self, input):
@@ -70,12 +90,13 @@ class AutoSolver(SupervisedSolver):
         print(input)
         print(input.data.edge_index)
         print(input.data)
-        g = self.model[0](input.data, edge_index=input.data.edge_index)
+        g = self._model(input.data, edge_index=input.data.edge_index)
         g.labels = {1: {'name': 'output', 'dof': ['u']}}
         return g
-        du_dt_new = LabelTensor(self.model[0](graph).reshape(-1,1), labels = ['du'])
+        du_dt_new = LabelTensor(self.model(graph).reshape(-1,1), labels = ['du'])
 
         return du_dt_new
+'''
 
 class GraphModel(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -94,7 +115,8 @@ class GraphModel(torch.nn.Module):
         return x
 
 def test_graph():
-    solver = AutoSolver(problem = problem, model=GraphModel(2, 1), loss=LpLoss())
+    solver = GraphSupervisedSolver(problem=problem_graph, model=GraphModel(2, 1), loss=LpLoss(),
+                                   nodes_coordinates=['x', 'y'], nodes_data=['u_0', 'u_1'])
     trainer = Trainer(solver=solver, max_epochs=30, accelerator='cpu', batch_size=20)
     trainer.train()
 
@@ -103,7 +125,6 @@ def test_train_cpu():
     solver = SupervisedSolver(problem = problem, model=model, loss=LpLoss())
     trainer = Trainer(solver=solver, max_epochs=300, accelerator='cpu', batch_size=20)
     trainer.train()
-
 
 
 # def test_train_restore():
@@ -153,3 +174,4 @@ def test_train_cpu():
 #                 extra_features=extra_feats)
 #     trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu')
 #     trainer.train()
+test_graph()

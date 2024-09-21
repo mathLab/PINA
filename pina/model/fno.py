@@ -269,4 +269,7 @@ class FNO(KernelNeuralOperator):
         :return: The output tensor obtained from FNO.
         :rtype: torch.Tensor
         """
+
+        if isinstance(x, LabelTensor):
+            x = x.as_subclass(torch.Tensor)
         return super().forward(x)
