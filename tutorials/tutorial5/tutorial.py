@@ -48,24 +48,28 @@ plt.style.use('tableau-colorblind10')
 # Specifically, $u$ is the flow pressure, $k$ is the permeability field and $f$ is the forcing function. The Darcy flow can parameterize a variety of systems including flow through porous media, elastic materials and heat conduction. Here you will define the domain as a 2D unit square Dirichlet boundary conditions. The dataset is taken from the authors original reference.
 # 
 
-# In[12]:
+# In[2]:
 
 
 # download the dataset
 data = io.loadmat("Data_Darcy.mat")
 
 # extract data (we use only 100 data for train)
-k_train = LabelTensor(torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1), ['u0'])
-u_train = LabelTensor(torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1), ['u'])
-k_test =  LabelTensor(torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1), ['u0'])
-u_test= LabelTensor(torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1), ['u'])
+k_train = LabelTensor(torch.tensor(data['k_train'], dtype=torch.float).unsqueeze(-1), 
+                      labels={3:{'dof': ['u0'], 'name': 'k_train'}})
+u_train = LabelTensor(torch.tensor(data['u_train'], dtype=torch.float).unsqueeze(-1),
+                     labels={3:{'dof': ['u'], 'name': 'u_train'}})
+k_test =  LabelTensor(torch.tensor(data['k_test'], dtype=torch.float).unsqueeze(-1),
+                      labels={3:{'dof': ['u0'], 'name': 'k_test'}})
+u_test= LabelTensor(torch.tensor(data['u_test'], dtype=torch.float).unsqueeze(-1),
+                   labels={3:{'dof': ['u'], 'name': 'u_test'}})
 x = torch.tensor(data['x'], dtype=torch.float)[0]
 y = torch.tensor(data['y'], dtype=torch.float)[0]
 
 
 # Let's visualize some data
 
-# In[13]:
+# In[3]:
 
 
 plt.subplot(1, 2, 1)
@@ -77,15 +81,24 @@ plt.imshow(u_train.squeeze(-1)[0])
 plt.show()
 
 
+# In[4]:
+
+
+u_train.labels[3]['dof']
+
+
 # We now create the neural operator class. It is a very simple class, inheriting from `AbstractProblem`.
 
-# In[17]:
+# In[5]:
 
 
 class NeuralOperatorSolver(AbstractProblem):
-    input_variables = k_train.labels
-    output_variables = u_train.labels
-    conditions = {'data' : Condition(input_points=k_train, 
+    input_variables = k_train.labels[3]['dof']
+    output_variables = u_train.labels[3]['dof']
+    domains = {
+        'pts': k_train
+    }
+    conditions = {'data' : Condition(domain='pts', 
                                      output_points=u_train)}
 
 # make problem
@@ -96,7 +109,7 @@ problem = NeuralOperatorSolver()
 # 
 # We will first solve the problem using a Feedforward neural network. We will use the `SupervisedSolver` for solving the problem, since we are training using supervised learning.
 
-# In[18]:
+# In[6]:
 
 
 # make model
@@ -107,25 +120,26 @@ model = FeedForward(input_dimensions=1, output_dimensions=1)
 solver = SupervisedSolver(problem=problem, model=model)
 
 # make the trainer and train
-trainer = Trainer(solver=solver, max_epochs=10, accelerator='cpu', enable_model_summary=False, batch_size=10) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer = Trainer(solver=solver, max_epochs=10, accelerator='cpu', enable_model_summary=False, batch_size=10) 
+# We train on CPU and avoid model summary at the beginning of training (optional)
 trainer.train()
 
 
 # The final loss is pretty high... We can calculate the error by importing `LpLoss`.
 
-# In[19]:
+# In[7]:
 
 
-from pina.loss.loss_interface import LpLoss
+from pina.loss import LpLoss
 
 # make the metric
 metric_err = LpLoss(relative=True)
 
-
-err = float(metric_err(u_train.squeeze(-1), solver.neural_net(k_train).squeeze(-1)).mean())*100
+model = solver.models[0]
+err = float(metric_err(u_train.squeeze(-1), model(k_train).squeeze(-1)).mean())*100
 print(f'Final error training {err:.2f}%')
 
-err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)).mean())*100
+err = float(metric_err(u_test.squeeze(-1), model(k_test).squeeze(-1)).mean())*100
 print(f'Final error testing {err:.2f}%')
 
 
@@ -133,7 +147,7 @@ print(f'Final error testing {err:.2f}%')
 # 
 # We will now move to solve the problem using a FNO. Since we are learning operator this approach is better suited, as we shall see.
 
-# In[24]:
+# In[8]:
 
 
 # make model
@@ -157,13 +171,15 @@ trainer.train()
 
 # We can clearly see that the final loss is lower. Let's see in testing.. Notice that the number of parameters is way higher than a `FeedForward` network. We suggest to use GPU or TPU for a speed up in training, when many data samples are used.
 
-# In[25]:
+# In[9]:
 
 
-err = float(metric_err(u_train.squeeze(-1), solver.neural_net(k_train).squeeze(-1)).mean())*100
+model = solver.models[0]
+
+err = float(metric_err(u_train.squeeze(-1), model(k_train).squeeze(-1)).mean())*100
 print(f'Final error training {err:.2f}%')
 
-err = float(metric_err(u_test.squeeze(-1), solver.neural_net(k_test).squeeze(-1)).mean())*100
+err = float(metric_err(u_test.squeeze(-1), model(k_test).squeeze(-1)).mean())*100
 print(f'Final error testing {err:.2f}%')
 
 
@@ -172,3 +188,9 @@ print(f'Final error testing {err:.2f}%')
 # ## What's next?
 # 
 # We have made a very simple example on how to use the `FNO` for learning neural operator. Currently in **PINA** we implement 1D/2D/3D cases. We suggest to extend the tutorial using more complex problems and train for longer, to see the full potential of neural operators.
+
+# In[ ]:
+
+
+
+
