@@ -112,6 +112,7 @@ class Spline(torch.nn.Module):
         else:
             c1 = (x - t[i])/(t[i+k] - t[i]) * Spline.B(x, k-1, i, t)
 
+        print(i+k+1, len(t), t[-1], order, len(t) - order - 1)
         if t[i+k+1] == t[i+1]:
             c2 = torch.tensor([0.0], requires_grad=True)
         else:

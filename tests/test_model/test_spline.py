@@ -23,14 +23,14 @@ def scipy_check(model, x, y):
     )
     y_scipy = spline(x)
     y = y.detach().numpy()
-    np.testing.assert_allclose(y, y_scipy, atol=1e-5)
+    np.testing.assert_allclose(y, y_numpy, atol=1e-5)
 
-def test_constructor():
-    Spline()
-
+@pytest.mark.parametrize("args", valid_args)
+def test_constructor(args):
+    Spline(**args)
 
 def test_constructor_wrong():
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TypeError):
         Spline()
 
 @pytest.mark.parametrize("args", valid_args)
