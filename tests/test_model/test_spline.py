@@ -8,35 +8,50 @@ input_vars = 3
 output_vars = 4
 
 valid_args = [
-    {'control_points': {'n': 5, 'dim': 1}, 'order': 3},
-    {'control_points': {'n': 8, 'dim': 1}, 'order': 3}
+    {
+        'knots': torch.tensor([0., 0., 0., 1., 2., 3., 3., 3.]),
+        'control_points': torch.tensor([0., 0., 1., 0., 0.]),
+        'order': 3
+    },
+    {
+        'knots': torch.tensor([-2., -2., -2., -2., -1., 0., 1., 2., 2., 2., 2.]),
+        'control_points': torch.tensor([0., 0., 0., 6., 0., 0., 0.]),
+        'order': 4
+    },
+    # {'control_points': {'n': 5, 'dim': 1}, 'order': 2},
+    # {'control_points': {'n': 7, 'dim': 1}, 'order': 3}
 ]
  
 def scipy_check(model, x, y):
 
     from scipy.interpolate._bsplines import BSpline
     import numpy as np
+    print(model.knots)
+    print(model.control_points)
+    print(model.order)
     spline = BSpline(
-        t=model.knots.detach(),
-        c=model.control_points.detach(),
+        t=model.knots.detach().numpy(),
+        c=model.control_points.detach().numpy(),
         k=model.order-1
     )
-    y_scipy = spline(x)
+    y_scipy = spline(x).flatten()
     y = y.detach().numpy()
-    np.testing.assert_allclose(y, y_numpy, atol=1e-5)
+    np.testing.assert_allclose(y, y_scipy, atol=1e-5)
 
 @pytest.mark.parametrize("args", valid_args)
 def test_constructor(args):
     Spline(**args)
 
 def test_constructor_wrong():
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Spline()
 
 @pytest.mark.parametrize("args", valid_args)
 def test_forward(args):
-    xi = torch.linspace(0, 1, 100)
-    model = Spline(*args)
+    min_x = args['knots'][0]
+    max_x = args['knots'][-1]
+    xi = torch.linspace(min_x, max_x, 1000)
+    model = Spline(**args)
     yi = model(xi).squeeze()
     scipy_check(model, xi, yi)
     return 
