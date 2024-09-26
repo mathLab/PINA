@@ -59,6 +59,7 @@ Models
     FeedForward <models/fnn.rst>
     MultiFeedForward <models/multifeedforward.rst>
     ResidualFeedForward <models/fnn_residual.rst>
+    Spline <models/spline.rst>
     DeepONet <models/deeponet.rst>
     MIONet <models/mionet.rst>
     FourierIntegralKernel <models/fourier_kernel.rst>
