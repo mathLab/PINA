@@ -23,12 +23,8 @@ valid_args = [
 ]
  
 def scipy_check(model, x, y):
-
     from scipy.interpolate._bsplines import BSpline
     import numpy as np
-    print(model.knots)
-    print(model.control_points)
-    print(model.order)
     spline = BSpline(
         t=model.knots.detach().numpy(),
         c=model.control_points.detach().numpy(),
@@ -57,8 +53,18 @@ def test_forward(args):
     return 
     
 
-def test_backward():
-    pass
+@pytest.mark.parametrize("args", valid_args)
+def test_backward(args):
+    min_x = args['knots'][0]
+    max_x = args['knots'][-1]
+    xi = torch.linspace(min_x, max_x, 100)
+    model = Spline(**args)
+    yi = model(xi)
+    fake_loss = torch.sum(yi)
+    assert model.control_points.grad is None
+    fake_loss.backward()
+    assert model.control_points.grad is not None
+
     # dim_in, dim_out = 3, 2
     # fnn = FeedForward(dim_in, dim_out)
     # data.requires_grad = True

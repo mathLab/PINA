@@ -11,7 +11,8 @@ class Spline(torch.nn.Module):
         Spline model.
 
         :param int order: the order of the spline.
-
+        :param torch.Tensor knots: the knot vector.
+        :param torch.Tensor control_points: the control points.
         """
         super().__init__()
 
@@ -52,7 +53,9 @@ class Spline(torch.nn.Module):
                 'n': n+2+self.order}
 
         else:
-            raise RuntimeError
+            raise ValueError(
+                "Knots and control points cannot be both None."
+            )
 
 
         if self.knots.ndim != 1:
@@ -60,11 +63,16 @@ class Spline(torch.nn.Module):
 
     def basis(self, x, k, i, t):
         '''
-        x: points to be evaluated
-        k: spline degree
-        i: counter for the recursive form
-        t: vector of knots
+        Recursive function to compute the basis functions of the spline.
+
+        :param torch.Tensor x: points to be evaluated.
+        :param int k: spline degree
+        :param int i: the index of the interval
+        :param torch.Tensor t: vector of knots
+        :return: the basis functions evaluated at x
+        :rtype: torch.Tensor
         '''
+        
         if k == 0:
             a = torch.where(torch.logical_and(t[i] <= x, x < t[i+1]), 1.0, 0.0)
             if i == len(t) - self.order - 1:
@@ -141,6 +149,13 @@ class Spline(torch.nn.Module):
         self._knots = value
 
     def forward(self, x_):
+        """
+        Forward pass of the spline model.
+
+        :param torch.Tensor x_: points to be evaluated.
+        :return: the spline evaluated at x_
+        :rtype: torch.Tensor        
+        """
         t = self.knots
         k = self.k
         c = self.control_points
