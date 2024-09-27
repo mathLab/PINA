@@ -26,7 +26,11 @@ EXTRAS = {
         'sphinx_design',
         'pydata_sphinx_theme'
         ],
-    'test': ['pytest', 'pytest-cov'],
+    'test': [
+        'pytest',
+        'pytest-cov',
+        'scipy'
+    ],
 }
 
 LDESCRIPTION = (
