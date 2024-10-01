@@ -9,10 +9,10 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Create the new documentation
-      uses: ammaraskar/sphinx-action@master
+      uses: ammaraskar/sphinx-action@7.4.7
       with:
         pre-build-command: "python3 -m pip install .[docs]"
         docs-folder: "docs/"
