@@ -1,157 +1,609 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CartesianDomain &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CartesianDomain &#8212; PINA 0.1.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script src="../../_static/js/theme.js"></script>
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="/css/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=92734c54"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_rst/geometry/cartesian';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="EllipsoidDomain" href="ellipsoid.html" />
-    <link rel="prev" title="Location" href="location.html" /> 
-</head>
+    <link rel="prev" title="Location" href="location.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Oct 01, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-          
-          
-          <a href="../../index.html">
-            
-              <img src="../../_static/pina_logo.png" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                0.1.1.post2407
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../_code.html">API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#pina-features">PINA Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#solvers">Solvers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#models">Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#layers">Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#adaptive-activation-functions">Adaptive Activation Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#equations-and-operators">Equations and Operators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#problem">Problem</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../_code.html#geometries">Geometries</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="location.html">Location</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">CartesianDomain</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipsoid.html">EllipsoidDomain</a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplex.html">SimplexDomain</a></li>
-</ul>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/PINA_logo.png" class="logo__image only-dark" alt="PINA 0.1.2 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_installation.html">
+    Installing
+  </a>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#geometry-set-operations">Geometry set operations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#callbacks">Callbacks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../_code.html#metrics-and-losses">Metrics and Losses</a></li>
-</ul>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_tutorial.html">
+    Tutorial
+  </a>
 </li>
-</ul>
-<p class="caption"><span class="caption-text">Getting Started:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../_installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../_tutorial.html">Tutorials</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Community:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../_team.html">Team &amp; Fundings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../_contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../_LICENSE.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../_cite.html">Cite PINA</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">PINA</a>
-      </nav>
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../_code.html">
+    API
+  </a>
+</li>
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../_code.html">Code Documentation</a></li>
-      <li class="breadcrumb-item active">CartesianDomain</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/_rst/geometry/cartesian.rst.txt" rel="nofollow"> View page source</a>
-      </li>
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
   </ul>
-  <hr/>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <div class="section" id="module-pina.geometry.cartesian">
-<span id="cartesiandomain"></span><h1>CartesianDomain<a class="headerlink" href="#module-pina.geometry.cartesian" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-name descname">CartesianDomain</code><span class="sig-paren">(</span><em class="sig-param">cartesian_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/cartesian.html#CartesianDomain"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <a class="reference internal" href="location.html#pina.geometry.location.Location" title="pina.geometry.location.Location"><code class="xref py py-class docutils literal notranslate"><span class="pre">pina.geometry.location.Location</span></code></a></p>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition.html">Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainer.html">Trainer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plotter.html">Plotter</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../solvers/solver_interface.html">SolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/basepinn.html">PINNInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/pinn.html">PINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/gpinn.html">GPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/causalpinn.html">CausalPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/competitivepinn.html">CompetitivePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/sapinn.html">SAPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/rba_pinn.html">RBAPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/supervised.html">Supervised solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/rom.html">ReducedOrderModelSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solvers/garom.html">GAROM</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../models/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/base_no.html">KernelNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/fnn.html">FeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/multifeedforward.html">MultiFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/fnn_residual.html">ResidualFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/deeponet.html">DeepONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/mionet.html">MIONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/fourier_kernel.html">FourierIntegralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/fno.html">FNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/avno.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/lno.html">LowRankNeuralOperator</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../layers/residual.html">Residual layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/enhanced_linear.html">EnhancedLinear layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/spectral.html">Spectral convolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/fourier.html">Fourier layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/avno_layer.html">Averaging layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/lowrank_layer.html">Low Rank layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/convolution.html">Continuous convolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/pod.html">Proper Orthogonal Decomposition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/pbc_embedding.html">Periodic Boundary Condition Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/fourier_embedding.html">Fourier Feature Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layers/rbf_layer.html">Radial Basis Function Interpolation</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveFunctionInterface.html">Adaptive Function Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveReLU.html">Adaptive ReLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveSigmoid.html">Adaptive Sigmoid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveTanh.html">Adaptive Tanh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveSiLU.html">Adaptive SiLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveMish.html">Adaptive Mish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveELU.html">Adaptive ELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveCELU.html">Adaptive CELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveGELU.html">Adaptive GELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveSoftmin.html">Adaptive Softmin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveSoftmax.html">Adaptive Softmax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveSIREN.html">Adaptive SIREN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_functions/AdaptiveExp.html">Adaptive Exp</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../equations.html">Equations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operators.html">Differential Operators</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../problem/abstractproblem.html">AbstractProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/spatialproblem.html">SpatialProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/timedepproblem.html">TimeDependentProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/parametricproblem.html">ParametricProblem</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="location.html">Location</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CartesianDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ellipsoid.html">EllipsoidDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simplex.html">SimplexDomain</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="operation_interface.html">OperationInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="union_domain.html">Union</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intersection_domain.html">Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="difference_domain.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exclusion_domain.html">Exclusion</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../callbacks/processing_callbacks.html">Processing Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callbacks/optimizer_callbacks.html">Optimizer Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callbacks/adaptive_refinment_callbacks.html">Adaptive Refinment Callback</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../loss/loss_interface.html">LossInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/lploss.html">LpLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/powerloss.html">PowerLoss</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../_code.html" class="nav-link">Code Documentation</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">CartesianDomain</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-pina.geometry.cartesian">
+<span id="cartesiandomain"></span><h1>CartesianDomain<a class="headerlink" href="#module-pina.geometry.cartesian" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CartesianDomain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cartesian_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/cartesian.html#CartesianDomain"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="location.html#pina.geometry.location.Location" title="pina.geometry.location.Location"><code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code></a></p>
 <p>PINA implementation of Hypercube domain.</p>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cartesian_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – A dictionary with dict-key a string representing
 the input variables for the pinn, and dict-value a list with
 the domain extrema.</p>
 </dd>
-<dt class="field-even">Example</dt>
+<dt class="field-even">Example<span class="colon">:</span></dt>
 <dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
 </pre></div>
 </div>
 </dd>
 </dl>
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">variables</code></dt>
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variables</span></span></dt>
 <dd><p>Spatial variables.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Spatial variables defined in <code class="docutils literal notranslate"><span class="pre">__init__()</span></code></p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt>
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">new_domain</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/cartesian.html#CartesianDomain.update"><span class="viewcode-link">[source]</span></a></dt>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_domain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/cartesian.html#CartesianDomain.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Adding new dimensions on the <code class="docutils literal notranslate"><span class="pre">CartesianDomain</span></code></p>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>new_domain</strong> (<em>CartesianDomain</em>) – A new <code class="docutils literal notranslate"><span class="pre">CartesianDomain</span></code> object to merge</p>
 </dd>
-<dt class="field-even">Example</dt>
+<dt class="field-even">Example<span class="colon">:</span></dt>
 <dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span><span class="o">.</span><span class="n">variables</span>
 <span class="go">[&#39;x&#39;, &#39;y&#39;]</span>
@@ -165,12 +617,12 @@ the domain extrema.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt>
-<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">mode='random'</em>, <em class="sig-param">variables='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/cartesian.html#CartesianDomain.sample"><span class="viewcode-link">[source]</span></a></dt>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/cartesian.html#CartesianDomain.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Sample routine.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Number of points to sample, see Note below
 for reference.</p></li>
@@ -178,13 +630,13 @@ for reference.</p></li>
 Available modes include: random sampling, <code class="docutils literal notranslate"><span class="pre">random</span></code>;
 latin hypercube sampling, <code class="docutils literal notranslate"><span class="pre">latin</span></code> or <code class="docutils literal notranslate"><span class="pre">lh</span></code>;
 chebyshev sampling, <code class="docutils literal notranslate"><span class="pre">chebyshev</span></code>; grid sampling <code class="docutils literal notranslate"><span class="pre">grid</span></code>.</p></li>
-<li><p><strong>variables</strong> (<em>str | list</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>]</em>) – pinn variable to be sampled, defaults to <code class="docutils literal notranslate"><span class="pre">all</span></code>.</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>]</em>) – pinn variable to be sampled, defaults to <code class="docutils literal notranslate"><span class="pre">all</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Returns <code class="docutils literal notranslate"><span class="pre">LabelTensor</span></code> of n sampled points.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
 </dl>
@@ -203,7 +655,7 @@ are sampled all together, and the final number of points</p>
 <p>The extrema values of Span are always sampled only for <code class="docutils literal notranslate"><span class="pre">grid</span></code> mode.</p>
 </div>
 <dl class="field-list">
-<dt class="field-odd">Example</dt>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">Span</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">spatial_domain</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;random&#39;</span><span class="p">)</span>
 <span class="go">    tensor([[0.0108, 0.7643],</span>
@@ -233,22 +685,22 @@ are sampled all together, and the final number of points</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt>
-<code class="sig-name descname">is_inside</code><span class="sig-paren">(</span><em class="sig-param">point</em>, <em class="sig-param">check_border=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/cartesian.html#CartesianDomain.is_inside"><span class="viewcode-link">[source]</span></a></dt>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">is_inside</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_border</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/geometry/cartesian.html#CartesianDomain.is_inside"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Check if a point is inside the ellipsoid.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>point</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Point to be checked</p></li>
 <li><p><strong>check_border</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Check if the point is also on the frontier
 of the hypercube, default <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Returning <code class="docutils literal notranslate"><span class="pre">True</span></code> if the point is inside, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
 </dd>
 </dl>
@@ -256,39 +708,85 @@ of the hypercube, default <code class="docutils literal notranslate"><span class
 
 </dd></dl>
 
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/_rst/geometry/cartesian.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
 </div>
 
-
-           </div>
+</div></div>
+              
+            
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="location.html" class="btn btn-neutral float-left" title="Location" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="ellipsoid.html" class="btn btn-neutral float-right" title="EllipsoidDomain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
     </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jul 01, 2024.
-      </span></p>
   </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
 
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+  <p class="copyright">
+    
+      © Copyright 2021-2024, PINA Contributors.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
 
-</body>
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
 </html>

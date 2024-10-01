@@ -1,124 +1,512 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial: Reduced order model (PODNN) for parametric problems &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Tutorial: Reduced order model (POD-RBF or POD-NN) for parametric problems &#8212; PINA 0.1.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/clipboard.min.js"></script>
-        <script src="../../../_static/copybutton.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script src="../../../_static/js/theme.js"></script>
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="/css/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=92734c54"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_rst/tutorials/tutorial8/tutorial';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="PINA Team" href="../../../_team.html" />
-    <link rel="prev" title="Tutorial: Unstructured convolutional autoencoder via continuous convolution" href="../tutorial4/tutorial.html" /> 
-</head>
+    <link rel="next" title="Code Documentation" href="../../_code.html" />
+    <link rel="prev" title="Tutorial: Unstructured convolutional autoencoder via continuous convolution" href="../tutorial4/tutorial.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Oct 01, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-          
-          
-          <a href="../../../index.html">
-            
-              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                0.1.1.post2407
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Getting Started:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../tutorial4/tutorial.html">Unstructured convolutional autoencoder via continuous convolution</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">POD-NN for reduced order modeling</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#references">References</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Community:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">PINA</a>
-      </nav>
+  
+    
+  
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
-      <li class="breadcrumb-item active">Tutorial: Reduced order model (PODNN) for parametric problems</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../../_sources/_rst/tutorials/tutorial8/tutorial.rst.txt" rel="nofollow"> View page source</a>
-      </li>
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/PINA_logo.png" class="logo__image only-dark" alt="PINA 0.1.2 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
   </ul>
-  <hr/>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <div class="section" id="tutorial-reduced-order-model-podnn-for-parametric-problems">
-<h1>Tutorial: Reduced order model (PODNN) for parametric problems<a class="headerlink" href="#tutorial-reduced-order-model-podnn-for-parametric-problems" title="Permalink to this headline">¶</a></h1>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial1/tutorial.html">Introduction to PINA for Physics Informed Neural Networks training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial12/tutorial.html">Introduction to PINA Equation class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial11/tutorial.html">PINA and PyTorch Lightning, training tips and visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial6/tutorial.html">Building custom geometries with PINA Location class</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial2/tutorial.html">Two dimensional Poisson problem using Extra Features Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial3/tutorial.html">Two dimensional Wave problem with hard constraint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial7/tutorial.html">Resolution of a 2D Poisson inverse problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial9/tutorial.html">Periodic Boundary Conditions for Helmotz Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial13/tutorial.html">Multiscale PDE learning with Fourier Feature Network</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial5/tutorial.html">Two dimensional Darcy flow using the Fourier Neural Operator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial10/tutorial.html">Time dependent Kuramoto Sivashinsky equation using the Averaging Neural Operator</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial4/tutorial.html">Unstructured convolutional autoencoder via continuous convolution</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">POD-RBF and POD-NN for reduced order modeling</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../_tutorial.html" class="nav-link">PINA Tutorials</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Tutorial:...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="tutorial-reduced-order-model-pod-rbf-or-pod-nn-for-parametric-problems">
+<h1>Tutorial: Reduced order model (POD-RBF or POD-NN) for parametric problems<a class="headerlink" href="#tutorial-reduced-order-model-pod-rbf-or-pod-nn-for-parametric-problems" title="Link to this heading">#</a></h1>
 <p>The tutorial aims to show how to employ the <strong>PINA</strong> library in order to
 apply a reduced order modeling technique [1]. Such methodologies have
 several similarities with machine learning approaches, since the main
-goal consists of predicting the solution of differential equations
+goal consists in predicting the solution of differential equations
 (typically parametric PDEs) in a real-time fashion.</p>
 <p>In particular we are going to use the Proper Orthogonal Decomposition
-with Neural Network (PODNN) [2], which basically perform a dimensional
-reduction using the POD approach, approximating the parametric solution
-manifold (at the reduced space) using a NN. In this example, we use a
-simple multilayer perceptron, but the plenty of different archiutectures
-can be plugged as well.</p>
-<div class="section" id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+with either Radial Basis Function Interpolation(POD-RBF) or Neural
+Network (POD-NN) [2]. Here we basically perform a dimensional reduction
+using the POD approach, and approximating the parametric solution
+manifold (at the reduced space) using an interpolation (RBF) or a
+regression technique (NN). In this example, we use a simple multilayer
+perceptron, but the plenty of different architectures can be plugged as
+well.</p>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order
 Methods and Applications in Computational Fluid Dynamics, Society for
@@ -138,7 +526,7 @@ import pina
 from pina.geometry import CartesianDomain
 
 from pina.problem import ParametricProblem
-from pina.model.layers import PODBlock
+from pina.model.layers import PODBlock, RBFBlock
 from pina import Condition, LabelTensor, Trainer
 from pina.model import FeedForward
 from pina.solvers import SupervisedSolver
@@ -146,7 +534,7 @@ from pina.solvers import SupervisedSolver
 print(f&#39;We are using PINA version {pina.__version__}&#39;)
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">We</span> <span class="n">are</span> <span class="n">using</span> <span class="n">PINA</span> <span class="n">version</span> <span class="mf">0.1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">We</span> <span class="n">are</span> <span class="n">using</span> <span class="n">PINA</span> <span class="n">version</span> <span class="mf">0.1.1</span>
 </pre></div>
 </div>
 <p>We exploit the <a class="reference external" href="www.github.com/mathLab/Smithers">Smithers</a> library to
@@ -157,7 +545,7 @@ parameter is the inflow velocity. The dataset is composed by 500
 snapshots of the velocity (along <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span>, and the
 magnitude) and pressure fields, and the corresponding parameter values.</p>
 <p>To visually check the snapshots, let’s plot also the data points and the
-reference solution: this is the expected output of the neural network.</p>
+reference solution: this is the expected output of our model.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from smithers.dataset import NavierStokesDataset
 dataset = NavierStokesDataset()
 
@@ -167,11 +555,11 @@ for ax, p, u in zip(axs, dataset.params[:4], dataset.snapshots[&#39;mag(v)&#39;]
     ax.set_title(f&#39;$\mu$ = {p[0]:.2f}&#39;)
 </pre></div>
 </div>
-<img alt="../../../_images/tutorial_5_1.png" src="../../../_images/tutorial_5_1.png" />
+<img alt="../../../_images/tutorial_5_01.png" src="../../../_images/tutorial_5_01.png" />
 <p>The <em>snapshots</em> - aka the numerical solutions computed for several
 parameters - and the corresponding parameters are the only data we need
-to train the model, in order to predict for any new test parameter the
-solution. To properly validate the accuracy, we initially split the 500
+to train the model, in order to predict the solution for any new test
+parameter. To properly validate the accuracy, we initially split the 500
 snapshots into the training dataset (90% of the original data) and the
 testing one (the reamining 10%). It must be said that, to plug the
 snapshots into <strong>PINA</strong>, we have to cast them to <code class="docutils literal notranslate"><span class="pre">LabelTensor</span></code>
@@ -198,16 +586,84 @@ methodology), just defining a simple <em>input-output</em> condition.</p>
     parameter_domain = CartesianDomain({&#39;mu&#39;: [0, 100]})
 
     conditions = {
-        &#39;io&#39;: Condition(input_points=p, output_points=u)
+        &#39;io&#39;: Condition(input_points=p_train, output_points=u_train)
     }
+
+poisson_problem = SnapshotProblem()
 </pre></div>
 </div>
-<p>Then, we define the model we want to use: basically we have a MLP
-architecture that takes in input the parameter and return the <em>modal
-coefficients</em>, so the reduced dimension representation (the coordinates
-in the POD space). Such latent variable is the projected to the original
-space using the POD modes, which are computed and stored in the
-<code class="docutils literal notranslate"><span class="pre">PODBlock</span></code> object.</p>
+<p>We can then build a <code class="docutils literal notranslate"><span class="pre">PODRBF</span></code> model (using a Radial Basis Function
+interpolation as approximation) and a <code class="docutils literal notranslate"><span class="pre">PODNN</span></code> approach (using an MLP
+architecture as approximation).</p>
+<section id="pod-rbf-reduced-order-model">
+<h3>POD-RBF reduced order model<a class="headerlink" href="#pod-rbf-reduced-order-model" title="Link to this heading">#</a></h3>
+<p>Then, we define the model we want to use, with the POD (<code class="docutils literal notranslate"><span class="pre">PODBlock</span></code>)
+and the RBF (<code class="docutils literal notranslate"><span class="pre">RBFBlock</span></code>) objects.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class PODRBF(torch.nn.Module):
+    &quot;&quot;&quot;
+    Proper orthogonal decomposition with Radial Basis Function interpolation model.
+    &quot;&quot;&quot;
+
+    def __init__(self, pod_rank, rbf_kernel):
+        &quot;&quot;&quot;
+
+        &quot;&quot;&quot;
+        super().__init__()
+
+        self.pod = PODBlock(pod_rank)
+        self.rbf = RBFBlock(kernel=rbf_kernel)
+
+
+    def forward(self, x):
+        &quot;&quot;&quot;
+        Defines the computation performed at every call.
+
+        :param x: The tensor to apply the forward pass.
+        :type x: torch.Tensor
+        :return: the output computed by the model.
+        :rtype: torch.Tensor
+        &quot;&quot;&quot;
+        coefficents = self.rbf(x)
+        return self.pod.expand(coefficents)
+
+    def fit(self, p, x):
+        &quot;&quot;&quot;
+        Call the :meth:`pina.model.layers.PODBlock.fit` method of the
+        :attr:`pina.model.layers.PODBlock` attribute to perform the POD,
+        and the :meth:`pina.model.layers.RBFBlock.fit` method of the
+        :attr:`pina.model.layers.RBFBlock` attribute to fit the interpolation.
+        &quot;&quot;&quot;
+        self.pod.fit(x)
+        self.rbf.fit(p, self.pod.reduce(x))
+</pre></div>
+</div>
+<p>We can then fit the model and ask it to predict the required field for
+unseen values of the parameters. Note that this model does not need a
+<code class="docutils literal notranslate"><span class="pre">Trainer</span></code> since it does not include any neural network or learnable
+parameters.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pod_rbf = PODRBF(pod_rank=20, rbf_kernel=&#39;thin_plate_spline&#39;)
+pod_rbf.fit(p_train, u_train)
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>u_test_rbf = pod_rbf(p_test)
+u_train_rbf = pod_rbf(p_train)
+
+relative_error_train = torch.norm(u_train_rbf - u_train)/torch.norm(u_train)
+relative_error_test = torch.norm(u_test_rbf - u_test)/torch.norm(u_test)
+
+print(&#39;Error summary for POD-RBF model:&#39;)
+print(f&#39;  Train: {relative_error_train.item():e}&#39;)
+print(f&#39;  Test:  {relative_error_test.item():e}&#39;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="n">summary</span> <span class="k">for</span> <span class="n">POD</span><span class="o">-</span><span class="n">RBF</span> <span class="n">model</span><span class="p">:</span>
+  <span class="n">Train</span><span class="p">:</span> <span class="mf">1.287801e-03</span>
+  <span class="n">Test</span><span class="p">:</span>  <span class="mf">1.217041e-03</span>
+</pre></div>
+</div>
+</section>
+<section id="pod-nn-reduced-order-model">
+<h3>POD-NN reduced order model<a class="headerlink" href="#pod-nn-reduced-order-model" title="Link to this heading">#</a></h3>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class PODNN(torch.nn.Module):
     &quot;&quot;&quot;
     Proper orthogonal decomposition with neural network model.
@@ -250,24 +706,22 @@ space using the POD modes, which are computed and stored in the
 </div>
 <p>We highlight that the POD modes are directly computed by means of the
 singular value decomposition (computed over the input data), and not
-trained using the back-propagation approach. Only the weights of the MLP
+trained using the backpropagation approach. Only the weights of the MLP
 are actually trained during the optimization loop.</p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>poisson_problem = SnapshotProblem()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pod_nn = PODNN(pod_rank=20, layers=[10, 10, 10], func=torch.nn.Tanh)
+pod_nn.fit_pod(u_train)
 
-pod_nn = PODNN(pod_rank=20, layers=[10, 10, 10], func=torch.nn.Tanh)
-pod_nn.fit_pod(u)
-
-pinn_stokes = SupervisedSolver(
+pod_nn_stokes = SupervisedSolver(
     problem=poisson_problem,
     model=pod_nn,
     optimizer=torch.optim.Adam,
     optimizer_kwargs={&#39;lr&#39;: 0.0001})
 </pre></div>
 </div>
-<p>Now that we set the <code class="docutils literal notranslate"><span class="pre">Problem</span></code> and the <code class="docutils literal notranslate"><span class="pre">Model</span></code>, we have just to train
-the model and use it for predict the test snapshots.</p>
+<p>Now that we have set the <code class="docutils literal notranslate"><span class="pre">Problem</span></code> and the <code class="docutils literal notranslate"><span class="pre">Model</span></code>, we have just to
+train the model and use it for predicting the test snapshots.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>trainer = Trainer(
-    solver=pinn_stokes,
+    solver=pod_nn_stokes,
     max_epochs=1000,
     batch_size=100,
     log_every_n_steps=5,
@@ -275,94 +729,196 @@ the model and use it for predict the test snapshots.</p>
 trainer.train()
 </pre></div>
 </div>
-<pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1000</cite> reached.</pre>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Epoch 999: 100%|██████████| 5/5 [00:00&lt;00:00, 248.36it/s, v_num=20, mean_loss=0.902]
+<pre class="literal-block">GPU available: True (cuda), used: False
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/u/a/aivagnes/anaconda3/lib/python3.8/site-packages/pytorch_lightning/trainer/setup.py:187: GPU available but not used. You can set it by doing <cite>Trainer(accelerator='gpu')</cite>.
+
+  | Name        | Type    | Params
+----------------------------------------
+0 | _loss       | MSELoss | 0
+1 | _neural_net | Network | 460
+----------------------------------------
+460       Trainable params
+0         Non-trainable params
+460       Total params
+0.002     Total estimated model params size (MB)
+/u/a/aivagnes/anaconda3/lib/python3.8/site-packages/torch/cuda/__init__.py:152: UserWarning:
+    Found GPU0 Quadro K600 which is of cuda capability 3.0.
+    PyTorch no longer supports this GPU because it is too old.
+    The minimum cuda capability supported by this library is 3.7.
+
+  warnings.warn(old_gpu_warn % (d, name, major, minor, min_arch // 10, min_arch % 10))</pre>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Training: |          | 0/? [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<p>Done! Now the computational expensive part is over, we can load in
+<pre class="literal-block"><cite>Trainer.fit</cite> stopped: <cite>max_epochs=1000</cite> reached.</pre>
+<p>Done! Now that the computational expensive part is over, we can load in
 future the model to infer new parameters (simply loading the checkpoint
 file automatically created by <code class="docutils literal notranslate"><span class="pre">Lightning</span></code>) or test its performances.
 We measure the relative error for the training and test datasets,
 printing the mean one.</p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>u_test_pred = pinn_stokes(p_test)
-u_train_pred = pinn_stokes(p_train)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>u_test_nn = pod_nn_stokes(p_test)
+u_train_nn = pod_nn_stokes(p_train)
 
-relative_error_train = torch.norm(u_train_pred - u_train)/torch.norm(u_train)
-relative_error_test = torch.norm(u_test_pred - u_test)/torch.norm(u_test)
+relative_error_train = torch.norm(u_train_nn - u_train)/torch.norm(u_train)
+relative_error_test = torch.norm(u_test_nn - u_test)/torch.norm(u_test)
 
-print(&#39;Error summary:&#39;)
+print(&#39;Error summary for POD-NN model:&#39;)
 print(f&#39;  Train: {relative_error_train.item():e}&#39;)
 print(f&#39;  Test:  {relative_error_test.item():e}&#39;)
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="n">summary</span><span class="p">:</span>
-  <span class="n">Train</span><span class="p">:</span> <span class="mf">3.865598e-02</span>
-  <span class="n">Test</span><span class="p">:</span>  <span class="mf">3.593161e-02</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="n">summary</span> <span class="k">for</span> <span class="n">POD</span><span class="o">-</span><span class="n">NN</span> <span class="n">model</span><span class="p">:</span>
+  <span class="n">Train</span><span class="p">:</span> <span class="mf">3.767902e-02</span>
+  <span class="n">Test</span><span class="p">:</span>  <span class="mf">3.488588e-02</span>
 </pre></div>
 </div>
-<p>We can of course also plot the solutions predicted by the <code class="docutils literal notranslate"><span class="pre">PODNN</span></code>
-model, comparing them to the original ones. We can note here some
-differences, especially for low velocities, but improvements can be
-accomplished thanks to longer training.</p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>idx = torch.randint(0, len(u_test_pred), (4,))
-u_idx = pinn_stokes(p_test[idx])
+</section>
+<section id="pod-rbf-vs-pod-nn">
+<h3>POD-RBF vs POD-NN<a class="headerlink" href="#pod-rbf-vs-pod-nn" title="Link to this heading">#</a></h3>
+<p>We can of course also plot the solutions predicted by the <code class="docutils literal notranslate"><span class="pre">PODRBF</span></code> and
+by the <code class="docutils literal notranslate"><span class="pre">PODNN</span></code> model, comparing them to the original ones. We can note
+here, in the <code class="docutils literal notranslate"><span class="pre">PODNN</span></code> model and for low velocities, some differences,
+but improvements can be accomplished thanks to longer training.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>idx = torch.randint(0, len(u_test), (4,))
+u_idx_rbf = pod_rbf(p_test[idx])
+u_idx_nn = pod_nn_stokes(p_test[idx])
+
 import numpy as np
 import matplotlib
-fig, axs = plt.subplots(3, 4, figsize=(14, 9))
+import matplotlib.pyplot as plt
 
-relative_error = np.abs(u_test[idx] - u_idx.detach())
-relative_error = np.where(u_test[idx] &lt; 1e-7, 1e-7, relative_error/u_test[idx])
+fig, axs = plt.subplots(5, 4, figsize=(14, 9))
 
-for i, (idx_, u_, err_) in enumerate(zip(idx, u_idx, relative_error)):
-    cm = axs[0, i].tricontourf(dataset.triang, u_.detach())
+relative_error_rbf = np.abs(u_test[idx] - u_idx_rbf.detach())
+relative_error_rbf = np.where(u_test[idx] &lt; 1e-7, 1e-7, relative_error_rbf/u_test[idx])
+
+relative_error_nn = np.abs(u_test[idx] - u_idx_nn.detach())
+relative_error_nn = np.where(u_test[idx] &lt; 1e-7, 1e-7, relative_error_nn/u_test[idx])
+
+for i, (idx_, rbf_, nn_, rbf_err_, nn_err_) in enumerate(
+    zip(idx, u_idx_rbf, u_idx_nn, relative_error_rbf, relative_error_nn)):
     axs[0, i].set_title(f&#39;$\mu$ = {p_test[idx_].item():.2f}&#39;)
-    plt.colorbar(cm)
 
-    cm = axs[1, i].tricontourf(dataset.triang, u_test[idx_].flatten())
-    plt.colorbar(cm)
+    cm = axs[0, i].tricontourf(dataset.triang, rbf_.detach()) # POD-RBF prediction
+    plt.colorbar(cm, ax=axs[0, i])
 
-    cm = axs[2, i].tripcolor(dataset.triang, err_, norm=matplotlib.colors.LogNorm())
-    plt.colorbar(cm)
+    cm = axs[1, i].tricontourf(dataset.triang, nn_.detach()) # POD-NN prediction
+    plt.colorbar(cm, ax=axs[1, i])
 
+    cm = axs[2, i].tricontourf(dataset.triang, u_test[idx_].flatten()) # Truth
+    plt.colorbar(cm, ax=axs[2, i])
+
+    cm = axs[3, i].tripcolor(dataset.triang, rbf_err_, norm=matplotlib.colors.LogNorm()) # Error for POD-RBF
+    plt.colorbar(cm, ax=axs[3, i])
+
+    cm = axs[4, i].tripcolor(dataset.triang, nn_err_, norm=matplotlib.colors.LogNorm()) # Error for POD-NN
+    plt.colorbar(cm, ax=axs[4, i])
 
 plt.show()
 </pre></div>
 </div>
-<img alt="../../../_images/tutorial_19_0.png" src="../../../_images/tutorial_19_0.png" />
-</div>
-</div>
+<img alt="../../../_images/tutorial_27_0.png" src="../../../_images/tutorial_27_0.png" />
+</section>
+</section>
+</section>
 
 
-           </div>
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pod-rbf-reduced-order-model">POD-RBF reduced order model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pod-nn-reduced-order-model">POD-NN reduced order model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pod-rbf-vs-pod-nn">POD-RBF vs POD-NN</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/_rst/tutorials/tutorial8/tutorial.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../tutorial4/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Unstructured convolutional autoencoder via continuous convolution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../../../_team.html" class="btn btn-neutral float-right" title="PINA Team" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
     </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jul 01, 2024.
-      </span></p>
   </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
 
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+  <p class="copyright">
+    
+      © Copyright 2021-2024, PINA Contributors.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
 
-</body>
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
 </html>

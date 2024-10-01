@@ -1,114 +1,497 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial: Unstructured convolutional autoencoder via continuous convolution &mdash; PINA 0.1.1.post2407 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Tutorial: Unstructured convolutional autoencoder via continuous convolution &#8212; PINA 0.1.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-        <script src="../../../_static/clipboard.min.js"></script>
-        <script src="../../../_static/copybutton.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script src="../../../_static/js/theme.js"></script>
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="/css/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=92734c54"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_rst/tutorials/tutorial4/tutorial';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Tutorial: Reduced order model (PODNN) for parametric problems" href="../tutorial8/tutorial.html" />
-    <link rel="prev" title="Tutorial: Averaging Neural Operator for solving Kuramoto Sivashinsky equation" href="../tutorial10/tutorial.html" /> 
-</head>
+    <link rel="next" title="Tutorial: Reduced order model (POD-RBF or POD-NN) for parametric problems" href="../tutorial8/tutorial.html" />
+    <link rel="prev" title="Tutorial: Averaging Neural Operator for solving Kuramoto Sivashinsky equation" href="../tutorial10/tutorial.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Oct 01, 2024"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-          
-          
-          <a href="../../../index.html">
-            
-              <img src="../../../_static/pina_logo.png" class="logo" alt="Logo"/>
-          </a>
-              <div class="version">
-                0.1.1.post2407
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Package Documentation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../_code.html">API</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Getting Started:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../_installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../_tutorial.html">Tutorials</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#getting-started-with-pina">Getting started with PINA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#physics-informed-neural-networks">Physics Informed Neural Networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../_tutorial.html#neural-operator-learning">Neural Operator Learning</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../../_tutorial.html#supervised-learning">Supervised Learning</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Unstructured convolutional autoencoder via continuous convolution</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#continuous-filter-background">Continuous filter background</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#building-a-mnist-classifier">Building a MNIST Classifier</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#building-a-continuous-convolutional-autoencoder">Building a Continuous Convolutional Autoencoder</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#whats-next">What’s next?</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../tutorial8/tutorial.html">POD-NN for reduced order modeling</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p class="caption"><span class="caption-text">Community:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_team.html">Team &amp; Fundings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../_contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_LICENSE.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../_cite.html">Cite PINA</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">PINA</a>
-      </nav>
+  
+    
+  
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../_tutorial.html">PINA Tutorials</a></li>
-      <li class="breadcrumb-item active">Tutorial: Unstructured convolutional autoencoder via continuous convolution</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../../_sources/_rst/tutorials/tutorial4/tutorial.rst.txt" rel="nofollow"> View page source</a>
-      </li>
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/PINA_logo.png" class="logo__image only-dark" alt="PINA 0.1.2 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
   </ul>
-  <hr/>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <div class="section" id="tutorial-unstructured-convolutional-autoencoder-via-continuous-convolution">
-<h1>Tutorial: Unstructured convolutional autoencoder via continuous convolution<a class="headerlink" href="#tutorial-unstructured-convolutional-autoencoder-via-continuous-convolution" title="Permalink to this headline">¶</a></h1>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial1/tutorial.html">Introduction to PINA for Physics Informed Neural Networks training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial12/tutorial.html">Introduction to PINA Equation class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial11/tutorial.html">PINA and PyTorch Lightning, training tips and visualizations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial6/tutorial.html">Building custom geometries with PINA Location class</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial2/tutorial.html">Two dimensional Poisson problem using Extra Features Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial3/tutorial.html">Two dimensional Wave problem with hard constraint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial7/tutorial.html">Resolution of a 2D Poisson inverse problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial9/tutorial.html">Periodic Boundary Conditions for Helmotz Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial13/tutorial.html">Multiscale PDE learning with Fourier Feature Network</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial5/tutorial.html">Two dimensional Darcy flow using the Fourier Neural Operator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial10/tutorial.html">Time dependent Kuramoto Sivashinsky equation using the Averaging Neural Operator</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Unstructured convolutional autoencoder via continuous convolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial8/tutorial.html">POD-RBF and POD-NN for reduced order modeling</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../_tutorial.html" class="nav-link">PINA Tutorials</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Tutorial:...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="tutorial-unstructured-convolutional-autoencoder-via-continuous-convolution">
+<h1>Tutorial: Unstructured convolutional autoencoder via continuous convolution<a class="headerlink" href="#tutorial-unstructured-convolutional-autoencoder-via-continuous-convolution" title="Link to this heading">#</a></h1>
 <p>In this tutorial, we will show how to use the Continuous Convolutional
 Filter, and how to build common Deep Learning architectures with it. The
 implementation of the filter follows the original work <a class="reference external" href="https://arxiv.org/abs/2210.13416">A Continuous
@@ -136,8 +519,8 @@ convolutional layer with a feedforward neural network.</p></li>
 show to use the continuous filter to work with unstructured data for
 autoencoding and up-sampling.</p></li>
 </ul>
-<div class="section" id="continuous-filter-background">
-<h2>Continuous filter background<a class="headerlink" href="#continuous-filter-background" title="Permalink to this headline">¶</a></h2>
+<section id="continuous-filter-background">
+<h2>Continuous filter background<a class="headerlink" href="#continuous-filter-background" title="Link to this heading">#</a></h2>
 <p>As reported by the authors in the original paper: in contrast to
 discrete convolution, continuous convolution is mathematically defined
 as:</p>
@@ -166,8 +549,8 @@ function defined on that domain (the input) 2. A stride, corresponding
 to the positions where the filter needs to be <span class="math notranslate nohighlight">\(\rightarrow\)</span>
 <code class="docutils literal notranslate"><span class="pre">stride</span></code> variable in <code class="docutils literal notranslate"><span class="pre">ContinuousConv</span></code> 3. The filter rectangular
 domain <span class="math notranslate nohighlight">\(\rightarrow\)</span> <code class="docutils literal notranslate"><span class="pre">filter_dim</span></code> variable in <code class="docutils literal notranslate"><span class="pre">ContinuousConv</span></code></p>
-<div class="section" id="input-function">
-<h3>Input function<a class="headerlink" href="#input-function" title="Permalink to this headline">¶</a></h3>
+<section id="input-function">
+<h3>Input function<a class="headerlink" href="#input-function" title="Link to this heading">#</a></h3>
 <p>The input function for the continuous filter is defined as a tensor of
 shape:</p>
 <div class="math notranslate nohighlight">
@@ -219,9 +602,9 @@ print(f&quot;Filter input data has shape: {data.shape}&quot;)
 <span class="n">Filter</span> <span class="nb">input</span> <span class="n">data</span> <span class="n">has</span> <span class="n">shape</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="stride">
-<h3>Stride<a class="headerlink" href="#stride" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="stride">
+<h3>Stride<a class="headerlink" href="#stride" title="Link to this heading">#</a></h3>
 <p>The stride is passed as a dictionary <code class="docutils literal notranslate"><span class="pre">stride</span></code> which tells the filter
 where to go. Here is an example for the <span class="math notranslate nohighlight">\([0,1]\times[0,5]\)</span> domain:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># stride definition</span>
@@ -246,9 +629,9 @@ centroid of the filter to the next position <span class="math notranslate nohigh
 <p><strong>Note</strong></p>
 <p>We are planning to release the possibility to directly pass a list of
 possible strides!</p>
-</div>
-<div class="section" id="filter-definition">
-<h3>Filter definition<a class="headerlink" href="#filter-definition" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="filter-definition">
+<h3>Filter definition<a class="headerlink" href="#filter-definition" title="Link to this heading">#</a></h3>
 <p>Having defined all the previous blocks we are able to construct the
 continuous filter. Suppose we would like to get an ouput with only one field, and let us
 fix the filter dimension to be <span class="math notranslate nohighlight">\([0.1, 0.1]\)</span>.</p>
@@ -322,10 +705,10 @@ cConv = ContinuousConvBlock(input_numb_field=number_input_fileds,
 </pre></div>
 </div>
 <p>Notice that we pass the class and not an already built object!</p>
-</div>
-</div>
-<div class="section" id="building-a-mnist-classifier">
-<h2>Building a MNIST Classifier<a class="headerlink" href="#building-a-mnist-classifier" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="building-a-mnist-classifier">
+<h2>Building a MNIST Classifier<a class="headerlink" href="#building-a-mnist-classifier" title="Link to this heading">#</a></h2>
 <p>Let’s see how we can build a MNIST classifier using a continuous
 convolutional filter. We will use the MNIST dataset from PyTorch. In
 order to keep small training times we use only 6000 samples for training
@@ -506,9 +889,9 @@ print(
 <p>As we can see we have very good performance for having traing only for 1
 epoch! Nevertheless, we are still using structured data… Let’s see how
 we can build an autoencoder for unstructured data now.</p>
-</div>
-<div class="section" id="building-a-continuous-convolutional-autoencoder">
-<h2>Building a Continuous Convolutional Autoencoder<a class="headerlink" href="#building-a-continuous-convolutional-autoencoder" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="building-a-continuous-convolutional-autoencoder">
+<h2>Building a Continuous Convolutional Autoencoder<a class="headerlink" href="#building-a-continuous-convolutional-autoencoder" title="Link to this heading">#</a></h2>
 <p>Just as toy problem, we will now build an autoencoder for the following
 function <span class="math notranslate nohighlight">\(f(x,y)=\sin(\pi x)\sin(\pi y)\)</span> on the unit circle domain
 centered in <span class="math notranslate nohighlight">\((0.5, 0.5)\)</span>. We will also see the ability to
@@ -692,8 +1075,8 @@ print(f&#39;l2 error: {l2_error(input_data[0, 0, :, -1], output[0, 0, :, -1]):.2
 considering the fact that we use just <strong>one</strong> convolutional layer and a
 simple feedforward to decrease the dimension. Let’s see now some
 peculiarity of the filter.</p>
-<div class="section" id="filter-for-upsampling">
-<h3>Filter for upsampling<a class="headerlink" href="#filter-for-upsampling" title="Permalink to this headline">¶</a></h3>
+<section id="filter-for-upsampling">
+<h3>Filter for upsampling<a class="headerlink" href="#filter-for-upsampling" title="Link to this heading">#</a></h3>
 <p>Suppose we have already the hidden dimension and we want to upsample on
 a differen grid with more points. Let’s see how to do it:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># setting the seed
@@ -734,9 +1117,9 @@ now:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">l2</span> <span class="n">error</span><span class="p">:</span> <span class="mf">8.49</span><span class="o">%</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="autoencoding-at-different-resolution">
-<h3>Autoencoding at different resolution<a class="headerlink" href="#autoencoding-at-different-resolution" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="autoencoding-at-different-resolution">
+<h3>Autoencoding at different resolution<a class="headerlink" href="#autoencoding-at-different-resolution" title="Link to this heading">#</a></h3>
 <p>In the previous example we already had the hidden dimension (of original
 input) and we used it to upsample. Sometimes however we have a more fine
 mesh solution and we simply want to encode it. This can be done without
@@ -779,10 +1162,10 @@ print(
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">l2</span> <span class="n">error</span><span class="p">:</span> <span class="mf">8.59</span><span class="o">%</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="whats-next">
-<h2>What’s next?<a class="headerlink" href="#whats-next" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="whats-next">
+<h2>What’s next?<a class="headerlink" href="#whats-next" title="Link to this heading">#</a></h2>
 <p>We have shown the basic usage of a convolutional filter. There are
 additional extensions possible:</p>
 <ol class="arabic simple">
@@ -791,40 +1174,110 @@ additional extensions possible:</p>
 reduced order modelling</p></li>
 <li><p>Many more…</p></li>
 </ol>
-</div>
-</div>
+</section>
+</section>
 
 
-           </div>
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-filter-background">Continuous filter background</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-function">Input function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stride">Stride</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter-definition">Filter definition</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-a-mnist-classifier">Building a MNIST Classifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-a-continuous-convolutional-autoencoder">Building a Continuous Convolutional Autoencoder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter-for-upsampling">Filter for upsampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autoencoding-at-different-resolution">Autoencoding at different resolution</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#whats-next">What’s next?</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/_rst/tutorials/tutorial4/tutorial.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../tutorial10/tutorial.html" class="btn btn-neutral float-left" title="Tutorial: Averaging Neural Operator for solving Kuramoto Sivashinsky equation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../tutorial8/tutorial.html" class="btn btn-neutral float-right" title="Tutorial: Reduced order model (PODNN) for parametric problems" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
     </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2021-2024, PINA Contributors.
-      <span class="lastupdated">Last updated on Jul 01, 2024.
-      </span></p>
   </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
 
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+  <p class="copyright">
+    
+      © Copyright 2021-2024, PINA Contributors.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
 
-</body>
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
 </html>
