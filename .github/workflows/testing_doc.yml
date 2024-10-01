@@ -1,0 +1,31 @@
+name: Test Sphinx Documentation Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: ammaraskar/sphinx-action@7.4.7
+        pre-build-command: "python3 -m pip install .[docs]"
+        docs-folder: "docs/"
+
+    - name: Build Sphinx documentation
+      run: |
+        cd docs
+        make html
