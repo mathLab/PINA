@@ -20,7 +20,7 @@ REQUIRED = [
 
 EXTRAS = {
     'docs': [
-        'sphinx',
+        'sphinx>5.0',
         'sphinx_rtd_theme',
         'sphinx_copybutton',
         'sphinx_design',
