@@ -21,6 +21,7 @@ class CartesianDomain(DomainInterface):
         """
         self.fixed_ = {}
         self.range_ = {}
+        self.sample_modes = ["random", "grid", "lh", "chebyshev", "latin"]
 
         for k, v in cartesian_dict.items():
             if isinstance(v, (int, float)):
