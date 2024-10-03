@@ -78,7 +78,7 @@ class Intersection(OperationInterface):
                 5
 
         """
-        if mode != "random":
+        if mode != self.sample_modes:
             raise NotImplementedError(
                 f"{mode} is not a valid mode for sampling."
             )
