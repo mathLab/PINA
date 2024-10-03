@@ -39,6 +39,7 @@ class EllipsoidDomain(DomainInterface):
         self.range_ = {}
         self._centers = None
         self._axis = None
+        self.sample_modes = "random"
 
         # checking consistency
         check_consistency(sample_surface, bool)
@@ -286,7 +287,7 @@ class EllipsoidDomain(DomainInterface):
         if variables == "all":
             variables = self.variables
 
-        if mode in ["random"]:
+        if mode in self.sample_modes:
             return _Nd_sampler(n, mode, variables).extract(variables)
         else:
             raise NotImplementedError(f"mode={mode} is not implemented.")
