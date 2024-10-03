@@ -74,6 +74,9 @@ class SimplexDomain(DomainInterface):
         # build cartesian_bound
         self._cartesian_bound = self._build_cartesian(self._vertices_matrix)
 
+        # sampling mode
+        self.sample_modes = "random"
+
     @property
     def variables(self):
         return self._vertices_matrix.labels
@@ -231,7 +234,7 @@ class SimplexDomain(DomainInterface):
             in ``variables``.
         """
 
-        if mode in ["random"]:
+        if mode in self.sample_modes:
             if self._sample_surface:
                 sample_pts = self._sample_boundary_randomly(n)
             else:
