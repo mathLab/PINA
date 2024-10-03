@@ -1,21 +1,25 @@
 
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 
 
 class ConditionInterface(metaclass=ABCMeta):
 
-    def __init__(self) -> None:
-        self._problem = None
+    condition_types = ['physical', 'supervised', 'unsupervised']
+    def __init__(self):
+        self._condition_type = None
 
-    @abstractmethod
-    def residual(self, model):
-        """
-        Compute the residual of the condition.
-
-        :param model: The model to evaluate the condition.
-        :return: The residual of the condition.
-        """
-        pass
-
-    def set_problem(self, problem):
-        self._problem = problem
+    @property
+    def condition_type(self):
+        return self._condition_type
+    
+    @condition_type.setattr
+    def condition_type(self, values):
+        if not isinstance(values, (list, tuple)):
+            values = [values]
+        for value in values:
+            if value not in ConditionInterface.condition_types:
+                raise ValueError( 
+                                'Unavailable type of condition, expected one of'
+                                f' {ConditionInterface.condition_types}.'
+                                )
+        self._condition_type = values
