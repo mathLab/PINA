@@ -172,6 +172,7 @@ class MIONet(torch.nn.Module):
             raise ValueError(f"Unsupported aggregation: {str(aggregator)}")
 
         self._aggregator = aggregator_func
+        self._aggregator_type = aggregator
 
     def _init_reduction(self, reduction):
         reduction_funcs = DeepONet._symbol_functions(dim=-1)
@@ -183,6 +184,7 @@ class MIONet(torch.nn.Module):
             raise ValueError(f"Unsupported reduction: {reduction}")
 
         self._reduction = reduction_func
+        self._reduction_type = reduction
 
     def _get_vars(self, x, indeces):
         if isinstance(indeces[0], str):
@@ -222,7 +224,9 @@ class MIONet(torch.nn.Module):
         aggregated = self._aggregator(torch.dstack(output_))
 
         # reduce
-        output_ = self._reduction(aggregated).reshape(-1, 1)
+        output_ = self._reduction(aggregated)
+        if self._reduction_type in DeepONet._symbol_functions(dim=-1):
+            output_ = output_.reshape(-1, 1)
 
         # scale and translate
         output_ *= self._scale
