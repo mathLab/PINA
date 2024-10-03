@@ -117,7 +117,7 @@ class RBAPINN(PINN):
         # initialize weights
         self.weights = {}
         for condition_name in problem.conditions:
-            self.weights[condition_name] = 1
+            self.weights[condition_name] = 0
 
         # define vectorial loss
         self._vectorial_loss = deepcopy(loss)
