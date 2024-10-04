@@ -24,6 +24,7 @@ labels_all = labels_column | labels_row
 def test_constructor(labels):
     LabelTensor(data, labels)
 
+
 def test_wrong_constructor():
     with pytest.raises(ValueError):
         LabelTensor(data, ['a', 'b'])
