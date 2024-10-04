@@ -1,18 +1,27 @@
 
 from abc import ABCMeta
 
-
 class ConditionInterface(metaclass=ABCMeta):
 
     condition_types = ['physical', 'supervised', 'unsupervised']
-    def __init__(self):
+
+    def __init__(self, *args, **wargs):
         self._condition_type = None
+        self._problem = None
+
+    @property
+    def problem(self):
+        return self._problem
+    
+    @problem.setter
+    def problem(self, value):
+        self._problem = value
 
     @property
     def condition_type(self):
         return self._condition_type
     
-    @condition_type.setattr
+    @condition_type.setter
     def condition_type(self, values):
         if not isinstance(values, (list, tuple)):
             values = [values]
