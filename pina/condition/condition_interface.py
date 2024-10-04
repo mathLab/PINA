@@ -3,7 +3,7 @@ from abc import ABCMeta
 
 class ConditionInterface(metaclass=ABCMeta):
 
-    condition_types = ['physical', 'supervised', 'unsupervised']
+    condition_types = ['physics', 'supervised', 'unsupervised']
 
     def __init__(self, *args, **wargs):
         self._condition_type = None
