@@ -39,7 +39,6 @@ class EllipsoidDomain(DomainInterface):
         self.range_ = {}
         self._centers = None
         self._axis = None
-        self.sample_modes = "random"
 
         # checking consistency
         check_consistency(sample_surface, bool)
@@ -72,6 +71,10 @@ class EllipsoidDomain(DomainInterface):
             self._centers = dict(zip(self.range_.keys(), centers.tolist()))
             self._axis = dict(zip(self.range_.keys(), ellipsoid_axis.tolist()))
 
+    @property
+    def sample_modes(self):
+        return ["random"]
+    
     @property
     def variables(self):
         """Spatial variables.
