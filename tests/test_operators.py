@@ -16,27 +16,28 @@ def func_scalar(x):
     return x_**2 + y_**2 + z_**2
 
 
-inp = LabelTensor(torch.rand((20, 3), requires_grad=True), ['x', 'y', 'z'])
-tensor_v = LabelTensor(func_vector(inp), ['a', 'b', 'c'])
-tensor_s = LabelTensor(func_scalar(inp).reshape(-1, 1), ['a'])
+data = torch.rand((20, 3))
+inp = LabelTensor(data, ['x', 'y', 'mu']).requires_grad_(True)
+labels = ['a', 'b', 'c']
+tensor_v = LabelTensor(func_vec(inp), labels)
+tensor_s = LabelTensor(func_scalar(inp).reshape(-1, 1), labels[0])
+
 
 def test_grad_scalar_output():
     grad_tensor_s = grad(tensor_s, inp)
     true_val = 2*inp
     assert grad_tensor_s.shape == inp.shape
-    assert grad_tensor_s.labels == [
-        f'd{tensor_s.labels[0]}d{i}' for i in inp.labels
+    assert grad_tensor_s.labels[grad_tensor_s.ndim-1]['dof'] == [
+        f'd{tensor_s.labels[tensor_s.ndim-1]["dof"][0]}d{i}' for i in inp.labels[inp.ndim-1]['dof']
     ]
     assert torch.allclose(grad_tensor_s, true_val)
 
     grad_tensor_s = grad(tensor_s, inp, d=['x', 'y'])
-    true_val = 2*inp.extract(['x', 'y'])
-    assert grad_tensor_s.shape == (inp.shape[0], 2)
-    assert grad_tensor_s.labels == [
-        f'd{tensor_s.labels[0]}d{i}' for i in ['x', 'y']
+    assert grad_tensor_s.shape == (20, 2)
+    assert grad_tensor_s.labels[grad_tensor_s.ndim-1]['dof'] == [
+        f'd{tensor_s.labels[tensor_s.ndim-1]["dof"][0]}d{i}' for i in ['x', 'y']
     ]
     assert torch.allclose(grad_tensor_s, true_val)
-
 
 def test_grad_vector_output():
     grad_tensor_v = grad(tensor_v, inp)
@@ -74,7 +75,6 @@ def test_grad_vector_output():
     ]
     assert torch.allclose(grad_tensor_v, true_val)
 
-
 def test_div_vector_output():
     div_tensor_v = div(tensor_v, inp)
     true_val = 2*torch.sum(inp, dim=1).reshape(-1,1)
@@ -88,7 +88,6 @@ def test_div_vector_output():
     assert div_tensor_v.labels == [f'dadx+dbdy']
     assert torch.allclose(div_tensor_v, true_val)
 
-
 def test_laplacian_scalar_output():
     laplace_tensor_s = laplacian(tensor_s, inp)
     true_val = 6*torch.ones_like(laplace_tensor_s)
@@ -101,7 +100,6 @@ def test_laplacian_scalar_output():
     assert laplace_tensor_s.shape == tensor_s.shape
     assert laplace_tensor_s.labels == [f"dd{tensor_s.labels[0]}"]
     assert torch.allclose(laplace_tensor_s, true_val)
-
 
 def test_laplacian_vector_output():
     laplace_tensor_v = laplacian(tensor_v, inp)
