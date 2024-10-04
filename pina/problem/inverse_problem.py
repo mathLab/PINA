@@ -45,6 +45,20 @@ class InverseProblem(AbstractProblem):
         >>>         'data': Condition(CartesianDomain({'x': [0, 1]}), Equation(solution_data))
     """
 
+    def __init__(self):
+        super().__init__()
+        # storing unknown_parameters for optimization
+        self.unknown_parameters = {}
+        for i, var in enumerate(self.unknown_variables):
+            range_var = self.unknown_parameter_domain.range_[var]
+            tensor_var = (
+                torch.rand(1, requires_grad=True) * range_var[1]
+                + range_var[0]
+            )
+            self.unknown_parameters[var] = torch.nn.Parameter(
+                tensor_var
+            )
+
     @abstractmethod
     def unknown_parameter_domain(self):
         """

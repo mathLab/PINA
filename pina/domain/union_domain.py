@@ -32,9 +32,16 @@ class Union(OperationInterface):
 
         """
         super().__init__(geometries)
+
+    @property
+    def sample_modes(self):
         self.sample_modes = list(
-            set([geom.sample_modes for geom in geometries])
+            set([geom.sample_modes for geom in self.geometries])
             )
+    
+    @property
+    def variables(self):
+        return list(set([geom.variables for geom in self.geometries]))
 
     def is_inside(self, point, check_border=False):
         """

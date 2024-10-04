@@ -21,7 +21,6 @@ class CartesianDomain(DomainInterface):
         """
         self.fixed_ = {}
         self.range_ = {}
-        self.sample_modes = ["random", "grid", "lh", "chebyshev", "latin"]
 
         for k, v in cartesian_dict.items():
             if isinstance(v, (int, float)):
@@ -31,6 +30,10 @@ class CartesianDomain(DomainInterface):
             else:
                 raise TypeError
 
+    @property
+    def sample_modes(self):
+        return ["random", "grid", "lh", "chebyshev", "latin"]
+    
     @property
     def variables(self):
         """Spatial variables.

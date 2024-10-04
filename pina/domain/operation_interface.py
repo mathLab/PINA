@@ -24,8 +24,9 @@ class OperationInterface(DomainInterface, metaclass=ABCMeta):
         # assign geometries
         self._geometries = geometries
 
-        # sampling mode, for now random is the only available
-        self.sample_modes = "random"
+    @property
+    def sample_modes(self):
+        return ["random"]
 
     @property
     def geometries(self):

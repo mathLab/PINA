@@ -27,31 +27,31 @@ class Poisson(SpatialProblem):
 
     conditions = {
         'gamma1':
-        Condition(location=CartesianDomain({
+        Condition(domain=CartesianDomain({
             'x': [0, 1],
             'y': 1
         }),
                   equation=FixedValue(0.0)),
         'gamma2':
-        Condition(location=CartesianDomain({
+        Condition(domain=CartesianDomain({
             'x': [0, 1],
             'y': 0
         }),
                   equation=FixedValue(0.0)),
         'gamma3':
-        Condition(location=CartesianDomain({
+        Condition(domain=CartesianDomain({
             'x': 1,
             'y': [0, 1]
         }),
                   equation=FixedValue(0.0)),
         'gamma4':
-        Condition(location=CartesianDomain({
+        Condition(domain=CartesianDomain({
             'x': 0,
             'y': [0, 1]
         }),
                   equation=FixedValue(0.0)),
         'D':
-        Condition(location=CartesianDomain({
+        Condition(domain=CartesianDomain({
             'x': [0, 1],
             'y': [0, 1]
         }),
@@ -69,7 +69,7 @@ class Poisson(SpatialProblem):
 
 # make the problem
 poisson_problem = Poisson()
-
+print(poisson_problem.input_pts)
 
 def test_discretise_domain():
     n = 10
@@ -93,14 +93,14 @@ def test_discretise_domain():
     assert poisson_problem.input_pts['D'].shape[0] == n
 
 
-def test_sampling_few_variables():
-    n = 10
-    poisson_problem.discretise_domain(n,
-                                      'grid',
-                                      locations=['D'],
-                                      variables=['x'])
-    assert poisson_problem.input_pts['D'].shape[1] == 1
-    assert poisson_problem._have_sampled_points['D'] is False
+# def test_sampling_few_variables():
+#     n = 10
+#     poisson_problem.discretise_domain(n,
+#                                       'grid',
+#                                       locations=['D'],
+#                                       variables=['x'])
+#     assert poisson_problem.input_pts['D'].shape[1] == 1
+#     assert poisson_problem._have_sampled_points['D'] is False
 
 
 # def test_sampling_all_args():

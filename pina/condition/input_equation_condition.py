@@ -23,20 +23,10 @@ class InputPointsEquationCondition(ConditionInterface):
         self.equation = equation
         self.condition_type = 'physics'
 
-    @property
-    def input_points(self):
-        return self._input_points
-    
-    @input_points.setter
-    def input_points(self, value):
-        check_consistency(value, (LabelTensor)) # for now only labeltensors, we need labels for the operators!
-        self._input_points = value
-
-    @property
-    def equation(self):
-        return self._equation
-    
-    @equation.setter
-    def equation(self, value):
-        check_consistency(value, (EquationInterface))
-        self._equation = value
+    def __setattr__(self, key, value):
+        if key == 'input_points':
+            check_consistency(value, (LabelTensor)) # for now only labeltensors, we need labels for the operators!
+            InputPointsEquationCondition.__dict__[key].__set__(self, value)
+        elif key == 'equation':
+            check_consistency(value, (EquationInterface))
+            InputPointsEquationCondition.__dict__[key].__set__(self, value)
