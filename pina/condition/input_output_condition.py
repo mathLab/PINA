@@ -23,20 +23,7 @@ class InputOutputPointsCondition(ConditionInterface):
         self.output_points = output_points
         self.condition_type = ['supervised', 'physics']
 
-    @property
-    def input_points(self):
-        return self._input_points
-    
-    @input_points.setter
-    def input_points(self, value):
-        check_consistency(value, (LabelTensor, Graph, torch.Tensor))
-        self._input_points = value
-
-    @property
-    def output_points(self):
-        return self._output_points
-    
-    @output_points.setter
-    def output_points(self, value):
-        check_consistency(value, (LabelTensor, Graph, torch.Tensor))
-        self._output_points = value
+    def __setattr__(self, key, value):
+        if (key == 'input_points') or (key == 'output_points'):
+            check_consistency(value, (LabelTensor, Graph, torch.Tensor))
+            InputOutputPointsCondition.__dict__[key].__set__(self, value)

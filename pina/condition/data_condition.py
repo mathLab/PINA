@@ -24,21 +24,7 @@ class DataConditionInterface(ConditionInterface):
         self.conditionalvariable = conditionalvariable
         self.condition_type = 'unsupervised'
 
-    @property
-    def data(self):
-        return self._data
-    
-    @data.setter
-    def data(self, value):
-        check_consistency(value, (LabelTensor, Graph, torch.Tensor))
-        self._data = value
-
-    @property
-    def conditionalvariable(self):
-        return self._conditionalvariable
-    
-    @data.setter
-    def conditionalvariable(self, value):
-        if value is not None:
+    def __setattr__(self, key, value):
+        if (key == 'data') or (key == 'conditionalvariable'):
             check_consistency(value, (LabelTensor, Graph, torch.Tensor))
-        self._data = value
+            DataConditionInterface.__dict__[key].__set__(self, value)

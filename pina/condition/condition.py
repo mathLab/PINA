@@ -39,11 +39,10 @@ class Condition:
 
     __slots__ = list(
                     set(
-                        InputOutputPointsCondition.__slots__,
-                        InputPointsEquationCondition.__slots__,
-                        DomainEquationCondition.__slots__,
+                        InputOutputPointsCondition.__slots__ + 
+                        InputPointsEquationCondition.__slots__ +
+                        DomainEquationCondition.__slots__ +
                         DataConditionInterface.__slots__
-
                     )
                 )
 
@@ -51,8 +50,8 @@ class Condition:
         
         if len(args) != 0:
             raise ValueError(
-                f"Condition takes only the following keyword '
-                'arguments: {Condition.__slots__}."
+                "Condition takes only the following keyword "
+                f"arguments: {Condition.__slots__}."
             )
     
         sorted_keys = sorted(kwargs.keys()) 
