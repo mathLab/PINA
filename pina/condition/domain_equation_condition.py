@@ -1,8 +1,6 @@
 import torch
 
 from .condition_interface import ConditionInterface
-from ..label_tensor import LabelTensor
-from ..graph import Graph
 from ..utils import check_consistency
 from ..domain import DomainInterface
 from ..equation.equation_interface import EquationInterface
@@ -24,20 +22,10 @@ class DomainEquationCondition(ConditionInterface):
         self.equation = equation
         self.condition_type = 'physics'
 
-    @property
-    def domain(self):
-        return self._domain
-    
-    @domain.setter
-    def domain(self, value):
-        check_consistency(value, (DomainInterface))
-        self._domain = value
-
-    @property
-    def equation(self):
-        return self._equation
-    
-    @equation.setter
-    def equation(self, value):
-        check_consistency(value, (EquationInterface))
-        self._equation = value
+    def __setattr__(self, key, value):
+        if key == 'domain':
+            check_consistency(value, (DomainInterface))
+            DomainEquationCondition.__dict__[key].__set__(self, value)
+        elif key == 'equation':
+            check_consistency(value, (EquationInterface))
+            DomainEquationCondition.__dict__[key].__set__(self, value)
