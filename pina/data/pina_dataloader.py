@@ -83,7 +83,9 @@ class SamplePointLoader:
             batch_num += 1
 
         output_labels = dataset.output_pts.labels
+        output_labels.pop(0)
         input_labels = dataset.input_pts.labels
+        input_labels.pop(0)
         self.tensor_conditions = dataset.condition_indeces
 
         if shuffle:
@@ -98,8 +100,8 @@ class SamplePointLoader:
         )
         #print(input_labels)
         for i in range(len(self.batch_input_pts)):
-            self.batch_input_pts[i].labels = input_labels
-            self.batch_output_pts[i].labels = output_labels
+            self.batch_input_pts[i].update_labels(input_labels)
+            self.batch_output_pts[i].update_labels(output_labels)
 
         self.batch_data_conditions = torch.tensor_split(
             self.tensor_conditions, batch_num

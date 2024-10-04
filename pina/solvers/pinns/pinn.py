@@ -12,8 +12,8 @@ except ImportError:
 from torch.optim.lr_scheduler import ConstantLR
 
 from .basepinn import PINNInterface
-from pina.utils import check_consistency
-from pina.problem import InverseProblem
+from ...optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
+from ...problem import InverseProblem
 
 
 class PINN(PINNInterface):
@@ -62,10 +62,8 @@ class PINN(PINNInterface):
         model,
         extra_features=None,
         loss=torch.nn.MSELoss(),
-        optimizer=torch.optim.Adam,
-        optimizer_kwargs={"lr": 0.001},
-        scheduler=ConstantLR,
-        scheduler_kwargs={"factor": 1, "total_iters": 0},
+        optimizer=TorchOptimizer(torch.optim.Adam, lr=0.001),
+        scheduler=TorchScheduler(torch.optim.lr_scheduler.ConstantLR),
     ):
         """
         :param AbstractProblem problem: The formulation of the problem.
@@ -81,22 +79,20 @@ class PINN(PINNInterface):
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         """
+
         super().__init__(
             models=[model],
             problem=problem,
-            optimizers=[optimizer],
-            optimizers_kwargs=[optimizer_kwargs],
+            optimizers=optimizer,
+            schedulers=scheduler,
             extra_features=extra_features,
             loss=loss,
         )
 
         # check consistency
-        check_consistency(scheduler, LRScheduler, subclass=True)
-        check_consistency(scheduler_kwargs, dict)
 
         # assign variables
-        self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
-        self._neural_net = self.models[0]
+        self._neural_net = self._pina_model[0]
 
     def forward(self, x):
         r"""

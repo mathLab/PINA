@@ -31,7 +31,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         models,
         problem,
         optimizers,
-        optimizers_kwargs,
+        schedulers,
         extra_features,
         loss,
     ):
@@ -54,10 +54,10 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             default :class:`torch.nn.MSELoss`.
         """
         super().__init__(
-            models=models,
+            model=models,
             problem=problem,
-            optimizers=optimizers,
-            optimizers_kwargs=optimizers_kwargs,
+            optimizer=optimizers,
+            scheduler=schedulers,
             extra_features=extra_features,
         )
 

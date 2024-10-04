@@ -22,10 +22,10 @@ class SamplePointDataset(Dataset):
                 pts_list.append(problem.input_pts[name])
                 self.condition_names.append(name)
 
-        self.pts = LabelTensor.stack(pts_list)
+        self.pts = LabelTensor.cat(pts_list)
 
         if self.pts != []:
-            self.condition_indeces = torch.cat(
+            self.condition_indices = torch.cat(
                 [
                     torch.tensor([i] * len(pts_list[i]))
                     for i in range(len(self.condition_names))
@@ -33,11 +33,11 @@ class SamplePointDataset(Dataset):
                 dim=0,
             )
         else:  # if there are no sample points
-            self.condition_indeces = torch.tensor([])
+            self.condition_indices = torch.tensor([])
             self.pts = torch.tensor([])
 
         self.pts = self.pts.to(device)
-        self.condition_indeces = self.condition_indeces.to(device)
+        self.condition_indices = self.condition_indices.to(device)
 
     def __len__(self):
         return self.pts.shape[0]

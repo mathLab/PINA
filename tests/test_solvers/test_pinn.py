@@ -9,7 +9,7 @@ from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.equation.equation import Equation
 from pina.equation.equation_factory import FixedValue
-from pina.loss.loss_interface import LpLoss
+from pina.loss import LpLoss
 
 
 def laplace_equation(input_, output_):
@@ -54,22 +54,22 @@ class InversePoisson(SpatialProblem, InverseProblem):
 
     # define the conditions for the loss (boundary conditions, equation, data)
     conditions = {
-        'gamma1': Condition(location=CartesianDomain({'x': [x_min, x_max],
+        'gamma1': Condition(domain=CartesianDomain({'x': [x_min, x_max],
             'y':  y_max}),
             equation=FixedValue(0.0, components=['u'])),
-        'gamma2': Condition(location=CartesianDomain(
+        'gamma2': Condition(domain=CartesianDomain(
             {'x': [x_min, x_max], 'y': y_min
             }),
             equation=FixedValue(0.0, components=['u'])),
-        'gamma3': Condition(location=CartesianDomain(
+        'gamma3': Condition(domain=CartesianDomain(
             {'x':  x_max, 'y': [y_min, y_max]
             }),
             equation=FixedValue(0.0, components=['u'])),
-        'gamma4': Condition(location=CartesianDomain(
+        'gamma4': Condition(domain=CartesianDomain(
             {'x': x_min, 'y': [y_min, y_max]
             }),
             equation=FixedValue(0.0, components=['u'])),
-        'D': Condition(location=CartesianDomain(
+        'D': Condition(domain=CartesianDomain(
             {'x': [x_min, x_max], 'y': [y_min, y_max]
             }),
         equation=Equation(laplace_equation)),
@@ -82,27 +82,37 @@ class Poisson(SpatialProblem):
     output_variables = ['u']
     spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
+    domains = {
+        'gamma1': CartesianDomain({'x': [0, 1], 'y':  1}),
+        'gamma2': CartesianDomain({'x': [0, 1], 'y': 0}),
+        'gamma3': CartesianDomain({'x':  1, 'y': [0, 1]}),
+        'gamma4': CartesianDomain({'x': 0, 'y': [0, 1]}),
+        'D': CartesianDomain({'x': [0,1], 'y': [0, 1]}),
+        'data': in_,
+        'data2': in2_
+    }
     conditions = {
         'gamma1': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y':  1}),
+            domain='gamma1',
             equation=FixedValue(0.0)),
         'gamma2': Condition(
-            location=CartesianDomain({'x': [0, 1], 'y': 0}),
+            domain='gamma2',
             equation=FixedValue(0.0)),
         'gamma3': Condition(
-            location=CartesianDomain({'x':  1, 'y': [0, 1]}),
+            domain='gamma3',
             equation=FixedValue(0.0)),
         'gamma4': Condition(
-            location=CartesianDomain({'x': 0, 'y': [0, 1]}),
+            domain='gamma4',
             equation=FixedValue(0.0)),
         'D': Condition(
-            input_points=LabelTensor(torch.rand(size=(100, 2)), ['x', 'y']),
+            domain='D',
             equation=my_laplace),
-        'data': Condition(
-            input_points=in_,
-            output_points=out_),
+        'data' : Condition(
+            domain='data',
+            output_points=out_
+        ),
         'data2': Condition(
-            input_points=in2_,
+            domain='data2',
             output_points=out2_)
     }
 
@@ -140,7 +150,7 @@ extra_feats = [myFeature()]
 def test_constructor():
     PINN(problem=poisson_problem, model=model, extra_features=None)
 
-
+test_constructor()
 def test_constructor_extra_feats():
     model_extra_feats = FeedForward(
         len(poisson_problem.input_variables) + 1,
@@ -148,19 +158,20 @@ def test_constructor_extra_feats():
     PINN(problem=poisson_problem,
          model=model_extra_feats,
          extra_features=extra_feats)
+test_constructor_extra_feats()
 
 
 def test_train_cpu():
     poisson_problem = Poisson()
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
     n = 10
-    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
+    poisson_problem.discretise_domain(n, 'grid')
     pinn = PINN(problem = poisson_problem, model=model,
                 extra_features=None, loss=LpLoss())
     trainer = Trainer(solver=pinn, max_epochs=1,
                       accelerator='cpu', batch_size=20)
     trainer.train()
-
+test_train_cpu()
 
 def test_train_restore():
     tmpdir = "tests/tmp_restore"

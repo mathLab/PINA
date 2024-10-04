@@ -185,6 +185,7 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         problem,
         optimizer,
         scheduler,
+        extra_features
     ):
         """
         :param model: A torch neural network model instance.
@@ -224,7 +225,16 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
 
         # extra features handling
         self._pina_problem = problem
-        self._pina_model = model
+        self._pina_model = []
+        for idx in range(len_model):
+            model_ = Network(
+                model=model[idx],
+                input_variables=problem.input_variables,
+                output_variables=problem.output_variables,
+                extra_features=extra_features,
+            )
+            self._pina_model.append(model_)
+
         self._pina_optimizer = optimizer
         self._pina_scheduler = scheduler
 

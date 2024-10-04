@@ -17,8 +17,8 @@ class DataPointDataset(Dataset):
                 output_list.append(problem.conditions[name].output_points)
                 self.condition_names.append(name)
 
-        self.input_pts = LabelTensor.stack(input_list)
-        self.output_pts = LabelTensor.stack(output_list)
+        self.input_pts = LabelTensor.cat(input_list)
+        self.output_pts = LabelTensor.cat(output_list)
 
         if self.input_pts != []:
             self.condition_indeces = torch.cat(
