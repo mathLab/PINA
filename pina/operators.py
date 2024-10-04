@@ -66,10 +66,10 @@ def grad(output_, input_, components=None, d=None):
             allow_unused=True,
         )[0]
         new_labels = deepcopy(input_.labels)
-        gradients.update_labels(new_labels)
+        gradients.labels = new_labels
         gradients = gradients.extract(d)
         new_labels[input_.tensor.ndim - 1]['dof'] = [f"d{output_fieldname}d{i}" for i in d]
-        gradients.update_labels(new_labels)
+        gradients.labels = new_labels
         return gradients
 
     if not isinstance(input_, LabelTensor):
@@ -146,7 +146,7 @@ def div(output_, input_, components=None, d=None):
     div = LabelTensor.summation(to_sum_tensors)
     new_labels = deepcopy(input_.labels)
     new_labels[input_.tensor.ndim-1]['dof'] = ["+".join(last_dim_dof)]
-    div.update_labels(new_labels)
+    div.labels = new_labels
     return div
 
 
@@ -196,7 +196,7 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
                 to_append_tensors.append(gg.extract([gg.labels[gg.tensor.ndim-1]['dof'][i]]))
             labels = [f"dd{components[0]}"]
             result = LabelTensor.summation(tensors=to_append_tensors)
-            result.update_labels(labels)
+            result.labels = labels
         else:
             labels = [None] * len(components)
             to_append_tensors = [None] * len(components)
@@ -209,7 +209,7 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
                 to_append_tensors[idx] = grad(grad_output, input_, d=di)
                 labels[idx] = f"dd{ci[0]}dd{di[0]}"
             result = LabelTensor.cat(tensors=to_append_tensors, dim=output_.tensor.ndim-1)
-            result.update_labels(labels)
+            result.labels = labels
     return result
 
 # TODO Fix advection operator
