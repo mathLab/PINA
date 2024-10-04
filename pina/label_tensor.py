@@ -1,4 +1,5 @@
 """ Module for LabelTensor """
+from copy import deepcopy
 
 import torch
 from torch import Tensor
@@ -39,6 +40,15 @@ class LabelTensor(torch.Tensor):
 
     @property
     def labels(self):
+        """Property decorator for labels
+
+        :return: labels of self
+        :rtype: list
+        """
+        return self._labels[self.tensor.ndim-1]['dof']
+
+    @property
+    def full_labels(self):
         """Property decorator for labels
 
         :return: labels of self
@@ -150,27 +160,27 @@ class LabelTensor(torch.Tensor):
         n_dims = tensors[0].ndim
         new_labels_cat_dim = []
         for i in range(n_dims):
-            name = tensors[0].labels[i]['name']
+            name = tensors[0].full_labels[i]['name']
             if i != dim:
-                dof = tensors[0].labels[i]['dof']
+                dof = tensors[0].full_labels[i]['dof']
                 for tensor in tensors:
-                    dof_to_check = tensor.labels[i]['dof']
-                    name_to_check = tensor.labels[i]['name']
+                    dof_to_check = tensor.full_labels[i]['dof']
+                    name_to_check = tensor.full_labels[i]['name']
                     if dof != dof_to_check or name != name_to_check:
                         raise ValueError('dimensions must have the same dof and name')
             else:
                 for tensor in tensors:
-                    new_labels_cat_dim += tensor.labels[i]['dof']
-                    name_to_check = tensor.labels[i]['name']
+                    new_labels_cat_dim += tensor.full_labels[i]['dof']
+                    name_to_check = tensor.full_labels[i]['name']
                     if name != name_to_check:
                         raise ValueError('dimensions must have the same dof and name')
         new_tensor = torch.cat(tensors, dim=dim)
-        labels = tensors[0].labels
+        labels = tensors[0].full_labels
         labels.pop(dim)
         new_labels_cat_dim = new_labels_cat_dim if len(set(new_labels_cat_dim)) == len(new_labels_cat_dim) \
             else range(new_tensor.shape[dim])
         labels[dim] = {'dof': new_labels_cat_dim,
-                       'name': tensors[1].labels[dim]['name']}
+                       'name': tensors[1].full_labels[dim]['name']}
         return LabelTensor(new_tensor, labels)
 
     def requires_grad_(self, mode=True):
@@ -203,7 +213,6 @@ class LabelTensor(torch.Tensor):
 
         out = LabelTensor(super().clone(*args, **kwargs), self._labels)
         return out
-
 
     def init_labels(self):
         self._labels = {
@@ -246,26 +255,42 @@ class LabelTensor(torch.Tensor):
             raise ValueError('tensors list must not be empty')
         if len(tensors) == 1:
             return tensors[0]
-        labels = tensors[0].labels
+        labels = tensors[0].full_labels
         for j in range(tensors[0].ndim):
             for i in range(1, len(tensors)):
-                if labels[j] != tensors[i].labels[j]:
+                if labels[j] != tensors[i].full_labels[j]:
                     labels.pop(j)
                     break
-
         data = torch.zeros(tensors[0].tensor.shape)
         for i in range(len(tensors)):
             data += tensors[i].tensor
         new_tensor = LabelTensor(data, labels)
         return new_tensor
 
-    def last_dim_dof(self):
-        return self._labels[self.tensor.ndim - 1]['dof']
-
     def append(self, tensor, mode='std'):
-        print(self.labels)
-        print(tensor.labels)
         if mode == 'std':
             new_label_tensor = LabelTensor.cat([self, tensor], dim=self.tensor.ndim - 1)
-
+        elif mode=='cross':
+            tensor1 = self
+            tensor2 = tensor
+            n1 = tensor1.shape[0]
+            n2 = tensor2.shape[0]
+            tensor1 = LabelTensor(tensor1.repeat(n2, 1), labels=tensor1.labels)
+            tensor2 = LabelTensor(tensor2.repeat_interleave(n1, dim=0), labels=tensor2.labels)
+            new_label_tensor = LabelTensor.cat([tensor1, tensor2], dim=self.tensor.ndim-1)
+        else:
+            raise ValueError('mode must be either "std" or "cross"')
         return new_label_tensor
+
+    @staticmethod
+    def vstack(label_tensors):
+        """
+        Stack tensors vertically. For more details, see
+        :meth:`torch.vstack`.
+
+        :param list(LabelTensor) label_tensors: the tensors to stack. They need
+            to have equal labels.
+        :return: the stacked tensor
+        :rtype: LabelTensor
+        """
+        return LabelTensor.cat(label_tensors, dim=0)

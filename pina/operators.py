@@ -1,13 +1,11 @@
 """
 Module for operators vectorize implementation. Differential operators are used to write any differential problem.
-These operators are implemented to work on different accelerators: CPU, GPU, TPU or MPS.
+These operators are implemented to work on different accellerators: CPU, GPU, TPU or MPS.
 All operators take as input a tensor onto which computing the operator, a tensor with respect
 to which computing the operator, the name of the output variables to calculate the operator
 for (in case of multidimensional functions), and the variables name on which the operator is calculated.
 """
-
 import torch
-from copy import deepcopy
 from pina.label_tensor import LabelTensor
 
 
@@ -49,12 +47,12 @@ def grad(output_, input_, components=None, d=None):
         :rtype: LabelTensor
         """
 
-        if len(output_.labels[output_.tensor.ndim-1]['dof']) != 1:
+        if len(output_.labels) != 1:
             raise RuntimeError("only scalar function can be differentiated")
-        if not all([di in input_.labels[input_.tensor.ndim-1]['dof'] for di in d]):
+        if not all([di in input_.labels for di in d]):
             raise RuntimeError("derivative labels missing from input tensor")
 
-        output_fieldname = output_.labels[output_.ndim-1]['dof'][0]
+        output_fieldname = output_.labels[0]
         gradients = torch.autograd.grad(
             output_,
             input_,
@@ -65,35 +63,37 @@ def grad(output_, input_, components=None, d=None):
             retain_graph=True,
             allow_unused=True,
         )[0]
-        new_labels = deepcopy(input_.labels)
-        gradients.labels = new_labels
+
+        gradients.labels = input_.labels
         gradients = gradients.extract(d)
-        new_labels[input_.tensor.ndim - 1]['dof'] = [f"d{output_fieldname}d{i}" for i in d]
-        gradients.labels = new_labels
+        gradients.labels = [f"d{output_fieldname}d{i}" for i in d]
+
         return gradients
 
     if not isinstance(input_, LabelTensor):
         raise TypeError
+
     if d is None:
-        d = input_.labels[input_.tensor.ndim-1]['dof']
+        d = input_.labels
 
     if components is None:
-        components = output_.labels[output_.tensor.ndim-1]['dof']
+        components = output_.labels
 
-    if output_.shape[output_.ndim-1] == 1:  # scalar output ################################
+    if output_.shape[1] == 1:  # scalar output ################################
 
-        if components != output_.labels[output_.tensor.ndim-1]['dof']:
+        if components != output_.labels:
             raise RuntimeError
         gradients = grad_scalar_output(output_, input_, d)
 
-    elif output_.shape[output_.ndim-1] >= 2:  # vector output ##############################
+    elif output_.shape[output_.ndim - 1] >= 2:  # vector output ##############################
         tensor_to_cat = []
         for i, c in enumerate(components):
             c_output = output_.extract([c])
             tensor_to_cat.append(grad_scalar_output(c_output, input_, d))
-        gradients = LabelTensor.cat(tensor_to_cat, dim=output_.tensor.ndim-1)
+        gradients = LabelTensor.cat(tensor_to_cat, dim=output_.tensor.ndim - 1)
     else:
         raise NotImplementedError
+
     return gradients
 
 
@@ -124,29 +124,26 @@ def div(output_, input_, components=None, d=None):
         raise TypeError
 
     if d is None:
-        d = input_.labels[input_.tensor.ndim-1]['dof']
+        d = input_.labels
 
     if components is None:
-        components = output_.labels[output_.tensor.ndim-1]['dof']
+        components = output_.labels
 
-    if output_.shape[output_.ndim-1] < 2 or len(components) < 2:
+    if output_.shape[1] < 2 or len(components) < 2:
         raise ValueError("div supported only for vector fields")
 
     if len(components) != len(d):
         raise ValueError
 
     grad_output = grad(output_, input_, components, d)
-    last_dim_dof = [None] * len(components)
-    to_sum_tensors = []
+    labels = [None] * len(components)
+    tensors_to_sum = []
     for i, (c, d) in enumerate(zip(components, d)):
         c_fields = f"d{c}d{d}"
-        last_dim_dof[i] = c_fields
-        to_sum_tensors.append(grad_output.extract(c_fields))
-
-    div = LabelTensor.summation(to_sum_tensors)
-    new_labels = deepcopy(input_.labels)
-    new_labels[input_.tensor.ndim-1]['dof'] = ["+".join(last_dim_dof)]
-    div.labels = new_labels
+        tensors_to_sum.append(grad_output.extract(c_fields))
+        labels[i] = c_fields
+    div = LabelTensor.summation(tensors_to_sum)
+    div.labels = ["+".join(labels)]
     return div
 
 
@@ -173,10 +170,10 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
     :rtype: LabelTensor
     """
     if d is None:
-        d = input_.labels[input_.tensor.ndim-1]['dof']
+        d = input_.labels
 
     if components is None:
-        components = output_.labels[output_.tensor.ndim-1]['dof']
+        components = output_.labels
 
     if len(components) != len(d) and len(components) != 1:
         raise ValueError
@@ -191,28 +188,34 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
         if len(components) == 1:
             grad_output = grad(output_, input_, components=components, d=d)
             to_append_tensors = []
-            for i, label in enumerate(grad_output.labels[grad_output.ndim-1]['dof']):
+            for i, label in enumerate(grad_output.labels):
                 gg = grad(grad_output, input_, d=d, components=[label])
-                to_append_tensors.append(gg.extract([gg.labels[gg.tensor.ndim-1]['dof'][i]]))
+                to_append_tensors.append(gg.extract([gg.labels[i]]))
             labels = [f"dd{components[0]}"]
             result = LabelTensor.summation(tensors=to_append_tensors)
             result.labels = labels
         else:
+            result = torch.empty(
+                input_.shape[0], len(components), device=output_.device
+            )
             labels = [None] * len(components)
             to_append_tensors = [None] * len(components)
             for idx, (ci, di) in enumerate(zip(components, d)):
+
                 if not isinstance(ci, list):
                     ci = [ci]
                 if not isinstance(di, list):
                     di = [di]
+
                 grad_output = grad(output_, input_, components=ci, d=di)
+                result[:, idx] = grad(grad_output, input_, d=di).flatten()
                 to_append_tensors[idx] = grad(grad_output, input_, d=di)
                 labels[idx] = f"dd{ci[0]}dd{di[0]}"
             result = LabelTensor.cat(tensors=to_append_tensors, dim=output_.tensor.ndim-1)
             result.labels = labels
     return result
 
-# TODO Fix advection operator
+
 def advection(output_, input_, velocity_field, components=None, d=None):
     """
     Perform advection operation. The operator works for vectorial functions,
@@ -234,10 +237,10 @@ def advection(output_, input_, velocity_field, components=None, d=None):
     :rtype: LabelTensor
     """
     if d is None:
-        d = input_.labels[input_.tensor.ndim-1]['dof']
+        d = input_.labels
 
     if components is None:
-        components = output_.labels[output_.tensor.ndim-1]['dof']
+        components = output_.labels
 
     tmp = (
         grad(output_, input_, components, d)
