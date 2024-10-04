@@ -259,3 +259,13 @@ class LabelTensor(torch.Tensor):
         new_tensor = LabelTensor(data, labels)
         return new_tensor
 
+    def last_dim_dof(self):
+        return self._labels[self.tensor.ndim - 1]['dof']
+
+    def append(self, tensor, mode='std'):
+        print(self.labels)
+        print(tensor.labels)
+        if mode == 'std':
+            new_label_tensor = LabelTensor.cat([self, tensor], dim=self.tensor.ndim - 1)
+
+        return new_label_tensor

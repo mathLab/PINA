@@ -177,4 +177,26 @@ def test_summation():
     assert lt_sum.labels == labels_all
     assert torch.eq(lt_sum.tensor, torch.ones(20,3)*2).all()
 
-
+def test_append_3D():
+    data_1 = torch.rand(20, 3, 4)
+    labels_1 = ['x', 'y', 'z', 'w']
+    lt1 = LabelTensor(data_1, labels_1)
+    data_2 = torch.rand(50, 3, 4)
+    labels_2 = ['x', 'y', 'z', 'w']
+    lt2 = LabelTensor(data_2, labels_2)
+    lt1 = lt1.append(lt2)
+    assert lt1.shape == (70, 3, 4)
+    assert lt1.labels[0]['dof'] == range(70)
+    assert lt1.labels[1]['dof'] == range(3)
+    assert lt1.labels[2]['dof'] == ['x', 'y', 'z', 'w']
+    data_1 = torch.rand(20, 3, 2)
+    labels_1 = ['x', 'y']
+    lt1 = LabelTensor(data_1, labels_1)
+    data_2 = torch.rand(20, 3, 2)
+    labels_2 = ['z', 'w']
+    lt2 = LabelTensor(data_2, labels_2)
+    lt1 = lt1.append(lt2, mode='cross')
+    assert lt1.shape == (20, 3, 4)
+    assert lt1.labels[0]['dof'] == range(20)
+    assert lt1.labels[1]['dof'] == range(3)
+    assert lt1.labels[2]['dof'] == ['x', 'y', 'z', 'w']
