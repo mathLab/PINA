@@ -24,10 +24,9 @@ labels_all = labels_column | labels_row
 def test_constructor(labels):
     LabelTensor(data, labels)
 
-
 def test_wrong_constructor():
     with pytest.raises(ValueError):
-        print(LabelTensor(data, ['a', 'b']))
+        LabelTensor(data, ['a', 'b'])
 
 @pytest.mark.parametrize("labels", [labels_column, labels_all])
 @pytest.mark.parametrize("labels_te", ['z', ['z'], {'space': ['z']}])
@@ -229,5 +228,3 @@ def test_vstack_2D():
     assert lt_stacked.full_labels[1]['dof'] == ['x', 'y']
     assert lt_stacked.full_labels[0]['name'] == 0
     assert lt_stacked.full_labels[1]['name'] == 'second'
-test_vstack_2D()
-test_vstack_3D()

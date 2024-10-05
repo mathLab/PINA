@@ -1,5 +1,4 @@
 """ Module for LabelTensor """
-from copy import deepcopy
 
 import torch
 from torch import Tensor
@@ -36,6 +35,7 @@ class LabelTensor(torch.Tensor):
                     {1: {"name": "space"['a', 'b', 'c'])
 
         """
+        self.dim_names = None
         self.labels = labels
 
     @property
@@ -75,6 +75,13 @@ class LabelTensor(torch.Tensor):
             self.update_labels_from_list(labels)
         else:
             raise ValueError(f"labels must be list, dict or string.")
+        self.set_names()
+
+    def set_names(self):
+        labels = self.full_labels
+        self.dim_names = {}
+        for dim in range(self.tensor.ndim):
+            self.dim_names[labels[dim]['name']] = dim
 
     def extract(self, label_to_extract):
         """
@@ -86,46 +93,66 @@ class LabelTensor(torch.Tensor):
         :raises TypeError: Labels are not ``str``.
         :raises ValueError: Label to extract is not in the labels ``list``.
         """
-        from copy import deepcopy
+        from copy import copy
         if isinstance(label_to_extract, (str, int)):
             label_to_extract = [label_to_extract]
         if isinstance(label_to_extract, (tuple, list)):
-            last_dim_label = self._labels[self.tensor.ndim - 1]['dof']
-            if set(label_to_extract).issubset(last_dim_label) is False:
-                raise ValueError('Cannot extract a dof which is not in the original LabelTensor')
-            idx_to_extract = [last_dim_label.index(i) for i in label_to_extract]
-            new_tensor = self.tensor
-            new_tensor = new_tensor[..., idx_to_extract]
-            new_labels = deepcopy(self._labels)
-            last_dim_new_label = {self.tensor.ndim - 1: {
-                'dof': label_to_extract,
-                'name': self._labels[self.tensor.ndim - 1]['name']
-            }}
-            new_labels.update(last_dim_new_label)
+            return self._extract_from_list(label_to_extract)
         elif isinstance(label_to_extract, dict):
-            new_labels = (deepcopy(self._labels))
-            new_tensor = self.tensor
-            for k, v in label_to_extract.items():
-                idx_dim = None
-                for kl, vl in self._labels.items():
-                    if vl['name'] == k:
-                        idx_dim = kl
-                        break
-                dim_labels = self._labels[idx_dim]['dof']
-                if isinstance(label_to_extract[k], (int, str)):
-                    label_to_extract[k] = [label_to_extract[k]]
-                if set(label_to_extract[k]).issubset(dim_labels) is False:
-                    raise ValueError('Cannot extract a dof which is not in the original LabelTensor')
-                idx_to_extract = [dim_labels.index(i) for i in label_to_extract[k]]
-                indexer = [slice(None)] * idx_dim + [idx_to_extract] + [slice(None)] * (self.tensor.ndim - idx_dim - 1)
-                new_tensor = new_tensor[indexer]
-                dim_new_label = {idx_dim: {
-                    'dof': label_to_extract[k],
-                    'name': self._labels[idx_dim]['name']
-                }}
-                new_labels.update(dim_new_label)
+            return self._extract_from_dict(label_to_extract)
         else:
             raise ValueError('labels_to_extract must be str or list or dict')
+
+    def _extract_from_list(self, labels_to_extract):
+        from copy import copy
+        #Store locally all necessary obj/variables
+        ndim = self.tensor.ndim
+        labels = self.full_labels
+        tensor = self.tensor
+        last_dim_label = self.labels
+
+        #Verify if all the labels in labels_to_extract are in last dimension
+        if set(labels_to_extract).issubset(last_dim_label) is False:
+            raise ValueError('Cannot extract a dof which is not in the original LabelTensor')
+
+        #Extract index to extract
+        idx_to_extract = [last_dim_label.index(i) for i in labels_to_extract]
+
+        #Perform extraction
+        new_tensor = tensor[..., idx_to_extract]
+
+        #Manage labels
+        new_labels = copy(labels)
+
+        last_dim_new_label = {ndim - 1: {
+            'dof': list(labels_to_extract),
+            'name': labels[ndim - 1]['name']
+        }}
+        new_labels.update(last_dim_new_label)
+        return LabelTensor(new_tensor, new_labels)
+
+    def _extract_from_dict(self, labels_to_extract):
+        from copy import copy
+        labels = self.full_labels
+        tensor = self.tensor
+        ndim = tensor.ndim
+        new_labels = (copy(labels))
+        new_tensor = tensor
+        for k, v in labels_to_extract.items():
+            idx_dim = self.dim_names[k]
+            dim_labels = labels[idx_dim]['dof']
+            if isinstance(labels_to_extract[k], (int, str)):
+                labels_to_extract[k] = [labels_to_extract[k]]
+            if set(labels_to_extract[k]).issubset(dim_labels) is False:
+                raise ValueError('Cannot extract a dof which is not in the original LabelTensor')
+            idx_to_extract = [dim_labels.index(i) for i in labels_to_extract[k]]
+            indexer = [slice(None)] * idx_dim + [idx_to_extract] + [slice(None)] * (ndim - idx_dim - 1)
+            new_tensor = new_tensor[indexer]
+            dim_new_label = {idx_dim: {
+                'dof': labels_to_extract[k],
+                'name': labels[idx_dim]['name']
+            }}
+            new_labels.update(dim_new_label)
         return LabelTensor(new_tensor, new_labels)
 
     def __str__(self):
@@ -137,7 +164,7 @@ class LabelTensor(torch.Tensor):
         for key, value in self._labels.items():
             s += f"{key}: {value}\n"
         s += '\n'
-        s += super().__str__()
+        s += self.tensor.__str__()
         return s
 
     @staticmethod
@@ -157,6 +184,18 @@ class LabelTensor(torch.Tensor):
             return []
         if len(tensors) == 1:
             return tensors[0]
+        new_labels_cat_dim = LabelTensor._check_validity_before_cat(tensors, dim)
+        new_tensor = torch.cat(tensors, dim=dim)
+        labels = tensors[0].full_labels
+        labels.pop(dim)
+        new_labels_cat_dim = new_labels_cat_dim if len(set(new_labels_cat_dim)) == len(new_labels_cat_dim) \
+            else range(new_tensor.shape[dim])
+        labels[dim] = {'dof': new_labels_cat_dim,
+                       'name': tensors[1].full_labels[dim]['name']}
+        return LabelTensor(new_tensor, labels)
+
+    @staticmethod
+    def _check_validity_before_cat(tensors, dim):
         n_dims = tensors[0].ndim
         new_labels_cat_dim = []
         for i in range(n_dims):
@@ -173,15 +212,8 @@ class LabelTensor(torch.Tensor):
                     new_labels_cat_dim += tensor.full_labels[i]['dof']
                     name_to_check = tensor.full_labels[i]['name']
                     if name != name_to_check:
-                        raise ValueError('dimensions must have the same dof and name')
-        new_tensor = torch.cat(tensors, dim=dim)
-        labels = tensors[0].full_labels
-        labels.pop(dim)
-        new_labels_cat_dim = new_labels_cat_dim if len(set(new_labels_cat_dim)) == len(new_labels_cat_dim) \
-            else range(new_tensor.shape[dim])
-        labels[dim] = {'dof': new_labels_cat_dim,
-                       'name': tensors[1].full_labels[dim]['name']}
-        return LabelTensor(new_tensor, labels)
+                        raise ValueError('Dimensions to concatenate must have the same name')
+        return new_labels_cat_dim
 
     def requires_grad_(self, mode=True):
         lt = super().requires_grad_(mode)
@@ -294,3 +326,39 @@ class LabelTensor(torch.Tensor):
         :rtype: LabelTensor
         """
         return LabelTensor.cat(label_tensors, dim=0)
+
+    def __getitem__(self, index):
+        if hasattr(self, '_labels'):
+            labels = self.full_labels
+            tensor = self
+
+            # Handle case where index is a string or a list/tuple of strings
+            if isinstance(index, str) or (isinstance(index, (tuple, list)) and all(isinstance(a, str) for a in index)):
+                return self.extract(index)
+
+            # Handle slice or single integer case
+            if isinstance(index, (slice, int)):
+                index = [index]
+
+            names = []
+            index_to_extract = [None] * len(index)
+
+            # Handle list or tuple of slices/ints
+            if isinstance(index, (tuple, list)) and all(isinstance(a, (slice, int)) for a in index):
+                for i in range(len(index)):
+                    index_to_extract[i] = labels[i]['dof'][index[i]]
+                    names.append(labels[i]['name'])
+
+            # Refine extraction logic to avoid recursion
+            if isinstance(index_to_extract, (tuple, list)) and all(
+                    isinstance(a, (list, range, int, str)) for a in index_to_extract):
+                to_extract_dict = {}
+                for i in range(len(index)):
+                    to_extract_dict[names[i]] = index_to_extract[i]
+                    # Avoid calling extract if unnecessary
+                if to_extract_dict:
+                    tensor = tensor.extract(to_extract_dict)
+            return tensor
+        else:
+            # Use the superclass's __getitem__ if _labels attribute is not present
+            return super().__getitem__(index)
