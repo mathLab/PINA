@@ -1,4 +1,5 @@
 """ Module for LabelTensor """
+from copy import deepcopy
 
 import torch
 from torch import Tensor
@@ -340,36 +341,44 @@ class LabelTensor(torch.Tensor):
         return LabelTensor.cat(label_tensors, dim=0)
 
     def __getitem__(self, index):
-        if hasattr(self, '_labels'):
-            labels = self.full_labels
-            tensor = self
+        """
+        Return a copy of the selected tensor.
+        """
 
-            # Handle case where index is a string or a list/tuple of strings
-            if isinstance(index, str) or (isinstance(index, (tuple, list)) and all(isinstance(a, str) for a in index)):
-                return self.extract(index)
+        if isinstance(index, str) or (isinstance(index, (tuple, list)) and all(isinstance(a, str) for a in index)):
+            return self.extract(index)
 
-            # Handle slice or single integer case
-            if isinstance(index, (slice, int)):
-                index = [index]
+        selected_lt = super(Tensor, self).__getitem__(index)
 
-            names = []
-            index_to_extract = [None] * len(index)
+        try:
+            len_index = len(index)
+        except TypeError:
+            len_index = 1
 
-            # Handle list or tuple of slices/ints
-            if isinstance(index, (tuple, list)) and all(isinstance(a, (slice, int)) for a in index):
-                for i in range(len(index)):
-                    index_to_extract[i] = labels[i]['dof'][index[i]]
-                    names.append(labels[i]['name'])
+        if isinstance(index, int) or len_index == 1:
+            if selected_lt.ndim == 1:
+                selected_lt = selected_lt.reshape(1, -1)
+            if hasattr(self, "labels"):
+                new_labels = deepcopy(self.full_labels)
+                new_labels.pop(0)
+                selected_lt.labels = new_labels
+        elif len(index) == self.tensor.ndim:
+            new_labels = deepcopy(self.full_labels)
+            if selected_lt.ndim == 1:
+                selected_lt = selected_lt.reshape(-1, 1)
+            for j in range(selected_lt.ndim):
+                if hasattr(self, "labels"):
+                    if isinstance(index[j], list):
+                        new_labels.update({j: {'dof': [new_labels[j]['dof'][i] for i in index[1]],
+                                               'name':new_labels[j]['name']}})
+                    else:
+                        new_labels.update({j: {'dof': new_labels[j]['dof'][index[j]],
+                                               'name':new_labels[j]['name']}})
 
-            # Call extract method
-            if isinstance(index_to_extract, (tuple, list)) and all(
-                    isinstance(a, (list, range, int, str)) for a in index_to_extract):
-                to_extract_dict = {}
-                for i in range(len(index)):
-                    to_extract_dict[names[i]] = index_to_extract[i]
-                if to_extract_dict:
-                    tensor = tensor.extract(to_extract_dict)
-            return tensor
+            selected_lt.labels = new_labels
         else:
-            # Use the superclass's __getitem__ if _labels attribute is not present
-            return super().__getitem__(index)
+            new_labels = deepcopy(self.full_labels)
+            new_labels.update({0: {'dof': list[index], 'name': new_labels[0]['name']}})
+            selected_lt.labels = self.labels
+
+        return selected_lt
