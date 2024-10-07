@@ -185,7 +185,11 @@ class LabelTensor(torch.Tensor):
         if len(tensors) == 1:
             return tensors[0]
         new_labels_cat_dim = LabelTensor._check_validity_before_cat(tensors, dim)
+
+        # Perform cat on tensors
         new_tensor = torch.cat(tensors, dim=dim)
+
+        #Update labels
         labels = tensors[0].full_labels
         labels.pop(dim)
         new_labels_cat_dim = new_labels_cat_dim if len(set(new_labels_cat_dim)) == len(new_labels_cat_dim) \
@@ -198,6 +202,7 @@ class LabelTensor(torch.Tensor):
     def _check_validity_before_cat(tensors, dim):
         n_dims = tensors[0].ndim
         new_labels_cat_dim = []
+        # Check if names and dof of the labels are the same in all dimensions except in dim
         for i in range(n_dims):
             name = tensors[0].full_labels[i]['name']
             if i != dim:
@@ -262,13 +267,14 @@ class LabelTensor(torch.Tensor):
         :type labels: dict
         :raises ValueError: dof list contain duplicates or number of dof does not match with tensor shape
         """
-
         tensor_shape = self.tensor.shape
+        #Check dimensionality
         for k, v in labels.items():
             if len(v['dof']) != len(set(v['dof'])):
                 raise ValueError("dof must be unique")
             if len(v['dof']) != tensor_shape[k]:
                 raise ValueError('Number of dof does not match with tensor dimension')
+        #Perform update
         self._labels.update(labels)
 
     def update_labels_from_list(self, labels):
@@ -278,6 +284,7 @@ class LabelTensor(torch.Tensor):
         :param labels: The label(s) to update.
         :type labels: list
         """
+        # Create a dict with labels
         last_dim_labels = {self.tensor.ndim - 1: {'dof': labels, 'name': self.tensor.ndim - 1}}
         self.update_labels_from_dict(last_dim_labels)
 
@@ -287,12 +294,15 @@ class LabelTensor(torch.Tensor):
             raise ValueError('tensors list must not be empty')
         if len(tensors) == 1:
             return tensors[0]
+        # Collect all labels
         labels = tensors[0].full_labels
+        # Check labels of all the tensors in each dimension
         for j in range(tensors[0].ndim):
             for i in range(1, len(tensors)):
                 if labels[j] != tensors[i].full_labels[j]:
                     labels.pop(j)
                     break
+        # Sum tensors
         data = torch.zeros(tensors[0].tensor.shape)
         for i in range(len(tensors)):
             data += tensors[i].tensor
@@ -301,8 +311,10 @@ class LabelTensor(torch.Tensor):
 
     def append(self, tensor, mode='std'):
         if mode == 'std':
+            # Call cat on last dimension
             new_label_tensor = LabelTensor.cat([self, tensor], dim=self.tensor.ndim - 1)
         elif mode=='cross':
+            # Crete tensor and call cat on last dimension
             tensor1 = self
             tensor2 = tensor
             n1 = tensor1.shape[0]
@@ -349,13 +361,12 @@ class LabelTensor(torch.Tensor):
                     index_to_extract[i] = labels[i]['dof'][index[i]]
                     names.append(labels[i]['name'])
 
-            # Refine extraction logic to avoid recursion
+            # Call extract method
             if isinstance(index_to_extract, (tuple, list)) and all(
                     isinstance(a, (list, range, int, str)) for a in index_to_extract):
                 to_extract_dict = {}
                 for i in range(len(index)):
                     to_extract_dict[names[i]] = index_to_extract[i]
-                    # Avoid calling extract if unnecessary
                 if to_extract_dict:
                     tensor = tensor.extract(to_extract_dict)
             return tensor
