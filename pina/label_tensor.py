@@ -382,3 +382,16 @@ class LabelTensor(torch.Tensor):
             selected_lt.labels = self.labels
 
         return selected_lt
+
+    def sort_labels(self, dim=None):
+        def argsort(lst):
+            return sorted(range(len(lst)), key=lambda x: lst[x])
+        if dim is None:
+            dim = self.tensor.ndim-1
+        labels = self.full_labels[dim]['dof']
+        sorted_index = argsort(labels)
+        indexer = [slice(None)] * self.tensor.ndim
+        indexer[dim] = sorted_index
+        new_labels = deepcopy(self.full_labels)
+        new_labels[dim] = {'dof': sorted(labels), 'name': new_labels[dim]['name']}
+        return LabelTensor(self.tensor[indexer], new_labels)

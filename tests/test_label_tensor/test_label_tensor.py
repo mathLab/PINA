@@ -2,7 +2,6 @@ import torch
 import pytest
 
 from pina.label_tensor import LabelTensor
-#import pina
 
 data = torch.rand((20, 3))
 labels_column = {
@@ -228,3 +227,36 @@ def test_vstack_2D():
     assert lt_stacked.full_labels[1]['dof'] == ['x', 'y']
     assert lt_stacked.full_labels[0]['name'] == 0
     assert lt_stacked.full_labels[1]['name'] == 'second'
+
+def test_sorting():
+    data = torch.ones(20, 5)
+    data[:,0] = data[:,0]*4
+    data[:,1] = data[:,1]*2
+    data[:,2] = data[:,2]
+    data[:,3] = data[:,3]*5
+    data[:,4] = data[:,4]*3
+    labels = ['d', 'b', 'a', 'e', 'c']
+    lt_data = LabelTensor(data, labels)
+    lt_sorted = LabelTensor.sort_labels(lt_data)
+    assert lt_sorted.shape == (20,5)
+    assert lt_sorted.labels == ['a', 'b', 'c', 'd', 'e']
+    assert torch.eq(lt_sorted.tensor[:,0], torch.ones(20) * 1).all()
+    assert torch.eq(lt_sorted.tensor[:,1], torch.ones(20) * 2).all()
+    assert torch.eq(lt_sorted.tensor[:,2], torch.ones(20) * 3).all()
+    assert torch.eq(lt_sorted.tensor[:,3], torch.ones(20) * 4).all()
+    assert torch.eq(lt_sorted.tensor[:,4], torch.ones(20) * 5).all()
+
+    data = torch.ones(20, 4, 5)
+    data[:,0,:] = data[:,0]*4
+    data[:,1,:] = data[:,1]*2
+    data[:,2,:] = data[:,2]
+    data[:,3,:] = data[:,3]*3
+    labels = {1: {'dof': ['d', 'b', 'a', 'c'], 'name': 1}}
+    lt_data = LabelTensor(data, labels)
+    lt_sorted = LabelTensor.sort_labels(lt_data, dim=1)
+    assert lt_sorted.shape == (20,4, 5)
+    assert lt_sorted.full_labels[1]['dof'] == ['a', 'b', 'c', 'd']
+    assert torch.eq(lt_sorted.tensor[:,0,:], torch.ones(20,5) * 1).all()
+    assert torch.eq(lt_sorted.tensor[:,1,:], torch.ones(20,5) * 2).all()
+    assert torch.eq(lt_sorted.tensor[:,2,:], torch.ones(20,5) * 3).all()
+    assert torch.eq(lt_sorted.tensor[:,3,:], torch.ones(20,5) * 4).all()

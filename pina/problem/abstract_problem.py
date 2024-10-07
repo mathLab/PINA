@@ -41,6 +41,10 @@ class AbstractProblem(metaclass=ABCMeta):
             if 'input_points' in v.keys():
                 to_return[k] = v['input_points']
         return to_return
+
+    @property
+    def _have_sampled_points(self):
+        return self.collector.is_conditions_ready
     
     def __deepcopy__(self, memo):
         """
@@ -169,3 +173,6 @@ class AbstractProblem(metaclass=ABCMeta):
 
         # store data
         self.collector.store_sample_domains(n, mode, variables, locations)
+
+    def add_points(self, new_points_dict):
+        self.collector.add_points(new_points_dict)
