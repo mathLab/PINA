@@ -165,7 +165,7 @@ class LabelTensor(torch.Tensor):
         for key, value in self._labels.items():
             s += f"{key}: {value}\n"
         s += '\n'
-        s += self.tensor.__str__()
+        s += super().__str__()
         return s
 
     @staticmethod

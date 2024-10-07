@@ -63,7 +63,7 @@ class Collector:
             ] + already_sampled
             pts = merge_tensors(samples)
             if (
-                sorted(self.data_collections[loc].input_points.labels) 
+                sorted(pts.labels)
                 ==
                 sorted(self.problem.input_variables)
                 ):

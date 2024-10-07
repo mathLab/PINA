@@ -93,7 +93,6 @@ def test_getitem():
 
 def test_getitem2():
     tensor = LabelTensor(data, labels)
-    print(tensor.labels)
     tensor_view = tensor[:5]
     assert tensor_view.labels == labels
     assert torch.allclose(tensor_view, data[:5])
@@ -114,5 +113,5 @@ def test_slice():
     assert torch.allclose(tensor_view2, data[3])
 
     tensor_view3 = tensor[:, 2]
-    assert tensor_view3.labels == [labels[2]]
+    assert tensor_view3.labels == labels[2]
     assert torch.allclose(tensor_view3, data[:, 2].reshape(-1, 1))

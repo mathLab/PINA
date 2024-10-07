@@ -36,7 +36,11 @@ class AbstractProblem(metaclass=ABCMeta):
 
     @property
     def input_pts(self):
-        return self.collector.data_collections
+        to_return = {}
+        for k, v in self.collector.data_collections.items():
+            if 'input_points' in v.keys():
+                to_return[k] = v['input_points']
+        return to_return
     
     def __deepcopy__(self, memo):
         """
