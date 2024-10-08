@@ -142,9 +142,9 @@ def div(output_, input_, components=None, d=None):
         c_fields = f"d{c}d{d}"
         tensors_to_sum.append(grad_output.extract(c_fields))
         labels[i] = c_fields
-    div = LabelTensor.summation(tensors_to_sum)
-    div.labels = ["+".join(labels)]
-    return div
+    div_result = LabelTensor.summation(tensors_to_sum)
+    div_result.labels = ["+".join(labels)]
+    return div_result
 
 
 def laplacian(output_, input_, components=None, d=None, method="std"):

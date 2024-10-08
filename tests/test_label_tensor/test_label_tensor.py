@@ -21,7 +21,7 @@ labels_all = labels_column | labels_row
 
 @pytest.mark.parametrize("labels", [labels_column, labels_row, labels_all, labels_list])
 def test_constructor(labels):
-    LabelTensor(data, labels)
+    print(LabelTensor(data, labels))
 
 def test_wrong_constructor():
     with pytest.raises(ValueError):

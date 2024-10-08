@@ -1,6 +1,5 @@
 """ Module for LabelTensor """
-from copy import deepcopy
-
+from copy import deepcopy, copy
 import torch
 from torch import Tensor
 
@@ -94,7 +93,6 @@ class LabelTensor(torch.Tensor):
         :raises TypeError: Labels are not ``str``.
         :raises ValueError: Label to extract is not in the labels ``list``.
         """
-        from copy import copy
         if isinstance(label_to_extract, (str, int)):
             label_to_extract = [label_to_extract]
         if isinstance(label_to_extract, (tuple, list)):
@@ -105,7 +103,6 @@ class LabelTensor(torch.Tensor):
             raise ValueError('labels_to_extract must be str or list or dict')
 
     def _extract_from_list(self, labels_to_extract):
-        from copy import copy
         #Store locally all necessary obj/variables
         ndim = self.tensor.ndim
         labels = self.full_labels
@@ -133,13 +130,12 @@ class LabelTensor(torch.Tensor):
         return LabelTensor(new_tensor, new_labels)
 
     def _extract_from_dict(self, labels_to_extract):
-        from copy import copy
         labels = self.full_labels
         tensor = self.tensor
         ndim = tensor.ndim
-        new_labels = (copy(labels))
+        new_labels = deepcopy(labels)
         new_tensor = tensor
-        for k, v in labels_to_extract.items():
+        for k, _ in labels_to_extract.items():
             idx_dim = self.dim_names[k]
             dim_labels = labels[idx_dim]['dof']
             if isinstance(labels_to_extract[k], (int, str)):
@@ -348,7 +344,7 @@ class LabelTensor(torch.Tensor):
         if isinstance(index, str) or (isinstance(index, (tuple, list)) and all(isinstance(a, str) for a in index)):
             return self.extract(index)
 
-        selected_lt = super(Tensor, self).__getitem__(index)
+        selected_lt = super().__getitem__(index)
 
         try:
             len_index = len(index)
