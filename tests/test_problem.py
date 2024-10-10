@@ -89,6 +89,7 @@ def test_discretise_domain():
     poisson_problem.discretise_domain(n, 'lh', locations=['D'])
     assert poisson_problem.input_pts['D'].shape[0] == n
 
+    poisson_problem.discretise_domain(n)
 
 def test_sampling_few_variables():
     n = 10
@@ -98,7 +99,7 @@ def test_sampling_few_variables():
                                       locations=['D'],
                                       variables=['x'])
     assert poisson_problem.input_pts['D'].shape[1] == 1
-    assert poisson_problem._have_sampled_points['D'] is False
+    assert poisson_problem.collector._is_conditions_ready['D'] is False
 
 
 def test_variables_correct_order_sampling():
@@ -140,3 +141,12 @@ def test_add_points():
     poisson_problem.add_points({'D': new_pts})
     assert torch.isclose(poisson_problem.input_pts['D'].extract('x'), new_pts.extract('x'))
     assert torch.isclose(poisson_problem.input_pts['D'].extract('y'), new_pts.extract('y'))
+
+
+def test_collector():
+    poisson_problem = Poisson()
+    collector = poisson_problem.collector
+    assert collector.full is False
+    assert collector._is_conditions_ready['data'] is True
+    poisson_problem.discretise_domain(10)
+    assert collector.full is True
