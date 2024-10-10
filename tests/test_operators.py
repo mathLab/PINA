@@ -26,13 +26,13 @@ tensor_s = LabelTensor(func_scalar(inp).reshape(-1, 1), labels[0])
 def test_grad_scalar_output():
     grad_tensor_s = grad(tensor_s, inp)
     assert grad_tensor_s.shape == inp.shape
-    assert grad_tensor_s.labels[grad_tensor_s.ndim-1]['dof'] == [
-        f'd{tensor_s.labels[tensor_s.ndim-1]["dof"][0]}d{i}' for i in inp.labels[inp.ndim-1]['dof']
+    assert grad_tensor_s.labels == [
+        f'd{tensor_s.labels[0]}d{i}' for i in inp.labels
     ]
     grad_tensor_s = grad(tensor_s, inp, d=['x', 'y'])
     assert grad_tensor_s.shape == (20, 2)
-    assert grad_tensor_s.labels[grad_tensor_s.ndim-1]['dof'] == [
-        f'd{tensor_s.labels[tensor_s.ndim-1]["dof"][0]}d{i}' for i in ['x', 'y']
+    assert grad_tensor_s.labels == [
+        f'd{tensor_s.labels[0]}d{i}' for i in ['x', 'y']
     ]
 
 def test_grad_vector_output():

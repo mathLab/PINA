@@ -21,7 +21,7 @@ class InputPointsEquationCondition(ConditionInterface):
         super().__init__()
         self.input_points = input_points
         self.equation = equation
-        self.condition_type = 'physics'
+        self._condition_type = 'physics'
 
     def __setattr__(self, key, value):
         if key == 'input_points':
@@ -30,3 +30,5 @@ class InputPointsEquationCondition(ConditionInterface):
         elif key == 'equation':
             check_consistency(value, (EquationInterface))
             InputPointsEquationCondition.__dict__[key].__set__(self, value)
+        elif key in ('_condition_type', '_problem', 'problem', 'condition_type'):
+            super().__setattr__(key, value)

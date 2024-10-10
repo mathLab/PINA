@@ -76,7 +76,7 @@ class Exclusion(OperationInterface):
                 5
 
         """
-        if mode != self.sample_modes:
+        if mode not in self.sample_modes:
             raise NotImplementedError(
                 f"{mode} is not a valid mode for sampling."
             )

@@ -27,3 +27,5 @@ class InputOutputPointsCondition(ConditionInterface):
         if (key == 'input_points') or (key == 'output_points'):
             check_consistency(value, (LabelTensor, Graph, torch.Tensor))
             InputOutputPointsCondition.__dict__[key].__set__(self, value)
+        elif key in ('_condition_type', '_problem', 'problem', 'condition_type'):
+            super().__setattr__(key, value)
