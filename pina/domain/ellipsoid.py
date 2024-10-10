@@ -72,6 +72,10 @@ class EllipsoidDomain(DomainInterface):
             self._axis = dict(zip(self.range_.keys(), ellipsoid_axis.tolist()))
 
     @property
+    def sample_modes(self):
+        return ["random"]
+    
+    @property
     def variables(self):
         """Spatial variables.
 
@@ -281,7 +285,7 @@ class EllipsoidDomain(DomainInterface):
         if variables == "all":
             variables = list(self.range_.keys()) + list(self.fixed_.keys())
 
-        if mode in ["random"]:
+        if mode in self.sample_modes:
             return _Nd_sampler(n, mode, variables)
         else:
             raise NotImplementedError(f"mode={mode} is not implemented.")

@@ -18,27 +18,27 @@ def test_init_inputoutput():
     Condition(input_points=example_input_pts, output_points=example_output_pts)
     with pytest.raises(ValueError):
         Condition(example_input_pts, example_output_pts)
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Condition(input_points=3., output_points='example')
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Condition(input_points=example_domain, output_points=example_domain)
+test_init_inputoutput()
 
-
-def test_init_locfunc():
-    Condition(location=example_domain, equation=FixedValue(0.0))
+def test_init_domainfunc():
+    Condition(domain=example_domain, equation=FixedValue(0.0))
     with pytest.raises(ValueError):
         Condition(example_domain, FixedValue(0.0))
-    with pytest.raises(TypeError):
-        Condition(location=3., equation='example')
-    with pytest.raises(TypeError):
-        Condition(location=example_input_pts, equation=example_output_pts)
+    with pytest.raises(ValueError):
+        Condition(domain=3., equation='example')
+    with pytest.raises(ValueError):
+        Condition(domain=example_input_pts, equation=example_output_pts)
 
 
 def test_init_inputfunc():
     Condition(input_points=example_input_pts, equation=FixedValue(0.0))
     with pytest.raises(ValueError):
         Condition(example_domain, FixedValue(0.0))
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Condition(input_points=3., equation='example')
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Condition(input_points=example_domain, equation=example_output_pts)

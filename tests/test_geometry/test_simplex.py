@@ -40,7 +40,6 @@ def test_constructor():
             LabelTensor(torch.tensor([[-.5, .5]]), labels=["x", "y"]),
         ])
 
-
 def test_sample():
     # sampling inside
     simplex = SimplexDomain([
