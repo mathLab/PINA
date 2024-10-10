@@ -158,7 +158,11 @@ class RBAPINN(PINN):
         residual = self.compute_residual(samples=samples, equation=equation)
         cond = self.current_condition_name
 
-        r_norm = self.eta * torch.abs(residual) / (torch.max(torch.abs(residual))+1e-12)
+        r_norm = (
+            self.eta
+            * torch.abs(residual)
+            / (torch.max(torch.abs(residual)) + 1e-12)
+        )
         self.weights[cond] = (self.gamma * self.weights[cond] + r_norm).detach()
 
         loss_value = self._vectorial_loss(
