@@ -92,13 +92,12 @@ class SimplexDomain(DomainInterface):
         """
 
         span_dict = {}
-
         for i, coord in enumerate(self.variables):
-            sorted_vertices = sorted(vertices, key=lambda vertex: vertex[i])
+            sorted_vertices = torch.sort(vertices[coord].tensor.squeeze())
             # respective coord bounded by the lowest and highest values
             span_dict[coord] = [
-                float(sorted_vertices[0][i]),
-                float(sorted_vertices[-1][i]),
+                float(sorted_vertices.values[0]),
+                float(sorted_vertices.values[-1]),
             ]
 
         return CartesianDomain(span_dict)

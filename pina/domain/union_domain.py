@@ -41,7 +41,10 @@ class Union(OperationInterface):
     
     @property
     def variables(self):
-        return list(set([geom.variables for geom in self.geometries]))
+        variables = []
+        for geom in self.geometries:
+            variables+=geom.variables
+        return list(set(variables))
 
     def is_inside(self, point, check_border=False):
         """
