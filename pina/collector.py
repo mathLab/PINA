@@ -5,20 +5,34 @@ from .utils import check_consistency, merge_tensors
 
 class Collector:
     def __init__(self, problem):
-        self.problem = problem                                                  # hook Collector <-> Problem
-        self.data_collections = {name : {} for name in self.problem.conditions} # collection of data
-        self.is_conditions_ready = {
-            name : False for name in self.problem.conditions}                   # names of the conditions that need to be sampled
-        self.full = False                                                       # collector full, all points for all conditions are given and the data are ready to be used in trainig
+        # creating a hook between collector and problem
+        self.problem = problem          
+
+        # this variable is used to store the data in the form:
+        # {'[condition_name]' : 
+        #           {'input_points' : Tensor, 
+        #            '[equation/output_points/conditional_variables]': Tensor}
+        # }
+        # those variables are used for the dataloading
+        self._data_collections = {name : {} for name in self.problem.conditions}
+
+        # variables used to check that all conditions are sampled
+        self._is_conditions_ready = {
+            name : False for name in self.problem.conditions}
+        self.full = False
         
     @property
     def full(self):
-        return all(self.is_conditions_ready.values())
+        return all(self._is_conditions_ready.values())
     
     @full.setter
     def full(self, value):
         check_consistency(value, bool)
         self._full = value
+
+    @property
+    def data_collections(self):
+        return self._data_collections
 
     @property
     def problem(self):
@@ -33,13 +47,13 @@ class Collector:
         for condition_name, condition in self.problem.conditions.items():
             # if the condition is not ready and domain is not attribute
             # of condition, we get and store the data
-            if (not self.is_conditions_ready[condition_name]) and (not hasattr(condition, "domain")):
+            if (not self._is_conditions_ready[condition_name]) and (not hasattr(condition, "domain")):
                 # get data
                 keys = condition.__slots__
                 values = [getattr(condition, name) for name in keys]
                 self.data_collections[condition_name] = dict(zip(keys, values))
                 # condition now is ready
-                self.is_conditions_ready[condition_name] = True
+                self._is_conditions_ready[condition_name] = True
 
     def store_sample_domains(self, n, mode, variables, sample_locations):
         # loop over all locations
@@ -48,7 +62,7 @@ class Collector:
             condition = self.problem.conditions[loc]
             keys = ["input_points", "equation"]
             # if the condition is not ready, we get and store the data
-            if (not self.is_conditions_ready[loc]):
+            if (not self._is_conditions_ready[loc]):
                 # if it is the first time we sample
                 if not self.data_collections[loc]:
                     already_sampled = []
@@ -57,7 +71,7 @@ class Collector:
                     already_sampled = [self.data_collections[loc]['input_points']]
             # if the condition is ready but we want to sample again
             else:
-                self.is_conditions_ready[loc] = False
+                self._is_conditions_ready[loc] = False
                 already_sampled = []
 
             # get the samples
@@ -70,7 +84,7 @@ class Collector:
                 ):
                 pts = pts.sort_labels()
                 if sorted(pts.labels)==sorted(self.problem.input_variables):
-                    self.is_conditions_ready[loc] = True
+                    self._is_conditions_ready[loc] = True
                 values = [pts, condition.equation]
                 self.data_collections[loc] = dict(zip(keys, values))
             else:
@@ -84,6 +98,6 @@ class Collector:
         :raises RuntimeError: if at least one condition is not already sampled
         """
         for k,v in new_points_dict.items():
-            if not self.is_conditions_ready[k]:
+            if not self._is_conditions_ready[k]:
                 raise RuntimeError('Cannot add points on a non sampled condition')
             self.data_collections[k]['input_points'] = self.data_collections[k]['input_points'].vstack(v)
