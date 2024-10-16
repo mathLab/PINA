@@ -249,7 +249,7 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
                 result[:, idx] = grad(grad_output, input_, d=di).flatten()
                 to_append_tensors[idx] = grad(grad_output, input_, d=di)
                 labels[idx] = f"dd{ci[0]}dd{di[0]}"
-            result = LabelTensor.cat(tensors=to_append_tensors, dim=output_.tensor.ndim-1)
+            result = LabelTensor.cat(tensors=to_append_tensors, dim=output_.tensor.ndim - 1)
             result.labels = labels
     return result
 

@@ -55,7 +55,6 @@ class EllipsoidDomain(DomainInterface):
         # perform operation only for not fixed variables (if any)
 
         if self.range_:
-
             # convert dict vals to torch [dim, 2] matrix
             list_dict_vals = list(self.range_.values())
             tmp = torch.tensor(list_dict_vals, dtype=torch.float)
@@ -74,7 +73,7 @@ class EllipsoidDomain(DomainInterface):
     @property
     def sample_modes(self):
         return ["random"]
-    
+
     @property
     def variables(self):
         """Spatial variables.

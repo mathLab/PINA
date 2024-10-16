@@ -30,5 +30,5 @@ class InputPointsEquationCondition(ConditionInterface):
         elif key == 'equation':
             check_consistency(value, (EquationInterface))
             InputPointsEquationCondition.__dict__[key].__set__(self, value)
-        elif key in ('problem', 'condition_type'):
+        elif key in ('_problem', '_condition_type'):
             super().__setattr__(key, value)
