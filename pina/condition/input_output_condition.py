@@ -21,11 +21,11 @@ class InputOutputPointsCondition(ConditionInterface):
         super().__init__()
         self.input_points = input_points
         self.output_points = output_points
-        self.condition_type = ['supervised', 'physics']
+        self._condition_type = ['supervised', 'physics']
 
     def __setattr__(self, key, value):
         if (key == 'input_points') or (key == 'output_points'):
             check_consistency(value, (LabelTensor, Graph, torch.Tensor))
             InputOutputPointsCondition.__dict__[key].__set__(self, value)
-        elif key in ('problem', 'condition_type'):
+        elif key in ('_problem', '_condition_type'):
             super().__setattr__(key, value)

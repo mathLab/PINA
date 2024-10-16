@@ -27,13 +27,13 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     """
 
     def __init__(
-        self,
-        models,
-        problem,
-        optimizers,
-        optimizers_kwargs,
-        extra_features,
-        loss,
+            self,
+            models,
+            problem,
+            optimizers,
+            optimizers_kwargs,
+            extra_features,
+            loss,
     ):
         """
         :param models: Multiple torch neural network models instances.
@@ -178,7 +178,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         try:
             residual = equation.residual(samples, self.forward(samples))
         except (
-            TypeError
+                TypeError
         ):  # this occurs when the function has three inputs, i.e. inverse problem
             residual = equation.residual(
                 samples, self.forward(samples), self._params

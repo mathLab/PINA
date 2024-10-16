@@ -5,7 +5,8 @@ __all__ = [
     "Plotter",
     "Condition",
     "SamplePointDataset",
-    "SamplePointLoader",
+    "PinaDataModule",
+    "PinaDataLoader"
 ]
 
 from .meta import *
@@ -15,4 +16,5 @@ from .trainer import Trainer
 from .plotter import Plotter
 from .condition.condition import Condition
 from .data import SamplePointDataset
-from .data import SamplePointLoader
+from .data import PinaDataModule
+from .data import PinaDataLoader
