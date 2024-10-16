@@ -1,6 +1,11 @@
 Tutorial: Averaging Neural Operator for solving Kuramoto Sivashinsky equation
 =============================================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial10/tutorial.ipynb
+
 In this tutorial we will build a Neural Operator using the
 ``AveragingNeuralOperator`` model and the ``SupervisedSolver``. At the
 end of the tutorial you will be able to train a Neural Operator for
@@ -11,6 +16,15 @@ operations.
 
 .. code:: ipython3
 
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
+    
     import torch
     import matplotlib.pyplot as plt
     from scipy import io

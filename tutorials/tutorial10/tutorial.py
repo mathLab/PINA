@@ -3,6 +3,8 @@
 
 # # Tutorial: Averaging Neural Operator for solving Kuramoto Sivashinsky equation
 # 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial10/tutorial.ipynb)
+# 
 # In this tutorial we will build a Neural Operator using the
 # `AveragingNeuralOperator` model and the `SupervisedSolver`. At the end of the
 # tutorial you will be able to train a Neural Operator for learning
@@ -14,6 +16,15 @@
 
 # In[1]:
 
+
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
 
 import torch
 import matplotlib.pyplot as plt
@@ -247,6 +258,6 @@ with torch.no_grad():
 # 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
 # 
-# 2. We left a more challenging dataset [Data_KS2.mat](tutorial10/dat/Data_KS2.mat) where $A_k \in [-0.5, 0.5]$, $\ell_k \in [1, 2, 3]$, $\phi_k \in [0, 2\pi]$ for loger training
+# 2. We left a more challenging dataset [Data_KS2.mat](dat/Data_KS2.mat) where $A_k \in [-0.5, 0.5]$, $\ell_k \in [1, 2, 3]$, $\phi_k \in [0, 2\pi]$ for loger training
 # 
 # 3. Compare the performance between the different neural operators (you can even try to implement your favourite one!)

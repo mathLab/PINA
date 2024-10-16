@@ -1,6 +1,11 @@
 Tutorial: PINA and PyTorch Lightning, training tips and visualizations
 ======================================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial11/tutorial.ipynb
+
 In this tutorial, we will delve deeper into the functionality of the
 ``Trainer`` class, which serves as the cornerstone for training **PINA**
 `Solvers <https://mathlab.github.io/PINA/_rst/_code.html#solvers>`__.
@@ -18,6 +23,15 @@ problem and the ``PINN`` solver.
 
 .. code:: ipython3
 
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
+    
     import torch
     
     from pina import Condition, Trainer

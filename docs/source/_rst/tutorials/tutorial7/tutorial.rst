@@ -1,6 +1,11 @@
 Tutorial: Resolution of an inverse problem
 ============================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial7/tutorial.ipynb
+
 Introduction to the inverse problem
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -32,6 +37,15 @@ In order to achieve both the goals we will need to define an
 ``InverseProblem`` in PINA. Let’s start with useful imports.
 
 .. code:: ipython3
+
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
 
     import matplotlib.pyplot as plt
     import torch

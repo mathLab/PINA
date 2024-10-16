@@ -2,6 +2,9 @@
 # coding: utf-8
 
 # # Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator
+# 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial5/tutorial.ipynb)
+# 
 
 # In this tutorial we are going to solve the Darcy flow problem in two dimensions, presented in [*Fourier Neural Operator for
 # Parametric Partial Differential Equation*](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input-output operations.
@@ -9,6 +12,16 @@
 # In[1]:
 
 
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
+  get_ipython().system('pip install scipy')
+  
 # !pip install scipy  # install scipy
 from scipy import io
 import torch
