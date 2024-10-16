@@ -1,6 +1,11 @@
 Tutorial: Physics Informed Neural Networks on PINA
 ==================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial1/tutorial.ipynb
+
 In this tutorial, we will demonstrate a typical use case of **PINA** on
 a toy problem, following the standard API procedure.
 
@@ -74,6 +79,15 @@ What if our equation is also time-dependent? In this case, our ``class``
 will inherit from both ``SpatialProblem`` and ``TimeDependentProblem``:
 
 .. code:: ipython3
+    
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
 
     from pina.problem import SpatialProblem, TimeDependentProblem
     from pina.geometry import CartesianDomain

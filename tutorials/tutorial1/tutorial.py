@@ -2,6 +2,9 @@
 # coding: utf-8
 
 # # Tutorial: Physics Informed Neural Networks on PINA
+# 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial1/tutorial.ipynb)
+# 
 
 # In this tutorial, we will demonstrate a typical use case of **PINA** on a toy problem, following the standard API procedure. 
 # 
@@ -50,8 +53,17 @@
 # What if our equation is also time-dependent? In this case, our `class` will inherit from both `SpatialProblem` and `TimeDependentProblem`:
 # 
 
-# In[1]:
+# In[ ]:
 
+
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
 
 from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.geometry import CartesianDomain
@@ -68,13 +80,10 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 # where we have included the `temporal_domain` variable, indicating the time domain wanted for the solution.
 # 
 # In summary, using **PINA**, we can initialize a problem with a class which inherits from different base classes: `SpatialProblem`, `TimeDependentProblem`, `ParametricProblem`, and so on depending on the type of problem we are considering. Here are some examples (more on the official documentation):
-# SpatialProblem  →  a differential equation with spatial variable(s)
-#    spatial_domain
-# TimeDependentProblem  →  a time-dependent differential equation
-#    with temporal variable(s) temporal_domain
-# ParametricProblem  →  a parametrized differential equation with
-#  parametric variable(s) parameter_domain
-# AbstractProblem  →  any PINA problem inherits from here
+# * ``SpatialProblem`` $\rightarrow$ a differential equation with spatial variable(s) ``spatial_domain``
+# * ``TimeDependentProblem`` $\rightarrow$ a time-dependent differential equation with temporal variable(s) ``temporal_domain``
+# * ``ParametricProblem`` $\rightarrow$ a parametrized differential equation with parametric variable(s) ``parameter_domain``
+# * ``AbstractProblem`` $\rightarrow$ any **PINA** problem inherits from here
 
 # ### Write the problem class
 # 
@@ -184,7 +193,7 @@ pl.plot_samples(problem=problem)
 
 # Once we have defined the problem and generated the data we can start the modelling. Here we will choose a `FeedForward` neural network available in `pina.model`, and we will train using the `PINN` solver from `pina.solvers`. We highlight that this training is fairly simple, for more advanced stuff consider the tutorials in the ***Physics Informed Neural Networks*** section of ***Tutorials***. For training we use the `Trainer` class from `pina.trainer`. Here we show a very short training and some method for plotting the results. Notice that by default all relevant metrics (e.g. MSE error during training) are going to be tracked using a `lightining` logger, by default `CSVLogger`. If you want to track the metric by yourself without a logger, use `pina.callbacks.MetricTracker`.
 
-# In[6]:
+# In[ ]:
 
 
 from pina import Trainer
@@ -250,5 +259,3 @@ pl.plot_loss(trainer=trainer, label = 'mean_loss', logy=True)
 # 3. GPU training and speed benchmarking
 # 
 # 4. Many more...
-
-# 

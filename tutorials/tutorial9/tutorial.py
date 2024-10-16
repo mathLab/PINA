@@ -2,6 +2,9 @@
 # coding: utf-8
 
 # # Tutorial: One dimensional Helmholtz equation using Periodic Boundary Conditions
+# 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial9/tutorial.ipynb)
+# 
 # This tutorial presents how to solve with Physics-Informed Neural Networks (PINNs)
 # a one dimensional Helmholtz equation with periodic boundary conditions (PBC).
 # We will train with standard PINN's training by augmenting the input with
@@ -13,6 +16,15 @@
 
 # In[1]:
 
+
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
 
 import torch
 import matplotlib.pyplot as plt
@@ -47,8 +59,8 @@ from pina.equation import Equation
 # the periodicity condition $ u^{(m)}(x=0) - u^{(m)}(x=2) = 0 \quad m\in[0, 1, \cdots] $ is
 # satisfied.
 # 
-# For demonstration porpuses the problem specifics are $\lambda=-10\pi^2$,
-# and $f(x)=-6\pi^2\sin(3\pi x)\cos(\pi x)$ which gives a solution that can be
+# For demonstration purposes, the problem specifics are $\lambda=-10\pi^2$,
+# and $f(x)=-6\pi^2\sin(3\pi x)\cos(\pi x)$ which give a solution that can be
 # computed analytically $u(x) = \sin(\pi x)\cos(3\pi x)$.
 
 # In[2]:
@@ -82,11 +94,11 @@ problem = Helmholtz()
 problem.discretise_domain(200, 'grid', locations=['D'])
 
 
-# As usual the Helmholtz problem is written in **PINA** code as a class. 
+# As usual, the Helmholtz problem is written in **PINA** code as a class. 
 # The equations are written as `conditions` that should be satisfied in the
 # corresponding domains. The `truth_solution`
 # is the exact solution which will be compared with the predicted one. We used
-# latin hypercube sampling for choosing the collocation points.
+# Latin Hypercube Sampling for choosing the collocation points.
 
 # ## Solving the problem with a Periodic Network
 
@@ -123,11 +135,11 @@ model = torch.nn.Sequential(PeriodicBoundaryEmbedding(input_dimension=1,
                                         layers=[10, 10]))
 
 
-# As simple as that! Notice in higher dimension you can specify different periods
+# As simple as that! Notice that in higher dimension you can specify different periods
 # for all dimensions using a dictionary, e.g. `periods={'x':2, 'y':3, ...}`
 # would indicate a periodicity of $2$ in $x$, $3$ in $y$, and so on...
 # 
-# We will now sole the problem as usually with the `PINN` and `Trainer` class.
+# We will now solve the problem as usually with the `PINN` and `Trainer` class.
 
 # In[ ]:
 
@@ -146,7 +158,7 @@ pl = Plotter()
 pl.plot(pinn)
 
 
-# Great, they overlap perfectly! This seeams a good result, considering the simple neural network used to some this (complex) problem. We will now test the neural network on the domain $[-4, 4]$ without retraining. In principle the periodicity should be present since the $v$ function ensures the periodicity in $(-\infty, \infty)$.
+# Great, they overlap perfectly! This seems a good result, considering the simple neural network used to some this (complex) problem. We will now test the neural network on the domain $[-4, 4]$ without retraining. In principle the periodicity should be present since the $v$ function ensures the periodicity in $(-\infty, \infty)$.
 
 # In[7]:
 
@@ -176,11 +188,11 @@ with torch.no_grad():
     plt.show()
 
 
-# It is pretty clear that the network is periodic, with also the error following a periodic pattern. Obviusly a longer training, and a more expressive neural network could improve the results!
+# It is pretty clear that the network is periodic, with also the error following a periodic pattern. Obviously a longer training and a more expressive neural network could improve the results!
 # 
 # ## What's next?
 # 
-# Nice you have completed the one dimensional Helmholtz tutorial of **PINA**! There are multiple directions you can go now:
+# Congratulations on completing the one dimensional Helmholtz tutorial of **PINA**! There are multiple directions you can go now:
 # 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
 # 
@@ -189,3 +201,5 @@ with torch.no_grad():
 # 3. Exploit extrafeature training ?
 # 
 # 4. Many more...
+
+# 

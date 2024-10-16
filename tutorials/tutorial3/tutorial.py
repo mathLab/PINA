@@ -3,6 +3,8 @@
 
 # # Tutorial: Two dimensional Wave problem with hard constraint
 # 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial3/tutorial.ipynb)
+# 
 # In this tutorial we present how to solve the wave equation using hard constraint PINNs. For doing so we will build a costum `torch` model and pass it to the `PINN` solver.
 # 
 # First of all, some useful imports.
@@ -10,6 +12,15 @@
 # In[1]:
 
 
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
+  
 import torch
 
 from pina.problem import SpatialProblem, TimeDependentProblem
@@ -146,7 +157,7 @@ plotter.plot(pinn, fixed_variables={'t': 1.0})
 # 
 # A valid option is to impose the initial condition as hard constraint as well. Specifically, our solution is written as:
 # 
-# $$ u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)\cdot t + \cos(\sqrt{2}\pi t)sin(\pi x)\sin(\pi y), $$
+# $$ u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)\cdot t + \cos(\sqrt{2}\pi t)\sin(\pi x)\sin(\pi y), $$
 # 
 # Let us build the network first
 
