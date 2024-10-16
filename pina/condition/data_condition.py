@@ -22,11 +22,11 @@ class DataConditionInterface(ConditionInterface):
         super().__init__()
         self.input_points = input_points
         self.conditional_variables = conditional_variables
-        self.condition_type = 'unsupervised'
+        self._condition_type = 'unsupervised'
 
     def __setattr__(self, key, value):
         if (key == 'input_points') or (key == 'conditional_variables'):
             check_consistency(value, (LabelTensor, Graph, torch.Tensor))
             DataConditionInterface.__dict__[key].__set__(self, value)
-        elif key in ('problem', 'condition_type'):
+        elif key in ('_problem', '_condition_type'):
             super().__setattr__(key, value)

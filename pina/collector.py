@@ -3,10 +3,11 @@ from sympy.strategies.branch import condition
 from . import LabelTensor
 from .utils import check_consistency, merge_tensors
 
+
 class Collector:
     def __init__(self, problem):
         # creating a hook between collector and problem
-        self.problem = problem          
+        self.problem = problem
 
         # this variable is used to store the data in the form:
         # {'[condition_name]' : 
@@ -14,17 +15,17 @@ class Collector:
         #            '[equation/output_points/conditional_variables]': Tensor}
         # }
         # those variables are used for the dataloading
-        self._data_collections = {name : {} for name in self.problem.conditions}
+        self._data_collections = {name: {} for name in self.problem.conditions}
 
         # variables used to check that all conditions are sampled
         self._is_conditions_ready = {
-            name : False for name in self.problem.conditions}
+            name: False for name in self.problem.conditions}
         self.full = False
-        
+
     @property
     def full(self):
         return all(self._is_conditions_ready.values())
-    
+
     @full.setter
     def full(self, value):
         check_consistency(value, bool)
@@ -37,7 +38,7 @@ class Collector:
     @property
     def problem(self):
         return self._problem
-    
+
     @problem.setter
     def problem(self, value):
         self._problem = value
@@ -76,14 +77,14 @@ class Collector:
 
             # get the samples
             samples = [
-                condition.domain.sample(n=n, mode=mode, variables=variables)
-            ] + already_sampled
+                          condition.domain.sample(n=n, mode=mode, variables=variables)
+                      ] + already_sampled
             pts = merge_tensors(samples)
             if (
-                set(pts.labels).issubset(sorted(self.problem.input_variables))
-                ):
+                    set(pts.labels).issubset(sorted(self.problem.input_variables))
+            ):
                 pts = pts.sort_labels()
-                if sorted(pts.labels)==sorted(self.problem.input_variables):
+                if sorted(pts.labels) == sorted(self.problem.input_variables):
                     self._is_conditions_ready[loc] = True
                 values = [pts, condition.equation]
                 self.data_collections[loc] = dict(zip(keys, values))
@@ -97,7 +98,7 @@ class Collector:
         :param new_points_dict: Dictonary of input points (condition_name: LabelTensor)
         :raises RuntimeError: if at least one condition is not already sampled
         """
-        for k,v in new_points_dict.items():
+        for k, v in new_points_dict.items():
             if not self._is_conditions_ready[k]:
                 raise RuntimeError('Cannot add points on a non sampled condition')
             self.data_collections[k]['input_points'] = self.data_collections[k]['input_points'].vstack(v)
