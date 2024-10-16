@@ -20,7 +20,7 @@ class DomainEquationCondition(ConditionInterface):
         super().__init__()
         self.domain = domain
         self.equation = equation
-        self.condition_type = 'physics'
+        self._condition_type = 'physics'
 
     def __setattr__(self, key, value):
         if key == 'domain':
@@ -29,5 +29,5 @@ class DomainEquationCondition(ConditionInterface):
         elif key == 'equation':
             check_consistency(value, (EquationInterface))
             DomainEquationCondition.__dict__[key].__set__(self, value)
-        elif key in ('problem', 'condition_type'):
+        elif key in ('_problem', '_condition_type'):
             super().__setattr__(key, value)

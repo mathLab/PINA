@@ -77,7 +77,7 @@ class SimplexDomain(DomainInterface):
     @property
     def sample_modes(self):
         return ["random"]
-       
+
     @property
     def variables(self):
         return self._vertices_matrix.labels
@@ -144,7 +144,7 @@ class SimplexDomain(DomainInterface):
             return all(torch.gt(lambdas, 0.0)) and all(torch.lt(lambdas, 1.0))
 
         return all(torch.ge(lambdas, 0)) and (
-            any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
+                any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
         )
 
     def _sample_interior_randomly(self, n, variables):
