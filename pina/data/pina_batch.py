@@ -1,36 +1,21 @@
-
-
 class Batch:
-    """
-    This class is used to create a dataset of sample points.
-    """
-
-    def __init__(self, type_, idx, *args, **kwargs) -> None:
+    def __init__(self, idx_dict, dataset_dict) -> None:
         """
+        TODO
         """
-        if type_ == "sample":
+        self.coordinates_dict = idx_dict
+        self.dataset_dict = dataset_dict
 
-            if len(args) != 2:
-                raise RuntimeError
+    def __len__(self):
+        length = 0
+        for k,v in self.coordinates_dict.items():
+            length += len(v)
+        return length
 
-            input = args[0]
-            conditions = args[1]
-
-            self.input = input[idx]
-            self.condition = conditions[idx]
-
-        elif type_ == "data":
-
-            if len(args) != 3:
-                raise RuntimeError
-
-            input = args[0]
-            output = args[1]
-            conditions = args[2]
-
-            self.input = input[idx]
-            self.output = output[idx]
-            self.condition = conditions[idx]
-                
+    def __getitem__(self, item):
+        if isinstance(item, str):
+            item = [item]
+        if len(item) == 1:
+            return self.dataset_dict[item[0]][list(self.coordinates_dict[item[0]])]
         else:
-            raise ValueError("Invalid number of arguments.")
+            return self.dataset_dict[item[0]][item[1]][list(self.coordinates_dict[item[0]])]
