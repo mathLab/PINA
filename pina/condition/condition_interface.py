@@ -5,7 +5,7 @@ class ConditionInterface(metaclass=ABCMeta):
 
     condition_types = ['physics', 'supervised', 'unsupervised']
 
-    def __init__(self, *args, **wargs):
+    def __init__(self, *args, **kwargs):
         self._condition_type = None
         self._problem = None
 
