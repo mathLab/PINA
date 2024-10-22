@@ -3,12 +3,12 @@ name: Test Sphinx Documentation Build
 on:
   push:
     branches:
-      - main
+      - "master"
     paths:
       - 'docs/**'
   pull_request:
     branches:
-      - main
+      - "master"
     paths:
       - 'docs/**'
 
