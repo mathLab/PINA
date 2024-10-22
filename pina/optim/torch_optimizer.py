@@ -5,6 +5,7 @@ import torch
 from ..utils import check_consistency
 from .optimizer_interface import Optimizer
 
+
 class TorchOptimizer(Optimizer):
 
     def __init__(self, optimizer_class, **kwargs):
@@ -14,6 +15,5 @@ class TorchOptimizer(Optimizer):
         self.kwargs = kwargs
 
     def hook(self, parameters):
-        self.optimizer_instance = self.optimizer_class(
-            parameters, **self.kwargs
-        )
+        self.optimizer_instance = self.optimizer_class(parameters,
+                                                       **self.kwargs)

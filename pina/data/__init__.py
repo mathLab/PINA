@@ -2,13 +2,8 @@
 Import data classes
 """
 __all__ = [
-    'PinaDataLoader',
-    'SupervisedDataset',
-    'SamplePointDataset',
-    'UnsupervisedDataset',
-    'Batch',
-    'PinaDataModule',
-    'BaseDataset'
+    'PinaDataLoader', 'SupervisedDataset', 'SamplePointDataset',
+    'UnsupervisedDataset', 'Batch', 'PinaDataModule', 'BaseDataset'
 ]
 
 from .pina_dataloader import PinaDataLoader
