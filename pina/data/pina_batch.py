@@ -5,6 +5,7 @@ from .pina_subset import PinaSubset
 
 
 class Batch:
+
     def __init__(self, dataset_dict, idx_dict):
 
         for k, v in dataset_dict.items():
@@ -29,5 +30,6 @@ class Batch:
     def __getattr__(self, item):
         if not item in dir(self):
             raise AttributeError(f'Batch instance has no attribute {item}')
-        return PinaSubset(getattr(self, item).dataset,
-                          getattr(self, item).indices[self.coordinates_dict[item]])
+        return PinaSubset(
+            getattr(self, item).dataset,
+            getattr(self, item).indices[self.coordinates_dict[item]])

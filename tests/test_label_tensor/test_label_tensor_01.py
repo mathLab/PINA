@@ -54,9 +54,8 @@ def test_extract_order():
     label_to_extract = ['c', 'a']
     tensor = LabelTensor(data, labels)
     new = tensor.extract(label_to_extract)
-    expected = torch.cat(
-        (data[:, 2].reshape(-1, 1), data[:, 0].reshape(-1, 1)),
-        dim=1)
+    expected = torch.cat((data[:, 2].reshape(-1, 1), data[:, 0].reshape(-1, 1)),
+                         dim=1)
     assert new.labels == label_to_extract
     assert new.shape[1] == len(label_to_extract)
     assert torch.all(torch.isclose(expected, new))
@@ -91,6 +90,7 @@ def test_getitem():
     assert tensor_view.labels == ['a', 'c']
     assert torch.allclose(tensor_view, data[:, 0::2])
 
+
 def test_getitem2():
     tensor = LabelTensor(data, labels)
     tensor_view = tensor[:5]
@@ -100,6 +100,7 @@ def test_getitem2():
     idx = torch.randperm(tensor.shape[0])
     tensor_view = tensor[idx]
     assert tensor_view.labels == labels
+
 
 def test_slice():
     tensor = LabelTensor(data, labels)

@@ -17,15 +17,13 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
     LightningModule methods.
     """
 
-    def __init__(
-        self,
-        models,
-        problem,
-        optimizers,
-        schedulers,
-        extra_features,
-        use_lt=True
-    ):
+    def __init__(self,
+                 models,
+                 problem,
+                 optimizers,
+                 schedulers,
+                 extra_features,
+                 use_lt=True):
         """
         :param model: A torch neural network model instance.
         :type model: torch.nn.Module
@@ -55,10 +53,11 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         if use_lt is True:
             for idx in range(len(models)):
                 models[idx] = Network(
-                    model = models[idx],
+                    model=models[idx],
                     input_variables=problem.input_variables,
                     output_variables=problem.output_variables,
-                    extra_features=extra_features, )
+                    extra_features=extra_features,
+                )
 
         #Check scheduler consistency + encapsulation
         if not isinstance(schedulers, list):
@@ -79,11 +78,9 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
 
         # check length consistency optimizers
         if len_model != len_optimizer:
-            raise ValueError(
-                "You must define one optimizer for each model."
-                f"Got {len_model} models, and {len_optimizer}"
-                " optimizers."
-            )
+            raise ValueError("You must define one optimizer for each model."
+                             f"Got {len_model} models, and {len_optimizer}"
+                             " optimizers.")
 
         # extra features handling
 
@@ -91,7 +88,6 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         self._pina_optimizers = optimizers
         self._pina_schedulers = schedulers
         self._pina_problem = problem
-
 
     @abstractmethod
     def forward(self, *args, **kwargs):
@@ -142,5 +138,8 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         TODO
         """
         for _, condition in problem.conditions.items():
-            if not set(self.accepted_condition_types).issubset(condition.condition_type):
-                raise ValueError(f'{self.__name__} support only dose not support condition {condition.condition_type}')
+            if not set(self.accepted_condition_types).issubset(
+                    condition.condition_type):
+                raise ValueError(
+                    f'{self.__name__} support only dose not support condition {condition.condition_type}'
+                )
