@@ -5,6 +5,9 @@ from .pina_subset import PinaSubset
 
 
 class Batch:
+    """
+    Implementation of the Batch class used during training to perform SGD optimization.
+    """
 
     def __init__(self, dataset_dict, idx_dict):
 
