@@ -3,10 +3,11 @@
 
 # # Tutorial: PINA and PyTorch Lightning, training tips and visualizations 
 # 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial11/tutorial.ipynb)
 # 
 # In this tutorial, we will delve deeper into the functionality of the `Trainer` class, which serves as the cornerstone for training **PINA** [Solvers](https://mathlab.github.io/PINA/_rst/_code.html#solvers). 
 # 
-# The `Trainer` class offers a plethora of features aimed at improving model accuracy, reducing training time and memory usage, facilitating logging visualization, and more.
+# The `Trainer` class offers a plethora of features aimed at improving model accuracy, reducing training time and memory usage, facilitating logging visualization, and more thanks to the amazing job done by the PyTorch Lightning team!
 # 
 # Our leading example will revolve around solving the `SimpleODE` problem, as outlined in the [*Introduction to PINA for Physics Informed Neural Networks training*](https://github.com/mathLab/PINA/blob/master/tutorials/tutorial1/tutorial.ipynb). If you haven't already explored it, we highly recommend doing so before diving into this tutorial.
 # 
@@ -14,6 +15,15 @@
 
 # In[18]:
 
+
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
 
 import torch
 
@@ -99,7 +109,7 @@ trainer = Trainer(solver=pinn,
 # 
 # In **PINA** you can log metrics in different ways. The simplest approach is to use the `MetricTraker` class from `pina.callbacks` as seen in the [*Introduction to PINA for Physics Informed Neural Networks training*](https://github.com/mathLab/PINA/blob/master/tutorials/tutorial1/tutorial.ipynb) tutorial.
 # 
-# However, expecially when we need to train multiple times to get an average of the loss across multiple runs, `pytorch_lightning.loggers` might be useful. Here we will use `TensorBoardLogger` (more on [logging](https://lightning.ai/docs/pytorch/stable/extensions/logging.html) here), but you can choose the one you prefer (or make your own one) thanks to the amazing job done by the PyTorch Lightning team!
+# However, expecially when we need to train multiple times to get an average of the loss across multiple runs, `pytorch_lightning.loggers` might be useful. Here we will use `TensorBoardLogger` (more on [logging](https://lightning.ai/docs/pytorch/stable/extensions/logging.html) here), but you can choose the one you prefer (or make your own one).
 # 
 # We will now import `TensorBoardLogger`, do three runs of training and then visualize the results. Notice we set `enable_model_summary=False` to avoid model summary specifications (e.g. number of parameters), set it to true if needed.
 # 

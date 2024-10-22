@@ -1,6 +1,12 @@
 Tutorial: Two dimensional Poisson problem using Extra Features Learning
 =======================================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial2/tutorial.ipynb
+
+
 This tutorial presents how to solve with Physics-Informed Neural
 Networks (PINNs) a 2D Poisson problem with Dirichlet boundary
 conditions. We will train with standard PINN’s training, and with
@@ -12,6 +18,15 @@ problems <https://www.sciencedirect.com/science/article/abs/pii/S089812212300201
 First of all, some useful imports.
 
 .. code:: ipython3
+
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
 
     import torch
     from torch.nn import Softplus

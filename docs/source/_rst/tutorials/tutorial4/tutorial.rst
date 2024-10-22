@@ -1,6 +1,11 @@
 Tutorial: Unstructured convolutional autoencoder via continuous convolution
 ===========================================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial4/tutorial.ipynb
+
 In this tutorial, we will show how to use the Continuous Convolutional
 Filter, and how to build common Deep Learning architectures with it. The
 implementation of the filter follows the original work `A Continuous
@@ -11,6 +16,15 @@ First of all we import the modules needed for the tutorial:
 
 .. code:: ipython3
 
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
+    
     import torch 
     import matplotlib.pyplot as plt 
     from pina.problem import AbstractProblem

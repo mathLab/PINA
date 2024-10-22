@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial: Reduced order model (POD-RBF and POD-NN) for parametric problems
+# # Tutorial: Reduced order model (POD-RBF or POD-NN) for parametric problems
+# 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial8/tutorial.ipynb)
 
 # The tutorial aims to show how to employ the **PINA** library in order to apply a reduced order modeling technique [1]. Such methodologies have several similarities with machine learning approaches, since the main goal consists in predicting the solution of differential equations (typically parametric PDEs) in a real-time fashion.
-#
+# 
 # In particular we are going to use the Proper Orthogonal Decomposition with either Radial Basis Function Interpolation(POD-RBF) or Neural Network (POD-NN) [2]. Here we basically perform a dimensional reduction using the POD approach, and approximating the parametric solution manifold (at the reduced space) using an interpolation (RBF) or a regression technique (NN). In this example, we use a simple multilayer perceptron, but the plenty of different architectures can be plugged as well.
-#
+# 
 # #### References
-# 1. Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order Methods and Applications in Computational Fluid Dynamics, Society for Industrial and Applied Mathematics.
+# 1. Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order Methods and Applications in Computational Fluid Dynamics, Society for Industrial and Applied Mathematics. 
 # 2. Hesthaven, J. S., & Ubbiali, S. (2018). Non-intrusive reduced order modeling of nonlinear problems using neural networks. Journal of Computational Physics, 363, 55-78.
 
 # Let's start with the necessary imports.
@@ -16,6 +18,15 @@
 
 # In[1]:
 
+
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
 
 get_ipython().run_line_magic('matplotlib', 'inline')
 
@@ -36,7 +47,7 @@ print(f'We are using PINA version {pina.__version__}')
 
 # We exploit the [Smithers](www.github.com/mathLab/Smithers) library to collect the parametric snapshots. In particular, we use the `NavierStokesDataset` class that contains a set of parametric solutions of the Navier-Stokes equations in a 2D L-shape domain. The parameter is the inflow velocity.
 # The dataset is composed by 500 snapshots of the velocity (along $x$, $y$, and the magnitude) and pressure fields, and the corresponding parameter values.
-#
+# 
 # To visually check the snapshots, let's plot also the data points and the reference solution: this is the expected output of our model.
 
 # In[2]:
@@ -103,13 +114,13 @@ class PODRBF(torch.nn.Module):
 
     def __init__(self, pod_rank, rbf_kernel):
         """
-
+        
         """
         super().__init__()
-
+        
         self.pod = PODBlock(pod_rank)
         self.rbf = RBFBlock(kernel=rbf_kernel)
-
+            
 
     def forward(self, x):
         """
@@ -169,10 +180,10 @@ class PODNN(torch.nn.Module):
 
     def __init__(self, pod_rank, layers, func):
         """
-
+        
         """
         super().__init__()
-
+        
         self.pod = PODBlock(pod_rank)
         self.nn = FeedForward(
             input_dimensions=1,
@@ -180,7 +191,7 @@ class PODNN(torch.nn.Module):
             layers=layers,
             func=func
         )
-
+            
 
     def forward(self, x):
         """
@@ -211,8 +222,8 @@ pod_nn = PODNN(pod_rank=20, layers=[10, 10, 10], func=torch.nn.Tanh)
 pod_nn.fit_pod(u_train)
 
 pod_nn_stokes = SupervisedSolver(
-    problem=poisson_problem,
-    model=pod_nn,
+    problem=poisson_problem, 
+    model=pod_nn, 
     optimizer=torch.optim.Adam,
     optimizer_kwargs={'lr': 0.0001})
 
@@ -269,14 +280,14 @@ relative_error_rbf = np.where(u_test[idx] < 1e-7, 1e-7, relative_error_rbf/u_tes
 
 relative_error_nn = np.abs(u_test[idx] - u_idx_nn.detach())
 relative_error_nn = np.where(u_test[idx] < 1e-7, 1e-7, relative_error_nn/u_test[idx])
-
+                        
 for i, (idx_, rbf_, nn_, rbf_err_, nn_err_) in enumerate(
     zip(idx, u_idx_rbf, u_idx_nn, relative_error_rbf, relative_error_nn)):
     axs[0, i].set_title(f'$\mu$ = {p_test[idx_].item():.2f}')
-
+    
     cm = axs[0, i].tricontourf(dataset.triang, rbf_.detach()) # POD-RBF prediction
     plt.colorbar(cm, ax=axs[0, i])
-
+    
     cm = axs[1, i].tricontourf(dataset.triang, nn_.detach()) # POD-NN prediction
     plt.colorbar(cm, ax=axs[1, i])
 
@@ -285,10 +296,10 @@ for i, (idx_, rbf_, nn_, rbf_err_, nn_err_) in enumerate(
 
     cm = axs[3, i].tripcolor(dataset.triang, rbf_err_, norm=matplotlib.colors.LogNorm()) # Error for POD-RBF
     plt.colorbar(cm, ax=axs[3, i])
-
+    
     cm = axs[4, i].tripcolor(dataset.triang, nn_err_, norm=matplotlib.colors.LogNorm()) # Error for POD-NN
     plt.colorbar(cm, ax=axs[4, i])
-
+    
 plt.show()
 
 

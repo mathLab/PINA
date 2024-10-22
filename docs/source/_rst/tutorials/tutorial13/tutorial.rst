@@ -1,6 +1,11 @@
 Tutorial: Multiscale PDE learning with Fourier Feature Network
 ==============================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial13/tutorial.ipynb
+
 This tutorial presents how to solve with Physics-Informed Neural
 Networks (PINNs) a PDE characterized by multiscale behaviour, as
 presented in `On the eigenvector bias of Fourier feature networks: From
@@ -11,6 +16,15 @@ First of all, some useful imports.
 
 .. code:: ipython3
 
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
+    
     import torch
     
     from pina import Condition, Plotter, Trainer, Plotter

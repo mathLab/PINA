@@ -2,6 +2,8 @@
 # coding: utf-8
 
 # # Tutorial: The `Equation` Class
+# 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial12/tutorial.ipynb)
 
 # In this tutorial, we will show how to use the `Equation` Class in PINA. Specifically, we will see how use the Class and its inherited classes to enforce residuals minimization in PINNs.
 
@@ -26,6 +28,15 @@
 
 # In[7]:
 
+
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
 
 #useful imports
 from pina.problem import SpatialProblem, TimeDependentProblem

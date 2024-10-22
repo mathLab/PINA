@@ -3,12 +3,23 @@
 
 # # Tutorial: Two dimensional Poisson problem using Extra Features Learning
 # 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial2/tutorial.ipynb)
+# 
 # This tutorial presents how to solve with Physics-Informed Neural Networks (PINNs) a 2D Poisson problem with Dirichlet boundary conditions. We will train with standard PINN's training, and with extrafeatures. For more insights on extrafeature learning please read [*An extended physics informed neural network for preliminary analysis of parametric optimal control problems*](https://www.sciencedirect.com/science/article/abs/pii/S0898122123002018).
 # 
 # First of all, some useful imports.
 
 # In[1]:
 
+
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
 
 import torch
 from torch.nn import Softplus

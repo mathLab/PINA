@@ -1,6 +1,11 @@
 Tutorial: One dimensional Helmotz equation using Periodic Boundary Conditions
 =============================================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial9/tutorial.ipynb
+
 This tutorial presents how to solve with Physics-Informed Neural
 Networks (PINNs) a one dimensional Helmotz equation with periodic
 boundary conditions (PBC). We will train with standard PINN’s training
@@ -12,6 +17,15 @@ First of all, some useful imports.
 
 .. code:: ipython3
 
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
+      
     import torch
     import matplotlib.pyplot as plt
     

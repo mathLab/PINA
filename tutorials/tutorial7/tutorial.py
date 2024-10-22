@@ -2,6 +2,8 @@
 # coding: utf-8
 
 # # Tutorial: Resolution of an inverse problem
+# 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial7/tutorial.ipynb)
 
 # ### Introduction to the inverse problem
 
@@ -26,6 +28,15 @@
 # In[1]:
 
 
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
+  
 import matplotlib.pyplot as plt
 import torch
 from pytorch_lightning.callbacks import Callback

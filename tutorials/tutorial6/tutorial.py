@@ -3,6 +3,8 @@
 
 # # Tutorial: Building custom geometries with PINA `Location` class
 # 
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial6/tutorial.ipynb)
+# 
 # In this tutorial we will show how to use geometries in PINA. Specifically, the tutorial will include how to create geometries and how to visualize them. The topics covered are:
 # 
 # * Creating CartesianDomains and EllipsoidDomains
@@ -13,6 +15,15 @@
 
 # In[1]:
 
+
+## routine needed to run the notebook on Google Colab
+try:
+  import google.colab
+  IN_COLAB = True
+except:
+  IN_COLAB = False
+if IN_COLAB:
+  get_ipython().system('pip install "pina-mathlab"')
 
 import matplotlib.pyplot as plt
 from pina.geometry import EllipsoidDomain, Difference, CartesianDomain, Union, SimplexDomain
