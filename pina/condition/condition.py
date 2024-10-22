@@ -5,6 +5,7 @@ from .input_equation_condition import InputPointsEquationCondition
 from .input_output_condition import InputOutputPointsCondition
 from .data_condition import DataConditionInterface
 
+
 class Condition:
     """
     The class ``Condition`` is used to represent the constraints (physical
@@ -38,23 +39,23 @@ class Condition:
     """
 
     __slots__ = list(
-                    set(
-                        InputOutputPointsCondition.__slots__ + 
-                        InputPointsEquationCondition.__slots__ +
-                        DomainEquationCondition.__slots__ +
-                        DataConditionInterface.__slots__
-                    )
-                )
+        set(
+            InputOutputPointsCondition.__slots__ +
+            InputPointsEquationCondition.__slots__ +
+            DomainEquationCondition.__slots__ +
+            DataConditionInterface.__slots__
+        )
+    )
 
     def __new__(cls, *args, **kwargs):
-        
+
         if len(args) != 0:
             raise ValueError(
                 "Condition takes only the following keyword "
                 f"arguments: {Condition.__slots__}."
             )
-    
-        sorted_keys = sorted(kwargs.keys()) 
+
+        sorted_keys = sorted(kwargs.keys())
         if sorted_keys == sorted(InputOutputPointsCondition.__slots__):
             return InputOutputPointsCondition(**kwargs)
         elif sorted_keys == sorted(InputPointsEquationCondition.__slots__):

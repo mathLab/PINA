@@ -48,7 +48,8 @@ class Collector:
         for condition_name, condition in self.problem.conditions.items():
             # if the condition is not ready and domain is not attribute
             # of condition, we get and store the data
-            if (not self._is_conditions_ready[condition_name]) and (not hasattr(condition, "domain")):
+            if (not self._is_conditions_ready[condition_name]) and (
+            not hasattr(condition, "domain")):
                 # get data
                 keys = condition.__slots__
                 values = [getattr(condition, name) for name in keys]
@@ -69,7 +70,8 @@ class Collector:
                     already_sampled = []
                 # if we have sampled the condition but not all variables
                 else:
-                    already_sampled = [self.data_collections[loc]['input_points']]
+                    already_sampled = [
+                        self.data_collections[loc]['input_points']]
             # if the condition is ready but we want to sample again
             else:
                 self._is_conditions_ready[loc] = False
@@ -77,11 +79,13 @@ class Collector:
 
             # get the samples
             samples = [
-                          condition.domain.sample(n=n, mode=mode, variables=variables)
+                          condition.domain.sample(n=n, mode=mode,
+                                                  variables=variables)
                       ] + already_sampled
             pts = merge_tensors(samples)
             if (
-                    set(pts.labels).issubset(sorted(self.problem.input_variables))
+                    set(pts.labels).issubset(
+                        sorted(self.problem.input_variables))
             ):
                 pts = pts.sort_labels()
                 if sorted(pts.labels) == sorted(self.problem.input_variables):
@@ -89,7 +93,8 @@ class Collector:
                 values = [pts, condition.equation]
                 self.data_collections[loc] = dict(zip(keys, values))
             else:
-                raise RuntimeError('Try to sample variables which are not in problem defined in the problem')
+                raise RuntimeError(
+                    'Try to sample variables which are not in problem defined in the problem')
 
     def add_points(self, new_points_dict):
         """
@@ -100,5 +105,7 @@ class Collector:
         """
         for k, v in new_points_dict.items():
             if not self._is_conditions_ready[k]:
-                raise RuntimeError('Cannot add points on a non sampled condition')
-            self.data_collections[k]['input_points'] = self.data_collections[k]['input_points'].vstack(v)
+                raise RuntimeError(
+                    'Cannot add points on a non sampled condition')
+            self.data_collections[k]['input_points'] = self.data_collections[k][
+                'input_points'].vstack(v)
