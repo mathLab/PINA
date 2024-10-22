@@ -29,34 +29,49 @@ class Poisson(SpatialProblem):
     spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
     conditions = {
-        'gamma1': Condition(
-            domain=CartesianDomain({'x': [0, 1], 'y': 1}),
-            equation=FixedValue(0.0)),
-        'gamma2': Condition(
-            domain=CartesianDomain({'x': [0, 1], 'y': 0}),
-            equation=FixedValue(0.0)),
-        'gamma3': Condition(
-            domain=CartesianDomain({'x': 1, 'y': [0, 1]}),
-            equation=FixedValue(0.0)),
-        'gamma4': Condition(
-            domain=CartesianDomain({'x': 0, 'y': [0, 1]}),
-            equation=FixedValue(0.0)),
-        'D': Condition(
-            input_points=LabelTensor(torch.rand(size=(100, 2)), ['x', 'y']),
-            equation=my_laplace),
-        'data': Condition(
-            input_points=in_,
-            output_points=out_),
-        'data2': Condition(
-            input_points=in2_,
-            output_points=out2_),
-        'unsupervised': Condition(
+        'gamma1':
+        Condition(domain=CartesianDomain({
+            'x': [0, 1],
+            'y': 1
+        }),
+                  equation=FixedValue(0.0)),
+        'gamma2':
+        Condition(domain=CartesianDomain({
+            'x': [0, 1],
+            'y': 0
+        }),
+                  equation=FixedValue(0.0)),
+        'gamma3':
+        Condition(domain=CartesianDomain({
+            'x': 1,
+            'y': [0, 1]
+        }),
+                  equation=FixedValue(0.0)),
+        'gamma4':
+        Condition(domain=CartesianDomain({
+            'x': 0,
+            'y': [0, 1]
+        }),
+                  equation=FixedValue(0.0)),
+        'D':
+        Condition(input_points=LabelTensor(torch.rand(size=(100, 2)),
+                                           ['x', 'y']),
+                  equation=my_laplace),
+        'data':
+        Condition(input_points=in_, output_points=out_),
+        'data2':
+        Condition(input_points=in2_, output_points=out2_),
+        'unsupervised':
+        Condition(
             input_points=LabelTensor(torch.rand(size=(45, 2)), ['x', 'y']),
-            conditional_variables=LabelTensor(torch.ones(size=(45, 1)), ['alpha']),
+            conditional_variables=LabelTensor(torch.ones(size=(45, 1)),
+                                              ['alpha']),
         ),
-        'unsupervised2': Condition(
+        'unsupervised2':
+        Condition(
             input_points=LabelTensor(torch.rand(size=(90, 2)), ['x', 'y']),
-            conditional_variables=LabelTensor(torch.ones(size=(90, 1)), ['alpha']),
+            conditional_variables=LabelTensor(torch.ones(size=(90, 1)),
+                                              ['alpha']),
         )
     }
 
@@ -113,32 +128,49 @@ def test_data_module():
     assert isinstance(loader, PinaDataLoader)
     assert isinstance(loader, PinaDataLoader)
 
-    data_module = PinaDataModule(poisson, device='cpu', batch_size=10, shuffle=False)
+    data_module = PinaDataModule(poisson,
+                                 device='cpu',
+                                 batch_size=10,
+                                 shuffle=False)
     data_module.setup()
     loader = data_module.train_dataloader()
     assert len(loader) == 24
     for i in loader:
         assert len(i) <= 10
-    len_ref = sum([math.ceil(len(dataset) * 0.7) for dataset in data_module.datasets])
-    len_real = sum([len(dataset) for dataset in data_module.splits['train'].values()])
+    len_ref = sum(
+        [math.ceil(len(dataset) * 0.7) for dataset in data_module.datasets])
+    len_real = sum(
+        [len(dataset) for dataset in data_module.splits['train'].values()])
     assert len_ref == len_real
 
     supervised_dataset = SupervisedDataset(poisson, device='cpu')
-    data_module = PinaDataModule(poisson, device='cpu', batch_size=10, shuffle=False, datasets=[supervised_dataset])
+    data_module = PinaDataModule(poisson,
+                                 device='cpu',
+                                 batch_size=10,
+                                 shuffle=False,
+                                 datasets=[supervised_dataset])
     data_module.setup()
     loader = data_module.train_dataloader()
     for batch in loader:
         assert len(batch) <= 10
 
     physics_dataset = SamplePointDataset(poisson, device='cpu')
-    data_module = PinaDataModule(poisson, device='cpu', batch_size=10, shuffle=False, datasets=[physics_dataset])
+    data_module = PinaDataModule(poisson,
+                                 device='cpu',
+                                 batch_size=10,
+                                 shuffle=False,
+                                 datasets=[physics_dataset])
     data_module.setup()
     loader = data_module.train_dataloader()
     for batch in loader:
         assert len(batch) <= 10
 
     unsupervised_dataset = UnsupervisedDataset(poisson, device='cpu')
-    data_module = PinaDataModule(poisson, device='cpu', batch_size=10, shuffle=False, datasets=[unsupervised_dataset])
+    data_module = PinaDataModule(poisson,
+                                 device='cpu',
+                                 batch_size=10,
+                                 shuffle=False,
+                                 datasets=[unsupervised_dataset])
     data_module.setup()
     loader = data_module.train_dataloader()
     for batch in loader:
@@ -159,4 +191,6 @@ def test_loader():
         assert i.supervised.input_points.requires_grad == True
         assert i.physics.input_points.requires_grad == True
         assert i.unsupervised.input_points.requires_grad == True
+
+
 test_loader()

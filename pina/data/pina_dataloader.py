@@ -50,7 +50,8 @@ class PinaDataLoader:
                     temp_dict[k] = slice(i * v, (i + 1) * v)
                 else:
                     temp_dict[k] = slice(i * v, len(self.dataset_dict[k]))
-            self.batches.append(Batch(idx_dict=temp_dict, dataset_dict=self.dataset_dict))
+            self.batches.append(
+                Batch(idx_dict=temp_dict, dataset_dict=self.dataset_dict))
 
     def __iter__(self):
         """
