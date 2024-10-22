@@ -1,3 +1,8 @@
+"""
+Module for PinaSubset class
+"""
+
+
 class PinaSubset:
     """
     TODO
