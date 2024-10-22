@@ -35,11 +35,13 @@ def test_grad_scalar_output():
         f'd{tensor_s.labels[0]}d{i}' for i in ['x', 'y']
     ]
 
+
 def test_grad_vector_output():
     grad_tensor_v = grad(tensor_v, inp)
     assert grad_tensor_v.shape == (20, 9)
     grad_tensor_v = grad(tensor_v, inp, d=['x', 'mu'])
     assert grad_tensor_v.shape == (inp.shape[0], 6)
+
 
 def test_div_vector_output():
     grad_tensor_v = div(tensor_v, inp)
@@ -47,9 +49,11 @@ def test_div_vector_output():
     grad_tensor_v = div(tensor_v, inp, components=['a', 'b'], d=['x', 'mu'])
     assert grad_tensor_v.shape == (inp.shape[0], 1)
 
+
 def test_laplacian_scalar_output():
     laplace_tensor_v = laplacian(tensor_s, inp, components=['a'], d=['x', 'y'])
     assert laplace_tensor_v.shape == tensor_s.shape
+
 
 def test_laplacian_vector_output():
     laplace_tensor_v = laplacian(tensor_v, inp)
