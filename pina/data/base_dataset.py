@@ -22,10 +22,12 @@ class BaseDataset(Dataset):
         dataset will be loaded.
         """
         if cls is BaseDataset:
-            raise TypeError('BaseDataset cannot be instantiated directly. Use a subclass.')
+            raise TypeError(
+                'BaseDataset cannot be instantiated directly. Use a subclass.')
         if not hasattr(cls, '__slots__'):
-            raise TypeError('Something is wrong, __slots__ must be defined in subclasses.')
-        return super().__new__(cls)
+            raise TypeError(
+                'Something is wrong, __slots__ must be defined in subclasses.')
+        return super(BaseDataset, cls).__new__(cls)
 
     def __init__(self, problem, device):
         """"
@@ -79,7 +81,8 @@ class BaseDataset(Dataset):
 
     def __getattribute__(self, item):
         attribute = super().__getattribute__(item)
-        if isinstance(attribute, LabelTensor) and attribute.dtype == torch.float32:
+        if isinstance(attribute,
+                      LabelTensor) and attribute.dtype == torch.float32:
             attribute = attribute.to(device=self.device).requires_grad_()
         return attribute
 
@@ -101,7 +104,8 @@ class BaseDataset(Dataset):
             if all(isinstance(x, int) for x in idx):
                 to_return_list = []
                 for i in self.__slots__:
-                    to_return_list.append(getattr(self, i)[[idx]].to(self.device))
+                    to_return_list.append(
+                        getattr(self, i)[[idx]].to(self.device))
                 return to_return_list
 
         raise ValueError(f'Invalid index {idx}')

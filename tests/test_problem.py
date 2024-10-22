@@ -27,42 +27,42 @@ class Poisson(SpatialProblem):
 
     conditions = {
         'gamma1':
-            Condition(domain=CartesianDomain({
-                'x': [0, 1],
-                'y': 1
-            }),
-                equation=FixedValue(0.0)),
+        Condition(domain=CartesianDomain({
+            'x': [0, 1],
+            'y': 1
+        }),
+                  equation=FixedValue(0.0)),
         'gamma2':
-            Condition(domain=CartesianDomain({
-                'x': [0, 1],
-                'y': 0
-            }),
-                equation=FixedValue(0.0)),
+        Condition(domain=CartesianDomain({
+            'x': [0, 1],
+            'y': 0
+        }),
+                  equation=FixedValue(0.0)),
         'gamma3':
-            Condition(domain=CartesianDomain({
-                'x': 1,
-                'y': [0, 1]
-            }),
-                equation=FixedValue(0.0)),
+        Condition(domain=CartesianDomain({
+            'x': 1,
+            'y': [0, 1]
+        }),
+                  equation=FixedValue(0.0)),
         'gamma4':
-            Condition(domain=CartesianDomain({
-                'x': 0,
-                'y': [0, 1]
-            }),
-                equation=FixedValue(0.0)),
+        Condition(domain=CartesianDomain({
+            'x': 0,
+            'y': [0, 1]
+        }),
+                  equation=FixedValue(0.0)),
         'D':
-            Condition(domain=CartesianDomain({
-                'x': [0, 1],
-                'y': [0, 1]
-            }),
-                equation=my_laplace),
+        Condition(domain=CartesianDomain({
+            'x': [0, 1],
+            'y': [0, 1]
+        }),
+                  equation=my_laplace),
         'data':
-            Condition(input_points=in_, output_points=out_)
+        Condition(input_points=in_, output_points=out_)
     }
 
     def poisson_sol(self, pts):
         return -(torch.sin(pts.extract(['x']) * torch.pi) *
-                 torch.sin(pts.extract(['y']) * torch.pi)) / (2 * torch.pi ** 2)
+                 torch.sin(pts.extract(['y']) * torch.pi)) / (2 * torch.pi**2)
 
     truth_solution = poisson_sol
 
@@ -79,7 +79,7 @@ def test_discretise_domain():
         assert poisson_problem.input_pts[b].shape[0] == n
 
     poisson_problem.discretise_domain(n, 'grid', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n ** 2
+    assert poisson_problem.input_pts['D'].shape[0] == n**2
     poisson_problem.discretise_domain(n, 'random', locations=['D'])
     assert poisson_problem.input_pts['D'].shape[0] == n
 
@@ -90,6 +90,7 @@ def test_discretise_domain():
     assert poisson_problem.input_pts['D'].shape[0] == n
 
     poisson_problem.discretise_domain(n)
+
 
 def test_sampling_few_variables():
     n = 10
@@ -115,9 +116,8 @@ def test_variables_correct_order_sampling():
                                       variables=['y'])
     assert poisson_problem.input_pts['D'].labels == sorted(
         poisson_problem.input_variables)
-    poisson_problem.discretise_domain(n,
-                                      'grid',
-                                      locations=['D'])
+
+    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
     assert poisson_problem.input_pts['D'].labels == sorted(
         poisson_problem.input_variables)
     poisson_problem.discretise_domain(n,
@@ -131,6 +131,7 @@ def test_variables_correct_order_sampling():
     assert poisson_problem.input_pts['D'].labels == sorted(
         poisson_problem.input_variables)
 
+
 def test_add_points():
     poisson_problem = Poisson()
     poisson_problem.discretise_domain(0,
@@ -139,8 +140,10 @@ def test_add_points():
                                       variables=['x', 'y'])
     new_pts = LabelTensor(torch.tensor([[0.5, -0.5]]), labels=['x', 'y'])
     poisson_problem.add_points({'D': new_pts})
-    assert torch.isclose(poisson_problem.input_pts['D'].extract('x'), new_pts.extract('x'))
-    assert torch.isclose(poisson_problem.input_pts['D'].extract('y'), new_pts.extract('y'))
+    assert torch.isclose(poisson_problem.input_pts['D'].extract('x'),
+                         new_pts.extract('x'))
+    assert torch.isclose(poisson_problem.input_pts['D'].extract('y'),
+                         new_pts.extract('y'))
 
 
 def test_collector():
