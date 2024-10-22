@@ -39,6 +39,7 @@ def test_grad_scalar_output():
     ]
     assert torch.allclose(grad_tensor_s, true_val)
 
+
 def test_grad_vector_output():
     grad_tensor_v = grad(tensor_v, inp)
     true_val = torch.cat(
@@ -75,6 +76,7 @@ def test_grad_vector_output():
     ]
     assert torch.allclose(grad_tensor_v, true_val)
 
+
 def test_div_vector_output():
     div_tensor_v = div(tensor_v, inp)
     true_val = 2*torch.sum(inp, dim=1).reshape(-1,1)
@@ -88,6 +90,7 @@ def test_div_vector_output():
     assert div_tensor_v.labels == [f'dadx+dbdy']
     assert torch.allclose(div_tensor_v, true_val)
 
+
 def test_laplacian_scalar_output():
     laplace_tensor_s = laplacian(tensor_s, inp)
     true_val = 6*torch.ones_like(laplace_tensor_s)
@@ -100,6 +103,7 @@ def test_laplacian_scalar_output():
     assert laplace_tensor_s.shape == tensor_s.shape
     assert laplace_tensor_s.labels == [f"dd{tensor_s.labels[0]}"]
     assert torch.allclose(laplace_tensor_s, true_val)
+
 
 def test_laplacian_vector_output():
     laplace_tensor_v = laplacian(tensor_v, inp)
