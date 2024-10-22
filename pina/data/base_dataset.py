@@ -27,7 +27,7 @@ class BaseDataset(Dataset):
         if not hasattr(cls, '__slots__'):
             raise TypeError(
                 'Something is wrong, __slots__ must be defined in subclasses.')
-        return super(BaseDataset, cls).__new__(cls)
+        return object.__new__(cls)
 
     def __init__(self, problem, device):
         """"

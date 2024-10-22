@@ -33,7 +33,7 @@ class PinaDataLoader:
         Create batches according to the batch_size provided in input.
         """
         self.batches = []
-        n_elements = sum([len(v) for v in self.dataset_dict.values()])
+        n_elements = sum(len(v) for v in self.dataset_dict.values())
         if batch_size is None:
             batch_size = n_elements
         indexes_dict = {}
