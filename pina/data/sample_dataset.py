@@ -2,6 +2,8 @@
 Sample dataset module
 """
 from .base_dataset import BaseDataset
+from ..condition.input_equation_condition import InputPointsEquationCondition
+
 
 class SamplePointDataset(BaseDataset):
     """
@@ -9,4 +11,4 @@ class SamplePointDataset(BaseDataset):
     composed of only input points.
     """
     data_type = 'physics'
-    __slots__ = ['input_points']
+    __slots__ = InputPointsEquationCondition.__slots__
