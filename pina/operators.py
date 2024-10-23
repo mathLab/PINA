@@ -85,7 +85,8 @@ def grad(output_, input_, components=None, d=None):
             raise RuntimeError
         gradients = grad_scalar_output(output_, input_, d)
 
-    elif output_.shape[output_.ndim - 1] >= 2:  # vector output ##############################
+    elif output_.shape[
+        output_.ndim - 1] >= 2:  # vector output ##############################
         tensor_to_cat = []
         for i, c in enumerate(components):
             c_output = output_.extract([c])
@@ -143,7 +144,6 @@ def div(output_, input_, components=None, d=None):
         tensors_to_sum.append(grad_output.extract(c_fields))
         labels[i] = c_fields
     div_result = LabelTensor.summation(tensors_to_sum)
-    div_result.labels = ["+".join(labels)]
     return div_result
 
 
@@ -249,7 +249,8 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
                 result[:, idx] = grad(grad_output, input_, d=di).flatten()
                 to_append_tensors[idx] = grad(grad_output, input_, d=di)
                 labels[idx] = f"dd{ci[0]}dd{di[0]}"
-            result = LabelTensor.cat(tensors=to_append_tensors, dim=output_.tensor.ndim - 1)
+            result = LabelTensor.cat(tensors=to_append_tensors,
+                                     dim=output_.tensor.ndim - 1)
             result.labels = labels
     return result
 

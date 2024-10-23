@@ -4,7 +4,8 @@ This module provide basic data management functionalities
 
 import math
 import torch
-from lightning import LightningDataModule
+import logging
+from pytorch_lightning import LightningDataModule
 from .sample_dataset import SamplePointDataset
 from .supervised_dataset import SupervisedDataset
 from .unsupervised_dataset import UnsupervisedDataset
@@ -22,8 +23,9 @@ class PinaDataModule(LightningDataModule):
                  problem,
                  device,
                  train_size=.7,
-                 test_size=.2,
-                 eval_size=.1,
+                 test_size=.1,
+                 val_size=.2,
+                 predict_size=0.,
                  batch_size=None,
                  shuffle=True,
                  datasets=None):
@@ -37,37 +39,64 @@ class PinaDataModule(LightningDataModule):
         :param batch_size: batch size used for training
         :param datasets: list of datasets objects
         """
+        logging.debug('Start initialization of Pina DataModule')
+        logging.info('Start initialization of Pina DataModule')
         super().__init__()
-        dataset_classes = [SupervisedDataset, UnsupervisedDataset,
-                           SamplePointDataset]
+        self.problem = problem
+        self.device = device
+        self.dataset_classes = [SupervisedDataset, UnsupervisedDataset,
+                                SamplePointDataset]
         if datasets is None:
-            self.datasets = [DatasetClass(problem, device) for DatasetClass in
-                             dataset_classes]
+            self.datasets = None
         else:
             self.datasets = datasets
 
         self.split_length = []
         self.split_names = []
+        self.loader_functions = {}
+        self.batch_size = batch_size
+        self.condition_names = problem.collector.conditions_name
+
         if train_size > 0:
             self.split_names.append('train')
             self.split_length.append(train_size)
+            self.loader_functions['train_dataloader'] = lambda: PinaDataLoader(
+                self.splits['train'], self.batch_size, self.condition_names)
         if test_size > 0:
             self.split_length.append(test_size)
             self.split_names.append('test')
-        if eval_size > 0:
-            self.split_length.append(eval_size)
-            self.split_names.append('eval')
-
-        self.batch_size = batch_size
-        self.condition_names = None
+            self.loader_functions['test_dataloader'] = lambda: PinaDataLoader(
+                self.splits['test'], self.batch_size, self.condition_names)
+        if val_size > 0:
+            self.split_length.append(val_size)
+            self.split_names.append('val')
+            self.loader_functions['val_dataloader'] = lambda: PinaDataLoader(
+                self.splits['val'], self.batch_size,
+                self.condition_names)
+        if predict_size > 0:
+            self.split_length.append(predict_size)
+            self.split_names.append('predict')
+            self.loader_functions[
+                'predict_dataloader'] = lambda: PinaDataLoader(
+                self.splits['predict'], self.batch_size,
+                self.condition_names)
         self.splits = {k: {} for k in self.split_names}
         self.shuffle = shuffle
+
+        for k, v in self.loader_functions.items():
+            setattr(self, k, v)
+
+    def prepare_data(self):
+        if self.datasets is None:
+            self._create_datasets()
 
     def setup(self, stage=None):
         """
         Perform the splitting of the dataset
         """
-        self.extract_conditions()
+        logging.debug('Start setup of Pina DataModule obj')
+        if self.datasets is None:
+            self._create_datasets()
         if stage == 'fit' or stage is None:
             for dataset in self.datasets:
                 if len(dataset) > 0:
@@ -82,53 +111,6 @@ class PinaDataModule(LightningDataModule):
         else:
             raise ValueError("stage must be either 'fit' or 'test'")
 
-    def extract_conditions(self):
-        """
-        Extract conditions from dataset and update condition indices
-        """
-        # Extract number of conditions
-        n_conditions = 0
-        for dataset in self.datasets:
-            if n_conditions != 0:
-                dataset.condition_names = {
-                    key + n_conditions: value
-                    for key, value in dataset.condition_names.items()
-                }
-            n_conditions += len(dataset.condition_names)
-
-        self.condition_names = {
-            key: value
-            for dataset in self.datasets
-            for key, value in dataset.condition_names.items()
-        }
-
-    def train_dataloader(self):
-        """
-        Return the training dataloader for the dataset
-        :return: data loader
-        :rtype: PinaDataLoader
-        """
-        return PinaDataLoader(self.splits['train'], self.batch_size,
-                              self.condition_names)
-
-    def test_dataloader(self):
-        """
-        Return the testing dataloader for the dataset
-        :return: data loader
-        :rtype: PinaDataLoader
-        """
-        return PinaDataLoader(self.splits['test'], self.batch_size,
-                              self.condition_names)
-
-    def eval_dataloader(self):
-        """
-        Return the evaluation dataloader for the dataset
-        :return: data loader
-        :rtype: PinaDataLoader
-        """
-        return PinaDataLoader(self.splits['eval'], self.batch_size,
-                              self.condition_names)
-
     @staticmethod
     def dataset_split(dataset, lengths, seed=None, shuffle=True):
         """
@@ -141,30 +123,28 @@ class PinaDataModule(LightningDataModule):
         :rtype: PinaSubset
         """
         if sum(lengths) - 1 < 1e-3:
+            len_dataset = len(dataset)
             lengths = [
-                int(math.floor(len(dataset) * length)) for length in lengths
+                int(math.floor(len_dataset * length)) for length in lengths
             ]
-
             remainder = len(dataset) - sum(lengths)
             for i in range(remainder):
                 lengths[i % len(lengths)] += 1
         elif sum(lengths) - 1 >= 1e-3:
             raise ValueError(f"Sum of lengths is {sum(lengths)} less than 1")
 
-        if sum(lengths) != len(dataset):
-            raise ValueError("Sum of lengths is not equal to dataset length")
-
         if shuffle:
             if seed is not None:
                 generator = torch.Generator()
                 generator.manual_seed(seed)
                 indices = torch.randperm(sum(lengths),
-                                         generator=generator).tolist()
+                                         generator=generator)
             else:
-                indices = torch.arange(sum(lengths)).tolist()
-        else:
-            indices = torch.arange(0, sum(lengths), 1,
-                                   dtype=torch.uint8).tolist()
+                indices = torch.randperm(sum(lengths))
+            dataset.apply_shuffle(indices)
+
+        indices = torch.arange(0, sum(lengths), 1,
+                               dtype=torch.uint8).tolist()
         offsets = [
             sum(lengths[:i]) if i > 0 else 0 for i in range(len(lengths))
         ]
@@ -172,3 +152,29 @@ class PinaDataModule(LightningDataModule):
             PinaSubset(dataset, indices[offset:offset + length])
             for offset, length in zip(offsets, lengths)
         ]
+
+    def _create_datasets(self):
+        """
+        Create the dataset objects putting data 
+        """
+        logging.debug('Dataset creation in PinaDataModule obj')
+        collector = self.problem.collector
+        batching_dim = self.problem.batching_dimension
+        datasets_slots = [i.__slots__ for i in self.dataset_classes]
+        self.datasets = [dataset(device=self.device) for dataset in
+                         self.dataset_classes]
+        logging.debug('Filling datasets in PinaDataModule obj')
+        for name, data in collector.data_collections.items():
+            keys = list(data.keys())
+            idx = [key for key, val in collector.conditions_name.items() if
+                   val == name]
+            for i, slot in enumerate(datasets_slots):
+                if slot == keys:
+                    self.datasets[i].add_points(data, idx[0], batching_dim)
+                    continue
+        datasets = []
+        for dataset in self.datasets:
+            if not dataset.empty:
+                dataset.initialize()
+                datasets.append(dataset)
+        self.datasets = datasets

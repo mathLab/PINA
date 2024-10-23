@@ -1,6 +1,7 @@
 __all__ = [
-    "PINN", "Trainer", "LabelTensor", "Plotter", "Condition",
-    "SamplePointDataset", "PinaDataModule", "PinaDataLoader"
+    "Trainer", "LabelTensor", "Plotter", "Condition",
+    "SamplePointDataset", "PinaDataModule", "PinaDataLoader",
+    'TorchOptimizer', 'Graph'
 ]
 
 from .meta import *
@@ -12,3 +13,6 @@ from .condition.condition import Condition
 from .data import SamplePointDataset
 from .data import PinaDataModule
 from .data import PinaDataLoader
+from .optim import TorchOptimizer
+from .optim import TorchScheduler
+from .graph import Graph

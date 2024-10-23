@@ -32,10 +32,19 @@ class AbstractProblem(metaclass=ABCMeta):
         # training all type self.collector.full, which returns true if all
         # points are ready.
         self.collector.store_fixed_data()
+        self._batching_dimension = 0
 
     @property
     def collector(self):
         return self._collector
+
+    @property
+    def batching_dimension(self):
+        return self._batching_dimension
+
+    @batching_dimension.setter
+    def batching_dimension(self, value):
+        self._batching_dimension = value
 
     # TODO this should be erase when dataloading will interface collector,
     # kept only for back compatibility

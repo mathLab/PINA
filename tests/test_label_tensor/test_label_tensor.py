@@ -131,17 +131,17 @@ def test_concatenation_3D():
     data_2 = torch.rand(20, 3, 4)
     labels_2 = ['x', 'y', 'z', 'w']
     lt2 = LabelTensor(data_2, labels_2)
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         LabelTensor.cat([lt1, lt2], dim=2)
     data_1 = torch.rand(20, 3, 2)
     labels_1 = ['x', 'y']
     lt1 = LabelTensor(data_1, labels_1)
     data_2 = torch.rand(20, 3, 3)
-    labels_2 = ['x', 'w', 'a']
+    labels_2 = ['z', 'w', 'a']
     lt2 = LabelTensor(data_2, labels_2)
     lt_cat = LabelTensor.cat([lt1, lt2], dim=2)
     assert lt_cat.shape == (20, 3, 5)
-    assert lt_cat.full_labels[2]['dof'] == range(5)
+    assert lt_cat.full_labels[2]['dof'] == ['x', 'y', 'z', 'w', 'a']
     assert lt_cat.full_labels[0]['dof'] == range(20)
     assert lt_cat.full_labels[1]['dof'] == range(3)
 
@@ -157,7 +157,8 @@ def test_summation():
     assert lt_sum.ndim == lt_sum.ndim
     assert lt_sum.shape[0] == 20
     assert lt_sum.shape[1] == 3
-    assert lt_sum.full_labels == labels_all
+    assert lt_sum.full_labels[0] == labels_all[0]
+    assert lt_sum.labels == ['x+x', 'y+y', 'z+z']
     assert torch.eq(lt_sum.tensor, torch.ones(20, 3) * 2).all()
     lt1 = LabelTensor(torch.ones(20, 3), labels_all)
     lt2 = LabelTensor(torch.ones(20, 3), labels_all)
@@ -166,7 +167,8 @@ def test_summation():
     assert lt_sum.ndim == lt_sum.ndim
     assert lt_sum.shape[0] == 20
     assert lt_sum.shape[1] == 3
-    assert lt_sum.full_labels == labels_all
+    assert lt_sum.full_labels[0] == labels_all[0]
+    assert lt_sum.labels == ['x+x+x', 'y+y+y', 'z+z+z']
     assert torch.eq(lt_sum.tensor, torch.ones(20, 3) * 2).all()
 
 
