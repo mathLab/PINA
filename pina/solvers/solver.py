@@ -94,7 +94,7 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def training_step(self):
+    def training_step(self, batch, batch_idx):
         pass
 
     @abstractmethod
