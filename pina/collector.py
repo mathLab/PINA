@@ -49,7 +49,7 @@ class Collector:
             # if the condition is not ready and domain is not attribute
             # of condition, we get and store the data
             if (not self._is_conditions_ready[condition_name]) and (
-            not hasattr(condition, "domain")):
+                    not hasattr(condition, "domain")):
                 # get data
                 keys = condition.__slots__
                 values = [getattr(condition, name) for name in keys]
@@ -94,7 +94,8 @@ class Collector:
                 self.data_collections[loc] = dict(zip(keys, values))
             else:
                 raise RuntimeError(
-                    'Try to sample variables which are not in problem defined in the problem')
+                    'Try to sample variables which are not in problem defined '
+                    'in the problem')
 
     def add_points(self, new_points_dict):
         """
