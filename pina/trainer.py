@@ -60,9 +60,12 @@ class Trainer(pytorch_lightning.Trainer):
         if not self.solver.problem.collector.full:
             error_message = '\n'.join(
                 [
-                    f'{" " * 13} ---> Condition {key} {"sampled" if value else "not sampled"}'
+                    f"""{" " * 13} ---> Condition {key} {"sampled" if value else
+                    "not sampled"}"""
                     for key, value in
-                    self.solver.problem.collector._is_conditions_ready.items()])
+                    self._solver.problem.collector._is_conditions_ready.items()
+                ]
+            )
             raise RuntimeError('Cannot create Trainer if not all conditions '
                                'are sampled. The Trainer got the following:\n'
                                f'{error_message}')
