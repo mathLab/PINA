@@ -1,6 +1,3 @@
-from sympy.strategies.branch import condition
-
-from . import LabelTensor
 from .utils import check_consistency, merge_tensors
 
 
@@ -16,6 +13,8 @@ class Collector:
         # }
         # those variables are used for the dataloading
         self._data_collections = {name: {} for name in self.problem.conditions}
+        self.conditions_name = {i: name for i, name in
+                                enumerate(self.problem.conditions)}
 
         # variables used to check that all conditions are sampled
         self._is_conditions_ready = {
@@ -101,7 +100,8 @@ class Collector:
         """
         Add input points to a sampled condition
 
-        :param new_points_dict: Dictonary of input points (condition_name: LabelTensor)
+        :param new_points_dict: Dictonary of input points (condition_name:
+        LabelTensor)
         :raises RuntimeError: if at least one condition is not already sampled
         """
         for k, v in new_points_dict.items():
