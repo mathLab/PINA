@@ -79,7 +79,7 @@ class Trainer(pytorch_lightning.Trainer):
         data_module = PinaDataModule(problem=self.solver.problem, device=device,
                                      train_size=self.train_size,
                                      test_size=self.test_size,
-                                     eval_size=self.eval_size)
+                                     val_size=self.eval_size)
         data_module.setup()
         self._loader = data_module.train_dataloader()
 
