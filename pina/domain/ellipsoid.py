@@ -55,7 +55,6 @@ class EllipsoidDomain(DomainInterface):
         # perform operation only for not fixed variables (if any)
 
         if self.range_:
-
             # convert dict vals to torch [dim, 2] matrix
             list_dict_vals = list(self.range_.values())
             tmp = torch.tensor(list_dict_vals, dtype=torch.float)
@@ -70,6 +69,10 @@ class EllipsoidDomain(DomainInterface):
             # save elipsoid axis and centers as dict
             self._centers = dict(zip(self.range_.keys(), centers.tolist()))
             self._axis = dict(zip(self.range_.keys(), ellipsoid_axis.tolist()))
+
+    @property
+    def sample_modes(self):
+        return ["random"]
 
     @property
     def variables(self):
@@ -281,7 +284,7 @@ class EllipsoidDomain(DomainInterface):
         if variables == "all":
             variables = list(self.range_.keys()) + list(self.fixed_.keys())
 
-        if mode in ["random"]:
+        if mode in self.sample_modes:
             return _Nd_sampler(n, mode, variables)
         else:
             raise NotImplementedError(f"mode={mode} is not implemented.")

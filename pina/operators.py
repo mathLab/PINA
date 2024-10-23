@@ -5,9 +5,7 @@ All operators take as input a tensor onto which computing the operator, a tensor
 to which computing the operator, the name of the output variables to calculate the operator
 for (in case of multidimensional functions), and the variables name on which the operator is calculated.
 """
-
 import torch
-
 from pina.label_tensor import LabelTensor
 
 
@@ -87,16 +85,12 @@ def grad(output_, input_, components=None, d=None):
             raise RuntimeError
         gradients = grad_scalar_output(output_, input_, d)
 
-    elif output_.shape[1] >= 2:  # vector output ##############################
-
+    elif output_.shape[output_.ndim - 1] >= 2:  # vector output ##############################
+        tensor_to_cat = []
         for i, c in enumerate(components):
             c_output = output_.extract([c])
-            if i == 0:
-                gradients = grad_scalar_output(c_output, input_, d)
-            else:
-                gradients = gradients.append(
-                    grad_scalar_output(c_output, input_, d)
-                )
+            tensor_to_cat.append(grad_scalar_output(c_output, input_, d))
+        gradients = LabelTensor.cat(tensor_to_cat, dim=output_.tensor.ndim - 1)
     else:
         raise NotImplementedError
 
@@ -142,16 +136,15 @@ def div(output_, input_, components=None, d=None):
         raise ValueError
 
     grad_output = grad(output_, input_, components, d)
-    div = torch.zeros(input_.shape[0], 1, device=output_.device)
     labels = [None] * len(components)
+    tensors_to_sum = []
     for i, (c, d) in enumerate(zip(components, d)):
         c_fields = f"d{c}d{d}"
-        div[:, 0] += grad_output.extract(c_fields).sum(axis=1)
+        tensors_to_sum.append(grad_output.extract(c_fields))
         labels[i] = c_fields
-
-    div = div.as_subclass(LabelTensor)
-    div.labels = ["+".join(labels)]
-    return div
+    div_result = LabelTensor.summation(tensors_to_sum)
+    div_result.labels = ["+".join(labels)]
+    return div_result
 
 
 def laplacian(output_, input_, components=None, d=None, method="std"):
@@ -194,19 +187,19 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
         if len(components) == 1:
             grad_output = grad(output_, input_, components=components, d=d)
-            result = torch.zeros(output_.shape[0], 1, device=output_.device)
+            to_append_tensors = []
             for i, label in enumerate(grad_output.labels):
                 gg = grad(grad_output, input_, d=d, components=[label])
-                result[:, 0] += super(torch.Tensor, gg.T).__getitem__(
-                    i
-                )  # TODO improve
+                to_append_tensors.append(gg.extract([gg.labels[i]]))
             labels = [f"dd{components[0]}"]
-
+            result = LabelTensor.summation(tensors=to_append_tensors)
+            result.labels = labels
         else:
             result = torch.empty(
                 input_.shape[0], len(components), device=output_.device
             )
             labels = [None] * len(components)
+            to_append_tensors = [None] * len(components)
             for idx, (ci, di) in enumerate(zip(components, d)):
 
                 if not isinstance(ci, list):
@@ -216,10 +209,10 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
                 grad_output = grad(output_, input_, components=ci, d=di)
                 result[:, idx] = grad(grad_output, input_, d=di).flatten()
-                labels[idx] = f"dd{ci}dd{di}"
-
-    result = result.as_subclass(LabelTensor)
-    result.labels = labels
+                to_append_tensors[idx] = grad(grad_output, input_, d=di)
+                labels[idx] = f"dd{ci[0]}dd{di[0]}"
+            result = LabelTensor.cat(tensors=to_append_tensors, dim=output_.tensor.ndim - 1)
+            result.labels = labels
     return result
 
 

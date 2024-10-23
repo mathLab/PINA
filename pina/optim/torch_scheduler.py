@@ -5,12 +5,12 @@ try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
     from torch.optim.lr_scheduler import (
-        _LRScheduler as LRScheduler,
-    )  # torch < 2.0
+        _LRScheduler as LRScheduler, )  # torch < 2.0
 
 from ..utils import check_consistency
 from .optimizer_interface import Optimizer
 from .scheduler_interface import Scheduler
+
 
 class TorchScheduler(Scheduler):
 
@@ -23,5 +23,4 @@ class TorchScheduler(Scheduler):
     def hook(self, optimizer):
         check_consistency(optimizer, Optimizer)
         self.scheduler_instance = self.scheduler_class(
-            optimizer.optimizer_instance, **self.kwargs
-        )
+            optimizer.optimizer_instance, **self.kwargs)

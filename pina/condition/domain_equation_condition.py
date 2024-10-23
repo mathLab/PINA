@@ -1,34 +1,33 @@
+import torch
+
 from .condition_interface import ConditionInterface
+from ..utils import check_consistency
+from ..domain import DomainInterface
+from ..equation.equation_interface import EquationInterface
 
 class DomainEquationCondition(ConditionInterface):
     """
-    Condition for input/output data.
+    Condition for domain/equation data. This condition must be used every
+    time a Physics Informed Loss is needed in the Solver.
     """
 
     __slots__ = ["domain", "equation"]
 
     def __init__(self, domain, equation):
         """
-        Constructor for the `InputOutputCondition` class.
+        TODO
         """
         super().__init__()
         self.domain = domain
         self.equation = equation
+        self._condition_type = 'physics'
 
-    def residual(self, model):
-        """
-        Compute the residual of the condition.
-        """
-        self.batch_residual(model, self.domain, self.equation)
-
-    @staticmethod
-    def batch_residual(model, input_pts, equation):
-        """
-        Compute the residual of the condition for a single batch. Input and
-        output points are provided as arguments.
-
-        :param torch.nn.Module model: The model to evaluate the condition.
-        :param torch.Tensor input_pts: The input points.
-        :param torch.Tensor equation: The output points.
-        """
-        return equation.residual(input_pts, model(input_pts))
+    def __setattr__(self, key, value):
+        if key == 'domain':
+            check_consistency(value, (DomainInterface))
+            DomainEquationCondition.__dict__[key].__set__(self, value)
+        elif key == 'equation':
+            check_consistency(value, (EquationInterface))
+            DomainEquationCondition.__dict__[key].__set__(self, value)
+        elif key in ('_problem', '_condition_type'):
+            super().__setattr__(key, value)

@@ -2,9 +2,7 @@
 
 import torch
 from torch.nn.modules.loss import _Loss
-
-
-from ..optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
+from ..optim import TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
@@ -39,15 +37,16 @@ class SupervisedSolver(SolverInterface):
     we are seeking to approximate multiple (discretised) functions given
     multiple (discretised) input functions.
     """
+    accepted_condition_types = ['supervised']
+    __name__ = 'SupervisedSolver'
 
-    def __init__(
-        self,
-        problem,
-        model,
-        loss=None,
-        optimizer=None,
-        scheduler=None,
-    ):
+    def __init__(self,
+                 problem,
+                 model,
+                 loss=None,
+                 optimizer=None,
+                 scheduler=None,
+                 extra_features=None):
         """
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
@@ -57,11 +56,8 @@ class SupervisedSolver(SolverInterface):
             features to use as augmented input.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
             use; default is :class:`torch.optim.Adam`.
-        :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param float lr: The learning rate; default is 0.001.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
-        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         """
         if loss is None:
             loss = torch.nn.MSELoss()
@@ -70,22 +66,20 @@ class SupervisedSolver(SolverInterface):
             optimizer = TorchOptimizer(torch.optim.Adam, lr=0.001)
 
         if scheduler is None:
-            scheduler = TorchScheduler(
-                torch.optim.lr_scheduler.ConstantLR)
+            scheduler = TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
 
-        super().__init__(
-            model=model,
-            problem=problem,
-            optimizer=optimizer,
-            scheduler=scheduler,
-        )
+        super().__init__(models=model,
+                         problem=problem,
+                         optimizers=optimizer,
+                         schedulers=scheduler,
+                         extra_features=extra_features)
 
         # check consistency
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
         self._loss = loss
-        self._model = self._pina_model[0]
-        self._optimizer = self._pina_optimizer[0]
-        self._scheduler = self._pina_scheduler[0]
+        self._model = self._pina_models[0]
+        self._optimizer = self._pina_optimizers[0]
+        self._scheduler = self._pina_schedulers[0]
 
     def forward(self, x):
         """Forward pass implementation for the solver.
@@ -97,12 +91,7 @@ class SupervisedSolver(SolverInterface):
 
         output = self._model(x)
 
-        output.labels = {
-            1: {
-                "name": "output",
-                "dof": self.problem.output_variables
-            }
-        }
+        output.labels = self.problem.output_variables
         return output
 
     def configure_optimizers(self):
@@ -113,10 +102,8 @@ class SupervisedSolver(SolverInterface):
         """
         self._optimizer.hook(self._model.parameters())
         self._scheduler.hook(self._optimizer)
-        return (
-            [self._optimizer.optimizer_instance],
-            [self._scheduler.scheduler_instance]
-        )
+        return ([self._optimizer.optimizer_instance],
+                [self._scheduler.scheduler_instance])
 
     def training_step(self, batch, batch_idx):
         """Solver training step.
@@ -128,34 +115,28 @@ class SupervisedSolver(SolverInterface):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-
-        condition_idx = batch.condition
+        condition_idx = batch.supervised.condition_indices
 
         for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
 
             condition_name = self._dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
-            pts = batch.input
-            out = batch.output
-
+            pts = batch.supervised.input_points
+            out = batch.supervised.output_points
             if condition_name not in self.problem.conditions:
                 raise RuntimeError("Something wrong happened.")
 
             # for data driven mode
             if not hasattr(condition, "output_points"):
                 raise NotImplementedError(
-                    f"{type(self).__name__} works only in data-driven mode."
-                )
-
+                    f"{type(self).__name__} works only in data-driven mode.")
             output_pts = out[condition_idx == condition_id]
             input_pts = pts[condition_idx == condition_id]
 
             input_pts.labels = pts.labels
             output_pts.labels = out.labels
 
-            loss = (
-                self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            )
+            loss = self.loss_data(input_pts=input_pts, output_pts=output_pts)
             loss = loss.as_subclass(torch.Tensor)
 
         self.log("mean_loss", float(loss), prog_bar=True, logger=True)
@@ -167,8 +148,8 @@ class SupervisedSolver(SolverInterface):
         the network output against the true solution. This function
         should not be override if not intentionally.
 
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
+        :param LabelTensor input_pts: The input to the neural networks.
+        :param LabelTensor output_pts: The true solution to compare the
             network solution.
         :return: The residual loss averaged on the input coordinates
         :rtype: torch.Tensor
@@ -181,7 +162,7 @@ class SupervisedSolver(SolverInterface):
         Scheduler for training.
         """
         return self._scheduler
-    
+
     @property
     def optimizer(self):
         """

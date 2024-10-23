@@ -1,7 +1,7 @@
 """Module LowRank Neural Operator."""
 
 import torch
-from torch import nn, concatenate
+from torch import nn, cat
 
 from pina.utils import check_consistency
 
@@ -145,4 +145,4 @@ class LowRankNeuralOperator(KernelNeuralOperator):
         for module in self._integral_kernels:
             x = module(x, coords)
         # projecting
-        return self._projection_operator(concatenate((x, coords), dim=-1))
+        return self._projection_operator(cat((x, coords), dim=-1))

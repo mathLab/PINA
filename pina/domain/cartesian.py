@@ -31,6 +31,10 @@ class CartesianDomain(DomainInterface):
                 raise TypeError
 
     @property
+    def sample_modes(self):
+        return ["random", "grid", "lh", "chebyshev", "latin"]
+
+    @property
     def variables(self):
         """Spatial variables.
 

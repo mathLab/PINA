@@ -25,6 +25,10 @@ class OperationInterface(DomainInterface, metaclass=ABCMeta):
         self._geometries = geometries
 
     @property
+    def sample_modes(self):
+        return ["random"]
+
+    @property
     def geometries(self):
         """
         The geometries to perform set operation.

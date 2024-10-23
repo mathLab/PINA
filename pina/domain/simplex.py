@@ -75,6 +75,10 @@ class SimplexDomain(DomainInterface):
         self._cartesian_bound = self._build_cartesian(self._vertices_matrix)
 
     @property
+    def sample_modes(self):
+        return ["random"]
+
+    @property
     def variables(self):
         return self._vertices_matrix.labels
 
@@ -88,13 +92,12 @@ class SimplexDomain(DomainInterface):
         """
 
         span_dict = {}
-
         for i, coord in enumerate(self.variables):
-            sorted_vertices = sorted(vertices, key=lambda vertex: vertex[i])
+            sorted_vertices = torch.sort(vertices[coord].tensor.squeeze())
             # respective coord bounded by the lowest and highest values
             span_dict[coord] = [
-                float(sorted_vertices[0][i]),
-                float(sorted_vertices[-1][i]),
+                float(sorted_vertices.values[0]),
+                float(sorted_vertices.values[-1]),
             ]
 
         return CartesianDomain(span_dict)
@@ -141,7 +144,7 @@ class SimplexDomain(DomainInterface):
             return all(torch.gt(lambdas, 0.0)) and all(torch.lt(lambdas, 1.0))
 
         return all(torch.ge(lambdas, 0)) and (
-            any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
+                any(torch.eq(lambdas, 0)) or any(torch.eq(lambdas, 1))
         )
 
     def _sample_interior_randomly(self, n, variables):
@@ -231,7 +234,7 @@ class SimplexDomain(DomainInterface):
             in ``variables``.
         """
 
-        if mode in ["random"]:
+        if mode in self.sample_modes:
             if self._sample_surface:
                 sample_pts = self._sample_boundary_randomly(n)
             else:

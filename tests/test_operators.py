@@ -10,15 +10,14 @@ def func_vec(x):
 
 
 def func_scalar(x):
-    print('X')
     x_ = x.extract(['x'])
     y_ = x.extract(['y'])
     mu_ = x.extract(['mu'])
     return x_**2 + y_**2 + mu_**3
 
 
-data = torch.rand((20, 3), requires_grad=True)
-inp = LabelTensor(data, ['x', 'y', 'mu'])
+data = torch.rand((20, 3))
+inp = LabelTensor(data, ['x', 'y', 'mu']).requires_grad_(True)
 labels = ['a', 'b', 'c']
 tensor_v = LabelTensor(func_vec(inp), labels)
 tensor_s = LabelTensor(func_scalar(inp).reshape(-1, 1), labels[0])
@@ -31,7 +30,7 @@ def test_grad_scalar_output():
         f'd{tensor_s.labels[0]}d{i}' for i in inp.labels
     ]
     grad_tensor_s = grad(tensor_s, inp, d=['x', 'y'])
-    assert grad_tensor_s.shape == (inp.shape[0], 2)
+    assert grad_tensor_s.shape == (20, 2)
     assert grad_tensor_s.labels == [
         f'd{tensor_s.labels[0]}d{i}' for i in ['x', 'y']
     ]
