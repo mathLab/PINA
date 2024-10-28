@@ -27,6 +27,7 @@ First of all we import the modules needed for the tutorial:
     
     import torch 
     import matplotlib.pyplot as plt 
+    plt.style.use('tableau-colorblind10')
     from pina.problem import AbstractProblem
     from pina.solvers import SupervisedSolver
     from pina.trainer import Trainer

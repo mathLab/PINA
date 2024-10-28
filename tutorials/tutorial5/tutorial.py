@@ -21,6 +21,9 @@ except:
 if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
   get_ipython().system('pip install scipy')
+  # get the data
+  get_ipython().system('wget https://github.com/mathLab/PINA/blob/master/tutorials/tutorial5/Data_Darcy.mat')
+
   
 # !pip install scipy  # install scipy
 from scipy import io
@@ -31,6 +34,7 @@ from pina.solvers import SupervisedSolver
 from pina.trainer import Trainer
 from pina.problem import AbstractProblem
 import matplotlib.pyplot as plt
+plt.style.use('tableau-colorblind10')
 
 
 # ## Data Generation

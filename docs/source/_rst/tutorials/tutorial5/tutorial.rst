@@ -23,6 +23,9 @@ First of all we import the modules needed for the tutorial. Importing
     if IN_COLAB:
       !pip install "pina-mathlab"
       !pip install scipy
+      # get the data
+      !wget https://github.com/mathLab/PINA/blob/master/tutorials/tutorial5/Data_Darcy.mat
+
       
     # !pip install scipy  # install scipy
     from scipy import io
@@ -33,6 +36,7 @@ First of all we import the modules needed for the tutorial. Importing
     from pina.trainer import Trainer
     from pina.problem import AbstractProblem
     import matplotlib.pyplot as plt
+    plt.style.use('tableau-colorblind10')
 
 Data Generation
 ---------------
