@@ -27,6 +27,7 @@ operations.
     
     import torch
     import matplotlib.pyplot as plt
+    plt.style.use('tableau-colorblind10')
     from scipy import io
     from pina import Condition, LabelTensor
     from pina.problem import AbstractProblem

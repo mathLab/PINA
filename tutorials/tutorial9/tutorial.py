@@ -28,7 +28,7 @@ if IN_COLAB:
 
 import torch
 import matplotlib.pyplot as plt
-
+plt.style.use('tableau-colorblind10')
 from pina import Condition, Plotter
 from pina.problem import SpatialProblem
 from pina.operators import laplacian

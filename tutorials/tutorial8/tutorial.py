@@ -31,6 +31,7 @@ if IN_COLAB:
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 import matplotlib.pyplot as plt
+plt.style.use('tableau-colorblind10')
 import torch
 import pina
 

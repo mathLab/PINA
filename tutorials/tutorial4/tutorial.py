@@ -9,7 +9,7 @@
 
 # First of all we import the modules needed for the tutorial:
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -23,6 +23,7 @@ if IN_COLAB:
 
 import torch 
 import matplotlib.pyplot as plt 
+plt.style.use('tableau-colorblind10')
 from pina.problem import AbstractProblem
 from pina.solvers import SupervisedSolver
 from pina.trainer import Trainer

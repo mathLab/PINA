@@ -36,8 +36,13 @@ except:
   IN_COLAB = False
 if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
+  # get the data
+  get_ipython().system('mkdir "data"')
+  get_ipython().system('wget "https://github.com/mathLab/PINA/blob/master/tutorials/tutorial7/data/pinn_solution_0.5_0.5" -O "data/pinn_solution_0.5_0.5"')
+  get_ipython().system('wget "https://github.com/mathLab/PINA/blob/master/tutorials/tutorial7/data/pts_0.5_0.5" -O "data/pts_0.5_0.5"')
   
 import matplotlib.pyplot as plt
+plt.style.use('tableau-colorblind10')
 import torch
 from pytorch_lightning.callbacks import Callback
 from pina.problem import SpatialProblem, InverseProblem
