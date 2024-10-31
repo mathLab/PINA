@@ -40,9 +40,9 @@ def check_consistency(object, object_instance, subclass=False):
             raise ValueError(f"{type(obj).__name__} must be {object_instance}.")
 
 
-def number_parameters(
-    model, aggregate=True, only_trainable=True
-):  # TODO: check
+def number_parameters(model,
+                      aggregate=True,
+                      only_trainable=True):  # TODO: check
     """
     Return the number of parameters of a given `model`.
 
@@ -80,9 +80,8 @@ def merge_two_tensors(tensor1, tensor2):
     n2 = tensor2.shape[0]
 
     tensor1 = LabelTensor(tensor1.repeat(n2, 1), labels=tensor1.labels)
-    tensor2 = LabelTensor(
-        tensor2.repeat_interleave(n1, dim=0), labels=tensor2.labels
-    )
+    tensor2 = LabelTensor(tensor2.repeat_interleave(n1, dim=0),
+                          labels=tensor2.labels)
     return tensor1.append(tensor2)
 
 
