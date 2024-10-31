@@ -27,21 +27,27 @@ class Batch:
         :rtype: int
         """
         length = 0
-        for dataset in dir(self):
+        for dataset in self.attributes:
             attribute = getattr(self, dataset)
-            if isinstance(attribute, list):
-                length += len(getattr(self, dataset))
+            length += len(attribute)
         return length
 
     def __getattribute__(self, item):
         if item in super().__getattribute__('attributes'):
             dataset = super().__getattribute__(item)
             index = super().__getattribute__(item + '_idx')
-            return PinaSubset(dataset.dataset, dataset.indices[index])
+            if isinstance(dataset, PinaSubset):
+                dataset_index = dataset.indices
+                if isinstance(dataset_index, slice):
+                    index = slice(dataset_index.start + index.start,
+                                  min(dataset_index.start + index.stop,
+                                      dataset_index.stop))
+            return PinaSubset(dataset.dataset, index,
+                              require_grad=self.require_grad)
         return super().__getattribute__(item)
 
     def __getattr__(self, item):
         if item == 'data' and len(self.attributes) == 1:
             item = self.attributes[0]
-            return super().__getattribute__(item)
+            return self.__getattribute__(item)
         raise AttributeError(f"'Batch' object has no attribute '{item}'")

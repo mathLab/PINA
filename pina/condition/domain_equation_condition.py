@@ -13,7 +13,7 @@ class DomainEquationCondition(ConditionInterface):
     """
 
     __slots__ = ["domain", "equation"]
-
+    condition_type = ['physics']
     def __init__(self, domain, equation):
         """
         TODO
@@ -21,7 +21,6 @@ class DomainEquationCondition(ConditionInterface):
         super().__init__()
         self.domain = domain
         self.equation = equation
-        self._condition_type = 'physics'
 
     def __setattr__(self, key, value):
         if key == 'domain':

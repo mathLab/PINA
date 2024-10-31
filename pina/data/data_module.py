@@ -23,8 +23,8 @@ class PinaDataModule(LightningDataModule):
                  problem,
                  device,
                  train_size=.7,
-                 test_size=.1,
-                 val_size=.2,
+                 test_size=.2,
+                 val_size=.1,
                  predict_size=0.,
                  batch_size=None,
                  shuffle=True,
@@ -61,28 +61,30 @@ class PinaDataModule(LightningDataModule):
         if train_size > 0:
             self.split_names.append('train')
             self.split_length.append(train_size)
-            self.loader_functions['train_dataloader'] = lambda: PinaDataLoader(
-                self.splits['train'], self.batch_size, self.condition_names)
+            self.loader_functions['train_dataloader'] = lambda \
+                x: PinaDataLoader(self.splits['train'], self.batch_size,
+                                  self.condition_names)
         if test_size > 0:
             self.split_length.append(test_size)
             self.split_names.append('test')
-            self.loader_functions['test_dataloader'] = lambda: PinaDataLoader(
+            self.loader_functions['test_dataloader'] = lambda x: PinaDataLoader(
                 self.splits['test'], self.batch_size, self.condition_names)
         if val_size > 0:
             self.split_length.append(val_size)
             self.split_names.append('val')
-            self.loader_functions['val_dataloader'] = lambda: PinaDataLoader(
+            self.loader_functions['val_dataloader'] = lambda x: PinaDataLoader(
                 self.splits['val'], self.batch_size, self.condition_names)
         if predict_size > 0:
             self.split_length.append(predict_size)
             self.split_names.append('predict')
-            self.loader_functions['predict_dataloader'] = lambda: PinaDataLoader(
+            self.loader_functions[
+                'predict_dataloader'] = lambda x: PinaDataLoader(
                 self.splits['predict'], self.batch_size, self.condition_names)
         self.splits = {k: {} for k in self.split_names}
         self.shuffle = shuffle
 
         for k, v in self.loader_functions.items():
-            setattr(self, k, v)
+            setattr(self, k, v.__get__(self, PinaDataModule))
 
     def prepare_data(self):
         if self.datasets is None:
@@ -140,12 +142,11 @@ class PinaDataModule(LightningDataModule):
                 indices = torch.randperm(sum(lengths))
             dataset.apply_shuffle(indices)
 
-        indices = torch.arange(0, sum(lengths), 1, dtype=torch.uint8).tolist()
         offsets = [
             sum(lengths[:i]) if i > 0 else 0 for i in range(len(lengths))
         ]
         return [
-            PinaSubset(dataset, indices[offset:offset + length])
+            PinaSubset(dataset, slice(offset, offset + length))
             for offset, length in zip(offsets, lengths)
         ]
 

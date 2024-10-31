@@ -5,7 +5,6 @@ import torch
 import logging
 
 from torch.utils.data import Dataset
-
 from ..label_tensor import LabelTensor
 
 
@@ -109,14 +108,14 @@ class BaseDataset(Dataset):
         already filled
         """
         logging.debug(f'Initialize dataset {self.__class__.__name__}')
-
         if self.num_el_per_condition:
             self.condition_indices = torch.cat([
-                torch.tensor([i] * self.num_el_per_condition[i],
-                             dtype=torch.uint8)
+                torch.tensor(
+                    [self.conditions_idx[i]] * self.num_el_per_condition[i],
+                    dtype=torch.uint8)
                 for i in range(len(self.num_el_per_condition))
             ],
-                                               dim=0)
+                dim=0)
             for slot in self.__slots__:
                 current_attribute = getattr(self, slot)
                 if all(isinstance(a, LabelTensor) for a in current_attribute):

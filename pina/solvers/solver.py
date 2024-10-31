@@ -138,8 +138,8 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         TODO
         """
         for _, condition in problem.conditions.items():
-            if not set(self.accepted_condition_types).issubset(
-                    condition.condition_type):
+            if not set(condition.condition_type).issubset(
+                    set(self.accepted_condition_types)):
                 raise ValueError(
-                    f'{self.__name__} support only dose not support condition '
+                    f'{self.__name__} dose not support condition '
                     f'{condition.condition_type}')

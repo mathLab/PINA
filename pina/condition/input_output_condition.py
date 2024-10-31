@@ -13,7 +13,7 @@ class InputOutputPointsCondition(ConditionInterface):
     """
 
     __slots__ = ["input_points", "output_points"]
-
+    condition_type = ['supervised']
     def __init__(self, input_points, output_points):
         """
         TODO
@@ -21,7 +21,6 @@ class InputOutputPointsCondition(ConditionInterface):
         super().__init__()
         self.input_points = input_points
         self.output_points = output_points
-        self._condition_type = ['supervised', 'physics']
 
     def __setattr__(self, key, value):
         if (key == 'input_points') or (key == 'output_points'):

@@ -14,7 +14,7 @@ class InputPointsEquationCondition(ConditionInterface):
     """
 
     __slots__ = ["input_points", "equation"]
-
+    condition_type = ['physics']
     def __init__(self, input_points, equation):
         """
         TODO
@@ -22,7 +22,6 @@ class InputPointsEquationCondition(ConditionInterface):
         super().__init__()
         self.input_points = input_points
         self.equation = equation
-        self._condition_type = 'physics'
 
     def __setattr__(self, key, value):
         if key == 'input_points':

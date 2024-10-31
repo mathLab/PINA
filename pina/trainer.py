@@ -14,7 +14,7 @@ class Trainer(pytorch_lightning.Trainer):
                  batch_size=None,
                  train_size=.7,
                  test_size=.2,
-                 eval_size=.1,
+                 val_size=.1,
                  **kwargs):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
@@ -39,11 +39,12 @@ class Trainer(pytorch_lightning.Trainer):
             check_consistency(batch_size, int)
         self.train_size = train_size
         self.test_size = test_size
-        self.eval_size = eval_size
+        self.val_size = val_size
         self.solver = solver
         self.batch_size = batch_size
         self._create_loader()
         self._move_to_device()
+        self.data_module = None
 
     def _move_to_device(self):
         device = self._accelerator_connector._parallel_devices[0]
@@ -64,7 +65,7 @@ class Trainer(pytorch_lightning.Trainer):
         if not self.solver.problem.collector.full:
             error_message = '\n'.join([
                 f"""{" " * 13} ---> Condition {key} {"sampled" if value else
-                    "not sampled"}""" for key, value in
+                "not sampled"}""" for key, value in
                 self._solver.problem.collector._is_conditions_ready.items()
             ])
             raise RuntimeError('Cannot create Trainer if not all conditions '
@@ -77,20 +78,21 @@ class Trainer(pytorch_lightning.Trainer):
 
         device = devices[0]
 
-        data_module = PinaDataModule(problem=self.solver.problem,
-                                     device=device,
-                                     train_size=self.train_size,
-                                     test_size=self.test_size,
-                                     val_size=self.eval_size)
-        data_module.setup()
-        self._loader = data_module.train_dataloader()
+        self.data_module = PinaDataModule(problem=self.solver.problem,
+                                          device=device,
+                                          train_size=self.train_size,
+                                          test_size=self.test_size,
+                                          val_size=self.val_size,
+                                          batch_size=self.batch_size, )
+        self.data_module.setup()
 
     def train(self, **kwargs):
         """
         Train the solver method.
         """
+        self._create_loader()
         return super().fit(self.solver,
-                           train_dataloaders=self._loader,
+                           datamodule=self.data_module,
                            **kwargs)
 
     @property

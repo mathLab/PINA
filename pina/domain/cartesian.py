@@ -236,15 +236,15 @@ class CartesianDomain(DomainInterface):
             return result
 
         if self.fixed_ and (not self.range_):
-            return _single_points_sample(n, variables)
+            return _single_points_sample(n, variables).sort_labels()
 
         if variables == "all":
             variables = list(self.range_.keys()) + list(self.fixed_.keys())
 
         if mode in ["grid", "chebyshev"]:
-            return _1d_sampler(n, mode, variables)
+            return _1d_sampler(n, mode, variables).sort_labels()
         elif mode in ["random", "lh", "latin"]:
-            return _Nd_sampler(n, mode, variables)
+            return _Nd_sampler(n, mode, variables).sort_labels()
         else:
             raise ValueError(f"mode={mode} is not valid.")
 

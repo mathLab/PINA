@@ -66,7 +66,7 @@ class OperationInterface(DomainInterface, metaclass=ABCMeta):
         :type geometries: list[Location]
         """
         for geometry in geometries:
-            if geometry.variables != geometries[0].variables:
+            if sorted(geometry.variables) != sorted(geometries[0].variables):
                 raise NotImplementedError(
                     f"The geometries need to have same dimensions and labels."
                 )
