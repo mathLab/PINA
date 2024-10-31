@@ -22,7 +22,10 @@ def test_init_inputoutput():
         Condition(input_points=3., output_points='example')
     with pytest.raises(ValueError):
         Condition(input_points=example_domain, output_points=example_domain)
+
+
 test_init_inputoutput()
+
 
 def test_init_domainfunc():
     Condition(domain=example_domain, equation=FixedValue(0.0))

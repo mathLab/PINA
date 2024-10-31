@@ -6,6 +6,7 @@ from ..graph import Graph
 from ..utils import check_consistency
 from ..equation.equation_interface import EquationInterface
 
+
 class InputPointsEquationCondition(ConditionInterface):
     """
     Condition for input_points/equation data. This condition must be used every
@@ -25,7 +26,9 @@ class InputPointsEquationCondition(ConditionInterface):
 
     def __setattr__(self, key, value):
         if key == 'input_points':
-            check_consistency(value, (LabelTensor)) # for now only labeltensors, we need labels for the operators!
+            check_consistency(
+                value, (LabelTensor)
+            )  # for now only labeltensors, we need labels for the operators!
             InputPointsEquationCondition.__dict__[key].__set__(self, value)
         elif key == 'equation':
             check_consistency(value, (EquationInterface))

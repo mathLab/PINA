@@ -5,6 +5,7 @@ from ..utils import check_consistency
 from ..domain import DomainInterface
 from ..equation.equation_interface import EquationInterface
 
+
 class DomainEquationCondition(ConditionInterface):
     """
     Condition for domain/equation data. This condition must be used every

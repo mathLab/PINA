@@ -32,49 +32,49 @@ class Poisson(SpatialProblem):
 
     conditions = {
         'gamma1':
-            Condition(domain=CartesianDomain({
-                'x': [0, 1],
-                'y': 1
-            }),
-                equation=FixedValue(0.0)),
+        Condition(domain=CartesianDomain({
+            'x': [0, 1],
+            'y': 1
+        }),
+                  equation=FixedValue(0.0)),
         'gamma2':
-            Condition(domain=CartesianDomain({
-                'x': [0, 1],
-                'y': 0
-            }),
-                equation=FixedValue(0.0)),
+        Condition(domain=CartesianDomain({
+            'x': [0, 1],
+            'y': 0
+        }),
+                  equation=FixedValue(0.0)),
         'gamma3':
-            Condition(domain=CartesianDomain({
-                'x': 1,
-                'y': [0, 1]
-            }),
-                equation=FixedValue(0.0)),
+        Condition(domain=CartesianDomain({
+            'x': 1,
+            'y': [0, 1]
+        }),
+                  equation=FixedValue(0.0)),
         'gamma4':
-            Condition(domain=CartesianDomain({
-                'x': 0,
-                'y': [0, 1]
-            }),
-                equation=FixedValue(0.0)),
+        Condition(domain=CartesianDomain({
+            'x': 0,
+            'y': [0, 1]
+        }),
+                  equation=FixedValue(0.0)),
         'D':
-            Condition(input_points=LabelTensor(torch.rand(size=(100, 2)),
-                                               ['x', 'y']),
-                      equation=my_laplace),
+        Condition(input_points=LabelTensor(torch.rand(size=(100, 2)),
+                                           ['x', 'y']),
+                  equation=my_laplace),
         'data':
-            Condition(input_points=in_, output_points=out_),
+        Condition(input_points=in_, output_points=out_),
         'data2':
-            Condition(input_points=in2_, output_points=out2_),
+        Condition(input_points=in2_, output_points=out2_),
         'unsupervised':
-            Condition(
-                input_points=LabelTensor(torch.rand(size=(45, 2)), ['x', 'y']),
-                conditional_variables=LabelTensor(torch.ones(size=(45, 1)),
-                                                  ['alpha']),
-            ),
+        Condition(
+            input_points=LabelTensor(torch.rand(size=(45, 2)), ['x', 'y']),
+            conditional_variables=LabelTensor(torch.ones(size=(45, 1)),
+                                              ['alpha']),
+        ),
         'unsupervised2':
-            Condition(
-                input_points=LabelTensor(torch.rand(size=(90, 2)), ['x', 'y']),
-                conditional_variables=LabelTensor(torch.ones(size=(90, 1)),
-                                                  ['alpha']),
-            )
+        Condition(
+            input_points=LabelTensor(torch.rand(size=(90, 2)), ['x', 'y']),
+            conditional_variables=LabelTensor(torch.ones(size=(90, 1)),
+                                              ['alpha']),
+        )
     }
 
 
@@ -201,11 +201,12 @@ data = LabelTensor(torch.rand((100, 100, 3)), labels=['ux', 'uy', 'p'])
 
 class GraphProblem(AbstractProblem):
     output = LabelTensor(torch.rand((100, 3)), labels=['ux', 'uy', 'p'])
-    input = [Graph.build('radius',
-                         nodes_coordinates=coordinates[i, :, :],
-                         nodes_data=data[i, :, :], radius=0.2)
-             for i in
-             range(100)]
+    input = [
+        Graph.build('radius',
+                    nodes_coordinates=coordinates[i, :, :],
+                    nodes_data=data[i, :, :],
+                    radius=0.2) for i in range(100)
+    ]
     output_variables = ['u']
 
     conditions = {
