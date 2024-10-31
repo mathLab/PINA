@@ -142,5 +142,4 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
                     condition.condition_type):
                 raise ValueError(
                     f'{self.__name__} support only dose not support condition '
-                    f'{condition.condition_type}'
-                )
+                    f'{condition.condition_type}')
