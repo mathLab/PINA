@@ -22,7 +22,7 @@ if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
   get_ipython().system('pip install scipy')
   # get the data
-  get_ipython().system('wget https://github.com/mathLab/PINA/blob/master/tutorials/tutorial5/Data_Darcy.mat')
+  get_ipython().system('wget https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial5/Data_Darcy.mat')
 
   
 # !pip install scipy  # install scipy

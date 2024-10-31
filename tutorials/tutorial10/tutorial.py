@@ -27,8 +27,8 @@ if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
   # get the data
   get_ipython().system('mkdir "data"')
-  get_ipython().system('wget "https://github.com/mathLab/PINA/blob/master/tutorials/tutorial10/dat/Data_KS.mat" -O "data/Data_KS.mat"')
-  get_ipython().system('wget "https://github.com/mathLab/PINA/blob/master/tutorials/tutorial10/dat/Data_KS2.mat" -O "data/Data_KS2.mat"')
+  get_ipython().system('wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial10/data/Data_KS.mat" -O "data/Data_KS.mat"')
+  get_ipython().system('wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial10/data/Data_KS2.mat" -O "data/Data_KS2.mat"')
 
 import torch
 import matplotlib.pyplot as plt
