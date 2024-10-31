@@ -5,6 +5,7 @@ from ..label_tensor import LabelTensor
 from ..graph import Graph
 from ..utils import check_consistency
 
+
 class DataConditionInterface(ConditionInterface):
     """
     Condition for data. This condition must be used every

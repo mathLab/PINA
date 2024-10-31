@@ -44,8 +44,9 @@ class PinaDataModule(LightningDataModule):
         super().__init__()
         self.problem = problem
         self.device = device
-        self.dataset_classes = [SupervisedDataset, UnsupervisedDataset,
-                                SamplePointDataset]
+        self.dataset_classes = [
+            SupervisedDataset, UnsupervisedDataset, SamplePointDataset
+        ]
         if datasets is None:
             self.datasets = None
         else:
@@ -71,15 +72,12 @@ class PinaDataModule(LightningDataModule):
             self.split_length.append(val_size)
             self.split_names.append('val')
             self.loader_functions['val_dataloader'] = lambda: PinaDataLoader(
-                self.splits['val'], self.batch_size,
-                self.condition_names)
+                self.splits['val'], self.batch_size, self.condition_names)
         if predict_size > 0:
             self.split_length.append(predict_size)
             self.split_names.append('predict')
-            self.loader_functions[
-                'predict_dataloader'] = lambda: PinaDataLoader(
-                self.splits['predict'], self.batch_size,
-                self.condition_names)
+            self.loader_functions['predict_dataloader'] = lambda: PinaDataLoader(
+                self.splits['predict'], self.batch_size, self.condition_names)
         self.splits = {k: {} for k in self.split_names}
         self.shuffle = shuffle
 
@@ -104,8 +102,8 @@ class PinaDataModule(LightningDataModule):
                                                 self.split_length,
                                                 shuffle=self.shuffle)
                     for i in range(len(self.split_length)):
-                        self.splits[
-                            self.split_names[i]][dataset.data_type] = splits[i]
+                        self.splits[self.split_names[i]][
+                            dataset.data_type] = splits[i]
         elif stage == 'test':
             raise NotImplementedError("Testing pipeline not implemented yet")
         else:
@@ -137,14 +135,12 @@ class PinaDataModule(LightningDataModule):
             if seed is not None:
                 generator = torch.Generator()
                 generator.manual_seed(seed)
-                indices = torch.randperm(sum(lengths),
-                                         generator=generator)
+                indices = torch.randperm(sum(lengths), generator=generator)
             else:
                 indices = torch.randperm(sum(lengths))
             dataset.apply_shuffle(indices)
 
-        indices = torch.arange(0, sum(lengths), 1,
-                               dtype=torch.uint8).tolist()
+        indices = torch.arange(0, sum(lengths), 1, dtype=torch.uint8).tolist()
         offsets = [
             sum(lengths[:i]) if i > 0 else 0 for i in range(len(lengths))
         ]
@@ -161,13 +157,16 @@ class PinaDataModule(LightningDataModule):
         collector = self.problem.collector
         batching_dim = self.problem.batching_dimension
         datasets_slots = [i.__slots__ for i in self.dataset_classes]
-        self.datasets = [dataset(device=self.device) for dataset in
-                         self.dataset_classes]
+        self.datasets = [
+            dataset(device=self.device) for dataset in self.dataset_classes
+        ]
         logging.debug('Filling datasets in PinaDataModule obj')
         for name, data in collector.data_collections.items():
             keys = list(data.keys())
-            idx = [key for key, val in collector.conditions_name.items() if
-                   val == name]
+            idx = [
+                key for key, val in collector.conditions_name.items()
+                if val == name
+            ]
             for i, slot in enumerate(datasets_slots):
                 if slot == keys:
                     self.datasets[i].add_points(data, idx[0], batching_dim)
