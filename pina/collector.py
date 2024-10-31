@@ -2,23 +2,28 @@ from .utils import check_consistency, merge_tensors
 
 
 class Collector:
+
     def __init__(self, problem):
         # creating a hook between collector and problem
         self.problem = problem
 
         # this variable is used to store the data in the form:
-        # {'[condition_name]' : 
-        #           {'input_points' : Tensor, 
+        # {'[condition_name]' :
+        #           {'input_points' : Tensor,
         #            '[equation/output_points/conditional_variables]': Tensor}
         # }
         # those variables are used for the dataloading
         self._data_collections = {name: {} for name in self.problem.conditions}
-        self.conditions_name = {i: name for i, name in
-                                enumerate(self.problem.conditions)}
+        self.conditions_name = {
+            i: name
+            for i, name in enumerate(self.problem.conditions)
+        }
 
         # variables used to check that all conditions are sampled
         self._is_conditions_ready = {
-            name: False for name in self.problem.conditions}
+            name: False
+            for name in self.problem.conditions
+        }
         self.full = False
 
     @property
@@ -47,8 +52,8 @@ class Collector:
         for condition_name, condition in self.problem.conditions.items():
             # if the condition is not ready and domain is not attribute
             # of condition, we get and store the data
-            if (not self._is_conditions_ready[condition_name]) and (
-                    not hasattr(condition, "domain")):
+            if (not self._is_conditions_ready[condition_name]) and (not hasattr(
+                    condition, "domain")):
                 # get data
                 keys = condition.__slots__
                 values = [getattr(condition, name) for name in keys]
@@ -70,7 +75,8 @@ class Collector:
                 # if we have sampled the condition but not all variables
                 else:
                     already_sampled = [
-                        self.data_collections[loc]['input_points']]
+                        self.data_collections[loc]['input_points']
+                    ]
             # if the condition is ready but we want to sample again
             else:
                 self._is_conditions_ready[loc] = False
@@ -78,14 +84,10 @@ class Collector:
 
             # get the samples
             samples = [
-                          condition.domain.sample(n=n, mode=mode,
-                                                  variables=variables)
-                      ] + already_sampled
+                condition.domain.sample(n=n, mode=mode, variables=variables)
+            ] + already_sampled
             pts = merge_tensors(samples)
-            if (
-                    set(pts.labels).issubset(
-                        sorted(self.problem.input_variables))
-            ):
+            if (set(pts.labels).issubset(sorted(self.problem.input_variables))):
                 pts = pts.sort_labels()
                 if sorted(pts.labels) == sorted(self.problem.input_variables):
                     self._is_conditions_ready[loc] = True

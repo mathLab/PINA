@@ -1,7 +1,6 @@
 __all__ = [
-    "Trainer", "LabelTensor", "Plotter", "Condition",
-    "SamplePointDataset", "PinaDataModule", "PinaDataLoader",
-    'TorchOptimizer', 'Graph'
+    "Trainer", "LabelTensor", "Plotter", "Condition", "SamplePointDataset",
+    "PinaDataModule", "PinaDataLoader", 'TorchOptimizer', 'Graph'
 ]
 
 from .meta import *

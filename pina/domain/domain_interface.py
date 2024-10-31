@@ -38,8 +38,7 @@ class DomainInterface(metaclass=ABCMeta):
             if value not in DomainInterface.available_sampling_modes:
                 raise TypeError(f"mode {value} not valid. Expected at least "
                                 "one in "
-                                f"{DomainInterface.available_sampling_modes}."
-                                )
+                                f"{DomainInterface.available_sampling_modes}.")
 
     @abstractmethod
     def sample(self):
