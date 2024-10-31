@@ -7,6 +7,7 @@ from ..condition.domain_equation_condition import DomainEquationCondition
 from ..collector import Collector
 from copy import deepcopy
 
+
 class AbstractProblem(metaclass=ABCMeta):
     """
     The abstract `AbstractProblem` class. All the class defining a PINA Problem
@@ -55,7 +56,7 @@ class AbstractProblem(metaclass=ABCMeta):
             if 'input_points' in v.keys():
                 to_return[k] = v['input_points']
         return to_return
-    
+
     def __deepcopy__(self, memo):
         """
         Implements deepcopy for the
@@ -116,9 +117,11 @@ class AbstractProblem(metaclass=ABCMeta):
         """
         return self._conditions
 
-    def discretise_domain(
-        self, n, mode="random", variables="all", locations="all"
-    ):
+    def discretise_domain(self,
+                          n,
+                          mode="random",
+                          variables="all",
+                          locations="all"):
         """
         Generate a set of points to span the `Location` of all the conditions of
         the problem.
@@ -170,9 +173,10 @@ class AbstractProblem(metaclass=ABCMeta):
 
         # check correct location
         if locations == "all":
-            locations = [name for name in self.conditions.keys()
-                         if isinstance(self.conditions[name],
-                                       DomainEquationCondition)]
+            locations = [
+                name for name in self.conditions.keys()
+                if isinstance(self.conditions[name], DomainEquationCondition)
+            ]
         else:
             if not isinstance(locations, (list)):
                 locations = [locations]

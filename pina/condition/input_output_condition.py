@@ -1,10 +1,10 @@
-
 import torch
 
 from .condition_interface import ConditionInterface
 from ..label_tensor import LabelTensor
 from ..graph import Graph
 from ..utils import check_consistency
+
 
 class InputOutputPointsCondition(ConditionInterface):
     """
