@@ -1,7 +1,7 @@
 PINA Team
 ==============
 
-PINA is currently developed in the `SISSA MathLab <https://mathlab.sissa.it/>`_, in colaboration with `Fast Computing <https://www.fastcomputing.net/>`_.
+PINA is currently developed in the `SISSA MathLab <https://mathlab.sissa.it/>`_, in collaboration with `Fast Computing <https://www.fastcomputing.net/>`_.
 
 A significant part of PINA has been written either as a by-product for other projects people were funded for, or by people on university-funded positions.
 There are probably many of such projects that have led to some development of PINA. We are very grateful for this support!

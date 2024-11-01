@@ -1,6 +1,11 @@
 Tutorial: Reduced order model (POD-RBF or POD-NN) for parametric problems
 =========================================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial8/tutorial.ipynb
+
 The tutorial aims to show how to employ the **PINA** library in order to
 apply a reduced order modeling technique [1]. Such methodologies have
 several similarities with machine learning approaches, since the main
@@ -31,6 +36,15 @@ minimum PINA version to run this tutorial is the ``0.1``.
 
 .. code:: ipython3
 
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
+      
     %matplotlib inline
 
     import matplotlib.pyplot as plt

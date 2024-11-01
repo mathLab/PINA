@@ -1,6 +1,12 @@
 Tutorial: Two dimensional Wave problem with hard constraint
 ===========================================================
 
+|Open In Colab|
+
+.. |Open In Colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial3/tutorial.ipynb
+
+
 In this tutorial we present how to solve the wave equation using hard
 constraint PINNs. For doing so we will build a costum ``torch`` model
 and pass it to the ``PINN`` solver.
@@ -8,6 +14,15 @@ and pass it to the ``PINN`` solver.
 First of all, some useful imports.
 
 .. code:: ipython3
+
+    ## routine needed to run the notebook on Google Colab
+    try:
+      import google.colab
+      IN_COLAB = True
+    except:
+      IN_COLAB = False
+    if IN_COLAB:
+      !pip install "pina-mathlab"
 
     import torch
     
