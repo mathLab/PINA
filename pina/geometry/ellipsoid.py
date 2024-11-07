@@ -275,13 +275,18 @@ class EllipsoidDomain(Location):
 
             return result
 
+        if variables == "all":
+            variables = self.variables
+        elif isinstance(variables, (list, tuple)):
+            variables = sorted(variables)
+
         if self.fixed_ and (not self.range_):
-            return _single_points_sample(n, variables)
+            return _single_points_sample(n, variables).extract(variables)
 
         if variables == "all":
             variables = self.variables
 
         if mode in ["random"]:
-            return _Nd_sampler(n, mode, variables)
+            return _Nd_sampler(n, mode, variables).extract(variables)
         else:
             raise NotImplementedError(f"mode={mode} is not implemented.")
