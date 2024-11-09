@@ -15,7 +15,8 @@ def issubset(a, b):
     if isinstance(a, range) and isinstance(b, range):
         return a.start <= b.start and a.stop >= b.stop
     return False
-
+MATH_MODULES = {torch.sin, torch.cos, torch.exp, torch.tan, torch.log,
+                 torch.sqrt}
 
 class LabelTensor(torch.Tensor):
     """Torch tensor with a label for any column."""
@@ -47,6 +48,59 @@ class LabelTensor(torch.Tensor):
         self.dim_names = None
         self.full = kwargs.get('full', full_labels)
         self.labels = labels
+
+    @classmethod
+    def __torch_function__(cls, func, types, args=(), kwargs=None):
+        if kwargs is None:
+            kwargs = {}
+        if func in MATH_MODULES:
+            str_labels = func.__name__
+            labels = copy(args[0].stored_labels)
+            lt = super().__torch_function__(func, types, args=args,
+                                            kwargs=kwargs)
+            lt_shape = lt.shape
+
+            if len(lt_shape) - 1 in labels.keys():
+                labels.update({
+                    len(lt_shape) - 1: {
+                        'dof': [f'{str_labels}({i})' for i in
+                                labels[len(lt_shape) - 1]['dof']],
+                        'name': len(lt_shape) - 1
+                    }
+                })
+            lt._labels = labels
+            return lt
+        return super().__torch_function__(func, types, args=args, kwargs=kwargs)
+
+    def __mul__(self, other):
+        lt = super().__mul__(other)
+        if isinstance(other, (int, float)):
+            if hasattr(self, '_labels'):
+                lt._labels = self._labels
+        if isinstance(other, LabelTensor):
+            lt_shape = lt.shape
+            labels = copy(self.stored_labels)
+            other_labels = other.stored_labels
+            check = False
+            for (k, v), (ko, vo) in zip(sorted(labels.items()),
+                                        sorted(other_labels.items())):
+                if k != ko:
+                    raise ValueError('Labels must be the same')
+                if k != len(lt_shape) - 1:
+                    if vo != v:
+                        raise ValueError('Labels must be the same')
+                else:
+                    check = True
+            if check:
+                labels.update({
+                    len(lt_shape) - 1: {'dof': [f'{i}{j}' for i, j in
+                            zip(self.stored_labels[len(lt_shape) - 1]['dof'],
+                            other.stored_labels[len(lt_shape) - 1]['dof'])],
+                            'name': self.stored_labels[len(lt_shape) - 1]['name']}
+                })
+
+            lt._labels = labels
+        return lt
 
     @classmethod
     def __internal_init__(cls,

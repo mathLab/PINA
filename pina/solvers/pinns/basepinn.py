@@ -122,7 +122,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             condition_idx = supervised.condition_indices
         else:
             condition_idx = torch.tensor([])
-
+        loss = torch.tensor(0, dtype=torch.float32)
         for condition_id in torch.unique(condition_idx).tolist():
             condition_name = self._dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
@@ -132,11 +132,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             output_pts = out[condition_idx == condition_id]
             input_pts = pts[condition_idx == condition_id]
 
-            input_pts.labels = pts.labels
-            output_pts.labels = out.labels
-
-            loss = self.loss_data(input_points=input_pts, output_points=output_pts)
-            loss = loss.as_subclass(torch.Tensor)
+            loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
+            loss += loss_.as_subclass(torch.Tensor)
 
         condition_idx = physics.condition_indices
         for condition_id in torch.unique(condition_idx).tolist():
@@ -147,20 +144,18 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             pts = batch.physics.input_points
             input_pts = pts[condition_idx == condition_id]
 
-            input_pts.labels = pts.labels
-            loss = self.loss_phys(pts, condition.equation)
+            loss_ = self.loss_phys(input_pts, condition.equation)
 
             # add condition losses for each epoch
-            condition_losses.append(loss)
+            loss += loss_.as_subclass(torch.Tensor)
 
         # clamp unknown parameters in InverseProblem (if needed)
         self._clamp_params()
 
         # total loss (must be a torch.Tensor)
-        total_loss = sum(condition_losses)
-        return total_loss.as_subclass(torch.Tensor)
+        return loss
 
-    def loss_data(self, input_points, output_points):
+    def loss_data(self, input_pts, output_pts):
         """
         The data loss for the PINN solver. It computes the loss between
         the network output against the true solution. This function
@@ -172,9 +167,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :return: The residual loss averaged on the input coordinates
         :rtype: torch.Tensor
         """
-        loss_value = self.loss(self.forward(input_points), output_points)
-        self.store_log(loss_value=float(loss_value))
-        return loss_value
+        return self._loss(self.forward(input_pts), output_pts)
+
 
     @abstractmethod
     def loss_phys(self, samples, equation):
