@@ -1,8 +1,6 @@
 """
 Batch management module
 """
-from attr import attributes
-
 from .pina_subset import PinaSubset
 
 
@@ -23,7 +21,7 @@ class Batch:
                                   min(dataset_index.start + index.stop,
                                       dataset_index.stop))
             setattr(self, k, PinaSubset(v.dataset, index,
-                                       require_grad=require_grad))
+                                        require_grad=require_grad))
             self.attributes.append(k)
         self.require_grad = require_grad
 

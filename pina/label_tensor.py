@@ -1,10 +1,13 @@
 """ Module for LabelTensor """
 import warnings
-import torch
 from copy import copy, deepcopy
+import torch
 from torch import Tensor
 
 full_labels = True
+MATH_MODULES = {torch.sin, torch.cos, torch.exp, torch.tan, torch.log,
+                torch.sqrt}
+
 
 def issubset(a, b):
     """
@@ -15,8 +18,7 @@ def issubset(a, b):
     if isinstance(a, range) and isinstance(b, range):
         return a.start <= b.start and a.stop >= b.stop
     return False
-MATH_MODULES = {torch.sin, torch.cos, torch.exp, torch.tan, torch.log,
-                 torch.sqrt}
+
 
 class LabelTensor(torch.Tensor):
     """Torch tensor with a label for any column."""
@@ -27,8 +29,7 @@ class LabelTensor(torch.Tensor):
         if isinstance(x, LabelTensor):
             x.full = full
             return x
-        else:
-            return super().__new__(cls, x, *args, **kwargs)
+        return super().__new__(cls, x, *args, **kwargs)
 
     @property
     def tensor(self):
@@ -94,9 +95,12 @@ class LabelTensor(torch.Tensor):
             if check:
                 labels.update({
                     len(lt_shape) - 1: {'dof': [f'{i}{j}' for i, j in
-                            zip(self.stored_labels[len(lt_shape) - 1]['dof'],
-                            other.stored_labels[len(lt_shape) - 1]['dof'])],
-                            'name': self.stored_labels[len(lt_shape) - 1]['name']}
+                                        zip(self.stored_labels[
+                                                len(lt_shape) - 1]['dof'],
+                                            other.stored_labels[
+                                                len(lt_shape) - 1]['dof'])],
+                                        'name': self.stored_labels[
+                                            len(lt_shape) - 1]['name']}
                 })
 
             lt._labels = labels
