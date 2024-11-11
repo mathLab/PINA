@@ -120,30 +120,13 @@ class SupervisedSolver(SolverInterface):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-
-        condition_idx = batch.supervised.condition_indices
-        loss = torch.tensor(0, dtype=torch.float32).to(self.device)
-        batch = batch.supervised
-        for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
-            condition_name = self.trainer.data_module.condition_names[
-                condition_id]
-            condition = self.problem.conditions[condition_name]
-            pts = batch.input_points
-            out = batch.output_points
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError("Something wrong happened.")
-
-            # for data driven mode
-            if not hasattr(condition, "output_points"):
-                raise NotImplementedError(
-                    f"{type(self).__name__} works only in data-driven mode.")
-
-            output_pts = out[condition_idx == condition_id]
-            input_pts = pts[condition_idx == condition_id]
-
+        condition_loss = []
+        batches = batch.get_supervised_data()
+        for points in batches:
+            input_pts, output_pts, _ = points
             loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            loss += loss_.as_subclass(torch.Tensor)
-
+            condition_loss.append(loss_.as_subclass(torch.Tensor))
+        loss = sum(condition_loss)
         self.log("mean_loss", float(loss), prog_bar=True, logger=True,
                  on_epoch=True,
                  on_step=False, batch_size=self.trainer.data_module.batch_size)
@@ -223,7 +206,7 @@ class SupervisedSolver(SolverInterface):
         Solver test step.
         """
 
-        raise NotImplementedError("Test step not implemented.")
+        raise NotImplementedError("Test step not implemented yet.")
 
     def loss_data(self, input_pts, output_pts):
         """

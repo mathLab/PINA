@@ -31,7 +31,7 @@ class Trainer(pytorch_lightning.Trainer):
             and can be choosen from the `pytorch-lightning
             Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_
         """
-        log_every_n_steps = kwargs.get('log_every_n_steps', 0)
+        log_every_n_steps = kwargs.pop('log_every_n_steps', 0)
         super().__init__(log_every_n_steps=log_every_n_steps, **kwargs)
 
         # check inheritance consistency for solver and batch size

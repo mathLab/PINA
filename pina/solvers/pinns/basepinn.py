@@ -113,46 +113,29 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-
         condition_losses = []
-
-        physics = batch.physics
-        if hasattr(batch, 'supervised'):
-            supervised = batch.supervised
-            condition_idx = supervised.condition_indices
-        else:
-            condition_idx = torch.tensor([])
-        loss = torch.tensor(0, dtype=torch.float32)
-        for condition_id in torch.unique(condition_idx).tolist():
+        batches = batch.get_supervised_data()
+        for points in batches:
+            input_pts, output_pts, condition_id = points
             condition_name = self._dataloader.condition_names[condition_id]
-            condition = self.problem.conditions[condition_name]
             self.__logged_metric = condition_name
-            pts = batch.supervised.input_points
-            out = batch.supervised.output_points
-            output_pts = out[condition_idx == condition_id]
-            input_pts = pts[condition_idx == condition_id]
-
             loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            loss += loss_.as_subclass(torch.Tensor)
+            condition_losses.append(loss_.as_subclass(torch.Tensor))
 
-        condition_idx = physics.condition_indices
-        for condition_id in torch.unique(condition_idx).tolist():
-
+        batches = batch.get_physics_data()
+        for points in batches:
+            input_pts, condition_id = points
             condition_name = self._dataloader.condition_names[condition_id]
             condition = self.problem.conditions[condition_name]
             self.__logged_metric = condition_name
-            pts = batch.physics.input_points
-            input_pts = pts[condition_idx == condition_id]
-
             loss_ = self.loss_phys(input_pts, condition.equation)
-
             # add condition losses for each epoch
-            loss += loss_.as_subclass(torch.Tensor)
+            condition_losses.append(loss_.as_subclass(torch.Tensor))
 
         # clamp unknown parameters in InverseProblem (if needed)
         self._clamp_params()
+        loss = sum(condition_losses)
 
-        # total loss (must be a torch.Tensor)
         return loss
 
     def loss_data(self, input_pts, output_pts):
