@@ -61,30 +61,31 @@ class PinaDataModule(LightningDataModule):
         if train_size > 0:
             self.split_names.append('train')
             self.split_length.append(train_size)
-            self.loader_functions['train_dataloader'] = lambda \
-                x: PinaDataLoader(self.splits['train'], self.batch_size,
-                                  self.condition_names)
+        else:
+            self.train_dataloader = super().train_dataloader
+
         if test_size > 0:
             self.split_length.append(test_size)
             self.split_names.append('test')
-            self.loader_functions['test_dataloader'] = lambda x: PinaDataLoader(
-                self.splits['test'], self.batch_size, self.condition_names)
+        else:
+            self.test_dataloader = super().test_dataloader
+
         if val_size > 0:
             self.split_length.append(val_size)
             self.split_names.append('val')
-            self.loader_functions['val_dataloader'] = lambda x: PinaDataLoader(
-                self.splits['val'], self.batch_size, self.condition_names)
+        else:
+            self.val_dataloader = super().val_dataloader
+
         if predict_size > 0:
             self.split_length.append(predict_size)
             self.split_names.append('predict')
-            self.loader_functions[
-                'predict_dataloader'] = lambda x: PinaDataLoader(
-                self.splits['predict'], self.batch_size, self.condition_names)
+        else:
+            self.predict_dataloader = super().predict_dataloader
+
         self.splits = {k: {} for k in self.split_names}
         self.shuffle = shuffle
-
-        for k, v in self.loader_functions.items():
-            setattr(self, k, v.__get__(self, PinaDataModule))
+        self.has_setup_fit = False
+        self.has_setup_test = False
 
     def prepare_data(self):
         if self.datasets is None:
@@ -106,8 +107,12 @@ class PinaDataModule(LightningDataModule):
                     for i in range(len(self.split_length)):
                         self.splits[self.split_names[i]][
                             dataset.data_type] = splits[i]
+            self.has_setup_fit = True
         elif stage == 'test':
-            raise NotImplementedError("Testing pipeline not implemented yet")
+            if self.has_setup_fit is False:
+                raise NotImplementedError(
+                    "You must call setup with stage='fit' "
+                    "first")
         else:
             raise ValueError("stage must be either 'fit' or 'test'")
 
@@ -178,3 +183,31 @@ class PinaDataModule(LightningDataModule):
                 dataset.initialize()
                 datasets.append(dataset)
         self.datasets = datasets
+
+    def val_dataloader(self):
+        """
+        Create the validation dataloader
+        """
+        return PinaDataLoader(self.splits['val'], self.batch_size,
+                              self.condition_names)
+
+    def train_dataloader(self):
+        """
+        Create the training dataloader
+        """
+        return PinaDataLoader(self.splits['train'], self.batch_size,
+                              self.condition_names)
+
+    def test_dataloader(self):
+        """
+        Create the testing dataloader
+        """
+        return PinaDataLoader(self.splits['test'], self.batch_size,
+                              self.condition_names)
+
+    def predict_dataloader(self):
+        """
+        Create the prediction dataloader
+        """
+        return PinaDataLoader(self.splits['predict'], self.batch_size,
+                              self.condition_names)

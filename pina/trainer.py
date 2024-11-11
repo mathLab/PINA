@@ -1,5 +1,5 @@
 """ Trainer module. """
-
+import warnings
 import torch
 import pytorch_lightning
 from .utils import check_consistency
@@ -15,6 +15,7 @@ class Trainer(pytorch_lightning.Trainer):
                  train_size=.7,
                  test_size=.2,
                  val_size=.1,
+                 predict_size=.0,
                  **kwargs):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
@@ -30,8 +31,8 @@ class Trainer(pytorch_lightning.Trainer):
             and can be choosen from the `pytorch-lightning
             Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_
         """
-
-        super().__init__(**kwargs)
+        log_every_n_steps = kwargs.get('log_every_n_steps', 0)
+        super().__init__(log_every_n_steps=log_every_n_steps, **kwargs)
 
         # check inheritance consistency for solver and batch size
         check_consistency(solver, SolverInterface)
@@ -40,9 +41,9 @@ class Trainer(pytorch_lightning.Trainer):
         self.train_size = train_size
         self.test_size = test_size
         self.val_size = val_size
+        self.predict_size = predict_size
         self.solver = solver
         self.batch_size = batch_size
-        self._create_loader()
         self._move_to_device()
         self.data_module = None
 
@@ -83,6 +84,7 @@ class Trainer(pytorch_lightning.Trainer):
                                           train_size=self.train_size,
                                           test_size=self.test_size,
                                           val_size=self.val_size,
+                                          predict_size=self.predict_size,
                                           batch_size=self.batch_size, )
         self.data_module.setup()
 
@@ -91,9 +93,24 @@ class Trainer(pytorch_lightning.Trainer):
         Train the solver method.
         """
         self._create_loader()
-        return super().fit(self.solver,
-                           datamodule=self.data_module,
-                           **kwargs)
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                message="You defined a `validation_step` but have no "
+                        "`val_dataloader`",
+                category=UserWarning
+            )
+            return super().fit(self.solver,
+                               datamodule=self.data_module,
+                               **kwargs)
+
+    def test(self, **kwargs):
+        """
+        Test the solver method.
+        """
+        return super().test(self.solver,
+                            datamodule=self.data_module,
+                            **kwargs)
 
     @property
     def solver(self):

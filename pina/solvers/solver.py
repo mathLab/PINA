@@ -83,7 +83,6 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
                              " optimizers.")
 
         # extra features handling
-
         self._pina_models = models
         self._pina_optimizers = optimizers
         self._pina_schedulers = schedulers

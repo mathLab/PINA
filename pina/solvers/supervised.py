@@ -1,5 +1,6 @@
 """ Module for SupervisedSolver """
 import torch
+from pytorch_lightning.utilities.types import STEP_OUTPUT
 from torch.nn.modules.loss import _Loss
 from ..optim import TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
@@ -75,11 +76,15 @@ class SupervisedSolver(SolverInterface):
                          extra_features=extra_features)
 
         # check consistency
-        check_consistency(loss, (LossInterface, _Loss), subclass=False)
+        check_consistency(loss, (LossInterface, _Loss),
+                          subclass=False)
         self._loss = loss
         self._model = self._pina_models[0]
         self._optimizer = self._pina_optimizers[0]
         self._scheduler = self._pina_schedulers[0]
+        self.validation_condition_losses = {
+            k: {'loss': [],
+                'count': []} for k in self.problem.conditions.keys()}
 
     def forward(self, x):
         """Forward pass implementation for the solver.
@@ -105,7 +110,7 @@ class SupervisedSolver(SolverInterface):
         return ([self._optimizer.optimizer_instance],
                 [self._scheduler.scheduler_instance])
 
-    def training_step(self, batch, batch_idx):
+    def training_step(self, batch):
         """Solver training step.
 
         :param batch: The batch element in the dataloader.
@@ -117,12 +122,14 @@ class SupervisedSolver(SolverInterface):
         """
 
         condition_idx = batch.supervised.condition_indices
-        loss = torch.tensor(0, dtype=torch.float32)
+        loss = torch.tensor(0, dtype=torch.float32).to(self.device)
+        batch = batch.supervised
         for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
-            condition_name = self._dataloader.condition_names[condition_id]
+            condition_name = self.trainer.data_module.condition_names[
+                condition_id]
             condition = self.problem.conditions[condition_name]
-            pts = batch.supervised.input_points
-            out = batch.supervised.output_points
+            pts = batch.input_points
+            out = batch.output_points
             if condition_name not in self.problem.conditions:
                 raise RuntimeError("Something wrong happened.")
 
@@ -134,12 +141,89 @@ class SupervisedSolver(SolverInterface):
             output_pts = out[condition_idx == condition_id]
             input_pts = pts[condition_idx == condition_id]
 
-
             loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
             loss += loss_.as_subclass(torch.Tensor)
 
-        self.log("mean_loss", float(loss), prog_bar=True, logger=True)
+        self.log("mean_loss", float(loss), prog_bar=True, logger=True,
+                 on_epoch=True,
+                 on_step=False, batch_size=self.trainer.data_module.batch_size)
         return loss
+
+    def validation_step(self, batch):
+        """
+        Solver validation step.
+        """
+
+        batch = batch.supervised
+        condition_idx = batch.condition_indices
+        for i in range(condition_idx.min(), condition_idx.max() + 1):
+            condition_name = self.trainer.data_module.condition_names[i]
+            condition = self.problem.conditions[condition_name]
+            pts = batch.input_points
+            out = batch.output_points
+            if condition_name not in self.problem.conditions:
+                raise RuntimeError("Something wrong happened.")
+
+            # for data driven mode
+            if not hasattr(condition, "output_points"):
+                raise NotImplementedError(
+                    f"{type(self).__name__} works only in data-driven mode.")
+
+            output_pts = out[condition_idx == i]
+            input_pts = pts[condition_idx == i]
+
+            loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
+            self.validation_condition_losses[condition_name]['loss'].append(
+                loss_)
+            self.validation_condition_losses[condition_name]['count'].append(
+                len(input_pts))
+
+    def on_validation_epoch_end(self):
+        """
+        Solver validation epoch end.
+        """
+        total_loss = []
+        total_count = []
+        for k, v in self.validation_condition_losses.items():
+            local_counter = torch.tensor(v['count']).to(self.device)
+            n_elements = torch.sum(local_counter)
+            loss = torch.sum(
+                torch.stack(v['loss']) * local_counter) / n_elements
+            loss = loss.as_subclass(torch.Tensor)
+            total_loss.append(loss)
+            total_count.append(n_elements)
+            self.log(
+                k + "_loss",
+                loss,
+                prog_bar=True,
+                logger=True,
+                on_epoch=True,
+                on_step=False,
+                batch_size=self.trainer.data_module.batch_size,
+            )
+        total_count = (torch.tensor(total_count, dtype=torch.float32).
+                       to(self.device))
+        mean_loss = (torch.sum(torch.stack(total_loss) * total_count) /
+                     total_count)
+        self.log(
+            "val_loss",
+            mean_loss,
+            prog_bar=True,
+            logger=True,
+            on_epoch=True,
+            on_step=False,
+            batch_size=self.trainer.data_module.batch_size,
+        )
+        for key in self.validation_condition_losses.keys():
+            self.validation_condition_losses[key]['loss'] = []
+            self.validation_condition_losses[key]['count'] = []
+
+    def test_step(self, batch, batch_idx) -> STEP_OUTPUT:
+        """
+        Solver test step.
+        """
+
+        raise NotImplementedError("Test step not implemented.")
 
     def loss_data(self, input_pts, output_pts):
         """
