@@ -100,7 +100,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         self._optimizer = self._pina_optimizers[0]
         self._scheduler = self._pina_schedulers[0]
 
-    def training_step(self, batch, _):
+
+    def training_step(self, batch):
         """
         The Physics Informed Solver Training Step. This function takes care
         of the physics informed training step, and it must not be override
@@ -113,30 +114,55 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-        condition_losses = []
-        batches = batch.get_supervised_data()
-        for points in batches:
-            input_pts, output_pts, condition_id = points
-            condition_name = self._dataloader.condition_names[condition_id]
-            self.__logged_metric = condition_name
-            loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            condition_losses.append(loss_.as_subclass(torch.Tensor))
 
-        batches = batch.get_physics_data()
-        for points in batches:
-            input_pts, condition_id = points
-            condition_name = self._dataloader.condition_names[condition_id]
-            condition = self.problem.conditions[condition_name]
-            self.__logged_metric = condition_name
-            loss_ = self.loss_phys(input_pts, condition.equation)
-            # add condition losses for each epoch
-            condition_losses.append(loss_.as_subclass(torch.Tensor))
+        condition_loss = []
+        for condition_name, points in batch:
+            if 'output_points' in points:
+                input_pts, output_pts = points['input_points'], points['output_points']
 
+                loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
+                condition_loss.append(loss_.as_subclass(torch.Tensor))
+            else:
+                input_pts = points['input_points']
+
+                condition = self.problem.conditions[condition_name]
+
+                loss_ = self.loss_phys(input_pts.requires_grad_(), condition.equation)
+                condition_loss.append(loss_.as_subclass(torch.Tensor))
+            condition_loss.append(loss_.as_subclass(torch.Tensor))
         # clamp unknown parameters in InverseProblem (if needed)
         self._clamp_params()
-        loss = sum(condition_losses)
+        loss = sum(condition_loss)
+        self.log('train_loss', loss, prog_bar=True, on_epoch=True,
+                 logger=True, batch_size=self.get_batch_size(batch),
+                 sync_dist=True)
 
         return loss
+
+    def validation_step(self, batch):
+        """
+        TODO: add docstring
+        """
+        condition_loss = []
+        for condition_name, points in batch:
+            if 'output_points' in points:
+                input_pts, output_pts = points['input_points'], points['output_points']
+                loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
+                condition_loss.append(loss_.as_subclass(torch.Tensor))
+            else:
+                input_pts = points['input_points']
+
+                condition = self.problem.conditions[condition_name]
+                with torch.set_grad_enabled(True):
+                    loss_ = self.loss_phys(input_pts.requires_grad_(), condition.equation)
+                condition_loss.append(loss_.as_subclass(torch.Tensor))
+            condition_loss.append(loss_.as_subclass(torch.Tensor))
+        # clamp unknown parameters in InverseProblem (if needed)
+
+        loss = sum(condition_loss)
+        self.log('val_loss', loss, on_epoch=True, prog_bar=True,
+                 logger=True, batch_size=self.get_batch_size(batch),
+                 sync_dist=True)
 
     def loss_data(self, input_pts, output_pts):
         """
@@ -144,14 +170,13 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         the network output against the true solution. This function
         should not be override if not intentionally.
 
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
+        :param LabelTensor input_pts: The input to the neural networks.
+        :param LabelTensor output_pts: The true solution to compare the
             network solution.
         :return: The residual loss averaged on the input coordinates
         :rtype: torch.Tensor
         """
         return self._loss(self.forward(input_pts), output_pts)
-
 
     @abstractmethod
     def loss_phys(self, samples, equation):
@@ -202,14 +227,17 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :param str name: The name of the loss.
         :param torch.Tensor loss_value: The value of the loss.
         """
+        batch_size = self.trainer.data_module.batch_size \
+            if self.trainer.data_module.batch_size is not None else 999
+
         self.log(
             self.__logged_metric + "_loss",
             loss_value,
             prog_bar=True,
             logger=True,
             on_epoch=True,
-            on_step=False,
-            batch_size=self._dataloader.batch_size,
+            on_step=True,
+            batch_size=batch_size,
         )
         self.__logged_res_losses.append(loss_value)
 

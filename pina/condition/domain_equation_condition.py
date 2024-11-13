@@ -16,7 +16,7 @@ class DomainEquationCondition(ConditionInterface):
     condition_type = ['physics']
     def __init__(self, domain, equation):
         """
-        TODO
+        TODO : add docstring
         """
         super().__init__()
         self.domain = domain
@@ -24,7 +24,7 @@ class DomainEquationCondition(ConditionInterface):
 
     def __setattr__(self, key, value):
         if key == 'domain':
-            check_consistency(value, (DomainInterface))
+            check_consistency(value, (DomainInterface, str))
             DomainEquationCondition.__dict__[key].__set__(self, value)
         elif key == 'equation':
             check_consistency(value, (EquationInterface))

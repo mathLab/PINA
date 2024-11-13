@@ -119,9 +119,8 @@ class PINN(PINNInterface):
         """
         residual = self.compute_residual(samples=samples, equation=equation)
         loss_value = self.loss(
-            torch.zeros_like(residual, requires_grad=True), residual
+            torch.zeros_like(residual), residual
         )
-        self.store_log(loss_value=float(loss_value))
         return loss_value
 
     def configure_optimizers(self):
@@ -134,7 +133,18 @@ class PINN(PINNInterface):
         """
         # if the problem is an InverseProblem, add the unknown parameters
         # to the parameters that the optimizer needs to optimize
+
+
         self._optimizer.hook(self._model.parameters())
+        if isinstance(self.problem, InverseProblem):
+            self._optimizer.optimizer_instance.add_param_group(
+                    {
+                        "params": [
+                            self._params[var]
+                            for var in self.problem.unknown_variables
+                        ]
+                    }
+                )
         self._scheduler.hook(self._optimizer)
         return ([self._optimizer.optimizer_instance],
                 [self._scheduler.scheduler_instance])

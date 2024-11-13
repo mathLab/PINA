@@ -1,4 +1,5 @@
 import torch
+import torch_geometric
 
 from .condition_interface import ConditionInterface
 from ..label_tensor import LabelTensor
@@ -16,7 +17,7 @@ class InputOutputPointsCondition(ConditionInterface):
     condition_type = ['supervised']
     def __init__(self, input_points, output_points):
         """
-        TODO
+        TODO : add docstring
         """
         super().__init__()
         self.input_points = input_points
@@ -24,7 +25,7 @@ class InputOutputPointsCondition(ConditionInterface):
 
     def __setattr__(self, key, value):
         if (key == 'input_points') or (key == 'output_points'):
-            check_consistency(value, (LabelTensor, Graph, torch.Tensor))
+            check_consistency(value, (LabelTensor, Graph, torch.Tensor, torch_geometric.data.Data))
             InputOutputPointsCondition.__dict__[key].__set__(self, value)
         elif key in ('_problem', '_condition_type'):
             super().__setattr__(key, value)
