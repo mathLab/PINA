@@ -231,9 +231,9 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
                 input_.shape[0], len(components), device=output_.device
             )
             labels = [None] * len(components)
-            for idx, ci in enumerate(components):
-                result[:, idx] = scalar_laplace(output_, input_, ci, d).flatten()
-                labels[idx] = f"dd{ci}"
+            for idx, c in enumerate(components):
+                result[:, idx] = scalar_laplace(output_, input_, c, d).flatten()
+                labels[idx] = f"dd{c}"
 
     result = result.as_subclass(LabelTensor)
     result.labels = labels
