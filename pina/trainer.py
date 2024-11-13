@@ -1,13 +1,13 @@
 """ Trainer module. """
 import warnings
 import torch
-import pytorch_lightning
+import lightning
 from .utils import check_consistency
 from .data import PinaDataModule
 from .solvers.solver import SolverInterface
 
 
-class Trainer(pytorch_lightning.Trainer):
+class Trainer(lightning.pytorch.Trainer):
 
     def __init__(self,
                  solver,
@@ -33,6 +33,9 @@ class Trainer(pytorch_lightning.Trainer):
         """
         log_every_n_steps = kwargs.pop('log_every_n_steps', 0)
         super().__init__(log_every_n_steps=log_every_n_steps, **kwargs)
+
+        strategy = kwargs.get('strategy', None)
+
 
         # check inheritance consistency for solver and batch size
         check_consistency(solver, SolverInterface)
@@ -72,21 +75,14 @@ class Trainer(pytorch_lightning.Trainer):
             raise RuntimeError('Cannot create Trainer if not all conditions '
                                'are sampled. The Trainer got the following:\n'
                                f'{error_message}')
-        devices = self._accelerator_connector._parallel_devices
-
-        if len(devices) > 1:
-            raise RuntimeError("Parallel training is not supported yet.")
-
-        device = devices[0]
-
-        self.data_module = PinaDataModule(problem=self.solver.problem,
-                                          device=device,
+        self.data_module = PinaDataModule(collector=self.solver.problem.collector,
                                           train_size=self.train_size,
                                           test_size=self.test_size,
                                           val_size=self.val_size,
                                           predict_size=self.predict_size,
                                           batch_size=self.batch_size, )
-        self.data_module.setup()
+        if self.batch_size is None:
+            self.data_module.setup()
 
     def train(self, **kwargs):
         """
@@ -100,6 +96,7 @@ class Trainer(pytorch_lightning.Trainer):
                         "`val_dataloader`",
                 category=UserWarning
             )
+
             return super().fit(self.solver,
                                datamodule=self.data_module,
                                **kwargs)

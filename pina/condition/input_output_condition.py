@@ -16,7 +16,7 @@ class InputOutputPointsCondition(ConditionInterface):
     condition_type = ['supervised']
     def __init__(self, input_points, output_points):
         """
-        TODO
+        TODO : add docstring
         """
         super().__init__()
         self.input_points = input_points

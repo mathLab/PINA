@@ -68,7 +68,7 @@ class Collector:
             condition = self.problem.conditions[loc]
             keys = ["input_points", "equation"]
             # if the condition is not ready, we get and store the data
-            if (not self._is_conditions_ready[loc]):
+            if not self._is_conditions_ready[loc]:
                 # if it is the first time we sample
                 if not self.data_collections[loc]:
                     already_sampled = []
@@ -87,7 +87,7 @@ class Collector:
                 condition.domain.sample(n=n, mode=mode, variables=variables)
             ] + already_sampled
             pts = merge_tensors(samples)
-            if (set(pts.labels).issubset(sorted(self.problem.input_variables))):
+            if set(pts.labels).issubset(sorted(self.problem.input_variables)):
                 pts = pts.sort_labels()
                 if sorted(pts.labels) == sorted(self.problem.input_variables):
                     self._is_conditions_ready[loc] = True

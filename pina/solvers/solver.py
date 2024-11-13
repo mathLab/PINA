@@ -2,7 +2,7 @@
 
 from abc import ABCMeta, abstractmethod
 from ..model.network import Network
-import pytorch_lightning
+import lightning
 from ..utils import check_consistency
 from ..problem import AbstractProblem
 from ..optim import Optimizer, Scheduler
@@ -10,7 +10,8 @@ import torch
 import sys
 
 
-class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
+
+class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     """
     Solver base class. This class inherits is a wrapper of
     LightningModule class, inheriting all the
@@ -88,12 +89,20 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
         self._pina_schedulers = schedulers
         self._pina_problem = problem
 
+        self.validation_condition_losses = {
+            k: {'loss': [],
+                'count': []} for k in self.problem.conditions.keys()}
+        self.train_condition_losses = {
+            k: {'loss': [],
+                'count': []} for k in self.problem.conditions.keys()}
+
+
     @abstractmethod
     def forward(self, *args, **kwargs):
         pass
 
     @abstractmethod
-    def training_step(self, batch, batch_idx):
+    def training_step(self, batch):
         pass
 
     @abstractmethod
@@ -142,3 +151,49 @@ class SolverInterface(pytorch_lightning.LightningModule, metaclass=ABCMeta):
                 raise ValueError(
                     f'{self.__name__} dose not support condition '
                     f'{condition.condition_type}')
+
+    def epoch_logger(self, name):
+        if name == 'train':
+            losses_dict = self.train_condition_losses
+        elif name == 'val':
+            losses_dict = self.validation_condition_losses
+        total_loss = []
+        total_count = []
+        for k, v in losses_dict.items():
+            local_counter = torch.tensor(v['count']).to(self.device)
+            n_elements = torch.sum(local_counter)
+            loss = torch.sum(
+                torch.stack(v['loss']) * local_counter) / n_elements
+            loss = loss.as_subclass(torch.Tensor)
+            total_loss.append(loss)
+            total_count.append(n_elements)
+            self.log(
+                k + f"_{name}_loss",
+                loss,
+                prog_bar=True,
+                logger=True,
+                on_epoch=True,
+                on_step=False,
+                batch_size=self.trainer.data_module.batch_size,
+                )
+        total_count = (torch.tensor(total_count, dtype=torch.float32).
+                       to(self.device))
+        mean_loss = (torch.sum(torch.stack(total_loss) * total_count) /
+                     total_count)
+        self.log(
+            f"_{name}_loss",
+            mean_loss,
+            prog_bar=True,
+            logger=True,
+            on_epoch=True,
+            on_step=False,
+            batch_size=self.trainer.data_module.batch_size,
+        )
+        if name == 'val':
+            self.validation_condition_losses = {
+                k: {'loss': [],
+                    'count': []} for k in self.problem.conditions.keys()}
+        elif name == 'train':
+            self.train_condition_losses = {
+                k: {'loss': [],
+                    'count': []} for k in self.problem.conditions.keys()}

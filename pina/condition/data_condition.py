@@ -19,7 +19,7 @@ class DataConditionInterface(ConditionInterface):
 
     def __init__(self, input_points, conditional_variables=None):
         """
-        TODO
+        TODO : add docstring
         """
         super().__init__()
         self.input_points = input_points

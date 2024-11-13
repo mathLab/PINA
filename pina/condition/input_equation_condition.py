@@ -17,7 +17,7 @@ class InputPointsEquationCondition(ConditionInterface):
     condition_type = ['physics']
     def __init__(self, input_points, equation):
         """
-        TODO
+        TODO : add docstring
         """
         super().__init__()
         self.input_points = input_points

@@ -1,6 +1,7 @@
 """ Module for SupervisedSolver """
 import torch
 from pytorch_lightning.utilities.types import STEP_OUTPUT
+from sympy.strategies.branch import condition
 from torch.nn.modules.loss import _Loss
 from ..optim import TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
@@ -47,7 +48,8 @@ class SupervisedSolver(SolverInterface):
                  loss=None,
                  optimizer=None,
                  scheduler=None,
-                 extra_features=None):
+                 extra_features=None,
+                 use_lt=True):
         """
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
@@ -73,10 +75,11 @@ class SupervisedSolver(SolverInterface):
                          problem=problem,
                          optimizers=optimizer,
                          schedulers=scheduler,
-                         extra_features=extra_features)
+                         extra_features=extra_features,
+                         use_lt=use_lt)
 
         # check consistency
-        check_consistency(loss, (LossInterface, _Loss),
+        check_consistency(loss, (LossInterface, _Loss, torch.nn.Module),
                           subclass=False)
         self._loss = loss
         self._model = self._pina_models[0]
@@ -121,85 +124,25 @@ class SupervisedSolver(SolverInterface):
         :rtype: LabelTensor
         """
         condition_loss = []
-        batches = batch.get_supervised_data()
-        for points in batches:
-            input_pts, output_pts, _ = points
+        for condition_name, points in batch.items():
+            input_pts, output_pts = points['input_points'], points['output_points']
             loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
             condition_loss.append(loss_.as_subclass(torch.Tensor))
         loss = sum(condition_loss)
-        self.log("mean_loss", float(loss), prog_bar=True, logger=True,
-                 on_epoch=True,
-                 on_step=False, batch_size=self.trainer.data_module.batch_size)
+        self.log('train_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def validation_step(self, batch):
         """
         Solver validation step.
         """
-
-        batch = batch.supervised
-        condition_idx = batch.condition_indices
-        for i in range(condition_idx.min(), condition_idx.max() + 1):
-            condition_name = self.trainer.data_module.condition_names[i]
-            condition = self.problem.conditions[condition_name]
-            pts = batch.input_points
-            out = batch.output_points
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError("Something wrong happened.")
-
-            # for data driven mode
-            if not hasattr(condition, "output_points"):
-                raise NotImplementedError(
-                    f"{type(self).__name__} works only in data-driven mode.")
-
-            output_pts = out[condition_idx == i]
-            input_pts = pts[condition_idx == i]
-
+        condition_loss = []
+        for condition_name, points in batch.items():
+            input_pts, output_pts = points['input_points'], points['output_points']
             loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            self.validation_condition_losses[condition_name]['loss'].append(
-                loss_)
-            self.validation_condition_losses[condition_name]['count'].append(
-                len(input_pts))
-
-    def on_validation_epoch_end(self):
-        """
-        Solver validation epoch end.
-        """
-        total_loss = []
-        total_count = []
-        for k, v in self.validation_condition_losses.items():
-            local_counter = torch.tensor(v['count']).to(self.device)
-            n_elements = torch.sum(local_counter)
-            loss = torch.sum(
-                torch.stack(v['loss']) * local_counter) / n_elements
-            loss = loss.as_subclass(torch.Tensor)
-            total_loss.append(loss)
-            total_count.append(n_elements)
-            self.log(
-                k + "_loss",
-                loss,
-                prog_bar=True,
-                logger=True,
-                on_epoch=True,
-                on_step=False,
-                batch_size=self.trainer.data_module.batch_size,
-            )
-        total_count = (torch.tensor(total_count, dtype=torch.float32).
-                       to(self.device))
-        mean_loss = (torch.sum(torch.stack(total_loss) * total_count) /
-                     total_count)
-        self.log(
-            "val_loss",
-            mean_loss,
-            prog_bar=True,
-            logger=True,
-            on_epoch=True,
-            on_step=False,
-            batch_size=self.trainer.data_module.batch_size,
-        )
-        for key in self.validation_condition_losses.keys():
-            self.validation_condition_losses[key]['loss'] = []
-            self.validation_condition_losses[key]['count'] = []
+            condition_loss.append(loss_.as_subclass(torch.Tensor))
+        loss = sum(condition_loss)
+        self.log('train_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
 
     def test_step(self, batch, batch_idx) -> STEP_OUTPUT:
         """

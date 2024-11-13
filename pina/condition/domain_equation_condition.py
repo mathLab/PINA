@@ -16,7 +16,7 @@ class DomainEquationCondition(ConditionInterface):
     condition_type = ['physics']
     def __init__(self, domain, equation):
         """
-        TODO
+        TODO : add docstring
         """
         super().__init__()
         self.domain = domain

@@ -119,9 +119,8 @@ class PINN(PINNInterface):
         """
         residual = self.compute_residual(samples=samples, equation=equation)
         loss_value = self.loss(
-            torch.zeros_like(residual, requires_grad=True), residual
+            torch.zeros_like(residual), residual
         )
-        self.store_log(loss_value=float(loss_value))
         return loss_value
 
     def configure_optimizers(self):
