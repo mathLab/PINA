@@ -235,9 +235,9 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
                 result[:, idx] = scalar_laplace(output_, input_, ci, d).flatten()
                 labels[idx] = f"dd{ci}"
 
-        result = result.as_subclass(LabelTensor)
-        result.labels = labels
-        return result
+    result = result.as_subclass(LabelTensor)
+    result.labels = labels
+    return result
 
 
 def advection(output_, input_, velocity_field, components=None, d=None):
