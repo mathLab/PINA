@@ -170,8 +170,7 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
         is calculated. d should be a subset of the input labels. If None, all
         the input variables are considered. Default is None.
     :param str method: used method to calculate Laplacian, defaults to 'std'.
-    :raises ValueError: for vectorial field derivative with respect to
-        all coordinates must be performed.
+
     :raises NotImplementedError: 'divgrad' not implemented as method.
     :return: The tensor containing the result of the Laplacian operator.
     :rtype: LabelTensor
@@ -192,7 +191,6 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
             Laplacian is computed. d should be a subset of the input labels.
             If None, all the input variables are considered. Default is None.
 
-        :raises RuntimeError: a vectorial function is passed.
         :return: The tensor containing the result of the Laplacian operator.
         :rtype: LabelTensor
         """
@@ -212,9 +210,6 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
     if components is None:
         components = output_.labels
 
-    if len(components) != len(d) and len(components) != 1:
-        raise ValueError
-
     if method == "divgrad":
         raise NotImplementedError("divgrad not implemented as method")
         # TODO fix
@@ -228,7 +223,8 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
         else:
             result = torch.empty(
-                input_.shape[0], len(components), device=output_.device
+                size=(input_.shape[0], len(components)), 
+                dtype=output_.dtype, device=output_.device
             )
             labels = [None] * len(components)
             for idx, c in enumerate(components):
