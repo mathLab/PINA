@@ -223,7 +223,7 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
         else:
             result = torch.empty(
-                size=(input_.shape[0], len(components)), 
+                size=(input_.shape[0], len(components)),
                 dtype=output_.dtype, device=output_.device
             )
             labels = [None] * len(components)
