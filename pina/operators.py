@@ -184,7 +184,7 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
             Laplacian. It has to be a column tensor.
         :param LabelTensor input_: the input tensor with respect to which
             computing the Laplacian.
-        :param list(str) components: the name of the output variables to 
+        :param list(str) components: the name of the output variables to
             calculate the Laplacian for. It should be a subset of the output
             labels. If None, all the output variables are considered.
         :param list(str) d: the name of the input variables on which the
@@ -224,7 +224,8 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
         else:
             result = torch.empty(
                 size=(input_.shape[0], len(components)),
-                dtype=output_.dtype, device=output_.device
+                dtype=output_.dtype,
+                device=output_.device,
             )
             labels = [None] * len(components)
             for idx, c in enumerate(components):
