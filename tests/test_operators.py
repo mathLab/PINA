@@ -27,7 +27,7 @@ def test_grad_scalar_output():
     assert grad_tensor_s.labels == [
         f'd{tensor_s.labels[0]}d{i}' for i in inp.labels
     ]
-    assert all((grad_tensor_s - true_val == 0).flatten())
+    assert torch.allclose(grad_tensor_s, true_val)
 
     grad_tensor_s = grad(tensor_s, inp, d=['x', 'y'])
     true_val = 2*inp.extract(['x', 'y'])
@@ -35,7 +35,7 @@ def test_grad_scalar_output():
     assert grad_tensor_s.labels == [
         f'd{tensor_s.labels[0]}d{i}' for i in ['x', 'y']
     ]
-    assert all((grad_tensor_s - true_val == 0).flatten())
+    assert torch.allclose(grad_tensor_s, true_val)
 
 
 def test_grad_vector_output():
@@ -56,7 +56,7 @@ def test_grad_vector_output():
     assert grad_tensor_v.labels == [
         f'd{j}d{i}' for j in tensor_v.labels for i in inp.labels
     ]
-    assert all((grad_tensor_v - true_val == 0).flatten())
+    assert torch.allclose(grad_tensor_v, true_val)
 
     grad_tensor_v = grad(tensor_v, inp, d=['x', 'y'])
     true_val = torch.cat(
@@ -72,7 +72,7 @@ def test_grad_vector_output():
     assert grad_tensor_v.labels == [
         f'd{j}d{i}' for j in tensor_v.labels for i in ['x', 'y']
     ]
-    assert all((grad_tensor_v - true_val == 0).flatten())
+    assert torch.allclose(grad_tensor_v, true_val)
 
 
 def test_div_vector_output():
@@ -80,13 +80,13 @@ def test_div_vector_output():
     true_val = 2*torch.sum(inp, dim=1).reshape(-1,1)
     assert div_tensor_v.shape == (20, 1)
     assert div_tensor_v.labels == [f'dadx+dbdy+dcdz']
-    assert all((div_tensor_v - true_val == 0).flatten())
+    assert torch.allclose(div_tensor_v, true_val)
 
     div_tensor_v = div(tensor_v, inp, components=['a', 'b'], d=['x', 'y'])
     true_val = 2*torch.sum(inp.extract(['x', 'y']), dim=1).reshape(-1,1)
     assert div_tensor_v.shape == (inp.shape[0], 1)
     assert div_tensor_v.labels == [f'dadx+dbdy']
-    assert all((div_tensor_v - true_val == 0).flatten())
+    assert torch.allclose(div_tensor_v, true_val)
 
 
 def test_laplacian_scalar_output():
@@ -94,13 +94,13 @@ def test_laplacian_scalar_output():
     true_val = 6*torch.ones_like(laplace_tensor_s)
     assert laplace_tensor_s.shape == tensor_s.shape
     assert laplace_tensor_s.labels == [f"dd{tensor_s.labels[0]}"]
-    assert all((laplace_tensor_s - true_val == 0).flatten())
+    assert torch.allclose(laplace_tensor_s, true_val)
 
     laplace_tensor_s = laplacian(tensor_s, inp, components=['a'], d=['x', 'y'])
     true_val = 4*torch.ones_like(laplace_tensor_s)
     assert laplace_tensor_s.shape == tensor_s.shape
     assert laplace_tensor_s.labels == [f"dd{tensor_s.labels[0]}"]
-    assert all((laplace_tensor_s - true_val == 0).flatten())
+    assert torch.allclose(laplace_tensor_s, true_val)
 
 
 def test_laplacian_vector_output():
@@ -110,7 +110,7 @@ def test_laplacian_vector_output():
     assert laplace_tensor_v.labels == [
         f'dd{i}' for i in tensor_v.labels
     ]
-    assert all((laplace_tensor_v - true_val == 0).flatten())
+    assert torch.allclose(laplace_tensor_v, true_val)
 
     laplace_tensor_v = laplacian(tensor_v,
                                  inp,
@@ -121,4 +121,4 @@ def test_laplacian_vector_output():
     assert laplace_tensor_v.labels == [
         f'dd{i}' for i in ['a', 'b']
     ]
-    assert all((laplace_tensor_v - true_val == 0).flatten())
+    assert torch.allclose(laplace_tensor_v, true_val)
