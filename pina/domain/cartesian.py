@@ -168,8 +168,9 @@ class CartesianDomain(DomainInterface):
             for variable in variables:
                 if variable in self.fixed_.keys():
                     value = self.fixed_[variable]
-                    pts_variable = torch.tensor([[value]
-                                                 ]).repeat(result.shape[0], 1)
+                    pts_variable = torch.tensor([[value]]).repeat(
+                        result.shape[0], 1
+                    )
                     pts_variable = pts_variable.as_subclass(LabelTensor)
                     pts_variable.labels = [variable]
 
@@ -202,8 +203,9 @@ class CartesianDomain(DomainInterface):
             for variable in variables:
                 if variable in self.fixed_.keys():
                     value = self.fixed_[variable]
-                    pts_variable = torch.tensor([[value]
-                                                 ]).repeat(result.shape[0], 1)
+                    pts_variable = torch.tensor([[value]]).repeat(
+                        result.shape[0], 1
+                    )
                     pts_variable = pts_variable.as_subclass(LabelTensor)
                     pts_variable.labels = [variable]
 
