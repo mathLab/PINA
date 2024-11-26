@@ -38,8 +38,6 @@ class PinaDatasetFactory:
     Dataset class for the PIN
     """
     def __new__(cls, conditions_dict, **kwargs):
-        print([isinstance(v['input_points'], list) for v
-               in conditions_dict.values()])
         if len(conditions_dict) == 0:
             raise ValueError('No conditions provided')
         if all([isinstance(v['input_points'], torch.Tensor) for v
@@ -84,7 +82,7 @@ class PinaGraphDataset(PinaDataset):
                 cond_idx = [idx%condition_len for idx in cond_idx]
             to_return_dict[condition] = {k: Batch.from_data_list([v[i]
                                             for i in cond_idx])
-                                if isinstance(v, list) else v[[cond_idx]]
+                                if isinstance(v, list) else v[cond_idx].tensor.reshape(-1, v.size(-1))
                             for k, v in data.items()
                             }
         return to_return_dict

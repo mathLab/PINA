@@ -486,7 +486,6 @@ class LabelTensor(torch.Tensor):
                 return
             if isinstance(index, int):
                 index = [index]
-            print(index)
             if isinstance(index, (list, torch.Tensor)):
                 to_update_labels.update({
                     dim: {
