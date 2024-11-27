@@ -18,12 +18,11 @@ class DataConditionInterface(ConditionInterface):
 
     def __init__(self, input_points, conditional_variables=None):
         """
-        TODO
+        TODO : add docstring
         """
         super().__init__()
         self.input_points = input_points
         self.conditional_variables = conditional_variables
-        self._condition_type = 'unsupervised'
 
     def __setattr__(self, key, value):
         if (key == 'input_points') or (key == 'conditional_variables'):

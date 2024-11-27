@@ -119,6 +119,7 @@ class LowRankBlock(torch.nn.Module):
         :rtype: torch.Tensor
         """
         # extract basis
+        coords = coords.as_subclass(torch.Tensor)
         basis = self._basis(coords)
         # reshape [B, N, D, 2*rank]
         shape = list(basis.shape[:-1]) + [-1, 2 * self.rank]

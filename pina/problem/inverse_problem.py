@@ -1,7 +1,6 @@
 """Module for the ParametricProblem class"""
-
+import torch
 from abc import abstractmethod
-
 from .abstract_problem import AbstractProblem
 
 
