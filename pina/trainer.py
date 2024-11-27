@@ -1,4 +1,5 @@
 """ Trainer module. """
+import warnings
 import torch
 import lightning
 from .utils import check_consistency
