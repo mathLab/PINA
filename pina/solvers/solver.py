@@ -134,18 +134,16 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         return super().on_train_start()
 
     def _check_solver_consistency(self, problem):
-        pass
-        #TODO : Implement this method for the conditions
-        '''
-        
-    
+        """
+        TODO
+        """
         for _, condition in problem.conditions.items():
             if not set(condition.condition_type).issubset(
                     set(self.accepted_condition_types)):
                 raise ValueError(
                     f'{self.__name__} dose not support condition '
                     f'{condition.condition_type}')
-        '''
+
     @staticmethod
     def get_batch_size(batch):
         # Assuming batch is your custom Batch object
