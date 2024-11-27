@@ -93,8 +93,8 @@ class Graph:
 
         logging.debug(f"edge_index computed")
         return Data(
-            x=nodes_data,
-            pos=nodes_coordinates,
+            x=nodes_data.tensor,
+            pos=nodes_coordinates.tensor,
             edge_index=edge_index,
             edge_attr=edges_data,
         )

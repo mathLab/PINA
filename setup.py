@@ -15,7 +15,8 @@ VERSION = meta['__version__']
 KEYWORDS = 'machine-learning deep-learning modeling pytorch ode neural-networks differential-equations pde hacktoberfest pinn physics-informed physics-informed-neural-networks neural-operators equation-learning lightining'
 
 REQUIRED = [
-    'numpy', 'matplotlib', 'torch', 'lightning', 'pytorch_lightning', 'torch_geometric', 'torch-cluster'
+    'numpy', 'matplotlib', 'torch', 'lightning', 'torch_geometric',
+    'torch-cluster', 'pytorch_lightning',
 ]
 
 EXTRAS = {

@@ -114,5 +114,5 @@ def test_slice():
     assert torch.allclose(tensor_view2, data[3])
 
     tensor_view3 = tensor[:, 2]
-    assert tensor_view3.labels == labels[2]
+    assert tensor_view3.labels == [labels[2]]
     assert torch.allclose(tensor_view3, data[:, 2].reshape(-1, 1))
