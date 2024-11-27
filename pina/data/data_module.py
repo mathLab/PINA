@@ -11,12 +11,12 @@ from .dataset import PinaDatasetFactory
 class Collator:
     def __init__(self, max_conditions_lengths, ):
         self.max_conditions_lengths = max_conditions_lengths
-        self.callable_function = self.collate_custom_dataloader if \
+        self.callable_function = self._collate_custom_dataloader if \
             max_conditions_lengths is None else (
             self._collate_standard_dataloader)
 
     @staticmethod
-    def collate_custom_dataloader(batch):
+    def _collate_custom_dataloader(batch):
         return batch[0]
 
     def _collate_standard_dataloader(self, batch):
@@ -82,7 +82,7 @@ class PinaDataModule(LightningDataModule):
                  batch_size=None,
                  shuffle=True,
                  repeat=False,
-                 default_batching=False
+                 automatic_batching=False
                  ):
         """
         Initialize the object, creating dataset based on input problem
@@ -95,7 +95,7 @@ class PinaDataModule(LightningDataModule):
         logging.debug('Start initialization of Pina DataModule')
         logging.info('Start initialization of Pina DataModule')
         super().__init__()
-        self.default_batching = default_batching
+        self.default_batching = automatic_batching
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.repeat = repeat

@@ -14,7 +14,7 @@ class InputPointsEquationCondition(ConditionInterface):
     """
 
     __slots__ = ["input_points", "equation"]
-    condition_type = ['physics']
+
     def __init__(self, input_points, equation):
         """
         TODO : add docstring

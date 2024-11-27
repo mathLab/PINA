@@ -15,7 +15,6 @@ class DataConditionInterface(ConditionInterface):
     """
 
     __slots__ = ["input_points", "conditional_variables"]
-    condition_type = ['unsupervised']
 
     def __init__(self, input_points, conditional_variables=None):
         """

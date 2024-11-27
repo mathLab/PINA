@@ -90,6 +90,9 @@ class AbstractProblem(metaclass=ABCMeta):
             variables += self.spatial_variables
         if hasattr(self, "temporal_variable"):
             variables += self.temporal_variable
+        if hasattr(self, "parameters"):
+            variables += self.parameters
+
 
         return variables
 

@@ -78,9 +78,7 @@ class Trainer(lightning.pytorch.Trainer):
                                           test_size=self.test_size,
                                           val_size=self.val_size,
                                           predict_size=self.predict_size,
-                                          batch_size=self.batch_size, )
-        if self.batch_size is None:
-            self.data_module.setup()
+                                          batch_size=self.batch_size,)
 
     def train(self, **kwargs):
         """

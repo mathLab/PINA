@@ -13,7 +13,7 @@ class DomainEquationCondition(ConditionInterface):
     """
 
     __slots__ = ["domain", "equation"]
-    condition_type = ['physics']
+
     def __init__(self, domain, equation):
         """
         TODO : add docstring

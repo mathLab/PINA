@@ -113,4 +113,5 @@ class Union(OperationInterface):
             # in case number of sampled points is smaller than the number of geometries
             if len(sampled_points) >= n:
                 break
-        return LabelTensor.cat(sampled_points)
+
+        return LabelTensor(torch.cat(sampled_points), labels=self.variables)

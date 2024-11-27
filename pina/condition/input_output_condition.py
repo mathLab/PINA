@@ -14,7 +14,7 @@ class InputOutputPointsCondition(ConditionInterface):
     """
 
     __slots__ = ["input_points", "output_points"]
-    condition_type = ['supervised']
+
     def __init__(self, input_points, output_points):
         """
         TODO : add docstring
