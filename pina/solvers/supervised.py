@@ -1,12 +1,14 @@
 """ Module for SupervisedSolver """
-
 import torch
+from pytorch_lightning.utilities.types import STEP_OUTPUT
+from sympy.strategies.branch import condition
 from torch.nn.modules.loss import _Loss
 from ..optim import TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 from ..loss.loss_interface import LossInterface
+from ..condition import InputOutputPointsCondition
 
 
 class SupervisedSolver(SolverInterface):
@@ -37,7 +39,7 @@ class SupervisedSolver(SolverInterface):
     we are seeking to approximate multiple (discretised) functions given
     multiple (discretised) input functions.
     """
-    accepted_condition_types = ['supervised']
+    accepted_condition_types = [InputOutputPointsCondition.condition_type[0]]
     __name__ = 'SupervisedSolver'
 
     def __init__(self,
@@ -46,7 +48,8 @@ class SupervisedSolver(SolverInterface):
                  loss=None,
                  optimizer=None,
                  scheduler=None,
-                 extra_features=None):
+                 extra_features=None,
+                 use_lt=True):
         """
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
@@ -72,14 +75,19 @@ class SupervisedSolver(SolverInterface):
                          problem=problem,
                          optimizers=optimizer,
                          schedulers=scheduler,
-                         extra_features=extra_features)
+                         extra_features=extra_features,
+                         use_lt=use_lt)
 
         # check consistency
-        check_consistency(loss, (LossInterface, _Loss), subclass=False)
+        check_consistency(loss, (LossInterface, _Loss, torch.nn.Module),
+                          subclass=False)
         self._loss = loss
         self._model = self._pina_models[0]
         self._optimizer = self._pina_optimizers[0]
         self._scheduler = self._pina_schedulers[0]
+        self.validation_condition_losses = {
+            k: {'loss': [],
+                'count': []} for k in self.problem.conditions.keys()}
 
     def forward(self, x):
         """Forward pass implementation for the solver.
@@ -105,7 +113,7 @@ class SupervisedSolver(SolverInterface):
         return ([self._optimizer.optimizer_instance],
                 [self._scheduler.scheduler_instance])
 
-    def training_step(self, batch, batch_idx):
+    def training_step(self, batch):
         """Solver training step.
 
         :param batch: The batch element in the dataloader.
@@ -115,32 +123,36 @@ class SupervisedSolver(SolverInterface):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-        condition_idx = batch.supervised.condition_indices
-
-        for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
-
-            condition_name = self._dataloader.condition_names[condition_id]
-            condition = self.problem.conditions[condition_name]
-            pts = batch.supervised.input_points
-            out = batch.supervised.output_points
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError("Something wrong happened.")
-
-            # for data driven mode
-            if not hasattr(condition, "output_points"):
-                raise NotImplementedError(
-                    f"{type(self).__name__} works only in data-driven mode.")
-            output_pts = out[condition_idx == condition_id]
-            input_pts = pts[condition_idx == condition_id]
-
-            input_pts.labels = pts.labels
-            output_pts.labels = out.labels
-
-            loss = self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            loss = loss.as_subclass(torch.Tensor)
-
-        self.log("mean_loss", float(loss), prog_bar=True, logger=True)
+        condition_loss = []
+        for condition_name, points in batch:
+            input_pts, output_pts = points['input_points'], points['output_points']
+            loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
+            condition_loss.append(loss_.as_subclass(torch.Tensor))
+        loss = sum(condition_loss)
+        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True,
+                 batch_size=self.get_batch_size(batch), sync_dist=True)
         return loss
+
+    def validation_step(self, batch):
+        """
+        Solver validation step.
+        """
+        condition_loss = []
+        for condition_name, points in batch:
+            input_pts, output_pts = points['input_points'], points['output_points']
+            loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
+            condition_loss.append(loss_.as_subclass(torch.Tensor))
+        loss = sum(condition_loss)
+        self.log('val_loss', loss, prog_bar=True, logger=True,
+                 batch_size=self.get_batch_size(batch), sync_dist=True)
+
+
+    def test_step(self, batch, batch_idx) -> STEP_OUTPUT:
+        """
+        Solver test step.
+        """
+
+        raise NotImplementedError("Test step not implemented yet.")
 
     def loss_data(self, input_pts, output_pts):
         """

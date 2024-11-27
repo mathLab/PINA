@@ -121,7 +121,7 @@ def test_train_cpu():
                       batch_size=5,
                       train_size=1,
                       test_size=0.,
-                      eval_size=0.)
+                      val_size=0.)
     trainer.train()
 test_train_cpu()
 
