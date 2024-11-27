@@ -16,4 +16,3 @@ from .pinns import *
 from .supervised import SupervisedSolver
 from .rom import ReducedOrderModelSolver
 from .garom import GAROM
-from .graph import GraphSupervisedSolver
