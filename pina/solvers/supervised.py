@@ -1,7 +1,6 @@
 """ Module for SupervisedSolver """
 import torch
 from pytorch_lightning.utilities.types import STEP_OUTPUT
-from sympy.strategies.branch import condition
 from torch.nn.modules.loss import _Loss
 from ..optim import TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
