@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 
-full_labels = False
+full_labels = True
 MATH_FUNCTIONS = {torch.sin, torch.cos}
 
 class LabelTensor(torch.Tensor):
