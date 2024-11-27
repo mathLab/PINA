@@ -7,7 +7,6 @@ from .solver import SolverInterface
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 from ..loss.loss_interface import LossInterface
-from ..condition import InputOutputPointsCondition
 
 
 class SupervisedSolver(SolverInterface):
@@ -38,7 +37,6 @@ class SupervisedSolver(SolverInterface):
     we are seeking to approximate multiple (discretised) functions given
     multiple (discretised) input functions.
     """
-    accepted_condition_types = [InputOutputPointsCondition.condition_type[0]]
     __name__ = 'SupervisedSolver'
 
     def __init__(self,
