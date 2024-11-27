@@ -6,44 +6,55 @@ from ..label_tensor import LabelTensor
 from torch.utils.data import DataLoader, BatchSampler, SequentialSampler, \
     RandomSampler
 from torch.utils.data.distributed import DistributedSampler
-from functools import partial
 from .dataset import PinaDatasetFactory
 
+class Collator:
+    def __init__(self, max_conditions_lengths, ):
+        self.max_conditions_lengths = max_conditions_lengths
+        self.callable_function = self.collate_custom_dataloader if \
+            max_conditions_lengths is None else (
+            self._collate_standard_dataloader)
 
-def collate_dummy(batch):
-    return batch[0]
+    @staticmethod
+    def collate_custom_dataloader(batch):
+        return batch[0]
 
+    def _collate_standard_dataloader(self, batch):
+        """
+        Function used to collate the batch
+        """
+        batch_dict = {}
+        if isinstance(batch, dict):
+            return batch
+        conditions_names = batch[0].keys()
 
-def collate_fn(batch, max_conditions_lengths):
-    """
-    Function used to collate the batch
-    """
-    batch_dict = {}
-    if isinstance(batch, dict):
-        return batch
-    conditions_names = batch[0].keys()
+        # Condition names
+        for condition_name in conditions_names:
+            single_cond_dict = {}
+            condition_args = batch[0][condition_name].keys()
+            for arg in condition_args:
+                data_list = [batch[idx][condition_name][arg] for idx in range(
+                    min(len(batch),
+                    self.max_conditions_lengths[condition_name]))]
+                if isinstance(data_list[0], LabelTensor):
+                    single_cond_dict[arg] = LabelTensor.stack(data_list)
+                elif isinstance(data_list[0], torch.Tensor):
+                    single_cond_dict[arg] = torch.stack(data_list)
+                else:
+                    raise NotImplementedError(
+                        f"Data type {type(data_list[0])} not supported")
+            batch_dict[condition_name] = single_cond_dict
+        return batch_dict
 
-    # Condition names
-    for condition_name in conditions_names:
-        single_cond_dict = {}
-        condition_args = batch[0][condition_name].keys()
-        for arg in condition_args:
-            data_list = [batch[idx][condition_name][arg] for idx in range(
-                min(len(batch), max_conditions_lengths[condition_name]))]
-            if isinstance(data_list[0], LabelTensor):
-                single_cond_dict[arg] = LabelTensor.stack(data_list)
-            elif isinstance(data_list[0], torch.Tensor):
-                single_cond_dict[arg] = torch.stack(data_list)
-            else:
-                raise NotImplementedError(
-                    f"Data type {type(data_list[0])} not supported")
-        batch_dict[condition_name] = single_cond_dict
-    return batch_dict
+    def __call__(self, batch):
+        return self.callable_function(batch)
+
 
 class PinaBatchSampler(BatchSampler):
     def __init__(self, dataset, batch_size, shuffle, sampler=None):
         if sampler is None:
-            if torch.distributed.is_available() and torch.distributed.is_initialized():
+            if (torch.distributed.is_available() and
+                    torch.distributed.is_initialized()):
                 rank = torch.distributed.get_rank()
                 world_size = torch.distributed.get_world_size()
                 sampler = DistributedSampler(dataset, shuffle=shuffle,
@@ -55,7 +66,6 @@ class PinaBatchSampler(BatchSampler):
                     sampler = SequentialSampler(dataset)
         super().__init__(sampler=sampler, batch_size=batch_size,
                          drop_last=False)
-
 
 class PinaDataModule(LightningDataModule):
     """
@@ -71,7 +81,8 @@ class PinaDataModule(LightningDataModule):
                  predict_size=0.,
                  batch_size=None,
                  shuffle=True,
-                 repeat=False
+                 repeat=False,
+                 default_batching=False
                  ):
         """
         Initialize the object, creating dataset based on input problem
@@ -84,7 +95,7 @@ class PinaDataModule(LightningDataModule):
         logging.debug('Start initialization of Pina DataModule')
         logging.info('Start initialization of Pina DataModule')
         super().__init__()
-
+        self.default_batching = default_batching
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.repeat = repeat
@@ -118,7 +129,6 @@ class PinaDataModule(LightningDataModule):
         Perform the splitting of the dataset
         """
         logging.debug('Start setup of Pina DataModule obj')
-
         if stage == 'fit' or stage is None:
             self.train_dataset = PinaDatasetFactory(
                 self.collector_splits['train'],
@@ -128,20 +138,24 @@ class PinaDataModule(LightningDataModule):
                 self.val_dataset = PinaDatasetFactory(
                     self.collector_splits['val'],
                     max_conditions_lengths=self.find_max_conditions_lengths(
-                        'val'))
+                        'val')
+                )
         elif stage == 'test':
             self.test_dataset = PinaDatasetFactory(
                 self.collector_splits['test'],
                 max_conditions_lengths=self.find_max_conditions_lengths(
-                    'test'))
+                    'test')
+            )
         elif stage == 'predict':
             self.predict_dataset = PinaDatasetFactory(
                 self.collector_splits['predict'],
                 max_conditions_lengths=self.find_max_conditions_lengths(
-                                        'predict'))
+                                        'predict')
+            )
         else:
             raise ValueError(
-                "stage must be either 'fit' or 'test' or 'predict'.")
+                "stage must be either 'fit' or 'test' or 'predict'."
+            )
 
     @staticmethod
     def _split_condition(condition_dict, splits_dict):
@@ -172,25 +186,31 @@ class PinaDataModule(LightningDataModule):
         """
         Create the dataset objects putting data
         """
+
+        # ----------- Auxiliary function ------------
+        def _apply_shuffle(condition_dict, len_data):
+            idx = torch.randperm(len_data)
+            for k, v in condition_dict.items():
+                if k == 'equation':
+                    continue
+                if isinstance(v, list):
+                    condition_dict[k] = [v[i] for i in idx]
+                elif isinstance(v, LabelTensor):
+                    condition_dict[k] = LabelTensor(v.tensor[idx],
+                                                    v.labels)
+                elif isinstance(v, torch.Tensor):
+                    condition_dict[k] = v[idx]
+                else:
+                    raise ValueError(f"Data type {type(v)} not supported")
+        # ----------- End auxiliary function ------------
+
         logging.debug('Dataset creation in PinaDataModule obj')
         split_names = list(splits_dict.keys())
         dataset_dict = {name: {} for name in split_names}
         for condition_name, condition_dict in collector.data_collections.items():
             len_data = len(condition_dict['input_points'])
             if self.shuffle:
-                idx = torch.randperm(len_data)
-                for k, v in condition_dict.items():
-                    if k == 'equation':
-                        continue
-                    if isinstance(v, list):
-                        condition_dict[k] = [v[i] for i in idx]
-                    elif isinstance(v, LabelTensor):
-                        condition_dict[k] = LabelTensor(v.tensor[[idx]],
-                                                        v.labels)
-                    elif isinstance(v, torch.Tensor):
-                        condition_dict[k] = v[idx]
-                    else:
-                        raise ValueError(f"Data type {type(v)} not supported")
+                _apply_shuffle(condition_dict, len_data)
             for key, data in self._split_condition(condition_dict,
                                                    splits_dict).items():
                 dataset_dict[key].update({condition_name: data})
@@ -212,44 +232,50 @@ class PinaDataModule(LightningDataModule):
         """
         Create the validation dataloader
         """
+
         batch_size = self.batch_size if self.batch_size is not None else len(
             self.val_dataset)
 
+        # Use default batching in torch DataLoader (good is batch size is small)
+        if self.default_batching:
+            collate = Collator(self.find_max_conditions_lengths('val'))
+            return DataLoader(self.val_dataset, self.batch_size,
+                              collate_fn=collate)
+        collate = Collator(None)
+        # Use custom batching (good if batch size is large)
         sampler = PinaBatchSampler(self.val_dataset, batch_size, shuffle=False)
         return DataLoader(self.val_dataset, sampler=sampler,
-                          collate_fn=collate_dummy)
+                          collate_fn=collate)
 
     def train_dataloader(self):
         """
         Create the training dataloader
         """
+        # Use default batching in torch DataLoader (good is batch size is small)
+        if self.default_batching:
+            collate = Collator(self.find_max_conditions_lengths('train'))
+            return DataLoader(self.train_dataset, self.batch_size,
+                                collate_fn=collate)
+        collate = Collator(None)
+        # Use custom batching (good if batch size is large)
         batch_size = self.batch_size if self.batch_size is not None else len(
             self.train_dataset)
-
         sampler = PinaBatchSampler(self.train_dataset, batch_size,
                                        shuffle=False)
         return DataLoader(self.train_dataset, sampler=sampler,
-                              collate_fn=collate_dummy)
+                              collate_fn=collate)
 
     def test_dataloader(self):
         """
         Create the testing dataloader
         """
-        max_conditions_lengths = self.find_max_conditions_lengths('test')
-        collate_fn_test = partial(collate_fn,
-                                  max_conditions_lengths=max_conditions_lengths)
-        return DataLoader(self.test_dataset, self.batch_size,
-                          collate_fn=collate_fn_test, shuffle=False)
+        raise NotImplementedError("Test dataloader not implemented")
 
     def predict_dataloader(self):
         """
         Create the prediction dataloader
         """
-        max_conditions_lengths = self.find_max_conditions_lengths('predict')
-        collate_fn_predict = partial(collate_fn,
-                                     max_conditions_lengths=max_conditions_lengths)
-        return DataLoader(self.predict_dataset, self.batch_size,
-                          collate_fn=collate_fn_predict, shuffle=False)
+        raise NotImplementedError("Predict dataloader not implemented")
 
     def transfer_batch_to_device(self, batch, device, dataloader_idx):
         """

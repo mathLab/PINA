@@ -15,8 +15,8 @@ VERSION = meta['__version__']
 KEYWORDS = 'physics-informed neural-network'
 
 REQUIRED = [
-    'numpy', 'matplotlib', 'torch', 'lightning', 'pytorch_lightning',
-    'torch_geometric', 'torch-cluster'
+    'numpy', 'matplotlib', 'torch', 'lightning', 'torch_geometric',
+    'torch-cluster', 'pytorch_lightning',
 ]
 
 EXTRAS = {

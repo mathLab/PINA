@@ -1,5 +1,4 @@
 """ Module for LabelTensor """
-import warnings
 from copy import copy, deepcopy
 import torch
 from torch import Tensor

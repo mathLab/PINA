@@ -126,8 +126,6 @@ class SupervisedSolver(SolverInterface):
         condition_loss = []
         for condition_name, points in batch:
             input_pts, output_pts = points['input_points'], points['output_points']
-
-
             loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
             condition_loss.append(loss_.as_subclass(torch.Tensor))
         loss = sum(condition_loss)
