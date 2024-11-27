@@ -3,12 +3,10 @@
 from abc import ABCMeta, abstractmethod
 import torch
 from torch.nn.modules.loss import _Loss
-from ...condition import InputOutputPointsCondition
 from ...solvers.solver import SolverInterface
 from ...utils import check_consistency
 from ...loss.loss_interface import LossInterface
 from ...problem import InverseProblem
-from ...condition import DomainEquationCondition
 from ...optim import TorchOptimizer, TorchScheduler
 
 torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
@@ -26,8 +24,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     to the user to choose which problem the implemented solver inheriting from
     this class is suitable for.
     """
-    accepted_condition_types = [DomainEquationCondition.condition_type[0],
-                                InputOutputPointsCondition.condition_type[0]]
+
     def __init__(
             self,
             models,
