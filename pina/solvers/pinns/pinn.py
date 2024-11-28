@@ -11,7 +11,7 @@ except ImportError:
 
 
 from .basepinn import PINNInterface
-from pina.problem import InverseProblem
+from ...problem import InverseProblem
 
 
 class PINN(PINNInterface):
