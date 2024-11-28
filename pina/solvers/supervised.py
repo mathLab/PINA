@@ -2,6 +2,8 @@
 import torch
 from pytorch_lightning.utilities.types import STEP_OUTPUT
 from torch.nn.modules.loss import _Loss
+
+from ..condition import InputOutputPointsCondition
 from ..optim import TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
 from ..label_tensor import LabelTensor
@@ -37,7 +39,7 @@ class SupervisedSolver(SolverInterface):
     we are seeking to approximate multiple (discretised) functions given
     multiple (discretised) input functions.
     """
-    __name__ = 'SupervisedSolver'
+    accepted_conditions_types = InputOutputPointsCondition
 
     def __init__(self,
                  problem,

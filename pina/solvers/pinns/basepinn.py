@@ -3,6 +3,8 @@
 from abc import ABCMeta, abstractmethod
 import torch
 from torch.nn.modules.loss import _Loss
+from ...condition import InputOutputPointsCondition, \
+    InputPointsEquationCondition, DomainEquationCondition
 from ...solvers.solver import SolverInterface
 from ...utils import check_consistency
 from ...loss.loss_interface import LossInterface
@@ -24,6 +26,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     to the user to choose which problem the implemented solver inheriting from
     this class is suitable for.
     """
+    accepted_conditions_types = (InputOutputPointsCondition,
+                        InputPointsEquationCondition, DomainEquationCondition)
 
     def __init__(
             self,
