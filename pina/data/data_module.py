@@ -95,7 +95,7 @@ class PinaDataModule(LightningDataModule):
         logging.debug('Start initialization of Pina DataModule')
         logging.info('Start initialization of Pina DataModule')
         super().__init__()
-        self.default_batching = automatic_batching
+        self.automatic_batching = automatic_batching
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.repeat = repeat
@@ -133,24 +133,24 @@ class PinaDataModule(LightningDataModule):
             self.train_dataset = PinaDatasetFactory(
                 self.collector_splits['train'],
                 max_conditions_lengths=self.find_max_conditions_lengths(
-                    'train'))
+                    'train'), automatic_batching=self.automatic_batching)
             if 'val' in self.collector_splits.keys():
                 self.val_dataset = PinaDatasetFactory(
                     self.collector_splits['val'],
                     max_conditions_lengths=self.find_max_conditions_lengths(
-                        'val')
+                        'val'),  automatic_batching=self.automatic_batching
                 )
         elif stage == 'test':
             self.test_dataset = PinaDatasetFactory(
                 self.collector_splits['test'],
                 max_conditions_lengths=self.find_max_conditions_lengths(
-                    'test')
+                    'test'), automatic_batching=self.automatic_batching
             )
         elif stage == 'predict':
             self.predict_dataset = PinaDatasetFactory(
                 self.collector_splits['predict'],
                 max_conditions_lengths=self.find_max_conditions_lengths(
-                                        'predict')
+                    'predict'), automatic_batching=self.automatic_batching
             )
         else:
             raise ValueError(
@@ -237,9 +237,9 @@ class PinaDataModule(LightningDataModule):
             self.val_dataset)
 
         # Use default batching in torch DataLoader (good is batch size is small)
-        if self.default_batching:
+        if self.automatic_batching:
             collate = Collator(self.find_max_conditions_lengths('val'))
-            return DataLoader(self.val_dataset, self.batch_size,
+            return DataLoader(self.val_dataset, batch_size,
                               collate_fn=collate)
         collate = Collator(None)
         # Use custom batching (good if batch size is large)
@@ -252,14 +252,16 @@ class PinaDataModule(LightningDataModule):
         Create the training dataloader
         """
         # Use default batching in torch DataLoader (good is batch size is small)
-        if self.default_batching:
+        batch_size = self.batch_size if self.batch_size is not None else len(
+            self.train_dataset)
+
+        if self.automatic_batching:
             collate = Collator(self.find_max_conditions_lengths('train'))
-            return DataLoader(self.train_dataset, self.batch_size,
+            return DataLoader(self.train_dataset, batch_size,
                                 collate_fn=collate)
         collate = Collator(None)
         # Use custom batching (good if batch size is large)
-        batch_size = self.batch_size if self.batch_size is not None else len(
-            self.train_dataset)
+
         sampler = PinaBatchSampler(self.train_dataset, batch_size,
                                        shuffle=False)
         return DataLoader(self.train_dataset, sampler=sampler,
