@@ -1,5 +1,5 @@
 # PINA-tutorial
-This repository contains the source code for the SIAM MDS 2024 tutorial session on PINA.
+This repository contains the source code for the University of Trieste tutorial session on PINA.
 
 <!-- ## Before starting...
 To set up the environment to reproduce the results run the following commands on the command line:
