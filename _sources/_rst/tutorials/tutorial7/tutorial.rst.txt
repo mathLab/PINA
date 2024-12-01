@@ -46,8 +46,14 @@ In order to achieve both the goals we will need to define an
       IN_COLAB = False
     if IN_COLAB:
       !pip install "pina-mathlab"
+      # get the data
+      !mkdir "data"
+      !wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pinn_solution_0.5_0.5" -O "data/pinn_solution_0.5_0.5"
+      !wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pts_0.5_0.5" -O "data/pts_0.5_0.5"
+
 
     import matplotlib.pyplot as plt
+    plt.style.use('tableau-colorblind10')
     import torch
     from pytorch_lightning.callbacks import Callback
     from pina.problem import SpatialProblem, InverseProblem

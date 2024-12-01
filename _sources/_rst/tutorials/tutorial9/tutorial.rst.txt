@@ -28,6 +28,7 @@ First of all, some useful imports.
       
     import torch
     import matplotlib.pyplot as plt
+    plt.style.use('tableau-colorblind10')
     
     from pina import Condition, Plotter
     from pina.problem import SpatialProblem

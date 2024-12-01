@@ -48,6 +48,7 @@ minimum PINA version to run this tutorial is the ``0.1``.
     %matplotlib inline
 
     import matplotlib.pyplot as plt
+    plt.style.use('tableau-colorblind10')
     import torch
     import pina
 

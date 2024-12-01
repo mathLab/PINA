@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tutorial: Resolution of an inverse problem &#8212; PINA 0.1.2.post2411 documentation</title>
+    <title>Tutorial: Resolution of an inverse problem &#8212; PINA 0.1.2.post2412 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../../../_static/documentation_options.js?v=b86f7f31"></script>
+    <script src="../../../_static/documentation_options.js?v=8f97f55b"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,8 +55,8 @@
     <link rel="prev" title="Tutorial: Two dimensional Wave problem with hard constraint" href="../tutorial3/tutorial.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.2.post2411" />
-    <meta name="docbuild:last-update" content="Nov 01, 2024"/>
+  <meta name="docsearch:version" content="0.1.2.post2412" />
+    <meta name="docbuild:last-update" content="Dec 01, 2024"/>
   </head>
   
   
@@ -122,8 +122,8 @@
       
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2411 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2411 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2412 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2412 documentation - Home"/>
   
   
 </a></div>
@@ -508,8 +508,14 @@ except:
   IN_COLAB = False
 if IN_COLAB:
   !pip install &quot;pina-mathlab&quot;
+  # get the data
+  !mkdir &quot;data&quot;
+  !wget &quot;https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pinn_solution_0.5_0.5&quot; -O &quot;data/pinn_solution_0.5_0.5&quot;
+  !wget &quot;https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pts_0.5_0.5&quot; -O &quot;data/pts_0.5_0.5&quot;
+
 
 import matplotlib.pyplot as plt
+plt.style.use(&#39;tableau-colorblind10&#39;)
 import torch
 from pytorch_lightning.callbacks import Callback
 from pina.problem import SpatialProblem, InverseProblem

@@ -24,9 +24,14 @@ operations.
       IN_COLAB = False
     if IN_COLAB:
       !pip install "pina-mathlab"
+      !mkdir "data"
+      !wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial10/data/Data_KS.mat" -O "data/Data_KS.mat"
+      !wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial10/data/Data_KS2.mat" -O "data/Data_KS2.mat"
+
     
     import torch
     import matplotlib.pyplot as plt
+    plt.style.use('tableau-colorblind10')
     from scipy import io
     from pina import Condition, LabelTensor
     from pina.problem import AbstractProblem
