@@ -113,7 +113,7 @@ class Burgers1DEquation(Equation):
         self.nu = nu 
     
         def equation(input_, output_):
-                return grad(output_, input_, d='x') +                       output_*grad(output_, input_, d='t') -                       self.nu*laplacian(output_, input_, d='x')
+                return grad(output_, input_, d='t') +                       output_*grad(output_, input_, d='x') -                       self.nu*laplacian(output_, input_, d='x')
 
             
         super().__init__(equation)
