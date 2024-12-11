@@ -240,8 +240,7 @@ class SimplexDomain(Location):
             if self._sample_surface:
                 sample_pts = self._sample_boundary_randomly(n)
             else:
-                sample_pts = self._sample_interior_randomly(n, variables
-                                                            )
+                sample_pts = self._sample_interior_randomly(n, variables)
 
         else:
             raise NotImplementedError(f"mode={mode} is not implemented.")
