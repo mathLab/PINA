@@ -41,7 +41,7 @@ class CartesianDomain(DomainInterface):
         :return: Spatial variables defined in ``__init__()``
         :rtype: list[str]
         """
-        return list(self.fixed_.keys()) + list(self.range_.keys())
+        return sorted(list(self.fixed_.keys()) + list(self.range_.keys()))
 
     def update(self, new_domain):
         """Adding new dimensions on the ``CartesianDomain``
@@ -235,16 +235,18 @@ class CartesianDomain(DomainInterface):
 
             return result
 
+        if variables == "all":
+            variables = self.variables
+        elif isinstance(variables, (list, tuple)):
+            variables = sorted(variables)
+
         if self.fixed_ and (not self.range_):
             return _single_points_sample(n, variables)
 
-        if variables == "all":
-            variables = list(self.range_.keys()) + list(self.fixed_.keys())
-
         if mode in ["grid", "chebyshev"]:
-            return _1d_sampler(n, mode, variables)
+            return _1d_sampler(n, mode, variables).extract(variables)
         elif mode in ["random", "lh", "latin"]:
-            return _Nd_sampler(n, mode, variables)
+            return _Nd_sampler(n, mode, variables).extract(variables)
         else:
             raise ValueError(f"mode={mode} is not valid.")
 

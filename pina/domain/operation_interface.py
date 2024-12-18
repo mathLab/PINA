@@ -43,7 +43,10 @@ class OperationInterface(DomainInterface, metaclass=ABCMeta):
         :return: All the variables defined in ``__init__`` in order.
         :rtype: list[str]
         """
-        return self.geometries[0].variables
+        variables = []
+        for geom in self.geometries:
+            variables += geom.variables
+        return sorted(list(set(variables)))
 
     @abstractmethod
     def is_inside(self, point, check_border=False):
