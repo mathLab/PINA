@@ -286,9 +286,6 @@ class EllipsoidDomain(DomainInterface):
         if self.fixed_ and (not self.range_):
             return _single_points_sample(n, variables).extract(variables)
 
-        if variables == "all":
-            variables = self.variables
-
         if mode in self.sample_modes:
             return _Nd_sampler(n, mode, variables).extract(variables)
         else:
