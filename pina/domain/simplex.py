@@ -234,12 +234,11 @@ class SimplexDomain(DomainInterface):
             in ``variables``.
         """
 
-        # if variables == "all": # TODO: check if this is necessary (from 0.1)
-        #     variables = self.variables
-        # elif isinstance(variables, (list, tuple)):
-        #     variables = sorted(variables)
+        if variables == "all":
+            variables = self.variables
+        elif isinstance(variables, (list, tuple)):
+            variables = sorted(variables)
 
-        # if mode in ["random"]:
         if mode in self.sample_modes:
             if self._sample_surface:
                 sample_pts = self._sample_boundary_randomly(n)
