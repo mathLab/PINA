@@ -80,7 +80,7 @@ class SimplexDomain(DomainInterface):
 
     @property
     def variables(self):
-        return self._vertices_matrix.labels
+        return sorted(self._vertices_matrix.labels)
 
     def _build_cartesian(self, vertices):
         """
@@ -233,6 +233,11 @@ class SimplexDomain(DomainInterface):
             the variables are sampled, despite passing different once
             in ``variables``.
         """
+
+        if variables == "all":
+            variables = self.variables
+        elif isinstance(variables, (list, tuple)):
+            variables = sorted(variables)
 
         if mode in self.sample_modes:
             if self._sample_surface:
