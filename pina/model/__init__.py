@@ -8,7 +8,7 @@ __all__ = [
     "FourierIntegralKernel",
     "KernelNeuralOperator",
     "AveragingNeuralOperator",
-    "LowRankNeuralOperator",
+    "LowRankNeuralOperator","GNO"
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward
@@ -18,3 +18,4 @@ from .fno import FNO, FourierIntegralKernel
 from .base_no import KernelNeuralOperator
 from .avno import AveragingNeuralOperator
 from .lno import LowRankNeuralOperator
+from .gno import GNO

@@ -79,15 +79,11 @@ class PinaTensorDataset(PinaDataset):
         return self._getitem_func(idx)
 
 class PinaGraphDataset(PinaDataset):
-    pass
-    """
-    def __init__(self, conditions_dict, max_conditions_lengths):
+    def __init__(self, conditions_dict, max_conditions_lengths,
+                 automatic_batching):
         super().__init__(conditions_dict, max_conditions_lengths)
 
     def __getitem__(self, idx):
-        
-        Getitem method for large batch size
-        
         to_return_dict = {}
         for condition, data in self.conditions_dict.items():
             cond_idx = idx[:self.max_conditions_lengths[condition]]
@@ -97,8 +93,8 @@ class PinaGraphDataset(PinaDataset):
             to_return_dict[condition] = {k: Batch.from_data_list([v[i]
                                             for i in cond_idx])
                             if isinstance(v, list)
-                            else v[cond_idx].tensor.reshape(-1, v.size(-1))
+                            else v[cond_idx].reshape(-1, v.size(-1))
                         for k, v in data.items()
                     }
         return to_return_dict
-    """
+
