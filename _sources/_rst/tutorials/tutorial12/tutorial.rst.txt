@@ -132,8 +132,8 @@ parameter :math:`\nu`:
             self.nu = nu 
         
             def equation(input_, output_):
-                    return grad(output_, input_, d='x') +\
-                           output_*grad(output_, input_, d='t') -\
+                    return grad(output_, input_, d='t') +\
+                           output_*grad(output_, input_, d='x') -\
                            self.nu*laplacian(output_, input_, d='x')
     
                 
