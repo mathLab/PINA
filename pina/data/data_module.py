@@ -2,11 +2,13 @@ import logging
 from lightning.pytorch import LightningDataModule
 import math
 import torch
+import torch_geometric
 from ..label_tensor import LabelTensor
 from torch.utils.data import DataLoader, BatchSampler, SequentialSampler, \
     RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from .dataset import PinaDatasetFactory
+from torch_geometric.data import Batch
 
 class Collator:
     def __init__(self, max_conditions_lengths, ):
@@ -27,7 +29,7 @@ class Collator:
         if isinstance(batch, dict):
             return batch
         conditions_names = batch[0].keys()
-
+        
         # Condition names
         for condition_name in conditions_names:
             single_cond_dict = {}
@@ -40,6 +42,8 @@ class Collator:
                     single_cond_dict[arg] = LabelTensor.stack(data_list)
                 elif isinstance(data_list[0], torch.Tensor):
                     single_cond_dict[arg] = torch.stack(data_list)
+                elif isinstance(data_list[0], torch_geometric.data.Data):
+                    single_cond_dict[arg] = torch_geometric.data.Batch.from_data_list(data_list)
                 else:
                     raise NotImplementedError(
                         f"Data type {type(data_list[0])} not supported")
@@ -49,16 +53,12 @@ class Collator:
     def __call__(self, batch):
         return self.callable_function(batch)
 
-
 class PinaBatchSampler(BatchSampler):
     def __init__(self, dataset, batch_size, shuffle, sampler=None):
         if sampler is None:
             if (torch.distributed.is_available() and
                     torch.distributed.is_initialized()):
-                rank = torch.distributed.get_rank()
-                world_size = torch.distributed.get_world_size()
-                sampler = DistributedSampler(dataset, shuffle=shuffle,
-                                             rank=rank, num_replicas=world_size)
+                sampler = DistributedSampler(dataset, shuffle=shuffle)
             else:
                 if shuffle:
                     sampler = RandomSampler(dataset)
@@ -66,6 +66,10 @@ class PinaBatchSampler(BatchSampler):
                     sampler = SequentialSampler(dataset)
         super().__init__(sampler=sampler, batch_size=batch_size,
                          drop_last=False)
+    
+    def set_epoch(self, epoch):
+        if isinstance(self.sampler, DistributedSampler):
+            self.sampler.set_epoch(epoch)
 
 class PinaDataModule(LightningDataModule):
     """
@@ -95,6 +99,7 @@ class PinaDataModule(LightningDataModule):
         logging.debug('Start initialization of Pina DataModule')
         logging.info('Start initialization of Pina DataModule')
         super().__init__()
+        
         self.automatic_batching = automatic_batching
         self.batch_size = batch_size
         self.shuffle = shuffle

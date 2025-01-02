@@ -82,8 +82,12 @@ class PinaGraphDataset(PinaDataset):
     def __init__(self, conditions_dict, max_conditions_lengths,
                  automatic_batching):
         super().__init__(conditions_dict, max_conditions_lengths)
+        if automatic_batching:
+            self._getitem_func = self._getitem_int
+        else:
+            self._getitem_func = self._getitem_list
 
-    def __getitem__(self, idx):
+    def _getitem_list(self, idx):
         to_return_dict = {}
         for condition, data in self.conditions_dict.items():
             cond_idx = idx[:self.max_conditions_lengths[condition]]
@@ -93,8 +97,17 @@ class PinaGraphDataset(PinaDataset):
             to_return_dict[condition] = {k: Batch.from_data_list([v[i]
                                             for i in cond_idx])
                             if isinstance(v, list)
-                            else v[cond_idx].reshape(-1, v.size(-1))
+                            else v[cond_idx]
                         for k, v in data.items()
                     }
         return to_return_dict
+
+    def _getitem_int(self, idx):
+        return {
+            k: {k_data: v[k_data][idx % len(v['input_points'])] for k_data
+                in v.keys()} for k, v in self.conditions_dict.items()
+        }  
+    
+    def __getitem__(self, idx):
+        return self._getitem_func(idx)
 

@@ -72,12 +72,18 @@ class Trainer(lightning.pytorch.Trainer):
             raise RuntimeError('Cannot create Trainer if not all conditions '
                                'are sampled. The Trainer got the following:\n'
                                f'{error_message}')
+        
+        if isinstance(self.strategy, lightning.pytorch.strategies.ddp.DDPStrategy):
+            automatic_batching = True
+        else:
+            automatic_batching = False
         self.data_module = PinaDataModule(collector=self.solver.problem.collector,
                                           train_size=self.train_size,
                                           test_size=self.test_size,
                                           val_size=self.val_size,
                                           predict_size=self.predict_size,
-                                          batch_size=self.batch_size,)
+                                          batch_size=self.batch_size,
+                                          automatic_batching=automatic_batching)
 
     def train(self, **kwargs):
         """
