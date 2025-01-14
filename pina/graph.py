@@ -1,14 +1,22 @@
 import torch
+import warnings
 from . import LabelTensor
 from torch_geometric.nn import radius_graph, knn_graph
 from torch_geometric.data import Data
 from torch_geometric.utils import to_undirected
 
+
 class Graph:
     def __init__(self, x=None, pos=None, edge_index=None, edge_attr=None,
-                 build_edge_attr=False, undirected=False, **kwargs):
+                 build_edge_attr=False, undirected=False, method=None,**kwargs):
         if edge_index is None:
-            edge_index = self._build_edge_index(pos, **kwargs)
+            if method is None:
+                raise ValueError("Cannot initialize graph object without edge index. "
+                                 "Input edge_index or use set method and related params")
+            edge_index = self._build_edge_index(pos, method, **kwargs)
+        elif method is not None:
+            warnings.warning("Both method and edge_index are not None. "
+                             "Using edge_index provided in input")
 
         if undirected:
             if isinstance(edge_index, list):
