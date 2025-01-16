@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pina-mathlab"
+version = "0.2.0"
+description = "Physic Informed Neural networks for Advance modeling."
+readme = "README.md"
+authors = [
+    { name = "PINA Contributors" },
+]
+license = { text = "MIT" }
+keywords = [
+    "machine-learning", "deep-learning", "modeling", "pytorch", "ode", 
+    "neural-networks", "differential-equations", "pde", "hacktoberfest", 
+    "pinn", "physics-informed", "physics-informed-neural-networks", "neural-operators", "equation-learning", "lightining"
+]
+dependencies = [
+    "numpy", "matplotlib", "lightning", "torch_geometric", "pytorch_lightning"
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>5.0", "sphinx_rtd_theme", "sphinx_copybutton", "sphinx_design", "pydata_sphinx_theme"
+]
+test = [
+    "pytest", "pytest-cov", "scipy"
+]
+
+[project.urls]
+Homepage = "https://github.com/mathLab/PINA"
+Repository = "https://github.com/mathLab/PINA"
+
+[tool.setuptools]
+packages = ["pina"]
+
