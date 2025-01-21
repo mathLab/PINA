@@ -7,7 +7,8 @@ data = torch.rand((20, 3))
 labels_column = {1: {"name": "space", "dof": ['x', 'y', 'z']}}
 labels_row = {0: {"name": "samples", "dof": range(20)}}
 labels_list = ['x', 'y', 'z']
-labels_all = labels_column | labels_row
+labels_all = labels_column.copy()
+labels_all.update(labels_row)
 
 
 @pytest.mark.parametrize("labels",
