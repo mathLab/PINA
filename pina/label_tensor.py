@@ -4,18 +4,13 @@ import torch
 from torch import Tensor
 
 
-full_labels = False
-MATH_FUNCTIONS = {torch.sin, torch.cos}
-
 class LabelTensor(torch.Tensor):
     """Torch tensor with a label for any column."""
 
     @staticmethod
     def __new__(cls, x, labels, *args, **kwargs):
-        full = kwargs.pop("full", full_labels)
 
         if isinstance(x, LabelTensor):
-            x.full = full
             return x
         return super().__new__(cls, x, *args, **kwargs)
 
@@ -34,7 +29,7 @@ class LabelTensor(torch.Tensor):
                     {1: {"name": "space"['a', 'b', 'c'])
 
         """
-        self.full = kwargs.get('full', full_labels)
+        super().__init__()
         if labels is not None:
             self.labels = labels
         else:
@@ -95,51 +90,49 @@ class LabelTensor(torch.Tensor):
         else:
             raise ValueError("labels must be list, dict or string.")
 
-    def _init_labels_from_dict(self, labels):
+    def _init_labels_from_dict(self, labels: dict):
         """
-            Update the internal label representation according to the values
-            passed as input.
+        Update the internal label representation according to the values
+        passed as input.
 
-            :param labels: The label(s) to update.
-            :type labels: dict
-            :raises ValueError: dof list contain duplicates or number of dof
-            does not match with tensor shape
-            """
+        :param labels: The label(s) to update.
+        :type labels: dict
+        :raises ValueError: If the dof list contains duplicates or the number of
+                            dof does not match the tensor shape.
+        """
         tensor_shape = self.shape
 
-        # Set all labels if full_labels is True
-        if hasattr(self, 'full') and self.full:
-            labels = {
-                i: labels[i] if i in labels else {
-                    'name': i, 'dof': range(tensor_shape[i])
-                }
-                for i in range(len(tensor_shape))
-            }
+        def validate_dof(dof_list, dim_size: int):
+            """Validate the 'dof' list for uniqueness and size."""
+            if len(dof_list) != len(set(dof_list)):
+                raise ValueError("dof must be unique")
+            if len(dof_list) != dim_size:
+                raise ValueError(
+                    f"Number of dof ({len(dof_list)}) does not match "
+                    f"tensor shape ({dim_size})")
 
-        for k, v in labels.items():
-
-            # Init labels from str
-            if isinstance(v, str):
-                v = {'name': v, 'dof': range(tensor_shape[k])}
-
-            # Init labels from dict
-            elif isinstance(v, dict):
-                # Only name of the dimension if provided
-                if list(v.keys()) == ['name']:
-                    v['dof'] = range(tensor_shape[k])
-                # Both name and dof are provided
-                elif sorted(list(v.keys())) == ['dof', 'name']:
-                    dof_list = v['dof']
-                    dof_len = len(dof_list)
-                    if dof_len != len(set(dof_list)):
-                        raise ValueError("dof must be unique")
-                    if dof_len != tensor_shape[k]:
-                        raise ValueError(
-                            'Number of dof does not match tensor shape')
+        for dim, label in labels.items():
+            if isinstance(label, dict):
+                if 'name' not in label:
+                    label['name'] = dim
+                if 'dof' not in label:
+                    label['dof'] = range(tensor_shape[dim])
+                if 'dof' in label and 'name' in label:
+                    dof = label['dof']
+                    dof_list = dof if isinstance(dof, (list, range)) else [dof]
+                    if not isinstance(dof_list, (list, range)):
+                        raise ValueError(f"'dof' should be a list or range, not"
+                                         f" {type(dof_list)}")
+                    validate_dof(dof_list, tensor_shape[dim])
+                else:
+                    raise ValueError("Labels dictionary must contain either "
+                                     " both 'name' and 'dof' keys")
             else:
-                raise ValueError('Illegal labels initialization')
-            # Assign labels values
-            self._labels[k] = v
+                raise ValueError(f"Invalid label format for {dim}: Expected "
+                                 f"list or dictionary, got {type(label)}")
+
+            # Assign validated label data to internal labels
+            self._labels[dim] = label
 
     def _init_labels_from_list(self, labels):
         """
@@ -168,61 +161,54 @@ class LabelTensor(torch.Tensor):
         :raises TypeError: Labels are not ``str``.
         :raises ValueError: Label to extract is not in the labels ``list``.
         """
-        # Convert str/int to string
-        def find_names(labels):
-            dim_names = {}
-            for dim in labels.keys():
-                dim_names[labels[dim]['name']] = dim
-            return dim_names
 
+        def get_label_indices(dim_labels, labels_te):
+            if isinstance(labels_te, (int, str)):
+                labels_te = [labels_te]
+            return [dim_labels.index(label) for label in labels_te] if len(
+                labels_te) > 1 else slice(dim_labels.index(labels_te[0]),
+                                          dim_labels.index(labels_te[0]) + 1)
+
+        # Ensure labels_to_extract is a list or dict
         if isinstance(labels_to_extract, (str, int)):
             labels_to_extract = [labels_to_extract]
 
-        # Store useful variables
         labels = copy(self._labels)
-        stored_keys = labels.keys()
-        dim_names = find_names(labels)
-        ndim = len(super().shape)
 
-        # Convert tuple/list to dict (having a list as input
-        # means that we want to extract a values from the last dimension)
-        if isinstance(labels_to_extract, (tuple, list)):
-            if not ndim - 1 in stored_keys:
-                raise ValueError(
-                    "LabelTensor does not have labels in last dimension")
-            name = labels[ndim-1]['name']
-            labels_to_extract = {name: list(labels_to_extract)}
+        # Get the dimension names and the respective dimension index
+        dim_names = {labels[dim]['name']: dim for dim in labels.keys()}
+        ndim = super().ndim
+        tensor = self.tensor.as_subclass(torch.Tensor)
 
-        # If labels_to_extract is not dict then rise error
+        # Convert list/tuple to a dict for the last dimension if applicable
+        if isinstance(labels_to_extract, (list, tuple)):
+            last_dim = ndim - 1
+            dim_name = labels[last_dim]['name']
+            labels_to_extract = {dim_name: list(labels_to_extract)}
+
+        # Validate the labels_to_extract type
         if not isinstance(labels_to_extract, dict):
-            raise ValueError('labels_to_extract must be str or list or dict')
+            raise ValueError(
+                "labels_to_extract must be a string, list, or dictionary.")
 
-        # Initialize list used to perform extraction
-        extractor = [slice(None)]*ndim
-
-        # Loop over labels_to_extract dict
+        # Perform the extraction for each specified dimension
         for dim_name, labels_te in labels_to_extract.items():
-
-            # If label is not find raise value error
-            idx_dim = dim_names.get(dim_name, None)
-            if idx_dim is None:
+            if dim_name not in dim_names:
                 raise ValueError(
-                    'Cannot extract label with is not in original labels')
+                    f"Cannot extract labels for dimension '{dim_name}' as it is"
+                    f" not present in the original labels.")
 
+            idx_dim = dim_names[dim_name]
             dim_labels = labels[idx_dim]['dof']
-            labels_te = [labels_te] if isinstance(labels_te, (int, str)) else labels_te
-            if not isinstance(labels_te, range):
-                #If is done to keep the dimension if there is only one extracted label
-                extractor[idx_dim] = [dim_labels.index(i) for i in labels_te] \
-                    if len(labels_te)>1 else slice(dim_labels.index(labels_te[0]), dim_labels.index(labels_te[0])+1)
-            else:
-                extractor[idx_dim] = slice(labels_te.start, labels_te.stop)
+            indices = get_label_indices(dim_labels, labels_te)
 
-            labels.update({idx_dim: {'dof': labels_te, 'name': dim_name}})
+            extractor = [slice(None)] * ndim
+            extractor[idx_dim] = indices
+            tensor = tensor[tuple(extractor)]
 
-        tensor = super().__getitem__(extractor).as_subclass(LabelTensor)
-        tensor._labels = labels
-        return tensor
+            labels[idx_dim] = {'dof': labels_te, 'name': dim_name}
+
+        return LabelTensor(tensor, labels)
 
     def __str__(self):
         """
@@ -243,62 +229,82 @@ class LabelTensor(torch.Tensor):
         the resulting tensor is of shape `(n+n',m,dof)`
 
         :param tensors: tensors to concatenate
-        :type tensors: list(LabelTensor)
+        :type tensors: list of LabelTensor
         :param dim: dimensions on which you want to perform the operation
-        (default 0)
+        (default is 0)
         :type dim: int
         :rtype: LabelTensor
         :raises ValueError: either number dof or dimensions names differ
         """
-        if len(tensors) == 0:
-            return []
-        if len(tensors) == 1 or isinstance(tensors, LabelTensor):
-            return tensors[0]
+        if not tensors:
+            return []  # Handle empty list
+        if len(tensors) == 1:
+            return tensors[0]  # Return single tensor as-is
 
-        # Perform cat on tensors
-        new_tensor = torch.cat(tensors, dim=dim)
+            # Perform concatenation
+        cat_tensor = torch.cat(tensors, dim=dim)
+        tensors_labels = [tensor.stored_labels for tensor in tensors]
 
-        # --------- Start definition auxiliary function ------
-        # Compute and update labels
-        def create_labels_cat(tensors, dim, tensor_shape):
-            stored_labels = [tensor.stored_labels for tensor in tensors]
-            keys = stored_labels[0].keys()
+        # Check label consistency across tensors, excluding the
+        # concatenation dimension
+        for key in tensors_labels[0].keys():
+            if key != dim:
+                if any(tensors_labels[i][key] != tensors_labels[0][key]
+                       for i in range(len(tensors_labels))):
+                    raise RuntimeError(
+                        f"Tensors must have the same labels along all "
+                        f"dimensions except {dim}.")
 
-            if any(not all(stored_labels[i][k] == stored_labels[0][k] for i in
-                        range(len(stored_labels))) for k in keys if k != dim):
-                raise RuntimeError('tensors must have the same shape and dof')
+        # Copy and update the 'dof' for the concatenation dimension
+        cat_labels = {k: copy(v) for k, v in tensors_labels[0].items()}
 
-            # Copy labels from the first tensor and update the 'dof' for dimension `dim`
-            labels = copy(stored_labels[0])
-            if dim in labels:
-                labels_list = [tensor[dim]['dof'] for tensor in stored_labels]
-                last_dim_dof = range(tensor_shape[dim]) if all(isinstance(label, range)
-                                    for label in labels_list) else sum(labels_list, [])
-                labels[dim]['dof'] = last_dim_dof
-            return labels
-        # --------- End definition auxiliary function ------
-
-        # Update labels
-        if dim in tensors[0].stored_labels.keys():
-            new_tensor_shape = new_tensor.shape
-            labels = create_labels_cat(tensors, dim, new_tensor_shape)
+        # Update labels if the concatenation dimension has labels
+        if dim in tensors[0].stored_labels:
+            if dim in cat_labels:
+                cat_dofs = [label[dim]['dof'] for label in
+                            tensors_labels]
+                cat_labels[dim]['dof'] = sum(cat_dofs, [])
         else:
-            labels = tensors[0].stored_labels
-        new_tensor._labels = labels
-        return new_tensor
+            cat_labels = tensors[0].stored_labels
+
+        # Assign updated labels to the concatenated tensor
+        cat_tensor._labels = cat_labels
+        return cat_tensor
 
     @staticmethod
     def stack(tensors):
+        """
+        Stacks a list of tensors along a new dimension.
+
+        :param tensors: A list of tensors to stack. All tensors must have the
+                        same shape.
+        :type tensors: list of LabelTensor
+        :return: A new tensor obtained by stacking the input tensors,
+                 with the updated labels.
+        :rtype: LabelTensor
+        """
+        # Perform stacking in torch
         new_tensor = torch.stack(tensors)
+
+        # Increase labels keys by 1
         labels = tensors[0]._labels
         labels = {key + 1: value for key, value in labels.items()}
-        if full_labels:
-            new_tensor.labels = labels
-        else:
-            new_tensor._labels = labels
+        new_tensor._labels = labels
         return new_tensor
 
     def requires_grad_(self, mode=True):
+        """
+        Override the requires_grad_ method to update the labels in the new
+        tensor.
+
+        :param mode: A boolean value indicating whether the tensor should track
+                     gradients.If `True`, the tensor will track gradients; if `
+                     False`, it will not.
+        :type mode: bool, optional (default is `True`)
+        :return: The tensor itself with the updated `requires_grad` state and
+                 retained labels.
+        :rtype: LabelTensor
+        """
         lt = super().requires_grad_(mode)
         lt._labels = self._labels
         return lt
@@ -324,38 +330,9 @@ class LabelTensor(torch.Tensor):
         :return: A copy of the tensor.
         :rtype: LabelTensor
         """
-        out = LabelTensor(super().clone(*args, **kwargs), deepcopy(self._labels))
+        out = LabelTensor(super().clone(*args, **kwargs),
+                          deepcopy(self._labels))
         return out
-
-    @staticmethod
-    def summation(tensors):
-        if len(tensors) == 0:
-            raise ValueError('tensors list must not be empty')
-        if len(tensors) == 1:
-            return tensors[0]
-        # Collect all labels
-
-        # Check labels of all the tensors in each dimension
-        if not all(tensor.shape == tensors[0].shape for tensor in tensors) or \
-                not all(tensor.full_labels[i] == tensors[0].full_labels[i] for
-                        tensor in tensors for i in range(tensors[0].ndim - 1)):
-            raise RuntimeError('Tensors must have the same shape and labels')
-
-        last_dim_labels = []
-        data = torch.zeros(tensors[0].tensor.shape).to(tensors[0].device)
-        for tensor in tensors:
-            data += tensor.tensor
-            last_dim_labels.append(tensor.labels)
-
-        last_dim_labels = ['+'.join(items) for items in zip(*last_dim_labels)]
-        labels = {k: copy(v) for k, v in tensors[0].stored_labels.items()}
-        labels.update({
-            tensors[0].ndim - 1: {
-                'dof': last_dim_labels,
-                'name': tensors[0].name
-            }
-        })
-        return LabelTensor(data, labels)
 
     def append(self, tensor, mode='std'):
         if mode == 'std':
@@ -390,132 +367,210 @@ class LabelTensor(torch.Tensor):
         """
         return LabelTensor.cat(label_tensors, dim=0)
 
-        # ---------------------- Start auxiliary function definition -----
-        # This method is used to update labels
+    # This method is used to update labels
     def _update_single_label(self, old_labels, to_update_labels, index, dim,
                              to_update_dim):
-            """
-            TODO
-                :param old_labels: labels from which retrieve data
-                :param to_update_labels: labels to update
-                :param index: index of dof to retain
-                :param dim: label index
-                :return:
-            """
-            old_dof = old_labels[to_update_dim]['dof']
-            if isinstance(index, slice):
-                to_update_labels.update({
-                    dim: {
-                        'dof': old_dof[index],
-                        'name': old_labels[dim]['name']
-                    }
-                })
-                return
-            if isinstance(index, int):
-                index = [index]
-            if isinstance(index, (list, torch.Tensor)):
-                to_update_labels.update({
-                    dim: {
-                        'dof': [old_dof[i] for i in index] if isinstance(old_dof, list) else index,
-                        'name': old_labels[dim]['name']
-                    }
-                })
-                return
-            raise NotImplementedError(f'Getitem not implemented for '
-                                      f'{type(index)} values')
-        # ---------------------- End auxiliary function definition -----
-
-
-    def __getitem__(self, index):
         """
-        TODO: Complete docstring
-        :param index:
+        Update the labels of the tensor by selecting only the labels
+        :param old_labels: labels from which retrieve data
+        :param to_update_labels: labels to update
+        :param index: index of dof to retain
+        :param dim: label index
         :return:
         """
-        # Index are str --> call extract
-        if isinstance(index, str) or (isinstance(index, (tuple, list))
-                                      and all(
-                    isinstance(a, str) for a in index)):
+        old_dof = old_labels[to_update_dim]['dof']
+        label_name = old_labels[dim]['name']
+
+        if isinstance(index, slice):
+            # Handle slicing
+            to_update_labels[dim] = {'dof': old_dof[index], 'name': label_name}
+        elif isinstance(index, int):
+            # Handle single integer index
+            to_update_labels[dim] = {'dof': [old_dof[index]],
+                                     'name': label_name}
+        elif isinstance(index, (list, torch.Tensor)):
+            # Handle lists or tensors
+            indices = [index] if isinstance(index, (int, str)) else index
+            to_update_labels[dim] = {
+                'dof': [old_dof[i] for i in indices] if isinstance(old_dof,
+                                                                   list) else indices,
+                'name': label_name
+            }
+        else:
+            raise NotImplementedError(
+                f"Unsupported index type: {type(index)}. Expected slice, int, "
+                f"list, or torch.Tensor."
+            )
+
+    def __getitem__(self, index):
+        """"
+        Override the __getitem__ method to handle the labels of the tensor.
+        Perform the __getitem__ operation on the tensor and update the labels.
+
+        :param index: The index used to access the item
+        :type index: Union[int, str, tuple, list]
+        :return: A tensor-like object with updated labels.
+        :rtype: LabelTensor
+        :raises KeyError: If an invalid label index is provided.
+        :raises IndexError: If an invalid index is accessed in the tensor.
+        """
+        # Handle string index
+        if isinstance(index, str) or (isinstance(index, (tuple, list)) and all(
+                isinstance(i, str) for i in index)):
             return self.extract(index)
 
-        # Store important variables
-        selected_lt = super().__getitem__(index)
-        stored_labels = self._labels
-        labels = copy(stored_labels)
+        # Retrieve selected tensor and labels
+        selected_tensor = super().__getitem__(index)
+        original_labels = self._labels
+        updated_labels = copy(original_labels)
 
-        # Put here because it is the most common case (int as index).
-        # Used by DataLoader -> put here for efficiency purpose
-        if isinstance(index, list):
-            if 0 in labels.keys():
-                self._update_single_label(stored_labels, labels, index,
-                                          0, 0)
-            selected_lt._labels = labels
-            return selected_lt
-
-        if isinstance(index, int):
-            labels.pop(0, None)
-            labels = {key - 1 if key > 0 else key: value for key, value in
-                      labels.items()}
-            selected_lt._labels = labels
-            return selected_lt
-
-        if not isinstance(index, (tuple, torch.Tensor)):
+        # Ensure the index is iterable
+        if not isinstance(index, tuple):
             index = [index]
 
-        # Ellipsis are used to perform operation on the last dimension
-        if index[0] == Ellipsis:
-            if len(self.shape) in labels:
-                self._update_single_label(stored_labels, labels, index, 0, 0)
-            selected_lt._labels = labels
-            return selected_lt
-
-        i = 0
-        for j, idx in enumerate(index):
-            if j in self.stored_labels.keys():
-                if isinstance(idx, int) or (
-                        isinstance(idx, torch.Tensor) and idx.ndim == 0):
-                    selected_lt = selected_lt.unsqueeze(j)
-                if idx != slice(None):
-                    self._update_single_label(stored_labels, labels, idx, j, i)
-            else:
+        # Update labels based on the index
+        offset = 0
+        for dim, idx in enumerate(index):
+            if dim in self.stored_labels.keys():
                 if isinstance(idx, int):
-                    labels = {key - 1 if key > j else key:
-                                  value for key, value in labels.items()}
+                    selected_tensor = selected_tensor.unsqueeze(dim)
+                if idx != slice(None):
+                    self._update_single_label(original_labels, updated_labels,
+                                              idx, dim, offset)
+            else:
+                # Adjust label keys if dimension is reduced (case of integer
+                # index on a non-labeled dimension)
+                if isinstance(idx, int):
+                    updated_labels = {
+                        key - 1 if key > dim else key: value
+                        for key, value in updated_labels.items()
+                    }
                     continue
-            i += 1
-        selected_lt._labels = labels
-        return selected_lt
+            offset += 1
+
+        # Update the selected tensor's labels
+        selected_tensor._labels = updated_labels
+        return selected_tensor
 
     def sort_labels(self, dim=None):
+        """
+        Sorts the labels along a specified dimension and returns a new tensor
+        with sorted labels.
+
+        :param dim: The dimension along which to sort the labels. If `None`,
+                    the last dimension (`ndim - 1`) is used.
+        :type dim: int, optional
+        :return: A new tensor with sorted labels along the specified dimension.
+        :rtype: LabelTensor
+        """
+
         def arg_sort(lst):
             return sorted(range(len(lst)), key=lambda x: lst[x])
+
         if dim is None:
             dim = self.ndim - 1
         if self.shape[dim] == 1:
             return self
         labels = self.stored_labels[dim]['dof']
         sorted_index = arg_sort(labels)
+        # Define an indexer to sort the tensor along the specified dimension
         indexer = [slice(None)] * self.ndim
+        # Assigned the sorted index to the specified dimension
         indexer[dim] = sorted_index
         return self.__getitem__(tuple(indexer))
 
     def __deepcopy__(self, memo):
+        """
+        Creates a deep copy of the object.
+
+        :param memo: LabelTensor object to be copied.
+        :type memo: LabelTensor
+        :return: A deep copy of the original LabelTensor object.
+        :rtype: LabelTensor
+        """
         cls = self.__class__
         result = cls(deepcopy(self.tensor), deepcopy(self.stored_labels))
         return result
 
     def permute(self, *dims):
+        """
+        Permutes the dimensions of the tensor and the associated labels
+        accordingly.
+
+        :param dims: The dimensions to permute the tensor to.
+        :type dims: tuple, list
+        :return: A new object with permuted dimensions and reordered labels.
+        :rtype: LabelTensor
+        """
+        # Call the base class permute method
         tensor = super().permute(*dims)
+
+        # Update lables
         labels = self._labels
         keys_list = list(*dims)
         labels = {
             keys_list.index(k): labels[k]
             for k in labels.keys()
         }
+
+        # Assign labels to the new tensor
         tensor._labels = labels
         return tensor
 
     def detach(self):
+        """
+        Detaches the tensor from the computation graph and retains the stored
+        labels.
+
+        :return: A new tensor detached from the computation graph.
+        :rtype: LabelTensor
+        """
         lt = super().detach()
-        lt._labels = self.stored_labels
+
+        # Copy the labels to the new tensor only if present
+        if hasattr(self, "_labels"):
+            lt._labels = self.stored_labels
         return lt
+
+    @staticmethod
+    def summation(tensors):
+        """
+        Computes the summation of a list of tensors.
+
+        :param tensors: A list of tensors to sum. All tensors must have the same
+                        shape and labels.
+        :type tensors: list of LabelTensor
+        :return: A new `LabelTensor` containing the element-wise sum of the
+                 input tensors.
+        :rtype: LabelTensor
+        :raises ValueError: If the input `tensors` list is empty.
+        :raises RuntimeError: If the tensors have different shapes and/or
+                              mismatched labels.
+        """
+
+        if not tensors:
+            raise ValueError('The tensors list must not be empty.')
+
+        if len(tensors) == 1:
+            return tensors[0]
+
+        # Initialize result tensor and labels
+        data = torch.zeros_like(tensors[0].tensor).to(tensors[0].device)
+        last_dim_labels = []
+
+        # Accumulate tensors
+        for tensor in tensors:
+            data += tensor.tensor
+            last_dim_labels.append(tensor.labels)
+
+        # Construct last dimension labels
+        last_dim_labels = ['+'.join(items) for items in zip(*last_dim_labels)]
+
+        # Update the labels for the resulting tensor
+        labels = {k: copy(v) for k, v in tensors[0].stored_labels.items()}
+        labels[tensors[0].ndim - 1] = {
+            'dof': last_dim_labels,
+            'name': tensors[0].name
+        }
+
+        return LabelTensor(data, labels)
