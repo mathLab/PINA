@@ -1,6 +1,5 @@
 """ Module for SupervisedSolver """
 import torch
-from pytorch_lightning.utilities.types import STEP_OUTPUT
 from torch.nn.modules.loss import _Loss
 from ..optim import TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
@@ -145,7 +144,7 @@ class SupervisedSolver(SolverInterface):
         self.log('val_loss', loss, prog_bar=True, logger=True,
                  batch_size=self.get_batch_size(batch), sync_dist=True)
 
-    def test_step(self, batch, batch_idx) -> STEP_OUTPUT:
+    def test_step(self, batch, batch_idx):
         """
         Solver test step.
         """
