@@ -1,11 +1,11 @@
 """PINA Callbacks Implementations"""
 
-from pytorch_lightning.core.module import LightningModule
-from pytorch_lightning.trainer.trainer import Trainer
+from lightning.pytorch.core.module import LightningModule
+from lightning.pytorch.trainer.trainer import Trainer
 import torch
 import copy
 
-from pytorch_lightning.callbacks import Callback, TQDMProgressBar
+from lightning.pytorch.callbacks import Callback, TQDMProgressBar
 from lightning.pytorch.callbacks.progress.progress_bar import (
     get_standard_metrics,
 )

@@ -1,7 +1,7 @@
 """PINA Callbacks Implementations"""
 
 import torch
-from pytorch_lightning.callbacks import Callback
+from lightning.pytorch.callbacks import Callback
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 
