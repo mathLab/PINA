@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader, BatchSampler, SequentialSampler, \
 from torch.utils.data.distributed import DistributedSampler
 from .dataset import PinaDatasetFactory
 
+
 class DummyDataloader:
     def __init__(self, dataset, device):
         self.dataset = dataset.get_all_data()
@@ -20,6 +21,7 @@ class DummyDataloader:
 
     def __next__(self):
         return self.dataset
+
 
 class Collator:
     def __init__(self, max_conditions_lengths, ):
@@ -48,7 +50,7 @@ class Collator:
             for arg in condition_args:
                 data_list = [batch[idx][condition_name][arg] for idx in range(
                     min(len(batch),
-                    self.max_conditions_lengths[condition_name]))]
+                        self.max_conditions_lengths[condition_name]))]
                 if isinstance(data_list[0], LabelTensor):
                     single_cond_dict[arg] = LabelTensor.stack(data_list)
                 elif isinstance(data_list[0], torch.Tensor):
@@ -79,6 +81,7 @@ class PinaBatchSampler(BatchSampler):
                     sampler = SequentialSampler(dataset)
         super().__init__(sampler=sampler, batch_size=batch_size,
                          drop_last=False)
+
 
 class PinaDataModule(LightningDataModule):
     """
@@ -136,6 +139,7 @@ class PinaDataModule(LightningDataModule):
         else:
             self.predict_dataloader = super().predict_dataloader
         self.collector_splits = self._create_splits(collector, splits_dict)
+        self.transfer_batch_to_device = self._transfer_batch_to_device
 
     def setup(self, stage=None):
         """
@@ -151,7 +155,7 @@ class PinaDataModule(LightningDataModule):
                 self.val_dataset = PinaDatasetFactory(
                     self.collector_splits['val'],
                     max_conditions_lengths=self.find_max_conditions_lengths(
-                        'val'),  automatic_batching=self.automatic_batching
+                        'val'), automatic_batching=self.automatic_batching
                 )
         elif stage == 'test':
             self.test_dataset = PinaDatasetFactory(
@@ -215,6 +219,7 @@ class PinaDataModule(LightningDataModule):
                     condition_dict[k] = v[idx]
                 else:
                     raise ValueError(f"Data type {type(v)} not supported")
+
         # ----------- End auxiliary function ------------
 
         logging.debug('Dataset creation in PinaDataModule obj')
@@ -251,14 +256,19 @@ class PinaDataModule(LightningDataModule):
             if self.automatic_batching:
                 collate = Collator(self.find_max_conditions_lengths('val'))
                 return DataLoader(self.val_dataset, self.batch_size,
-                          collate_fn=collate)
+                                  collate_fn=collate)
             collate = Collator(None)
-            sampler = PinaBatchSampler(self.val_dataset, self.batch_size, shuffle=False)
+            sampler = PinaBatchSampler(self.val_dataset, self.batch_size,
+                                       shuffle=False)
             return DataLoader(self.val_dataset, sampler=sampler,
-                          collate_fn=collate)
-        dataloader = DummyDataloader(self.train_dataset, self.trainer.strategy.root_device)
-        dataloader.dataset = self.transfer_batch_to_device(dataloader.dataset, self.trainer.strategy.root_device, 0)
-        self.transfer_batch_to_device = self.dummy_transfer_to_device
+                              collate_fn=collate)
+        dataloader = DummyDataloader(self.val_dataset,
+                                     self.trainer.strategy.root_device)
+        dataloader.dataset = self._transfer_batch_to_device(dataloader.dataset,
+                                                            self.trainer.strategy.root_device,
+                                                            0)
+        self.transfer_batch_to_device = self._transfer_batch_to_device_dummy
+        return dataloader
 
     def train_dataloader(self):
         """
@@ -273,12 +283,15 @@ class PinaDataModule(LightningDataModule):
                                   collate_fn=collate)
             collate = Collator(None)
             sampler = PinaBatchSampler(self.train_dataset, self.batch_size,
-                                           shuffle=False)
+                                       shuffle=False)
             return DataLoader(self.train_dataset, sampler=sampler,
                               collate_fn=collate)
-        dataloader = DummyDataloader(self.train_dataset, self.trainer.strategy.root_device)
-        dataloader.dataset = self.transfer_batch_to_device(dataloader.dataset, self.trainer.strategy.root_device, 0)
-        self.transfer_batch_to_device = self.dummy_transfer_to_device
+        dataloader = DummyDataloader(self.train_dataset,
+                                     self.trainer.strategy.root_device)
+        dataloader.dataset = self._transfer_batch_to_device(dataloader.dataset,
+                                            self.trainer.strategy.root_device,
+                                            0)
+        self.transfer_batch_to_device = self._transfer_batch_to_device_dummy
         return dataloader
 
     def test_dataloader(self):
@@ -293,10 +306,10 @@ class PinaDataModule(LightningDataModule):
         """
         raise NotImplementedError("Predict dataloader not implemented")
 
-    def dummy_transfer_to_device(self, batch, device, dataloader_idx):
+    def _transfer_batch_to_device_dummy(self, batch, device, dataloader_idx):
         return batch
 
-    def transfer_batch_to_device(self, batch, device, dataloader_idx):
+    def _transfer_batch_to_device(self, batch, device, dataloader_idx):
         """
         Transfer the batch to the device. This method is called in the
         training loop and is used to transfer the batch to the device.
@@ -307,4 +320,5 @@ class PinaDataModule(LightningDataModule):
                                                                 dataloader_idx))
             for k, v in batch.items()
         ]
+
         return batch
