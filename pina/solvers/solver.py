@@ -22,7 +22,6 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
                  problem,
                  optimizers,
                  schedulers,
-                 extra_features,
                  use_lt=True):
         """
         :param model: A torch neural network model instance.
@@ -56,7 +55,6 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
                     model=model,
                     input_variables=problem.input_variables,
                     output_variables=problem.output_variables,
-                    extra_features=extra_features,
                 )
 
         # Check scheduler consistency + encapsulation
@@ -98,7 +96,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
 
     @abstractmethod
     def configure_optimizers(self):
-        pass
+        raise NotImplementedError
 
     @property
     def models(self):

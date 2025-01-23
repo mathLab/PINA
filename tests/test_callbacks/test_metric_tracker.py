@@ -10,6 +10,7 @@ poisson_problem = Poisson()
 boundaries = ['nil_g1', 'nil_g2', 'nil_g3', 'nil_g4']
 n = 10
 poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
+poisson_problem.discretise_domain(n, 'grid', locations='laplace_D')
 model = FeedForward(len(poisson_problem.input_variables),
                     len(poisson_problem.output_variables))
 
@@ -33,9 +34,6 @@ def test_metric_tracker_routine():
     metrics = trainer.callbacks[0].metrics
     # assert the logged metrics are correct
     logged_metrics = sorted(list(metrics.keys()))
-    total_metrics = sorted(
-        list([key + '_loss' for key in poisson_problem.conditions.keys()])
-        + ['mean_loss'])
-    assert logged_metrics == total_metrics
+    assert logged_metrics == ['train_loss_epoch', 'train_loss_step', 'val_loss']
 
 

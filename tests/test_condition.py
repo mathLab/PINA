@@ -2,11 +2,7 @@ import torch
 import pytest
 
 from pina import LabelTensor, Condition
-from pina.solvers import PINN
 from pina.domain import CartesianDomain
-from pina.problem import SpatialProblem
-from pina.model import FeedForward
-from pina.operators import laplacian
 from pina.equation.equation_factory import FixedValue
 
 example_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
