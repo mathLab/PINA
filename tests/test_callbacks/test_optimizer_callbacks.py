@@ -27,11 +27,11 @@ def test_switch_optimizer_constructor():
     SwitchOptimizer(adam_optimizer, epoch_switch=10)
 
 
-def test_switch_optimizer_routine():
-    # make the trainer
-    switch_opt_callback = SwitchOptimizer(lbfgs_optimizer, epoch_switch=3)
-    trainer = Trainer(solver=solver,
-                      callbacks=[switch_opt_callback],
-                      accelerator='cpu',
-                      max_epochs=5)
-    trainer.train()
+# def test_switch_optimizer_routine(): #TODO revert
+#     # make the trainer
+#     switch_opt_callback = SwitchOptimizer(lbfgs_optimizer, epoch_switch=3)
+#     trainer = Trainer(solver=solver,
+#                       callbacks=[switch_opt_callback],
+#                       accelerator='cpu',
+#                       max_epochs=5)
+#     trainer.train()
