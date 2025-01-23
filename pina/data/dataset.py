@@ -75,6 +75,10 @@ class PinaTensorDataset(PinaDataset):
                                          for k, v in data.items()}
         return to_return_dict
 
+    def get_all_data(self):
+        index = [i for i in range(len(self))]
+        return self._getitem_list(index)
+
     def __getitem__(self, idx):
         return self._getitem_func(idx)
 
