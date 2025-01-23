@@ -10,7 +10,7 @@ except ImportError:
     )  # torch < 2.0
 
 
-from .basepinn import PINNInterface
+from .pinn_interface import PINNInterface
 from ...problem import InverseProblem
 
 
@@ -60,7 +60,6 @@ class PINN(PINNInterface):
         self,
         problem,
         model,
-        extra_features=None,
         loss=None,
         optimizer=None,
         scheduler=None,
@@ -82,10 +81,9 @@ class PINN(PINNInterface):
         super().__init__(
             models=model,
             problem=problem,
+            loss=loss,
             optimizers=optimizer,
             schedulers=scheduler,
-            extra_features=extra_features,
-            loss=loss,
         )
 
         # assign variables

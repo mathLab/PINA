@@ -18,3 +18,6 @@ class TorchOptimizer(Optimizer):
     def hook(self, parameters):
         self.optimizer_instance = self.optimizer_class(parameters,
                                                        **self.kwargs)
+    @property
+    def instance(self):
+        return self.optimizer_instance
