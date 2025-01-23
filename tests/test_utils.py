@@ -6,7 +6,7 @@ from pina import LabelTensor
 from pina.domain import EllipsoidDomain, CartesianDomain
 from pina.utils import check_consistency
 import pytest
-from pina.domain import Location
+from pina.domain import DomainInterface
 
 
 def test_merge_tensors():
@@ -27,8 +27,8 @@ def test_check_consistency_correct():
     example_input_pts = LabelTensor(torch.tensor([[0, 0, 0]]), ['x', 'y', 'z'])
 
     check_consistency(example_input_pts, torch.Tensor)
-    check_consistency(CartesianDomain, Location, subclass=True)
-    check_consistency(ellipsoid1, Location)
+    check_consistency(CartesianDomain, DomainInterface, subclass=True)
+    check_consistency(ellipsoid1, DomainInterface)
 
 
 def test_check_consistency_incorrect():
@@ -36,8 +36,8 @@ def test_check_consistency_incorrect():
     example_input_pts = LabelTensor(torch.tensor([[0, 0, 0]]), ['x', 'y', 'z'])
 
     with pytest.raises(ValueError):
-        check_consistency(example_input_pts, Location)
+        check_consistency(example_input_pts, DomainInterface)
     with pytest.raises(ValueError):
-        check_consistency(torch.Tensor, Location, subclass=True)
+        check_consistency(torch.Tensor, DomainInterface, subclass=True)
     with pytest.raises(ValueError):
         check_consistency(ellipsoid1, torch.Tensor)

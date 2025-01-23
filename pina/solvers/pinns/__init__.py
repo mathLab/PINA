@@ -8,7 +8,7 @@ __all__ = [
     "RBAPINN",
 ]
 
-from .basepinn import PINNInterface
+from .pinn_interface import PINNInterface
 from .pinn import PINN
 from .gpinn import GPINN
 from .causalpinn import CausalPINN

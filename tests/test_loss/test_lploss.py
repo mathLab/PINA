@@ -1,7 +1,6 @@
 import torch
-import pytest
 
-from pina.loss.loss_interface import *
+from pina.loss import LpLoss
 
 input = torch.tensor([[3.], [1.], [-8.]])
 target = torch.tensor([[6.], [4.], [2.]])

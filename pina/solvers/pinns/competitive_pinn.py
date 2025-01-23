@@ -12,7 +12,7 @@ except ImportError:
 
 from torch.optim.lr_scheduler import ConstantLR
 
-from .basepinn import PINNInterface
+from .pinn_interface import PINNInterface
 from pina.utils import check_consistency
 from pina.problem import InverseProblem
 

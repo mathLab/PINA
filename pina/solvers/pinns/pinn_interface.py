@@ -3,7 +3,7 @@
 from abc import ABCMeta, abstractmethod
 import torch
 from torch.nn.modules.loss import _Loss
-from ...solvers.solver import SolverInterface
+from ..solver import SolverInterface
 from ...utils import check_consistency
 from ...loss.loss_interface import LossInterface
 from ...problem import InverseProblem
@@ -33,10 +33,9 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             self,
             models,
             problem,
-            optimizers,
-            schedulers,
-            extra_features,
-            loss,
+            loss=None,
+            optimizers=None,
+            schedulers=None,
     ):
         """
         :param models: Multiple torch neural network models instances.
@@ -70,7 +69,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             problem=problem,
             optimizers=optimizers,
             schedulers=schedulers,
-            extra_features=extra_features,
         )
 
         # check consistency
@@ -197,6 +195,11 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :rtype: LabelTensor
         """
         pass
+
+    def configure_optimizers(self):
+        self._optimizer.hook(self._model)
+        self.schedulers.hook(self._optimizer)
+        return [self.optimizers.instance]#, self.schedulers.scheduler_instance
 
     def compute_residual(self, samples, equation):
         """
