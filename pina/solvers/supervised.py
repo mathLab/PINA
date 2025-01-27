@@ -3,7 +3,6 @@ import torch
 from torch.nn.modules.loss import _Loss
 from ..optim import TorchOptimizer, TorchScheduler
 from .solver import SolverInterface
-from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 from ..loss.loss_interface import LossInterface
 from ..condition import InputOutputPointsCondition
@@ -63,16 +62,10 @@ class SupervisedSolver(SolverInterface):
         if loss is None:
             loss = torch.nn.MSELoss()
 
-        if optimizer is None:
-            optimizer = TorchOptimizer(torch.optim.Adam, lr=0.001)
-
-        if scheduler is None:
-            scheduler = TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
-
-        super().__init__(models=model,
+        super().__init__(model=model,
                          problem=problem,
-                         optimizers=optimizer,
-                         schedulers=scheduler,
+                         optimizer=optimizer,
+                         scheduler=scheduler,
                          extra_features=extra_features,
                          use_lt=use_lt)
 
@@ -80,25 +73,6 @@ class SupervisedSolver(SolverInterface):
         check_consistency(loss, (LossInterface, _Loss, torch.nn.Module),
                           subclass=False)
         self._loss = loss
-        self._model = self._pina_models[0]
-        self._optimizer = self._pina_optimizers[0]
-        self._scheduler = self._pina_schedulers[0]
-        self.validation_condition_losses = {
-            k: {'loss': [],
-                'count': []} for k in self.problem.conditions.keys()}
-
-    def forward(self, x):
-        """Forward pass implementation for the solver.
-
-        :param torch.Tensor x: Input tensor.
-        :return: Solver solution.
-        :rtype: torch.Tensor
-        """
-
-        output = self._model(x)
-
-        output.labels = self.problem.output_variables
-        return output
 
     def configure_optimizers(self):
         """Optimizer configuration for the solver.
@@ -106,11 +80,20 @@ class SupervisedSolver(SolverInterface):
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
         """
-        self._optimizer.hook(self._model.parameters())
-        self._scheduler.hook(self._optimizer)
-        return ([self._optimizer.optimizer_instance],
-                [self._scheduler.scheduler_instance])
+        self.optimizer.hook(self.model.parameters())
+        self.scheduler.hook(self.optimizer)
+        return ([self.optimizer.optimizer_instance],
+                [self.scheduler.scheduler_instance])
 
+    def _optimization_cycle(self, batch):
+        condition_loss = []
+        for _, points in batch:
+            input_pts, output_pts = points['input_points'], points['output_points']
+            loss = self.loss_data(input_pts=input_pts, output_pts=output_pts)
+            condition_loss.append(loss.as_subclass(torch.Tensor))
+        loss = sum(condition_loss)
+        return loss
+    
     def training_step(self, batch):
         """Solver training step.
 
@@ -121,12 +104,7 @@ class SupervisedSolver(SolverInterface):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-        condition_loss = []
-        for condition_name, points in batch:
-            input_pts, output_pts = points['input_points'], points['output_points']
-            loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            condition_loss.append(loss_.as_subclass(torch.Tensor))
-        loss = sum(condition_loss)
+        loss = self._optimization_cycle(batch=batch)
         self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True,
                  batch_size=self.get_batch_size(batch), sync_dist=True)
         return loss
@@ -135,21 +113,17 @@ class SupervisedSolver(SolverInterface):
         """
         Solver validation step.
         """
-        condition_loss = []
-        for condition_name, points in batch:
-            input_pts, output_pts = points['input_points'], points['output_points']
-            loss_ = self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            condition_loss.append(loss_.as_subclass(torch.Tensor))
-        loss = sum(condition_loss)
+        loss = self._optimization_cycle(batch=batch)
         self.log('val_loss', loss, prog_bar=True, logger=True,
                  batch_size=self.get_batch_size(batch), sync_dist=True)
-
-    def test_step(self, batch, batch_idx):
+        
+    def test_step(self, batch):
         """
-        Solver test step.
+        Solver validation step.
         """
-
-        raise NotImplementedError("Test step not implemented yet.")
+        loss = self._optimization_cycle(batch=batch)
+        self.log('test_loss', loss, prog_bar=True, logger=True,
+                 batch_size=self.get_batch_size(batch), sync_dist=True)
 
     def loss_data(self, input_pts, output_pts):
         """
@@ -157,34 +131,15 @@ class SupervisedSolver(SolverInterface):
         the network output against the true solution. This function
         should not be override if not intentionally.
 
-        :param LabelTensor input_pts: The input to the neural networks.
-        :param LabelTensor output_pts: The true solution to compare the
+        :param input_pts: The input to the neural networks.
+        :type input_pts: LabelTensor | torch.Tensor
+        :param output_pts: The true solution to compare the
             network solution.
-        :return: The residual loss averaged on the input coordinates
+        :type output_pts: LabelTensor | torch.Tensor
+        :return: The residual loss.
         :rtype: torch.Tensor
         """
         return self._loss(self.forward(input_pts), output_pts)
-
-    @property
-    def scheduler(self):
-        """
-        Scheduler for training.
-        """
-        return self._scheduler
-
-    @property
-    def optimizer(self):
-        """
-        Optimizer for training.
-        """
-        return self._optimizer
-
-    @property
-    def model(self):
-        """
-        Neural network for training.
-        """
-        return self._model
 
     @property
     def loss(self):
