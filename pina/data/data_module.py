@@ -246,10 +246,7 @@ class PinaDataModule(LightningDataModule):
                                                 self.batch_size)
         return max_conditions_lengths
 
-    def val_dataloader(self):
-        """
-        Create the validation dataloader
-        """
+    def _create_dataloader(self, dataset):
         # Use custom batching (good if batch size is large)
         if self.batch_size is not None:
             sampler = PinaSampler(self.val_dataset, self.batch_size,
