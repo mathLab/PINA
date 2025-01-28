@@ -45,7 +45,7 @@ def test_solver_train(use_lt, batch_size):
                       train_size=1.,
                       test_size=0.,
                       val_size=0.)
-    trainer.train() 
+    trainer.train()
 
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_validation(use_lt):
@@ -58,7 +58,7 @@ def test_solver_validation(use_lt):
                       train_size=0.9,
                       val_size=0.1,
                       test_size=0.)
-    trainer.train() 
+    trainer.train()
 
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_test(use_lt):
@@ -71,7 +71,7 @@ def test_solver_test(use_lt):
                       train_size=0.8,
                       val_size=0.1,
                       test_size=0.1)
-    trainer.train() 
+    trainer.train()
 
 def test_train_load_restore():
     dir = "tests/test_solvers/tmp/"

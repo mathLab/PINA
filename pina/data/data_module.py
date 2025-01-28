@@ -125,6 +125,7 @@ class PinaDataModule(LightningDataModule):
                  ):
         """
         Initialize the object, creating dataset based on input problem
+        :param problem: Problem where data are defined
         :param train_size: number/percentage of elements in train split
         :param test_size: number/percentage of elements in test split
         :param val_size: number/percentage of elements in evaluation split
@@ -335,10 +336,9 @@ class PinaDataModule(LightningDataModule):
         training loop and is used to transfer the batch to the device.
         """
         batch = [
-            (k,
-             super(LightningDataModule, self).transfer_batch_to_device(v,
-                                                                       device,
-                                                                       dataloader_idx))
+            (k, super(LightningDataModule, self).transfer_batch_to_device(v,
+                                                                          device,
+                                                                          dataloader_idx))
             for k, v in batch.items()
         ]
 
