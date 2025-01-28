@@ -1,6 +1,5 @@
 import logging
 from lightning.pytorch import LightningDataModule
-import math
 import torch
 from ..label_tensor import LabelTensor
 from torch.utils.data import DataLoader, BatchSampler, SequentialSampler, \
