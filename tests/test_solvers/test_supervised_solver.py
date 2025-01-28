@@ -90,7 +90,8 @@ def test_extra_features_train_and_val_cpu():
                       accelerator='cpu',
                       batch_size=5,
                       train_size=0.9,
-                      test_size=0.1,
+                      val_size=0.1,
+                      test_size=0.0,
                       )
     trainer.train()
 
