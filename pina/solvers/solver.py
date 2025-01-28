@@ -100,7 +100,6 @@ class MultipleSolversInterface(lightning.pytorch.LightningModule, metaclass=ABCM
     def configure_optimizers(self):
         raise NotImplementedError
 
-
     def on_train_start(self):
         """
         On training epoch start this function is call to do global checks for
