@@ -76,17 +76,6 @@ class SupervisedSolver(SolverInterface):
                           subclass=False)
         self._loss = loss
 
-    def configure_optimizers(self):
-        """Optimizer configuration for the solver.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple(list, list)
-        """
-        self.optimizer.hook(self.model.parameters())
-        self.scheduler.hook(self.optimizer)
-        return ([self.optimizer.optimizer_instance],
-                [self.scheduler.scheduler_instance])
-
     def _optimization_cycle(self, batch):
         condition_loss = []
         for condition_name, points in batch:

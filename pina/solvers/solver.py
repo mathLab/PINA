@@ -149,7 +149,7 @@ class MultipleSolversInterface(lightning.pytorch.LightningModule, metaclass=ABCM
         """
         The problem formulation."""
         return self._pina_problem
-    
+
     @property
     def use_lt(self):
         """
@@ -185,7 +185,7 @@ class SolverInterface(MultipleSolversInterface):
                          use_lt = use_lt)
         # initialize model (needed for Lightining to go to different devices)
         self._pina_model = self.models[0]
-    
+
     def forward(self, x):
         """Forward pass implementation for the solver.
 
@@ -195,21 +195,32 @@ class SolverInterface(MultipleSolversInterface):
         """
         return self.model(x)
 
+    def configure_optimizers(self):
+        """Optimizer configuration for the solver.
+
+        :return: The optimizers and the schedulers
+        :rtype: tuple(list, list)
+        """
+        self.optimizer.hook(self.model.parameters())
+        self.scheduler.hook(self.optimizer)
+        return ([self.optimizer.optimizer_instance],
+                [self.scheduler.scheduler_instance])
+
     @staticmethod
     def default_torch_optimizer():
         return TorchOptimizer(torch.optim.Adam, lr=0.001)
-    
+
     @staticmethod
     def default_torch_scheduler():
         return TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
-    
+
     @property
     def model(self):
         """
         Model for training.
         """
         return self._pina_model
-    
+
     @property
     def scheduler(self):
         """
