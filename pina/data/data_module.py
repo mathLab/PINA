@@ -1,6 +1,5 @@
 import logging
 from lightning.pytorch import LightningDataModule
-import math
 import torch
 from ..label_tensor import LabelTensor
 from torch.utils.data import DataLoader, BatchSampler, SequentialSampler, \
@@ -176,23 +175,28 @@ class PinaDataModule(LightningDataModule):
         len_condition = len(condition_dict['input_points'])
 
         lengths = [
-            int(math.floor(len_condition * length)) for length in
+            int(len_condition * length) for length in
             splits_dict.values()
         ]
 
         remainder = len_condition - sum(lengths)
         for i in range(remainder):
             lengths[i % len(lengths)] += 1
-        splits_dict = {k: v for k, v in zip(splits_dict.keys(), lengths)
+
+        splits_dict = {k: max(1,v) for k, v in zip(splits_dict.keys(), lengths)
                        }
         to_return_dict = {}
         offset = 0
+
         for stage, stage_len in splits_dict.items():
             to_return_dict[stage] = {k: v[offset:offset + stage_len]
                                      for k, v in condition_dict.items() if
                                      k != 'equation'
                                      # Equations are NEVER dataloaded
                                      }
+            if offset + stage_len > len_condition:
+                offset = len_condition - 1
+                continue
             offset += stage_len
         return to_return_dict
 
@@ -243,53 +247,40 @@ class PinaDataModule(LightningDataModule):
                                                 self.batch_size)
         return max_conditions_lengths
 
-    def _create_dataloader(self, dataset):
+    def _create_dataloader(self, split, dataset):
         # Use custom batching (good if batch size is large)
         if self.batch_size is not None:
-            sampler = PinaSampler(self.val_dataset, self.batch_size,
-                                  self.shuffle, self.automatic_batching)
+            # Use default batching in torch DataLoader (good if batch size is small)
             if self.automatic_batching:
-                collate = Collator(self.find_max_conditions_lengths('val'))
-            else:
-                collate = Collator(None, self.val_dataset)
-            return DataLoader(self.val_dataset, self.batch_size,
-                              collate_fn=collate, sampler=sampler)
-        dataloader = DummyDataloader(self.val_dataset,
-                                     self.trainer.strategy.root_device)
-        dataloader.dataset = self._transfer_batch_to_device(dataloader.dataset,
-                                                            self.trainer.strategy.root_device,
-                                                            0)
-        self.transfer_batch_to_device = self._transfer_batch_to_device_dummy
+                collate = Collator(self.find_max_conditions_lengths(split))
+                return DataLoader(dataset, self.batch_size,
+                          collate_fn=collate)
+            collate = Collator(None)
+            sampler = PinaBatchSampler(dataset, self.batch_size, shuffle=False)
+            return DataLoader(dataset, sampler=sampler,
+                          collate_fn=collate)
+        dataloader = DummyDataloader(dataset, self.trainer.strategy.root_device)
+        dataloader.dataset = self.transfer_batch_to_device(dataloader.dataset, self.trainer.strategy.root_device, 0)
+        self.transfer_batch_to_device = self.dummy_transfer_to_device
         return dataloader
+    
+    def val_dataloader(self):
+        """
+        Create the validation dataloader
+        """
+        return self._create_dataloader('val', self.val_dataset)
 
     def train_dataloader(self):
         """
         Create the training dataloader
         """
-        # Use custom batching (good if batch size is large)
-        if self.batch_size is not None:
-            sampler = PinaSampler(self.train_dataset, self.batch_size,
-                                  self.shuffle, self.automatic_batching)
-            if self.automatic_batching:
-                collate = Collator(self.find_max_conditions_lengths('train'))
-
-            else:
-                collate = Collator(None, self.train_dataset)
-            return DataLoader(self.train_dataset, self.batch_size,
-                            collate_fn=collate, sampler=sampler)
-        dataloader = DummyDataloader(self.train_dataset,
-                                     self.trainer.strategy.root_device)
-        dataloader.dataset = self._transfer_batch_to_device(dataloader.dataset,
-                                            self.trainer.strategy.root_device,
-                                            0)
-        self.transfer_batch_to_device = self._transfer_batch_to_device_dummy
-        return dataloader
+        return self._create_dataloader('train', self.train_dataset)
 
     def test_dataloader(self):
         """
         Create the testing dataloader
         """
-        raise NotImplementedError("Test dataloader not implemented")
+        raise self._create_dataloader('test', self.test_dataset)
 
     def predict_dataloader(self):
         """
