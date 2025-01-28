@@ -135,16 +135,8 @@ def test_train_load():
     solver = SupervisedSolver(problem=problem,
                               model=model,
                               extra_features=None)
-    # trainer = Trainer(solver=solver,
-    #                   max_epochs=5,
-    #                   accelerator='cpu',
-    #                   batch_size=None,
-    #                   train_size=0.9,
-    #                   test_size=0.0,
-    #                   val_size=0.1,
-    #                   default_root_dir=tmpdir)
     trainer = Trainer(solver=solver,
-                      max_epochs=2,
+                      max_epochs=5,
                       accelerator='cpu',
                       batch_size=None,
                       train_size=0.9,
@@ -152,14 +144,14 @@ def test_train_load():
                       val_size=0.1,
                       default_root_dir=tmpdir)
     trainer.train()
-    # new_solver = SupervisedSolver.load_from_checkpoint(
-    #     f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt',
-    #     problem = problem, model=model)
-    # test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
-    # assert new_solver.forward(test_pts).shape == (20, 1)
-    # assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
-    # torch.testing.assert_close(
-    #     new_solver.forward(test_pts),
-    #     solver.forward(test_pts))
-    # import shutil
-    # shutil.rmtree('tests/test_solvers/tmp')
+    new_solver = SupervisedSolver.load_from_checkpoint(
+        f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt',
+        problem = problem, model=model)
+    test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
+    assert new_solver.forward(test_pts).shape == (20, 1)
+    assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
+    torch.testing.assert_close(
+        new_solver.forward(test_pts),
+        solver.forward(test_pts))
+    import shutil
+    shutil.rmtree('tests/test_solvers/tmp')
