@@ -14,14 +14,16 @@ class Trainer(lightning.pytorch.Trainer):
                  train_size=.7,
                  test_size=.2,
                  val_size=.1,
-                 predict_size=.0,
+                 predict_size=0.,
                  **kwargs):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
 
-        :param solver: A pina:class:`SolverInterface` solver for the differential problem.
+        :param solver: A pina:class:`SolverInterface` solver for the
+            differential problem.
         :type solver: SolverInterface
-        :param batch_size: How many samples per batch to load. If ``batch_size=None`` all
+        :param batch_size: How many samples per batch to load.
+            If ``batch_size=None`` all
             samples are loaded and data are not batched, defaults to None.
         :type batch_size: int | None
 
@@ -30,7 +32,6 @@ class Trainer(lightning.pytorch.Trainer):
             and can be choosen from the `pytorch-lightning
             Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_
         """
-
         super().__init__(**kwargs)
 
         # check inheritance consistency for solver and batch size
@@ -49,7 +50,6 @@ class Trainer(lightning.pytorch.Trainer):
 
     def _move_to_device(self):
         device = self._accelerator_connector._parallel_devices[0]
-
         # move parameters to device
         pb = self.solver.problem
         if hasattr(pb, "unknown_parameters"):
@@ -85,17 +85,13 @@ class Trainer(lightning.pytorch.Trainer):
         """
         Train the solver method.
         """
-        return super().fit(self.solver,
-                               datamodule=self.data_module,
-                               **kwargs)
+        return super().fit(self.solver, datamodule=self.data_module, **kwargs)
 
     def test(self, **kwargs):
         """
         Test the solver method.
         """
-        return super().test(self.solver,
-                            datamodule=self.data_module,
-                            **kwargs)
+        return super().test(self.solver, datamodule=self.data_module, **kwargs)
 
     @property
     def solver(self):

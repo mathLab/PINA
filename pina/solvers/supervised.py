@@ -58,6 +58,8 @@ class SupervisedSolver(SolverInterface):
             use; default is :class:`torch.optim.Adam`.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
+        :type extra_features: list[torch.nn.Module] | tuple[torch.nn.Module]
+        :param bool use_lt: Using LabelTensors as input during training.
         """
         if loss is None:
             loss = torch.nn.MSELoss()
@@ -87,7 +89,7 @@ class SupervisedSolver(SolverInterface):
 
     def _optimization_cycle(self, batch):
         condition_loss = []
-        for _, points in batch:
+        for condition_name, points in batch:
             input_pts, output_pts = points['input_points'], points['output_points']
             loss = self.loss_data(input_pts=input_pts, output_pts=output_pts)
             condition_loss.append(loss.as_subclass(torch.Tensor))
