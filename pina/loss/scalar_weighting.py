@@ -19,7 +19,6 @@ class ScalarWeighting(WeightingInterface):
             self.default_value_weights = weights
             self.weights = {}
         else:
-            self.default_value_weights = 1
             self.weights = weights
 
     def aggregate(self, losses):

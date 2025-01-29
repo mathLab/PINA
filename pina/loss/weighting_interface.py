@@ -10,6 +10,7 @@ class WeightingInterface(metaclass=ABCMeta):
 
     def __init__(self):
         self.condition_names = None
+        self.default_value_weights = 1
     
     @abstractmethod
     def aggregate(self, losses):
@@ -19,5 +20,12 @@ class WeightingInterface(metaclass=ABCMeta):
         :param dict(torch.Tensor) input: The dictionary of losses.
         :return: The losses aggregation. It should be a scalar Tensor.
         :rtype: torch.Tensor
+        """
+        pass
+
+    @abstractmethod
+    def NTK_weighting(self, losses):
+        """
+        Weight the losses 
         """
         pass
