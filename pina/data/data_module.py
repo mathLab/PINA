@@ -336,9 +336,10 @@ class PinaDataModule(LightningDataModule):
         training loop and is used to transfer the batch to the device.
         """
         batch = [
-            (k, super(LightningDataModule, self).transfer_batch_to_device(v,
-                                                                          device,
-                                                                          dataloader_idx))
+            (k,
+             super(LightningDataModule, self).transfer_batch_to_device(v,
+                                                                       device,
+                                                                       dataloader_idx))
             for k, v in batch.items()
         ]
 
