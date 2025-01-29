@@ -2,13 +2,13 @@
 import torch
 from torch.nn.modules.loss import _Loss
 from ..optim import TorchOptimizer, TorchScheduler
-from .solver import SolverInterface
+from .solver import SingleSolverInterface
 from ..utils import check_consistency
 from ..loss.loss_interface import LossInterface
 from ..condition import InputOutputPointsCondition
 
 
-class SupervisedSolver(SolverInterface):
+class SupervisedSolver(SingleSolverInterface):
     r"""
     SupervisedSolver solver class. This class implements a SupervisedSolver,
     using a user specified ``model`` to solve a specific ``problem``.
@@ -96,8 +96,7 @@ class SupervisedSolver(SolverInterface):
         :rtype: LabelTensor
         """
         loss = self._optimization_cycle(batch=batch)
-        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
+        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True, sync_dist=True)
         return loss
 
     def validation_step(self, batch):
@@ -105,8 +104,7 @@ class SupervisedSolver(SolverInterface):
         Solver validation step.
         """
         loss = self._optimization_cycle(batch=batch)
-        self.log('val_loss', loss, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
+        self.log('val_loss', loss, prog_bar=True, logger=True, sync_dist=True)
         
     def test_step(self, batch):
         """
