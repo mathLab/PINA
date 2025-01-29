@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial: Building custom geometries with PINA `Location` class
+# # Tutorial: Building custom geometries with PINA `DomainInterface` class
 # 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial6/tutorial.ipynb)
 # 
@@ -27,7 +27,7 @@ if IN_COLAB:
 
 import matplotlib.pyplot as plt
 plt.style.use('tableau-colorblind10')
-from pina.geometry import EllipsoidDomain, Difference, CartesianDomain, Union, SimplexDomain
+from pina.domain import EllipsoidDomain, Difference, CartesianDomain, Union, SimplexDomain, DomainInterface
 from pina.label_tensor import LabelTensor
 
 def plot_scatter(ax, pts, title):
@@ -164,7 +164,7 @@ fig, ax = plt.subplots(1, 1, figsize=(8, 6))
 plot_scatter(ax, c_e_nb_d_points, 'Difference')
 
 
-# ## Create Custom Location
+# ## Create Custom DomainInterface
 
 # We will take a look on how to create our own geometry. The one we will try to make is a heart defined by the function $$(x^2+y^2-1)^3-x^2y^3 \le 0$$
 
@@ -174,17 +174,16 @@ plot_scatter(ax, c_e_nb_d_points, 'Difference')
 
 
 import torch
-from pina import Location
 from pina import LabelTensor
 import random
 
 
-# Next, we will create the `Heart(Location)` class and initialize it.
+# Next, we will create the `Heart(DomainInterface)` class and initialize it.
 
 # In[12]:
 
 
-class Heart(Location):
+class Heart(DomainInterface):
     """Implementation of the Heart Domain."""
 
     def __init__(self, sample_border=False):
@@ -192,12 +191,18 @@ class Heart(Location):
         
 
 
-# Because the `Location` class we are inheriting from requires both a `sample` method and `is_inside` method, we will create them and just add in "pass" for the moment.
+# In[ ]:
+
+
+
+
+
+# Because the `DomainInterface` class we are inheriting from requires both a `sample` method and `is_inside` method, we will create them and just add in "pass" for the moment. We also observe that the methods `sample_modes` and `variables` of the `DomainInterface` class are initialized as `abstractmethod`, so we need to redefine them both in the subclass `Heart` .
 
 # In[13]:
 
 
-class Heart(Location):
+class Heart(DomainInterface):
     """Implementation of the Heart Domain."""
 
     def __init__(self, sample_border=False):
@@ -208,15 +213,22 @@ class Heart(Location):
 
     def sample(self):
         pass
+    
+    @property
+    def sample_modes(self):
+        pass
+
+    @property
+    def variables(self):
+        pass
 
 
-# Now we have the skeleton for our `Heart` class. The `sample` method is where most of the work is done so let's fill it out.
+# Now we have the skeleton for our `Heart` class.  Also the `sample` method is where most of the work is done so let's fill it out. 
 
 # In[14]:
 
 
-
-class Heart(Location):
+class Heart(DomainInterface):
     """Implementation of the Heart Domain."""
 
     def __init__(self, sample_border=False):
@@ -225,7 +237,7 @@ class Heart(Location):
     def is_inside(self):
         pass
 
-    def sample(self, n, mode='random', variables='all'):
+    def sample(self, n):
         sampled_points = []
 
         while len(sampled_points) < n:
@@ -235,6 +247,14 @@ class Heart(Location):
                 sampled_points.append([x.item(), y.item()])
 
         return LabelTensor(torch.tensor(sampled_points), labels=['x','y'])
+    
+    @property
+    def sample_modes(self):
+        pass
+
+    @property
+    def variables(self):
+        pass
 
 
 # To create the Heart geometry we simply run:
