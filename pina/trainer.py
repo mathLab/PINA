@@ -15,6 +15,8 @@ class Trainer(lightning.pytorch.Trainer):
                  test_size=.2,
                  val_size=.1,
                  predict_size=0.,
+                 compile=False,
+                 automatic_batching=False,
                  **kwargs):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
@@ -26,6 +28,20 @@ class Trainer(lightning.pytorch.Trainer):
             If ``batch_size=None`` all
             samples are loaded and data are not batched, defaults to None.
         :type batch_size: int | None
+        :param train_size: percentage of elements in the train dataset
+        :type train_size: float
+        :param test_size: percentage of elements in the test dataset
+        :type test_size: float
+        :param val_size: percentage of elements in the val dataset
+        :type val_size: float
+        :param predict_size: percentage of elements in the predict dataset
+        :type predict_size: float
+        :param compile: if True model is compiled before training
+        :type compile: bool
+        :param automatic_batching: if True automatic PyTorch batching is
+            performed. Please avoid using automatic batching when batch_size is
+            large
+        :type automatic_batching: bool
 
         :Keyword Arguments:
             The additional keyword arguments specify the training setup
@@ -38,6 +54,8 @@ class Trainer(lightning.pytorch.Trainer):
         check_consistency(solver, SolverInterface)
         if batch_size is not None:
             check_consistency(batch_size, int)
+        self.compile = compile
+        self.automatic_batching = automatic_batching
         self.train_size = train_size
         self.test_size = test_size
         self.val_size = val_size
@@ -72,14 +90,14 @@ class Trainer(lightning.pytorch.Trainer):
             raise RuntimeError('Cannot create Trainer if not all conditions '
                                'are sampled. The Trainer got the following:\n'
                                f'{error_message}')
-        automatic_batching = False
-        self.data_module = PinaDataModule(collector=self.solver.problem.collector,
-                                          train_size=self.train_size,
-                                          test_size=self.test_size,
-                                          val_size=self.val_size,
-                                          predict_size=self.predict_size,
-                                          batch_size=self.batch_size,
-                                          automatic_batching=automatic_batching)
+        self.data_module = PinaDataModule(
+            collector=self.solver.problem.collector,
+            train_size=self.train_size,
+            test_size=self.test_size,
+            val_size=self.val_size,
+            predict_size=self.predict_size,
+            batch_size=self.batch_size,
+            automatic_batching=self.automatic_batching)
 
     def train(self, **kwargs):
         """
