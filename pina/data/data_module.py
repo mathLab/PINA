@@ -138,7 +138,7 @@ class PinaDataModule(LightningDataModule):
         self.shuffle = shuffle
         self.repeat = repeat
 
-        #Check if the splits are correct
+        # Check if the splits are correct
         self._check_slit_sizes(train_size, test_size, val_size, predict_size)
 
         # Begin Data splitting
@@ -269,10 +269,11 @@ class PinaDataModule(LightningDataModule):
         return dataset_dict
 
     def _create_dataloader(self, split, dataset):
+        shuffle = self.shuffle if split == 'train' else False
         # Use custom batching (good if batch size is large)
         if self.batch_size is not None:
             sampler = PinaSampler(dataset, self.batch_size,
-                                  self.shuffle, self.automatic_batching)
+                                  shuffle, self.automatic_batching)
             if self.automatic_batching:
                 collate = Collator(self.find_max_conditions_lengths(split))
 
@@ -323,7 +324,8 @@ class PinaDataModule(LightningDataModule):
         """
         raise NotImplementedError("Predict dataloader not implemented")
 
-    def _transfer_batch_to_device_dummy(self, batch, device, dataloader_idx):
+    @staticmethod
+    def _transfer_batch_to_device_dummy(batch, device, dataloader_idx):
         return batch
 
     def _transfer_batch_to_device(self, batch, device, dataloader_idx):
@@ -332,9 +334,10 @@ class PinaDataModule(LightningDataModule):
         training loop and is used to transfer the batch to the device.
         """
         batch = [
-            (k, super(LightningDataModule, self).transfer_batch_to_device(v,
-                                                                          device,
-                                                                          dataloader_idx))
+            (k,
+             super(LightningDataModule, self).transfer_batch_to_device(v,
+                                                                       device,
+                                                                       dataloader_idx))
             for k, v in batch.items()
         ]
 
@@ -347,6 +350,5 @@ class PinaDataModule(LightningDataModule):
         """
         if train_size < 0 or test_size < 0 or val_size < 0 or predict_size < 0:
             raise ValueError("The splits must be positive")
-        if abs(train_size + test_size + val_size + predict_size-1)>1e-6:
+        if abs(train_size + test_size + val_size + predict_size - 1) > 1e-6:
             raise ValueError("The sum of the splits must be 1")
-
