@@ -1,14 +1,13 @@
 """ Module for SupervisedSolver """
 import torch
 from torch.nn.modules.loss import _Loss
-from ..optim import TorchOptimizer, TorchScheduler
-from .solver import SolverInterface
+from .solver import SingleSolverInterface
 from ..utils import check_consistency
 from ..loss.loss_interface import LossInterface
 from ..condition import InputOutputPointsCondition
 
 
-class SupervisedSolver(SolverInterface):
+class SupervisedSolver(SingleSolverInterface):
     r"""
     SupervisedSolver solver class. This class implements a SupervisedSolver,
     using a user specified ``model`` to solve a specific ``problem``.
@@ -45,20 +44,16 @@ class SupervisedSolver(SolverInterface):
                  loss=None,
                  optimizer=None,
                  scheduler=None,
-                 extra_features=None,
                  use_lt=True):
         """
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default :class:`torch.nn.MSELoss`.
-        :param torch.nn.Module extra_features: The additional input
-            features to use as augmented input.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
             use; default is :class:`torch.optim.Adam`.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
-        :type extra_features: list[torch.nn.Module] | tuple[torch.nn.Module]
         :param bool use_lt: Using LabelTensors as input during training.
         """
         if loss is None:
@@ -68,7 +63,6 @@ class SupervisedSolver(SolverInterface):
                          problem=problem,
                          optimizer=optimizer,
                          scheduler=scheduler,
-                         extra_features=extra_features,
                          use_lt=use_lt)
 
         # check consistency
