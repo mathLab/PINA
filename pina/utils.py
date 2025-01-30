@@ -39,13 +39,14 @@ def check_consistency(object, object_instance, subclass=False):
         except AssertionError:
             raise ValueError(f"{type(obj).__name__} must be {object_instance}.")
 
-def labelize_forward(forward, input_variables, output_variables, extra_features=[]):
+def labelize_forward(forward, input_variables, output_variables):
     def wrapper(x):
         x = x.extract(input_variables)
-        for feature in extra_features:
-            x = x.append(feature(x))
         output = forward(x.tensor)
-        output = LabelTensor(output, output_variables)
+        # keep it like this, directly using LabelTensor(...) raises errors
+        # when compiling the code
+        output = output.as_subclass(LabelTensor)
+        output.labels = output_variables
         return output
     return wrapper
 

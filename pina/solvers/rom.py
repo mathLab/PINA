@@ -104,8 +104,6 @@ class ReducedOrderModelSolver(SupervisedSolver):
             the ``reduction_network`` encoding.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default :class:`torch.nn.MSELoss`.
-        :param torch.nn.Module extra_features: The additional input
-            features to use as augmented input.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
             use; default is :class:`torch.optim.Adam`.
         :param torch.optim.LRScheduler scheduler: Learning
@@ -125,7 +123,6 @@ class ReducedOrderModelSolver(SupervisedSolver):
             loss=loss,
             optimizer=optimizer,
             scheduler=scheduler,
-            extra_features=None,
             use_lt=use_lt
         )
 
