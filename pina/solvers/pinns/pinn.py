@@ -2,19 +2,12 @@
 
 import torch
 
-try:
-    from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
-except ImportError:
-    from torch.optim.lr_scheduler import (
-        _LRScheduler as LRScheduler,
-    )  # torch < 2.0
-
-
 from .pinn_interface import PINNInterface
+from ..solver import SingleSolverInterface
 from ...problem import InverseProblem
 
 
-class PINN(PINNInterface):
+class PINN(SingleSolverInterface, PINNInterface):
     r"""
     Physics Informed Neural Network (PINN) solver class.
     This class implements Physics Informed Neural
@@ -78,30 +71,21 @@ class PINN(PINNInterface):
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         """
-        super().__init__(
-            models=model,
+        # Call SingleSolverInterface's __init__ directly with required args
+        SingleSolverInterface.__init__(
+            self,
+            model=model,
             problem=problem,
-            loss=loss,
-            optimizers=optimizer,
-            schedulers=scheduler,
+            optimizer=optimizer,
+            scheduler=scheduler,
         )
 
-        # assign variables
-        self._neural_net = self.models[0]
-
-    def forward(self, x):
-        r"""
-        Forward pass implementation for the PINN solver. It returns the function
-        evaluation :math:`\mathbf{u}(\mathbf{x})` at the control points
-        :math:`\mathbf{x}`.
-
-        :param LabelTensor x: Input tensor for the PINN solver. It expects
-            a tensor :math:`N \times D`, where :math:`N` the number of points
-            in the mesh, :math:`D` the dimension of the problem,
-        :return: PINN solution evaluated at contro points.
-        :rtype: LabelTensor
-        """
-        return self.neural_net(x)
+        # Call PINNInterface's __init__ directly with its required args
+        PINNInterface.__init__(
+            self,
+            problem=problem,
+            loss=loss,
+        )
 
     def loss_phys(self, samples, equation):
         """
@@ -131,11 +115,8 @@ class PINN(PINNInterface):
         """
         # if the problem is an InverseProblem, add the unknown parameters
         # to the parameters that the optimizer needs to optimize
-
-
-        self._optimizer.hook(self._model.parameters())
         if isinstance(self.problem, InverseProblem):
-            self._optimizer.optimizer_instance.add_param_group(
+            self.optimizer.optimizer_instance.add_param_group(
                     {
                         "params": [
                             self._params[var]
@@ -143,20 +124,6 @@ class PINN(PINNInterface):
                         ]
                     }
                 )
-        self._scheduler.hook(self._optimizer)
-        return ([self._optimizer.optimizer_instance],
-                [self._scheduler.scheduler_instance])
-
-    @property
-    def scheduler(self):
-        """
-        Scheduler for the PINN training.
-        """
-        return self._scheduler
-
-    @property
-    def neural_net(self):
-        """
-        Neural network for the PINN training.
-        """
-        return self._neural_net
+        self.scheduler.hook(self.optimizer)
+        return ([self.optimizer.optimizer_instance],
+                [self.scheduler.scheduler_instance])

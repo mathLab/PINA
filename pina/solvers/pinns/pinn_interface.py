@@ -7,7 +7,6 @@ from ..solver import SolverInterface
 from ...utils import check_consistency
 from ...loss.loss_interface import LossInterface
 from ...problem import InverseProblem
-from ...optim import TorchOptimizer, TorchScheduler
 from ...condition import InputOutputPointsCondition, \
     InputPointsEquationCondition, DomainEquationCondition
 
@@ -27,49 +26,25 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     this class is suitable for.
     """
     accepted_conditions_types = (InputOutputPointsCondition,
-                                 InputPointsEquationCondition, DomainEquationCondition)
+                                 InputPointsEquationCondition,
+                                 DomainEquationCondition)
 
     def __init__(
             self,
-            models,
             problem,
             loss=None,
-            optimizers=None,
-            schedulers=None,
     ):
         """
-        :param models: Multiple torch neural network models instances.
-        :type models: list(torch.nn.Module)
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
-        :param list(torch.optim.Optimizer) optimizer: A list of neural network
-            optimizers to use.
-        :param list(dict) optimizer_kwargs: A list of optimizer constructor
-            keyword args.
-        :param list(torch.nn.Module) extra_features: The additional input
-            features to use as augmented input. If ``None`` no extra features
-            are passed. If it is a list of :class:`torch.nn.Module`,
-            the extra feature list is passed to all models. If it is a list
-            of extra features' lists, each single list of extra feature
-            is passed to a model.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default :class:`torch.nn.MSELoss`.
         """
-        if optimizers is None:
-            optimizers = TorchOptimizer(torch.optim.Adam, lr=0.001)
-
-        if schedulers is None:
-            schedulers = TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
 
         if loss is None:
             loss = torch.nn.MSELoss()
 
-        super().__init__(
-            models=models,
-            problem=problem,
-            optimizers=optimizers,
-            schedulers=schedulers,
-        )
+        super().__init__(problem=problem, use_lt=True)
 
         # check consistency
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
@@ -95,13 +70,27 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         # variable will be stored with name = self.__logged_metric
         self.__logged_metric = None
 
-        self._model = self._pina_models[0]
-        self._optimizer = self._pina_optimizers[0]
-        self._scheduler = self._pina_schedulers[0]
+    def _optimization_cycle(self, batch):
+        condition_loss = []
+        for condition_name, points in batch:
+            if 'output_points' not in points: # if equations are passed
+                input_pts = points['input_points']
+                condition = self.problem.conditions[condition_name]
+                loss_ = self.loss_phys(input_pts.requires_grad_(),
+                                       condition.equation)
+            else: # if data are passed
+                input_pts, output_pts = points['input_points'], points['output_points']
+                loss_ = self.loss_data(input_pts=input_pts,
+                                       output_pts=output_pts)
+            # append loss
+            condition_loss.append(loss_.as_subclass(torch.Tensor))
+        # clamp unknown parameters in InverseProblem (if needed)
+        self._clamp_params()
+        return sum(condition_loss)
 
     def training_step(self, batch):
         """
-        The Physics Informed Solver Training Step. This function takes care
+        The Physics Informed Solver training Step. This function takes care
         of the physics informed training step, and it must not be override
         if not intentionally. It handles the batching mechanism, the workload
         division for the various conditions, the inverse problem clamping,
@@ -112,27 +101,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-
-        condition_loss = []
-        for condition_name, points in batch:
-            if 'output_points' in points:
-                input_pts, output_pts = points['input_points'], points['output_points']
-
-                loss_ = self.loss_data(
-                    input_pts=input_pts, output_pts=output_pts)
-                condition_loss.append(loss_.as_subclass(torch.Tensor))
-            else:
-                input_pts = points['input_points']
-
-                condition = self.problem.conditions[condition_name]
-
-                loss_ = self.loss_phys(
-                    input_pts.requires_grad_(), condition.equation)
-                condition_loss.append(loss_.as_subclass(torch.Tensor))
-            condition_loss.append(loss_.as_subclass(torch.Tensor))
-        # clamp unknown parameters in InverseProblem (if needed)
-        self._clamp_params()
-        loss = sum(condition_loss)
+        loss = self._optimization_cycle(batch)
         self.log('train_loss', loss, prog_bar=True, on_epoch=True,
                  logger=True, batch_size=self.get_batch_size(batch),
                  sync_dist=True)
@@ -141,31 +110,40 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
 
     def validation_step(self, batch):
         """
-        TODO: add docstring
+        The Physics Informed Solver validation Step. This function takes care
+        of the physics informed validation step, and it must not be override
+        if not intentionally. It handles the batching mechanism, the workload
+        division for the various conditions, the inverse problem clamping,
+        and loggers.
+
+        :param tuple batch: The batch element in the dataloader.
+        :param int batch_idx: The batch index.
+        :return: The sum of the loss functions.
+        :rtype: LabelTensor
         """
-        condition_loss = []
-        for condition_name, points in batch:
-            if 'output_points' in points:
-                input_pts, output_pts = points['input_points'], points['output_points']
-                loss_ = self.loss_data(
-                    input_pts=input_pts, output_pts=output_pts)
-                condition_loss.append(loss_.as_subclass(torch.Tensor))
-            else:
-                input_pts = points['input_points']
-
-                condition = self.problem.conditions[condition_name]
-                with torch.set_grad_enabled(True):
-                    loss_ = self.loss_phys(
-                        input_pts.requires_grad_(), condition.equation)
-                condition_loss.append(loss_.as_subclass(torch.Tensor))
-            condition_loss.append(loss_.as_subclass(torch.Tensor))
-        # clamp unknown parameters in InverseProblem (if needed)
-
-        loss = sum(condition_loss)
+        loss = self._optimization_cycle(batch)
         self.log('val_loss', loss, on_epoch=True, prog_bar=True,
                  logger=True, batch_size=self.get_batch_size(batch),
                  sync_dist=True)
+        
+    def test_step(self, batch):
+        """
+        The Physics Informed Solver test Step. This function takes care
+        of the physics informed test step, and it must not be override
+        if not intentionally. It handles the batching mechanism, the workload
+        division for the various conditions, the inverse problem clamping,
+        and loggers.
 
+        :param tuple batch: The batch element in the dataloader.
+        :param int batch_idx: The batch index.
+        :return: The sum of the loss functions.
+        :rtype: LabelTensor
+        """
+        loss = self._optimization_cycle(batch)
+        self.log('test_loss', loss, on_epoch=True, prog_bar=True,
+                 logger=True, batch_size=self.get_batch_size(batch),
+                 sync_dist=True)
+    
     def loss_data(self, input_pts, output_pts):
         """
         The data loss for the PINN solver. It computes the loss between
@@ -195,11 +173,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :rtype: LabelTensor
         """
         pass
-
-    def configure_optimizers(self):
-        self._optimizer.hook(self._model)
-        self.schedulers.hook(self._optimizer)
-        return [self.optimizers.instance]#, self.schedulers.scheduler_instance
 
     def compute_residual(self, samples, equation):
         """
