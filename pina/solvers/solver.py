@@ -9,19 +9,17 @@ import torch
 import sys
 
 
-class _PINASolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
+class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     """
     SolverInterface base class. This class is a wrapper of the LightningModule
     """
 
     def __init__(self,
                  problem,
-                 use_lt,
-                 extra_features):
+                 use_lt):
         """
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
-        :type extra_features: list[torch.nn.Module] | tuple[torch.nn.Module]
         :param use_lt: Using LabelTensors as input during training.
         :type use_lt: bool
         """
@@ -37,12 +35,10 @@ class _PINASolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta)
         self._use_lt = use_lt
         # If use_lt is true add extract operation in input
         if use_lt is True:
-            extra_features = [] if extra_features is None else extra_features
             self.forward = labelize_forward(
                 forward=self.forward,
                 input_variables=problem.input_variables,
                 output_variables=problem.output_variables,
-                extra_features=extra_features
             )
 
         # PINA private attributes (some are override by derived classes)
@@ -106,7 +102,7 @@ class _PINASolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta)
             batch_size += len(data[1]['input_points'])
         return batch_size
 
-class MultiSolversInterface(_PINASolverInterface):
+class MultiSolverInterface(SolverInterface):
     """
     Multiple Solver base class. This class inherits is a wrapper of
     SolverInterface class
@@ -115,9 +111,8 @@ class MultiSolversInterface(_PINASolverInterface):
     def __init__(self,
                  models,
                  problem,
-                 optimizers,
-                 schedulers,
-                 extra_features=None,
+                 optimizers=None,
+                 schedulers=None,
                  use_lt=True):
         """
         :param models: Multiple torch nn.Module instances.
@@ -130,9 +125,21 @@ class MultiSolversInterface(_PINASolverInterface):
            schedulers to use.
         :param bool use_lt: Using LabelTensors as input during training.
         """
+        if not isinstance(models, (list, tuple)) or len(models) < 2:
+            raise ValueError('models should be list[torch.nn.Module] or '
+                             'tuple[torch.nn.Module] with len greater than '
+                             'one.')
+        
+        if optimizer is None:
+            optimizer = [
+                self.default_torch_optimizer() for _ in range(len(models))]
+
+        if scheduler is None:
+            scheduler = [
+                self.default_torch_scheduler() for _ in range(len(models))]
+
         super().__init__(problem=problem,
-                         use_lt=use_lt,
-                         extra_features=extra_features,)
+                         use_lt=use_lt)
 
         # Check consistency of models argument and encapsulate in list
         check_consistency(models, torch.nn.Module)
@@ -144,11 +151,9 @@ class MultiSolversInterface(_PINASolverInterface):
         check_consistency(optimizers, Optimizer)
 
         # check length consistency optimizers
-        len_model = len(models)
-        len_optimizer = len(optimizers)
-        if len_model != len_optimizer:
+        if len(models) != len(optimizers):
             raise ValueError("You must define one optimizer for each model."
-                             f"Got {len_model} models, and {len_optimizer}"
+                             f"Got {len(models)} models, and {len(optimizers)}"
                              " optimizers.")
 
         # extra features handling
@@ -189,13 +194,12 @@ class MultiSolversInterface(_PINASolverInterface):
         return self._pina_schedulers
 
 
-class SolverInterface(_PINASolverInterface):
+class SingleSolverInterface(SolverInterface):
     def __init__(self,
                  model,
                  problem,
                  optimizer,
                  scheduler,
-                 extra_features=None,
                  use_lt=True):
         """
         :param model: A torch nn.Module instances.
@@ -204,9 +208,6 @@ class SolverInterface(_PINASolverInterface):
         :type problem: AbstractProblem
         :param Optimizer optimizers: A neural network optimizers to use.
         :param Scheduler optimizers: A neural network scheduler to use.
-        :param extra_features: The additional input features to use as
-            augmented input.
-        :type extra_features: list[torch.nn.Module] | tuple[torch.nn.Module]
         :param bool use_lt: Using LabelTensors as input during training.
         """
         if optimizer is None:
@@ -216,7 +217,6 @@ class SolverInterface(_PINASolverInterface):
             scheduler = self.default_torch_scheduler()
 
         super().__init__(problem=problem,
-                         extra_features=extra_features,
                          use_lt=use_lt)
 
         # Check consistency of models argument and encapsulate in list
