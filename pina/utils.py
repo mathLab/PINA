@@ -123,9 +123,3 @@ def chebyshev_roots(n):
     k = torch.arange(n)
     nodes = torch.sort(torch.cos(pi * (k + 0.5) / n))[0]
     return nodes
-
-
-class LabelTensorDataLoader(DataLoader):
-
-    def collate_fn(self, data):
-        pass
