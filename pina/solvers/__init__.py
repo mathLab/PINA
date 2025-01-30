@@ -1,5 +1,7 @@
 __all__ = [
     "SolverInterface",
+    "SingleSolverInterface",
+    "MultiSolverInterface",
     "PINNInterface",
     "PINN",
     "GPINN",
@@ -12,7 +14,7 @@ __all__ = [
     "GAROM",
 ]
 
-from .solver import SolverInterface
+from .solver import SolverInterface, SingleSolverInterface, MultiSolverInterface
 from .pinns import *
 from .supervised import SupervisedSolver
 from .rom import ReducedOrderModelSolver

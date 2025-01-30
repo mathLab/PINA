@@ -9,76 +9,47 @@ import torch
 import sys
 
 
-class MultipleSolversInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
+class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     """
-    Solver base class. This class inherits is a wrapper of
-    LightningModule class, inheriting all the
-    LightningModule methods.
+    SolverInterface base class. This class is a wrapper of the LightningModule
     """
 
     def __init__(self,
-                 models,
                  problem,
-                 optimizers,
-                 schedulers,
-                 extra_features=None,
-                 use_lt=True):
+                 use_lt):
         """
-        :param models: Multiple torch nn.Module instances.
-        :type model: list[torch.nn.Module] | tuple[torch.nn.Module]
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
-        :param list(Optimizer) optimizers: A list of neural network
-           optimizers to use.
-        :param list(Scheduler) optimizers: A list of neural network
-           schedulers to use.
-        :param bool use_lt: Using LabelTensors as input during training.
+        :param use_lt: Using LabelTensors as input during training.
+        :type use_lt: bool
         """
         super().__init__()
-
+    
         # check consistency of the inputs
         check_consistency(problem, AbstractProblem)
         self._check_solver_consistency(problem)
+        self._pina_problem = problem
 
-        # Check consistency of models argument and encapsulate in list
-        check_consistency(models, torch.nn.Module)
-        len_model = len(models)
-
-        # Check consistency extra_features
-        if extra_features is None:
-            extra_features = []
-        else:
-            check_consistency(extra_features, torch.nn.Module)
-
-        # If use_lt is true add extract operation in input
+        # Check consistency use_lt
         check_consistency(use_lt, bool)
         self._use_lt = use_lt
+        # If use_lt is true add extract operation in input
         if use_lt is True:
             self.forward = labelize_forward(
                 forward=self.forward,
                 input_variables=problem.input_variables,
                 output_variables=problem.output_variables,
-                extra_features=extra_features
-                )
+            )
 
-        # Check scheduler consistency + encapsulation
-        check_consistency(schedulers, Scheduler)
-
-        # Check optimizer consistency + encapsulation
-        check_consistency(optimizers, Optimizer)
-        len_optimizer = len(optimizers)
-
-        # check length consistency optimizers
-        if len_model != len_optimizer:
-            raise ValueError("You must define one optimizer for each model."
-                             f"Got {len_model} models, and {len_optimizer}"
-                             " optimizers.")
-
-        # extra features handling
-        self._pina_models = models
-        self._pina_optimizers = optimizers
-        self._pina_schedulers = schedulers
+        # PINA private attributes (some are override by derived classes)
         self._pina_problem = problem
+        self._pina_models = None
+        self._pina_optimizers = None
+        self._pina_schedulers = None
+
+    def _check_solver_consistency(self, problem):
+        for condition in problem.conditions.values():
+            check_consistency(condition, self.accepted_conditions_types)
 
     @abstractmethod
     def forward(self, *args, **kwargs):
@@ -96,23 +67,32 @@ class MultipleSolversInterface(lightning.pytorch.LightningModule, metaclass=ABCM
     def test_step(self, batch):
         pass
 
-    @abstractmethod
-    def configure_optimizers(self):
-        raise NotImplementedError
-
     def on_train_start(self):
-        """
-        On training epoch start this function is call to do global checks for
-        the different solvers.
-        """
+        super().on_train_start()
+        if self.trainer.compile:
+            model_device = next(self._pina_model.parameters()).device
+            try:
+                if model_device == torch.device("mps:0"):
+                    self._pina_model = torch.compile(self._pina_model,
+                                                     backend="eager")
+                else:
+                    self._pina_model = torch.compile(self._pina_model,
+                                                     backend="inductor")
+            except Exception as e:
+                print("Compilation failed, running in normal mode.:\n", e)
+                sys.stdout.flush()
 
-        # 1. Check the verison for dataloader
-        dataloader = self.trainer.train_dataloader
-        if sys.version_info < (3, 8):
-            dataloader = dataloader.loaders
-        self._dataloader = dataloader
+    @property
+    def problem(self):
+        """
+        The problem formulation."""
+        return self._pina_problem
 
-        return super().on_train_start()
+    @property
+    def use_lt(self):
+        """
+        Using LabelTensor in training."""
+        return self._use_lt
 
     @staticmethod
     def get_batch_size(batch):
@@ -122,9 +102,78 @@ class MultipleSolversInterface(lightning.pytorch.LightningModule, metaclass=ABCM
             batch_size += len(data[1]['input_points'])
         return batch_size
 
-    def _check_solver_consistency(self, problem):
-        for condition in problem.conditions.values():
-            check_consistency(condition, self.accepted_conditions_types)
+class MultiSolverInterface(SolverInterface):
+    """
+    Multiple Solver base class. This class inherits is a wrapper of
+    SolverInterface class
+    """
+
+    def __init__(self,
+                 models,
+                 problem,
+                 optimizers=None,
+                 schedulers=None,
+                 use_lt=True):
+        """
+        :param models: Multiple torch nn.Module instances.
+        :type model: list[torch.nn.Module] | tuple[torch.nn.Module]
+        :param problem: A problem definition instance.
+        :type problem: AbstractProblem
+        :param list(Optimizer) optimizers: A list of neural network
+           optimizers to use.
+        :param list(Scheduler) optimizers: A list of neural network
+           schedulers to use.
+        :param bool use_lt: Using LabelTensors as input during training.
+        """
+        if not isinstance(models, (list, tuple)) or len(models) < 2:
+            raise ValueError('models should be list[torch.nn.Module] or '
+                             'tuple[torch.nn.Module] with len greater than '
+                             'one.')
+        
+        if optimizer is None:
+            optimizer = [
+                self.default_torch_optimizer() for _ in range(len(models))]
+
+        if scheduler is None:
+            scheduler = [
+                self.default_torch_scheduler() for _ in range(len(models))]
+
+        super().__init__(problem=problem,
+                         use_lt=use_lt)
+
+        # Check consistency of models argument and encapsulate in list
+        check_consistency(models, torch.nn.Module)
+
+        # Check scheduler consistency + encapsulation
+        check_consistency(schedulers, Scheduler)
+
+        # Check optimizer consistency + encapsulation
+        check_consistency(optimizers, Optimizer)
+
+        # check length consistency optimizers
+        if len(models) != len(optimizers):
+            raise ValueError("You must define one optimizer for each model."
+                             f"Got {len(models)} models, and {len(optimizers)}"
+                             " optimizers.")
+
+        # extra features handling
+        self._pina_models = models
+        self._pina_optimizers = optimizers
+        self._pina_schedulers = schedulers
+
+    def configure_optimizers(self):
+        """Optimizer configuration for the solver.
+
+        :return: The optimizers and the schedulers
+        :rtype: tuple(list, list)
+        """
+        for optimizer, scheduler, model in zip(self.optimizers,
+                                               self.schedulers,
+                                               self.models):
+            optimizer.hook(model.parameters())
+            scheduler.hook(optimizer)
+        return ([optimizer.optimizer_instance for optimizer in self.optimizers],
+                [scheduler.scheduler_instance for scheduler in self.schedulers])
 
     @property
     def models(self):
@@ -144,21 +193,14 @@ class MultipleSolversInterface(lightning.pytorch.LightningModule, metaclass=ABCM
         The torch model."""
         return self._pina_schedulers
 
-    @property
-    def problem(self):
-        """
-        The problem formulation."""
-        return self._pina_problem
 
-    @property
-    def use_lt(self):
-        """
-        Using LabelTensor in training."""
-        return self._use_lt
-
-
-class SolverInterface(MultipleSolversInterface):
-    def __init__(self, model, problem, optimizer, scheduler, extra_features=None, use_lt=True):
+class SingleSolverInterface(SolverInterface):
+    def __init__(self,
+                 model,
+                 problem,
+                 optimizer,
+                 scheduler,
+                 use_lt=True):
         """
         :param model: A torch nn.Module instances.
         :type model: torch.nn.Module
@@ -166,25 +208,28 @@ class SolverInterface(MultipleSolversInterface):
         :type problem: AbstractProblem
         :param Optimizer optimizers: A neural network optimizers to use.
         :param Scheduler optimizers: A neural network scheduler to use.
-        :param extra_features: The additional input features to use as
-            augmented input.
-        :type extra_features: list[torch.nn.Module] | tuple[torch.nn.Module]
         :param bool use_lt: Using LabelTensors as input during training.
         """
         if optimizer is None:
-            optimizer = SolverInterface.default_torch_optimizer()
+            optimizer = self.default_torch_optimizer()
 
         if scheduler is None:
-            scheduler = SolverInterface.default_torch_scheduler()
+            scheduler = self.default_torch_scheduler()
 
-        super().__init__(models = [model],
-                         problem = problem,
-                         optimizers = [optimizer],
-                         schedulers = [scheduler],
-                         extra_features = extra_features,
-                         use_lt = use_lt)
+        super().__init__(problem=problem,
+                         use_lt=use_lt)
+
+        # Check consistency of models argument and encapsulate in list
+        check_consistency(model, torch.nn.Module)
+        # Check scheduler consistency + encapsulation
+        check_consistency(scheduler, Scheduler)
+        # Check optimizer consistency + encapsulation
+        check_consistency(optimizer, Optimizer)
+
         # initialize model (needed for Lightining to go to different devices)
-        self._pina_model = self.models[0]
+        self._pina_models = [model]
+        self._pina_optimizers = [optimizer]
+        self._pina_schedulers = [scheduler]
 
     def forward(self, x):
         """Forward pass implementation for the solver.
@@ -219,18 +264,18 @@ class SolverInterface(MultipleSolversInterface):
         """
         Model for training.
         """
-        return self._pina_model
+        return self._pina_models[0]
 
     @property
     def scheduler(self):
         """
         Scheduler for training.
         """
-        return self.schedulers[0]
+        return self._pina_schedulers[0]
 
     @property
     def optimizer(self):
         """
         Optimizer for training.
         """
-        return self.optimizers[0]
+        return self._pina_optimizers[0]
