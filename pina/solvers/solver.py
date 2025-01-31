@@ -1,12 +1,13 @@
 """ Solver module. """
 
-from abc import ABCMeta, abstractmethod
 import lightning
+import torch
+import sys
+
+from abc import ABCMeta, abstractmethod
 from ..utils import check_consistency, labelize_forward
 from ..problem import AbstractProblem
 from ..optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
-import torch
-import sys
 
 
 class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
@@ -102,6 +103,93 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
             batch_size += len(data[1]['input_points'])
         return batch_size
 
+    @staticmethod
+    def default_torch_optimizer():
+        return TorchOptimizer(torch.optim.Adam, lr=0.001)
+
+    @staticmethod
+    def default_torch_scheduler():
+        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
+    
+class SingleSolverInterface(SolverInterface):
+    def __init__(self,
+                 model,
+                 problem,
+                 optimizer=None,
+                 scheduler=None,
+                 use_lt=True):
+        """
+        :param model: A torch nn.Module instances.
+        :type model: torch.nn.Module
+        :param problem: A problem definition instance.
+        :type problem: AbstractProblem
+        :param Optimizer optimizers: A neural network optimizers to use.
+        :param Scheduler optimizers: A neural network scheduler to use.
+        :param bool use_lt: Using LabelTensors as input during training.
+        """
+        if optimizer is None:
+            optimizer = self.default_torch_optimizer()
+
+        if scheduler is None:
+            scheduler = self.default_torch_scheduler()
+
+        super().__init__(problem=problem,
+                         use_lt=use_lt)
+
+        # Check consistency of models argument and encapsulate in list
+        check_consistency(model, torch.nn.Module)
+        # Check scheduler consistency + encapsulation
+        check_consistency(scheduler, Scheduler)
+        # Check optimizer consistency + encapsulation
+        check_consistency(optimizer, Optimizer)
+
+        # initialize model (needed for Lightining to go to different devices)
+        self._pina_models = [model]
+        self._pina_optimizers = [optimizer]
+        self._pina_schedulers = [scheduler]
+
+    def forward(self, x):
+        """Forward pass implementation for the solver.
+
+        :param torch.Tensor x: Input tensor.
+        :return: Solver solution.
+        :rtype: torch.Tensor
+        """
+        return self.model(x)
+
+    def configure_optimizers(self):
+        """Optimizer configuration for the solver.
+
+        :return: The optimizers and the schedulers
+        :rtype: tuple(list, list)
+        """
+        self.optimizer.hook(self.model.parameters())
+        self.scheduler.hook(self.optimizer)
+        return ([self.optimizer.optimizer_instance],
+                [self.scheduler.scheduler_instance])
+
+    @property
+    def model(self):
+        """
+        Model for training.
+        """
+        return self._pina_models[0]
+
+    @property
+    def scheduler(self):
+        """
+        Scheduler for training.
+        """
+        return self._pina_schedulers[0]
+
+    @property
+    def optimizer(self):
+        """
+        Optimizer for training.
+        """
+        return self._pina_optimizers[0]
+
+
 class MultiSolverInterface(SolverInterface):
     """
     Multiple Solver base class. This class inherits is a wrapper of
@@ -131,12 +219,10 @@ class MultiSolverInterface(SolverInterface):
                              'one.')
         
         if optimizer is None:
-            optimizer = [
-                self.default_torch_optimizer() for _ in range(len(models))]
+            optimizer = [self.default_torch_optimizer()] * len(models)
 
         if scheduler is None:
-            scheduler = [
-                self.default_torch_scheduler() for _ in range(len(models))]
+            scheduler = [self.default_torch_scheduler()] * len(models)
 
         super().__init__(problem=problem,
                          use_lt=use_lt)
@@ -192,90 +278,3 @@ class MultiSolverInterface(SolverInterface):
         """
         The torch model."""
         return self._pina_schedulers
-
-
-class SingleSolverInterface(SolverInterface):
-    def __init__(self,
-                 model,
-                 problem,
-                 optimizer,
-                 scheduler,
-                 use_lt=True):
-        """
-        :param model: A torch nn.Module instances.
-        :type model: torch.nn.Module
-        :param problem: A problem definition instance.
-        :type problem: AbstractProblem
-        :param Optimizer optimizers: A neural network optimizers to use.
-        :param Scheduler optimizers: A neural network scheduler to use.
-        :param bool use_lt: Using LabelTensors as input during training.
-        """
-        if optimizer is None:
-            optimizer = self.default_torch_optimizer()
-
-        if scheduler is None:
-            scheduler = self.default_torch_scheduler()
-
-        super().__init__(problem=problem,
-                         use_lt=use_lt)
-
-        # Check consistency of models argument and encapsulate in list
-        check_consistency(model, torch.nn.Module)
-        # Check scheduler consistency + encapsulation
-        check_consistency(scheduler, Scheduler)
-        # Check optimizer consistency + encapsulation
-        check_consistency(optimizer, Optimizer)
-
-        # initialize model (needed for Lightining to go to different devices)
-        self._pina_models = [model]
-        self._pina_optimizers = [optimizer]
-        self._pina_schedulers = [scheduler]
-
-    def forward(self, x):
-        """Forward pass implementation for the solver.
-
-        :param torch.Tensor x: Input tensor.
-        :return: Solver solution.
-        :rtype: torch.Tensor
-        """
-        return self.model(x)
-
-    def configure_optimizers(self):
-        """Optimizer configuration for the solver.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple(list, list)
-        """
-        self.optimizer.hook(self.model.parameters())
-        self.scheduler.hook(self.optimizer)
-        return ([self.optimizer.optimizer_instance],
-                [self.scheduler.scheduler_instance])
-
-    @staticmethod
-    def default_torch_optimizer():
-        return TorchOptimizer(torch.optim.Adam, lr=0.001)
-
-    @staticmethod
-    def default_torch_scheduler():
-        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
-
-    @property
-    def model(self):
-        """
-        Model for training.
-        """
-        return self._pina_models[0]
-
-    @property
-    def scheduler(self):
-        """
-        Scheduler for training.
-        """
-        return self._pina_schedulers[0]
-
-    @property
-    def optimizer(self):
-        """
-        Optimizer for training.
-        """
-        return self._pina_optimizers[0]
