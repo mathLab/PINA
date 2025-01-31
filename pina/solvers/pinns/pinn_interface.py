@@ -10,8 +10,6 @@ from ...problem import InverseProblem
 from ...condition import InputOutputPointsCondition, \
     InputPointsEquationCondition, DomainEquationCondition
 
-torch.pi = torch.acos(torch.zeros(1)).item() * 2  # which is 3.1415927410125732
-
 
 class PINNInterface(SolverInterface, metaclass=ABCMeta):
     """
@@ -33,6 +31,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             self,
             problem,
             loss=None,
+            **kwargs,
     ):
         """
         :param problem: A problem definition instance.
@@ -44,7 +43,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         if loss is None:
             loss = torch.nn.MSELoss()
 
-        super().__init__(problem=problem, use_lt=True)
+        super().__init__(problem=problem, use_lt=True, **kwargs)
 
         # check consistency
         check_consistency(loss, (LossInterface, _Loss), subclass=False)

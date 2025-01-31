@@ -7,7 +7,7 @@ from ..solver import SingleSolverInterface
 from ...problem import InverseProblem
 
 
-class PINN(SingleSolverInterface, PINNInterface):
+class PINN(PINNInterface, SingleSolverInterface):
     r"""
     Physics Informed Neural Network (PINN) solver class.
     This class implements Physics Informed Neural
@@ -51,11 +51,11 @@ class PINN(SingleSolverInterface, PINNInterface):
 
     def __init__(
         self,
-        problem,
         model,
-        loss=None,
+        problem,
         optimizer=None,
         scheduler=None,
+        loss=None,
     ):
         """
         :param AbstractProblem problem: The formulation of the problem.
@@ -71,21 +71,8 @@ class PINN(SingleSolverInterface, PINNInterface):
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         """
-        # Call SingleSolverInterface's __init__ directly with required args
-        SingleSolverInterface.__init__(
-            self,
-            model=model,
-            problem=problem,
-            optimizer=optimizer,
-            scheduler=scheduler,
-        )
-
-        # Call PINNInterface's __init__ directly with its required args
-        PINNInterface.__init__(
-            self,
-            problem=problem,
-            loss=loss,
-        )
+        super().__init__(model=model, problem=problem, optimizer=optimizer,
+                         scheduler=scheduler, loss=loss)
 
     def loss_phys(self, samples, equation):
         """
