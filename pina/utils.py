@@ -1,15 +1,11 @@
-"""Utils module"""
+"""Utils module."""
 
-from torch.utils.data import Dataset, DataLoader
-from functools import reduce
 import types
-
 import torch
-from torch.utils.data import DataLoader, default_collate, ConcatDataset
 
+from functools import reduce
 from .label_tensor import LabelTensor
 
-import torch
 
 
 def check_consistency(object, object_instance, subclass=False):
