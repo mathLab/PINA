@@ -44,6 +44,7 @@ class SupervisedSolver(SingleSolverInterface):
                  loss=None,
                  optimizer=None,
                  scheduler=None,
+                 weighting=None,
                  use_lt=True):
         """
         :param AbstractProblem problem: The formualation of the problem.
@@ -54,6 +55,7 @@ class SupervisedSolver(SingleSolverInterface):
             use; default is :class:`torch.optim.Adam`.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
+        :param WeightingInterface weighting: The loss weighting to use.
         :param bool use_lt: Using LabelTensors as input during training.
         """
         if loss is None:
@@ -63,6 +65,7 @@ class SupervisedSolver(SingleSolverInterface):
                          problem=problem,
                          optimizer=optimizer,
                          scheduler=scheduler,
+                         weighting=weighting,
                          use_lt=use_lt)
 
         # check consistency
@@ -70,45 +73,25 @@ class SupervisedSolver(SingleSolverInterface):
                           subclass=False)
         self._loss = loss
 
-    def _optimization_cycle(self, batch):
-        condition_loss = []
+    def optimization_cycle(self, batch):
+        """
+        Perform an optimization cycle by computing the loss for each condition
+        in the given batch.
+
+        :param batch: A batch of data, where each element is a tuple containing
+                    a condition name and a dictionary of points. 
+        :type batch: list of tuples (str, dict)
+        :return: The computed loss for the all conditions in the batch,
+            cast to a subclass of `torch.Tensor`. It should return a dict
+            containing the condition name and the associated scalar loss.
+        :rtype: dict(torch.Tensor)
+        """
+        condition_loss = {}
         for condition_name, points in batch:
             input_pts, output_pts = points['input_points'], points['output_points']
-            loss = self.loss_data(input_pts=input_pts, output_pts=output_pts)
-            condition_loss.append(loss.as_subclass(torch.Tensor))
-        loss = sum(condition_loss)
-        return loss
-    
-    def training_step(self, batch):
-        """Solver training step.
-
-        :param batch: The batch element in the dataloader.
-        :type batch: tuple
-        :param batch_idx: The batch index.
-        :type batch_idx: int
-        :return: The sum of the loss functions.
-        :rtype: LabelTensor
-        """
-        loss = self._optimization_cycle(batch=batch)
-        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
-        return loss
-
-    def validation_step(self, batch):
-        """
-        Solver validation step.
-        """
-        loss = self._optimization_cycle(batch=batch)
-        self.log('val_loss', loss, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
-        
-    def test_step(self, batch):
-        """
-        Solver validation step.
-        """
-        loss = self._optimization_cycle(batch=batch)
-        self.log('test_loss', loss, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
+            condition_loss[condition_name] = self.loss_data(
+                input_pts=input_pts, output_pts=output_pts)
+        return condition_loss
 
     def loss_data(self, input_pts, output_pts):
         """
