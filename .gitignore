@@ -1,6 +1,6 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
+**__pycache__/
+**.py[cod]
 *$py.class
 
 # C extensions
@@ -138,5 +138,4 @@ dmypy.json
 cython_debug/
 
 # Lightning logs dir
-*/lightning_logs/*
-lightning_logs/*
+**lightning_logs/*
