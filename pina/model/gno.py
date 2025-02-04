@@ -16,6 +16,7 @@ class GraphNeuralKernel(torch.nn.Module):
             n_layers=2,
             internal_n_layers=0,
             internal_layers=None,
+            inner_size=None,
             internal_func=None,
             external_func=None,
             shared_weights=False
@@ -50,6 +51,7 @@ class GraphNeuralKernel(torch.nn.Module):
                 edges_features=edge_features,
                 n_layers=internal_n_layers,
                 layers=internal_layers,
+                inner_size=inner_size,
                 internal_func=internal_func,
                 external_func=external_func)
             self.n_layers = n_layers
@@ -61,6 +63,7 @@ class GraphNeuralKernel(torch.nn.Module):
                     edges_features=edge_features,
                     n_layers=internal_n_layers,
                     layers=internal_layers,
+                    inner_size=inner_size,
                     internal_func=internal_func,
                     external_func=external_func
                 )
@@ -150,6 +153,7 @@ class GNO(KernelNeuralOperator):
                 width=lifting_operator.out_features,
                 edge_features=edge_features,
                 internal_n_layers=internal_n_layers,
+                inner_size=inner_size,
                 internal_layers=internal_layers,
                 external_func=external_func,
                 internal_func=internal_func,
