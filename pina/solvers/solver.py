@@ -5,9 +5,11 @@ import torch
 import sys
 
 from abc import ABCMeta, abstractmethod
-from ..utils import check_consistency, labelize_forward
 from ..problem import AbstractProblem
 from ..optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
+from ..loss import WeightingInterface
+from ..loss.scalar_weighting import _NoWeighting
+from ..utils import check_consistency, labelize_forward
 
 
 class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
@@ -17,6 +19,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
 
     def __init__(self,
                  problem,
+                 weighting,
                  use_lt):
         """
         :param problem: A problem definition instance.
@@ -26,10 +29,17 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         super().__init__()
     
-        # check consistency of the inputs
+        # check consistency of the problem
         check_consistency(problem, AbstractProblem)
         self._check_solver_consistency(problem)
         self._pina_problem = problem
+
+        # check consistency of the weighting + hook the condition names
+        if weighting is None:
+            weighting = _NoWeighting()
+        check_consistency(weighting, WeightingInterface)
+        self._pina_weighting = weighting
+        weighting.condition_names = list(self._pina_problem.conditions.keys())
 
         # Check consistency use_lt
         check_consistency(use_lt, bool)
@@ -52,21 +62,55 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         for condition in problem.conditions.values():
             check_consistency(condition, self.accepted_conditions_types)
 
-    @abstractmethod
-    def forward(self, *args, **kwargs):
-        pass
+    def _optimization_cycle(self, batch):
+        """
+        Perform a private optimization cycle by computing the loss for each
+        condition in the given batch. The loss are later aggregated using the
+        specific weighting schema.
 
-    @abstractmethod
+        :param batch: A batch of data, where each element is a tuple containing
+                    a condition name and a dictionary of points. 
+        :type batch: list of tuples (str, dict)
+        :return: The computed loss for the all conditions in the batch,
+            cast to a subclass of `torch.Tensor`. It should return a dict
+            containing the condition name and the associated scalar loss.
+        :rtype: dict(torch.Tensor)
+        """
+        losses =  self.optimization_cycle(batch)
+        loss = self.weighting.aggregate(losses).as_subclass(torch.Tensor)
+        return loss
+
     def training_step(self, batch):
-        pass
+        """Solver training step.
 
-    @abstractmethod
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
+        :param batch_idx: The batch index.
+        :type batch_idx: int
+        :return: The sum of the loss functions.
+        :rtype: LabelTensor
+        """
+        loss = self._optimization_cycle(batch=batch)
+        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True,
+                 logger=True,
+                 batch_size=self.get_batch_size(batch), sync_dist=True)
+        return loss
+
     def validation_step(self, batch):
-        pass
-
-    @abstractmethod
+        """
+        Solver validation step.
+        """
+        loss = self._optimization_cycle(batch=batch)
+        self.log('val_loss', loss, prog_bar=True, logger=True,
+                 batch_size=self.get_batch_size(batch), sync_dist=True)
+        
     def test_step(self, batch):
-        pass
+        """
+        Solver validation step.
+        """
+        loss = self._optimization_cycle(batch=batch)
+        self.log('test_loss', loss, prog_bar=True, logger=True,
+                 batch_size=self.get_batch_size(batch), sync_dist=True)
 
     def on_train_start(self):
         super().on_train_start()
@@ -83,6 +127,26 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
                 print("Compilation failed, running in normal mode.:\n", e)
                 sys.stdout.flush()
 
+    @abstractmethod
+    def forward(self, *args, **kwargs):
+        pass
+
+    @abstractmethod
+    def optimization_cycle(self, batch):
+        """
+        Perform an optimization cycle by computing the loss for each condition
+        in the given batch.
+
+        :param batch: A batch of data, where each element is a tuple containing
+                    a condition name and a dictionary of points. 
+        :type batch: list of tuples (str, dict)
+        :return: The computed loss for the all conditions in the batch,
+            cast to a subclass of `torch.Tensor`. It should return a dict
+            containing the condition name and the associated scalar loss.
+        :rtype: dict(torch.Tensor)
+        """
+        pass
+    
     @property
     def problem(self):
         """
@@ -94,6 +158,12 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         Using LabelTensor in training."""
         return self._use_lt
+    
+    @property
+    def weighting(self):
+        """
+        The weighting mechanism."""
+        return self._pina_weighting
 
     @staticmethod
     def get_batch_size(batch):
@@ -117,6 +187,7 @@ class SingleSolverInterface(SolverInterface):
                  problem,
                  optimizer=None,
                  scheduler=None,
+                 weighting=None,
                  use_lt=True):
         """
         :param model: A torch nn.Module instances.
@@ -125,6 +196,7 @@ class SingleSolverInterface(SolverInterface):
         :type problem: AbstractProblem
         :param Optimizer optimizers: A neural network optimizers to use.
         :param Scheduler optimizers: A neural network scheduler to use.
+        :param WeightingInterface weighting: The loss weighting to use.
         :param bool use_lt: Using LabelTensors as input during training.
         """
         if optimizer is None:
@@ -134,7 +206,8 @@ class SingleSolverInterface(SolverInterface):
             scheduler = self.default_torch_scheduler()
 
         super().__init__(problem=problem,
-                         use_lt=use_lt)
+                         use_lt=use_lt,
+                         weighting=weighting)
 
         # Check consistency of models argument and encapsulate in list
         check_consistency(model, torch.nn.Module)
@@ -201,6 +274,7 @@ class MultiSolverInterface(SolverInterface):
                  problem,
                  optimizers=None,
                  schedulers=None,
+                 weighting=None,
                  use_lt=True):
         """
         :param models: Multiple torch nn.Module instances.
@@ -211,6 +285,7 @@ class MultiSolverInterface(SolverInterface):
            optimizers to use.
         :param list(Scheduler) optimizers: A list of neural network
            schedulers to use.
+        :param WeightingInterface weighting: The loss weighting to use.
         :param bool use_lt: Using LabelTensors as input during training.
         """
         if not isinstance(models, (list, tuple)) or len(models) < 2:
@@ -225,7 +300,8 @@ class MultiSolverInterface(SolverInterface):
             scheduler = [self.default_torch_scheduler()] * len(models)
 
         super().__init__(problem=problem,
-                         use_lt=use_lt)
+                         use_lt=use_lt,
+                         weighting=weighting)
 
         # Check consistency of models argument and encapsulate in list
         check_consistency(models, torch.nn.Module)
