@@ -1,8 +1,8 @@
-""" Module for RBAPINN. """
+""" Module for Residual-Based Attention PINN. """
 
-from copy import deepcopy
 import torch
-from torch.optim.lr_scheduler import ConstantLR
+from copy import deepcopy
+
 from .pinn import PINN
 from ...utils import check_consistency
 
@@ -70,42 +70,31 @@ class RBAPINN(PINN):
         self,
         problem,
         model,
-        extra_features=None,
-        loss=torch.nn.MSELoss(),
-        optimizer=torch.optim.Adam,
-        optimizer_kwargs={"lr": 0.001},
-        scheduler=ConstantLR,
-        scheduler_kwargs={"factor": 1, "total_iters": 0},
+        optimizer=None,
+        scheduler=None,
+        loss=None,
         eta=0.001,
         gamma=0.999,
     ):
         """
         :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
-        :param torch.nn.Module extra_features: The additional input
-            features to use as augmented input.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default :class:`torch.nn.MSELoss`.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
             use; default is :class:`torch.optim.Adam`.
-        :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param torch.optim.LRScheduler scheduler: Learning
-            rate scheduler.
-        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
         :param float | int eta: The learning rate for the
             weights of the residual.
-        :param float  gamma: The decay parameter in the update of the weights
+        :param float gamma: The decay parameter in the update of the weights
             of the residual.
         """
         super().__init__(
             problem=problem,
             model=model,
-            extra_features=extra_features,
-            loss=loss,
             optimizer=optimizer,
-            optimizer_kwargs=optimizer_kwargs,
             scheduler=scheduler,
-            scheduler_kwargs=scheduler_kwargs,
+            loss=loss
         )
 
         # check consistency
@@ -163,7 +152,7 @@ class RBAPINN(PINN):
             * torch.abs(residual)
             / (torch.max(torch.abs(residual)) + 1e-12)
         )
-        self.weights[cond] = (self.gamma * self.weights[cond] + r_norm).detach()
+        self.weights[cond] = (self.gamma*self.weights[cond] + r_norm).detach()
 
         loss_value = self._vectorial_loss(
             torch.zeros_like(residual, requires_grad=True), residual

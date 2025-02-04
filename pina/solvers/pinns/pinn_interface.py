@@ -1,14 +1,18 @@
-""" Module for PINN """
+""" Module for Physics Informed Neural Network Interface."""
 
-from abc import ABCMeta, abstractmethod
 import torch
+from abc import ABCMeta, abstractmethod
 from torch.nn.modules.loss import _Loss
+
 from ..solver import SolverInterface
 from ...utils import check_consistency
 from ...loss.loss_interface import LossInterface
 from ...problem import InverseProblem
-from ...condition import InputOutputPointsCondition, \
-    InputPointsEquationCondition, DomainEquationCondition
+from ...condition import (
+    InputOutputPointsCondition,
+    InputPointsEquationCondition,
+    DomainEquationCondition
+)
 
 
 class PINNInterface(SolverInterface, metaclass=ABCMeta):
@@ -32,7 +36,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             problem,
             loss=None,
             **kwargs,
-    ):
+        ):
         """
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
@@ -43,7 +47,11 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         if loss is None:
             loss = torch.nn.MSELoss()
 
-        super().__init__(problem=problem, use_lt=True, **kwargs)
+        super().__init__(
+            problem=problem,
+            use_lt=True,
+            **kwargs
+        )
 
         # check consistency
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
@@ -58,16 +66,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         else:
             self._params = None
             self._clamp_params = lambda: None
-
-        # variable used internally to store residual losses at each epoch
-        # this variable save the residual at each iteration (not weighted)
-        self.__logged_res_losses = []
-
-        # variable used internally in pina for logging. This variable points to
-        # the current condition during the training step and returns the
-        # condition name. Whenever :meth:`store_log` is called the logged
-        # variable will be stored with name = self.__logged_metric
-        self.__logged_metric = None
 
     def _optimization_cycle(self, batch):
         condition_loss = []
@@ -90,7 +88,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     def training_step(self, batch):
         """
         The Physics Informed Solver training Step. This function takes care
-        of the physics informed training step, and it must not be override
+        of the physics informed training step, and it must not be overridden
         if not intentionally. It handles the batching mechanism, the workload
         division for the various conditions, the inverse problem clamping,
         and loggers.
@@ -110,7 +108,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     def validation_step(self, batch):
         """
         The Physics Informed Solver validation Step. This function takes care
-        of the physics informed validation step, and it must not be override
+        of the physics informed validation step, and it must not be overridden
         if not intentionally. It handles the batching mechanism, the workload
         division for the various conditions, the inverse problem clamping,
         and loggers.
@@ -120,7 +118,10 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-        loss = self._optimization_cycle(batch)
+        # Necessary to compute gradients in equations
+        with torch.set_grad_enabled(True):
+            # in realtà sarà super().validation_step() --> check
+            loss = self._optimization_cycle(batch)
         self.log('val_loss', loss, on_epoch=True, prog_bar=True,
                  logger=True, batch_size=self.get_batch_size(batch),
                  sync_dist=True)
@@ -128,7 +129,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     def test_step(self, batch):
         """
         The Physics Informed Solver test Step. This function takes care
-        of the physics informed test step, and it must not be override
+        of the physics informed test step, and it must not be overridden
         if not intentionally. It handles the batching mechanism, the workload
         division for the various conditions, the inverse problem clamping,
         and loggers.
@@ -138,7 +139,10 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-        loss = self._optimization_cycle(batch)
+        # .....
+        with torch.set_grad_enabled(True):
+            # in realtà sarà super().validation_step() --> check
+            loss = self._optimization_cycle(batch)
         self.log('test_loss', loss, on_epoch=True, prog_bar=True,
                  logger=True, batch_size=self.get_batch_size(batch),
                  sync_dist=True)
@@ -195,45 +199,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             )
         return residual
 
-    def store_log(self, loss_value):
-        """
-        Stores the loss value in the logger. This function should be
-        called for all conditions. It automatically handles the storing
-        conditions names. It must be used
-        anytime a specific variable wants to be stored for a specific condition.
-        A simple example is to use the variable to store the residual.
-
-        :param str name: The name of the loss.
-        :param torch.Tensor loss_value: The value of the loss.
-        """
-        batch_size = self.trainer.data_module.batch_size \
-            if self.trainer.data_module.batch_size is not None else 999
-
-        self.log(
-            self.__logged_metric + "_loss",
-            loss_value,
-            prog_bar=True,
-            logger=True,
-            on_epoch=True,
-            on_step=True,
-            batch_size=batch_size,
-        )
-        self.__logged_res_losses.append(loss_value)
-
-    def save_logs_and_release(self):
-        """
-        At the end of each epoch we free the stored losses. This function
-        should not be override if not intentionally.
-        """
-        if self.__logged_res_losses:
-            # storing mean loss
-            self.__logged_metric = "mean"
-            self.store_log(
-                sum(self.__logged_res_losses) / len(self.__logged_res_losses)
-            )
-            # free the logged losses
-            self.__logged_res_losses = []
-
     def _clamp_inverse_problem_params(self):
         """
         Clamps the parameters of the inverse problem
@@ -251,12 +216,3 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         Loss used for training.
         """
         return self._loss
-
-    @property
-    def current_condition_name(self):
-        """
-        Returns the condition name. This function can be used inside the
-        :meth:`loss_phys` to extract the condition at which the loss is
-        computed.
-        """
-        return self.__logged_metric

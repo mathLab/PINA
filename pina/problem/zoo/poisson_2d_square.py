@@ -11,6 +11,8 @@ import torch
 def laplace_equation(input_, output_):
     force_term = (torch.sin(input_.extract(['x']) * torch.pi) *
                   torch.sin(input_.extract(['y']) * torch.pi))
+    print(input_.requires_grad)
+    print(output_.requires_grad)
     delta_u = laplacian(output_.extract(['u']), input_)
     return delta_u - force_term
 
