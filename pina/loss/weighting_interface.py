@@ -22,10 +22,3 @@ class WeightingInterface(metaclass=ABCMeta):
         :rtype: torch.Tensor
         """
         pass
-
-    @abstractmethod
-    def NTK_weighting(self, losses):
-        """
-        Weight the losses 
-        """
-        pass
