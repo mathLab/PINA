@@ -91,6 +91,7 @@ class ReducedOrderModelSolver(SupervisedSolver):
         loss=None,
         optimizer=None,
         scheduler=None,
+        weighting=None,
         use_lt=True,
     ):
         """
@@ -108,6 +109,7 @@ class ReducedOrderModelSolver(SupervisedSolver):
             use; default is :class:`torch.optim.Adam`.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
+        :param WeightingInterface weighting: The loss weighting to use.
         :param bool use_lt: Using LabelTensors as input during training.
         """
         model = torch.nn.ModuleDict(
@@ -123,6 +125,7 @@ class ReducedOrderModelSolver(SupervisedSolver):
             loss=loss,
             optimizer=optimizer,
             scheduler=scheduler,
+            weighting=weighting,
             use_lt=use_lt
         )
 
