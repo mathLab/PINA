@@ -26,16 +26,11 @@ class ScalarWeighting(WeightingInterface):
         """
         Aggregate the losses.
 
-        :param dict(torch.Tensor) input: The dictionary of losses.
+        :param dict(torch.Tensor) losses: The dictionary of losses.
         :return: The losses aggregation. It should be a scalar Tensor.
         :rtype: torch.Tensor
         """
-        # all conditions must have a single value
-        for condition in self.condition_names:
-            self.weights.setdefault(condition, self.default_value_weights)
-        # update
-        weighted_losses = {
-            condition: self.weights[condition] * losses[condition] 
-            for condition in losses
-        }
-        return sum(weighted_losses.values())
+        return sum(
+            self.weights.get(condition, self.default_value_weights) * loss for
+            condition, loss in losses.items()
+        )
