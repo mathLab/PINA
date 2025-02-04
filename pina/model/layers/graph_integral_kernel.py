@@ -10,8 +10,9 @@ class GraphIntegralLayer(MessagePassing):
             self,
             width,
             edges_features,
-            n_layers=0,
+            n_layers=2,
             layers=None,
+            inner_size=None,
             internal_func=None,
             external_func=None
     ):
@@ -28,10 +29,13 @@ class GraphIntegralLayer(MessagePassing):
         from pina.model import FeedForward
         super(GraphIntegralLayer, self).__init__(aggr='mean')
         self.width = width
+        if layers is None and inner_size is None:
+            inner_size = width
         self.dense = FeedForward(input_dimensions=edges_features,
                                  output_dimensions=width ** 2,
                                  n_layers=n_layers,
                                  layers=layers,
+                                 inner_size=inner_size,
                                  func=internal_func)
         self.W = torch.nn.Linear(width, width)
         self.func = external_func()
