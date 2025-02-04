@@ -268,6 +268,7 @@ class PinaDataModule(LightningDataModule):
                 dataset_dict[key].update({condition_name: data})
         return dataset_dict
 
+
     def _create_dataloader(self, split, dataset):
         shuffle = self.shuffle if split == 'train' else False
         # Use custom batching (good if batch size is large)
@@ -316,7 +317,7 @@ class PinaDataModule(LightningDataModule):
         """
         Create the testing dataloader
         """
-        raise self._create_dataloader('test', self.test_dataset)
+        return self._create_dataloader('test', self.test_dataset)
 
     def predict_dataloader(self):
         """
