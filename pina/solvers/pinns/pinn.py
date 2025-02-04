@@ -55,6 +55,7 @@ class PINN(PINNInterface, SingleSolverInterface):
         model,
         optimizer=None,
         scheduler=None,
+        weighting=None,
         loss=None,
     ):
         """
@@ -76,7 +77,8 @@ class PINN(PINNInterface, SingleSolverInterface):
             problem=problem,
             optimizer=optimizer,
             scheduler=scheduler,
-            loss=loss
+            loss=loss,
+            weighting=weighting
         )
 
     def loss_phys(self, samples, equation):

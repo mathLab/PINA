@@ -67,85 +67,31 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             self._params = None
             self._clamp_params = lambda: None
 
-    def _optimization_cycle(self, batch):
-        condition_loss = []
+    def optimization_cycle(self, batch):
+        condition_loss = {}
         for condition_name, points in batch:
             if 'output_points' not in points: # if equations are passed
                 input_pts = points['input_points']
                 condition = self.problem.conditions[condition_name]
-                loss_ = self.loss_phys(input_pts.requires_grad_(),
+                loss = self.loss_phys(input_pts.requires_grad_(),
                                        condition.equation)
             else: # if data are passed
                 input_pts, output_pts = points['input_points'], points['output_points']
-                loss_ = self.loss_data(input_pts=input_pts,
+                loss = self.loss_data(input_pts=input_pts,
                                        output_pts=output_pts)
-            # append loss
-            condition_loss.append(loss_.as_subclass(torch.Tensor))
+            # append loss --
+            condition_loss[condition_name] = loss
         # clamp unknown parameters in InverseProblem (if needed)
         self._clamp_params()
-        return sum(condition_loss)
+        return condition_loss
 
-    def training_step(self, batch):
-        """
-        The Physics Informed Solver training Step. This function takes care
-        of the physics informed training step, and it must not be overridden
-        if not intentionally. It handles the batching mechanism, the workload
-        division for the various conditions, the inverse problem clamping,
-        and loggers.
-
-        :param tuple batch: The batch element in the dataloader.
-        :param int batch_idx: The batch index.
-        :return: The sum of the loss functions.
-        :rtype: LabelTensor
-        """
-        loss = self._optimization_cycle(batch)
-        self.log('train_loss', loss, prog_bar=True, on_epoch=True,
-                 logger=True, batch_size=self.get_batch_size(batch),
-                 sync_dist=True)
-
-        return loss
-
+    @torch.set_grad_enabled(True)
     def validation_step(self, batch):
-        """
-        The Physics Informed Solver validation Step. This function takes care
-        of the physics informed validation step, and it must not be overridden
-        if not intentionally. It handles the batching mechanism, the workload
-        division for the various conditions, the inverse problem clamping,
-        and loggers.
+        super().validation_step(batch)
 
-        :param tuple batch: The batch element in the dataloader.
-        :param int batch_idx: The batch index.
-        :return: The sum of the loss functions.
-        :rtype: LabelTensor
-        """
-        # Necessary to compute gradients in equations
-        with torch.set_grad_enabled(True):
-            # in realtà sarà super().validation_step() --> check
-            loss = self._optimization_cycle(batch)
-        self.log('val_loss', loss, on_epoch=True, prog_bar=True,
-                 logger=True, batch_size=self.get_batch_size(batch),
-                 sync_dist=True)
-        
+    @torch.set_grad_enabled(True)
     def test_step(self, batch):
-        """
-        The Physics Informed Solver test Step. This function takes care
-        of the physics informed test step, and it must not be overridden
-        if not intentionally. It handles the batching mechanism, the workload
-        division for the various conditions, the inverse problem clamping,
-        and loggers.
-
-        :param tuple batch: The batch element in the dataloader.
-        :param int batch_idx: The batch index.
-        :return: The sum of the loss functions.
-        :rtype: LabelTensor
-        """
-        # .....
-        with torch.set_grad_enabled(True):
-            # in realtà sarà super().validation_step() --> check
-            loss = self._optimization_cycle(batch)
-        self.log('test_loss', loss, on_epoch=True, prog_bar=True,
-                 logger=True, batch_size=self.get_batch_size(batch),
-                 sync_dist=True)
+        super().test_step(batch)
     
     def loss_data(self, input_pts, output_pts):
         """

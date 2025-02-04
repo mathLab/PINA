@@ -4,7 +4,7 @@ import pytest
 from pina import Trainer
 from pina.optim import TorchOptimizer, TorchScheduler
 from pina.model import FeedForward
-from pina.solvers import PINNInterface
+from pina.solvers import PINNInterface, PINN
 from pina.problem import InverseProblem
 from pina.problem.zoo.poisson_2d_square import (
     Poisson2DSquareProblem as Poisson
@@ -62,7 +62,7 @@ def test_constructor():
 
 
 def test_train_step():
-    solver = FooPINN(poisson_problem, model)
+    solver = PINN(poisson_problem, model)
     trainer = Trainer(solver, max_epochs=2, accelerator='cpu')
     trainer.train()
     trainer.test()
