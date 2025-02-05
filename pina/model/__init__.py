@@ -10,7 +10,7 @@ __all__ = [
     "AveragingNeuralOperator",
     "LowRankNeuralOperator",
     "Spline",
-    "GNO"
+    "GraphNeuralOperator"
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward
@@ -21,4 +21,4 @@ from .base_no import KernelNeuralOperator
 from .avno import AveragingNeuralOperator
 from .lno import LowRankNeuralOperator
 from .spline import Spline
-from .gno import GNO
+from .gno import GraphNeuralOperator
