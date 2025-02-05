@@ -2,10 +2,11 @@ import torch
 from torch_geometric.nn import MessagePassing
 
 
-class GraphIntegralLayer(MessagePassing):
+class GNOBlock(MessagePassing):
     """
     TODO: Add documentation
     """
+
     def __init__(
             self,
             width,
@@ -27,7 +28,7 @@ class GraphIntegralLayer(MessagePassing):
         :type n_layers: int
         """
         from pina.model import FeedForward
-        super(GraphIntegralLayer, self).__init__(aggr='mean')
+        super(GNOBlock, self).__init__(aggr='mean')
         self.width = width
         if layers is None and inner_size is None:
             inner_size = width
