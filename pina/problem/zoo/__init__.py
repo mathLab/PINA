@@ -1,5 +1,9 @@
 __all__ = [
-    'Poisson2DSquareProblem'
+    'Poisson2DSquareProblem',
+    'DiffusionReactionProblem',
+    'InverseDiffusionReactionProblem'
 ]
 
 from .poisson_2d_square import Poisson2DSquareProblem
+from .diffusion_reaction import DiffusionReactionProblem
+from .inverse_diffusion_reaction import InverseDiffusionReactionProblem
