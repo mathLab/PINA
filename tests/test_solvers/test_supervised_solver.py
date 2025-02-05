@@ -30,7 +30,9 @@ model = FeedForward(2, 1)
 def test_constructor():
     SupervisedSolver(problem=TensorProblem(), model=model)
     SupervisedSolver(problem=LabelTensorProblem(), model=model)
-    assert SupervisedSolver.accepted_conditions_types == InputOutputPointsCondition
+    assert SupervisedSolver.accepted_conditions_types == (
+        InputOutputPointsCondition
+    )
 
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
@@ -71,13 +73,12 @@ def test_solver_test(use_lt):
                       train_size=0.8,
                       val_size=0.1,
                       test_size=0.1)
-    trainer.train()
+    trainer.test()
 
 def test_train_load_restore():
     dir = "tests/test_solvers/tmp/"
     problem = LabelTensorProblem()
-    solver = SupervisedSolver(problem=problem,
-                              model=model)
+    solver = SupervisedSolver(problem=problem, model=model)
     trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
@@ -87,22 +88,25 @@ def test_train_load_restore():
                       val_size=0.,
                       default_root_dir=dir)
     trainer.train()
+
     # restore
-    ntrainer = Trainer(solver=solver,
-                       max_epochs=5,
-                       accelerator='cpu',)
-    ntrainer.train(
-        ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt')
+    new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
+    new_trainer.train(
+        ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
+                   'epoch=4-step=5.ckpt')
+
     # loading
     new_solver = SupervisedSolver.load_from_checkpoint(
         f'{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt',
-        problem = problem, model=model)
+        problem=problem, model=model)
+
     test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
     assert new_solver.forward(test_pts).shape == (20, 1)
     assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
     torch.testing.assert_close(
         new_solver.forward(test_pts),
         solver.forward(test_pts))
+
     # rm directories
     import shutil
     shutil.rmtree('tests/test_solvers/tmp')

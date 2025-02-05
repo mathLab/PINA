@@ -39,7 +39,8 @@ class GradientPINN(PINN):
         \nabla_{\mathbf{x}}\mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i))
 
 
-    where :math:`\mathcal{L}` is a specific loss function, default Mean Square Error:
+    where :math:`\mathcal{L}` is a specific loss function,
+    default Mean Square Error:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.
@@ -58,14 +59,13 @@ class GradientPINN(PINN):
         class.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        optimizer=None,
-        scheduler=None,
-        loss=None
-    ):
+    def __init__(self,
+                 problem,
+                 model,
+                 optimizer=None,
+                 scheduler=None,
+                 weighting=None,
+                 loss=None):
         """
         :param AbstractProblem problem: The formulation of the problem. It must
             inherit from at least
@@ -84,6 +84,7 @@ class GradientPINN(PINN):
             model=model,
             optimizer=optimizer,
             scheduler=scheduler,
+            weighting=weighting,
             loss=loss
         )
 
@@ -112,10 +113,10 @@ class GradientPINN(PINN):
         loss_value = self.loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
-        self.store_log(loss_value=float(loss_value))
+
         # gradient PINN loss
         loss_value = loss_value.reshape(-1, 1)
-        loss_value.labels = ["__LOSS"]
+        loss_value.labels = ["__loss"]
         loss_grad = grad(loss_value, samples, d=self.problem.spatial_variables)
         g_loss_phys = self.loss(
             torch.zeros_like(loss_grad, requires_grad=True), loss_grad

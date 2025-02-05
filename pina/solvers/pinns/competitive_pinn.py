@@ -64,6 +64,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         optimizer_discriminator=None,
         scheduler_model=None,
         scheduler_discriminator=None,
+        weighting=None,
         loss=None
     ):
         """
@@ -94,6 +95,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
             models=[model, discriminator],
             optimizers=[optimizer_model, optimizer_discriminator],
             schedulers=[scheduler_model, scheduler_discriminator],
+            weighting=weighting,
             loss=loss
         )
 
@@ -112,7 +114,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :return: PINN solution evaluated at contro points.
         :rtype: LabelTensor
         """
-        return self.neural_net(x)
+        return self.model(x)
 
     def loss_phys(self, samples, equation):
         """
@@ -130,7 +132,6 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         with torch.no_grad():
             discriminator_bets = self.discriminator(samples)
         loss_val = self._train_model(samples, equation, discriminator_bets)
-        self.store_log(loss_value=float(loss_val))
 
         # Detach samples from the existing computational graph and
         # create a new one by setting requires_grad to True.
@@ -143,10 +144,10 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         self._train_discriminator(samples, equation, discriminator_bets)
         return loss_val
 
-    def loss_data(self, input_tensor, output_tensor):
+    def loss_data(self, input_pts, output_pts):
         """
-        The data loss for the CompetitivePINN solver. It computes the loss between the
-        network output against the true solution.
+        The data loss for the CompetitivePINN solver. It computes the loss 
+        between the network output against the true solution.
 
         :param LabelTensor input_tensor: The input to the neural networks.
         :param LabelTensor output_tensor: The true solution to compare the
@@ -154,13 +155,13 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :return: The computed data loss.
         :rtype: torch.Tensor
         """
-        self.optimizer_model.zero_grad()
+        self.optimizer_model.instance.zero_grad()
         loss_val = (
-            super().loss_data(input_tensor, output_tensor)
-            .as_subclass(torch.Tensor)
+            super().loss_data(input_pts, output_pts)
+            #.as_subclass(torch.Tensor)
         )
         loss_val.backward()
-        self.optimizer_model.step()
+        self.optimizer_model.instance.step()
         return loss_val
 
     def configure_optimizers(self):
@@ -172,6 +173,8 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         """
         # If the problem is an InverseProblem, add the unknown parameters
         # to the parameters to be optimized
+        self.optimizer_model.hook(self.model.parameters())
+        self.optimizer_discriminator.hook(self.discriminator.parameters())
         if isinstance(self.problem, InverseProblem):
             self.optimizer_model.optimizer_instance.add_param_group(
                 {
@@ -182,8 +185,13 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
                 }
             )
         self.scheduler_model.hook(self.optimizer_model)
-        return ([self.optimizer_model.optimizer_instance],
-                [self.scheduler_model.scheduler_instance])
+        self.scheduler_discriminator.hook(self.optimizer_discriminator)
+        return (
+            [self.optimizer_model.optimizer_instance,
+             self.optimizer_discriminator.optimizer_instance],
+            [self.scheduler_model.scheduler_instance,
+             self.scheduler_discriminator.scheduler_instance]
+        )
 
     def on_train_batch_end(self, outputs, batch, batch_idx):
         """
@@ -217,7 +225,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
             network.
         """
         # Manual optimization
-        self.optimizer_discriminator.zero_grad()
+        self.optimizer_discriminator.instance.zero_grad()
 
         # Compute residual. Detach since discriminator weights are fixed
         residual = self.compute_residual(
@@ -229,11 +237,11 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         loss_val = -self.loss(
             torch.zeros_like(competitive_residual, requires_grad=True),
             competitive_residual,
-        ).as_subclass(torch.Tensor)
+        )#.as_subclass(torch.Tensor)
 
         # Backpropagation
         self.manual_backward(loss_val)
-        self.optimizer_discriminator.step()
+        self.optimizer_discriminator.instance.step()
         return
 
     def _train_model(self, samples, equation, discriminator_bets):
@@ -249,7 +257,10 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :rtype: torch.Tensor
         """
         # Manual optimization
-        self.optimizer_model.zero_grad()
+        try:
+            self.optimizer_model.instance.zero_grad()
+        except:
+            pass
 
         # Compute residual
         residual = self.compute_residual(samples=samples, equation=equation)
@@ -262,15 +273,20 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         loss_val = self.loss(
             torch.zeros_like(competitive_residual, requires_grad=True),
             competitive_residual,
-        ).as_subclass(torch.Tensor)
+        )
 
         # Backpropagation
-        self.manual_backward(loss_val)
-        self.optimizer_model.step()
+        try:
+            self.manual_backward(loss_val)
+            self.optimizer_model.instance.step()
+        except:
+            pass
         return loss_residual
+    
+    def training_step(self, batch):
 
     @property
-    def neural_net(self):
+    def model(self):
         """
         Returns the neural network model.
 

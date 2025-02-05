@@ -20,23 +20,22 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     Base PINN solver class. This class implements the Solver Interface
     for Physics Informed Neural Network solvers.
 
-    This class can be used to
-    define PINNs with multiple ``optimizers``, and/or ``models``.
-    By default it takes
-    an :class:`~pina.problem.abstract_problem.AbstractProblem`, so it is up
-    to the user to choose which problem the implemented solver inheriting from
-    this class is suitable for.
+    This class can be used to define PINNs with multiple ``optimizers``, 
+    and/or ``models``.
+    By default it takes :class:`~pina.problem.abstract_problem.AbstractProblem`,
+    so the user can choose which type of problem the implemented solver,
+    inheriting from this class, is designed to solve.
     """
-    accepted_conditions_types = (InputOutputPointsCondition,
-                                 InputPointsEquationCondition,
-                                 DomainEquationCondition)
+    accepted_conditions_types = (
+        InputOutputPointsCondition,
+        InputPointsEquationCondition,
+        DomainEquationCondition
+    )
 
-    def __init__(
-            self,
-            problem,
-            loss=None,
-            **kwargs,
-        ):
+    def __init__(self,
+                 problem,
+                 loss=None,
+                 **kwargs):
         """
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
@@ -70,16 +69,23 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     def optimization_cycle(self, batch):
         condition_loss = {}
         for condition_name, points in batch:
-            if 'output_points' not in points: # if equations are passed
+            # if equations are passed
+            if 'output_points' not in points:
                 input_pts = points['input_points']
                 condition = self.problem.conditions[condition_name]
-                loss = self.loss_phys(input_pts.requires_grad_(),
-                                       condition.equation)
-            else: # if data are passed
-                input_pts, output_pts = points['input_points'], points['output_points']
-                loss = self.loss_data(input_pts=input_pts,
-                                       output_pts=output_pts)
-            # append loss --
+                loss = self.loss_phys(
+                    input_pts.requires_grad_(),
+                    condition.equation
+                )
+            # if data are passed
+            else:
+                input_pts = points['input_points']
+                output_pts = points['output_points']
+                loss = self.loss_data(
+                    input_pts=input_pts,
+                    output_pts=output_pts
+                )
+            # append loss
             condition_loss[condition_name] = loss
         # clamp unknown parameters in InverseProblem (if needed)
         self._clamp_params()
@@ -137,11 +143,12 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         """
         try:
             residual = equation.residual(samples, self.forward(samples))
-        except (
-                TypeError
-        ):  # this occurs when the function has three inputs, i.e. inverse problem
+        except (TypeError):
+            # this occurs when the function has three inputs (inverse problem)
             residual = equation.residual(
-                samples, self.forward(samples), self._params
+                samples,
+                self.forward(samples),
+                self._params
             )
         return residual
 

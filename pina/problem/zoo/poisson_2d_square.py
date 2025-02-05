@@ -14,9 +14,7 @@ def laplace_equation(input_, output_):
     delta_u = laplacian(output_.extract(['u']), input_)
     return delta_u - force_term
 
-
 my_laplace = Equation(laplace_equation)
-
 
 class Poisson2DSquareProblem(SpatialProblem):
     output_variables = ['u']

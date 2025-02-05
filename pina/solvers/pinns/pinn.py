@@ -34,7 +34,8 @@ class PINN(PINNInterface, SingleSolverInterface):
         \frac{1}{N}\sum_{i=1}^N
         \mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i))
 
-    where :math:`\mathcal{L}` is a specific loss function, default Mean Square Error:
+    where :math:`\mathcal{L}` is a specific loss function,
+    default Mean Square Error:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.
@@ -49,15 +50,13 @@ class PINN(PINNInterface, SingleSolverInterface):
 
     __name__ = 'PINN'
 
-    def __init__(
-        self,
-        problem,
-        model,
-        optimizer=None,
-        scheduler=None,
-        weighting=None,
-        loss=None,
-    ):
+    def __init__(self,
+                 problem,
+                 model,
+                 optimizer=None,
+                 scheduler=None,
+                 weighting=None,
+                 loss=None):
         """
         :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
@@ -77,8 +76,8 @@ class PINN(PINNInterface, SingleSolverInterface):
             problem=problem,
             optimizer=optimizer,
             scheduler=scheduler,
-            loss=loss,
-            weighting=weighting
+            weighting=weighting,
+            loss=loss
         )
 
     def loss_phys(self, samples, equation):
@@ -95,7 +94,7 @@ class PINN(PINNInterface, SingleSolverInterface):
         """
         residual = self.compute_residual(samples=samples, equation=equation)
         loss_value = self.loss(
-            torch.zeros_like(residual), residual
+            torch.zeros_like(residual, requires_grad=True), residual
         )
         return loss_value
 
@@ -111,13 +110,15 @@ class PINN(PINNInterface, SingleSolverInterface):
         self.optimizer.hook(self.model.parameters())
         if isinstance(self.problem, InverseProblem):
             self.optimizer.optimizer_instance.add_param_group(
-                    {
-                        "params": [
-                            self._params[var]
-                            for var in self.problem.unknown_variables
-                        ]
-                    }
-                )
+                {
+                    "params": [
+                        self._params[var]
+                        for var in self.problem.unknown_variables
+                    ]
+                }
+            )
         self.scheduler.hook(self.optimizer)
-        return ([self.optimizer.optimizer_instance],
-                [self.scheduler.scheduler_instance])
+        return (
+            [self.optimizer.optimizer_instance],
+            [self.scheduler.scheduler_instance]
+        )

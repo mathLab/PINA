@@ -67,15 +67,14 @@ class CausalPINN(PINN):
         :class:`~pina.problem.timedep_problem.TimeDependentProblem` class.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        optimizer=None,
-        scheduler=None,
-        loss=None,
-        eps=100
-    ):
+    def __init__(self,
+                 problem,
+                 model,
+                 optimizer=None,
+                 scheduler=None,
+                 weighting=None,
+                 loss=None,
+                 eps=100):
         """
         :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
@@ -93,6 +92,7 @@ class CausalPINN(PINN):
             model=model,
             optimizer=optimizer,
             scheduler=scheduler,
+            weighting=weighting,
             loss=loss
         )
 
@@ -102,7 +102,7 @@ class CausalPINN(PINN):
         if not isinstance(self.problem, TimeDependentProblem):
             raise ValueError(
                 "Casual PINN works only for problems"
-                "inheritig from TimeDependentProblem."
+                "inheriting from TimeDependentProblem."
             )
 
     def loss_phys(self, samples, equation):
@@ -120,8 +120,8 @@ class CausalPINN(PINN):
         # split sequentially ordered time tensors into chunks
         chunks, labels = self._split_tensor_into_chunks(samples)
         # compute residuals - this correspond to ordered loss functions
-        # values for each time step. We apply `flatten` such that after
-        # concataning the residuals we obtain a tensor of shape #chunks
+        # values for each time step. Apply `flatten` to ensure obtaining
+        # a tensor of shape #chunks after concatenating the residuals
         time_loss = []
         for chunk in chunks:
             chunk.labels = labels
@@ -131,11 +131,10 @@ class CausalPINN(PINN):
                 torch.zeros_like(residual, requires_grad=True), residual
             )
             time_loss.append(loss_val)
-        # store results
-        self.store_log(loss_value=float(sum(time_loss) / len(time_loss)))
+
         # concatenate residuals
         time_loss = torch.stack(time_loss)
-        # compute weights (without the gradient storing)
+        # compute weights without storing the gradient
         with torch.no_grad():
             weights = self._compute_weights(time_loss)
         return (weights * time_loss).mean()
@@ -183,17 +182,17 @@ class CausalPINN(PINN):
         :return: Tuple containing the chunks and the original labels.
         :rtype: Tuple[List[LabelTensor], List]
         """
-        # labels input tensors
+        # extract labels
         labels = tensor.labels
-        # labels input tensors
+        # sort input tensor based on time
         tensor = self._sort_label_tensor(tensor)
         # extract time tensor
         time_tensor = tensor.extract(self.problem.temporal_domain.variables)
         # count unique tensors in time
         _, idx_split = time_tensor.unique(return_counts=True)
-        # splitting
+        # split the tensor based on time
         chunks = torch.split(tensor, tuple(idx_split))
-        return chunks, labels  # return chunks
+        return chunks, labels
 
     def _compute_weights(self, loss):
         """
@@ -203,7 +202,7 @@ class CausalPINN(PINN):
         :return: The computed weights for the physics loss.
         :rtype: LabelTensor
         """
-        # compute comulative loss and multiply by epsilos
+        # compute comulative loss and multiply by epsilon
         cumulative_loss = self._eps * torch.cumsum(loss, dim=0)
-        # return the exponential of the weghited negative cumulative sum
+        # return the exponential of the negative weighted cumulative sum
         return torch.exp(-cumulative_loss)

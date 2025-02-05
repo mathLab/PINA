@@ -14,7 +14,7 @@ from ..utils import check_consistency, labelize_forward
 
 class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     """
-    SolverInterface base class. This class is a wrapper of the LightningModule
+    SolverInterface base class. This class is a wrapper of LightningModule.
     """
 
     def __init__(self,
@@ -24,28 +24,30 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
+        :param weighting: The loss weighting to use.
+        :type weighting: WeightingInterface
         :param use_lt: Using LabelTensors as input during training.
         :type use_lt: bool
         """
         super().__init__()
-    
+
         # check consistency of the problem
         check_consistency(problem, AbstractProblem)
         self._check_solver_consistency(problem)
         self._pina_problem = problem
 
-        # check consistency of the weighting + hook the condition names
+        # check consistency of the weighting and hook the condition names
         if weighting is None:
             weighting = _NoWeighting()
         check_consistency(weighting, WeightingInterface)
         self._pina_weighting = weighting
         weighting.condition_names = list(self._pina_problem.conditions.keys())
 
-        # Check consistency use_lt
+        # check consistency use_lt
         check_consistency(use_lt, bool)
         self._use_lt = use_lt
 
-        # If use_lt is true add extract operation in input
+        # if use_lt is true add extract operation in input
         if use_lt is True:
             self.forward = labelize_forward(
                 forward=self.forward,
@@ -70,50 +72,59 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         specific weighting schema.
 
         :param batch: A batch of data, where each element is a tuple containing
-                    a condition name and a dictionary of points. 
+            a condition name and a dictionary of points. 
         :type batch: list of tuples (str, dict)
         :return: The computed loss for the all conditions in the batch,
             cast to a subclass of `torch.Tensor`. It should return a dict
             containing the condition name and the associated scalar loss.
         :rtype: dict(torch.Tensor)
         """
-        losses =  self.optimization_cycle(batch)
+        losses = self.optimization_cycle(batch)
         loss = self.weighting.aggregate(losses).as_subclass(torch.Tensor)
         return loss
 
     def training_step(self, batch):
-        """Solver training step.
+        """
+        Solver training step.
 
         :param batch: The batch element in the dataloader.
         :type batch: tuple
-        :param batch_idx: The batch index.
-        :type batch_idx: int
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
         loss = self._optimization_cycle(batch=batch)
         self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True,
-                 logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
+                 logger=True, batch_size=self.get_batch_size(batch), 
+                 sync_dist=True)
         return loss
 
     def validation_step(self, batch):
         """
         Solver validation step.
+
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
         """
         loss = self._optimization_cycle(batch=batch)
         self.log('val_loss', loss, prog_bar=True, logger=True,
                  batch_size=self.get_batch_size(batch), sync_dist=True)
-        
+
     def test_step(self, batch):
         """
-        Solver validation step.
+        Solver test step.
+
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
         """
         loss = self._optimization_cycle(batch=batch)
         self.log('test_loss', loss, prog_bar=True, logger=True,
                  batch_size=self.get_batch_size(batch), sync_dist=True)
 
     def on_train_start(self):
+        """
+        Hook that is called before training begins.
+        Used to compile the model if the trainer is set to compile.
+        """
         super().on_train_start()
         if self.trainer.compile:
             model_device = next(self._pina_model.parameters()).device
@@ -139,7 +150,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         in the given batch.
 
         :param batch: A batch of data, where each element is a tuple containing
-                    a condition name and a dictionary of points. 
+            a condition name and a dictionary of points. 
         :type batch: list of tuples (str, dict)
         :return: The computed loss for the all conditions in the batch,
             cast to a subclass of `torch.Tensor`. It should return a dict
@@ -147,28 +158,31 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :rtype: dict(torch.Tensor)
         """
         pass
-    
+
     @property
     def problem(self):
         """
-        The problem formulation."""
+        The problem formulation.
+        """
         return self._pina_problem
 
     @property
     def use_lt(self):
         """
-        Using LabelTensor in training."""
+        Using LabelTensor in training.
+        """
         return self._use_lt
-    
+
     @property
     def weighting(self):
         """
-        The weighting mechanism."""
+        The weighting mechanism.
+        """
         return self._pina_weighting
 
     @staticmethod
     def get_batch_size(batch):
-        # Assuming batch is your custom Batch object
+        # assuming batch is a custom Batch object
         batch_size = 0
         for data in batch:
             batch_size += len(data[1]['input_points'])
@@ -211,20 +225,21 @@ class SingleSolverInterface(SolverInterface):
                          use_lt=use_lt,
                          weighting=weighting)
 
-        # Check consistency of models argument and encapsulate in list
+        # check consistency of models argument and encapsulate in list
         check_consistency(model, torch.nn.Module)
-        # Check scheduler consistency + encapsulation
+        # check scheduler consistency and encapsulate in list
         check_consistency(scheduler, Scheduler)
-        # Check optimizer consistency + encapsulation
+        # check optimizer consistency and encapsulate in list
         check_consistency(optimizer, Optimizer)
 
-        # initialize model (needed for Lightining to go to different devices)
+        # initialize the model (needed by Lightining to go to different devices)
         self._pina_models = [model]
         self._pina_optimizers = [optimizer]
         self._pina_schedulers = [scheduler]
 
     def forward(self, x):
-        """Forward pass implementation for the solver.
+        """
+        Forward pass implementation for the solver.
 
         :param torch.Tensor x: Input tensor.
         :return: Solver solution.
@@ -233,15 +248,18 @@ class SingleSolverInterface(SolverInterface):
         return self.model(x)
 
     def configure_optimizers(self):
-        """Optimizer configuration for the solver.
+        """
+        Optimizer configuration for the solver.
 
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
         """
         self.optimizer.hook(self.model.parameters())
         self.scheduler.hook(self.optimizer)
-        return ([self.optimizer.optimizer_instance],
-                [self.scheduler.scheduler_instance])
+        return (
+            [self.optimizer.optimizer_instance],
+            [self.scheduler.scheduler_instance]
+        )
 
     @property
     def model(self):
@@ -296,21 +314,30 @@ class MultiSolverInterface(SolverInterface):
                 'tuple[torch.nn.Module] with len greater than '
                 'one.'
             )
+        
+        if any(opt is None for opt in optimizers):
+            optimizers = [
+                self.default_torch_optimizer() if opt is None else opt 
+                for opt in optimizers
+            ]
 
-        if optimizers is None:
-            optimizers = [self.default_torch_optimizer()] * len(models)
+        if any(sched is None for sched in schedulers):
+            schedulers = [
+                self.default_torch_scheduler() if sched is None else sched 
+                for sched in schedulers
+            ]
 
         super().__init__(problem=problem,
                          use_lt=use_lt,
                          weighting=weighting)
 
-        # Check consistency of models argument and encapsulate in list
+        # check consistency of models argument and encapsulate in list
         check_consistency(models, torch.nn.Module)
 
-        # Check scheduler consistency + encapsulation
+        # check scheduler consistency and encapsulate in list
         check_consistency(schedulers, Scheduler)
 
-        # Check optimizer consistency + encapsulation
+        # check optimizer consistency and encapsulate in list
         check_consistency(optimizers, Optimizer)
 
         # check length consistency optimizers
@@ -321,7 +348,7 @@ class MultiSolverInterface(SolverInterface):
                 " optimizers."
             )
 
-        # initialize model
+        # initialize the model
         self._pina_models = models
         self._pina_optimizers = optimizers
         self._pina_schedulers = schedulers
