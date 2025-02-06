@@ -65,12 +65,12 @@ class Collector:
 
     def store_sample_domains(self):
         """
-        Add
+        # TODO: Add docstring
         """
         for condition_name in self.problem.conditions:
             condition = self.problem.conditions[condition_name]
             if not hasattr(condition, "domain"):
-                continue
+               continue
 
             samples = self.problem.discretised_domains[condition.domain]
 
