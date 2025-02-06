@@ -33,6 +33,5 @@ test = [
 Homepage = "https://github.com/mathLab/PINA"
 Repository = "https://github.com/mathLab/PINA"
 
-[tool.setuptools]
-packages = ["pina"]
-
+[tool.setuptools.packages]
+find = {}
