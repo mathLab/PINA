@@ -62,6 +62,7 @@ class Collector:
                 # condition now is ready
                 self._is_conditions_ready[condition_name] = True
 
+
     def store_sample_domains(self):
         """
         Add
