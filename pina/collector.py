@@ -62,46 +62,58 @@ class Collector:
                 # condition now is ready
                 self._is_conditions_ready[condition_name] = True
 
-    def store_sample_domains(self, n, mode, variables, sample_locations):
-        # loop over all locations
-        for loc in sample_locations:
-            # get condition
-            condition = self.problem.conditions[loc]
-            condition_domain = condition.domain
-            if isinstance(condition_domain, str):
-                condition_domain = self.problem.domains[condition_domain]
-            keys = ["input_points", "equation"]
-            # if the condition is not ready, we get and store the data
-            if not self._is_conditions_ready[loc]:
-                # if it is the first time we sample
-                if not self.data_collections[loc]:
-                    already_sampled = []
-                # if we have sampled the condition but not all variables
-                else:
-                    already_sampled = [
-                        self.data_collections[loc]['input_points']
-                    ]
-            # if the condition is ready but we want to sample again
-            else:
-                self._is_conditions_ready[loc] = False
-                already_sampled = []
+    def store_sample_domains(self):
+        """
+        Add
+        """
+        for condition_name in self.problem.conditions:
+            condition = self.problem.conditions[condition_name]
+            if not hasattr(condition, "domain"):
+                continue
 
-            # get the samples
-            samples = [
-                          condition_domain.sample(n=n, mode=mode,
-                                                  variables=variables)
-                      ] + already_sampled
-            pts = merge_tensors(samples)
-            if set(pts.labels).issubset(sorted(self.problem.input_variables)):
-                pts = pts.sort_labels()
-                if sorted(pts.labels) == sorted(self.problem.input_variables):
-                    self._is_conditions_ready[loc] = True
-                values = [pts, condition.equation]
-                self.data_collections[loc] = dict(zip(keys, values))
-            else:
-                raise RuntimeError(
-                    'Try to sample variables which are not in problem defined '
-                    'in the problem')
+            samples = self.problem.discretised_domains[condition.domain]
+
+            self.data_collections[condition_name] = {
+                'input_points': samples,
+                'equation': condition.equation
+            }
+
+            # # get condition
+            # condition = self.problem.conditions[loc]
+            # condition_domain = condition.domain
+            # if isinstance(condition_domain, str):
+            #     condition_domain = self.problem.domains[condition_domain]
+            # keys = ["input_points", "equation"]
+            # # if the condition is not ready, we get and store the data
+            # if not self._is_conditions_ready[loc]:
+            #     # if it is the first time we sample
+            #     if not self.data_collections[loc]:
+            #         already_sampled = []
+            #     # if we have sampled the condition but not all variables
+            #     else:
+            #         already_sampled = [
+            #             self.data_collections[loc]['input_points']
+            #         ]
+            # # if the condition is ready but we want to sample again
+            # else:
+            #     self._is_conditions_ready[loc] = False
+            #     already_sampled = []
+            # # get the samples
+            # samples = [
+            #               condition_domain.sample(n=n, mode=mode,
+            #                                       variables=variables)
+            #           ] + already_sampled
+            # pts = merge_tensors(samples)
+            # if set(pts.labels).issubset(sorted(self.problem.input_variables)):
+            #     pts = pts.sort_labels()
+            #     if sorted(pts.labels) == sorted(self.problem.input_variables):
+            #         self._is_conditions_ready[loc] = True
+            #     values = [pts, condition.equation]
+            #     self.data_collections[loc] = dict(zip(keys, values))
+            # else:
+            #     raise RuntimeError(
+            #         'Try to sample variables which are not in problem defined '
+            #         'in the problem')
 
     def add_points(self, new_points_dict):
         """

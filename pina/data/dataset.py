@@ -58,6 +58,7 @@ class PinaTensorDataset(PinaDataset):
     def __init__(self, conditions_dict, max_conditions_lengths,
                  automatic_batching):
         super().__init__(conditions_dict, max_conditions_lengths)
+
         if automatic_batching:
             self._getitem_func = self._getitem_int
         else:
