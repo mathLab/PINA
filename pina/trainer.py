@@ -63,17 +63,17 @@ class Trainer(lightning.pytorch.Trainer):
         during training, there is no need to define to touch the
         trainer dataloader, just call the method.
         """
-        if not self.solver.problem.collector.full:
+        if not self.solver.problem.are_all_domains_discretised:
             error_message = '\n'.join([
-                f"""{" " * 13} ---> Condition {key} {"sampled" if value else
-                "not sampled"}""" for key, value in
-                self._solver.problem.collector._is_conditions_ready.items()
+                f"""{" " * 13} ---> Domain {key} {"sampled" if key in self.solver.problem.discretised_domains else
+                "not sampled"}""" for key in
+                self.solver.problem.domains.keys()
             ])
             raise RuntimeError('Cannot create Trainer if not all conditions '
                                'are sampled. The Trainer got the following:\n'
                                f'{error_message}')
         automatic_batching = False
-        self.data_module = PinaDataModule(collector=self.solver.problem.collector,
+        self.data_module = PinaDataModule(self.solver.problem,
                                           train_size=self.train_size,
                                           test_size=self.test_size,
                                           val_size=self.val_size,
