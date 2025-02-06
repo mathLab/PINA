@@ -57,9 +57,11 @@ class AbstractProblem(metaclass=ABCMeta):
     @property
     def input_pts(self):
         to_return = {}
-        for k, v in self.collector.data_collections.items():
-            if 'input_points' in v.keys():
-                to_return[k] = v['input_points']
+        for cond_name, cond in self.conditions.items():
+            if hasattr(cond, "input_points"):
+                to_return[cond_name] = cond.input_points
+            elif hasattr(cond, "domain"):
+                to_return[cond_name] = self.discretised_domains[cond.domain]
         return to_return
 
     def __deepcopy__(self, memo):
