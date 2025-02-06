@@ -60,8 +60,8 @@ class GradientPINN(PINN):
     """
 
     def __init__(self,
-                 problem,
                  model,
+                 problem,
                  optimizer=None,
                  scheduler=None,
                  weighting=None,
@@ -79,14 +79,12 @@ class GradientPINN(PINN):
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
         """
-        super().__init__(
-            problem=problem,
-            model=model,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            weighting=weighting,
-            loss=loss
-        )
+        super().__init__(model=model,
+                         problem=problem,
+                         optimizer=optimizer,
+                         scheduler=scheduler,
+                         weighting=weighting,
+                         loss=loss)
 
         if not isinstance(self.problem, SpatialProblem):
             raise ValueError(

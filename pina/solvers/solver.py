@@ -233,7 +233,7 @@ class SingleSolverInterface(SolverInterface):
         check_consistency(optimizer, Optimizer)
 
         # initialize the model (needed by Lightining to go to different devices)
-        self._pina_models = [model]
+        self._pina_models = torch.nn.ModuleList([model])
         self._pina_optimizers = [optimizer]
         self._pina_schedulers = [scheduler]
 
@@ -257,7 +257,7 @@ class SingleSolverInterface(SolverInterface):
         self.optimizer.hook(self.model.parameters())
         self.scheduler.hook(self.optimizer)
         return (
-            [self.optimizer.optimizer_instance],
+            [self.optimizer.instance],
             [self.scheduler.scheduler_instance]
         )
 
@@ -349,7 +349,7 @@ class MultiSolverInterface(SolverInterface):
             )
 
         # initialize the model
-        self._pina_models = models
+        self._pina_models = torch.nn.ModuleList(models)
         self._pina_optimizers = optimizers
         self._pina_schedulers = schedulers
 
@@ -366,7 +366,7 @@ class MultiSolverInterface(SolverInterface):
             scheduler.hook(optimizer)
 
         return (
-            [optimizer.optimizer_instance for optimizer in self.optimizers],
+            [optimizer.instance for optimizer in self.optimizers],
             [scheduler.scheduler_instance for scheduler in self.schedulers]
         )
 

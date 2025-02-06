@@ -66,16 +66,15 @@ class RBAPINN(PINN):
         j.cma.2024.116805 <https://doi.org/10.1016/j.cma.2024.116805>`_.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        optimizer=None,
-        scheduler=None,
-        loss=None,
-        eta=0.001,
-        gamma=0.999,
-    ):
+    def __init__(self,
+                 model,
+                 problem,
+                 optimizer=None,
+                 scheduler=None,
+                 weighting=None,
+                 loss=None,
+                 eta=0.001,
+                 gamma=0.999):
         """
         :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
@@ -89,17 +88,19 @@ class RBAPINN(PINN):
         :param float gamma: The decay parameter in the update of the weights
             of the residual.
         """
-        super().__init__(
-            problem=problem,
-            model=model,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            loss=loss
-        )
+        super().__init__(model=model,
+                         problem=problem,
+                         optimizer=optimizer,
+                         scheduler=scheduler,
+                         weighting=weighting,
+                         loss=loss)
 
         # check consistency
         check_consistency(eta, (float, int))
         check_consistency(gamma, float)
+        assert (
+            0 < gamma < 1
+        ), f"Invalid range: expected 0 < gamma < 1, got {gamma=}"
         self.eta = eta
         self.gamma = gamma
 
@@ -109,7 +110,7 @@ class RBAPINN(PINN):
             self.weights[condition_name] = 0
 
         # define vectorial loss
-        self._vectorial_loss = deepcopy(loss)
+        self._vectorial_loss = deepcopy(self.loss)
         self._vectorial_loss.reduction = "none"
 
     def _vect_to_scalar(self, loss_value):
@@ -148,8 +149,7 @@ class RBAPINN(PINN):
         cond = self.current_condition_name
 
         r_norm = (
-            self.eta
-            * torch.abs(residual)
+            self.eta * torch.abs(residual)
             / (torch.max(torch.abs(residual)) + 1e-12)
         )
         self.weights[cond] = (self.gamma*self.weights[cond] + r_norm).detach()
@@ -157,7 +157,5 @@ class RBAPINN(PINN):
         loss_value = self._vectorial_loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
-
-        self.store_log(loss_value=float(self._vect_to_scalar(loss_value)))
 
         return self._vect_to_scalar(self.weights[cond] ** 2 * loss_value)

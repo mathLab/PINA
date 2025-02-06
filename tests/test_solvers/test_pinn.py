@@ -1,13 +1,8 @@
 import pytest
 import torch
-from pina.problem.zoo import Poisson2DSquareProblem as Poisson
-from pina.problem import SpatialProblem, InverseProblem
-from pina.equation.equation_factory import FixedValue
-from pina.domain import CartesianDomain
-from pina import Condition, LabelTensor
-from pina.operators import laplacian
+
+from pina import LabelTensor
 from pina.model import FeedForward
-from pina.equation import Equation
 from pina.trainer import Trainer
 from pina.solvers import PINN
 from pina.condition import (
@@ -15,50 +10,10 @@ from pina.condition import (
     InputPointsEquationCondition,
     DomainEquationCondition
 )
-
-class InversePoisson(SpatialProblem, InverseProblem):
-    '''
-    Problem definition for the Poisson equation.
-    '''
-    output_variables = ['u']
-    x_min, x_max = -2, 2
-    y_min, y_max = -2, 2
-    data_input = LabelTensor(torch.rand(10, 2), ['x', 'y'])
-    data_output = LabelTensor(torch.rand(10, 1), ['u'])
-    spatial_domain = CartesianDomain({'x': [x_min, x_max], 'y': [y_min, y_max]})
-    unknown_parameter_domain = CartesianDomain({'mu1': [-1, 1], 'mu2': [-1, 1]})
-
-    def laplace_equation(input_, output_, params_):
-        '''
-        Laplace equation with a force term.
-        '''
-        force_term = torch.exp(
-                - 2*(input_.extract(['x']) - params_['mu1'])**2
-                - 2*(input_.extract(['y']) - params_['mu2'])**2)
-        delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
-        return delta_u - force_term
-
-    # define conditions for loss terms (boundaries, domain, data)
-    conditions = {
-        'gamma1': Condition(
-            domain=CartesianDomain({'x': [x_min, x_max], 'y':  y_max}),
-            equation=FixedValue(0.0, components=['u'])),
-        'gamma2': Condition(
-            domain=CartesianDomain({'x': [x_min, x_max], 'y': y_min}),
-            equation=FixedValue(0.0, components=['u'])),
-        'gamma3': Condition(
-            domain=CartesianDomain({'x':  x_max, 'y': [y_min, y_max]}),
-            equation=FixedValue(0.0, components=['u'])),
-        'gamma4': Condition(
-            domain=CartesianDomain({'x': x_min, 'y': [y_min, y_max]}),
-            equation=FixedValue(0.0, components=['u'])),
-        'D': Condition(
-            domain=CartesianDomain({'x': [x_min, x_max], 'y': [y_min, y_max]}),
-            equation=Equation(laplace_equation)),
-        'data': Condition(
-            input_points=data_input.extract(['x', 'y']),
-            output_points=data_output)
-    }
+from pina.problem.zoo import (
+    Poisson2DSquareProblem as Poisson,
+    InversePoisson2DSquareProblem as InversePoisson
+)
 
 
 # define problems and model
@@ -85,7 +40,7 @@ def test_constructor(problem):
 @pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 def test_pinn_train(problem, batch_size):
-    pinn = PINN(problem=problem, model=model)
+    pinn = PINN(model=model, problem=problem)
     trainer = Trainer(solver=pinn,
                       max_epochs=2,
                       accelerator='cpu',
@@ -99,7 +54,7 @@ def test_pinn_train(problem, batch_size):
 @pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 def test_pinn_validation(problem, batch_size):
-    pinn = PINN(problem=problem, model=model)
+    pinn = PINN(model=model, problem=problem)
     trainer = Trainer(solver=pinn,
                       max_epochs=2,
                       accelerator='cpu',
@@ -113,7 +68,7 @@ def test_pinn_validation(problem, batch_size):
 @pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 def test_pinn_test(problem, batch_size):
-    pinn = PINN(problem=problem, model=model)
+    pinn = PINN(model=model, problem=problem)
     trainer = Trainer(solver=pinn,
                       max_epochs=2,
                       accelerator='cpu',
@@ -128,7 +83,7 @@ def test_pinn_test(problem, batch_size):
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    pinn = PINN(problem=problem, model=model)
+    pinn = PINN(model=model, problem=problem)
     trainer = Trainer(solver=pinn,
                       max_epochs=5,
                       accelerator='cpu',

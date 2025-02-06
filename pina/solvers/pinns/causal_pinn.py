@@ -68,8 +68,8 @@ class CausalPINN(PINN):
     """
 
     def __init__(self,
-                 problem,
                  model,
+                 problem,
                  optimizer=None,
                  scheduler=None,
                  weighting=None,
@@ -87,14 +87,12 @@ class CausalPINN(PINN):
             value is kept fixed during training, but it can be changed by means
             of a callback, e.g. for annealing.
         """
-        super().__init__(
-            problem=problem,
-            model=model,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            weighting=weighting,
-            loss=loss
-        )
+        super().__init__(model=model,
+                         problem=problem,
+                         optimizer=optimizer,
+                         scheduler=scheduler,
+                         weighting=weighting,
+                         loss=loss)
 
         # checking consistency
         check_consistency(eps, (int, float))

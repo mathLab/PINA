@@ -99,22 +99,21 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         j.jcp.2022.111722 <https://doi.org/10.1016/j.jcp.2022.111722>`_.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        weights_function=torch.nn.Sigmoid(),
-        loss=None,
-        optimizer_model=None,
-        optimizer_weights=None,
-        scheduler_model=None,
-        scheduler_weights=None,
-    ):
+    def __init__(self,
+                 problem,
+                 model,
+                 weight_function=torch.nn.Sigmoid(),
+                 optimizer_model=None,
+                 optimizer_weights=None,
+                 scheduler_model=None,
+                 scheduler_weights=None,
+                 weighting=None,
+                 loss=None):
         """
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use
             for the model.
-        :param torch.nn.Module weights_function: The neural network model
+        :param torch.nn.Module weight_function: The neural network model
             related to the mask of SAPINN.
             default :obj:`~torch.nn.Sigmoid`.
         :param torch.nn.Module loss: The loss function used as minimizer,
@@ -131,26 +130,25 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
             rate scheduler for the mask model.
         """
         # check consistency weitghs_function
-        check_consistency(weights_function, torch.nn.Module)
+        check_consistency(weight_function, torch.nn.Module)
 
         # create models for weights
         weights_dict = {}
         for condition_name in problem.conditions:
-            weights_dict[condition_name] = Weights(weights_function)
+            weights_dict[condition_name] = Weights(weight_function)
         weights_dict = torch.nn.ModuleDict(weights_dict)
 
-        super().__init__(
-            problem=problem,
-            models=[model, weights_dict],
-            optimizers=[optimizer_model, optimizer_weights],
-            schedulers=[scheduler_model, scheduler_weights],
-            loss=loss
-        )
+        super().__init__(models=[model, weights_dict],
+                         problem=problem,
+                         optimizers=[optimizer_model, optimizer_weights],
+                         schedulers=[scheduler_model, scheduler_weights],
+                         weighting=weighting,
+                         loss=loss)
 
         # Set automatic optimization to False
         self.automatic_optimization = False
 
-        self._vectorial_loss = deepcopy(loss)
+        self._vectorial_loss = deepcopy(self.loss)
         self._vectorial_loss.reduction = "none"
 
     def forward(self, x):
@@ -167,6 +165,35 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: LabelTensor
         """
         return self.neural_net(x)
+    
+    def training_step(self, batch):
+        """
+        Solver training step, overridden to perform manual optimization.
+
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
+        :return: The sum of the loss functions.
+        :rtype: LabelTensor
+        """
+        self.optimizer_model.instance.zero_grad()
+        self.optimizer_weights.instance.zero_grad()
+        loss = super().training_step(batch)
+        self.optimizer_model.instance.step()
+        self.optimizer_weights.instance.step()
+        return loss
+    
+    def validation_step(self, batch):
+        """
+        Solver validation step, overridden to perform manual optimization.
+
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
+        """
+        self.optimizer_model.instance.zero_grad()
+        self.optimizer_weights.instance.zero_grad()
+        super().validation_step(batch)
+        self.optimizer_model.instance.step()
+        self.optimizer_weights.instance.step()
 
     def loss_phys(self, samples, equation):
         """
@@ -181,11 +208,9 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: torch.Tensor
         """
         # Train the weights
-        self.optimizer_weights.zero_grad()
         weighted_loss, _ = self._loss_phys(samples, equation)
         loss_value = -weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
-        self.optimizer_weights.step()
 
         # Detach samples from the existing computational graph and
         # create a new one by setting requires_grad to True.
@@ -194,14 +219,10 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         samples.requires_grad = True
 
         # Train the model
-        self.optimizer_model.zero_grad()
-        weighted_loss, loss = self._loss_phys(samples, equation)
+        weighted_loss, _ = self._loss_phys(samples, equation)
         loss_value = weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
-        self.optimizer_model.step()
 
-        # Store the loss without weights
-        self.store_log(loss_value=float(loss))
         return loss_value
 
     def loss_data(self, input_tensor, output_tensor):
@@ -217,11 +238,9 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: torch.Tensor
         """
         # Train the weights
-        self.optimizer_weights.zero_grad()
         weighted_loss, _ = self._loss_data(input_tensor, output_tensor)
         loss_value = -weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
-        self.optimizer_weights.step()
 
         # Detach samples from the existing computational graph and
         # create a new one by setting requires_grad to True.
@@ -230,14 +249,11 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         input_tensor.requires_grad = True
 
         # Train the model
-        self.optimizer_model.zero_grad()
-        weighted_loss, loss = self._loss_data(input_tensor, output_tensor)
+        ###self.optimizer_model.zero_grad()
+        weighted_loss, _ = self._loss_data(input_tensor, output_tensor)
         loss_value = weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
-        self.optimizer_model.step()
 
-        # Store the loss without weights
-        self.store_log(loss_value=float(loss))
         return loss_value
 
     def configure_optimizers(self):
@@ -249,8 +265,10 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         """
         # If the problem is an InverseProblem, add the unknown parameters
         # to the parameters to be optimized
+        self.optimizer_model.hook(self.neural_net.parameters())
+        self.optimizer_weights.hook(self.weights_dict.parameters())
         if isinstance(self.problem, InverseProblem):
-            self.optimizer_model.optimizer_instance.add_param_group(
+            self.optimizer_model.instance.add_param_group(
                     {
                         "params": [
                             self._params[var]
@@ -259,8 +277,13 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
                     }
                 )
         self.scheduler_model.hook(self.optimizer_model)
-        return ([self.optimizer_model.optimizer_instance],
-                [self.scheduler_model.scheduler_instance])
+        self.scheduler_weights.hook(self.optimizer_weights)
+        return (
+            [self.optimizer_model.instance,
+             self.optimizer_weights.instance],
+            [self.scheduler_model.scheduler_instance,
+             self.scheduler_weights.scheduler_instance]
+        )
 
     def on_train_batch_end(self, outputs, batch, batch_idx):
         """
@@ -296,8 +319,8 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
             self.trainer._accelerator_connector._accelerator_flag
         )
 
-        for condition_name, tensor in self.problem.input_pts.items():
-            self.weights_dict.torchmodel[condition_name].sa_weights.data = (
+        for condition_name, tensor in self.problem.input_pts.items(): #problema qui
+            self.weights_dict[condition_name].sa_weights.data = (
                 torch.rand((tensor.shape[0], 1), device=device)
             )
 
@@ -357,9 +380,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :return: tuple with weighted and not weighted loss
         :rtype List[LabelTensor, LabelTensor]
         """
-        weights = self.weights_dict.torchmodel[
-            self.current_condition_name
-        ].forward()
+        weights = self.weights_dict[self.current_condition_name].forward()
         loss_value = self._vectorial_loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )

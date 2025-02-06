@@ -1,62 +1,20 @@
 import pytest
 import torch
-from pina.problem.zoo import Poisson2DSquareProblem as Poisson
-from pina.problem import SpatialProblem, InverseProblem, TimeDependentProblem
-from pina.equation.equation_factory import FixedValue
-from pina.domain import CartesianDomain
-from pina import Condition, LabelTensor
-from pina.operators import laplacian
-from pina.model import FeedForward
-from pina.equation import Equation
-from pina.trainer import Trainer
+
+from pina import LabelTensor
+from pina.problem import TimeDependentProblem
 from pina.solvers import GradientPINN
+from pina.model import FeedForward
+from pina.trainer import Trainer
+from pina.problem.zoo import (
+    Poisson2DSquareProblem as Poisson,
+    InversePoisson2DSquareProblem as InversePoisson
+)
 from pina.condition import (
     InputOutputPointsCondition,
     InputPointsEquationCondition,
     DomainEquationCondition
 )
-
-class InversePoisson(SpatialProblem, InverseProblem):
-    '''
-    Problem definition for the Poisson equation.
-    '''
-    output_variables = ['u']
-    data_input = LabelTensor(torch.rand(10, 2), ['x', 'y'])
-    data_output = LabelTensor(torch.rand(10, 1), ['u'])
-    spatial_domain = CartesianDomain({'x': [-2, 2], 'y': [-2, 2]})
-    unknown_parameter_domain = CartesianDomain({'mu1': [-1, 1], 'mu2': [-1, 1]})
-
-    def laplace_equation(input_, output_, params_):
-        '''
-        Laplace equation with a force term.
-        '''
-        force_term = torch.exp(
-                - 2*(input_.extract(['x']) - params_['mu1'])**2
-                - 2*(input_.extract(['y']) - params_['mu2'])**2)
-        delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
-        return delta_u - force_term
-
-    # define conditions for loss terms (boundaries, domain, data)
-    conditions = {
-        'gamma1': Condition(
-            domain=CartesianDomain({'x': [-2, 2], 'y':  2}),
-            equation=FixedValue(0.0, components=['u'])),
-        'gamma2': Condition(
-            domain=CartesianDomain({'x': [-2, 2], 'y': -2}),
-            equation=FixedValue(0.0, components=['u'])),
-        'gamma3': Condition(
-            domain=CartesianDomain({'x':  2, 'y': [-2, 2]}),
-            equation=FixedValue(0.0, components=['u'])),
-        'gamma4': Condition(
-            domain=CartesianDomain({'x': -2, 'y': [-2, 2]}),
-            equation=FixedValue(0.0, components=['u'])),
-        'D': Condition(
-            domain=CartesianDomain({'x': [-2, 2], 'y': [-2, 2]}),
-            equation=Equation(laplace_equation)),
-        'data': Condition(
-            input_points=data_input.extract(['x', 'y']),
-            output_points=data_output)
-    }
 
 
 class DummyTimeProblem(TimeDependentProblem):
@@ -82,8 +40,8 @@ model = FeedForward(
 @pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
 def test_constructor(problem):
     with pytest.raises(ValueError):
-        GradientPINN(problem=DummyTimeProblem(), model=model)
-    gradient_pinn = GradientPINN(problem=problem, model=model)
+        GradientPINN(model=model, problem=DummyTimeProblem())
+    gradient_pinn = GradientPINN(model=model, problem=problem)
 
     assert gradient_pinn.accepted_conditions_types == (
         InputOutputPointsCondition,
@@ -93,8 +51,8 @@ def test_constructor(problem):
 
 @pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_train(problem, batch_size):
-    gradient_pinn = GradientPINN(problem=problem, model=model)
+def test_gradient_pinn_train(problem, batch_size):
+    gradient_pinn = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=gradient_pinn,
                       max_epochs=2,
                       accelerator='cpu',
@@ -107,8 +65,8 @@ def test_pinn_train(problem, batch_size):
 
 @pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_validation(problem, batch_size):
-    gradient_pinn = GradientPINN(problem=problem, model=model)
+def test_gradient_pinn_validation(problem, batch_size):
+    gradient_pinn = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=gradient_pinn,
                       max_epochs=2,
                       accelerator='cpu',
@@ -121,8 +79,8 @@ def test_pinn_validation(problem, batch_size):
 
 @pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_test(problem, batch_size):
-    gradient_pinn = GradientPINN(problem=problem, model=model)
+def test_gradient_pinn_test(problem, batch_size):
+    gradient_pinn = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=gradient_pinn,
                       max_epochs=2,
                       accelerator='cpu',
@@ -137,7 +95,7 @@ def test_pinn_test(problem, batch_size):
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    gradient_pinn = GradientPINN(problem=problem, model=model)
+    gradient_pinn = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=gradient_pinn,
                       max_epochs=5,
                       accelerator='cpu',

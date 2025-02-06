@@ -46,11 +46,9 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         if loss is None:
             loss = torch.nn.MSELoss()
 
-        super().__init__(
-            problem=problem,
-            use_lt=True,
-            **kwargs
-        )
+        super().__init__(problem=problem,
+                         use_lt=True,
+                         **kwargs)
 
         # check consistency
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
@@ -66,9 +64,12 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             self._params = None
             self._clamp_params = lambda: None
 
+        self.__metric = None
+
     def optimization_cycle(self, batch):
         condition_loss = {}
         for condition_name, points in batch:
+            self.__metric = condition_name
             # if equations are passed
             if 'output_points' not in points:
                 input_pts = points['input_points']
@@ -169,3 +170,10 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         Loss used for training.
         """
         return self._loss
+    
+    @property
+    def current_condition_name(self):
+        """
+        The current condition name.
+        """
+        return self.__metric

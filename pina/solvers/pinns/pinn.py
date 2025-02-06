@@ -48,11 +48,9 @@ class PINN(PINNInterface, SingleSolverInterface):
         DOI: `10.1038 <https://doi.org/10.1038/s42254-021-00314-5>`_.
     """
 
-    __name__ = 'PINN'
-
     def __init__(self,
-                 problem,
                  model,
+                 problem,
                  optimizer=None,
                  scheduler=None,
                  weighting=None,
@@ -71,14 +69,12 @@ class PINN(PINNInterface, SingleSolverInterface):
             rate scheduler.
         :param dict scheduler_kwargs: LR scheduler constructor keyword args.
         """
-        super().__init__(
-            model=model,
-            problem=problem,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            weighting=weighting,
-            loss=loss
-        )
+        super().__init__(model=model,
+                         problem=problem,
+                         optimizer=optimizer,
+                         scheduler=scheduler,
+                         weighting=weighting,
+                         loss=loss)
 
     def loss_phys(self, samples, equation):
         """
@@ -109,7 +105,7 @@ class PINN(PINNInterface, SingleSolverInterface):
         # to the parameters to be optimized.
         self.optimizer.hook(self.model.parameters())
         if isinstance(self.problem, InverseProblem):
-            self.optimizer.optimizer_instance.add_param_group(
+            self.optimizer.instance.add_param_group(
                 {
                     "params": [
                         self._params[var]
@@ -119,6 +115,6 @@ class PINN(PINNInterface, SingleSolverInterface):
             )
         self.scheduler.hook(self.optimizer)
         return (
-            [self.optimizer.optimizer_instance],
+            [self.optimizer.instance],
             [self.scheduler.scheduler_instance]
         )

@@ -37,7 +37,7 @@ def test_constructor(problem, discr):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_train(problem, batch_size):
+def test_competitive_pinn_train(problem, batch_size):
     comp_pinn = CompPINN(problem=problem, model=model)
     trainer = Trainer(solver=comp_pinn,
                       max_epochs=2,
@@ -52,7 +52,7 @@ def test_pinn_train(problem, batch_size):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_validation(problem, batch_size):
+def test_competitive_pinn_validation(problem, batch_size):
     comp_pinn = CompPINN(problem=problem, model=model)
     trainer = Trainer(solver=comp_pinn,
                       max_epochs=2,
@@ -65,7 +65,7 @@ def test_pinn_validation(problem, batch_size):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_test(problem, batch_size):
+def test_competitive_pinn_test(problem, batch_size):
     comp_pinn = CompPINN(problem=problem, model=model)
     trainer = Trainer(solver=comp_pinn,
                       max_epochs=2,
