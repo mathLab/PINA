@@ -258,7 +258,7 @@ class SingleSolverInterface(SolverInterface):
         self.scheduler.hook(self.optimizer)
         return (
             [self.optimizer.instance],
-            [self.scheduler.scheduler_instance]
+            [self.scheduler.instance]
         )
 
     @property
@@ -367,7 +367,7 @@ class MultiSolverInterface(SolverInterface):
 
         return (
             [optimizer.instance for optimizer in self.optimizers],
-            [scheduler.scheduler_instance for scheduler in self.schedulers]
+            [scheduler.instance for scheduler in self.schedulers]
         )
 
     @property

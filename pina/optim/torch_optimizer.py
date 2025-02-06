@@ -13,11 +13,11 @@ class TorchOptimizer(Optimizer):
 
         self.optimizer_class = optimizer_class
         self.kwargs = kwargs
-        self.optimizer_instance = None
+        self._optimizer_instance = None
 
     def hook(self, parameters):
-        self.optimizer_instance = self.optimizer_class(parameters,
+        self._optimizer_instance = self.optimizer_class(parameters,
                                                        **self.kwargs)
     @property
     def instance(self):
-        return self.optimizer_instance
+        return self._optimizer_instance

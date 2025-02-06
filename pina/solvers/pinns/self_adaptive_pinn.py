@@ -181,19 +181,6 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         self.optimizer_model.instance.step()
         self.optimizer_weights.instance.step()
         return loss
-    
-    def validation_step(self, batch):
-        """
-        Solver validation step, overridden to perform manual optimization.
-
-        :param batch: The batch element in the dataloader.
-        :type batch: tuple
-        """
-        self.optimizer_model.instance.zero_grad()
-        self.optimizer_weights.instance.zero_grad()
-        super().validation_step(batch)
-        self.optimizer_model.instance.step()
-        self.optimizer_weights.instance.step()
 
     def loss_phys(self, samples, equation):
         """
@@ -281,8 +268,8 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         return (
             [self.optimizer_model.instance,
              self.optimizer_weights.instance],
-            [self.scheduler_model.scheduler_instance,
-             self.scheduler_weights.scheduler_instance]
+            [self.scheduler_model.instance,
+             self.scheduler_weights.instance]
         )
 
     def on_train_batch_end(self, outputs, batch, batch_idx):

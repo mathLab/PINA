@@ -116,5 +116,5 @@ class PINN(PINNInterface, SingleSolverInterface):
         self.scheduler.hook(self.optimizer)
         return (
             [self.optimizer.instance],
-            [self.scheduler.scheduler_instance]
+            [self.scheduler.instance]
         )
