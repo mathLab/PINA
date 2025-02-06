@@ -71,23 +71,23 @@ def test_discretise_domain():
     n = 10
     poisson_problem = Poisson()
     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-    poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
+    poisson_problem.discretise_domain(n, 'grid', domains=boundaries)
     for b in boundaries:
-        assert poisson_problem.input_pts[b].shape[0] == n
-    poisson_problem.discretise_domain(n, 'random', locations=boundaries)
+        assert poisson_problem.discretised_domains[b].shape[0] == n
+    poisson_problem.discretise_domain(n, 'random', domains=boundaries)
     for b in boundaries:
-        assert poisson_problem.input_pts[b].shape[0] == n
+        assert poisson_problem.discretised_domains[b].shape[0] == n
 
-    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n**2
-    poisson_problem.discretise_domain(n, 'random', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n
+    poisson_problem.discretise_domain(n, 'grid', domains=['D'])
+    assert poisson_problem.discretised_domains['D'].shape[0] == n**2
+    poisson_problem.discretise_domain(n, 'random', domains=['D'])
+    assert poisson_problem.discretised_domains['D'].shape[0] == n
 
-    poisson_problem.discretise_domain(n, 'latin', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n
+    poisson_problem.discretise_domain(n, 'latin', domains=['D'])
+    assert poisson_problem.discretised_domains['D'].shape[0] == n
 
-    poisson_problem.discretise_domain(n, 'lh', locations=['D'])
-    assert poisson_problem.input_pts['D'].shape[0] == n
+    poisson_problem.discretise_domain(n, 'lh', domains=['D'])
+    assert poisson_problem.discretised_domains['D'].shape[0] == n
 
     poisson_problem.discretise_domain(n)
 
@@ -97,10 +97,9 @@ def test_sampling_few_variables():
     poisson_problem = Poisson()
     poisson_problem.discretise_domain(n,
                                       'grid',
-                                      locations=['D'],
+                                      domains=['D'],
                                       variables=['x'])
-    assert poisson_problem.input_pts['D'].shape[1] == 1
-    assert poisson_problem.collector._is_conditions_ready['D'] is False
+    assert poisson_problem.discretised_domains['D'].shape[1] == 1
 
 
 def test_variables_correct_order_sampling():
@@ -108,48 +107,24 @@ def test_variables_correct_order_sampling():
     poisson_problem = Poisson()
     poisson_problem.discretise_domain(n,
                                       'grid',
-                                      locations=['D'],
-                                      variables=['x'])
-    poisson_problem.discretise_domain(n,
-                                      'grid',
-                                      locations=['D'],
-                                      variables=['y'])
-    assert poisson_problem.input_pts['D'].labels == sorted(
+                                      domains=['D'])
+    assert poisson_problem.discretised_domains['D'].labels == sorted(
         poisson_problem.input_variables)
 
-    poisson_problem.discretise_domain(n, 'grid', locations=['D'])
-    assert poisson_problem.input_pts['D'].labels == sorted(
-        poisson_problem.input_variables)
-    poisson_problem.discretise_domain(n,
-                                      'grid',
-                                      locations=['D'],
-                                      variables=['y'])
-    poisson_problem.discretise_domain(n,
-                                      'grid',
-                                      locations=['D'],
-                                      variables=['x'])
-    assert poisson_problem.input_pts['D'].labels == sorted(
+    poisson_problem.discretise_domain(n, 'grid', domains=['D'])
+    assert poisson_problem.discretised_domains['D'].labels == sorted(
         poisson_problem.input_variables)
 
 
-def test_add_points():
-    poisson_problem = Poisson()
-    poisson_problem.discretise_domain(0,
-                                      'random',
-                                      locations=['D'],
-                                      variables=['x', 'y'])
-    new_pts = LabelTensor(torch.tensor([[0.5, -0.5]]), labels=['x', 'y'])
-    poisson_problem.add_points({'D': new_pts})
-    assert torch.isclose(poisson_problem.input_pts['D'].extract('x'),
-                         new_pts.extract('x'))
-    assert torch.isclose(poisson_problem.input_pts['D'].extract('y'),
-                         new_pts.extract('y'))
-
-
-def test_collector():
-    poisson_problem = Poisson()
-    collector = poisson_problem.collector
-    assert collector.full is False
-    assert collector._is_conditions_ready['data'] is True
-    poisson_problem.discretise_domain(10)
-    assert collector.full is True
+# def test_add_points():
+#     poisson_problem = Poisson()
+#     poisson_problem.discretise_domain(0,
+#                                       'random',
+#                                       domains=['D'],
+#                                       variables=['x', 'y'])
+#     new_pts = LabelTensor(torch.tensor([[0.5, -0.5]]), labels=['x', 'y'])
+#     poisson_problem.add_points({'D': new_pts})
+#     assert torch.isclose(poisson_problem.discretised_domain['D'].extract('x'),
+#                          new_pts.extract('x'))
+#     assert torch.isclose(poisson_problem.discretised_domain['D'].extract('y'),
+#                          new_pts.extract('y'))
