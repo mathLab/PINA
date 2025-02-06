@@ -4,14 +4,14 @@ from abc import ABCMeta, abstractmethod
 from ..utils import check_consistency
 from ..domain import DomainInterface
 from ..condition.domain_equation_condition import DomainEquationCondition
-from ..collector import Collector
+from ..condition import InputPointsEquationCondition
 from copy import deepcopy
 
 
 class AbstractProblem(metaclass=ABCMeta):
     """
     The abstract `AbstractProblem` class. All the class defining a PINA Problem
-    should be inheritied from this class.
+    should be inherited from this class.
 
     In the definition of a PINA problem, the fundamental elements are:
     the output variables, the condition(s), and the domain(s) where the
@@ -27,21 +27,18 @@ class AbstractProblem(metaclass=ABCMeta):
         for condition_name in self.conditions:
             self.conditions[condition_name].problem = self
 
-        # store in collector all the available fixed points
-        # note that some points could not be stored at this stage (e.g. when
-        # sampling locations). To check that all data points are ready for
-        # training all type self.collector.full, which returns true if all
-        # points are ready.
-        # self.collector.store_fixed_data()
         self._batching_dimension = 0
 
+        # Store in domains dict all the domains object directly passed to
+        # ConditionInterface. Done for back compatibility with PINA <0.2
         if not hasattr(self, "domains"):
             self.domains = {}
-            for k, v in self.conditions.items():
-                if isinstance(v, DomainEquationCondition):
-                    self.domains[k] = v.domain
-                    self.conditions[k] = DomainEquationCondition(
-                        domain=v.domain, equation=v.equation)
+        for cond_name, cond in self.conditions.items():
+            if isinstance(cond, (DomainEquationCondition,
+                                 InputPointsEquationCondition)):
+                if isinstance(cond.domain, DomainInterface):
+                    self.domains[cond_name] = cond.domain
+                    cond.domain = cond_name
 
     # @property
     # def collector(self):
@@ -115,7 +112,6 @@ class AbstractProblem(metaclass=ABCMeta):
             variables += self.temporal_variable
         if hasattr(self, "parameters"):
             variables += self.parameters
-
 
         return variables
 
@@ -197,9 +193,7 @@ class AbstractProblem(metaclass=ABCMeta):
             domains = self.domains.keys()
         elif not isinstance(domains, (list)):
             domains = [domains]
-         
-        print(domains)
-        print(self.domains)
+
         for domain in domains:
             self.discretised_domains[domain] = (
                 self.domains[domain].sample(n, mode, variables)

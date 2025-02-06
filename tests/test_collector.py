@@ -99,7 +99,6 @@ def test_pinn_collector():
         if isinstance(v, DomainEquationCondition):
             assert list(collector.data_collections[k].keys()) == ['input_points', 'equation']
 
-
 def test_supervised_graph_collector():
     pos = torch.rand((100,3))
     x = [torch.rand((100,3)) for _ in range(10)]
