@@ -35,6 +35,14 @@ class AbstractProblem(metaclass=ABCMeta):
         # self.collector.store_fixed_data()
         self._batching_dimension = 0
 
+        if not hasattr(self, "domains"):
+            self.domains = {}
+            for k, v in self.conditions.items():
+                if isinstance(v, DomainEquationCondition):
+                    self.domains[k] = v.domain
+                    self.conditions[k] = DomainEquationCondition(
+                        domain=v.domain, equation=v.equation)
+
     # @property
     # def collector(self):
     #     return self._collector
@@ -190,6 +198,8 @@ class AbstractProblem(metaclass=ABCMeta):
         elif not isinstance(domains, (list)):
             domains = [domains]
          
+        print(domains)
+        print(self.domains)
         for domain in domains:
             self.discretised_domains[domain] = (
                 self.domains[domain].sample(n, mode, variables)
