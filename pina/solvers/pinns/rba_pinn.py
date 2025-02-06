@@ -1,7 +1,7 @@
 """ Module for Residual-Based Attention PINN. """
 
-import torch
 from copy import deepcopy
+import torch
 
 from .pinn import PINN
 from ...utils import check_consistency

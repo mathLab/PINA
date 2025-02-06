@@ -28,4 +28,7 @@ class TorchScheduler(Scheduler):
 
     @property
     def instance(self):
+        """
+        Scheduler instance.
+        """
         return self._scheduler_instance

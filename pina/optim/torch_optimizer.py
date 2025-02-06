@@ -20,4 +20,7 @@ class TorchOptimizer(Optimizer):
                                                        **self.kwargs)
     @property
     def instance(self):
+        """
+        Optimizer instance.
+        """
         return self._optimizer_instance

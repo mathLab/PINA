@@ -9,6 +9,9 @@ from pina.equation.equation_factory import FixedValue
 import torch
 
 def laplace_equation(input_, output_):
+    """
+    Implementation of the laplace equation.
+    """
     force_term = (torch.sin(input_.extract(['x']) * torch.pi) *
                   torch.sin(input_.extract(['y']) * torch.pi))
     delta_u = laplacian(output_.extract(['u']), input_)
@@ -17,6 +20,9 @@ def laplace_equation(input_, output_):
 my_laplace = Equation(laplace_equation)
 
 class Poisson2DSquareProblem(SpatialProblem):
+    """
+    Implementation of the 2-dimensional Poisson problem on a square domain.
+    """
     output_variables = ['u']
     spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 

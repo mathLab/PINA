@@ -1,7 +1,7 @@
 """ Module for Physics Informed Neural Network Interface."""
 
-import torch
 from abc import ABCMeta, abstractmethod
+import torch
 from torch.nn.modules.loss import _Loss
 
 from ..solver import SolverInterface
@@ -99,7 +99,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     @torch.set_grad_enabled(True)
     def test_step(self, batch):
         super().test_step(batch)
-    
+
     def loss_data(self, input_pts, output_pts):
         """
         The data loss for the PINN solver. It computes the loss between
@@ -144,7 +144,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         """
         try:
             residual = equation.residual(samples, self.forward(samples))
-        except (TypeError):
+        except TypeError:
             # this occurs when the function has three inputs (inverse problem)
             residual = equation.residual(
                 samples,

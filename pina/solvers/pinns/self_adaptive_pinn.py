@@ -165,7 +165,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: LabelTensor
         """
         return self.neural_net(x)
-    
+
     def training_step(self, batch):
         """
         Solver training step, overridden to perform manual optimization.
@@ -306,7 +306,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
             self.trainer._accelerator_connector._accelerator_flag
         )
 
-        for condition_name, tensor in self.problem.input_pts.items(): #problema qui
+        for condition_name, tensor in self.problem.input_pts.items():
             self.weights_dict[condition_name].sa_weights.data = (
                 torch.rand((tensor.shape[0], 1), device=device)
             )

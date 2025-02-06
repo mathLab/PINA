@@ -8,6 +8,9 @@ from pina.domain import CartesianDomain
 from pina.operators import grad
 
 def diffusion_reaction(input_, output_):
+    """
+    Implementation of the diffusion-reaction equation.
+    """
     x = input_.extract('x')
     t = input_.extract('t')
     u_t = grad(output_, input_, d='t')
@@ -19,6 +22,10 @@ def diffusion_reaction(input_, output_):
 
 
 class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
+    """
+    Implementation of the diffusion-reaction problem on the spatial interval
+    [-pi, pi] and temporal interval [0,1].
+    """
     output_variables = ['u']
     spatial_domain = CartesianDomain({'x': [-torch.pi, torch.pi]})
     temporal_domain = CartesianDomain({'t': [0, 1]})

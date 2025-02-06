@@ -111,7 +111,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :rtype: LabelTensor
         """
         return self.neural_net(x)
-    
+
     def training_step(self, batch):
         """
         Solver training step, overridden to perform manual optimization.

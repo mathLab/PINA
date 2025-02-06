@@ -1,20 +1,27 @@
 """ Definition of the inverse Poisson problem on a square domain."""
 
+import torch
+from pina import Condition, LabelTensor
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operators import laplacian
-from pina import Condition, LabelTensor
 from pina.domain import CartesianDomain
 from pina.equation.equation import Equation
 from pina.equation.equation_factory import FixedValue
-import torch
 
 def laplace_equation(input_, output_, params_):
+    """
+    Implementation of the laplace equation.
+    """
     force_term = torch.exp(- 2*(input_.extract(['x']) - params_['mu1'])**2
                             - 2*(input_.extract(['y']) - params_['mu2'])**2)
     delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
     return delta_u - force_term
 
 class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
+    """
+    Implementation of the inverse 2-dimensional Poisson problem 
+    on a square domain, with parameter domain [-1, 1] x [-1, 1].
+    """
     output_variables = ['u']
     x_min, x_max = -2, 2
     y_min, y_max = -2, 2

@@ -94,7 +94,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         loss = self._optimization_cycle(batch=batch)
         self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True,
-                 logger=True, batch_size=self.get_batch_size(batch), 
+                 logger=True, batch_size=self.get_batch_size(batch),
                  sync_dist=True)
         return loss
 
@@ -317,13 +317,13 @@ class MultiSolverInterface(SolverInterface):
         
         if any(opt is None for opt in optimizers):
             optimizers = [
-                self.default_torch_optimizer() if opt is None else opt 
+                self.default_torch_optimizer() if opt is None else opt
                 for opt in optimizers
             ]
 
         if any(sched is None for sched in schedulers):
             schedulers = [
-                self.default_torch_scheduler() if sched is None else sched 
+                self.default_torch_scheduler() if sched is None else sched
                 for sched in schedulers
             ]
 

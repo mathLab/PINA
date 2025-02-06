@@ -2,9 +2,9 @@
 
 import torch
 
+from pina.problem import TimeDependentProblem
 from .pinn import PINN
 from pina.utils import check_consistency
-from pina.problem import TimeDependentProblem
 
 
 class CausalPINN(PINN):
