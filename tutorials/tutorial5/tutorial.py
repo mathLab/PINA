@@ -9,7 +9,7 @@
 # In this tutorial we are going to solve the Darcy flow problem in two dimensions, presented in [*Fourier Neural Operator for
 # Parametric Partial Differential Equation*](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input-output operations.
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -89,7 +89,7 @@ u_train.labels[3]['dof']
 
 # We now create the neural operator class. It is a very simple class, inheriting from `AbstractProblem`.
 
-# In[5]:
+# In[ ]:
 
 
 class NeuralOperatorSolver(AbstractProblem):
@@ -98,7 +98,7 @@ class NeuralOperatorSolver(AbstractProblem):
     domains = {
         'pts': k_train
     }
-    conditions = {'data' : Condition(domain='pts', 
+    conditions = {'data' : Condition(domain='pts', #not among allowed pairs!!!
                                      output_points=u_train)}
 
 # make problem
@@ -188,9 +188,3 @@ print(f'Final error testing {err:.2f}%')
 # ## What's next?
 # 
 # We have made a very simple example on how to use the `FNO` for learning neural operator. Currently in **PINA** we implement 1D/2D/3D cases. We suggest to extend the tutorial using more complex problems and train for longer, to see the full potential of neural operators.
-
-# In[ ]:
-
-
-
-

@@ -33,7 +33,7 @@ from pina.operators import laplacian
 from pina.solvers import PINN, SAPINN
 from pina.model.layers import FourierFeatureEmbedding
 from pina.loss import LpLoss
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina.equation import Equation, FixedValue
 from pina.model import FeedForward
 
@@ -74,11 +74,11 @@ class Poisson(SpatialProblem):
 
     # here we write the problem conditions
     conditions = {
-        'gamma0' : Condition(location=CartesianDomain({'x': 0}),
+        'bound_cond0' : Condition(domain=CartesianDomain({'x': 0}),
                              equation=FixedValue(0)),
-        'gamma1' : Condition(location=CartesianDomain({'x': 1}),
+        'bound_cond1' : Condition(domain=CartesianDomain({'x': 1}),
                              equation=FixedValue(0)),
-        'D':       Condition(location=spatial_domain,
+        'phys_cond':       Condition(domain=spatial_domain,
                              equation=Equation(poisson_equation)),
     }
 
