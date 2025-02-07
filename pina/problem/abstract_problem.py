@@ -2,11 +2,12 @@
 
 from abc import ABCMeta, abstractmethod
 from ..utils import check_consistency
-from ..domain import DomainInterface
+from ..domain import DomainInterface, CartesianDomain
 from ..condition.domain_equation_condition import DomainEquationCondition
 from ..condition import InputPointsEquationCondition
 from copy import deepcopy
-from pina import LabelTensor
+from .. import LabelTensor
+from ..utils import merge_tensors
 
 
 class AbstractProblem(metaclass=ABCMeta):
@@ -21,7 +22,7 @@ class AbstractProblem(metaclass=ABCMeta):
 
     def __init__(self):
 
-        self.discretised_domains = {}
+        self._discretised_domains = {}
         # create collector to manage problem data
 
         # create hook conditions <-> problems
@@ -53,6 +54,10 @@ class AbstractProblem(metaclass=ABCMeta):
     def batching_dimension(self, value):
         self._batching_dimension = value
 
+    @property
+    def discretised_domains(self):
+        return self._discretised_domains
+
     # TODO this should be erase when dataloading will interface collector,
     # kept only for back compatibility
     @property
@@ -62,7 +67,7 @@ class AbstractProblem(metaclass=ABCMeta):
             if hasattr(cond, "input_points"):
                 to_return[cond_name] = cond.input_points
             elif hasattr(cond, "domain"):
-                to_return[cond_name] = self.discretised_domains[cond.domain]
+                to_return[cond_name] = self._discretised_domains[cond.domain]
         return to_return
 
     def __deepcopy__(self, memo):
@@ -139,9 +144,10 @@ class AbstractProblem(metaclass=ABCMeta):
         return self.conditions
 
     def discretise_domain(self,
-                          n,
+                          n=None,
                           mode="random",
-                          domains="all"):
+                          domains="all",
+                          sample_rules=None):
         """
         Generate a set of points to span the `Location` of all the conditions of
         the problem.
@@ -153,6 +159,8 @@ class AbstractProblem(metaclass=ABCMeta):
             Available modes include: random sampling, ``random``;
             latin hypercube sampling, ``latin`` or ``lh``;
             chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
+        :param variables: variable(s) to sample, defaults to 'all'.
+        :type variables: str | list[str]
         :param domains: problem's domain from where to sample, defaults to 'all'.
         :type domains: str | list[str]
 
@@ -170,24 +178,55 @@ class AbstractProblem(metaclass=ABCMeta):
         """
 
         # check consistecy n, mode, variables, locations
-        check_consistency(n, int)
-        check_consistency(mode, str)
+        if sample_rules is not None:
+            check_consistency(sample_rules, dict)
+        if mode is not None:
+            check_consistency(mode, str)
         check_consistency(domains, (list, str))
-
-        # check correct sampling mode
-        # if mode not in DomainInterface.available_sampling_modes:
-        #     raise TypeError(f"mode {mode} not valid.")
 
         # check correct location
         if domains == "all":
             domains = self.domains.keys()
         elif not isinstance(domains, (list)):
             domains = [domains]
+        if n is not None and sample_rules is None:
+            self._apply_default_discretization(n, mode, domains)
+        if n is None and sample_rules is not None:
+            self._apply_custom_discretization(sample_rules, domains)
+        elif n is not None and sample_rules is not None:
+            raise RuntimeError(
+                "You can't specify both n and sample_rules at the same time."
+            )
+        elif n is None and sample_rules is None:
+            raise RuntimeError(
+                "You have to specify either n or sample_rules."
+            )
 
+    def _apply_default_discretization(self, n, mode, domains):
         for domain in domains:
             self.discretised_domains[domain] = (
-                self.domains[domain].sample(n, mode)
+                self.domains[domain].sample(n, mode).sort_labels()
             )
+
+    def _apply_custom_discretization(self, sample_rules, domains):
+        if sorted(list(sample_rules.keys())) != sorted(self.input_variables):
+            raise RuntimeError(
+                "The keys of the sample_rules dictionary must be the same as "
+                "the input variables."
+            )
+        for domain in domains:
+            if not isinstance(self.domains[domain], CartesianDomain):
+                raise RuntimeError(
+                    "Custom discretisation can be applied only on Cartesian "
+                    "domains")
+            discretised_tensor = []
+            for var, rules in sample_rules.items():
+                n, mode = rules['n'], rules['mode']
+                points = self.domains[domain].sample(n, mode, var)
+                discretised_tensor.append(points)
+
+            self.discretised_domains[domain] = merge_tensors(
+                discretised_tensor).sort_labels()
 
     def add_points(self, new_points_dict):
         """
