@@ -118,10 +118,7 @@ class PODBlock(torch.nn.Module):
 
         :param torch.Tensor X: The tensor to be reduced.
         """
-        if X.device.type == "mps":  #  svd_lowrank not arailable for mps
-            self._basis = torch.svd(X.T)[0].T
-        else:
-            self._basis = torch.svd_lowrank(X.T, q=X.shape[0])[0].T
+        self._basis = torch.svd(X.T)[0].T
 
     def forward(self, X):
         """
