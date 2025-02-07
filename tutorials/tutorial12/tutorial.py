@@ -26,7 +26,7 @@
 # 
 # In the class that models this problem we will see in action the `Equation` class and one of its inherited classes, the `FixedValue` class. 
 
-# In[7]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -40,14 +40,15 @@ if IN_COLAB:
 
 #useful imports
 from pina.problem import SpatialProblem, TimeDependentProblem
-from pina.equation import Equation, FixedValue, FixedGradient, FixedFlux
+from pina.equation import Equation, FixedValue
 from pina.domain import CartesianDomain
 import torch
 from pina.operators import grad, laplacian
 from pina import Condition
 
 
-# In[6]:
+
+# In[2]:
 
 
 class Burgers1D(TimeDependentProblem, SpatialProblem):
@@ -74,17 +75,17 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
 
     # problem condition statement
     conditions = {
-        'gamma1': Condition(location=CartesianDomain({'x': -1, 't': [0, 1]}), equation=FixedValue(0.)),
-        'gamma2': Condition(location=CartesianDomain({'x':  1, 't': [0, 1]}), equation=FixedValue(0.)),
-        't0': Condition(location=CartesianDomain({'x': [-1, 1], 't': 0}), equation=Equation(initial_condition)),
-        'D': Condition(location=CartesianDomain({'x': [-1, 1], 't': [0, 1]}), equation=Equation(burger_equation)),
+        'bound_cond1': Condition(domain=CartesianDomain({'x': -1, 't': [0, 1]}), equation=FixedValue(0.)),
+        'bound_cond2': Condition(domain=CartesianDomain({'x':  1, 't': [0, 1]}), equation=FixedValue(0.)),
+        'time_cond': Condition(domain=CartesianDomain({'x': [-1, 1], 't': 0}), equation=Equation(initial_condition)),
+        'phys_cond': Condition(domain=CartesianDomain({'x': [-1, 1], 't': [0, 1]}), equation=Equation(burger_equation)),
     }
 
 
 # 
 # The `Equation` class takes as input a function (in this case it happens twice, with `initial_condition` and `burger_equation`) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the `Equation` class with such a given input is passed as a parameter in the specified `Condition`. 
 # 
-# The `FixedValue` class takes as input a value of same dimensions of the output functions; this class can be used to enforced a fixed value for a specific condition, e.g. Dirichlet boundary conditions, as it happens for instance in our example.
+# The `FixedValue` class takes as input a value of same dimensions of the output functions; this class can be used to enforce a fixed value for a specific condition, e.g. Dirichlet boundary conditions, as it happens for instance in our example.
 # 
 # Once the equations are set as above in the problem conditions, the PINN solver will aim to minimize the residuals described in each equation in the training phase. 
 
@@ -98,7 +99,7 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
 
 # `Equation` classes can be also inherited to define a new class. As example, we can see how to rewrite the above problem introducing a new class `Burgers1D`; during the class call, we can pass the viscosity parameter $\nu$:
 
-# In[13]:
+# In[3]:
 
 
 class Burgers1DEquation(Equation):
@@ -113,7 +114,9 @@ class Burgers1DEquation(Equation):
         self.nu = nu 
     
         def equation(input_, output_):
-                return grad(output_, input_, d='t') +                       output_*grad(output_, input_, d='x') -                       self.nu*laplacian(output_, input_, d='x')
+                return grad(output_, input_, d='t') +\
+                       output_*grad(output_, input_, d='x') -\
+                       self.nu*laplacian(output_, input_, d='x')
 
             
         super().__init__(equation)
@@ -121,7 +124,7 @@ class Burgers1DEquation(Equation):
 
 # Now we can just pass the above class as input for the last condition, setting $\nu= \frac{0.01}{\pi}$:
 
-# In[14]:
+# In[4]:
 
 
 class Burgers1D(TimeDependentProblem, SpatialProblem):
@@ -138,16 +141,16 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
 
     # problem condition statement
     conditions = {
-        'gamma1': Condition(location=CartesianDomain({'x': -1, 't': [0, 1]}), equation=FixedValue(0.)),
-        'gamma2': Condition(location=CartesianDomain({'x':  1, 't': [0, 1]}), equation=FixedValue(0.)),
-        't0': Condition(location=CartesianDomain({'x': [-1, 1], 't': 0}), equation=Equation(initial_condition)),
-        'D': Condition(location=CartesianDomain({'x': [-1, 1], 't': [0, 1]}), equation=Burgers1DEquation(0.01/torch.pi)),
+        'bound_cond1': Condition(domain=CartesianDomain({'x': -1, 't': [0, 1]}), equation=FixedValue(0.)),
+        'bound_cond2': Condition(domain=CartesianDomain({'x':  1, 't': [0, 1]}), equation=FixedValue(0.)),
+        'time_cond': Condition(domain=CartesianDomain({'x': [-1, 1], 't': 0}), equation=Equation(initial_condition)),
+        'phys_cond': Condition(domain=CartesianDomain({'x': [-1, 1], 't': [0, 1]}), equation=Burgers1DEquation(0.01/torch.pi)),
     }
 
 
 # # What's next?
 
-# Congratulations on completing the `Equation` class tutorial of **PINA**! As we have seen, you can build new classes that inherits `Equation` to store more complex equations, as the Burgers 1D equation, only requiring to pass the characteristic coefficients of the problem. 
+# Congratulations on completing the `Equation` class tutorial of **PINA**! As we have seen, you can build new classes that inherit `Equation` to store more complex equations, as the Burgers 1D equation, only requiring to pass the characteristic coefficients of the problem. 
 # From now on, you can:
 # - define additional complex equation classes (e.g. `SchrodingerEquation`, `NavierStokeEquation`..)
 # - define more `FixedOperator` (e.g. `FixedCurl`)

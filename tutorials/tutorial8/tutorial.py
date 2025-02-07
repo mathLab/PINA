@@ -46,7 +46,7 @@ from pina.solvers import SupervisedSolver
 print(f'We are using PINA version {pina.__version__}')
 
 
-# We exploit the [Smithers](www.github.com/mathLab/Smithers) library to collect the parametric snapshots. In particular, we use the `NavierStokesDataset` class that contains a set of parametric solutions of the Navier-Stokes equations in a 2D L-shape domain. The parameter is the inflow velocity.
+# We exploit the [Smithers](https://github.com/mathLab/Smithers) library to collect the parametric snapshots. In particular, we use the `NavierStokesDataset` class that contains a set of parametric solutions of the Navier-Stokes equations in a 2D L-shape domain. The parameter is the inflow velocity.
 # The dataset is composed by 500 snapshots of the velocity (along $x$, $y$, and the magnitude) and pressure fields, and the corresponding parameter values.
 # 
 # To visually check the snapshots, let's plot also the data points and the reference solution: this is the expected output of our model.
@@ -54,6 +54,8 @@ print(f'We are using PINA version {pina.__version__}')
 # In[2]:
 
 
+get_ipython().system('pip install git+https://github.com/mathLab/Smithers.git')
+import smithers
 from smithers.dataset import NavierStokesDataset
 dataset = NavierStokesDataset()
 
@@ -302,10 +304,4 @@ for i, (idx_, rbf_, nn_, rbf_err_, nn_err_) in enumerate(
     plt.colorbar(cm, ax=axs[4, i])
     
 plt.show()
-
-
-# In[ ]:
-
-
-
 

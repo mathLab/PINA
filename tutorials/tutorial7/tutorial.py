@@ -25,7 +25,7 @@
 
 # Let's start with useful imports.
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -81,7 +81,7 @@ plt.show()
 
 # Then, we initialize the Poisson problem, that is inherited from the `SpatialProblem` and from the `InverseProblem` classes. We here have to define all the variables, and the domain where our unknown parameters ($\mu_1$, $\mu_2$) belong. Notice that the Laplace equation takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
 
-# In[4]:
+# In[ ]:
 
 
 ### Define ranges of variables
@@ -112,19 +112,19 @@ class Poisson(SpatialProblem, InverseProblem):
 
     # define the conditions for the loss (boundary conditions, equation, data)
     conditions = {
-        'gamma1': Condition(location=CartesianDomain({'x': [x_min, x_max],
+        'bound_cond1': Condition(domain=CartesianDomain({'x': [x_min, x_max],
             'y':  y_max}),
             equation=FixedValue(0.0, components=['u'])),
-        'gamma2': Condition(location=CartesianDomain({'x': [x_min, x_max], 'y': y_min
+        'bound_cond2': Condition(domain=CartesianDomain({'x': [x_min, x_max], 'y': y_min
             }),
             equation=FixedValue(0.0, components=['u'])),
-        'gamma3': Condition(location=CartesianDomain({'x':  x_max, 'y': [y_min, y_max]
+        'bound_cond3': Condition(domain=CartesianDomain({'x':  x_max, 'y': [y_min, y_max]
             }),
             equation=FixedValue(0.0, components=['u'])),
-        'gamma4': Condition(location=CartesianDomain({'x': x_min, 'y': [y_min, y_max]
+        'bound_cond4': Condition(domain=CartesianDomain({'x': x_min, 'y': [y_min, y_max]
             }),
             equation=FixedValue(0.0, components=['u'])),
-        'D': Condition(location=CartesianDomain({'x': [x_min, x_max], 'y': [y_min, y_max]
+        'phys_cond': Condition(domain=CartesianDomain({'x': [x_min, x_max], 'y': [y_min, y_max]
             }),
         equation=Equation(laplace_equation)),
         'data': Condition(input_points=data_input.extract(['x', 'y']), output_points=data_output)
@@ -148,12 +148,12 @@ model = FeedForward(
 
 # After that, we discretize the spatial domain.
 
-# In[6]:
+# In[ ]:
 
 
-problem.discretise_domain(20, 'grid', locations=['D'], variables=['x', 'y'])
-problem.discretise_domain(1000, 'random', locations=['gamma1', 'gamma2',
-    'gamma3', 'gamma4'], variables=['x', 'y'])
+problem.discretise_domain(20, 'grid', locations=['phys_cond'], variables=['x', 'y'])
+problem.discretise_domain(1000, 'random', locations=['bound_cond1', 'bound_cond2',
+    'bound_cond3', 'bound_cond4'], variables=['x', 'y'])
 
 
 # Here, we define a simple callback for the trainer. We use this callback to save the parameters predicted by the neural network during the training. The parameters are saved every 100 epochs as `torch` tensors in a specified directory (`tmp_dir` in our case).

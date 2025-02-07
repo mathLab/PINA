@@ -65,11 +65,11 @@ class Poisson(SpatialProblem):
 
     # here we write the problem conditions
     conditions = {
-        'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1}), equation=FixedValue(0.)),
-        'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0}), equation=FixedValue(0.)),
-        'gamma3': Condition(location=CartesianDomain({'x':  1, 'y': [0, 1]}), equation=FixedValue(0.)),
-        'gamma4': Condition(location=CartesianDomain({'x': 0, 'y': [0, 1]}), equation=FixedValue(0.)),
-        'D': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}), equation=Equation(laplace_equation)),
+        'bound_cond1': Condition(domain=CartesianDomain({'x': [0, 1], 'y':  1}), equation=FixedValue(0.)),
+        'bound_cond2': Condition(domain=CartesianDomain({'x': [0, 1], 'y': 0}), equation=FixedValue(0.)),
+        'bound_cond3': Condition(domain=CartesianDomain({'x':  1, 'y': [0, 1]}), equation=FixedValue(0.)),
+        'bound_cond4': Condition(domain=CartesianDomain({'x': 0, 'y': [0, 1]}), equation=FixedValue(0.)),
+        'phys_cond': Condition(domain=CartesianDomain({'x': [0, 1], 'y': [0, 1]}), equation=Equation(laplace_equation)),
     }
 
     def poisson_sol(self, pts):
@@ -83,8 +83,8 @@ class Poisson(SpatialProblem):
 problem = Poisson()
 
 # let's discretise the domain
-problem.discretise_domain(25, 'grid', locations=['D'])
-problem.discretise_domain(25, 'grid', locations=['gamma1', 'gamma2', 'gamma3', 'gamma4'])
+problem.discretise_domain(25, 'grid', locations=['phys_cond'])
+problem.discretise_domain(25, 'grid', locations=['bound_cond1', 'bound_cond2', 'bound_cond3', 'bound_cond4'])
 
 
 # ## Solving the problem with standard PINNs
