@@ -160,10 +160,10 @@ class CartesianDomain(DomainInterface):
                     pts_variable.labels = [variable]
 
                     tmp.append(pts_variable)
-
-            result = tmp[0]
-            for i in tmp[1:]:
-                result = result.append(i, mode="cross")
+            if tmp:
+                result = tmp[0]
+                for i in tmp[1:]:
+                    result = result.append(i, mode="cross")
 
             for variable in variables:
                 if variable in self.fixed_.keys():
@@ -241,6 +241,8 @@ class CartesianDomain(DomainInterface):
             variables = sorted(variables)
 
         if self.fixed_ and (not self.range_):
+            return _single_points_sample(n, variables)
+        if isinstance(variables, str) and variables in self.fixed_.keys():
             return _single_points_sample(n, variables)
 
         if mode in ["grid", "chebyshev"]:

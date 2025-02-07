@@ -11,22 +11,23 @@ from pina.operators import laplacian
 from pina.collector import Collector
 
 
-# def test_supervised_tensor_collector():
-#     class SupervisedProblem(AbstractProblem):
-#         output_variables = None
-#         conditions = {
-#             'data1' : Condition(input_points=torch.rand((10,2)),
-#                                 output_points=torch.rand((10,2))),
-#             'data2' : Condition(input_points=torch.rand((20,2)),
-#                                 output_points=torch.rand((20,2))),
-#             'data3' : Condition(input_points=torch.rand((30,2)),
-#                                 output_points=torch.rand((30,2))),
-#         }
-#     problem = SupervisedProblem()
-#     collector = Collector(problem)
-#     for v in collector.conditions_name.values():
-#         assert v in problem.conditions.keys()
-#     assert all(collector._is_conditions_ready.values())
+def test_supervised_tensor_collector():
+    class SupervisedProblem(AbstractProblem):
+        output_variables = None
+        conditions = {
+            'data1': Condition(input_points=torch.rand((10, 2)),
+                               output_points=torch.rand((10, 2))),
+            'data2': Condition(input_points=torch.rand((20, 2)),
+                               output_points=torch.rand((20, 2))),
+            'data3': Condition(input_points=torch.rand((30, 2)),
+                               output_points=torch.rand((30, 2))),
+        }
+
+    problem = SupervisedProblem()
+    collector = Collector(problem)
+    for v in collector.conditions_name.values():
+        assert v in problem.conditions.keys()
+
 
 def test_pinn_collector():
     def laplace_equation(input_, output_):
@@ -81,7 +82,7 @@ def test_pinn_collector():
         def poisson_sol(self, pts):
             return -(torch.sin(pts.extract(['x']) * torch.pi) *
                      torch.sin(pts.extract(['y']) * torch.pi)) / (
-                        2 * torch.pi ** 2)
+                    2 * torch.pi ** 2)
 
         truth_solution = poisson_sol
 
