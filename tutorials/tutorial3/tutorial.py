@@ -69,12 +69,12 @@ class Wave(TimeDependentProblem, SpatialProblem):
         return output_.extract(['u']) - u_expected
 
     conditions = {
-        'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1, 't': [0, 1]}), equation=FixedValue(0.)),
-        'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0, 't': [0, 1]}), equation=FixedValue(0.)),
-        'gamma3': Condition(location=CartesianDomain({'x':  1, 'y': [0, 1], 't': [0, 1]}), equation=FixedValue(0.)),
-        'gamma4': Condition(location=CartesianDomain({'x': 0, 'y': [0, 1], 't': [0, 1]}), equation=FixedValue(0.)),
-        't0': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': 0}), equation=Equation(initial_condition)),
-        'D': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}), equation=Equation(wave_equation)),
+        'bound_cond1': Condition(domain=CartesianDomain({'x': [0, 1], 'y':  1, 't': [0, 1]}), equation=FixedValue(0.)),
+        'bound_cond2': Condition(domain=CartesianDomain({'x': [0, 1], 'y': 0, 't': [0, 1]}), equation=FixedValue(0.)),
+        'bound_cond3': Condition(domain=CartesianDomain({'x':  1, 'y': [0, 1], 't': [0, 1]}), equation=FixedValue(0.)),
+        'bound_cond4': Condition(domain=CartesianDomain({'x': 0, 'y': [0, 1], 't': [0, 1]}), equation=FixedValue(0.)),
+        'time_cond': Condition(domain=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': 0}), equation=Equation(initial_condition)),
+        'phys_cond': Condition(domain=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}), equation=Equation(wave_equation)),
     }
 
     def wave_sol(self, pts):
@@ -123,7 +123,7 @@ class HardMLP(torch.nn.Module):
 
 
 # generate the data
-problem.discretise_domain(1000, 'random', locations=['D', 't0', 'gamma1', 'gamma2', 'gamma3', 'gamma4'])
+problem.discretise_domain(1000, 'random', domains=['phys_cond', 'time_cond', 'bound_cond1', 'bound_cond2', 'bound_cond3', 'bound_cond4'])
 
 # crete the solver
 pinn = PINN(problem, HardMLP(len(problem.input_variables), len(problem.output_variables)))
@@ -188,7 +188,7 @@ class HardMLPtime(torch.nn.Module):
 
 
 # generate the data
-problem.discretise_domain(1000, 'random', locations=['D', 't0', 'gamma1', 'gamma2', 'gamma3', 'gamma4'])
+problem.discretise_domain(1000, 'random', domains=['phys_cond', 'time_cond', 'bound_cond1', 'bound_cond2', 'bound_cond3', 'bound_cond4'])
 
 # crete the solver
 pinn = PINN(problem, HardMLPtime(len(problem.input_variables), len(problem.output_variables)))

@@ -48,8 +48,8 @@ class SimpleODE(SpatialProblem):
 
     # conditions to hold
     conditions = {
-        'x0': Condition(location=CartesianDomain({'x': 0.}), equation=FixedValue(1)),             # We fix initial condition to value 1
-        'D': Condition(location=CartesianDomain({'x': [0, 1]}), equation=Equation(ode_equation)), # We wrap the python equation using Equation
+        'bound_cond': Condition(domain=CartesianDomain({'x': 0.}), equation=FixedValue(1)),             # We fix initial condition to value 1
+        'phys_cond': Condition(domain=CartesianDomain({'x': [0, 1]}), equation=Equation(ode_equation)), # We wrap the python equation using Equation
     }
 
     # defining the true solution
@@ -59,8 +59,8 @@ class SimpleODE(SpatialProblem):
 
 # sampling for training
 problem = SimpleODE()
-problem.discretise_domain(1, 'random', locations=['x0'])
-problem.discretise_domain(20, 'lh', locations=['D'])
+problem.discretise_domain(1, 'random', domains=['bound_cond'])
+problem.discretise_domain(20, 'lh', domains=['phys_cond'])
 
 # build the model
 model = FeedForward(

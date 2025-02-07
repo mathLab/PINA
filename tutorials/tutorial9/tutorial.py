@@ -63,7 +63,7 @@ from pina.equation import Equation
 # and $f(x)=-6\pi^2\sin(3\pi x)\cos(\pi x)$ which give a solution that can be
 # computed analytically $u(x) = \sin(\pi x)\cos(3\pi x)$.
 
-# In[2]:
+# In[ ]:
 
 
 class Helmholtz(SpatialProblem):
@@ -79,7 +79,7 @@ class Helmholtz(SpatialProblem):
 
     # here we write the problem conditions
     conditions = {
-        'D': Condition(location=spatial_domain,
+        'phys_cond': Condition(domain=spatial_domain,
                        equation=Equation(Helmholtz_equation)),
     }
 
@@ -91,7 +91,7 @@ class Helmholtz(SpatialProblem):
 problem = Helmholtz()
 
 # let's discretise the domain
-problem.discretise_domain(200, 'grid', locations=['D'])
+problem.discretise_domain(200, 'grid', domains=['phys_cond'])
 
 
 # As usual, the Helmholtz problem is written in **PINA** code as a class. 
