@@ -223,8 +223,8 @@ class Graph:
             return [edge_attr] * data_len
 
         if build_edge_attr:
-            return [self._build_edge_attr(x, pos_, edge_index_) for
-                    pos_, edge_index_ in zip(pos, edge_index)]
+            return [self._build_edge_attr(x_, pos_, edge_index_) for
+                    x_, pos_, edge_index_ in zip(x, pos, edge_index)]
 
 
 class RadiusGraph(Graph):
