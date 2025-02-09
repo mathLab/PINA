@@ -1,6 +1,7 @@
 __all__ = [
     "Trainer", "LabelTensor", "Plotter", "Condition",
     "PinaDataModule", 'TorchOptimizer', 'Graph',
+    "RadiusGraph", "KNNGraph"
 ]
 
 from .meta import *
@@ -14,4 +15,4 @@ from .data import PinaDataModule
 
 from .optim import TorchOptimizer
 from .optim import TorchScheduler
-from .graph import Graph
+from .graph import Graph, RadiusGraph, KNNGraph
