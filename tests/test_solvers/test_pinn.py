@@ -17,31 +17,31 @@ from pina.problem.zoo import (
 
 
 # define problems and model
-poisson_problem = Poisson()
-poisson_problem.discretise_domain(100)
+problem = Poisson()
+problem.discretise_domain(10)
 inverse_problem = InversePoisson()
-inverse_problem.discretise_domain(100)
+inverse_problem.discretise_domain(10)
 model = FeedForward(
-    len(poisson_problem.input_variables),
-    len(poisson_problem.output_variables)
+    len(problem.input_variables),
+    len(problem.output_variables)
 )
 
 
-@pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
 def test_constructor(problem):
-    pinn = PINN(problem=problem, model=model)
+    solver = PINN(problem=problem, model=model)
 
-    assert pinn.accepted_conditions_types == (
+    assert solver.accepted_conditions_types == (
         InputOutputPointsCondition,
         InputPointsEquationCondition,
         DomainEquationCondition
     )
 
-@pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_train(problem, batch_size):
-    pinn = PINN(model=model, problem=problem)
-    trainer = Trainer(solver=pinn,
+def test_solver_train(problem, batch_size):
+    solver = PINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -51,11 +51,11 @@ def test_pinn_train(problem, batch_size):
     trainer.train()
 
 
-@pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_validation(problem, batch_size):
-    pinn = PINN(model=model, problem=problem)
-    trainer = Trainer(solver=pinn,
+def test_solver_validation(problem, batch_size):
+    solver = PINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -65,11 +65,11 @@ def test_pinn_validation(problem, batch_size):
     trainer.train()
 
 
-@pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_pinn_test(problem, batch_size):
-    pinn = PINN(model=model, problem=problem)
-    trainer = Trainer(solver=pinn,
+def test_solver_test(problem, batch_size):
+    solver = PINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -79,12 +79,12 @@ def test_pinn_test(problem, batch_size):
     trainer.test()
 
 
-@pytest.mark.parametrize("problem", [poisson_problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    pinn = PINN(model=model, problem=problem)
-    trainer = Trainer(solver=pinn,
+    solver = PINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
                       batch_size=None,
@@ -95,7 +95,7 @@ def test_train_load_restore(problem):
     trainer.train()
 
     # restore
-    new_trainer = Trainer(solver=pinn, max_epochs=5, accelerator='cpu')
+    new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
     new_trainer.train(
         ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
                    'epoch=4-step=5.ckpt')
@@ -107,10 +107,10 @@ def test_train_load_restore(problem):
 
     test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
     assert new_solver.forward(test_pts).shape == (20, 1)
-    assert new_solver.forward(test_pts).shape == pinn.forward(test_pts).shape
+    assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
     torch.testing.assert_close(
         new_solver.forward(test_pts),
-        pinn.forward(test_pts))
+        solver.forward(test_pts))
 
     # rm directories
     import shutil

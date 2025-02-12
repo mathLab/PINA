@@ -164,7 +164,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :return: PINN solution.
         :rtype: LabelTensor
         """
-        return self.neural_net(x)
+        return self.model(x)
 
     def training_step(self, batch):
         """
@@ -212,32 +212,32 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
         return loss_value
 
-    def loss_data(self, input_tensor, output_tensor):
+    def loss_data(self, input_pts, output_pts):
         """
         Computes the data loss for the SAPINN solver based on input and
         output. It computes the loss between the
         network output against the true solution.
 
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
+        :param LabelTensor input_pts: The input to the neural networks.
+        :param LabelTensor output_pts: The true solution to compare the
             network solution.
         :return: The computed data loss.
         :rtype: torch.Tensor
         """
         # Train the weights
-        weighted_loss, _ = self._loss_data(input_tensor, output_tensor)
+        weighted_loss, _ = self._loss_data(input_pts, output_pts)
         loss_value = -weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
 
         # Detach samples from the existing computational graph and
         # create a new one by setting requires_grad to True.
         # In alternative set `retain_graph=True`.
-        input_tensor = input_tensor.detach()
-        input_tensor.requires_grad = True
+        input_pts = input_pts.detach()
+        input_pts.requires_grad = True
 
         # Train the model
         ###self.optimizer_model.zero_grad()
-        weighted_loss, _ = self._loss_data(input_tensor, output_tensor)
+        weighted_loss, _ = self._loss_data(input_pts, output_pts)
         loss_value = weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
 
@@ -252,7 +252,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         """
         # If the problem is an InverseProblem, add the unknown parameters
         # to the parameters to be optimized
-        self.optimizer_model.hook(self.neural_net.parameters())
+        self.optimizer_model.hook(self.model.parameters())
         self.optimizer_weights.hook(self.weights_dict.parameters())
         if isinstance(self.problem, InverseProblem):
             self.optimizer_model.instance.add_param_group(
@@ -302,15 +302,17 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
             method ``on_train_start``.
         :rtype: Any
         """
+        if self.trainer.batch_size is not None:
+            raise NotImplementedError("SAPINN only works with full batch "
+                                      "size, set batch_size=None inside the "
+                                      "Trainer to use the solver.")
         device = torch.device(
             self.trainer._accelerator_connector._accelerator_flag
         )
-
         for condition_name, tensor in self.problem.input_pts.items():
             self.weights_dict[condition_name].sa_weights.data = (
                 torch.rand((tensor.shape[0], 1), device=device)
             )
-
         return super().on_train_start()
 
     def on_load_checkpoint(self, checkpoint):
@@ -342,18 +344,18 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         residual = self.compute_residual(samples, equation)
         return self._compute_loss(residual)
 
-    def _loss_data(self, input_tensor, output_tensor):
+    def _loss_data(self, input_pts, output_pts):
         """
         Computation of the loss related to data for SelfAdaptive PINN solver.
 
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
+        :param LabelTensor input_pts: The input to the neural networks.
+        :param LabelTensor output_pts: The true solution to compare the
             network solution.
 
         :return: tuple with weighted and not weighted scalar loss
         :rtype: List[LabelTensor, LabelTensor]
         """
-        residual = self.forward(input_tensor) - output_tensor
+        residual = self.forward(input_pts) - output_pts
         return self._compute_loss(residual)
 
     def _compute_loss(self, residual):
@@ -398,15 +400,17 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         return ret
 
     @property
-    def neural_net(self):
+    def model(self):
         """
-        Returns the neural network model.
+        Return the mask models associate to the application of
+        the mask to the self adaptive weights for each loss that
+        compones the global loss of the problem.
 
-        :return: The neural network model.
-        :rtype: torch.nn.Module
+        :return: The ModuleDict for mask models.
+        :rtype: torch.nn.ModuleDict
         """
         return self.models[0]
-
+    
     @property
     def weights_dict(self):
         """

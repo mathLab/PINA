@@ -39,9 +39,9 @@ model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 def test_constructor(problem, eps):
     with pytest.raises(ValueError):
         CausalPINN(model=model, problem=DummySpatialProblem())
-    causal_pinn = CausalPINN(model=model, problem=problem, eps=eps)
+    solver = CausalPINN(model=model, problem=problem, eps=eps)
 
-    assert causal_pinn.accepted_conditions_types == (
+    assert solver.accepted_conditions_types == (
         InputOutputPointsCondition,
         InputPointsEquationCondition,
         DomainEquationCondition
@@ -50,9 +50,9 @@ def test_constructor(problem, eps):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_causal_pinn_train(problem, batch_size):
-    causal_pinn = CausalPINN(model=model, problem=problem)
-    trainer = Trainer(solver=causal_pinn,
+def test_solver_train(problem, batch_size):
+    solver = CausalPINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -64,9 +64,9 @@ def test_causal_pinn_train(problem, batch_size):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_causal_pinn_validation(problem, batch_size):
-    causal_pinn = CausalPINN(model=model, problem=problem)
-    trainer = Trainer(solver=causal_pinn,
+def test_solver_validation(problem, batch_size):
+    solver = CausalPINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -78,9 +78,9 @@ def test_causal_pinn_validation(problem, batch_size):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_causal_pinn_test(problem, batch_size):
-    causal_pinn = CausalPINN(model=model, problem=problem)
-    trainer = Trainer(solver=causal_pinn,
+def test_solver_test(problem, batch_size):
+    solver = CausalPINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -94,8 +94,8 @@ def test_causal_pinn_test(problem, batch_size):
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    causal_pinn = CausalPINN(model=model, problem=problem)
-    trainer = Trainer(solver=causal_pinn,
+    solver = CausalPINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
                       batch_size=None,
@@ -106,7 +106,7 @@ def test_train_load_restore(problem):
     trainer.train()
 
     # restore
-    new_trainer = Trainer(solver=causal_pinn, max_epochs=5, accelerator='cpu')
+    new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
     new_trainer.train(
         ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
                    'epoch=4-step=5.ckpt')
@@ -119,11 +119,11 @@ def test_train_load_restore(problem):
     test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
     assert new_solver.forward(test_pts).shape == (20, 1)
     assert new_solver.forward(test_pts).shape == (
-        causal_pinn.forward(test_pts).shape
+        solver.forward(test_pts).shape
     )
     torch.testing.assert_close(
         new_solver.forward(test_pts),
-        causal_pinn.forward(test_pts))
+        solver.forward(test_pts))
 
     # rm directories
     import shutil

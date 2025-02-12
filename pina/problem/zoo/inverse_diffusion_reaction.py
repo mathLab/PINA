@@ -38,8 +38,8 @@ class InverseDiffusionReactionProblem(TimeDependentProblem,
             domain=CartesianDomain({'x': [-torch.pi, torch.pi], 't': [0, 1]}),
             equation=Equation(diffusion_reaction)),
         'data' : Condition(
-            input_points=LabelTensor(torch.tensor([[0., 0.]]), ['x', 't']),
-            output_points=LabelTensor(torch.tensor([[0.]]), ['u'])),
+            input_points=LabelTensor(torch.randn(10, 2), ['x', 't']),
+            output_points=LabelTensor(torch.randn(10, 1), ['u'])),
     }
 
     def _solution(self, pts):

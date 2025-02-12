@@ -92,13 +92,40 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         self._clamp_params()
         return condition_loss
 
+    def _pinn_validation_loop(self, batch):
+        condition_loss = {}
+        for condition_name, points in batch:
+            self.__metric = condition_name
+            # if equations are passed
+            if 'output_points' not in points:
+                input_pts = points['input_points']
+                condition = self.problem.conditions[condition_name]
+                residuals = self.compute_residual(
+                    input_pts.requires_grad_(),
+                    condition.equation
+                )
+                loss = self.loss(residuals, torch.zeros_like(residuals)) 
+            # if data are passed
+            else:
+                input_pts = points['input_points']
+                output_pts = points['output_points']
+                loss = self.loss_data(
+                    input_pts=input_pts,
+                    output_pts=output_pts
+                )
+            # append loss
+            condition_loss[condition_name] = loss
+        # clamp unknown parameters in InverseProblem (if needed)
+        self._clamp_params()
+        return condition_loss
+    
     @torch.set_grad_enabled(True)
     def validation_step(self, batch):
-        super().validation_step(batch)
+        return self._pinn_validation_loop(batch)
 
     @torch.set_grad_enabled(True)
     def test_step(self, batch):
-        super().test_step(batch)
+        return self._pinn_validation_loop(batch)
 
     def loss_data(self, input_pts, output_pts):
         """

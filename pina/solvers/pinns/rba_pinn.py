@@ -113,6 +113,14 @@ class RBAPINN(PINN):
         self._vectorial_loss = deepcopy(self.loss)
         self._vectorial_loss.reduction = "none"
 
+    # for now RBAPINN is implemented only for batch_size = None
+    def on_train_start(self):
+        if self.trainer.batch_size is not None:
+            raise NotImplementedError("RBAPINN only works with full batch "
+                                      "size, set batch_size=None inside the "
+                                      "Trainer to use the solver.")
+        return super().on_train_start()
+
     def _vect_to_scalar(self, loss_value):
         """
         Elaboration of the pointwise loss.

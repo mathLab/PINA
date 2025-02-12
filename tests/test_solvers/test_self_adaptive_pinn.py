@@ -28,22 +28,34 @@ model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 def test_constructor(problem, weight_fn):
     with pytest.raises(ValueError):
         SAPINN(model=model, problem=problem, weight_function=1)
-    sa_pinn = SAPINN(problem=problem, model=model, weight_function=weight_fn)
+    solver = SAPINN(problem=problem, model=model, weight_function=weight_fn)
 
-    assert sa_pinn.accepted_conditions_types == (
+    assert solver.accepted_conditions_types == (
         InputOutputPointsCondition,
         InputPointsEquationCondition,
         DomainEquationCondition
     )
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_self_adaptive_pinn_train(problem, batch_size):
-    sa_pinn = SAPINN(problem=problem, model=model)
-    trainer = Trainer(solver=sa_pinn,
+def test_wrong_batch(problem):
+    with pytest.raises(NotImplementedError):
+        solver = SAPINN(model=model, problem=problem)
+        trainer = Trainer(solver=solver,
+                        max_epochs=2,
+                        accelerator='cpu',
+                        batch_size=10,
+                        train_size=1.,
+                        val_size=0.,
+                        test_size=0.)
+        trainer.train()   
+
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
+def test_solver_train(problem):
+    solver = SAPINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
-                      batch_size=batch_size,
+                      batch_size=None,
                       train_size=1.,
                       val_size=0.,
                       test_size=0.)
@@ -51,37 +63,37 @@ def test_self_adaptive_pinn_train(problem, batch_size):
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_self_adaptive_pinn_validation(problem, batch_size):
-    sa_pinn = SAPINN(problem=problem, model=model)
-    trainer = Trainer(solver=sa_pinn,
+def test_solver_validation(problem):
+    solver = SAPINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
-                      batch_size=batch_size,
+                      batch_size=None,
                       train_size=0.9,
                       val_size=0.1,
                       test_size=0.)
     trainer.train()
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_self_adaptive_pinn_test(problem, batch_size):
-    sa_pinn = SAPINN(problem=problem, model=model)
-    trainer = Trainer(solver=sa_pinn,
+def test_solver_test(problem):
+    solver = SAPINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
-                      batch_size=batch_size,
+                      batch_size=None,
                       train_size=0.7,
                       val_size=0.2,
                       test_size=0.1)
     trainer.test()
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    sa_pinn = SAPINN(problem=problem, model=model)
-    trainer = Trainer(solver=sa_pinn,
+    solver = SAPINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
                       batch_size=None,
@@ -92,7 +104,7 @@ def test_train_load_restore(problem):
     trainer.train()
 
     # restore
-    new_trainer = Trainer(solver=sa_pinn, max_epochs=5, accelerator='cpu')
+    new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
     new_trainer.train(
         ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
                    'epoch=4-step=5.ckpt')
@@ -105,11 +117,11 @@ def test_train_load_restore(problem):
     test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
     assert new_solver.forward(test_pts).shape == (20, 1)
     assert new_solver.forward(test_pts).shape == (
-        sa_pinn.forward(test_pts).shape
+        solver.forward(test_pts).shape
     )
     torch.testing.assert_close(
         new_solver.forward(test_pts),
-        sa_pinn.forward(test_pts))
+        solver.forward(test_pts))
 
     # rm directories
     import shutil

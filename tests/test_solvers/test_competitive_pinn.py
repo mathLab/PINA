@@ -26,10 +26,10 @@ model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("discr", [None, model])
 def test_constructor(problem, discr):
-    comp_pinn = CompPINN(problem=problem, model=model)
-    comp_pinn = CompPINN(problem=problem, model=model, discriminator=discr)
+    solver = CompPINN(problem=problem, model=model)
+    solver = CompPINN(problem=problem, model=model, discriminator=discr)
 
-    assert comp_pinn.accepted_conditions_types == (
+    assert solver.accepted_conditions_types == (
         InputOutputPointsCondition,
         InputPointsEquationCondition,
         DomainEquationCondition
@@ -37,9 +37,9 @@ def test_constructor(problem, discr):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_competitive_pinn_train(problem, batch_size):
-    comp_pinn = CompPINN(problem=problem, model=model)
-    trainer = Trainer(solver=comp_pinn,
+def test_solver_train(problem, batch_size):
+    solver = CompPINN(problem=problem, model=model)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -52,9 +52,9 @@ def test_competitive_pinn_train(problem, batch_size):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_competitive_pinn_validation(problem, batch_size):
-    comp_pinn = CompPINN(problem=problem, model=model)
-    trainer = Trainer(solver=comp_pinn,
+def test_solver_validation(problem, batch_size):
+    solver = CompPINN(problem=problem, model=model)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -65,9 +65,9 @@ def test_competitive_pinn_validation(problem, batch_size):
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_competitive_pinn_test(problem, batch_size):
-    comp_pinn = CompPINN(problem=problem, model=model)
-    trainer = Trainer(solver=comp_pinn,
+def test_solver_test(problem, batch_size):
+    solver = CompPINN(problem=problem, model=model)
+    trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
@@ -80,8 +80,8 @@ def test_competitive_pinn_test(problem, batch_size):
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    comp_pinn = CompPINN(problem=problem, model=model)
-    trainer = Trainer(solver=comp_pinn,
+    solver = CompPINN(problem=problem, model=model)
+    trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
                       batch_size=None,
@@ -92,7 +92,7 @@ def test_train_load_restore(problem):
     trainer.train()
 
     # restore
-    new_trainer = Trainer(solver=comp_pinn, max_epochs=5, accelerator='cpu')
+    new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
     new_trainer.train(
         ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
                    'epoch=4-step=5.ckpt')
@@ -105,11 +105,11 @@ def test_train_load_restore(problem):
     test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
     assert new_solver.forward(test_pts).shape == (20, 1)
     assert new_solver.forward(test_pts).shape == (
-        comp_pinn.forward(test_pts).shape
+        solver.forward(test_pts).shape
     )
     torch.testing.assert_close(
         new_solver.forward(test_pts),
-        comp_pinn.forward(test_pts))
+        solver.forward(test_pts))
 
     # rm directories
     import shutil
