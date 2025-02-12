@@ -1,7 +1,7 @@
 import torch
 import pytest 
 
-from pina import LabelTensor
+from pina import LabelTensor, Condition
 from pina.solvers import CompetitivePINN as CompPINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
@@ -16,12 +16,25 @@ from pina.condition import (
 )
 
 
-# make the problem
+# define problems and model
 problem = Poisson()
-problem.discretise_domain(100)
+problem.discretise_domain(50)
 inverse_problem = InversePoisson()
-inverse_problem.discretise_domain(100)
-model = FeedForward(len(problem.input_variables), len(problem.output_variables))
+inverse_problem.discretise_domain(50)
+model = FeedForward(
+    len(problem.input_variables),
+    len(problem.output_variables)
+)
+
+# add input-output condition to test supervised learning
+input_pts = torch.rand(50, len(problem.input_variables))
+input_pts = LabelTensor(input_pts, problem.input_variables)
+output_pts = torch.rand(50, len(problem.output_variables))
+output_pts = LabelTensor(output_pts, problem.output_variables)
+problem.conditions['data'] = Condition(
+    input_points=input_pts,
+    output_points=output_pts
+)
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("discr", [None, model])
