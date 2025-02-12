@@ -76,17 +76,20 @@ class RBAPINN(PINN):
                  eta=0.001,
                  gamma=0.999):
         """
-        :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
+        :param AbstractProblem problem: The formulation of the problem.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
-        :param float | int eta: The learning rate for the
-            weights of the residual.
+            use; default `None`.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
+            default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
+        :param float | int eta: The learning rate for the weights of the 
+            residual; default 0.001.
         :param float gamma: The decay parameter in the update of the weights
-            of the residual.
+            of the residual. Must be between 0 and 1; default 0.999.
         """
         super().__init__(model=model,
                          problem=problem,

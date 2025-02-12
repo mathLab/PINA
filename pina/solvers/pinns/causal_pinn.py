@@ -76,16 +76,17 @@ class CausalPINN(PINN):
                  loss=None,
                  eps=100):
         """
-        :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
+        :param AbstractProblem problem: The formulation of the problem.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
-        :param int | float eps: The exponential decay parameter. Note that this
-            value is kept fixed during training, but it can be changed by means
-            of a callback, e.g. for annealing.
+            use; default `None`.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
+            default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
+        :param float eps: The exponential decay parameter; default `100`.
         """
         super().__init__(model=model,
                          problem=problem,

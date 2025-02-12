@@ -49,4 +49,3 @@ class InverseDiffusionReactionProblem(TimeDependentProblem,
             torch.sin(x) + (1/2)*torch.sin(2*x) + (1/3)*torch.sin(3*x) +
             (1/4)*torch.sin(4*x) + (1/8)*torch.sin(8*x)
         )
-    

@@ -67,17 +67,19 @@ class GradientPINN(PINN):
                  weighting=None,
                  loss=None):
         """
+        :param torch.nn.Module model: The neural network model to use.
         :param AbstractProblem problem: The formulation of the problem. It must
             inherit from at least
-            :class:`~pina.problem.spatial_problem.SpatialProblem` in order to
-            compute the gradient of the loss.
-        :param torch.nn.Module model: The neural network model to use.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
+            :class:`~pina.problem.spatial_problem.SpatialProblem` to compute 
+            the gradient of the loss.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param torch.optim.LRScheduler scheduler: Learning
-            rate scheduler.
+            use; default `None`.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
+            default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
         """
         super().__init__(model=model,
                          problem=problem,

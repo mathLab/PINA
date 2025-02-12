@@ -23,7 +23,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     This class can be used to define PINNs with multiple ``optimizers``, 
     and/or ``models``.
     By default it takes :class:`~pina.problem.abstract_problem.AbstractProblem`,
-    so the user can choose which type of problem the implemented solver,
+    so the user can choose what type of problem the implemented solver,
     inheriting from this class, is designed to solve.
     """
     accepted_conditions_types = (
@@ -37,10 +37,9 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                  loss=None,
                  **kwargs):
         """
-        :param problem: A problem definition instance.
-        :type problem: AbstractProblem
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
+        :param AbstractProblem problem: A problem definition instance.
+        :param torch.nn.Module loss: The loss function to be minimized,
+            default `None`.
         """
 
         if loss is None:
@@ -104,7 +103,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                     input_pts.requires_grad_(),
                     condition.equation
                 )
-                loss = self.loss(residuals, torch.zeros_like(residuals)) 
+                loss = self.loss(residuals, torch.zeros_like(residuals))
             # if data are passed
             else:
                 input_pts = points['input_points']
@@ -118,7 +117,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         # clamp unknown parameters in InverseProblem (if needed)
         self._clamp_params()
         return condition_loss
-    
+
     @torch.set_grad_enabled(True)
     def validation_step(self, batch):
         return self._pinn_validation_loop(batch)

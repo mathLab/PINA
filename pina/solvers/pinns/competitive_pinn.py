@@ -66,24 +66,24 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
                  weighting=None,
                  loss=None):
         """
-        :param AbstractProblem problem: The formualation of the problem.
+        :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use
             for the model.
         :param torch.nn.Module discriminator: The neural network model to use
             for the discriminator. If ``None``, the discriminator network will
             have the same architecture as the model network.
         :param torch.optim.Optimizer optimizer_model: The neural network 
-            optimizer to use for the model network
-            , default is `torch.optim.Adam`.
-        :param torch.optim.Optimizer optimizer_discriminator: The neural
-            network optimizer to use for the discriminator network
-            , default is `torch.optim.Adam`.
-        :param torch.optim.LRScheduler scheduler_model: Learning
-            rate scheduler for the model.
-        :param torch.optim.LRScheduler scheduler_discriminator: Learning
-            rate scheduler for the discriminator.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
+            optimizer to use for the model network; default `None`.
+        :param torch.optim.Optimizer optimizer_discriminator: The neural network
+            optimizer to use for the discriminator network; default `None`.
+        :param torch.optim.LRScheduler scheduler_model: Learning rate scheduler 
+            for the model; default `None`.
+        :param torch.optim.LRScheduler scheduler_discriminator: Learning rate 
+            scheduler for the discriminator; default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
         """
         if discriminator is None:
             discriminator = copy.deepcopy(model)

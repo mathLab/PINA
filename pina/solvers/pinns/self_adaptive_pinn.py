@@ -110,24 +110,23 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
                  weighting=None,
                  loss=None):
         """
-        :param AbstractProblem problem: The formualation of the problem.
-        :param torch.nn.Module model: The neural network model to use
-            for the model.
+        :param AbstractProblem problem: The formulation of the problem.
+        :param torch.nn.Module model: The neural network model to use for 
+            the model.
         :param torch.nn.Module weight_function: The neural network model
-            related to the mask of SAPINN.
-            default :obj:`~torch.nn.Sigmoid`.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
-        :param torch.optim.Optimizer optimizer_model: The neural
-            network optimizer to use for the model network
-            , default is `torch.optim.Adam`.
-        :param torch.optim.Optimizer optimizer_weights: The neural
-            network optimizer to use for mask model model,
-            default is `torch.optim.Adam`.
-        :param torch.optim.LRScheduler scheduler_model: Learning
-            rate scheduler for the model.
-        :param torch.optim.LRScheduler scheduler_weights: Learning
-            rate scheduler for the mask model.
+            related to the Self-Adaptive PINN mask; default `torch.nn.Sigmoid()`
+        :param torch.optim.Optimizer optimizer_model: The neural network 
+            optimizer to use for the model network; default `None`.
+        :param torch.optim.Optimizer optimizer_weights: The neural network 
+            optimizer to use for mask model; default `None`.
+        :param torch.optim.LRScheduler scheduler_model: Learning rate scheduler
+            for the model; default `None`.
+        :param torch.optim.LRScheduler scheduler_weights: Learning rate
+            scheduler for the mask model; default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
         """
         # check consistency weitghs_function
         check_consistency(weight_function, torch.nn.Module)
@@ -298,7 +297,6 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         device = torch.device(
             self.trainer._accelerator_connector._accelerator_flag
         )
-        self.trainer.datamodule.train_dataset
 
         # Initialize the self adaptive weights only for training points
         for condition_name, tensor in (
@@ -317,7 +315,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
         :param dict checkpoint: Pytorch Lightning checkpoint dict.
         """
-        # First initialize self-adaptive weights with correct shape, 
+        # First initialize self-adaptive weights with correct shape,
         # then load the values from the checkpoint.
         for condition_name, _ in self.problem.input_pts.items():
             shape = checkpoint['state_dict'][
@@ -378,7 +376,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: torch.nn.ModuleDict
         """
         return self.models[0]
-    
+
     @property
     def weights_dict(self):
         """

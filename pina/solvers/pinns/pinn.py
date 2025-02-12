@@ -56,18 +56,16 @@ class PINN(PINNInterface, SingleSolverInterface):
                  weighting=None,
                  loss=None):
         """
-        :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
-        :param torch.nn.Module extra_features: The additional input
-            features to use as augmented input.
+        :param AbstractProblem problem: The formulation of the problem.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param torch.optim.LRScheduler scheduler: Learning
-            rate scheduler.
-        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
+            use; default `None`.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
+            default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
         """
         super().__init__(model=model,
                          problem=problem,
