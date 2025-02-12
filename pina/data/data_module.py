@@ -354,3 +354,17 @@ class PinaDataModule(LightningDataModule):
             raise ValueError("The splits must be positive")
         if abs(train_size + test_size + val_size + predict_size - 1) > 1e-6:
             raise ValueError("The sum of the splits must be 1")
+
+    @property
+    def input_points(self):
+        """
+        # TODO
+        """
+        to_return = {}
+        if hasattr(self, "train_dataset") and self.train_dataset is not None:
+            to_return["train"] = self.train_dataset.input_points
+        if hasattr(self, "val_dataset") and self.val_dataset is not None:
+            to_return["val"] = self.val_dataset.input_points
+        if hasattr(self, "test_dataset") and self.test_dataset is not None:
+            to_return = self.test_dataset.input_points
+        return to_return
