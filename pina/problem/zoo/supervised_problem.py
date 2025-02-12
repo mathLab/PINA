@@ -35,3 +35,4 @@ class SupervisedProblem(AbstractProblem):
             output_points = output_
         )
         super().__init__()
+        

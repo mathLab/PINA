@@ -29,6 +29,3 @@ def test_constructor_graph():
     assert isinstance(problem.conditions['data'], InputOutputPointsCondition)
     assert isinstance(problem.conditions['data'].input_points, list) 
     assert isinstance(problem.conditions['data'].output_points, torch.Tensor) 
-
-
-    
