@@ -149,7 +149,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         # create a new one by setting requires_grad to True.
         # In alternative set `retain_graph=True`.
         samples = samples.detach()
-        samples.requires_grad = True
+        samples.requires_grad_()
 
         # Train the discriminator for one step
         discriminator_bets = self.discriminator(samples)

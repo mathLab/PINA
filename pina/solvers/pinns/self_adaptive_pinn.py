@@ -195,7 +195,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: torch.Tensor
         """
         # Train the weights
-        weighted_loss, _ = self._loss_phys(samples, equation)
+        weighted_loss = self._loss_phys(samples, equation)
         loss_value = -weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
 
@@ -203,10 +203,10 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         # create a new one by setting requires_grad to True.
         # In alternative set `retain_graph=True`.
         samples = samples.detach()
-        samples.requires_grad = True
+        samples.requires_grad_()# = True
 
         # Train the model
-        weighted_loss, _ = self._loss_phys(samples, equation)
+        weighted_loss = self._loss_phys(samples, equation)
         loss_value = weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
 
@@ -224,23 +224,12 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :return: The computed data loss.
         :rtype: torch.Tensor
         """
-        # Train the weights
-        weighted_loss, _ = self._loss_data(input_pts, output_pts)
-        loss_value = -weighted_loss.as_subclass(torch.Tensor)
+        residual = self.forward(input_pts) - output_pts
+        loss = self._vectorial_loss(
+            torch.zeros_like(residual, requires_grad=True), residual
+        )
+        loss_value = self._vect_to_scalar(loss).as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
-
-        # Detach samples from the existing computational graph and
-        # create a new one by setting requires_grad to True.
-        # In alternative set `retain_graph=True`.
-        input_pts = input_pts.detach()
-        input_pts.requires_grad = True
-
-        # Train the model
-        ###self.optimizer_model.zero_grad()
-        weighted_loss, _ = self._loss_data(input_pts, output_pts)
-        loss_value = weighted_loss.as_subclass(torch.Tensor)
-        self.manual_backward(loss_value)
-
         return loss_value
 
     def configure_optimizers(self):
@@ -303,13 +292,18 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: Any
         """
         if self.trainer.batch_size is not None:
-            raise NotImplementedError("SAPINN only works with full batch "
-                                      "size, set batch_size=None inside the "
-                                      "Trainer to use the solver.")
+            raise NotImplementedError("SelfAdaptivePINN only works with full "
+                                      "batch size, set batch_size=None inside "
+                                      "the Trainer to use the solver.")
         device = torch.device(
             self.trainer._accelerator_connector._accelerator_flag
         )
-        for condition_name, tensor in self.problem.input_pts.items():
+        self.trainer.datamodule.train_dataset
+
+        # Initialize the self adaptive weights only for training points
+        for condition_name, tensor in (
+            self.trainer.data_module.train_dataset.input_points.items()
+        ):
             self.weights_dict[condition_name].sa_weights.data = (
                 torch.rand((tensor.shape[0], 1), device=device)
             )
@@ -323,11 +317,15 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
         :param dict checkpoint: Pytorch Lightning checkpoint dict.
         """
-        for condition_name, tensor in self.problem.input_pts.items():
-            self.weights_dict.torchmodel[condition_name].sa_weights.data = (
-                torch.rand((tensor.shape[0], 1))
+        # First initialize self-adaptive weights with correct shape, 
+        # then load the values from the checkpoint.
+        for condition_name, _ in self.problem.input_pts.items():
+            shape = checkpoint['state_dict'][
+                f"_pina_models.1.{condition_name}.sa_weights"
+            ].shape
+            self.weights_dict[condition_name].sa_weights.data = (
+                torch.rand(shape)
             )
-
         return super().on_load_checkpoint(checkpoint)
 
     def _loss_phys(self, samples, equation):
@@ -342,41 +340,11 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: List[LabelTensor, LabelTensor]
         """
         residual = self.compute_residual(samples, equation)
-        return self._compute_loss(residual)
-
-    def _loss_data(self, input_pts, output_pts):
-        """
-        Computation of the loss related to data for SelfAdaptive PINN solver.
-
-        :param LabelTensor input_pts: The input to the neural networks.
-        :param LabelTensor output_pts: The true solution to compare the
-            network solution.
-
-        :return: tuple with weighted and not weighted scalar loss
-        :rtype: List[LabelTensor, LabelTensor]
-        """
-        residual = self.forward(input_pts) - output_pts
-        return self._compute_loss(residual)
-
-    def _compute_loss(self, residual):
-        """
-        Elaboration of the pointwise loss through the mask model and the
-        self adaptive weights
-
-        :param LabelTensor residual: the matrix of residuals that have to
-            be weighted
-
-        :return: tuple with weighted and not weighted loss
-        :rtype List[LabelTensor, LabelTensor]
-        """
         weights = self.weights_dict[self.current_condition_name].forward()
         loss_value = self._vectorial_loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
-        return (
-            self._vect_to_scalar(weights * loss_value),
-            self._vect_to_scalar(loss_value),
-        )
+        return self._vect_to_scalar(weights * loss_value)
 
     def _vect_to_scalar(self, loss_value):
         """
