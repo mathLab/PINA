@@ -1,23 +1,17 @@
 """ Module for GAROM """
 
 import torch
-import sys
 
-try:
-    from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
-except ImportError:
-    from torch.optim.lr_scheduler import (
-        _LRScheduler as LRScheduler,
-    )  # torch < 2.0
-
-from torch.optim.lr_scheduler import ConstantLR
-from .solver import SolverInterface
+from .solver import MultiSolverInterface
+from ..utils import check_consistency
+from ..loss.loss_interface import LossInterface
+from ..condition import InputOutputPointsCondition
 from ..utils import check_consistency
 from ..loss import LossInterface, PowerLoss
 from torch.nn.modules.loss import _Loss
 
 
-class GAROM(SolverInterface):
+class GAROM(MultiSolverInterface):
     """
     GAROM solver class. This class implements Generative Adversarial
     Reduced Order Model solver, using user specified ``models`` to solve
@@ -31,20 +25,18 @@ class GAROM(SolverInterface):
         <https://doi.org/10.48550/arXiv.2305.15881>`_.
     """
 
+    accepted_conditions_types = InputOutputPointsCondition
+
     def __init__(
         self,
         problem,
         generator,
         discriminator,
         loss=None,
-        optimizer_generator=torch.optim.Adam,
-        optimizer_generator_kwargs={"lr": 0.001},
-        optimizer_discriminator=torch.optim.Adam,
-        optimizer_discriminator_kwargs={"lr": 0.001},
-        scheduler_generator=ConstantLR,
-        scheduler_generator_kwargs={"factor": 1, "total_iters": 0},
-        scheduler_discriminator=ConstantLR,
-        scheduler_discriminator_kwargs={"factor": 1, "total_iters": 0},
+        optimizer_generator=None,
+        optimizer_discriminator=None,
+        scheduler_generator=None,
+        scheduler_discriminator=None,
         gamma=0.3,
         lambda_k=0.001,
         regularizer=False,
@@ -58,20 +50,15 @@ class GAROM(SolverInterface):
         :param torch.nn.Module loss: The loss function used as minimizer,
             default ``None``. If ``loss`` is ``None`` the defualt
             ``PowerLoss(p=1)`` is used, as in the original paper.
-        :param torch.optim.Optimizer optimizer_generator: The neural
+        :param Optimizer optimizer_generator: The neural
             network optimizer to use for the generator network
             , default is `torch.optim.Adam`.
-        :param dict optimizer_generator_kwargs: Optimizer constructor keyword
-            args. for the generator.
-        :param torch.optim.Optimizer optimizer_discriminator: The neural
+        :param Optimizer optimizer_discriminator: The neural
             network optimizer to use for the discriminator network
             , default is `torch.optim.Adam`.
-        :param dict optimizer_discriminator_kwargs: Optimizer constructor keyword
-            args. for the discriminator.
-        :param torch.optim.LRScheduler scheduler_generator: Learning
+        :param Scheduler scheduler_generator: Learning
             rate scheduler for the generator.
-        :param dict scheduler_generator_kwargs: LR scheduler constructor keyword args.
-        :param torch.optim.LRScheduler scheduler_discriminator: Learning
+        :param Scheduler scheduler_discriminator: Learning
             rate scheduler for the discriminator.
         :param dict scheduler_discriminator_kwargs: LR scheduler constructor keyword args.
         :param gamma: Ratio of expected loss for generator and discriminator, defaults to 0.3.
@@ -87,53 +74,39 @@ class GAROM(SolverInterface):
             parameters), and ``output_points``.
         """
 
-        super().__init__(
-            models=[generator, discriminator],
-            problem=problem,
-            optimizers=[optimizer_generator, optimizer_discriminator],
-            optimizers_kwargs=[
-                optimizer_generator_kwargs,
-                optimizer_discriminator_kwargs,
-            ],
-        )
-
-        # set automatic optimization for GANs
-        self.automatic_optimization = False
-
         # set loss
         if loss is None:
             loss = PowerLoss(p=1)
 
+        super().__init__(
+            models=[generator, discriminator],
+            problem=problem,
+            optimizers=[optimizer_generator, optimizer_discriminator],
+            schedulers=[
+                scheduler_generator,
+                scheduler_discriminator,
+            ],
+            use_lt=False
+        )
+
         # check consistency
-        check_consistency(scheduler_generator, LRScheduler, subclass=True)
-        check_consistency(scheduler_generator_kwargs, dict)
-        check_consistency(scheduler_discriminator, LRScheduler, subclass=True)
-        check_consistency(scheduler_discriminator_kwargs, dict)
-        check_consistency(loss, (LossInterface, _Loss))
+        check_consistency(loss, (LossInterface, _Loss, torch.nn.Module),
+                          subclass=False)
+        self._loss = loss   
+
+        # set automatic optimization for GANs
+        self.automatic_optimization = False
+
+        # check consistency
         check_consistency(gamma, float)
         check_consistency(lambda_k, float)
         check_consistency(regularizer, bool)
-
-        # assign schedulers
-        self._schedulers = [
-            scheduler_generator(
-                self.optimizers[0], **scheduler_generator_kwargs
-            ),
-            scheduler_discriminator(
-                self.optimizers[1], **scheduler_discriminator_kwargs
-            ),
-        ]
-
-        # loss and writer
-        self._loss = loss
 
         # began hyperparameters
         self.k = 0
         self.gamma = gamma
         self.lambda_k = lambda_k
         self.regularizer = float(regularizer)
-        self._generator = self.models[0]
-        self._discriminator = self.models[1]
 
     def forward(self, x, mc_steps=20, variance=False):
         """
@@ -164,16 +137,6 @@ class GAROM(SolverInterface):
 
         return mean
 
-    def configure_optimizers(self):
-        """
-        Optimizer configuration for the GAROM
-        solver.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple(list, list)
-        """
-        return self.optimizers, self._schedulers
-
     def sample(self, x):
         # sampling
         return self.generator(x)
@@ -185,11 +148,11 @@ class GAROM(SolverInterface):
         optimizer = self.optimizer_generator
         optimizer.zero_grad()
 
-        generated_snapshots = self.generator(parameters)
+        generated_snapshots = self.sample(parameters)
 
         # generator loss
         r_loss = self._loss(snapshots, generated_snapshots)
-        d_fake = self.discriminator.forward_map(
+        d_fake = self.discriminator(
             [generated_snapshots, parameters]
         )
         g_loss = (
@@ -202,6 +165,27 @@ class GAROM(SolverInterface):
 
         return r_loss, g_loss
 
+    def on_train_batch_end(self, outputs, batch, batch_idx):
+        """
+        This method is called at the end of each training batch, and ovverides
+        the PytorchLightining implementation for logging the checkpoints.
+
+        :param torch.Tensor outputs: The output from the model for the
+            current batch.
+        :param tuple batch: The current batch of data.
+        :param int batch_idx: The index of the current batch.
+        :return: Whatever is returned by the parent
+            method ``on_train_batch_end``.
+        :rtype: Any
+        """
+        # increase by one the counter of optimization to save loggers
+        (
+            self.trainer.fit_loop.epoch_loop.manual_optimization
+            .optim_step_progress.total.completed
+        ) += 1
+
+        return super().on_train_batch_end(outputs, batch, batch_idx)
+
     def _train_discriminator(self, parameters, snapshots):
         """
         Private method to train the discriminator network.
@@ -210,11 +194,11 @@ class GAROM(SolverInterface):
         optimizer.zero_grad()
 
         # Generate a batch of images
-        generated_snapshots = self.generator(parameters)
+        generated_snapshots = self.sample(parameters)
 
         # Discriminator pass
-        d_real = self.discriminator.forward_map([snapshots, parameters])
-        d_fake = self.discriminator.forward_map(
+        d_real = self.discriminator([snapshots, parameters])
+        d_fake = self.discriminator(
             [generated_snapshots, parameters]
         )
 
@@ -242,103 +226,82 @@ class GAROM(SolverInterface):
         self.k = min(max(self.k, 0), 1)  # Constraint to interval [0, 1]
         return diff
 
-    def training_step(self, batch, batch_idx):
+    def optimization_cycle(self, batch):
         """GAROM solver training step.
 
         :param batch: The batch element in the dataloader.
         :type batch: tuple
-        :param batch_idx: The batch index.
-        :type batch_idx: int
         :return: The sum of the loss functions.
         :rtype: LabelTensor
         """
-
-        condition_idx = batch["condition"]
-
-        for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
-
-            condition_name = self._dataloader.condition_names[condition_id]
-            condition = self.problem.conditions[condition_name]
-            pts = batch["pts"].detach()
-            out = batch["output"]
-
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError("Something wrong happened.")
-
-            # for data driven mode
-            if not hasattr(condition, "output_points"):
-                raise NotImplementedError(
-                    "GAROM works only in data-driven mode."
-                )
-
-            # get data
-            snapshots = out[condition_idx == condition_id]
-            parameters = pts[condition_idx == condition_id]
-
+        condition_loss = {}
+        for condition_name, points in batch:
+            parameters, snapshots = points['input_points'], points['output_points']
             d_loss_real, d_loss_fake, d_loss = self._train_discriminator(
                 parameters, snapshots
             )
-
             r_loss, g_loss = self._train_generator(parameters, snapshots)
-
             diff = self._update_weights(d_loss_real, d_loss_fake)
+            condition_loss[condition_name] = r_loss
 
-            # logging
-            self.log(
-                "mean_loss",
-                float(r_loss),
-                prog_bar=True,
-                logger=True,
-                on_epoch=True,
-                on_step=False,
-            )
-            self.log(
+        # some extra logging
+        self.store_log(
                 "d_loss",
                 float(d_loss),
-                prog_bar=True,
-                logger=True,
-                on_epoch=True,
-                on_step=False,
+                self.get_batch_size(batch)
             )
-            self.log(
-                "g_loss",
-                float(g_loss),
-                prog_bar=True,
-                logger=True,
-                on_epoch=True,
-                on_step=False,
-            )
-            self.log(
-                "stability_metric",
-                float(d_loss_real + torch.abs(diff)),
-                prog_bar=True,
-                logger=True,
-                on_epoch=True,
-                on_step=False,
-            )
+        self.store_log(
+            "g_loss",
+            float(g_loss),
+            self.get_batch_size(batch)
+        )
+        self.store_log(
+            "stability_metric",
+            float(d_loss_real + torch.abs(diff)),
+            self.get_batch_size(batch)
+        )
+        return condition_loss
 
-        return
-
+    def validation_step(self, batch):
+        condition_loss = {}
+        for condition_name, points in batch:
+            parameters, snapshots = points['input_points'], points['output_points']
+            snapshots_gen = self.generator(parameters)
+            condition_loss[condition_name] = self._loss(snapshots, snapshots_gen)
+        loss = self.weighting.aggregate(condition_loss)
+        self.store_log('train_loss', loss, self.get_batch_size(batch))
+        return loss
+    
+    def test_step(self, batch):
+        condition_loss = {}
+        for condition_name, points in batch:
+            parameters, snapshots = points['input_points'], points['output_points']
+            snapshots_gen = self.generator(parameters)
+            condition_loss[condition_name] = self._loss(snapshots, snapshots_gen)
+        loss = self.weighting.aggregate(condition_loss)
+        self.store_log('train_loss', loss, self.get_batch_size(batch))
+        return loss
+       
     @property
     def generator(self):
-        return self._generator
-
+        return self.models[0]
+    
     @property
     def discriminator(self):
-        return self._discriminator
-
+        return self.models[1]
+    
     @property
     def optimizer_generator(self):
-        return self.optimizers[0]
+        return self.optimizers[0].instance
 
     @property
     def optimizer_discriminator(self):
-        return self.optimizers[1]
+        return self.optimizers[1].instance
 
     @property
     def scheduler_generator(self):
-        return self._schedulers[0]
+        return self.schedulers[0].instance
 
     @property
     def scheduler_discriminator(self):
-        return self._schedulers[1]
+        return self.schedulers[1].instance

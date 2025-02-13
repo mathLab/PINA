@@ -93,9 +93,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :rtype: LabelTensor
         """
         loss = self._optimization_cycle(batch=batch)
-        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True,
-                 logger=True, batch_size=self.get_batch_size(batch),
-                 sync_dist=True)
+        self.store_log('train_loss', loss, self.get_batch_size(batch))
         return loss
 
     def validation_step(self, batch):
@@ -106,8 +104,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :type batch: tuple
         """
         loss = self._optimization_cycle(batch=batch)
-        self.log('val_loss', loss, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
+        self.store_log('val_loss', loss, self.get_batch_size(batch))
 
     def test_step(self, batch):
         """
@@ -117,8 +114,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :type batch: tuple
         """
         loss = self._optimization_cycle(batch=batch)
-        self.log('test_loss', loss, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
+        self.store_log('test_loss', loss, self.get_batch_size(batch))
 
     def on_train_start(self):
         """
@@ -139,6 +135,13 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
                 print("Compilation failed, running in normal mode.:\n", e)
                 sys.stdout.flush()
 
+    def store_log(self, name, value, batch_size):
+        self.log(name=name,
+                 value=value,
+                 batch_size=batch_size,
+                 **self.trainer.logging_kwargs
+                 )
+        
     @abstractmethod
     def forward(self, *args, **kwargs):
         pass

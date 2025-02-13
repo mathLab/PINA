@@ -48,17 +48,41 @@ class Trainer(lightning.pytorch.Trainer):
             and can be choosen from the `pytorch-lightning
             Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_
         """
-        # check inheritance consistency for solver and batch size.
+        # check consistency for init types
         check_consistency(solver, SolverInterface)
+        check_consistency(automatic_batching, bool)
+        check_consistency(train_size, float)
+        check_consistency(test_size, float)
+        check_consistency(val_size, float)
+        check_consistency(predict_size, float)
+        if train_size + test_size + val_size + predict_size > 1:
+            raise ValueError('train_size, test_size, val_size and predict_size '
+                             'must sum up to 1.')
+        for size in [train_size, test_size, val_size, predict_size]:
+            if size < 0 or size > 1:
+                raise ValueError('splitting sizes for train, validation, test '
+                                 'and prediction must be between [0, 1].')
+        if batch_size is not None:
+            check_consistency(batch_size, int)
 
         # inference mode set to false when validating/testing PINNs otherwise
         # gradient is not tracked and optimization_cycle fails
         if isinstance(solver, PINNInterface):
             kwargs['inference_mode'] = False
+
+        # Logging depends on the batch size, when batch_size is None then
+        # log_every_n_steps should be zero
+        if batch_size is None:
+            kwargs['log_every_n_steps'] = 0
+        else:
+            kwargs.setdefault('log_every_n_steps', 50) # default for lightning
+
+        # Setting default kwargs, overriding lightning defaults
+        kwargs.setdefault('enable_progress_bar', True)
+        kwargs.setdefault('logger', None)
+
         super().__init__(**kwargs)
 
-        if batch_size is not None:
-            check_consistency(batch_size, int)
         self.compile = compile
         self.automatic_batching = automatic_batching
         self.train_size = train_size
@@ -71,6 +95,16 @@ class Trainer(lightning.pytorch.Trainer):
         self.data_module = None
         self._create_loader()
 
+        # logging
+        self.logging_kwargs = {
+            'logger' : bool(kwargs['logger'] is None or kwargs['logger'] is True),
+            'sync_dist' : bool(len(self._accelerator_connector._parallel_devices) > 1),
+            'on_step' : bool(kwargs['log_every_n_steps'] > 0),
+            'prog_bar': bool(kwargs['enable_progress_bar']),
+            'on_epoch' : True
+        }
+        print(self.logging_kwargs)
+  
     def _move_to_device(self):
         device = self._accelerator_connector._parallel_devices[0]
         # move parameters to device

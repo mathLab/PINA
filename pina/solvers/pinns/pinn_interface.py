@@ -72,16 +72,14 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     def validation_step(self, batch):
         losses = self._run_optimization_cycle(batch, self._residual_loss)
         loss = self.weighting.aggregate(losses).as_subclass(torch.Tensor)
-        self.log('val_loss', loss, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
+        self.store_log('val_loss', loss, self.get_batch_size(batch))
         return loss
 
     @torch.set_grad_enabled(True)
     def test_step(self, batch):
         losses = self._run_optimization_cycle(batch, self._residual_loss)
         loss = self.weighting.aggregate(losses).as_subclass(torch.Tensor)
-        self.log('test_loss', loss, prog_bar=True, logger=True,
-                 batch_size=self.get_batch_size(batch), sync_dist=True)
+        self.store_log('test_loss', loss, self.get_batch_size(batch))
         return loss
 
     def loss_data(self, input_pts, output_pts):
