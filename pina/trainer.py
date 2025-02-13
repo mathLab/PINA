@@ -3,7 +3,7 @@ import torch
 import lightning
 from .utils import check_consistency
 from .data import PinaDataModule
-from .solvers.solver import SolverInterface
+from .solvers import SolverInterface, PINNInterface
 
 
 class Trainer(lightning.pytorch.Trainer):
@@ -48,10 +48,15 @@ class Trainer(lightning.pytorch.Trainer):
             and can be choosen from the `pytorch-lightning
             Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_
         """
+        # check inheritance consistency for solver and batch size.
+        check_consistency(solver, SolverInterface)
+
+        # inference mode set to false when validating/testing PINNs otherwise
+        # gradient is not tracked and optimization_cycle fails
+        if isinstance(solver, PINNInterface):
+            kwargs['inference_mode'] = False
         super().__init__(**kwargs)
 
-        # check inheritance consistency for solver and batch size
-        check_consistency(solver, SolverInterface)
         if batch_size is not None:
             check_consistency(batch_size, int)
         self.compile = compile

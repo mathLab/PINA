@@ -2,7 +2,7 @@ import torch
 import pytest 
 
 from pina import LabelTensor, Condition
-from pina.solvers import CompetitivePINN as CompPINN
+from pina.solvers import SelfAdaptivePINN as SAPINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.problem.zoo import (
@@ -16,7 +16,7 @@ from pina.condition import (
 )
 
 
-# define problems and model
+# make the problem
 problem = Poisson()
 problem.discretise_domain(50)
 inverse_problem = InversePoisson()
@@ -37,10 +37,11 @@ problem.conditions['data'] = Condition(
 )
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("discr", [None, model])
-def test_constructor(problem, discr):
-    solver = CompPINN(problem=problem, model=model)
-    solver = CompPINN(problem=problem, model=model, discriminator=discr)
+@pytest.mark.parametrize("weight_fn", [torch.nn.Sigmoid(), torch.nn.Tanh()])
+def test_constructor(problem, weight_fn):
+    with pytest.raises(ValueError):
+        SAPINN(model=model, problem=problem, weight_function=1)
+    solver = SAPINN(problem=problem, model=model, weight_function=weight_fn)
 
     assert solver.accepted_conditions_types == (
         InputOutputPointsCondition,
@@ -49,51 +50,62 @@ def test_constructor(problem, discr):
     )
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_solver_train(problem, batch_size):
-    solver = CompPINN(problem=problem, model=model)
+def test_wrong_batch(problem):
+    with pytest.raises(NotImplementedError):
+        solver = SAPINN(model=model, problem=problem)
+        trainer = Trainer(solver=solver,
+                        max_epochs=2,
+                        accelerator='cpu',
+                        batch_size=10,
+                        train_size=1.,
+                        val_size=0.,
+                        test_size=0.)
+        trainer.train()   
+
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
+def test_solver_train(problem):
+    solver = SAPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
-                      batch_size=batch_size,
+                      batch_size=None,
                       train_size=1.,
                       val_size=0.,
                       test_size=0.)
     trainer.train()
 
 
-
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_solver_validation(problem, batch_size):
-    solver = CompPINN(problem=problem, model=model)
+def test_solver_validation(problem):
+    solver = SAPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
-                      batch_size=batch_size,
+                      batch_size=None,
                       train_size=0.9,
                       val_size=0.1,
                       test_size=0.)
     trainer.train()
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_solver_test(problem, batch_size):
-    solver = CompPINN(problem=problem, model=model)
+def test_solver_test(problem):
+    solver = SAPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
-                      batch_size=batch_size,
+                      batch_size=None,
                       train_size=0.7,
                       val_size=0.2,
                       test_size=0.1)
     trainer.test()
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    solver = CompPINN(problem=problem, model=model)
+    solver = SAPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
@@ -111,7 +123,7 @@ def test_train_load_restore(problem):
                    'epoch=4-step=5.ckpt')
 
     # loading
-    new_solver = CompPINN.load_from_checkpoint(
+    new_solver = SAPINN.load_from_checkpoint(
         f'{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt',
         problem=problem, model=model)
 

@@ -1,13 +1,14 @@
 import torch
-import pytest 
+import pytest
 
 from pina import LabelTensor, Condition
-from pina.solvers import CompetitivePINN as CompPINN
+from pina.problem import SpatialProblem
+from pina.solvers import CausalPINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.problem.zoo import (
-    Poisson2DSquareProblem as Poisson,
-    InversePoisson2DSquareProblem as InversePoisson
+    DiffusionReactionProblem,
+    InverseDiffusionReactionProblem
 )
 from pina.condition import (
     InputOutputPointsCondition,
@@ -16,10 +17,19 @@ from pina.condition import (
 )
 
 
+class DummySpatialProblem(SpatialProblem):
+    '''
+    A mock spatial problem for testing purposes.
+    '''
+    output_variables = ['u']
+    conditions = {}
+    spatial_domain = None
+
+
 # define problems and model
-problem = Poisson()
+problem = DiffusionReactionProblem()
 problem.discretise_domain(50)
-inverse_problem = InversePoisson()
+inverse_problem = InverseDiffusionReactionProblem()
 inverse_problem.discretise_domain(50)
 model = FeedForward(
     len(problem.input_variables),
@@ -36,11 +46,13 @@ problem.conditions['data'] = Condition(
     output_points=output_pts
 )
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("discr", [None, model])
-def test_constructor(problem, discr):
-    solver = CompPINN(problem=problem, model=model)
-    solver = CompPINN(problem=problem, model=model, discriminator=discr)
+@pytest.mark.parametrize("eps", [100, 100.1])
+def test_constructor(problem, eps):
+    with pytest.raises(ValueError):
+        CausalPINN(model=model, problem=DummySpatialProblem())
+    solver = CausalPINN(model=model, problem=problem, eps=eps)
 
     assert solver.accepted_conditions_types == (
         InputOutputPointsCondition,
@@ -48,10 +60,11 @@ def test_constructor(problem, discr):
         DomainEquationCondition
     )
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 def test_solver_train(problem, batch_size):
-    solver = CompPINN(problem=problem, model=model)
+    solver = CausalPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
@@ -62,11 +75,10 @@ def test_solver_train(problem, batch_size):
     trainer.train()
 
 
-
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 def test_solver_validation(problem, batch_size):
-    solver = CompPINN(problem=problem, model=model)
+    solver = CausalPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
@@ -76,10 +88,11 @@ def test_solver_validation(problem, batch_size):
                       test_size=0.)
     trainer.train()
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 def test_solver_test(problem, batch_size):
-    solver = CompPINN(problem=problem, model=model)
+    solver = CausalPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
@@ -89,11 +102,12 @@ def test_solver_test(problem, batch_size):
                       test_size=0.1)
     trainer.test()
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    solver = CompPINN(problem=problem, model=model)
+    solver = CausalPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
@@ -111,7 +125,7 @@ def test_train_load_restore(problem):
                    'epoch=4-step=5.ckpt')
 
     # loading
-    new_solver = CompPINN.load_from_checkpoint(
+    new_solver = CausalPINN.load_from_checkpoint(
         f'{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt',
         problem=problem, model=model)
 
