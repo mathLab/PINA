@@ -1,6 +1,6 @@
 __all__ = [
     'Poisson2DSquareProblem',
-    'SupervisedProblem'
+    'SupervisedProblem',
     'InversePoisson2DSquareProblem',
     'DiffusionReactionProblem',
     'InverseDiffusionReactionProblem'
