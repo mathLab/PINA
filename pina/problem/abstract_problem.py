@@ -36,8 +36,7 @@ class AbstractProblem(metaclass=ABCMeta):
         if not hasattr(self, "domains"):
             self.domains = {}
         for cond_name, cond in self.conditions.items():
-            if isinstance(cond, (DomainEquationCondition,
-                                 InputPointsEquationCondition)):
+            if isinstance(cond, DomainEquationCondition):
                 if isinstance(cond.domain, DomainInterface):
                     self.domains[cond_name] = cond.domain
                     cond.domain = cond_name
