@@ -38,7 +38,7 @@ def check_consistency(object, object_instance, subclass=False):
 def labelize_forward(forward, input_variables, output_variables):
     def wrapper(x):
         x = x.extract(input_variables)
-        output = forward(x.tensor)
+        output = forward(x)
         # keep it like this, directly using LabelTensor(...) raises errors
         # when compiling the code
         output = output.as_subclass(LabelTensor)

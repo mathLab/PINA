@@ -156,7 +156,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                 input_pts = points['input_points']
                 output_pts = points['output_points']
                 loss = self.loss_data(
-                    input_pts=input_pts,
+                    input_pts=input_pts.requires_grad_(),
                     output_pts=output_pts
                 )
             # append loss

@@ -230,9 +230,7 @@ class SingleSolverInterface(SolverInterface):
         :return: Solver solution.
         :rtype: torch.Tensor
         """
-        print(x)
         x = self.model(x)
-        print(x)
         return x
 
     def configure_optimizers(self):
