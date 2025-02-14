@@ -269,7 +269,7 @@ class GAROM(MultiSolverInterface):
             snapshots_gen = self.generator(parameters)
             condition_loss[condition_name] = self._loss(snapshots, snapshots_gen)
         loss = self.weighting.aggregate(condition_loss)
-        self.store_log('train_loss', loss, self.get_batch_size(batch))
+        self.store_log('val_loss', loss, self.get_batch_size(batch))
         return loss
     
     def test_step(self, batch):
@@ -279,7 +279,7 @@ class GAROM(MultiSolverInterface):
             snapshots_gen = self.generator(parameters)
             condition_loss[condition_name] = self._loss(snapshots, snapshots_gen)
         loss = self.weighting.aggregate(condition_loss)
-        self.store_log('train_loss', loss, self.get_batch_size(batch))
+        self.store_log('test_loss', loss, self.get_batch_size(batch))
         return loss
        
     @property
