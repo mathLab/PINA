@@ -10,6 +10,7 @@ from ..optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
 from ..loss import WeightingInterface
 from ..loss.scalar_weighting import _NoWeighting
 from ..utils import check_consistency, labelize_forward
+from torch._dynamo.eval_frame import OptimizedModule
 
 
 class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
@@ -116,32 +117,13 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         loss = self._optimization_cycle(batch=batch)
         self.store_log('test_loss', loss, self.get_batch_size(batch))
 
-    def on_train_start(self):
-        """
-        Hook that is called before training begins.
-        Used to compile the model if the trainer is set to compile.
-        """
-        super().on_train_start()
-        if self.trainer.compile:
-            model_device = next(self._pina_model.parameters()).device
-            try:
-                if model_device == torch.device("mps:0"):
-                    self._pina_model = torch.compile(self._pina_model,
-                                                     backend="eager")
-                else:
-                    self._pina_model = torch.compile(self._pina_model,
-                                                     backend="inductor")
-            except Exception as e:
-                print("Compilation failed, running in normal mode.:\n", e)
-                sys.stdout.flush()
-
     def store_log(self, name, value, batch_size):
         self.log(name=name,
                  value=value,
                  batch_size=batch_size,
                  **self.trainer.logging_kwargs
                  )
-        
+
     @abstractmethod
     def forward(self, *args, **kwargs):
         pass
@@ -248,7 +230,10 @@ class SingleSolverInterface(SolverInterface):
         :return: Solver solution.
         :rtype: torch.Tensor
         """
-        return self.model(x)
+        print(x)
+        x = self.model(x)
+        print(x)
+        return x
 
     def configure_optimizers(self):
         """
@@ -263,6 +248,35 @@ class SingleSolverInterface(SolverInterface):
             [self.optimizer.instance],
             [self.scheduler.instance]
         )
+    
+    def _compile_model(self):
+        super().on_train_start()
+        if self.trainer.compile:
+            model_device = next(self.model.parameters()).device
+            try:
+                if model_device == torch.device("mps:0"):
+                    self._pina_models[0] = torch.compile(self.model,
+                                                         backend="eager")
+                else:
+                    self._pina_models[0] = torch.compile(self.model,
+                                                         backend="inductor")
+            except Exception as e:
+                print("Compilation failed, running in normal mode.:\n", e)
+                
+    def on_train_start(self):
+        """
+        Hook that is called before training begins.
+        Used to compile the model if the trainer is set to compile.
+        """
+        self._compile_model()
+    
+    def on_test_start(self):
+        """
+        Hook that is called before training begins.
+        Used to compile the model if the trainer is set to compile.
+        """
+        if not isinstance(self.model, OptimizedModule):
+            self._compile_model()
 
     @property
     def model(self):
@@ -317,7 +331,7 @@ class MultiSolverInterface(SolverInterface):
                 'tuple[torch.nn.Module] with len greater than '
                 'one.'
             )
-        
+
         if any(opt is None for opt in optimizers):
             optimizers = [
                 self.default_torch_optimizer() if opt is None else opt
