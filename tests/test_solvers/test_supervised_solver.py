@@ -6,6 +6,7 @@ from pina.problem import AbstractProblem
 from pina.solvers import SupervisedSolver
 from pina.model import FeedForward
 from pina.trainer import Trainer
+from torch._dynamo.eval_frame import OptimizedModule
 
 
 class LabelTensorProblem(AbstractProblem):
@@ -37,7 +38,8 @@ def test_constructor():
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("use_lt", [True, False])
-def test_solver_train(use_lt, batch_size):
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_train(use_lt, batch_size, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
     solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
     trainer = Trainer(solver=solver,
@@ -46,11 +48,16 @@ def test_solver_train(use_lt, batch_size):
                       batch_size=batch_size,
                       train_size=1.,
                       test_size=0.,
-                      val_size=0.)
+                      val_size=0.,
+                      compile=compile)
+    
     trainer.train()
+    if compile:
+        assert(isinstance(solver.model, OptimizedModule))
 
 @pytest.mark.parametrize("use_lt", [True, False])
-def test_solver_validation(use_lt):
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_validation(use_lt, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
     solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
     trainer = Trainer(solver=solver,
@@ -59,11 +66,15 @@ def test_solver_validation(use_lt):
                       batch_size=None,
                       train_size=0.9,
                       val_size=0.1,
-                      test_size=0.)
+                      test_size=0.,
+                      compile=compile)
     trainer.train()
+    if compile:
+        assert(isinstance(solver.model, OptimizedModule))
 
 @pytest.mark.parametrize("use_lt", [True, False])
-def test_solver_test(use_lt):
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_test(use_lt,compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
     solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
     trainer = Trainer(solver=solver,
@@ -72,8 +83,11 @@ def test_solver_test(use_lt):
                       batch_size=None,
                       train_size=0.8,
                       val_size=0.1,
-                      test_size=0.1)
+                      test_size=0.1,
+                      compile=compile)
     trainer.test()
+    if compile:
+        assert(isinstance(solver.model, OptimizedModule))
 
 def test_train_load_restore():
     dir = "tests/test_solvers/tmp/"
