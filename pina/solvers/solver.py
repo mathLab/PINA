@@ -81,6 +81,8 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :rtype: dict(torch.Tensor)
         """
         losses = self.optimization_cycle(batch)
+        for name, value in losses.items():
+            self.store_log(f'{name}_loss', value.item(), self.get_batch_size(batch))
         loss = self.weighting.aggregate(losses).as_subclass(torch.Tensor)
         return loss
 
