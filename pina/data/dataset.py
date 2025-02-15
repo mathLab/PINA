@@ -94,6 +94,9 @@ class PinaTensorDataset(PinaDataset):
 
     @property
     def input_points(self):
+        """
+        Method to return input points for training.
+        """
         return {
             k: v['input_points'] for k, v in self.conditions_dict.items()
         }
@@ -116,10 +119,12 @@ class PinaGraphDataset(PinaDataset):
             condition_len = self.conditions_length[condition]
             if self.length > condition_len:
                 cond_idx = [idx % condition_len for idx in cond_idx]
-            to_return_dict[condition] = {k: Batch.from_data_list([v[i]
-                                                                  for i in cond_idx])
+            to_return_dict[condition] = {k: Batch.from_data_list([
+                v[i] for i in cond_idx])
                                          if isinstance(v, list)
-                                         else v[cond_idx].reshape(-1, *v[cond_idx].shape[2:])
+                                         else v[
+                                             cond_idx].reshape(
+                                                 -1, *v[cond_idx].shape[2:])
                                          for k, v in data.items()
                                          }
         return to_return_dict

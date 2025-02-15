@@ -16,8 +16,8 @@ class Trainer(lightning.pytorch.Trainer):
                  test_size=.2,
                  val_size=.1,
                  predict_size=0.,
-                 compile=False,
-                 automatic_batching=False,
+                 compile=None,
+                 automatic_batching=None,
                  **kwargs):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
@@ -37,11 +37,12 @@ class Trainer(lightning.pytorch.Trainer):
         :type val_size: float
         :param predict_size: percentage of elements in the predict dataset
         :type predict_size: float
-        :param compile: if True model is compiled before training
+        :param compile: if True model is compiled before training,
+            default False. For Windows users compilation is always disabled.
         :type compile: bool
         :param automatic_batching: if True automatic PyTorch batching is
             performed. Please avoid using automatic batching when batch_size is
-            large
+            large, default False.
         :type automatic_batching: bool
 
         :Keyword Arguments:
@@ -51,11 +52,14 @@ class Trainer(lightning.pytorch.Trainer):
         """
         # check consistency for init types
         check_consistency(solver, SolverInterface)
-        check_consistency(automatic_batching, bool)
         check_consistency(train_size, float)
         check_consistency(test_size, float)
         check_consistency(val_size, float)
         check_consistency(predict_size, float)
+        if automatic_batching is not None:
+            check_consistency(automatic_batching, bool)
+        if compile is not None:
+            check_consistency(compile, bool)
         if train_size + test_size + val_size + predict_size > 1:
             raise ValueError('train_size, test_size, val_size and predict_size '
                              'must sum up to 1.')
@@ -84,7 +88,14 @@ class Trainer(lightning.pytorch.Trainer):
 
         super().__init__(**kwargs)
 
-        self.compile = False if sys.platform == "win32" else compile
+        # checking compilation and automatic batching
+        if compile is None or sys.platform == "win32":
+            compile = False
+        if automatic_batching is None:
+            automatic_batching = False
+        
+        # set attributes
+        self.compile = compile
         self.automatic_batching = automatic_batching
         self.train_size = train_size
         self.test_size = test_size
@@ -98,13 +109,14 @@ class Trainer(lightning.pytorch.Trainer):
 
         # logging
         self.logging_kwargs = {
-            'logger': bool(kwargs['logger'] is None or kwargs['logger'] is True),
-            'sync_dist': bool(len(self._accelerator_connector._parallel_devices) > 1),
+            'logger': bool(
+                kwargs['logger'] is None or kwargs['logger'] is True),
+            'sync_dist': bool(
+                len(self._accelerator_connector._parallel_devices) > 1),
             'on_step': bool(kwargs['log_every_n_steps'] > 0),
             'prog_bar': bool(kwargs['enable_progress_bar']),
             'on_epoch': True
         }
-        print(self.logging_kwargs)
 
     def _move_to_device(self):
         device = self._accelerator_connector._parallel_devices[0]
@@ -123,7 +135,8 @@ class Trainer(lightning.pytorch.Trainer):
         """
         if not self.solver.problem.are_all_domains_discretised:
             error_message = '\n'.join([
-                f"""{" " * 13} ---> Domain {key} {"sampled" if key in self.solver.problem.discretised_domains else
+                f"""{" " * 13} ---> Domain {key} {
+                "sampled" if key in self.solver.problem.discretised_domains else
                                                   "not sampled"}""" for key in
                 self.solver.problem.domains.keys()
             ])

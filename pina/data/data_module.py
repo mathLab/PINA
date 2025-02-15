@@ -19,10 +19,12 @@ class DummyDataloader:
         param dataset: The dataset object to be processed.
         :notes:
             - **Distributed Environment**:
-                - Divides the dataset across processes using the rank and world size.
-                - Fetches only the portion of data corresponding to the current process.
+                - Divides the dataset across processes using the
+                    rank and world size.
+                - Fetches only the portion of data corresponding to
+                    the current process.
             - **Non-Distributed Environment**:
-                - Fetches the entire dataset using.
+                - Fetches the entire dataset.
         """
         if (torch.distributed.is_available() and
                 torch.distributed.is_initialized()):
@@ -284,9 +286,8 @@ class PinaDataModule(LightningDataModule):
             return DataLoader(dataset, self.batch_size,
                               collate_fn=collate, sampler=sampler)
         dataloader = DummyDataloader(dataset)
-        dataloader.dataset = self._transfer_batch_to_device(dataloader.dataset,
-                                                            self.trainer.strategy.root_device,
-                                                            0)
+        dataloader.dataset = self._transfer_batch_to_device(
+            dataloader.dataset, self.trainer.strategy.root_device, 0)
         self.transfer_batch_to_device = self._transfer_batch_to_device_dummy
         return dataloader
 
@@ -337,9 +338,8 @@ class PinaDataModule(LightningDataModule):
         """
         batch = [
             (k,
-             super(LightningDataModule, self).transfer_batch_to_device(v,
-                                                                       device,
-                                                                       dataloader_idx))
+             super(LightningDataModule, self).transfer_batch_to_device(
+                 v, device, dataloader_idx))
             for k, v in batch.items()
         ]
 

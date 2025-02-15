@@ -36,6 +36,17 @@ def check_consistency(object, object_instance, subclass=False):
             raise ValueError(f"{type(obj).__name__} must be {object_instance}.")
 
 def labelize_forward(forward, input_variables, output_variables):
+    """
+    Wrapper decorator to allow users to enable or disable the use of
+    LabelTensors during the forward pass.
+
+    :param forward: The torch.nn.Module forward function.
+    :type forward: Callable
+    :param input_variables: The problem input variables.
+    :type input_variables: list[str] | tuple[str]
+    :param output_variables: The problem output variables.
+    :type output_variables: list[str] | tuple[str]
+    """
     def wrapper(x):
         x = x.extract(input_variables)
         output = forward(x)

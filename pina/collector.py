@@ -1,6 +1,4 @@
-from . import LabelTensor
-from .utils import check_consistency, merge_tensors
-from copy import deepcopy
+from .utils import check_consistency
 
 
 class Collector:

@@ -10,7 +10,7 @@ class WeightingInterface(metaclass=ABCMeta):
 
     def __init__(self):
         self.condition_names = None
-    
+
     @abstractmethod
     def aggregate(self, losses):
         """
