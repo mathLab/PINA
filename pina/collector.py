@@ -1,5 +1,4 @@
-from . import LabelTensor
-from .utils import check_consistency, merge_tensors
+from .utils import check_consistency
 
 
 class Collector:
@@ -8,11 +7,6 @@ class Collector:
         # creating a hook between collector and problem
         self.problem = problem
 
-        # this variable is used to store the data in the form:
-        # {'[condition_name]' :
-        #           {'input_points' : Tensor,
-        #            '[equation/output_points/conditional_variables]': Tensor}
-        # }
         # those variables are used for the dataloading
         self._data_collections = {name: {} for name in self.problem.conditions}
         self.conditions_name = {

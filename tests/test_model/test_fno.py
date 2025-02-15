@@ -2,9 +2,9 @@ import torch
 from pina.model import FNO
 
 output_channels = 5
-batch_size = 15
-resolution = [30, 40, 50]
-lifting_dim = 128
+batch_size = 4
+resolution = [4, 6, 8]
+lifting_dim = 24
 
 
 def test_constructor():

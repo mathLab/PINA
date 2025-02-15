@@ -2,23 +2,27 @@
 
 from pina.problem import SpatialProblem
 from pina.operators import laplacian
-from pina import LabelTensor, Condition
+from pina import Condition
 from pina.domain import CartesianDomain
 from pina.equation.equation import Equation
 from pina.equation.equation_factory import FixedValue
 import torch
 
 def laplace_equation(input_, output_):
+    """
+    Implementation of the laplace equation.
+    """
     force_term = (torch.sin(input_.extract(['x']) * torch.pi) *
                   torch.sin(input_.extract(['y']) * torch.pi))
     delta_u = laplacian(output_.extract(['u']), input_)
     return delta_u - force_term
 
-
 my_laplace = Equation(laplace_equation)
 
-
 class Poisson2DSquareProblem(SpatialProblem):
+    """
+    Implementation of the 2-dimensional Poisson problem on a square domain.
+    """
     output_variables = ['u']
     spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
 
@@ -31,10 +35,10 @@ class Poisson2DSquareProblem(SpatialProblem):
     }
 
     conditions = {
-        'nil_g1': Condition(domain='D', equation=FixedValue(0.0)),
-        'nil_g2': Condition(domain='D', equation=FixedValue(0.0)),
-        'nil_g3': Condition(domain='D', equation=FixedValue(0.0)),
-        'nil_g4': Condition(domain='D', equation=FixedValue(0.0)),
+        'nil_g1': Condition(domain='g1', equation=FixedValue(0.0)),
+        'nil_g2': Condition(domain='g2', equation=FixedValue(0.0)),
+        'nil_g3': Condition(domain='g3', equation=FixedValue(0.0)),
+        'nil_g4': Condition(domain='g4', equation=FixedValue(0.0)),
         'laplace_D': Condition(domain='D', equation=my_laplace),
     }
 

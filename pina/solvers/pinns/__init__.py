@@ -1,17 +1,17 @@
 __all__ = [
     "PINNInterface",
     "PINN",
-    "GPINN",
+    "GradientPINN",
     "CausalPINN",
     "CompetitivePINN",
-    "SAPINN",
+    "SelfAdaptivePINN",
     "RBAPINN",
 ]
 
 from .pinn_interface import PINNInterface
 from .pinn import PINN
-from .gpinn import GPINN
-from .causalpinn import CausalPINN
+from .rba_pinn import RBAPINN
+from .causal_pinn import CausalPINN
+from .gradient_pinn import GradientPINN
 from .competitive_pinn import CompetitivePINN
-from .sapinn import SAPINN
-from .rbapinn import RBAPINN
+from .self_adaptive_pinn import SelfAdaptivePINN

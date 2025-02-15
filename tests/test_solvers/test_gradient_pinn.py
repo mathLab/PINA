@@ -1,10 +1,11 @@
+import pytest
 import torch
-import pytest 
 
 from pina import LabelTensor, Condition
-from pina.solvers import CompetitivePINN as CompPINN
-from pina.trainer import Trainer
+from pina.problem import TimeDependentProblem
+from pina.solvers import GradientPINN
 from pina.model import FeedForward
+from pina.trainer import Trainer
 from pina.problem.zoo import (
     Poisson2DSquareProblem as Poisson,
     InversePoisson2DSquareProblem as InversePoisson
@@ -15,6 +16,15 @@ from pina.condition import (
     DomainEquationCondition
 )
 from torch._dynamo.eval_frame import OptimizedModule
+
+
+class DummyTimeProblem(TimeDependentProblem):
+    """
+    A mock time-dependent problem for testing purposes.
+    """
+    output_variables = ['u']
+    temporal_domain = None
+    conditions = {}
 
 
 # define problems and model
@@ -37,11 +47,12 @@ problem.conditions['data'] = Condition(
     output_points=output_pts
 )
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-@pytest.mark.parametrize("discr", [None, model])
-def test_constructor(problem, discr):
-    solver = CompPINN(problem=problem, model=model)
-    solver = CompPINN(problem=problem, model=model, discriminator=discr)
+def test_constructor(problem):
+    with pytest.raises(ValueError):
+        GradientPINN(model=model, problem=DummyTimeProblem())
+    solver = GradientPINN(model=model, problem=problem)
 
     assert solver.accepted_conditions_types == (
         InputOutputPointsCondition,
@@ -49,11 +60,12 @@ def test_constructor(problem, discr):
         DomainEquationCondition
     )
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_train(problem, batch_size, compile):
-    solver = CompPINN(problem=problem, model=model)
+    solver = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
@@ -64,16 +76,14 @@ def test_solver_train(problem, batch_size, compile):
                       compile=compile)
     trainer.train()
     if trainer.compile:
-        assert (all([isinstance(model, OptimizedModule)
-                for model in solver.models]))
-
+        assert (isinstance(solver.model, OptimizedModule))
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_validation(problem, batch_size, compile):
-    solver = CompPINN(problem=problem, model=model)
+    solver = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
@@ -84,14 +94,14 @@ def test_solver_validation(problem, batch_size, compile):
                       compile=compile)
     trainer.train()
     if trainer.compile:
-        assert (all([isinstance(model, OptimizedModule)
-                for model in solver.models]))
+        assert (isinstance(solver.model, OptimizedModule))
+
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_test(problem, batch_size, compile):
-    solver = CompPINN(problem=problem, model=model)
+    solver = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
@@ -102,14 +112,14 @@ def test_solver_test(problem, batch_size, compile):
                       compile=compile)
     trainer.test()
     if trainer.compile:
-        assert (all([isinstance(model, OptimizedModule)
-                for model in solver.models]))
+        assert (isinstance(solver.model, OptimizedModule))
+
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 def test_train_load_restore(problem):
     dir = "tests/test_solvers/tmp"
     problem = problem
-    solver = CompPINN(problem=problem, model=model)
+    solver = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
@@ -124,10 +134,10 @@ def test_train_load_restore(problem):
     new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
     new_trainer.train(
         ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
-                   'epoch=4-step=5.ckpt')
+        'epoch=4-step=5.ckpt')
 
     # loading
-    new_solver = CompPINN.load_from_checkpoint(
+    new_solver = GradientPINN.load_from_checkpoint(
         f'{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt',
         problem=problem, model=model)
 

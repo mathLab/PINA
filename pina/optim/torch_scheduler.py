@@ -19,8 +19,16 @@ class TorchScheduler(Scheduler):
 
         self.scheduler_class = scheduler_class
         self.kwargs = kwargs
+        self._scheduler_instance = None
 
     def hook(self, optimizer):
         check_consistency(optimizer, Optimizer)
-        self.scheduler_instance = self.scheduler_class(
-            optimizer.optimizer_instance, **self.kwargs)
+        self._scheduler_instance = self.scheduler_class(
+            optimizer.instance, **self.kwargs)
+
+    @property
+    def instance(self):
+        """
+        Scheduler instance.
+        """
+        return self._scheduler_instance
