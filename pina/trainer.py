@@ -1,4 +1,5 @@
 """ Trainer module. """
+import sys
 import torch
 import lightning
 from .utils import check_consistency
@@ -75,7 +76,7 @@ class Trainer(lightning.pytorch.Trainer):
         if batch_size is None:
             kwargs['log_every_n_steps'] = 0
         else:
-            kwargs.setdefault('log_every_n_steps', 50) # default for lightning
+            kwargs.setdefault('log_every_n_steps', 50)  # default for lightning
 
         # Setting default kwargs, overriding lightning defaults
         kwargs.setdefault('enable_progress_bar', True)
@@ -83,7 +84,7 @@ class Trainer(lightning.pytorch.Trainer):
 
         super().__init__(**kwargs)
 
-        self.compile = compile
+        self.compile = False if sys.platform == "win32" else compile
         self.automatic_batching = automatic_batching
         self.train_size = train_size
         self.test_size = test_size
@@ -97,14 +98,14 @@ class Trainer(lightning.pytorch.Trainer):
 
         # logging
         self.logging_kwargs = {
-            'logger' : bool(kwargs['logger'] is None or kwargs['logger'] is True),
-            'sync_dist' : bool(len(self._accelerator_connector._parallel_devices) > 1),
-            'on_step' : bool(kwargs['log_every_n_steps'] > 0),
+            'logger': bool(kwargs['logger'] is None or kwargs['logger'] is True),
+            'sync_dist': bool(len(self._accelerator_connector._parallel_devices) > 1),
+            'on_step': bool(kwargs['log_every_n_steps'] > 0),
             'prog_bar': bool(kwargs['enable_progress_bar']),
-            'on_epoch' : True
+            'on_epoch': True
         }
         print(self.logging_kwargs)
-  
+
     def _move_to_device(self):
         device = self._accelerator_connector._parallel_devices[0]
         # move parameters to device
@@ -123,7 +124,7 @@ class Trainer(lightning.pytorch.Trainer):
         if not self.solver.problem.are_all_domains_discretised:
             error_message = '\n'.join([
                 f"""{" " * 13} ---> Domain {key} {"sampled" if key in self.solver.problem.discretised_domains else
-                "not sampled"}""" for key in
+                                                  "not sampled"}""" for key in
                 self.solver.problem.domains.keys()
             ])
             raise RuntimeError('Cannot create Trainer if not all conditions '
