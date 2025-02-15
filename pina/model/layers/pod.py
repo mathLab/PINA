@@ -6,6 +6,7 @@ from .stride import Stride
 from .utils_convolution import optimizing
 import warnings
 
+
 class PODBlock(torch.nn.Module):
     """
     POD layer: it projects the input field on the proper orthogonal
@@ -121,12 +122,15 @@ class PODBlock(torch.nn.Module):
         if X.device.type == "mps":  #  svd_lowrank not arailable for mps
             warnings.warn(
                 "svd_lowrank not available for mps, using svd instead."
-                "This may slow down computations.", ResourceWarning
+                "This may slow down computations.",
+                ResourceWarning,
             )
             self._basis = torch.svd(X.T)[0].T
         else:
             if randomized:
-                warnings.warn("Considering a randomized algorithm to compute the POD basis")
+                warnings.warn(
+                    "Considering a randomized algorithm to compute the POD basis"
+                )
                 self._basis = torch.svd_lowrank(X.T, q=X.shape[0])[0].T
             else:
                 self._basis = torch.svd(X.T)[0].T
