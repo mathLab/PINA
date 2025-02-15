@@ -1,15 +1,21 @@
 """ Trainer module. """
-
 import torch
-import pytorch_lightning
+import lightning
 from .utils import check_consistency
-from .dataset import SamplePointDataset, SamplePointLoader, DataPointDataset
+from .data import PinaDataModule
 from .solvers.solver import SolverInterface
 
 
-class Trainer(pytorch_lightning.Trainer):
+class Trainer(lightning.pytorch.Trainer):
 
-    def __init__(self, solver, batch_size=None, **kwargs):
+    def __init__(self,
+                 solver,
+                 batch_size=None,
+                 train_size=.7,
+                 test_size=.2,
+                 val_size=.1,
+                 predict_size=.0,
+                 **kwargs):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
 
@@ -31,57 +37,73 @@ class Trainer(pytorch_lightning.Trainer):
         check_consistency(solver, SolverInterface)
         if batch_size is not None:
             check_consistency(batch_size, int)
-
-        self._model = solver
+        self.train_size = train_size
+        self.test_size = test_size
+        self.val_size = val_size
+        self.predict_size = predict_size
+        self.solver = solver
         self.batch_size = batch_size
+        self._move_to_device()
+        self.data_module = None
+        self._create_loader()
 
-        # create dataloader
-        if solver.problem.have_sampled_points is False:
-            raise RuntimeError(
-                f"Input points in {solver.problem.not_sampled_points} "
-                "training are None. Please "
-                "sample points in your problem by calling "
-                "discretise_domain function before train "
-                "in the provided locations."
-            )
+    def _move_to_device(self):
+        device = self._accelerator_connector._parallel_devices[0]
 
-        self._create_or_update_loader()
+        # move parameters to device
+        pb = self.solver.problem
+        if hasattr(pb, "unknown_parameters"):
+            for key in pb.unknown_parameters:
+                pb.unknown_parameters[key] = torch.nn.Parameter(
+                    pb.unknown_parameters[key].data.to(device))
 
-    def _create_or_update_loader(self):
+    def _create_loader(self):
         """
         This method is used here because is resampling is needed
         during training, there is no need to define to touch the
         trainer dataloader, just call the method.
         """
-        devices = self._accelerator_connector._parallel_devices
-
-        if len(devices) > 1:
-            raise RuntimeError("Parallel training is not supported yet.")
-
-        device = devices[0]
-        dataset_phys = SamplePointDataset(self._model.problem, device)
-        dataset_data = DataPointDataset(self._model.problem, device)
-        self._loader = SamplePointLoader(
-            dataset_phys, dataset_data, batch_size=self.batch_size, shuffle=True
-        )
-        pb = self._model.problem
-        if hasattr(pb, "unknown_parameters"):
-            for key in pb.unknown_parameters:
-                pb.unknown_parameters[key] = torch.nn.Parameter(
-                    pb.unknown_parameters[key].data.to(device)
-                )
+        if not self.solver.problem.are_all_domains_discretised:
+            error_message = '\n'.join([
+                f"""{" " * 13} ---> Domain {key} {"sampled" if key in self.solver.problem.discretised_domains else
+                "not sampled"}""" for key in
+                self.solver.problem.domains.keys()
+            ])
+            raise RuntimeError('Cannot create Trainer if not all conditions '
+                               'are sampled. The Trainer got the following:\n'
+                               f'{error_message}')
+        automatic_batching = False
+        self.data_module = PinaDataModule(self.solver.problem,
+                                          train_size=self.train_size,
+                                          test_size=self.test_size,
+                                          val_size=self.val_size,
+                                          predict_size=self.predict_size,
+                                          batch_size=self.batch_size,
+                                          automatic_batching=automatic_batching)
 
     def train(self, **kwargs):
         """
         Train the solver method.
         """
-        return super().fit(
-            self._model, train_dataloaders=self._loader, **kwargs
-        )
+        return super().fit(self.solver,
+                               datamodule=self.data_module,
+                               **kwargs)
+
+    def test(self, **kwargs):
+        """
+        Test the solver method.
+        """
+        return super().test(self.solver,
+                            datamodule=self.data_module,
+                            **kwargs)
 
     @property
     def solver(self):
         """
         Returning trainer solver.
         """
-        return self._model
+        return self._solver
+
+    @solver.setter
+    def solver(self, solver):
+        self._solver = solver

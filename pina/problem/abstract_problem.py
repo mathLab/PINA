@@ -1,15 +1,19 @@
 """ Module for AbstractProblem class """
 
 from abc import ABCMeta, abstractmethod
-from ..utils import merge_tensors, check_consistency
+from ..utils import check_consistency
+from ..domain import DomainInterface, CartesianDomain
+from ..condition.domain_equation_condition import DomainEquationCondition
+from ..condition import InputPointsEquationCondition
 from copy import deepcopy
-import torch
+from .. import LabelTensor
+from ..utils import merge_tensors
 
 
 class AbstractProblem(metaclass=ABCMeta):
     """
     The abstract `AbstractProblem` class. All the class defining a PINA Problem
-    should be inheritied from this class.
+    should be inherited from this class.
 
     In the definition of a PINA problem, the fundamental elements are:
     the output variables, the condition(s), and the domain(s) where the
@@ -18,17 +22,53 @@ class AbstractProblem(metaclass=ABCMeta):
 
     def __init__(self):
 
-        # variable storing all points
-        self.input_pts = {}
+        self._discretised_domains = {}
+        # create collector to manage problem data
 
-        # varible to check if sampling is done. If no location
-        # element is presented in Condition this variable is set to true
-        self._have_sampled_points = {}
+        # create hook conditions <-> problems
         for condition_name in self.conditions:
-            self._have_sampled_points[condition_name] = False
+            self.conditions[condition_name].problem = self
 
-        # put in self.input_pts all the points that we don't need to sample
-        self._span_condition_points()
+        self._batching_dimension = 0
+
+        # Store in domains dict all the domains object directly passed to
+        # ConditionInterface. Done for back compatibility with PINA <0.2
+        if not hasattr(self, "domains"):
+            self.domains = {}
+        for cond_name, cond in self.conditions.items():
+            if isinstance(cond, (DomainEquationCondition,
+                                 InputPointsEquationCondition)):
+                if isinstance(cond.domain, DomainInterface):
+                    self.domains[cond_name] = cond.domain
+                    cond.domain = cond_name
+
+    # @property
+    # def collector(self):
+    #     return self._collector
+
+    @property
+    def batching_dimension(self):
+        return self._batching_dimension
+
+    @batching_dimension.setter
+    def batching_dimension(self, value):
+        self._batching_dimension = value
+
+    @property
+    def discretised_domains(self):
+        return self._discretised_domains
+
+    # TODO this should be erase when dataloading will interface collector,
+    # kept only for back compatibility
+    @property
+    def input_pts(self):
+        to_return = {}
+        for cond_name, cond in self.conditions.items():
+            if hasattr(cond, "input_points"):
+                to_return[cond_name] = cond.input_points
+            elif hasattr(cond, "domain"):
+                to_return[cond_name] = self._discretised_domains[cond.domain]
+        return to_return
 
     def __deepcopy__(self, memo):
         """
@@ -48,6 +88,21 @@ class AbstractProblem(metaclass=ABCMeta):
         return result
 
     @property
+    def are_all_domains_discretised(self):
+        """
+        Check if all the domains are discretised.
+
+        :return: True if all the domains are discretised, False otherwise
+        :rtype: bool
+        """
+        return all(
+            [
+                domain in self.discretised_domains
+                for domain in self.domains.keys()
+            ]
+        )
+
+    @property
     def input_variables(self):
         """
         The input variables of the AbstractProblem, whose type depends on the
@@ -65,38 +120,8 @@ class AbstractProblem(metaclass=ABCMeta):
             variables += self.temporal_variable
         if hasattr(self, "parameters"):
             variables += self.parameters
-        if hasattr(self, "custom_variables"):
-            variables += self.custom_variables
 
         return variables
-
-    @property
-    def domain(self):
-        """
-        The domain(s) where the conditions of the AbstractProblem are valid.
-        If more than one domain type is passed, a list of Location is
-        retured.
-
-        :return: the domain(s) of ``self``
-        :rtype: list[Location]
-        """
-        domains = [
-            getattr(self, f"{t}_domain")
-            for t in ["spatial", "temporal", "parameter"]
-            if hasattr(self, f"{t}_domain")
-        ]
-
-        if len(domains) == 1:
-            return domains[0]
-        elif len(domains) == 0:
-            raise RuntimeError
-
-        if len(set(map(type, domains))) == 1:
-            domain = domains[0].__class__({})
-            [domain.update(d) for d in domains]
-            return domain
-        else:
-            raise RuntimeError("different domains")
 
     @input_variables.setter
     def input_variables(self, variables):
@@ -116,35 +141,13 @@ class AbstractProblem(metaclass=ABCMeta):
         """
         The conditions of the problem.
         """
-        pass
+        return self.conditions
 
-    def _span_condition_points(self):
-        """
-        Simple function to get the condition points
-        """
-        for condition_name in self.conditions:
-            condition = self.conditions[condition_name]
-            if hasattr(condition, "input_points"):
-                samples = condition.input_points
-                self.input_pts[condition_name] = samples
-                self._have_sampled_points[condition_name] = True
-            if hasattr(self, "unknown_parameter_domain"):
-                # initialize the unknown parameters of the inverse problem given
-                # the domain the user gives
-                self.unknown_parameters = {}
-                for i, var in enumerate(self.unknown_variables):
-                    range_var = self.unknown_parameter_domain.range_[var]
-                    tensor_var = (
-                        torch.rand(1, requires_grad=True) * range_var[1]
-                        + range_var[0]
-                    )
-                    self.unknown_parameters[var] = torch.nn.Parameter(
-                        tensor_var
-                    )
-
-    def discretise_domain(
-        self, n, mode="random", variables="all", locations="all"
-    ):
+    def discretise_domain(self,
+                          n=None,
+                          mode="random",
+                          domains="all",
+                          sample_rules=None):
         """
         Generate a set of points to span the `Location` of all the conditions of
         the problem.
@@ -156,14 +159,14 @@ class AbstractProblem(metaclass=ABCMeta):
             Available modes include: random sampling, ``random``;
             latin hypercube sampling, ``latin`` or ``lh``;
             chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
-        :param variables: problem's variables to be sampled, defaults to 'all'.
+        :param variables: variable(s) to sample, defaults to 'all'.
         :type variables: str | list[str]
-        :param locations: problem's locations from where to sample, defaults to 'all'.
-        :type locations: str
+        :param domains: problem's domain from where to sample, defaults to 'all'.
+        :type domains: str | list[str]
 
         :Example:
             >>> pinn.discretise_domain(n=10, mode='grid')
-            >>> pinn.discretise_domain(n=10, mode='grid', location=['bound1'])
+            >>> pinn.discretise_domain(n=10, mode='grid', domain=['bound1'])
             >>> pinn.discretise_domain(n=10, mode='grid', variables=['x'])
 
         .. warning::
@@ -174,135 +177,64 @@ class AbstractProblem(metaclass=ABCMeta):
             ``CartesianDomain``.
         """
 
-        # check consistecy n
-        check_consistency(n, int)
+        # check consistecy n, mode, variables, locations
+        if sample_rules is not None:
+            check_consistency(sample_rules, dict)
+        if mode is not None:
+            check_consistency(mode, str)
+        check_consistency(domains, (list, str))
 
-        # check consistency mode
-        check_consistency(mode, str)
-        if mode not in ["random", "grid", "lh", "chebyshev", "latin"]:
-            raise TypeError(f"mode {mode} not valid.")
-
-        # check consistency variables
-        if variables == "all":
-            variables = self.input_variables
-        else:
-            check_consistency(variables, str)
-
-        if sorted(variables) != sorted(self.input_variables):
-            TypeError(
-                f"Wrong variables for sampling. Variables ",
-                f"should be in {self.input_variables}.",
+        # check correct location
+        if domains == "all":
+            domains = self.domains.keys()
+        elif not isinstance(domains, (list)):
+            domains = [domains]
+        if n is not None and sample_rules is None:
+            self._apply_default_discretization(n, mode, domains)
+        if n is None and sample_rules is not None:
+            self._apply_custom_discretization(sample_rules, domains)
+        elif n is not None and sample_rules is not None:
+            raise RuntimeError(
+                "You can't specify both n and sample_rules at the same time."
+            )
+        elif n is None and sample_rules is None:
+            raise RuntimeError(
+                "You have to specify either n or sample_rules."
             )
 
-        # check consistency location
-        locations_to_sample = [
-            condition
-            for condition in self.conditions
-            if hasattr(self.conditions[condition], "location")
-        ]
-        if locations == "all":
-            # only locations that can be sampled
-            locations = locations_to_sample
-        else:
-            check_consistency(locations, str)
-
-        if sorted(locations) != sorted(locations_to_sample):
-            TypeError(
-                f"Wrong locations for sampling. Location ",
-                f"should be in {locations_to_sample}.",
+    def _apply_default_discretization(self, n, mode, domains):
+        for domain in domains:
+            self.discretised_domains[domain] = (
+                self.domains[domain].sample(n, mode).sort_labels()
             )
 
-        # sampling
-        for location in locations:
-            condition = self.conditions[location]
-
-            # we try to check if we have already sampled
-            try:
-                already_sampled = [self.input_pts[location]]
-            # if we have not sampled, a key error is thrown
-            except KeyError:
-                already_sampled = []
-
-            # if we have already sampled fully the condition
-            # but we want to sample again we set already_sampled
-            # to an empty list since we need to sample again, and
-            # self._have_sampled_points to False.
-            if self._have_sampled_points[location]:
-                already_sampled = []
-                self._have_sampled_points[location] = False
-
-            # build samples
-            samples = [
-                condition.location.sample(n=n, mode=mode, variables=variables)
-            ] + already_sampled
-            pts = merge_tensors(samples)
-            self.input_pts[location] = pts
-
-            # the condition is sampled if input_pts contains all labels
-            if sorted(self.input_pts[location].labels) == sorted(
-                self.input_variables
-            ):
-                self._have_sampled_points[location] = True
-                self.input_pts[location] = self.input_pts[location].extract(
-                    sorted(self.input_variables)
-                )
-
-    def add_points(self, new_points):
-        """
-        Adding points to the already sampled points.
-
-        :param dict new_points: a dictionary with key the location to add the points
-            and values the torch.Tensor points.
-        """
-
-        if sorted(new_points.keys()) != sorted(self.conditions):
-            TypeError(
-                f"Wrong locations for new points. Location ",
-                f"should be in {self.conditions}.",
+    def _apply_custom_discretization(self, sample_rules, domains):
+        if sorted(list(sample_rules.keys())) != sorted(self.input_variables):
+            raise RuntimeError(
+                "The keys of the sample_rules dictionary must be the same as "
+                "the input variables."
             )
+        for domain in domains:
+            if not isinstance(self.domains[domain], CartesianDomain):
+                raise RuntimeError(
+                    "Custom discretisation can be applied only on Cartesian "
+                    "domains")
+            discretised_tensor = []
+            for var, rules in sample_rules.items():
+                n, mode = rules['n'], rules['mode']
+                points = self.domains[domain].sample(n, mode, var)
+                discretised_tensor.append(points)
 
-        for location in new_points.keys():
-            # extract old and new points
-            old_pts = self.input_pts[location]
-            new_pts = new_points[location]
+            self.discretised_domains[domain] = merge_tensors(
+                discretised_tensor).sort_labels()
 
-            # if they don't have the same variables error
-            if sorted(old_pts.labels) != sorted(new_pts.labels):
-                TypeError(
-                    f"Not matching variables for old and new points "
-                    f"in condition {location}."
-                )
-            if old_pts.labels != new_pts.labels:
-                new_pts = torch.hstack(
-                    [new_pts.extract([i]) for i in old_pts.labels]
-                )
-                new_pts.labels = old_pts.labels
-
-            # merging
-            merged_pts = torch.vstack([old_pts, new_pts])
-            merged_pts.labels = old_pts.labels
-            self.input_pts[location] = merged_pts
-
-    @property
-    def have_sampled_points(self):
+    def add_points(self, new_points_dict):
         """
-        Check if all points for
-        ``Location`` are sampled.
+        Add input points to a sampled condition
+        :param new_points_dict: Dictionary of input points (condition_name:
+        LabelTensor)
+        :raises RuntimeError: if at least one condition is not already sampled
         """
-        return all(self._have_sampled_points.values())
-
-    @property
-    def not_sampled_points(self):
-        """
-        Check which points are
-        not sampled.
-        """
-        # variables which are not sampled
-        not_sampled = None
-        if self.have_sampled_points is False:
-            # check which one are not sampled:
-            not_sampled = []
-            for condition_name, is_sample in self._have_sampled_points.items():
-                if not is_sample:
-                    not_sampled.append(condition_name)
-        return not_sampled
+        for k, v in new_points_dict.items():
+            self.discretised_domains[k] = LabelTensor.vstack(
+                [self.discretised_domains[k], v])

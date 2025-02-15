@@ -8,7 +8,7 @@ except ImportError:
         _LRScheduler as LRScheduler,
     )  # torch < 2.0
 
-from .basepinn import PINNInterface
+from .pinn_interface import PINNInterface
 from pina.utils import check_consistency
 from pina.problem import InverseProblem
 

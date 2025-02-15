@@ -3,7 +3,7 @@
 import matplotlib.pyplot as plt
 import torch
 from pina.callbacks import MetricTracker
-from pina import LabelTensor
+from .label_tensor import LabelTensor
 
 
 class Plotter:

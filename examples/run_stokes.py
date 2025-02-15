@@ -17,8 +17,8 @@ if __name__ == "__main__":
 
     # create problem and discretise domain
     stokes_problem = Stokes()
-    stokes_problem.discretise_domain(n=1000, locations=['gamma_top', 'gamma_bot', 'gamma_in', 'gamma_out'])
-    stokes_problem.discretise_domain(n=2000, locations=['D'])
+    stokes_problem.discretise_domain(n=1000, domains=['gamma_top', 'gamma_bot', 'gamma_in', 'gamma_out'])
+    stokes_problem.discretise_domain(n=2000, domains=['D'])
 
     # make the model
     model = FeedForward(

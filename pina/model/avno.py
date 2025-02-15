@@ -1,7 +1,7 @@
 """Module Averaging Neural Operator."""
 
 import torch
-from torch import nn, concatenate
+from torch import nn, cat
 from .layers import AVNOBlock
 from .base_no import KernelNeuralOperator
 from pina.utils import check_consistency
@@ -110,9 +110,9 @@ class AveragingNeuralOperator(KernelNeuralOperator):
         """
         points_tmp = x.extract(self.coordinates_indices)
         new_batch = x.extract(self.field_indices)
-        new_batch = concatenate((new_batch, points_tmp), dim=-1)
+        new_batch = cat((new_batch, points_tmp), dim=-1)
         new_batch = self._lifting_operator(new_batch)
         new_batch = self._integral_kernels(new_batch)
-        new_batch = concatenate((new_batch, points_tmp), dim=-1)
+        new_batch = cat((new_batch, points_tmp), dim=-1)
         new_batch = self._projection_operator(new_batch)
         return new_batch
