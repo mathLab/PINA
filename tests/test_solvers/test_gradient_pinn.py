@@ -15,6 +15,7 @@ from pina.condition import (
     InputPointsEquationCondition,
     DomainEquationCondition
 )
+from torch._dynamo.eval_frame import OptimizedModule
 
 
 class DummyTimeProblem(TimeDependentProblem):
@@ -59,9 +60,11 @@ def test_constructor(problem):
         DomainEquationCondition
     )
 
+
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_solver_train(problem, batch_size):
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_train(problem, batch_size, compile):
     solver = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
@@ -69,13 +72,17 @@ def test_solver_train(problem, batch_size):
                       batch_size=batch_size,
                       train_size=1.,
                       val_size=0.,
-                      test_size=0.)
+                      test_size=0.,
+                      compile=compile)
     trainer.train()
+    if compile:
+        assert (isinstance(solver.model, OptimizedModule))
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_solver_validation(problem, batch_size):
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_validation(problem, batch_size, compile):
     solver = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
@@ -83,13 +90,17 @@ def test_solver_validation(problem, batch_size):
                       batch_size=batch_size,
                       train_size=0.9,
                       val_size=0.1,
-                      test_size=0.)
+                      test_size=0.,
+                      compile=compile)
     trainer.train()
+    if compile:
+        assert (isinstance(solver.model, OptimizedModule))
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_solver_test(problem, batch_size):
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_test(problem, batch_size, compile):
     solver = GradientPINN(model=model, problem=problem)
     trainer = Trainer(solver=solver,
                       max_epochs=2,
@@ -97,8 +108,11 @@ def test_solver_test(problem, batch_size):
                       batch_size=batch_size,
                       train_size=0.7,
                       val_size=0.2,
-                      test_size=0.1)
+                      test_size=0.1,
+                      compile=compile)
     trainer.test()
+    if compile:
+        assert (isinstance(solver.model, OptimizedModule))
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
@@ -120,7 +134,7 @@ def test_train_load_restore(problem):
     new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
     new_trainer.train(
         ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
-                   'epoch=4-step=5.ckpt')
+        'epoch=4-step=5.ckpt')
 
     # loading
     new_solver = GradientPINN.load_from_checkpoint(

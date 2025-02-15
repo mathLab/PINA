@@ -8,6 +8,7 @@ from pina.condition import InputOutputPointsCondition
 from pina.problem import AbstractProblem
 from pina.model import FeedForward
 from pina.trainer import Trainer
+from torch._dynamo.eval_frame import OptimizedModule
 
 
 class TensorProblem(AbstractProblem):
@@ -33,17 +34,19 @@ class Generator(nn.Module):
         self._noise_dimension = noise_dimension
         self._activation = activation
         self.model = FeedForward(6*noise_dimension, input_dimension)
-        self.condition =  FeedForward(parameters_dimension, 5 * noise_dimension)
+        self.condition = FeedForward(parameters_dimension, 5 * noise_dimension)
 
     def forward(self, param):
         # uniform sampling in [-1, 1]
         z = 2 * torch.rand(size=(param.shape[0], self._noise_dimension),
-                       device=param.device,
-                       dtype=param.dtype,
-                       requires_grad=True) - 1
+                           device=param.device,
+                           dtype=param.dtype,
+                           requires_grad=True) - 1
         return self.model(torch.cat((z, self.condition(param)), dim=-1))
 
 # Simple Discriminator Network
+
+
 class Discriminator(nn.Module):
 
     def __init__(self,
@@ -74,55 +77,76 @@ def test_constructor():
         InputOutputPointsCondition
     )
 
+
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
-def test_solver_train(batch_size):
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_train(batch_size, compile):
     solver = GAROM(problem=TensorProblem(),
-          generator=Generator(),
-          discriminator=Discriminator())
+                   generator=Generator(),
+                   discriminator=Discriminator())
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
                       batch_size=batch_size,
                       train_size=1.,
                       test_size=0.,
-                      val_size=0.)
+                      val_size=0.,
+                      compile=compile)
     trainer.train()
+    if compile:
+        assert (all([isinstance(model, OptimizedModule)
+                for model in solver.models]))
 
-def test_solver_validation():
+
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_validation(batch_size, compile):
     solver = GAROM(problem=TensorProblem(),
-          generator=Generator(),
-          discriminator=Discriminator())
-    
+                   generator=Generator(),
+                   discriminator=Discriminator())
+
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
-                      batch_size=None,
+                      batch_size=batch_size,
                       train_size=0.9,
                       val_size=0.1,
-                      test_size=0.)
+                      test_size=0.,
+                      compile=compile)
     trainer.train()
+    if compile:
+        assert (all([isinstance(model, OptimizedModule)
+                for model in solver.models]))
 
-def test_solver_test():
+
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_test(batch_size, compile):
     solver = GAROM(problem=TensorProblem(),
-          generator=Generator(),
-          discriminator=Discriminator(),
-          )
+                   generator=Generator(),
+                   discriminator=Discriminator(),
+                   )
     trainer = Trainer(solver=solver,
                       max_epochs=2,
                       accelerator='cpu',
-                      batch_size=None,
+                      batch_size=batch_size,
                       train_size=0.8,
                       val_size=0.1,
-                      test_size=0.1)
+                      test_size=0.1,
+                      compile=compile)
     trainer.test()
+    if compile:
+        assert (all([isinstance(model, OptimizedModule)
+                for model in solver.models]))
+
 
 def test_train_load_restore():
     dir = "tests/test_solvers/tmp/"
     problem = TensorProblem()
     solver = GAROM(problem=TensorProblem(),
-          generator=Generator(),
-          discriminator=Discriminator(),
-          )
+                   generator=Generator(),
+                   discriminator=Discriminator(),
+                   )
     trainer = Trainer(solver=solver,
                       max_epochs=5,
                       accelerator='cpu',
@@ -137,7 +161,7 @@ def test_train_load_restore():
     new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
     new_trainer.train(
         ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
-                   'epoch=4-step=5.ckpt')
+        'epoch=4-step=5.ckpt')
 
     # loading
     new_solver = GAROM.load_from_checkpoint(

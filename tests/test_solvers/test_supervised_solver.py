@@ -17,6 +17,8 @@ class LabelTensorProblem(AbstractProblem):
             input_points=LabelTensor(torch.randn(20, 2), ['u_0', 'u_1']),
             output_points=LabelTensor(torch.randn(20, 1), ['u'])),
     }
+
+
 class TensorProblem(AbstractProblem):
     input_variables = ['u_0', 'u_1']
     output_variables = ['u']
@@ -25,6 +27,8 @@ class TensorProblem(AbstractProblem):
             input_points=torch.randn(20, 2),
             output_points=torch.randn(20, 1))
     }
+
+
 model = FeedForward(2, 1)
 
 
@@ -50,10 +54,11 @@ def test_solver_train(use_lt, batch_size, compile):
                       test_size=0.,
                       val_size=0.,
                       compile=compile)
-    
+
     trainer.train()
     if compile:
-        assert(isinstance(solver.model, OptimizedModule))
+        assert (isinstance(solver.model, OptimizedModule))
+
 
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("compile", [True, False])
@@ -70,11 +75,12 @@ def test_solver_validation(use_lt, compile):
                       compile=compile)
     trainer.train()
     if compile:
-        assert(isinstance(solver.model, OptimizedModule))
+        assert (isinstance(solver.model, OptimizedModule))
+
 
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("compile", [True, False])
-def test_solver_test(use_lt,compile):
+def test_solver_test(use_lt, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
     solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
     trainer = Trainer(solver=solver,
@@ -87,7 +93,8 @@ def test_solver_test(use_lt,compile):
                       compile=compile)
     trainer.test()
     if compile:
-        assert(isinstance(solver.model, OptimizedModule))
+        assert (isinstance(solver.model, OptimizedModule))
+
 
 def test_train_load_restore():
     dir = "tests/test_solvers/tmp/"
@@ -107,7 +114,7 @@ def test_train_load_restore():
     new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
     new_trainer.train(
         ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
-                   'epoch=4-step=5.ckpt')
+        'epoch=4-step=5.ckpt')
 
     # loading
     new_solver = SupervisedSolver.load_from_checkpoint(

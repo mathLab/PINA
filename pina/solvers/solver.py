@@ -73,7 +73,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         specific weighting schema.
 
         :param batch: A batch of data, where each element is a tuple containing
-            a condition name and a dictionary of points. 
+            a condition name and a dictionary of points.
         :type batch: list of tuples (str, dict)
         :return: The computed loss for the all conditions in the batch,
             cast to a subclass of `torch.Tensor`. It should return a dict
@@ -135,7 +135,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         in the given batch.
 
         :param batch: A batch of data, where each element is a tuple containing
-            a condition name and a dictionary of points. 
+            a condition name and a dictionary of points.
         :type batch: list of tuples (str, dict)
         :return: The computed loss for the all conditions in the batch,
             cast to a subclass of `torch.Tensor`. It should return a dict
@@ -180,6 +180,46 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     @staticmethod
     def default_torch_scheduler():
         return TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
+
+    def on_train_start(self):
+        """
+        Hook that is called before training begins.
+        Used to compile the model if the trainer is set to compile.
+        """
+        super().on_train_start()
+        if self.trainer.compile:
+            self._compile_model()
+
+    def on_test_start(self):
+        """
+        Hook that is called before training begins.
+        Used to compile the model if the trainer is set to compile.
+        """
+        super().on_train_start()
+        if self.trainer.compile and not self._check_already_compiled():
+            self._compile_model()
+
+    def _check_already_compiled(self):
+        models = self._pina_models
+        if len(models) == 1 and isinstance(self._pina_models[0],
+                                           torch.nn.ModuleDict):
+            models = list(self._pina_models.values())
+        for model in models:
+            if not isinstance(model, (OptimizedModule, torch.nn.ModuleDict)):
+                return False
+        return True
+
+    @staticmethod
+    def _perform_compilation(model):
+        model_device = next(model.parameters()).device
+        try:
+            if model_device == torch.device("mps:0"):
+                model = torch.compile(model, backend="eager")
+            else:
+                model = torch.compile(model, backend="inductor")
+        except Exception as e:
+            print("Compilation failed, running in normal mode.:\n", e)
+        return model
 
 
 class SingleSolverInterface(SolverInterface):
@@ -246,35 +286,19 @@ class SingleSolverInterface(SolverInterface):
             [self.optimizer.instance],
             [self.scheduler.instance]
         )
-    
+
     def _compile_model(self):
-        super().on_train_start()
-        if self.trainer.compile:
-            model_device = next(self.model.parameters()).device
-            try:
-                if model_device == torch.device("mps:0"):
-                    self._pina_models[0] = torch.compile(self.model,
-                                                         backend="eager")
-                else:
-                    self._pina_models[0] = torch.compile(self.model,
-                                                         backend="inductor")
-            except Exception as e:
-                print("Compilation failed, running in normal mode.:\n", e)
-                
-    def on_train_start(self):
-        """
-        Hook that is called before training begins.
-        Used to compile the model if the trainer is set to compile.
-        """
-        self._compile_model()
-    
-    def on_test_start(self):
-        """
-        Hook that is called before training begins.
-        Used to compile the model if the trainer is set to compile.
-        """
-        if not isinstance(self.model, OptimizedModule):
-            self._compile_model()
+        if isinstance(self._pina_models[0], torch.nn.ModuleDict):
+            self._compile_module_dict()
+        else:
+            self._compile_single_model()
+
+    def _compile_module_dict(self):
+        for name, model in self._pina_models[0].items():
+            self._pina_models[0][name] = self._perform_compilation(model)
+
+    def _compile_single_model(self):
+        self._pina_models[0] = self._perform_compilation(self._pina_models[0])
 
     @property
     def model(self):
@@ -384,6 +408,11 @@ class MultiSolverInterface(SolverInterface):
             [optimizer.instance for optimizer in self.optimizers],
             [scheduler.instance for scheduler in self.schedulers]
         )
+
+    def _compile_model(self):
+        for i, model in enumerate(self._pina_models):
+            if not isinstance(model, torch.nn.ModuleDict):
+                self._pina_models[i] = self._perform_compilation(model)
 
     @property
     def models(self):
