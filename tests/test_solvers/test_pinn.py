@@ -77,7 +77,7 @@ def test_solver_validation(problem, batch_size, compile):
                       test_size=0.,
                       compile=compile)
     trainer.train()
-    if compile:
+    if trainer.compile:
         assert(isinstance(solver.model, OptimizedModule))
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])

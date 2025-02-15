@@ -101,7 +101,7 @@ def test_solver_train(use_lt, batch_size, compile):
                       val_size=0.,
                       compile=compile)
     trainer.train()
-    if compile:
+    if trainer.compile:
         for v in solver.model.values():
             assert (isinstance(v, OptimizedModule))
 
@@ -122,7 +122,7 @@ def test_solver_validation(use_lt, compile):
                       test_size=0.,
                       compile=compile)
     trainer.train()
-    if compile:
+    if trainer.compile:
         for v in solver.model.values():
             assert (isinstance(v, OptimizedModule))
 
@@ -143,7 +143,7 @@ def test_solver_test(use_lt, compile):
                       test_size=0.1,
                       compile=compile)
     trainer.train()
-    if compile:
+    if trainer.compile:
         for v in solver.model.values():
             assert (isinstance(v, OptimizedModule))
 
