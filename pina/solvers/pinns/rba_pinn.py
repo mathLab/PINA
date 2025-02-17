@@ -1,8 +1,8 @@
-""" Module for RBAPINN. """
+""" Module for Residual-Based Attention PINN. """
 
 from copy import deepcopy
 import torch
-from torch.optim.lr_scheduler import ConstantLR
+
 from .pinn import PINN
 from ...utils import check_consistency
 
@@ -66,51 +66,44 @@ class RBAPINN(PINN):
         j.cma.2024.116805 <https://doi.org/10.1016/j.cma.2024.116805>`_.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        extra_features=None,
-        loss=torch.nn.MSELoss(),
-        optimizer=torch.optim.Adam,
-        optimizer_kwargs={"lr": 0.001},
-        scheduler=ConstantLR,
-        scheduler_kwargs={"factor": 1, "total_iters": 0},
-        eta=0.001,
-        gamma=0.999,
-    ):
+    def __init__(self,
+                 problem,
+                 model,
+                 optimizer=None,
+                 scheduler=None,
+                 weighting=None,
+                 loss=None,
+                 eta=0.001,
+                 gamma=0.999):
         """
-        :param AbstractProblem problem: The formulation of the problem.
         :param torch.nn.Module model: The neural network model to use.
-        :param torch.nn.Module extra_features: The additional input
-            features to use as augmented input.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
+        :param AbstractProblem problem: The formulation of the problem.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param torch.optim.LRScheduler scheduler: Learning
-            rate scheduler.
-        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
-        :param float | int eta: The learning rate for the
-            weights of the residual.
-        :param float  gamma: The decay parameter in the update of the weights
-            of the residual.
+            use; default `None`.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
+            default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
+        :param float | int eta: The learning rate for the weights of the 
+            residual; default 0.001.
+        :param float gamma: The decay parameter in the update of the weights
+            of the residual. Must be between 0 and 1; default 0.999.
         """
-        super().__init__(
-            problem=problem,
-            model=model,
-            extra_features=extra_features,
-            loss=loss,
-            optimizer=optimizer,
-            optimizer_kwargs=optimizer_kwargs,
-            scheduler=scheduler,
-            scheduler_kwargs=scheduler_kwargs,
-        )
+        super().__init__(model=model,
+                         problem=problem,
+                         optimizer=optimizer,
+                         scheduler=scheduler,
+                         weighting=weighting,
+                         loss=loss)
 
         # check consistency
         check_consistency(eta, (float, int))
         check_consistency(gamma, float)
+        assert (
+            0 < gamma < 1
+        ), f"Invalid range: expected 0 < gamma < 1, got {gamma=}"
         self.eta = eta
         self.gamma = gamma
 
@@ -120,8 +113,16 @@ class RBAPINN(PINN):
             self.weights[condition_name] = 0
 
         # define vectorial loss
-        self._vectorial_loss = deepcopy(loss)
+        self._vectorial_loss = deepcopy(self.loss)
         self._vectorial_loss.reduction = "none"
+
+    # for now RBAPINN is implemented only for batch_size = None
+    def on_train_start(self):
+        if self.trainer.batch_size is not None:
+            raise NotImplementedError("RBAPINN only works with full batch "
+                                      "size, set batch_size=None inside the "
+                                      "Trainer to use the solver.")
+        return super().on_train_start()
 
     def _vect_to_scalar(self, loss_value):
         """
@@ -159,16 +160,13 @@ class RBAPINN(PINN):
         cond = self.current_condition_name
 
         r_norm = (
-            self.eta
-            * torch.abs(residual)
+            self.eta * torch.abs(residual)
             / (torch.max(torch.abs(residual)) + 1e-12)
         )
-        self.weights[cond] = (self.gamma * self.weights[cond] + r_norm).detach()
+        self.weights[cond] = (self.gamma*self.weights[cond] + r_norm).detach()
 
         loss_value = self._vectorial_loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
-
-        self.store_log(loss_value=float(self._vect_to_scalar(loss_value)))
 
         return self._vect_to_scalar(self.weights[cond] ** 2 * loss_value)

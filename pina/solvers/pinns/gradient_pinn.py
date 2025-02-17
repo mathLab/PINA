@@ -1,18 +1,15 @@
-""" Module for GPINN """
+""" Module for Gradient PINN. """
 
 import torch
-
-
-from torch.optim.lr_scheduler import ConstantLR
 
 from .pinn import PINN
 from pina.operators import grad
 from pina.problem import SpatialProblem
 
 
-class GPINN(PINN):
+class GradientPINN(PINN):
     r"""
-    Gradient Physics Informed Neural Network (GPINN) solver class.
+    Gradient Physics Informed Neural Network (GradientPINN) solver class.
     This class implements Gradient Physics Informed Neural
     Network solvers, using a user specified ``model`` to solve a specific
     ``problem``. It can be used for solving both forward and inverse problems.
@@ -42,7 +39,8 @@ class GPINN(PINN):
         \nabla_{\mathbf{x}}\mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i))
 
 
-    where :math:`\mathcal{L}` is a specific loss function, default Mean Square Error:
+    where :math:`\mathcal{L}` is a specific loss function,
+    default Mean Square Error:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.
@@ -61,44 +59,35 @@ class GPINN(PINN):
         class.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        extra_features=None,
-        loss=torch.nn.MSELoss(),
-        optimizer=torch.optim.Adam,
-        optimizer_kwargs={"lr": 0.001},
-        scheduler=ConstantLR,
-        scheduler_kwargs={"factor": 1, "total_iters": 0},
-    ):
+    def __init__(self,
+                 problem,
+                 model,
+                 optimizer=None,
+                 scheduler=None,
+                 weighting=None,
+                 loss=None):
         """
+        :param torch.nn.Module model: The neural network model to use.
         :param AbstractProblem problem: The formulation of the problem. It must
             inherit from at least
-            :class:`~pina.problem.spatial_problem.SpatialProblem` in order to
-            compute the gradient of the loss.
-        :param torch.nn.Module model: The neural network model to use.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
-        :param torch.nn.Module extra_features: The additional input
-            features to use as augmented input.
+            :class:`~pina.problem.spatial_problem.SpatialProblem` to compute 
+            the gradient of the loss.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param torch.optim.LRScheduler scheduler: Learning
-            rate scheduler.
-        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
+            use; default `None`.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
+            default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
         """
-        super().__init__(
-            problem=problem,
-            model=model,
-            extra_features=extra_features,
-            loss=loss,
-            optimizer=optimizer,
-            optimizer_kwargs=optimizer_kwargs,
-            scheduler=scheduler,
-            scheduler_kwargs=scheduler_kwargs,
-        )
+        super().__init__(model=model,
+                         problem=problem,
+                         optimizer=optimizer,
+                         scheduler=scheduler,
+                         weighting=weighting,
+                         loss=loss)
+
         if not isinstance(self.problem, SpatialProblem):
             raise ValueError(
                 "Gradient PINN computes the gradient of the "
@@ -124,10 +113,10 @@ class GPINN(PINN):
         loss_value = self.loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
-        self.store_log(loss_value=float(loss_value))
+
         # gradient PINN loss
         loss_value = loss_value.reshape(-1, 1)
-        loss_value.labels = ["__LOSS"]
+        loss_value.labels = ["__loss"]
         loss_grad = grad(loss_value, samples, d=self.problem.spatial_variables)
         g_loss_phys = self.loss(
             torch.zeros_like(loss_grad, requires_grad=True), loss_grad
