@@ -60,8 +60,8 @@ class GradientPINN(PINN):
     """
 
     def __init__(self,
-                 model,
                  problem,
+                 model,
                  optimizer=None,
                  scheduler=None,
                  weighting=None,

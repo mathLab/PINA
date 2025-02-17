@@ -49,8 +49,8 @@ class PINN(PINNInterface, SingleSolverInterface):
     """
 
     def __init__(self,
-                 model,
                  problem,
+                 model,
                  optimizer=None,
                  scheduler=None,
                  weighting=None,

@@ -226,17 +226,17 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
 
 class SingleSolverInterface(SolverInterface):
     def __init__(self,
-                 model,
                  problem,
+                 model,
                  optimizer=None,
                  scheduler=None,
                  weighting=None,
                  use_lt=True):
         """
-        :param model: A torch nn.Module instances.
-        :type model: torch.nn.Module
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
+        :param model: A torch nn.Module instances.
+        :type model: torch.nn.Module
         :param Optimizer optimizers: A neural network optimizers to use.
         :param Scheduler optimizers: A neural network scheduler to use.
         :param WeightingInterface weighting: The loss weighting to use.
@@ -331,17 +331,17 @@ class MultiSolverInterface(SolverInterface):
     """
 
     def __init__(self,
-                 models,
                  problem,
+                 models,
                  optimizers=None,
                  schedulers=None,
                  weighting=None,
                  use_lt=True):
         """
-        :param models: Multiple torch nn.Module instances.
-        :type model: list[torch.nn.Module] | tuple[torch.nn.Module]
         :param problem: A problem definition instance.
         :type problem: AbstractProblem
+        :param models: Multiple torch nn.Module instances.
+        :type model: list[torch.nn.Module] | tuple[torch.nn.Module]
         :param list(Optimizer) optimizers: A list of neural network
            optimizers to use.
         :param list(Scheduler) optimizers: A list of neural network
