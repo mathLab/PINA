@@ -105,8 +105,6 @@ class Trainer(lightning.pytorch.Trainer):
         # checking compilation and automatic batching
         if compile is None or sys.platform == "win32":
             compile = False
-        if automatic_batching is None:
-            automatic_batching = False
 
         # set attributes
         self.compile = compile

@@ -2,10 +2,10 @@ import logging
 import warnings
 from lightning.pytorch import LightningDataModule
 import torch
-from ..label_tensor import LabelTensor
-from torch.utils.data import DataLoader, BatchSampler, SequentialSampler, \
-    RandomSampler
+from torch_geometric.data import Data, Batch
+from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
+from ..label_tensor import LabelTensor
 from .dataset import PinaDatasetFactory
 from ..collector import Collector
 
@@ -86,9 +86,8 @@ class Collator:
                     single_cond_dict[arg] = LabelTensor.stack(data_list)
                 elif isinstance(data_list[0], torch.Tensor):
                     single_cond_dict[arg] = torch.stack(data_list)
-                else:
-                    raise NotImplementedError(
-                        f"Data type {type(data_list[0])} not supported")
+                elif isinstance(data_list[0], Data):
+                    single_cond_dict[arg] = Batch.from_data_list(data_list)
             batch_dict[condition_name] = single_cond_dict
         return batch_dict
 
@@ -125,7 +124,7 @@ class PinaDataModule(LightningDataModule):
                  batch_size=None,
                  shuffle=True,
                  repeat=False,
-                 automatic_batching=False,
+                 automatic_batching=None,
                  num_workers=0,
                  pin_memory=False,
                  ):
@@ -158,7 +157,6 @@ class PinaDataModule(LightningDataModule):
         logging.debug('Start initialization of Pina DataModule')
         logging.info('Start initialization of Pina DataModule')
         super().__init__()
-        self.automatic_batching = automatic_batching
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.repeat = repeat
@@ -192,6 +190,10 @@ class PinaDataModule(LightningDataModule):
         collector = Collector(problem)
         collector.store_fixed_data()
         collector.store_sample_domains()
+
+        self.automatic_batching = self._set_automatic_batching_option(
+            collector, automatic_batching)
+
         if batch_size is None and num_workers != 0:
             warnings.warn(
                 "Setting num_workers when batch_size is None has no effect on "
@@ -392,6 +394,27 @@ class PinaDataModule(LightningDataModule):
             raise ValueError("The splits must be positive")
         if abs(train_size + test_size + val_size + predict_size - 1) > 1e-6:
             raise ValueError("The sum of the splits must be 1")
+
+    @staticmethod
+    def _set_automatic_batching_option(collector, automatic_batching):
+        """
+        Determines whether automatic batching should be enabled.
+
+        If all 'input_points' in the collector's data collections are 
+        tensors (torch.Tensor or LabelTensor), it respects the provided
+        `automatic_batching` value; otherwise, mainly in the Graph scenario, 
+        it forces automatic batching on.
+
+        :param Collector collector: Collector object with contains all data 
+        retrieved from input conditions
+        :param bool automatic_batching : If the user wants to enable automatic
+        batching or not
+        """
+        if all(isinstance(v['input_points'], (torch.Tensor, LabelTensor))
+                for v in collector.data_collections.values()):
+            return automatic_batching if automatic_batching is not None \
+                else False
+        return True
 
     @property
     def input_points(self):
