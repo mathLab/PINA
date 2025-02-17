@@ -1,185 +1,134 @@
+import pytest
 import torch
-from pina.problem import SpatialProblem, InverseProblem
-from pina.operators import laplacian
-from pina.domain import CartesianDomain
-from pina import Condition, LabelTensor
-from pina.solvers import PINN
-from pina.trainer import Trainer
+
+from pina import LabelTensor, Condition
 from pina.model import FeedForward
-from pina.equation import Equation
-from pina.equation.equation_factory import FixedValue
-from pina.loss import LpLoss
-from pina.problem.zoo import Poisson2DSquareProblem
-
-# class InversePoisson(SpatialProblem, InverseProblem):
-#     '''
-#     Problem definition for the Poisson equation.
-#     '''
-#     output_variables = ['u']
-#     x_min = -2
-#     x_max = 2
-#     y_min = -2
-#     y_max = 2
-#     data_input = LabelTensor(torch.rand(10, 2), ['x', 'y'])
-#     data_output = LabelTensor(torch.rand(10, 1), ['u'])
-#     spatial_domain = CartesianDomain({'x': [x_min, x_max], 'y': [y_min, y_max]})
-#     # define the ranges for the parameters
-#     unknown_parameter_domain = CartesianDomain({'mu1': [-1, 1], 'mu2': [-1, 1]})
-
-#     def laplace_equation(input_, output_, params_):
-#         '''
-#         Laplace equation with a force term.
-#         '''
-#         force_term = torch.exp(
-#                 - 2*(input_.extract(['x']) - params_['mu1'])**2
-#                 - 2*(input_.extract(['y']) - params_['mu2'])**2)
-#         delta_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
-
-#         return delta_u - force_term
-
-#     # define the conditions for the loss (boundary conditions, equation, data)
-#     conditions = {
-#         'gamma1': Condition(domain=CartesianDomain({'x': [x_min, x_max],
-#             'y':  y_max}),
-#             equation=FixedValue(0.0, components=['u'])),
-#         'gamma2': Condition(domain=CartesianDomain(
-#             {'x': [x_min, x_max], 'y': y_min
-#             }),
-#             equation=FixedValue(0.0, components=['u'])),
-#         'gamma3': Condition(domain=CartesianDomain(
-#             {'x':  x_max, 'y': [y_min, y_max]
-#             }),
-#             equation=FixedValue(0.0, components=['u'])),
-#         'gamma4': Condition(domain=CartesianDomain(
-#             {'x': x_min, 'y': [y_min, y_max]
-#             }),
-#             equation=FixedValue(0.0, components=['u'])),
-#         'D': Condition(domain=CartesianDomain(
-#             {'x': [x_min, x_max], 'y': [y_min, y_max]
-#             }),
-#         equation=Equation(laplace_equation)),
-#         'data': Condition(input_points=data_input.extract(['x', 'y']),
-#                           output_points=data_output)
-#     }
+from pina.trainer import Trainer
+from pina.solvers import PINN
+from pina.condition import (
+    InputOutputPointsCondition,
+    InputPointsEquationCondition,
+    DomainEquationCondition
+)
+from pina.problem.zoo import (
+    Poisson2DSquareProblem as Poisson,
+    InversePoisson2DSquareProblem as InversePoisson
+)
+from torch._dynamo.eval_frame import OptimizedModule
 
 
-# # make the problem
-# poisson_problem = Poisson2DSquareProblem()
-# model = FeedForward(len(poisson_problem.input_variables),
-#                     len(poisson_problem.output_variables))
-# model_extra_feats = FeedForward(
-#     len(poisson_problem.input_variables) + 1,
-#     len(poisson_problem.output_variables))
+# define problems and model
+problem = Poisson()
+problem.discretise_domain(50)
+inverse_problem = InversePoisson()
+inverse_problem.discretise_domain(50)
+model = FeedForward(
+    len(problem.input_variables),
+    len(problem.output_variables)
+)
+
+# add input-output condition to test supervised learning
+input_pts = torch.rand(50, len(problem.input_variables))
+input_pts = LabelTensor(input_pts, problem.input_variables)
+output_pts = torch.rand(50, len(problem.output_variables))
+output_pts = LabelTensor(output_pts, problem.output_variables)
+problem.conditions['data'] = Condition(
+    input_points=input_pts,
+    output_points=output_pts
+)
+
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
+def test_constructor(problem):
+    solver = PINN(problem=problem, model=model)
+
+    assert solver.accepted_conditions_types == (
+        InputOutputPointsCondition,
+        InputPointsEquationCondition,
+        DomainEquationCondition
+    )
+
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_train(problem, batch_size, compile):
+    solver = PINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
+                      max_epochs=2,
+                      accelerator='cpu',
+                      batch_size=batch_size,
+                      train_size=1.,
+                      val_size=0.,
+                      test_size=0.,
+                      compile=compile)
+    trainer.train()
 
 
-# def test_constructor():
-#     PINN(problem=poisson_problem, model=model, extra_features=None)
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_validation(problem, batch_size, compile):
+    solver = PINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
+                      max_epochs=2,
+                      accelerator='cpu',
+                      batch_size=batch_size,
+                      train_size=0.9,
+                      val_size=0.1,
+                      test_size=0.,
+                      compile=compile)
+    trainer.train()
+    if trainer.compile:
+        assert(isinstance(solver.model, OptimizedModule))
+
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_test(problem, batch_size, compile):
+    solver = PINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
+                      max_epochs=2,
+                      accelerator='cpu',
+                      batch_size=batch_size,
+                      train_size=0.7,
+                      val_size=0.2,
+                      test_size=0.1,
+                      compile=compile)
+    trainer.test()
 
 
-# def test_constructor_extra_feats():
-#     model_extra_feats = FeedForward(
-#         len(poisson_problem.input_variables) + 1,
-#         len(poisson_problem.output_variables))
-#     PINN(problem=poisson_problem,
-#          model=model_extra_feats)
+@pytest.mark.parametrize("problem", [problem, inverse_problem])
+def test_train_load_restore(problem):
+    dir = "tests/test_solvers/tmp"
+    problem = problem
+    solver = PINN(model=model, problem=problem)
+    trainer = Trainer(solver=solver,
+                      max_epochs=5,
+                      accelerator='cpu',
+                      batch_size=None,
+                      train_size=0.7,
+                      val_size=0.2,
+                      test_size=0.1,
+                      default_root_dir=dir)
+    trainer.train()
 
+    # restore
+    new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
+    new_trainer.train(
+        ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
+                   'epoch=4-step=5.ckpt')
 
-# def test_train_cpu():
-#     poisson_problem = Poisson2DSquareProblem()
-#     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-#     n = 10
-#     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-#     pinn = PINN(problem = poisson_problem, model=model,
-#                 extra_features=None, loss=LpLoss())
-#     trainer = Trainer(solver=pinn, max_epochs=1,
-#                       accelerator='cpu', batch_size=20, val_size=0., train_size=1., test_size=0.)
+    # loading
+    new_solver = PINN.load_from_checkpoint(
+        f'{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt',
+        problem=problem, model=model)
 
-# def test_train_load():
-#     tmpdir = "tests/tmp_load"
-#     poisson_problem = Poisson2DSquareProblem()
-#     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-#     n = 10
-#     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-#     pinn = PINN(problem=poisson_problem,
-#                 model=model,
-#                 extra_features=None,
-#                 loss=LpLoss())
-#     trainer = Trainer(solver=pinn,
-#                       max_epochs=15,
-#                       accelerator='cpu',
-#                       default_root_dir=tmpdir)
-#     trainer.train()
-#     new_pinn = PINN.load_from_checkpoint(
-#         f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=14-step=15.ckpt',
-#         problem = poisson_problem, model=model)
-#     test_pts = CartesianDomain({'x': [0, 1], 'y': [0, 1]}).sample(10)
-#     assert new_pinn.forward(test_pts).extract(['u']).shape == (10, 1)
-#     assert new_pinn.forward(test_pts).extract(
-#         ['u']).shape == pinn.forward(test_pts).extract(['u']).shape
-#     torch.testing.assert_close(
-#         new_pinn.forward(test_pts).extract(['u']),
-#         pinn.forward(test_pts).extract(['u']))
-#     import shutil
-#     shutil.rmtree(tmpdir)
+    test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
+    assert new_solver.forward(test_pts).shape == (20, 1)
+    assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
+    torch.testing.assert_close(
+        new_solver.forward(test_pts),
+        solver.forward(test_pts))
 
-# def test_train_restore():
-#     tmpdir = "tests/tmp_restore"
-#     poisson_problem = Poisson2DSquareProblem()
-#     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4']
-#     n = 10
-#     poisson_problem.discretise_domain(n, 'grid', locations=boundaries)
-#     pinn = PINN(problem=poisson_problem,
-#                 model=model,
-#                 extra_features=None,
-#                 loss=LpLoss())
-#     trainer = Trainer(solver=pinn,
-#                       max_epochs=5,
-#                       accelerator='cpu',
-#                       default_root_dir=tmpdir)
-#     trainer.train()
-#     ntrainer = Trainer(solver=pinn, max_epochs=15, accelerator='cpu')
-#     t = ntrainer.train(
-#         ckpt_path=f'{tmpdir}/lightning_logs/version_0/'
-#                   'checkpoints/epoch=4-step=5.ckpt')
-#     import shutil
-#     shutil.rmtree(tmpdir)
-
-# def test_train_inverse_problem_cpu():
-#     poisson_problem = InversePoisson()
-#     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4', 'D']
-#     n = 100
-#     poisson_problem.discretise_domain(n, 'random', locations=boundaries,
-#                                       variables=['x', 'y'])
-#     pinn = PINN(problem = poisson_problem, model=model,
-#                 extra_features=None, loss=LpLoss())
-#     trainer = Trainer(solver=pinn, max_epochs=1,
-#                       accelerator='cpu', batch_size=20)
-#     trainer.train()
-
-# def test_train_inverse_problem_load():
-#     tmpdir = "tests/tmp_load_inv"
-#     poisson_problem = InversePoisson()
-#     boundaries = ['gamma1', 'gamma2', 'gamma3', 'gamma4', 'D']
-#     n = 100
-#     poisson_problem.discretise_domain(n, 'random', locations=boundaries)
-#     pinn = PINN(problem=poisson_problem,
-#                 model=model,
-#                 extra_features=None,
-#                 loss=LpLoss())
-#     trainer = Trainer(solver=pinn,
-#                       max_epochs=15,
-#                       accelerator='cpu',
-#                       default_root_dir=tmpdir)
-#     trainer.train()
-#     new_pinn = PINN.load_from_checkpoint(
-#         f'{tmpdir}/lightning_logs/version_0/checkpoints/epoch=14-step=15.ckpt',
-#         problem = poisson_problem, model=model)
-#     test_pts = CartesianDomain({'x': [0, 1], 'y': [0, 1]}).sample(10)
-#     assert new_pinn.forward(test_pts).extract(['u']).shape == (10, 1)
-#     assert new_pinn.forward(test_pts).extract(
-#         ['u']).shape == pinn.forward(test_pts).extract(['u']).shape
-#     torch.testing.assert_close(
-#         new_pinn.forward(test_pts).extract(['u']),
-#         pinn.forward(test_pts).extract(['u']))
-#     import shutil
-#     shutil.rmtree(tmpdir)
+    # rm directories
+    import shutil
+    shutil.rmtree('tests/test_solvers/tmp')

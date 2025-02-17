@@ -3,21 +3,20 @@
 from abc import ABCMeta, abstractmethod
 
 
-class weightningInterface(metaclass=ABCMeta):
+class WeightingInterface(metaclass=ABCMeta):
     """
     The ``weightingInterface`` class. TODO
     """
 
-    @abstractmethod
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self):
+        self.condition_names = None
 
     @abstractmethod
     def aggregate(self, losses):
         """
         Aggregate the losses.
 
-        :param list(torch.Tensor) input: The list
+        :param dict(torch.Tensor) input: The dictionary of losses.
         :return: The losses aggregation. It should be a scalar Tensor.
         :rtype: torch.Tensor
         """
