@@ -1,143 +1,133 @@
 import torch
 import pytest
-from pina.problem import AbstractProblem, SpatialProblem
 from pina import Condition, LabelTensor
+from pina.condition import InputOutputPointsCondition
+from pina.problem import AbstractProblem
 from pina.solvers import SupervisedSolver
 from pina.model import FeedForward
-from pina.equation import Equation
-from pina.equation.equation_factory import FixedValue
-from pina.operators import laplacian
-from pina.domain import CartesianDomain
 from pina.trainer import Trainer
-
-# in_ = LabelTensor(torch.tensor([[0., 1.]]), ['u_0', 'u_1'])
-# out_ = LabelTensor(torch.tensor([[0.]]), ['u'])
+from torch._dynamo.eval_frame import OptimizedModule
 
 
-# class NeuralOperatorProblem(AbstractProblem):
-#     input_variables = ['u_0', 'u_1']
-#     output_variables = ['u']
-
-#     conditions = {
-#         'data': Condition(input_points=in_, output_points=out_),
-#     }
-
-
-# class myFeature(torch.nn.Module):
-#     """
-#     Feature: sin(x)
-#     """
-
-#     def __init__(self):
-#         super(myFeature, self).__init__()
-
-#     def forward(self, x):
-#         t = (torch.sin(x.extract(['u_0']) * torch.pi) *
-#              torch.sin(x.extract(['u_1']) * torch.pi))
-#         return LabelTensor(t, ['sin(x)sin(y)'])
+class LabelTensorProblem(AbstractProblem):
+    input_variables = ['u_0', 'u_1']
+    output_variables = ['u']
+    conditions = {
+        'data': Condition(
+            input_points=LabelTensor(torch.randn(20, 2), ['u_0', 'u_1']),
+            output_points=LabelTensor(torch.randn(20, 1), ['u'])),
+    }
 
 
-# problem = NeuralOperatorProblem()
-# extra_feats = [myFeature()]
-# model = FeedForward(len(problem.input_variables), len(problem.output_variables))
-# model_extra_feats = FeedForward(
-#     len(problem.input_variables) + 1, len(problem.output_variables))
+class TensorProblem(AbstractProblem):
+    input_variables = ['u_0', 'u_1']
+    output_variables = ['u']
+    conditions = {
+        'data': Condition(
+            input_points=torch.randn(20, 2),
+            output_points=torch.randn(20, 1))
+    }
 
 
-# def test_constructor():
-#     SupervisedSolver(problem=problem, model=model)
+model = FeedForward(2, 1)
 
 
-# test_constructor()
+def test_constructor():
+    SupervisedSolver(problem=TensorProblem(), model=model)
+    SupervisedSolver(problem=LabelTensorProblem(), model=model)
+    assert SupervisedSolver.accepted_conditions_types == (
+        InputOutputPointsCondition
+    )
 
 
-# def laplace_equation(input_, output_):
-#     force_term = (torch.sin(input_.extract(['x']) * torch.pi) *
-#                   torch.sin(input_.extract(['y']) * torch.pi))
-#     delta_u = laplacian(output_.extract(['u']), input_)
-#     return delta_u - force_term
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_train(use_lt, batch_size, compile):
+    problem = LabelTensorProblem() if use_lt else TensorProblem()
+    solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
+    trainer = Trainer(solver=solver,
+                      max_epochs=2,
+                      accelerator='cpu',
+                      batch_size=batch_size,
+                      train_size=1.,
+                      test_size=0.,
+                      val_size=0.,
+                      compile=compile)
+
+    trainer.train()
+    if trainer.compile:
+        assert (isinstance(solver.model, OptimizedModule))
 
 
-# my_laplace = Equation(laplace_equation)
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_validation(use_lt, compile):
+    problem = LabelTensorProblem() if use_lt else TensorProblem()
+    solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
+    trainer = Trainer(solver=solver,
+                      max_epochs=2,
+                      accelerator='cpu',
+                      batch_size=None,
+                      train_size=0.9,
+                      val_size=0.1,
+                      test_size=0.,
+                      compile=compile)
+    trainer.train()
+    if trainer.compile:
+        assert (isinstance(solver.model, OptimizedModule))
 
 
-# class Poisson(SpatialProblem):
-#     output_variables = ['u']
-#     spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
-
-#     conditions = {
-#         'gamma1':
-#             Condition(domain=CartesianDomain({
-#                 'x': [0, 1],
-#                 'y': 1
-#             }),
-#                 equation=FixedValue(0.0)),
-#         'gamma2':
-#             Condition(domain=CartesianDomain({
-#                 'x': [0, 1],
-#                 'y': 0
-#             }),
-#                 equation=FixedValue(0.0)),
-#         'gamma3':
-#             Condition(domain=CartesianDomain({
-#                 'x': 1,
-#                 'y': [0, 1]
-#             }),
-#                 equation=FixedValue(0.0)),
-#         'gamma4':
-#             Condition(domain=CartesianDomain({
-#                 'x': 0,
-#                 'y': [0, 1]
-#             }),
-#                 equation=FixedValue(0.0)),
-#         'D':
-#             Condition(domain=CartesianDomain({
-#                 'x': [0, 1],
-#                 'y': [0, 1]
-#             }),
-#                 equation=my_laplace),
-#         'data':
-#             Condition(input_points=in_, output_points=out_)
-#     }
-
-#     def poisson_sol(self, pts):
-#         return -(torch.sin(pts.extract(['x']) * torch.pi) *
-#                  torch.sin(pts.extract(['y']) * torch.pi)) / (2 * torch.pi ** 2)
-
-#     truth_solution = poisson_sol
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("compile", [True, False])
+def test_solver_test(use_lt, compile):
+    problem = LabelTensorProblem() if use_lt else TensorProblem()
+    solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
+    trainer = Trainer(solver=solver,
+                      max_epochs=2,
+                      accelerator='cpu',
+                      batch_size=None,
+                      train_size=0.8,
+                      val_size=0.1,
+                      test_size=0.1,
+                      compile=compile)
+    trainer.test()
+    if trainer.compile:
+        assert (isinstance(solver.model, OptimizedModule))
 
 
-# def test_wrong_constructor():
-#     poisson_problem = Poisson()
-#     with pytest.raises(ValueError):
-#         SupervisedSolver(problem=poisson_problem, model=model)
+def test_train_load_restore():
+    dir = "tests/test_solvers/tmp/"
+    problem = LabelTensorProblem()
+    solver = SupervisedSolver(problem=problem, model=model)
+    trainer = Trainer(solver=solver,
+                      max_epochs=5,
+                      accelerator='cpu',
+                      batch_size=None,
+                      train_size=0.9,
+                      test_size=0.1,
+                      val_size=0.,
+                      default_root_dir=dir)
+    trainer.train()
 
+    # restore
+    new_trainer = Trainer(solver=solver, max_epochs=5, accelerator='cpu')
+    new_trainer.train(
+        ckpt_path=f'{dir}/lightning_logs/version_0/checkpoints/' +
+        'epoch=4-step=5.ckpt')
 
-# def test_train_cpu():
-#     solver = SupervisedSolver(problem=problem, model=model)
-#     trainer = Trainer(solver=solver,
-#                       max_epochs=200,
-#                       accelerator='gpu',
-#                       batch_size=5,
-#                       train_size=1,
-#                       test_size=0.,
-#                       val_size=0.)
-#     trainer.train()
-# test_train_cpu()
+    # loading
+    new_solver = SupervisedSolver.load_from_checkpoint(
+        f'{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt',
+        problem=problem, model=model)
 
+    test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
+    assert new_solver.forward(test_pts).shape == (20, 1)
+    assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
+    torch.testing.assert_close(
+        new_solver.forward(test_pts),
+        solver.forward(test_pts))
 
-# def test_extra_features_constructor():
-#     SupervisedSolver(problem=problem,
-#                      model=model_extra_feats,
-#                      extra_features=extra_feats)
-
-
-# def test_extra_features_train_cpu():
-#     solver = SupervisedSolver(problem=problem,
-#                               model=model_extra_feats,
-#                               extra_features=extra_feats)
-#     trainer = Trainer(solver=solver,
-#                       max_epochs=200,
-#                       accelerator='gpu',
-#                       batch_size=5)
-#     trainer.train()
+    # rm directories
+    import shutil
+    shutil.rmtree('tests/test_solvers/tmp')
