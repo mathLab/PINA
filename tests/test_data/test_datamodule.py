@@ -112,11 +112,23 @@ def test_setup_test(input_, output_, train_size, val_size, test_size):
 def test_dummy_dataloader(input_, output_):
     problem = SupervisedProblem(input_=input_, output_=output_)
     solver = SupervisedSolver(problem=problem, model=torch.nn.Linear(10, 10))
-    trainer = Trainer(solver, batch_size=None)
+    trainer = Trainer(solver, batch_size=None, train_size=.7, val_size=.3, test_size=0.)
     dm = trainer.data_module
     dm.setup()
     dm.trainer = trainer
     dataloader = dm.train_dataloader()
+    assert isinstance(dataloader, DummyDataloader)
+    assert len(dataloader) == 1
+    data = next(dataloader)
+    assert isinstance(data, list)
+    assert isinstance(data[0], tuple)
+    if isinstance(input_, RadiusGraph):
+        assert isinstance(data[0][1]['input_points'], Batch)
+    else:
+        assert isinstance(data[0][1]['input_points'], torch.Tensor)
+    assert isinstance(data[0][1]['output_points'], torch.Tensor)
+
+    dataloader = dm.val_dataloader()
     assert isinstance(dataloader, DummyDataloader)
     assert len(dataloader) == 1
     data = next(dataloader)
@@ -138,7 +150,7 @@ def test_dummy_dataloader(input_, output_):
 def test_dataloader(input_, output_):
     problem = SupervisedProblem(input_=input_, output_=output_)
     solver = SupervisedSolver(problem=problem, model=torch.nn.Linear(10, 10))
-    trainer = Trainer(solver, batch_size=10)
+    trainer = Trainer(solver, batch_size=10, train_size=.7, val_size=.3, test_size=0.)
     dm = trainer.data_module
     dm.setup()
     dm.trainer = trainer
@@ -152,3 +164,15 @@ def test_dataloader(input_, output_):
     else:
         assert isinstance(data['data']['input_points'], torch.Tensor)
     assert isinstance(data['data']['output_points'], torch.Tensor)
+
+    dataloader = dm.val_dataloader()
+    assert isinstance(dataloader, DataLoader)
+    assert len(dataloader) == 3
+    data = next(iter(dataloader))
+    assert isinstance(data, dict)
+    if isinstance(input_, RadiusGraph):
+        assert isinstance(data['data']['input_points'], Batch)
+    else:
+        assert isinstance(data['data']['input_points'], torch.Tensor)
+    assert isinstance(data['data']['output_points'], torch.Tensor)
+

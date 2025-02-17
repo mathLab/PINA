@@ -18,6 +18,8 @@ class Trainer(lightning.pytorch.Trainer):
                  predict_size=0.,
                  compile=None,
                  automatic_batching=None,
+                 num_workers=0,
+                 pin_memory=False,
                  **kwargs):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
@@ -44,7 +46,11 @@ class Trainer(lightning.pytorch.Trainer):
             performed. Please avoid using automatic batching when batch_size is
             large, default False.
         :type automatic_batching: bool
-
+        :param num_workers: Number of worker threads for data loading. Default 0 (serial loading)
+        :type num_workers: int
+        :param pin_memory: Whether to use pinned memory for faster data transfer to GPU. (Default False)
+        :type pin_memory: bool
+        
         :Keyword Arguments:
             The additional keyword arguments specify the training setup
             and can be choosen from the `pytorch-lightning
@@ -105,7 +111,7 @@ class Trainer(lightning.pytorch.Trainer):
         self.batch_size = batch_size
         self._move_to_device()
         self.data_module = None
-        self._create_loader()
+        self._create_loader(pin_memory, num_workers)
 
         # logging
         self.logging_kwargs = {
@@ -127,7 +133,7 @@ class Trainer(lightning.pytorch.Trainer):
                 pb.unknown_parameters[key] = torch.nn.Parameter(
                     pb.unknown_parameters[key].data.to(device))
 
-    def _create_loader(self):
+    def _create_loader(self, pin_memory, num_workers):
         """
         This method is used here because is resampling is needed
         during training, there is no need to define to touch the
@@ -150,7 +156,9 @@ class Trainer(lightning.pytorch.Trainer):
             val_size=self.val_size,
             predict_size=self.predict_size,
             batch_size=self.batch_size,
-            automatic_batching=self.automatic_batching)
+            automatic_batching=self.automatic_batching,
+            num_workers=num_workers,
+            pin_memory=pin_memory)
 
     def train(self, **kwargs):
         """
