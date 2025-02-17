@@ -1,30 +1,23 @@
+""" Module for Self-Adaptive PINN. """
+
 import torch
 from copy import deepcopy
 
-try:
-    from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
-except ImportError:
-    from torch.optim.lr_scheduler import (
-        _LRScheduler as LRScheduler,
-    )  # torch < 2.0
-
-from .pinn_interface import PINNInterface
 from pina.utils import check_consistency
 from pina.problem import InverseProblem
-
-from torch.optim.lr_scheduler import ConstantLR
+from ..solver import MultiSolverInterface
+from .pinn_interface import PINNInterface
 
 
 class Weights(torch.nn.Module):
     """
-    This class aims to implements the mask model for
-    self adaptive weights of the Self-Adaptive
-    PINN solver.
+    This class aims to implements the mask model for the
+    self-adaptive weights of the Self-Adaptive PINN solver.
     """
 
     def __init__(self, func):
         """
-        :param torch.nn.Module func: the mask module of SAPINN
+        :param torch.nn.Module func: the mask module of SAPINN.
         """
         super().__init__()
         check_consistency(func, torch.nn.Module)
@@ -34,8 +27,7 @@ class Weights(torch.nn.Module):
     def forward(self):
         """
         Forward pass implementation for the mask module.
-        It returns the function on the weights
-        evaluation.
+        It returns the function on the weights evaluation.
 
         :return: evaluation of self adaptive weights through the mask.
         :rtype: torch.Tensor
@@ -43,10 +35,10 @@ class Weights(torch.nn.Module):
         return self.func(self.sa_weights)
 
 
-class SAPINN(PINNInterface):
+class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
     r"""
-    Self Adaptive Physics Informed Neural Network (SAPINN) solver class.
-    This class implements Self-Adaptive Physics Informed Neural
+    Self Adaptive Physics Informed Neural Network (SelfAdaptivePINN)
+    solver class. This class implements Self-Adaptive Physics Informed Neural
     Network solvers, using a user specified ``model`` to solve a specific
     ``problem``. It can be used for solving both forward and inverse problems.
 
@@ -107,97 +99,55 @@ class SAPINN(PINNInterface):
         j.jcp.2022.111722 <https://doi.org/10.1016/j.jcp.2022.111722>`_.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        weights_function=torch.nn.Sigmoid(),
-        extra_features=None,
-        loss=torch.nn.MSELoss(),
-        optimizer_model=torch.optim.Adam,
-        optimizer_model_kwargs={"lr": 0.001},
-        optimizer_weights=torch.optim.Adam,
-        optimizer_weights_kwargs={"lr": 0.001},
-        scheduler_model=ConstantLR,
-        scheduler_model_kwargs={"factor": 1, "total_iters": 0},
-        scheduler_weights=ConstantLR,
-        scheduler_weights_kwargs={"factor": 1, "total_iters": 0},
-    ):
+    def __init__(self,
+                 problem,
+                 model,
+                 weight_function=torch.nn.Sigmoid(),
+                 optimizer_model=None,
+                 optimizer_weights=None,
+                 scheduler_model=None,
+                 scheduler_weights=None,
+                 weighting=None,
+                 loss=None):
         """
-        :param AbstractProblem problem: The formualation of the problem.
-        :param torch.nn.Module model: The neural network model to use
-            for the model.
-        :param torch.nn.Module weights_function: The neural network model
-            related to the mask of SAPINN.
-            default :obj:`~torch.nn.Sigmoid`.
-        :param list(torch.nn.Module) extra_features: The additional input
-            features to use as augmented input. If ``None`` no extra features
-            are passed. If it is a list of :class:`torch.nn.Module`,
-            the extra feature list is passed to all models. If it is a list
-            of extra features' lists, each single list of extra feature
-            is passed to a model.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
-        :param torch.optim.Optimizer optimizer_model: The neural
-            network optimizer to use for the model network
-            , default is `torch.optim.Adam`.
-        :param dict optimizer_model_kwargs: Optimizer constructor keyword
-            args. for the model.
-        :param torch.optim.Optimizer optimizer_weights: The neural
-            network optimizer to use for mask model model,
-            default is `torch.optim.Adam`.
-        :param dict optimizer_weights_kwargs: Optimizer constructor
-            keyword args. for the mask module.
-        :param torch.optim.LRScheduler scheduler_model: Learning
-            rate scheduler for the model.
-        :param dict scheduler_model_kwargs: LR scheduler constructor
-            keyword args.
-        :param torch.optim.LRScheduler scheduler_weights: Learning
-            rate scheduler for the mask model.
-        :param dict scheduler_model_kwargs: LR scheduler constructor
-            keyword args.
+        :param AbstractProblem problem: The formulation of the problem.
+        :param torch.nn.Module model: The neural network model to use for 
+            the model.
+        :param torch.nn.Module weight_function: The neural network model
+            related to the Self-Adaptive PINN mask; default `torch.nn.Sigmoid()`
+        :param torch.optim.Optimizer optimizer_model: The neural network 
+            optimizer to use for the model network; default `None`.
+        :param torch.optim.Optimizer optimizer_weights: The neural network 
+            optimizer to use for mask model; default `None`.
+        :param torch.optim.LRScheduler scheduler_model: Learning rate scheduler
+            for the model; default `None`.
+        :param torch.optim.LRScheduler scheduler_weights: Learning rate
+            scheduler for the mask model; default `None`.
+        :param WeightingInterface weighting: The weighting schema to use;
+            default `None`.
+        :param torch.nn.Module loss: The loss function to be minimized;
+            default `None`.
         """
-
         # check consistency weitghs_function
-        check_consistency(weights_function, torch.nn.Module)
+        check_consistency(weight_function, torch.nn.Module)
 
         # create models for weights
         weights_dict = {}
         for condition_name in problem.conditions:
-            weights_dict[condition_name] = Weights(weights_function)
+            weights_dict[condition_name] = Weights(weight_function)
         weights_dict = torch.nn.ModuleDict(weights_dict)
 
-        super().__init__(
-            models=[model, weights_dict],
-            problem=problem,
-            optimizers=[optimizer_model, optimizer_weights],
-            optimizers_kwargs=[
-                optimizer_model_kwargs,
-                optimizer_weights_kwargs,
-            ],
-            extra_features=extra_features,
-            loss=loss,
-        )
+        super().__init__(models=[model, weights_dict],
+                         problem=problem,
+                         optimizers=[optimizer_model, optimizer_weights],
+                         schedulers=[scheduler_model, scheduler_weights],
+                         weighting=weighting,
+                         loss=loss)
 
-        # set automatic optimization
+        # Set automatic optimization to False
         self.automatic_optimization = False
 
-        # check consistency
-        check_consistency(scheduler_model, LRScheduler, subclass=True)
-        check_consistency(scheduler_model_kwargs, dict)
-        check_consistency(scheduler_weights, LRScheduler, subclass=True)
-        check_consistency(scheduler_weights_kwargs, dict)
-
-        # assign schedulers
-        self._schedulers = [
-            scheduler_model(self.optimizers[0], **scheduler_model_kwargs),
-            scheduler_weights(self.optimizers[1], **scheduler_weights_kwargs),
-        ]
-
-        self._model = self.models[0]
-        self._weights = self.models[1]
-
-        self._vectorial_loss = deepcopy(loss)
+        self._vectorial_loss = deepcopy(self.loss)
         self._vectorial_loss.reduction = "none"
 
     def forward(self, x):
@@ -213,7 +163,23 @@ class SAPINN(PINNInterface):
         :return: PINN solution.
         :rtype: LabelTensor
         """
-        return self.neural_net(x)
+        return self.model(x)
+
+    def training_step(self, batch):
+        """
+        Solver training step, overridden to perform manual optimization.
+
+        :param batch: The batch element in the dataloader.
+        :type batch: tuple
+        :return: The sum of the loss functions.
+        :rtype: LabelTensor
+        """
+        self.optimizer_model.instance.zero_grad()
+        self.optimizer_weights.instance.zero_grad()
+        loss = super().training_step(batch)
+        self.optimizer_model.instance.step()
+        self.optimizer_weights.instance.step()
+        return loss
 
     def loss_phys(self, samples, equation):
         """
@@ -227,86 +193,72 @@ class SAPINN(PINNInterface):
             samples and equation.
         :rtype: torch.Tensor
         """
-        # train weights
-        self.optimizer_weights.zero_grad()
-        weighted_loss, _ = self._loss_phys(samples, equation)
+        # Train the weights
+        weighted_loss = self._loss_phys(samples, equation)
         loss_value = -weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
-        self.optimizer_weights.step()
 
-        # detaching samples from the computational graph to erase it and setting
-        # the gradient to true to create a new computational graph.
+        # Detach samples from the existing computational graph and
+        # create a new one by setting requires_grad to True.
         # In alternative set `retain_graph=True`.
         samples = samples.detach()
-        samples.requires_grad = True
+        samples.requires_grad_()# = True
 
-        # train model
-        self.optimizer_model.zero_grad()
-        weighted_loss, loss = self._loss_phys(samples, equation)
+        # Train the model
+        weighted_loss = self._loss_phys(samples, equation)
         loss_value = weighted_loss.as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
-        self.optimizer_model.step()
 
-        # store loss without weights
-        self.store_log(loss_value=float(loss))
         return loss_value
 
-    def loss_data(self, input_tensor, output_tensor):
+    def loss_data(self, input_pts, output_pts):
         """
         Computes the data loss for the SAPINN solver based on input and
         output. It computes the loss between the
         network output against the true solution.
 
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
+        :param LabelTensor input_pts: The input to the neural networks.
+        :param LabelTensor output_pts: The true solution to compare the
             network solution.
         :return: The computed data loss.
         :rtype: torch.Tensor
         """
-        # train weights
-        self.optimizer_weights.zero_grad()
-        weighted_loss, _ = self._loss_data(input_tensor, output_tensor)
-        loss_value = -weighted_loss.as_subclass(torch.Tensor)
+        residual = self.forward(input_pts) - output_pts
+        loss = self._vectorial_loss(
+            torch.zeros_like(residual, requires_grad=True), residual
+        )
+        loss_value = self._vect_to_scalar(loss).as_subclass(torch.Tensor)
         self.manual_backward(loss_value)
-        self.optimizer_weights.step()
-
-        # detaching samples from the computational graph to erase it and setting
-        # the gradient to true to create a new computational graph.
-        # In alternative set `retain_graph=True`.
-        input_tensor = input_tensor.detach()
-        input_tensor.requires_grad = True
-
-        # train model
-        self.optimizer_model.zero_grad()
-        weighted_loss, loss = self._loss_data(input_tensor, output_tensor)
-        loss_value = weighted_loss.as_subclass(torch.Tensor)
-        self.manual_backward(loss_value)
-        self.optimizer_model.step()
-
-        # store loss without weights
-        self.store_log(loss_value=float(loss))
         return loss_value
 
     def configure_optimizers(self):
         """
-        Optimizer configuration for the SAPINN
-        solver.
+        Optimizer configuration for the SelfAdaptive PINN solver.
 
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
         """
-        # if the problem is an InverseProblem, add the unknown parameters
-        # to the parameters that the optimizer needs to optimize
+        # If the problem is an InverseProblem, add the unknown parameters
+        # to the parameters to be optimized
+        self.optimizer_model.hook(self.model.parameters())
+        self.optimizer_weights.hook(self.weights_dict.parameters())
         if isinstance(self.problem, InverseProblem):
-            self.optimizers[0].add_param_group(
-                {
-                    "params": [
-                        self._params[var]
-                        for var in self.problem.unknown_variables
-                    ]
-                }
-            )
-        return self.optimizers, self._schedulers
+            self.optimizer_model.instance.add_param_group(
+                    {
+                        "params": [
+                            self._params[var]
+                            for var in self.problem.unknown_variables
+                        ]
+                    }
+                )
+        self.scheduler_model.hook(self.optimizer_model)
+        self.scheduler_weights.hook(self.optimizer_weights)
+        return (
+            [self.optimizer_model.instance,
+             self.optimizer_weights.instance],
+            [self.scheduler_model.instance,
+             self.scheduler_weights.instance]
+        )
 
     def on_train_batch_end(self, outputs, batch, batch_idx):
         """
@@ -322,9 +274,11 @@ class SAPINN(PINNInterface):
         :rtype: Any
         """
         # increase by one the counter of optimization to save loggers
-        self.trainer.fit_loop.epoch_loop.manual_optimization.optim_step_progress.total.completed += (
-            1
-        )
+        (
+            self.trainer.fit_loop.epoch_loop.manual_optimization
+            .optim_step_progress.total.completed
+        ) += 1
+
         return super().on_train_batch_end(outputs, batch, batch_idx)
 
     def on_train_start(self):
@@ -336,32 +290,45 @@ class SAPINN(PINNInterface):
             method ``on_train_start``.
         :rtype: Any
         """
+        if self.trainer.batch_size is not None:
+            raise NotImplementedError("SelfAdaptivePINN only works with full "
+                                      "batch size, set batch_size=None inside "
+                                      "the Trainer to use the solver.")
         device = torch.device(
             self.trainer._accelerator_connector._accelerator_flag
         )
-        for condition_name, tensor in self.problem.input_pts.items():
-            self.weights_dict.torchmodel[condition_name].sa_weights.data = (
+
+        # Initialize the self adaptive weights only for training points
+        for condition_name, tensor in (
+            self.trainer.data_module.train_dataset.input_points.items()
+        ):
+            self.weights_dict[condition_name].sa_weights.data = (
                 torch.rand((tensor.shape[0], 1), device=device)
             )
         return super().on_train_start()
 
     def on_load_checkpoint(self, checkpoint):
         """
-        Overriding the Pytorch Lightning ``on_load_checkpoint`` to handle
-        checkpoints for Self Adaptive Weights. This method should not be
+        Override the Pytorch Lightning ``on_load_checkpoint`` to handle
+        checkpoints for Self-Adaptive Weights. This method should not be
         overridden if not intentionally.
 
         :param dict checkpoint: Pytorch Lightning checkpoint dict.
         """
-        for condition_name, tensor in self.problem.input_pts.items():
-            self.weights_dict.torchmodel[condition_name].sa_weights.data = (
-                torch.rand((tensor.shape[0], 1))
+        # First initialize self-adaptive weights with correct shape,
+        # then load the values from the checkpoint.
+        for condition_name, _ in self.problem.input_pts.items():
+            shape = checkpoint['state_dict'][
+                f"_pina_models.1.{condition_name}.sa_weights"
+            ].shape
+            self.weights_dict[condition_name].sa_weights.data = (
+                torch.rand(shape)
             )
         return super().on_load_checkpoint(checkpoint)
 
     def _loss_phys(self, samples, equation):
         """
-        Elaboration of the physical loss for the SAPINN solver.
+        Computation of the physical loss for SelfAdaptive PINN solver.
 
         :param LabelTensor samples: Input samples to evaluate the physics loss.
         :param EquationInterface equation: the governing equation representing
@@ -371,43 +338,11 @@ class SAPINN(PINNInterface):
         :rtype: List[LabelTensor, LabelTensor]
         """
         residual = self.compute_residual(samples, equation)
-        return self._compute_loss(residual)
-
-    def _loss_data(self, input_tensor, output_tensor):
-        """
-        Elaboration of the loss related to data for the SAPINN solver.
-
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
-            network solution.
-
-        :return: tuple with weighted and not weighted scalar loss
-        :rtype: List[LabelTensor, LabelTensor]
-        """
-        residual = self.forward(input_tensor) - output_tensor
-        return self._compute_loss(residual)
-
-    def _compute_loss(self, residual):
-        """
-        Elaboration of the pointwise loss through the mask model and the
-        self adaptive weights
-
-        :param LabelTensor residual: the matrix of residuals that have to
-            be weighted
-
-        :return: tuple with weighted and not weighted loss
-        :rtype List[LabelTensor, LabelTensor]
-        """
-        weights = self.weights_dict.torchmodel[
-            self.current_condition_name
-        ].forward()
+        weights = self.weights_dict[self.current_condition_name].forward()
         loss_value = self._vectorial_loss(
             torch.zeros_like(residual, requires_grad=True), residual
         )
-        return (
-            self._vect_to_scalar(weights * loss_value),
-            self._vect_to_scalar(loss_value),
-        )
+        return self._vect_to_scalar(weights * loss_value)
 
     def _vect_to_scalar(self, loss_value):
         """
@@ -431,12 +366,14 @@ class SAPINN(PINNInterface):
         return ret
 
     @property
-    def neural_net(self):
+    def model(self):
         """
-        Returns the neural network model.
+        Return the mask models associate to the application of
+        the mask to the self adaptive weights for each loss that
+        compones the global loss of the problem.
 
-        :return: The neural network model.
-        :rtype: torch.nn.Module
+        :return: The ModuleDict for mask models.
+        :rtype: torch.nn.ModuleDict
         """
         return self.models[0]
 
@@ -460,7 +397,7 @@ class SAPINN(PINNInterface):
         :return: The scheduler for the neural network model.
         :rtype: torch.optim.lr_scheduler._LRScheduler
         """
-        return self._scheduler[0]
+        return self.schedulers[0]
 
     @property
     def scheduler_weights(self):
@@ -470,7 +407,7 @@ class SAPINN(PINNInterface):
         :return: The scheduler for the mask model.
         :rtype: torch.optim.lr_scheduler._LRScheduler
         """
-        return self._scheduler[1]
+        return self.schedulers[1]
 
     @property
     def optimizer_model(self):
