@@ -18,6 +18,8 @@ class Trainer(lightning.pytorch.Trainer):
                  predict_size=0.,
                  compile=None,
                  automatic_batching=None,
+                 num_workers=None,
+                 pin_memory=None,
                  **kwargs):
         """
         PINA Trainer class for costumizing every aspect of training via flags.
@@ -44,6 +46,10 @@ class Trainer(lightning.pytorch.Trainer):
             performed. Please avoid using automatic batching when batch_size is
             large, default False.
         :type automatic_batching: bool
+        :param num_workers: Number of worker threads for data loading. Default 0 (serial loading)
+        :type num_workers: int
+        :param pin_memory: Whether to use pinned memory for faster data transfer to GPU. (Default False)
+        :type pin_memory: bool
 
         :Keyword Arguments:
             The additional keyword arguments specify the training setup
@@ -60,6 +66,14 @@ class Trainer(lightning.pytorch.Trainer):
             check_consistency(automatic_batching, bool)
         if compile is not None:
             check_consistency(compile, bool)
+        if pin_memory is not None:
+            check_consistency(pin_memory, bool)
+        else:
+            pin_memory = False
+        if num_workers is not None:
+            check_consistency(pin_memory, int)
+        else:
+            num_workers = 0
         if train_size + test_size + val_size + predict_size > 1:
             raise ValueError('train_size, test_size, val_size and predict_size '
                              'must sum up to 1.')
@@ -93,19 +107,16 @@ class Trainer(lightning.pytorch.Trainer):
             compile = False
         if automatic_batching is None:
             automatic_batching = False
-        
+
         # set attributes
         self.compile = compile
-        self.automatic_batching = automatic_batching
-        self.train_size = train_size
-        self.test_size = test_size
-        self.val_size = val_size
-        self.predict_size = predict_size
         self.solver = solver
         self.batch_size = batch_size
         self._move_to_device()
         self.data_module = None
-        self._create_loader()
+        self._create_datamodule(train_size, test_size, val_size, predict_size,
+                                batch_size, automatic_batching, pin_memory, 
+                                num_workers)
 
         # logging
         self.logging_kwargs = {
@@ -127,7 +138,15 @@ class Trainer(lightning.pytorch.Trainer):
                 pb.unknown_parameters[key] = torch.nn.Parameter(
                     pb.unknown_parameters[key].data.to(device))
 
-    def _create_loader(self):
+    def _create_datamodule(self,
+                           train_size,
+                           test_size,
+                           val_size,
+                           predict_size,
+                           batch_size,
+                           automatic_batching,
+                           pin_memory,
+                           num_workers):
         """
         This method is used here because is resampling is needed
         during training, there is no need to define to touch the
@@ -136,8 +155,8 @@ class Trainer(lightning.pytorch.Trainer):
         if not self.solver.problem.are_all_domains_discretised:
             error_message = '\n'.join([
                 f"""{" " * 13} ---> Domain {key} {
-                "sampled" if key in self.solver.problem.discretised_domains else
-                                                  "not sampled"}""" for key in
+                    "sampled" if key in self.solver.problem.discretised_domains else
+                    "not sampled"}""" for key in
                 self.solver.problem.domains.keys()
             ])
             raise RuntimeError('Cannot create Trainer if not all conditions '
@@ -145,12 +164,14 @@ class Trainer(lightning.pytorch.Trainer):
                                f'{error_message}')
         self.data_module = PinaDataModule(
             self.solver.problem,
-            train_size=self.train_size,
-            test_size=self.test_size,
-            val_size=self.val_size,
-            predict_size=self.predict_size,
-            batch_size=self.batch_size,
-            automatic_batching=self.automatic_batching)
+            train_size=train_size,
+            test_size=test_size,
+            val_size=val_size,
+            predict_size=predict_size,
+            batch_size=batch_size,
+            automatic_batching=automatic_batching,
+            num_workers=num_workers,
+            pin_memory=pin_memory)
 
     def train(self, **kwargs):
         """
