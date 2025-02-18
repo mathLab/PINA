@@ -5,7 +5,7 @@ import functools
 import torch
 from torch.utils.data import Dataset
 from abc import abstractmethod
-from torch_geometric.data import Batch
+from torch_geometric.data import Batch, Data
 from pina import LabelTensor
 
 
@@ -64,7 +64,7 @@ class PinaTensorDataset(PinaDataset):
         if automatic_batching:
             self._getitem_func = self._getitem_int
         else:
-            self._getitem_func = self._getitem_list
+            self._getitem_func = self._getitem_dummy
 
     def _getitem_int(self, idx):
         return {
@@ -84,7 +84,7 @@ class PinaTensorDataset(PinaDataset):
         return to_return_dict
 
     @staticmethod
-    def _getitem_list(idx):
+    def _getitem_dummy(idx):
         return idx
 
     def get_all_data(self):
@@ -104,6 +104,27 @@ class PinaTensorDataset(PinaDataset):
         }
 
 
+class PinaBatch(Batch):
+    """
+    Add extract function to torch_geometric Batch object
+    """
+    def __init__(self):
+
+        super().__init__(self)
+
+    def extract(self, labels):
+        """
+        Perform extraction of labels on node features (x)
+
+        :param labels: Labels to extract 
+        :type labels: list[str] | tuple[str] | str 
+        :return: Batch object with extraction performed on x
+        :rtype: PinaBatch
+        """
+        self.x = self.x.extract(labels)
+        return self
+
+
 class PinaGraphDataset(PinaDataset):
 
     def __init__(self, conditions_dict, max_conditions_lengths,
@@ -111,6 +132,11 @@ class PinaGraphDataset(PinaDataset):
         super().__init__(conditions_dict, max_conditions_lengths)
         self.in_labels = {}
         self.out_labels = None
+        if automatic_batching:
+            self._getitem_func = self._getitem_int
+        else:
+            self._getitem_func = self._getitem_dummy
+
         ex_data = conditions_dict[list(conditions_dict.keys())[
             0]]['input_points'][0]
         for name, attr in ex_data.items():
@@ -137,21 +163,24 @@ class PinaGraphDataset(PinaDataset):
             if self.length > condition_len:
                 cond_idx = [idx % condition_len for idx in cond_idx]
             to_return_dict[condition] = {
-                k: self._create_graph_batch_from_list(v, cond_idx)
+                k: self._create_graph_batch_from_list([v[i] for i in idx])
                 if isinstance(v, list)
-                else self._create_output_batch(v, cond_idx)
+                else self._create_output_batch(v[idx])
                 for k, v in data.items()
             }
 
         return to_return_dict
 
-    def _base_create_graph_batch_from_list(self, data, idx):
-        batch = Batch.from_data_list([data[i] for i in idx])
+    def _base_create_graph_batch_from_list(self, data):
+        batch = PinaBatch.from_data_list(data)
         return batch
 
-    def _base_create_output_batch(self, data, idx):
-        out = data[idx].reshape(-1, *data[idx].shape[2:])
+    def _base_create_output_batch(self, data):
+        out = data.reshape(-1, *data.shape[2:])
         return out
+
+    def _getitem_dummy(self, idx):
+        return idx
 
     def _getitem_int(self, idx):
         return {
@@ -164,8 +193,7 @@ class PinaGraphDataset(PinaDataset):
         return self.fetch_from_idx_list(index)
 
     def __getitem__(self, idx):
-        return self._getitem_int(idx) if isinstance(idx, int) else \
-            self.fetch_from_idx_list(idx=idx)
+        return self._getitem_func(idx)
 
     def _labelise_batch(self, func):
         @functools.wraps(func)
@@ -186,3 +214,11 @@ class PinaGraphDataset(PinaDataset):
                 out.labels = self.out_labels
             return out
         return wrapper
+
+    def create_graph_batch(self, data):
+        """
+        # TODO
+        """
+        if isinstance(data[0], Data):
+            return self._create_graph_batch_from_list(data)
+        return self._create_output_batch(data)

@@ -48,8 +48,7 @@ def labelize_forward(forward, input_variables, output_variables):
     :type output_variables: list[str] | tuple[str]
     """
     def wrapper(x):
-        if isinstance(x, LabelTensor):
-            x = x.extract(input_variables)
+        x = x.extract(input_variables)
         output = forward(x)
         # keep it like this, directly using LabelTensor(...) raises errors
         # when compiling the code

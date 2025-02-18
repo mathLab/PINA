@@ -125,7 +125,8 @@ class Graph:
 
     @staticmethod
     def _build_edge_attr(x, pos, edge_index):
-        distance = torch.abs(pos[edge_index[0]] - pos[edge_index[1]])
+        distance = torch.abs(pos[edge_index[0]] -
+                             pos[edge_index[1]]).as_subclass(torch.Tensor)
         return distance
 
     @staticmethod
