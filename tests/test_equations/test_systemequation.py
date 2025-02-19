@@ -1,5 +1,5 @@
 from pina.equation import SystemEquation
-from pina.operators import grad, laplacian
+from pina.operator import grad, laplacian
 from pina import LabelTensor
 import torch
 import pytest
