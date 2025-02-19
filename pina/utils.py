@@ -7,6 +7,10 @@ from functools import reduce
 from .label_tensor import LabelTensor
 
 
+def custom_warning_format(
+        message, category, filename, lineno, file=None, line=None
+        ):
+    return f"{filename}: {category.__name__}: {message}\n"
 
 def check_consistency(object, object_instance, subclass=False):
     """Helper function to check object inheritance consistency.

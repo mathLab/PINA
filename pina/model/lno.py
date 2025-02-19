@@ -3,10 +3,10 @@
 import torch
 from torch import nn, cat
 
-from pina.utils import check_consistency
+from ..utils import check_consistency
 
 from .base_no import KernelNeuralOperator
-from .layers.lowrank_layer import LowRankBlock
+from .block.lowrank_layer import LowRankBlock
 
 
 class LowRankNeuralOperator(KernelNeuralOperator):
@@ -19,7 +19,7 @@ class LowRankNeuralOperator(KernelNeuralOperator):
     to other functions. It can be trained with Supervised or PINN based
     learning strategies.
     LowRankNeuralOperator does convolution by performing a low rank
-    approximation, see :class:`~pina.model.layers.lowrank_layer.LowRankBlock`.
+    approximation, see :class:`~pina.model.block.lowrank_layer.LowRankBlock`.
 
     .. seealso::
 
