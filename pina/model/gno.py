@@ -1,6 +1,6 @@
 import torch
 from torch.nn import Tanh
-from .layers import GNOBlock
+from .block import GNOBlock
 from .base_no import KernelNeuralOperator
 
 

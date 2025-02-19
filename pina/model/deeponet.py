@@ -18,7 +18,7 @@ class MIONet(torch.nn.Module):
     .. seealso::
 
         **Original reference**: Jin, Pengzhan, Shuai Meng, and Lu Lu.
-        *MIONet: Learning multiple-input operators via tensor product.*
+        *MIONet: Learning multiple-input operator via tensor product.*
         SIAM Journal on Scientific Computing 44.6 (2022): A3490-A351
         DOI: `10.1137/22M1477751
         <https://doi.org/10.1137/22M1477751>`_
@@ -289,8 +289,8 @@ class DeepONet(MIONet):
     .. seealso::
 
         **Original reference**: Lu, L., Jin, P., Pang, G. et al. *Learning
-        nonlinear operators via DeepONet based on the universal approximation
-        theorem of operators*. Nat Mach Intell 3, 218–229 (2021).
+        nonlinear operator via DeepONet based on the universal approximation
+        theorem of operator*. Nat Mach Intell 3, 218–229 (2021).
         DOI: `10.1038/s42256-021-00302-5
         <https://doi.org/10.1038/s42256-021-00302-5>`_
 

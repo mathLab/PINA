@@ -3,14 +3,14 @@ Kernel Neural Operator Module.
 """
 
 import torch
-from pina.utils import check_consistency
+from ..utils import check_consistency
 
 
 class KernelNeuralOperator(torch.nn.Module):
     r"""
     Base class for composing Neural Operators with integral kernels.
 
-    This is a base class for composing neural operators with multiple
+    This is a base class for composing neural operator with multiple
     integral kernels. All neural operator models defined in PINA inherit
     from this class. The structure is inspired by the work of Kovachki, N.
     et al. see Figure 2 of the reference for extra details. The Neural

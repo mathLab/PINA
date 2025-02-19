@@ -14,7 +14,7 @@ class SpatialProblem(AbstractProblem):
 
     :Example:
         >>> from pina.problem import SpatialProblem
-        >>> from pina.operators import grad
+        >>> from pina.operator import grad
         >>> from pina.equation import Equation, FixedValue
         >>> from pina import Condition
         >>> from pina.geometry import CartesianDomain

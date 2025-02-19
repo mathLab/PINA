@@ -1,7 +1,7 @@
 """ Definition of the Poisson problem on a square domain."""
 
 from pina.problem import SpatialProblem
-from pina.operators import laplacian
+from pina.operator import laplacian
 from pina import Condition
 from pina.domain import CartesianDomain
 from pina.equation.equation import Equation
