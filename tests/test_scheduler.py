@@ -1,7 +1,7 @@
 
 import torch
 import pytest
-from pina import TorchOptimizer, TorchScheduler
+from pina.optim import TorchOptimizer, TorchScheduler
 
 opt_list = [
     torch.optim.Adam,
