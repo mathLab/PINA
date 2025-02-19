@@ -4,7 +4,7 @@ import torch
 import lightning
 from .utils import check_consistency
 from .data import PinaDataModule
-from .solvers import SolverInterface, PINNInterface
+from .solver import SolverInterface, PINNInterface
 
 
 class Trainer(lightning.pytorch.Trainer):

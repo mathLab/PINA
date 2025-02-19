@@ -27,7 +27,7 @@ class InputPointsEquationCondition(ConditionInterface):
         if key == 'input_points':
             check_consistency(
                 value, (LabelTensor)
-            )  # for now only labeltensors, we need labels for the operators!
+            )  # for now only labeltensors, we need labels for the operator!
             InputPointsEquationCondition.__dict__[key].__set__(self, value)
         elif key == 'equation':
             check_consistency(value, (EquationInterface))

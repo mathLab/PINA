@@ -14,7 +14,7 @@ class TimeDependentProblem(AbstractProblem):
 
     :Example:
         >>> from pina.problem import SpatialProblem, TimeDependentProblem
-        >>> from pina.operators import grad, laplacian
+        >>> from pina.operator import grad, laplacian
         >>> from pina.equation import Equation, FixedValue
         >>> from pina import Condition
         >>> from pina.geometry import CartesianDomain

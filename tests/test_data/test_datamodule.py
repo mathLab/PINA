@@ -6,7 +6,7 @@ from pina.problem.zoo import SupervisedProblem
 from pina.graph import RadiusGraph
 from pina.data.data_module import DummyDataloader
 from pina import Trainer
-from pina.solvers import SupervisedSolver
+from pina.solver import SupervisedSolver
 from torch_geometric.data import Batch
 from torch.utils.data import DataLoader
 
