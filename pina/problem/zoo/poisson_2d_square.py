@@ -40,17 +40,15 @@ class Poisson2DSquareProblem(SpatialProblem):
     }
 
     conditions = {
-        "nil_g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "nil_g2": Condition(domain="g2", equation=FixedValue(0.0)),
-        "nil_g3": Condition(domain="g3", equation=FixedValue(0.0)),
-        "nil_g4": Condition(domain="g4", equation=FixedValue(0.0)),
-        "laplace_D": Condition(domain="D", equation=my_laplace),
+
+        'g1': Condition(domain='g1', equation=FixedValue(0.0)),
+        'g2': Condition(domain='g2', equation=FixedValue(0.0)),
+        'g3': Condition(domain='g3', equation=FixedValue(0.0)),
+        'g4': Condition(domain='g4', equation=FixedValue(0.0)),
+        'D': Condition(domain='D', equation=my_laplace),
     }
 
-    def poisson_sol(self, pts):
-        """TODO"""
+    def solution(self, pts):
+        return -(torch.sin(pts.extract(['x']) * torch.pi) *
+                 torch.sin(pts.extract(['y']) * torch.pi))
 
-        return -(
-            torch.sin(pts.extract(["x"]) * torch.pi)
-            * torch.sin(pts.extract(["y"]) * torch.pi)
-        )
