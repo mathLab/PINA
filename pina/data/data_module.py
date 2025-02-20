@@ -2,11 +2,11 @@ import logging
 import warnings
 from lightning.pytorch import LightningDataModule
 import torch
-from ..label_tensor import LabelTensor
-from torch.utils.data import DataLoader, BatchSampler, SequentialSampler, \
-    RandomSampler
+from torch_geometric.data import Data
+from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
-from .dataset import PinaDatasetFactory
+from ..label_tensor import LabelTensor
+from .dataset import PinaDatasetFactory, PinaTensorDataset
 from ..collector import Collector
 
 
@@ -61,6 +61,10 @@ class Collator:
             max_conditions_lengths is None else (
                 self._collate_standard_dataloader)
         self.dataset = dataset
+        if isinstance(self.dataset, PinaTensorDataset):
+            self._collate = self._collate_tensor_dataset
+        else:
+            self._collate = self._collate_graph_dataset
 
     def _collate_custom_dataloader(self, batch):
         return self.dataset.fetch_from_idx_list(batch)
@@ -73,7 +77,6 @@ class Collator:
         if isinstance(batch, dict):
             return batch
         conditions_names = batch[0].keys()
-
         # Condition names
         for condition_name in conditions_names:
             single_cond_dict = {}
@@ -82,15 +85,27 @@ class Collator:
                 data_list = [batch[idx][condition_name][arg] for idx in range(
                     min(len(batch),
                         self.max_conditions_lengths[condition_name]))]
-                if isinstance(data_list[0], LabelTensor):
-                    single_cond_dict[arg] = LabelTensor.stack(data_list)
-                elif isinstance(data_list[0], torch.Tensor):
-                    single_cond_dict[arg] = torch.stack(data_list)
-                else:
-                    raise NotImplementedError(
-                        f"Data type {type(data_list[0])} not supported")
+                single_cond_dict[arg] = self._collate(data_list)
+
             batch_dict[condition_name] = single_cond_dict
         return batch_dict
+
+    @staticmethod
+    def _collate_tensor_dataset(data_list):
+        if isinstance(data_list[0], LabelTensor):
+            return LabelTensor.stack(data_list)
+        if isinstance(data_list[0], torch.Tensor):
+            return torch.stack(data_list)
+        raise RuntimeError("Data must be Tensors or LabelTensor ")
+
+    def _collate_graph_dataset(self, data_list):
+        if isinstance(data_list[0], LabelTensor):
+            return LabelTensor.cat(data_list)
+        if isinstance(data_list[0], torch.Tensor):
+            return torch.cat(data_list)
+        if isinstance(data_list[0], Data):
+            return self.dataset.create_graph_batch(data_list)
+        raise RuntimeError("Data must be Tensors or LabelTensor or pyG Data")
 
     def __call__(self, batch):
         return self.callable_function(batch)
@@ -125,7 +140,7 @@ class PinaDataModule(LightningDataModule):
                  batch_size=None,
                  shuffle=True,
                  repeat=False,
-                 automatic_batching=False,
+                 automatic_batching=None,
                  num_workers=0,
                  pin_memory=False,
                  ):
@@ -158,15 +173,35 @@ class PinaDataModule(LightningDataModule):
         logging.debug('Start initialization of Pina DataModule')
         logging.info('Start initialization of Pina DataModule')
         super().__init__()
-        self.automatic_batching = automatic_batching
+
+        # Store fixed attributes
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.repeat = repeat
+        self.automatic_batching = automatic_batching
+        if batch_size is None and num_workers != 0:
+            warnings.warn(
+                "Setting num_workers when batch_size is None has no effect on "
+                "the DataLoading process.")
+            self.num_workers = 0
+        else:
+            self.num_workers = num_workers
+        if batch_size is None and pin_memory:
+            warnings.warn("Setting pin_memory to True has no effect when "
+                          "batch_size is None.")
+            self.pin_memory = False
+        else:
+            self.pin_memory = pin_memory
+
+        # Collect data
+        collector = Collector(problem)
+        collector.store_fixed_data()
+        collector.store_sample_domains()
 
         # Check if the splits are correct
         self._check_slit_sizes(train_size, test_size, val_size, predict_size)
 
-        # Begin Data splitting
+        # Split input data into subsets
         splits_dict = {}
         if train_size > 0:
             splits_dict['train'] = train_size
@@ -188,19 +223,6 @@ class PinaDataModule(LightningDataModule):
             self.predict_dataset = None
         else:
             self.predict_dataloader = super().predict_dataloader
-
-        collector = Collector(problem)
-        collector.store_fixed_data()
-        collector.store_sample_domains()
-        if batch_size is None and num_workers != 0:
-            warnings.warn(
-                "Setting num_workers when batch_size is None has no effect on "
-                "the DataLoading process.")
-        if batch_size is None and pin_memory:
-            warnings.warn("Setting pin_memory to True has no effect when "
-                          "batch_size is None.")
-        self.num_workers = num_workers
-        self.pin_memory = pin_memory
         self.collector_splits = self._create_splits(collector, splits_dict)
         self.transfer_batch_to_device = self._transfer_batch_to_device
 
@@ -316,10 +338,10 @@ class PinaDataModule(LightningDataModule):
         if self.batch_size is not None:
             sampler = PinaSampler(dataset, shuffle)
             if self.automatic_batching:
-                collate = Collator(self.find_max_conditions_lengths(split))
-
+                collate = Collator(self.find_max_conditions_lengths(split),
+                                   dataset=dataset)
             else:
-                collate = Collator(None, dataset)
+                collate = Collator(None, dataset=dataset)
             return DataLoader(dataset, self.batch_size,
                               collate_fn=collate, sampler=sampler,
                               num_workers=self.num_workers)
