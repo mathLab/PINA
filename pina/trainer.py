@@ -105,9 +105,9 @@ class Trainer(lightning.pytorch.Trainer):
         # checking compilation and automatic batching
         if compile is None or sys.platform == "win32":
             compile = False
-        if automatic_batching is None:
-            automatic_batching = False
 
+        self.automatic_batching = automatic_batching if automatic_batching \
+            is not None else False
         # set attributes
         self.compile = compile
         self.solver = solver
@@ -115,7 +115,7 @@ class Trainer(lightning.pytorch.Trainer):
         self._move_to_device()
         self.data_module = None
         self._create_datamodule(train_size, test_size, val_size, predict_size,
-                                batch_size, automatic_batching, pin_memory, 
+                                batch_size, automatic_batching, pin_memory,
                                 num_workers)
 
         # logging
