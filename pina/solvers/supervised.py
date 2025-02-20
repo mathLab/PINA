@@ -1,24 +1,13 @@
 """ Module for SupervisedSolver """
-
 import torch
-
-try:
-    from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
-except ImportError:
-    from torch.optim.lr_scheduler import (
-        _LRScheduler as LRScheduler,
-    )  # torch < 2.0
-
-from torch.optim.lr_scheduler import ConstantLR
-
-from .solver import SolverInterface
-from ..label_tensor import LabelTensor
-from ..utils import check_consistency
-from ..loss import LossInterface
 from torch.nn.modules.loss import _Loss
+from .solver import SingleSolverInterface
+from ..utils import check_consistency
+from ..loss.loss_interface import LossInterface
+from ..condition import InputOutputPointsCondition
 
 
-class SupervisedSolver(SolverInterface):
+class SupervisedSolver(SingleSolverInterface):
     r"""
     SupervisedSolver solver class. This class implements a SupervisedSolver,
     using a user specified ``model`` to solve a specific ``problem``.
@@ -47,107 +36,62 @@ class SupervisedSolver(SolverInterface):
     multiple (discretised) input functions.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        extra_features=None,
-        loss=torch.nn.MSELoss(),
-        optimizer=torch.optim.Adam,
-        optimizer_kwargs={"lr": 0.001},
-        scheduler=ConstantLR,
-        scheduler_kwargs={"factor": 1, "total_iters": 0},
-    ):
+    accepted_conditions_types = InputOutputPointsCondition
+
+    def __init__(self,
+                 problem,
+                 model,
+                 loss=None,
+                 optimizer=None,
+                 scheduler=None,
+                 weighting=None,
+                 use_lt=True):
         """
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module model: The neural network model to use.
         :param torch.nn.Module loss: The loss function used as minimizer,
             default :class:`torch.nn.MSELoss`.
-        :param torch.nn.Module extra_features: The additional input
-            features to use as augmented input.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
             use; default is :class:`torch.optim.Adam`.
-        :param dict optimizer_kwargs: Optimizer constructor keyword args.
-        :param float lr: The learning rate; default is 0.001.
         :param torch.optim.LRScheduler scheduler: Learning
             rate scheduler.
-        :param dict scheduler_kwargs: LR scheduler constructor keyword args.
+        :param WeightingInterface weighting: The loss weighting to use.
+        :param bool use_lt: Using LabelTensors as input during training.
         """
-        super().__init__(
-            models=[model],
-            problem=problem,
-            optimizers=[optimizer],
-            optimizers_kwargs=[optimizer_kwargs],
-            extra_features=extra_features,
-        )
+        if loss is None:
+            loss = torch.nn.MSELoss()
+
+        super().__init__(model=model,
+                         problem=problem,
+                         optimizer=optimizer,
+                         scheduler=scheduler,
+                         weighting=weighting,
+                         use_lt=use_lt)
 
         # check consistency
-        check_consistency(scheduler, LRScheduler, subclass=True)
-        check_consistency(scheduler_kwargs, dict)
-        check_consistency(loss, (LossInterface, _Loss), subclass=False)
-
-        # assign variables
-        self._scheduler = scheduler(self.optimizers[0], **scheduler_kwargs)
+        check_consistency(loss, (LossInterface, _Loss, torch.nn.Module),
+                          subclass=False)
         self._loss = loss
-        self._neural_net = self.models[0]
 
-    def forward(self, x):
-        """Forward pass implementation for the solver.
-
-        :param torch.Tensor x: Input tensor.
-        :return: Solver solution.
-        :rtype: torch.Tensor
+    def optimization_cycle(self, batch):
         """
-        return self.neural_net(x)
+        Perform an optimization cycle by computing the loss for each condition
+        in the given batch.
 
-    def configure_optimizers(self):
-        """Optimizer configuration for the solver.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple(list, list)
+        :param batch: A batch of data, where each element is a tuple containing
+                    a condition name and a dictionary of points. 
+        :type batch: list of tuples (str, dict)
+        :return: The computed loss for the all conditions in the batch,
+            cast to a subclass of `torch.Tensor`. It should return a dict
+            containing the condition name and the associated scalar loss.
+        :rtype: dict(torch.Tensor)
         """
-        return self.optimizers, [self.scheduler]
-
-    def training_step(self, batch, batch_idx):
-        """Solver training step.
-
-        :param batch: The batch element in the dataloader.
-        :type batch: tuple
-        :param batch_idx: The batch index.
-        :type batch_idx: int
-        :return: The sum of the loss functions.
-        :rtype: LabelTensor
-        """
-
-        condition_idx = batch["condition"]
-
-        for condition_id in range(condition_idx.min(), condition_idx.max() + 1):
-
-            condition_name = self._dataloader.condition_names[condition_id]
-            condition = self.problem.conditions[condition_name]
-            pts = batch["pts"]
-            out = batch["output"]
-
-            if condition_name not in self.problem.conditions:
-                raise RuntimeError("Something wrong happened.")
-
-            # for data driven mode
-            if not hasattr(condition, "output_points"):
-                raise NotImplementedError(
-                    f"{type(self).__name__} works only in data-driven mode."
-                )
-
-            output_pts = out[condition_idx == condition_id]
-            input_pts = pts[condition_idx == condition_id]
-
-            loss = (
-                self.loss_data(input_pts=input_pts, output_pts=output_pts)
-                * condition.data_weight
-            )
-            loss = loss.as_subclass(torch.Tensor)
-
-        self.log("mean_loss", float(loss), prog_bar=True, logger=True)
-        return loss
+        condition_loss = {}
+        for condition_name, points in batch:
+            input_pts, output_pts = points['input_points'], points['output_points']
+            condition_loss[condition_name] = self.loss_data(
+                input_pts=input_pts, output_pts=output_pts)
+        return condition_loss
 
     def loss_data(self, input_pts, output_pts):
         """
@@ -155,27 +99,15 @@ class SupervisedSolver(SolverInterface):
         the network output against the true solution. This function
         should not be override if not intentionally.
 
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
+        :param input_pts: The input to the neural networks.
+        :type input_pts: LabelTensor | torch.Tensor
+        :param output_pts: The true solution to compare the
             network solution.
-        :return: The residual loss averaged on the input coordinates
+        :type output_pts: LabelTensor | torch.Tensor
+        :return: The residual loss.
         :rtype: torch.Tensor
         """
-        return self.loss(self.forward(input_pts), output_pts)
-
-    @property
-    def scheduler(self):
-        """
-        Scheduler for training.
-        """
-        return self._scheduler
-
-    @property
-    def neural_net(self):
-        """
-        Neural network for training.
-        """
-        return self._neural_net
+        return self._loss(self.forward(input_pts), output_pts)
 
     @property
     def loss(self):

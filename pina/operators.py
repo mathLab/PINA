@@ -5,9 +5,7 @@ All operators take as input a tensor onto which computing the operator, a tensor
 to which computing the operator, the name of the output variables to calculate the operator
 for (in case of multidimensional functions), and the variables name on which the operator is calculated.
 """
-
 import torch
-
 from pina.label_tensor import LabelTensor
 
 
@@ -58,18 +56,16 @@ def grad(output_, input_, components=None, d=None):
         gradients = torch.autograd.grad(
             output_,
             input_,
-            grad_outputs=torch.ones(
-                output_.size(), dtype=output_.dtype, device=output_.device
-            ),
+            grad_outputs=torch.ones(output_.size(),
+                                    dtype=output_.dtype,
+                                    device=output_.device),
             create_graph=True,
             retain_graph=True,
             allow_unused=True,
         )[0]
-
-        gradients.labels = input_.labels
-        gradients = gradients.extract(d)
+        gradients.labels = input_.stored_labels
+        gradients = gradients[..., [input_.labels.index(i) for i in d]]
         gradients.labels = [f"d{output_fieldname}d{i}" for i in d]
-
         return gradients
 
     if not isinstance(input_, LabelTensor):
@@ -87,16 +83,13 @@ def grad(output_, input_, components=None, d=None):
             raise RuntimeError
         gradients = grad_scalar_output(output_, input_, d)
 
-    elif output_.shape[1] >= 2:  # vector output ##############################
-
+    elif output_.shape[output_.ndim -
+                       1] >= 2:  # vector output ##############################
+        tensor_to_cat = []
         for i, c in enumerate(components):
             c_output = output_.extract([c])
-            if i == 0:
-                gradients = grad_scalar_output(c_output, input_, d)
-            else:
-                gradients = gradients.append(
-                    grad_scalar_output(c_output, input_, d)
-                )
+            tensor_to_cat.append(grad_scalar_output(c_output, input_, d))
+        gradients = LabelTensor.cat(tensor_to_cat, dim=output_.tensor.ndim - 1)
     else:
         raise NotImplementedError
 
@@ -142,16 +135,14 @@ def div(output_, input_, components=None, d=None):
         raise ValueError
 
     grad_output = grad(output_, input_, components, d)
-    div = torch.zeros(input_.shape[0], 1, device=output_.device)
     labels = [None] * len(components)
+    tensors_to_sum = []
     for i, (c, d) in enumerate(zip(components, d)):
         c_fields = f"d{c}d{d}"
-        div[:, 0] += grad_output.extract(c_fields).sum(axis=1)
+        tensors_to_sum.append(grad_output.extract(c_fields))
         labels[i] = c_fields
-
-    div = div.as_subclass(LabelTensor)
-    div.labels = ["+".join(labels)]
-    return div
+    div_result = LabelTensor.summation(tensors_to_sum)
+    return div_result
 
 
 def laplacian(output_, input_, components=None, d=None, method="std"):
@@ -223,17 +214,16 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
         else:
             result = torch.empty(
-                size=(input_.shape[0], len(components)),
-                dtype=output_.dtype,
-                device=output_.device,
+                input_.shape[0], len(components), device=output_.device
             )
             labels = [None] * len(components)
             for idx, c in enumerate(components):
                 result[:, idx] = scalar_laplace(output_, input_, c, d).flatten()
                 labels[idx] = f"dd{c}"
 
-    result = result.as_subclass(LabelTensor)
-    result.labels = labels
+        result = result.as_subclass(LabelTensor)
+        result.labels = labels
+
     return result
 
 
@@ -263,11 +253,8 @@ def advection(output_, input_, velocity_field, components=None, d=None):
     if components is None:
         components = output_.labels
 
-    tmp = (
-        grad(output_, input_, components, d)
-        .reshape(-1, len(components), len(d))
-        .transpose(0, 1)
-    )
+    tmp = (grad(output_, input_, components, d).reshape(-1, len(components),
+                                                        len(d)).transpose(0, 1))
 
     tmp *= output_.extract(velocity_field)
     return tmp.sum(dim=2).T

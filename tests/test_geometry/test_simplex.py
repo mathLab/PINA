@@ -2,7 +2,7 @@ import torch
 import pytest
 
 from pina import LabelTensor
-from pina.geometry import SimplexDomain
+from pina.domain import SimplexDomain
 
 
 def test_constructor():
@@ -39,7 +39,6 @@ def test_constructor():
             LabelTensor(torch.tensor([[-2., 0.]]), labels=["x", "y"]),
             LabelTensor(torch.tensor([[-.5, .5]]), labels=["x", "y"]),
         ])
-
 
 def test_sample():
     # sampling inside

@@ -242,7 +242,7 @@ plot_trajectory(coords=initial_cond_test[sample_number].extract(['x', 't']),
 # In[8]:
 
 
-from pina.loss import PowerLoss
+from pina.loss.loss_interface import PowerLoss
 
 error_metric = PowerLoss(p=2)                                                   # we use the MSE loss
 

@@ -66,7 +66,7 @@ if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
 
 from pina.problem import SpatialProblem, TimeDependentProblem
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 
 class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
     
@@ -95,7 +95,7 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 from pina.problem import SpatialProblem
 from pina.operators import grad
 from pina import Condition
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina.equation import Equation, FixedValue
 
 import torch

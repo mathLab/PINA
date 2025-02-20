@@ -17,7 +17,7 @@
 
 from pina.problem import SpatialProblem
 from pina import Condition
-from pina.geometry import CartesianDomain
+from pina.domain import CartesianDomain
 from pina.operators import grad
 from pina.equation import Equation, FixedValue
 import torch
