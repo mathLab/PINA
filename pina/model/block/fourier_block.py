@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from ...utils import check_consistency
 
-from pina.model.block import (
+from . import (
     SpectralConvBlock1D,
     SpectralConvBlock2D,
     SpectralConvBlock3D,

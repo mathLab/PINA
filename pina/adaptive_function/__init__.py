@@ -14,7 +14,7 @@ __all__ = [
     "AdaptiveExp",
 ]
 
-from .adaptive_func import (
+from .adaptive_function import (
     AdaptiveReLU,
     AdaptiveSigmoid,
     AdaptiveTanh,
@@ -28,4 +28,4 @@ from .adaptive_func import (
     AdaptiveSIREN,
     AdaptiveExp,
 )
-from .adaptive_func_interface import AdaptiveActivationFunctionInterface
+from .adaptive_function_interface import AdaptiveActivationFunctionInterface
