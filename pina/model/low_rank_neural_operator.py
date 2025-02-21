@@ -6,7 +6,7 @@ from torch import nn, cat
 from ..utils import check_consistency
 
 from .kernel_neural_operator import KernelNeuralOperator
-from .block.lowrank_block import LowRankBlock
+from .block.low_rank_block import LowRankBlock
 
 
 class LowRankNeuralOperator(KernelNeuralOperator):

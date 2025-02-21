@@ -30,6 +30,6 @@ from .pod_block import PODBlock
 from .orthogonal import OrthogonalBlock
 from .embedding import PeriodicBoundaryEmbedding, FourierFeatureEmbedding
 from .average_neural_operator_block import AVNOBlock
-from .lowrank_block import LowRankBlock
+from .low_rank_block import LowRankBlock
 from .rbf_block import RBFBlock
 from .gno_block import GNOBlock
