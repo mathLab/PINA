@@ -92,7 +92,7 @@ class PINAProgressBar(TQDMProgressBar):
         Example:
             >>> pbar = PINAProgressBar(['mean'])
             >>> # ... Perform training ...
-            >>> trainer = Trainer(solver, callback=[pbar])
+            >>> trainer = Trainer(solver, callbacks=[pbar])
         """
         super().__init__(**kwargs)
         # check consistency
