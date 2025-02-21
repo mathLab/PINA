@@ -3,7 +3,7 @@
 import torch
 import torch.nn as nn
 from ..utils import check_consistency
-from .layers.residual import EnhancedLinear
+from .block.residual import EnhancedLinear
 
 
 class FeedForward(torch.nn.Module):

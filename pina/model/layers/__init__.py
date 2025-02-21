@@ -1,35 +1,13 @@
-__all__ = [
-    "ContinuousConvBlock",
-    "ResidualBlock",
-    "EnhancedLinear",
-    "SpectralConvBlock1D",
-    "SpectralConvBlock2D",
-    "SpectralConvBlock3D",
-    "FourierBlock1D",
-    "FourierBlock2D",
-    "FourierBlock3D",
-    "PODBlock",
-    "OrthogonalBlock",
-    "PeriodicBoundaryEmbedding",
-    "FourierFeatureEmbedding",
-    "AVNOBlock",
-    "LowRankBlock",
-    "RBFBlock",
-    "GNOBlock"
-]
+import warnings
 
-from .convolution_2d import ContinuousConvBlock
-from .residual import ResidualBlock, EnhancedLinear
-from .spectral import (
-    SpectralConvBlock1D,
-    SpectralConvBlock2D,
-    SpectralConvBlock3D,
-)
-from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
-from .pod import PODBlock
-from .orthogonal import OrthogonalBlock
-from .embedding import PeriodicBoundaryEmbedding, FourierFeatureEmbedding
-from .avno_layer import AVNOBlock
-from .lowrank_layer import LowRankBlock
-from .rbf_layer import RBFBlock
-from .gno_block import GNOBlock
+from ..block import *
+from ...utils import custom_warning_format
+
+# back-compatibility 0.1
+# Set the custom format for warnings
+warnings.formatwarning = custom_warning_format
+warnings.filterwarnings("always", category=DeprecationWarning)
+warnings.warn(
+            f"'pina.model.layers' is deprecated and will be removed "
+            f"in future versions. Please use 'pina.model.block' instead.",
+            DeprecationWarning)

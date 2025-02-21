@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from pina import Trainer
-from pina.solvers import PINN
+from pina.solver import PINN
 from pina.model import FeedForward
 from pina.problem.zoo import Poisson2DSquareProblem
 from pina.loss import ScalarWeighting

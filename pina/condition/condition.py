@@ -4,7 +4,12 @@ from .domain_equation_condition import DomainEquationCondition
 from .input_equation_condition import InputPointsEquationCondition
 from .input_output_condition import InputOutputPointsCondition
 from .data_condition import DataConditionInterface
+import warnings
+from ..utils import custom_warning_format
 
+# Set the custom format for warnings
+warnings.formatwarning = custom_warning_format
+warnings.filterwarnings("always", category=DeprecationWarning)
 
 class Condition:
     """
@@ -50,7 +55,16 @@ class Condition:
             raise ValueError("Condition takes only the following keyword "
                              f"arguments: {Condition.__slots__}.")
 
+        # back-compatibility 0.1
+        if 'location' in kwargs.keys():
+            kwargs['domain'] = kwargs.pop('location')
+            warnings.warn(
+            f"'location' is deprecated and will be removed "
+            f"in future versions. Please use 'domain' instead.",
+            DeprecationWarning)
+
         sorted_keys = sorted(kwargs.keys())
+
         if sorted_keys == sorted(InputOutputPointsCondition.__slots__):
             return InputOutputPointsCondition(**kwargs)
         elif sorted_keys == sorted(InputPointsEquationCondition.__slots__):

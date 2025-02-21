@@ -5,7 +5,7 @@ from pina import Condition, LabelTensor
 from pina.problem import SpatialProblem, TimeDependentProblem, InverseProblem
 from pina.equation.equation import Equation
 from pina.domain import CartesianDomain
-from pina.operators import grad
+from pina.operator import grad
 
 def diffusion_reaction(input_, output_):
     """

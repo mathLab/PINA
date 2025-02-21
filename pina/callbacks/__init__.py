@@ -1,10 +1,13 @@
-__all__ = [
-    "SwitchOptimizer",
-    "R3Refinement",
-    "MetricTracker",
-    "PINAProgressBar",
-]
+import warnings
 
-from .optimizer_callbacks import SwitchOptimizer
-from .adaptive_refinment_callbacks import R3Refinement
-from .processing_callbacks import MetricTracker, PINAProgressBar
+from ..callback import *
+from ..utils import custom_warning_format
+
+# back-compatibility 0.1
+# Set the custom format for warnings
+warnings.formatwarning = custom_warning_format
+warnings.filterwarnings("always", category=DeprecationWarning)
+warnings.warn(
+            f"'pina.callbacks' is deprecated and will be removed "
+            f"in future versions. Please use 'pina.callback' instead.",
+            DeprecationWarning)

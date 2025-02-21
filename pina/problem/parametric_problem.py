@@ -16,7 +16,7 @@ class ParametricProblem(AbstractProblem):
 
     :Example:
         >>> from pina.problem import SpatialProblem, ParametricProblem
-        >>> from pina.operators import grad
+        >>> from pina.operator import grad
         >>> from pina.equations import Equation, FixedValue
         >>> from pina import Condition
         >>> from pina.geometry import CartesianDomain

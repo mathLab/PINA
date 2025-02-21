@@ -16,9 +16,9 @@ __all__ = [
 from .feed_forward import FeedForward, ResidualFeedForward
 from .multi_feed_forward import MultiFeedForward
 from .deeponet import DeepONet, MIONet
-from .fno import FNO, FourierIntegralKernel
-from .base_no import KernelNeuralOperator
-from .avno import AveragingNeuralOperator
-from .lno import LowRankNeuralOperator
+from .fourier_neural_operator import FNO, FourierIntegralKernel
+from .kernel_neural_operator import KernelNeuralOperator
+from .average_neural_operator import AveragingNeuralOperator
+from .low_rank_neural_operator import LowRankNeuralOperator
 from .spline import Spline
-from .gno import GraphNeuralOperator
+from .graph_neural_operator import GraphNeuralOperator

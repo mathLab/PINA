@@ -16,7 +16,7 @@ class InverseProblem(AbstractProblem):
 
     :Example:
         >>> from pina.problem import SpatialProblem, InverseProblem
-        >>> from pina.operators import grad
+        >>> from pina.operator import grad
         >>> from pina.equation import ParametricEquation, FixedValue
         >>> from pina import Condition
         >>> from pina.geometry import CartesianDomain

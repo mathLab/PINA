@@ -1,7 +1,6 @@
 """Module for Spline model"""
 
 import torch
-import torch.nn as nn
 from ..utils import check_consistency
 
 

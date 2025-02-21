@@ -2,7 +2,7 @@ import torch
 from pina.problem import AbstractProblem
 from pina.condition import InputOutputPointsCondition
 from pina.problem.zoo.supervised_problem import SupervisedProblem
-from pina import RadiusGraph
+from pina.graph import RadiusGraph
 
 def test_constructor():
     input_ = torch.rand((100,10))

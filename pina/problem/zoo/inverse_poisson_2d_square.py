@@ -3,7 +3,7 @@
 import torch
 from pina import Condition, LabelTensor
 from pina.problem import SpatialProblem, InverseProblem
-from pina.operators import laplacian
+from pina.operator import laplacian
 from pina.domain import CartesianDomain
 from pina.equation.equation import Equation
 from pina.equation.equation_factory import FixedValue

@@ -1,17 +1,14 @@
-__all__ = [
-    "PINNInterface",
-    "PINN",
-    "GradientPINN",
-    "CausalPINN",
-    "CompetitivePINN",
-    "SelfAdaptivePINN",
-    "RBAPINN",
-]
+import warnings
 
-from .pinn_interface import PINNInterface
-from .pinn import PINN
-from .rba_pinn import RBAPINN
-from .causal_pinn import CausalPINN
-from .gradient_pinn import GradientPINN
-from .competitive_pinn import CompetitivePINN
-from .self_adaptive_pinn import SelfAdaptivePINN
+from ...solver.physic_informed_solver import *
+from ...utils import custom_warning_format
+
+# back-compatibility 0.1
+# Set the custom format for warnings
+warnings.formatwarning = custom_warning_format
+warnings.filterwarnings("always", category=DeprecationWarning)
+warnings.warn(
+            "'pina.solvers.pinns' is deprecated and will be removed "
+            "in future versions. Please use "
+            "'pina.solver.physic_informed_solver' instead.",
+            DeprecationWarning)

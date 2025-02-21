@@ -7,7 +7,7 @@ from pina.problem import AbstractProblem, SpatialProblem
 from pina.domain import CartesianDomain
 from pina.equation.equation import Equation
 from pina.equation.equation_factory import FixedValue
-from pina.operators import laplacian
+from pina.operator import laplacian
 from pina.collector import Collector
 
 
