@@ -1,7 +1,7 @@
 import torch
 from torch.nn import Tanh
 from .block import GNOBlock
-from .base_no import KernelNeuralOperator
+from .kernel_neural_operator import KernelNeuralOperator
 
 
 class GraphNeuralKernel(torch.nn.Module):

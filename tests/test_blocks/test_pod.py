@@ -1,7 +1,7 @@
 import torch
 import pytest
 
-from pina.model.block.pod import PODBlock
+from pina.model.block.pod_block import PODBlock
 
 x = torch.linspace(-1, 1, 100)
 toy_snapshots = torch.vstack([torch.exp(-x**2)*c for c in torch.linspace(0, 1, 10)])

@@ -2,7 +2,7 @@
 
 import torch
 from ..utils import check_consistency
-from .adaptive_func_interface import AdaptiveActivationFunctionInterface
+from .adaptive_function_interface import AdaptiveActivationFunctionInterface
 
 
 class AdaptiveReLU(AdaptiveActivationFunctionInterface):

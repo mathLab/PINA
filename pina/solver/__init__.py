@@ -17,5 +17,5 @@ __all__ = [
 from .solver import SolverInterface, SingleSolverInterface, MultiSolverInterface
 from .physic_informed_solver import *
 from .supervised import SupervisedSolver
-from .rom import ReducedOrderModelSolver
+from .reduced_order_model import ReducedOrderModelSolver
 from .garom import GAROM
