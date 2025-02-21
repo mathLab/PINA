@@ -6,5 +6,5 @@ __all__ = [
 ]
 
 from .optimizer_callback import SwitchOptimizer
-from .adaptive_refinment_callback import R3Refinement
+from .adaptive_refinement_callback import R3Refinement
 from .processing_callback import MetricTracker, PINAProgressBar
