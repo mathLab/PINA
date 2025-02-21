@@ -7,8 +7,8 @@ import torch.nn as nn
 from ..label_tensor import LabelTensor
 import warnings
 from ..utils import check_consistency
-from .block.fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
-from .base_no import KernelNeuralOperator
+from .block.fourier_block import FourierBlock1D, FourierBlock2D, FourierBlock3D
+from .kernel_neural_operator import KernelNeuralOperator
 
 
 class FourierIntegralKernel(torch.nn.Module):

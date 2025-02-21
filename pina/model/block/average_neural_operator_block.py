@@ -1,7 +1,7 @@
 """ Module for Averaging Neural Operator Layer class. """
 
 from torch import nn, mean
-from pina.utils import check_consistency
+from ...utils import check_consistency
 
 
 class AVNOBlock(nn.Module):
