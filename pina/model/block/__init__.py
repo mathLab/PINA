@@ -25,11 +25,11 @@ from .spectral import (
     SpectralConvBlock2D,
     SpectralConvBlock3D,
 )
-from .fourier import FourierBlock1D, FourierBlock2D, FourierBlock3D
-from .pod import PODBlock
+from .fourier_block import FourierBlock1D, FourierBlock2D, FourierBlock3D
+from .pod_block import PODBlock
 from .orthogonal import OrthogonalBlock
 from .embedding import PeriodicBoundaryEmbedding, FourierFeatureEmbedding
-from .avno_layer import AVNOBlock
-from .lowrank_layer import LowRankBlock
-from .rbf_layer import RBFBlock
+from .average_neural_operator_block import AVNOBlock
+from .lowrank_block import LowRankBlock
+from .rbf_block import RBFBlock
 from .gno_block import GNOBlock
