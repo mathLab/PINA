@@ -3,6 +3,7 @@ from logging import warning
 import torch
 
 from . import LabelTensor
+from .utils import check_consistency
 from torch_geometric.data import Data
 from torch_geometric.utils import to_undirected
 import inspect
@@ -149,7 +150,7 @@ class Graph:
         if isinstance(x, list) and isinstance(pos, list):
             if len(x) != len(pos):
                 raise ValueError("x and pos must have the same length.")
-            return max(len(x), len(pos))
+            return len(x)
         elif isinstance(x, list) and not isinstance(pos, list):
             return len(x)
         elif not isinstance(x, list) and isinstance(pos, list):
@@ -206,27 +207,32 @@ class Graph:
             for param, val in additional_params.items():
                 # Check if the values are tensors or lists of tensors
                 if isinstance(val, torch.Tensor):
-                    # If the tensor is 3D, we split it into a list of 2D tensors
-                    # In this case there must be a additional parameter for each
-                    # node
-                    if val.ndim == 3:
+                    # If the length of the tensor is equal to the number of
+                    # graphs, we store the values as a list
+                    if len(val) == data_len:
                         additional_params[param] = [
-                            val[i] for i in range(val.shape[0])
+                            val[i] for i in range(data_len)
                         ]
-                    # If the tensor is 2D, we replicate it for each node
-                    elif val.ndim == 2:
+                    # If the length of the tensor is not equal to the number of
+                    # graphs, we replicate the values
+                    else:
                         additional_params[param] = [val] * data_len
-                    # If the tensor is 1D, each graph has a scalar values as
-                    # additional parameter
-                    if val.ndim == 1:
-                        if len(val) == data_len:
-                            additional_params[param] = [
-                                val[i] for i in range(len(val))
-                            ]
-                        else:
-                            additional_params[param] = [
-                                val for _ in range(data_len)
-                            ]
+                # Case in which the additional parameter is a list of tensors
+                elif isinstance(val, list):
+                    # Raise error if the list contains elements that are not
+                    # tensors
+                    if not all(isinstance(v, torch.Tensor) for v in val):
+                        raise RuntimeError(
+                            "additional_params values must be tensors "
+                            "or lists of tensors."
+                        )
+                    # Check if the the length of the list is consistent with the
+                    # number of graphs
+                    if len(val) != data_len:
+                        raise RuntimeError(
+                            "The first dimension of the tensor "
+                            "must be equal to the number of graphs."
+                        )
                 elif not isinstance(val, list):
                     raise TypeError(
                         "additional_params values must be tensors "
@@ -249,7 +255,7 @@ class Graph:
             if isinstance(edge_attr, list):
                 if len(edge_attr) != data_len:
                     raise TypeError(
-                        "edge_attr must have the same length as x " "and pos."
+                        "edge_attr must have the same length as x and pos."
                     )
             return [edge_attr] * data_len
 
@@ -263,7 +269,7 @@ class Graph:
 class RadiusGraph(Graph):
     def __init__(self, x, pos, r, **kwargs):
         x, pos, edge_index = Graph._check_input_consistency(x, pos)
-
+        check_consistency(r, float)
         if isinstance(pos, (torch.Tensor, LabelTensor)):
             edge_index = RadiusGraph._radius_graph(pos, r)
         else:
@@ -292,6 +298,7 @@ class RadiusGraph(Graph):
 class KNNGraph(Graph):
     def __init__(self, x, pos, k, **kwargs):
         x, pos, edge_index = Graph._check_input_consistency(x, pos)
+        check_consistency(k, int)
         if isinstance(pos, (torch.Tensor, LabelTensor)):
             edge_index = KNNGraph._knn_graph(pos, k)
         else:
@@ -309,6 +316,8 @@ class KNNGraph(Graph):
         :return: The edge index.
         :rtype: torch.Tensor
         """
+        if isinstance(points, LabelTensor):
+            points = points.tensor
         dist = torch.cdist(points, points, p=2)
         knn_indices = torch.topk(dist, k=k + 1, largest=False).indices[:, 1:]
         row = torch.arange(points.size(0)).repeat_interleave(k)
