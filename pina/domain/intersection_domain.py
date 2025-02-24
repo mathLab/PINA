@@ -1,4 +1,4 @@
-"""Module for Intersection class. """
+"""Module for Intersection class."""
 
 import torch
 from ..label_tensor import LabelTensor

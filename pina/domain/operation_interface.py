@@ -1,4 +1,4 @@
-""" Module for OperationInterface class. """
+"""Module for OperationInterface class."""
 
 from .domain_interface import DomainInterface
 from ..utils import check_consistency

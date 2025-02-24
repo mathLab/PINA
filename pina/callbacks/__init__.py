@@ -8,6 +8,7 @@ from ..utils import custom_warning_format
 warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=DeprecationWarning)
 warnings.warn(
-            f"'pina.callbacks' is deprecated and will be removed "
-            f"in future versions. Please use 'pina.callback' instead.",
-            DeprecationWarning)
+    f"'pina.callbacks' is deprecated and will be removed "
+    f"in future versions. Please use 'pina.callback' instead.",
+    DeprecationWarning,
+)

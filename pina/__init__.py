@@ -1,11 +1,11 @@
 __all__ = [
     "Trainer",
-    "LabelTensor", 
+    "LabelTensor",
     "Condition",
     "PinaDataModule",
-    'Graph',
+    "Graph",
     "SolverInterface",
-    "MultiSolverInterface"
+    "MultiSolverInterface",
 ]
 
 from .label_tensor import LabelTensor

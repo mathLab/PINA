@@ -11,7 +11,8 @@ Location = DomainInterface
 warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=DeprecationWarning)
 warnings.warn(
-            "'pina.geometry' is deprecated and will be removed "
-            "in future versions. Please use 'pina.domain' instead. "
-            "Location moved to DomainInferface object.",
-            DeprecationWarning)
+    "'pina.geometry' is deprecated and will be removed "
+    "in future versions. Please use 'pina.domain' instead. "
+    "Location moved to DomainInferface object.",
+    DeprecationWarning,
+)

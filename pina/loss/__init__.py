@@ -1,9 +1,9 @@
 __all__ = [
-    'LossInterface',
-    'LpLoss',
-    'PowerLoss',
-    'WeightingInterface',
-    'ScalarWeighting'
+    "LossInterface",
+    "LpLoss",
+    "PowerLoss",
+    "WeightingInterface",
+    "ScalarWeighting",
 ]
 
 from .loss_interface import LossInterface

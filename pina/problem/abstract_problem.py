@@ -1,4 +1,4 @@
-""" Module for AbstractProblem class """
+"""Module for AbstractProblem class"""
 
 from abc import ABCMeta, abstractmethod
 from ..utils import check_consistency
@@ -60,7 +60,7 @@ class AbstractProblem(metaclass=ABCMeta):
             elif hasattr(cond, "domain"):
                 to_return[cond_name] = self._discretised_domains[cond.domain]
         return to_return
-    
+
     @property
     def discretised_domains(self):
         return self._discretised_domains
@@ -138,11 +138,9 @@ class AbstractProblem(metaclass=ABCMeta):
         """
         return self.conditions
 
-    def discretise_domain(self,
-                          n=None,
-                          mode="random",
-                          domains="all",
-                          sample_rules=None):
+    def discretise_domain(
+        self, n=None, mode="random", domains="all", sample_rules=None
+    ):
         """
         Generate a set of points to span the `Location` of all the conditions of
         the problem.
@@ -193,9 +191,7 @@ class AbstractProblem(metaclass=ABCMeta):
                 "You can't specify both n and sample_rules at the same time."
             )
         elif n is None and sample_rules is None:
-            raise RuntimeError(
-                "You have to specify either n or sample_rules."
-            )
+            raise RuntimeError("You have to specify either n or sample_rules.")
 
     def _apply_default_discretization(self, n, mode, domains):
         for domain in domains:
@@ -213,15 +209,17 @@ class AbstractProblem(metaclass=ABCMeta):
             if not isinstance(self.domains[domain], CartesianDomain):
                 raise RuntimeError(
                     "Custom discretisation can be applied only on Cartesian "
-                    "domains")
+                    "domains"
+                )
             discretised_tensor = []
             for var, rules in sample_rules.items():
-                n, mode = rules['n'], rules['mode']
+                n, mode = rules["n"], rules["mode"]
                 points = self.domains[domain].sample(n, mode, var)
                 discretised_tensor.append(points)
 
             self.discretised_domains[domain] = merge_tensors(
-                discretised_tensor).sort_labels()
+                discretised_tensor
+            ).sort_labels()
 
     def add_points(self, new_points_dict):
         """
@@ -232,4 +230,5 @@ class AbstractProblem(metaclass=ABCMeta):
         """
         for k, v in new_points_dict.items():
             self.discretised_domains[k] = LabelTensor.vstack(
-                [self.discretised_domains[k], v])
+                [self.discretised_domains[k], v]
+            )

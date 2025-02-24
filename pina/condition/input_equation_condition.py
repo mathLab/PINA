@@ -24,13 +24,13 @@ class InputPointsEquationCondition(ConditionInterface):
         self.equation = equation
 
     def __setattr__(self, key, value):
-        if key == 'input_points':
+        if key == "input_points":
             check_consistency(
                 value, (LabelTensor)
             )  # for now only labeltensors, we need labels for the operator!
             InputPointsEquationCondition.__dict__[key].__set__(self, value)
-        elif key == 'equation':
+        elif key == "equation":
             check_consistency(value, (EquationInterface))
             InputPointsEquationCondition.__dict__[key].__set__(self, value)
-        elif key in ('_problem', '_condition_type'):
+        elif key in ("_problem", "_condition_type"):
             super().__setattr__(key, value)

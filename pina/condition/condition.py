@@ -1,4 +1,4 @@
-""" Condition module. """
+"""Condition module."""
 
 from .domain_equation_condition import DomainEquationCondition
 from .input_equation_condition import InputPointsEquationCondition
@@ -10,6 +10,7 @@ from ..utils import custom_warning_format
 # Set the custom format for warnings
 warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=DeprecationWarning)
+
 
 class Condition:
     """
@@ -44,24 +45,30 @@ class Condition:
     """
 
     __slots__ = list(
-        set(InputOutputPointsCondition.__slots__ +
-            InputPointsEquationCondition.__slots__ +
-            DomainEquationCondition.__slots__ +
-            DataConditionInterface.__slots__))
+        set(
+            InputOutputPointsCondition.__slots__
+            + InputPointsEquationCondition.__slots__
+            + DomainEquationCondition.__slots__
+            + DataConditionInterface.__slots__
+        )
+    )
 
     def __new__(cls, *args, **kwargs):
 
         if len(args) != 0:
-            raise ValueError("Condition takes only the following keyword "
-                             f"arguments: {Condition.__slots__}.")
+            raise ValueError(
+                "Condition takes only the following keyword "
+                f"arguments: {Condition.__slots__}."
+            )
 
         # back-compatibility 0.1
-        if 'location' in kwargs.keys():
-            kwargs['domain'] = kwargs.pop('location')
+        if "location" in kwargs.keys():
+            kwargs["domain"] = kwargs.pop("location")
             warnings.warn(
-            f"'location' is deprecated and will be removed "
-            f"in future versions. Please use 'domain' instead.",
-            DeprecationWarning)
+                f"'location' is deprecated and will be removed "
+                f"in future versions. Please use 'domain' instead.",
+                DeprecationWarning,
+            )
 
         sorted_keys = sorted(kwargs.keys())
 

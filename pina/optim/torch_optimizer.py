@@ -1,4 +1,4 @@
-""" Module for PINA Torch Optimizer """
+"""Module for PINA Torch Optimizer"""
 
 import torch
 
@@ -16,8 +16,10 @@ class TorchOptimizer(Optimizer):
         self._optimizer_instance = None
 
     def hook(self, parameters):
-        self._optimizer_instance = self.optimizer_class(parameters,
-                                                       **self.kwargs)
+        self._optimizer_instance = self.optimizer_class(
+            parameters, **self.kwargs
+        )
+
     @property
     def instance(self):
         """
