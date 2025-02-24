@@ -67,7 +67,7 @@ class R3Refinement(Callback):
         # compute residual
         res_loss = {}
         tot_loss = []
-        for location in self._sampling_locations: #TODO fix for new collector
+        for location in self._sampling_locations:  # TODO fix for new collector
             condition = solver.problem.conditions[location]
             pts = solver.problem.input_pts[location]
             # send points to correct device

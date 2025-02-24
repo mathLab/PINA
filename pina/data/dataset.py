@@ -1,6 +1,7 @@
 """
 This module provide basic data management functionalities
 """
+
 import functools
 import torch
 from torch.utils.data import Dataset
@@ -19,15 +20,24 @@ class PinaDatasetFactory:
 
     def __new__(cls, conditions_dict, **kwargs):
         if len(conditions_dict) == 0:
-            raise ValueError('No conditions provided')
-        if all([isinstance(v['input_points'], torch.Tensor) for v
-                in conditions_dict.values()]):
+            raise ValueError("No conditions provided")
+        if all(
+            [
+                isinstance(v["input_points"], torch.Tensor)
+                for v in conditions_dict.values()
+            ]
+        ):
             return PinaTensorDataset(conditions_dict, **kwargs)
-        elif all([isinstance(v['input_points'], list) for v
-                  in conditions_dict.values()]):
+        elif all(
+            [
+                isinstance(v["input_points"], list)
+                for v in conditions_dict.values()
+            ]
+        ):
             return PinaGraphDataset(conditions_dict, **kwargs)
-        raise ValueError('Conditions must be either torch.Tensor or list of Data '
-                         'objects.')
+        raise ValueError(
+            "Conditions must be either torch.Tensor or list of Data " "objects."
+        )
 
 
 class PinaDataset(Dataset):
@@ -38,14 +48,15 @@ class PinaDataset(Dataset):
     def __init__(self, conditions_dict, max_conditions_lengths):
         self.conditions_dict = conditions_dict
         self.max_conditions_lengths = max_conditions_lengths
-        self.conditions_length = {k: len(v['input_points']) for k, v in
-                                  self.conditions_dict.items()}
+        self.conditions_length = {
+            k: len(v["input_points"]) for k, v in self.conditions_dict.items()
+        }
         self.length = max(self.conditions_length.values())
 
     def _get_max_len(self):
         max_len = 0
         for condition in self.conditions_dict.values():
-            max_len = max(max_len, len(condition['input_points']))
+            max_len = max(max_len, len(condition["input_points"]))
         return max_len
 
     def __len__(self):
@@ -57,8 +68,9 @@ class PinaDataset(Dataset):
 
 
 class PinaTensorDataset(PinaDataset):
-    def __init__(self, conditions_dict, max_conditions_lengths,
-                 automatic_batching):
+    def __init__(
+        self, conditions_dict, max_conditions_lengths, automatic_batching
+    ):
         super().__init__(conditions_dict, max_conditions_lengths)
 
         if automatic_batching:
@@ -68,19 +80,23 @@ class PinaTensorDataset(PinaDataset):
 
     def _getitem_int(self, idx):
         return {
-            k: {k_data: v[k_data][idx % len(v['input_points'])] for k_data
-                in v.keys()} for k, v in self.conditions_dict.items()
+            k: {
+                k_data: v[k_data][idx % len(v["input_points"])]
+                for k_data in v.keys()
+            }
+            for k, v in self.conditions_dict.items()
         }
 
     def fetch_from_idx_list(self, idx):
         to_return_dict = {}
         for condition, data in self.conditions_dict.items():
-            cond_idx = idx[:self.max_conditions_lengths[condition]]
+            cond_idx = idx[: self.max_conditions_lengths[condition]]
             condition_len = self.conditions_length[condition]
             if self.length > condition_len:
                 cond_idx = [idx % condition_len for idx in cond_idx]
-            to_return_dict[condition] = {k: v[cond_idx]
-                                         for k, v in data.items()}
+            to_return_dict[condition] = {
+                k: v[cond_idx] for k, v in data.items()
+            }
         return to_return_dict
 
     @staticmethod
@@ -99,15 +115,14 @@ class PinaTensorDataset(PinaDataset):
         """
         Method to return input points for training.
         """
-        return {
-            k: v['input_points'] for k, v in self.conditions_dict.items()
-        }
+        return {k: v["input_points"] for k, v in self.conditions_dict.items()}
 
 
 class PinaBatch(Batch):
     """
     Add extract function to torch_geometric Batch object
     """
+
     def __init__(self):
 
         super().__init__(self)
@@ -116,8 +131,8 @@ class PinaBatch(Batch):
         """
         Perform extraction of labels on node features (x)
 
-        :param labels: Labels to extract 
-        :type labels: list[str] | tuple[str] | str 
+        :param labels: Labels to extract
+        :type labels: list[str] | tuple[str] | str
         :return: Batch object with extraction performed on x
         :rtype: PinaBatch
         """
@@ -127,8 +142,9 @@ class PinaBatch(Batch):
 
 class PinaGraphDataset(PinaDataset):
 
-    def __init__(self, conditions_dict, max_conditions_lengths,
-                 automatic_batching):
+    def __init__(
+        self, conditions_dict, max_conditions_lengths, automatic_batching
+    ):
         super().__init__(conditions_dict, max_conditions_lengths)
         self.in_labels = {}
         self.out_labels = None
@@ -137,35 +153,43 @@ class PinaGraphDataset(PinaDataset):
         else:
             self._getitem_func = self._getitem_dummy
 
-        ex_data = conditions_dict[list(conditions_dict.keys())[
-            0]]['input_points'][0]
+        ex_data = conditions_dict[list(conditions_dict.keys())[0]][
+            "input_points"
+        ][0]
         for name, attr in ex_data.items():
             if isinstance(attr, LabelTensor):
                 self.in_labels[name] = attr.stored_labels
-        ex_data = conditions_dict[list(conditions_dict.keys())[
-            0]]['output_points'][0]
+        ex_data = conditions_dict[list(conditions_dict.keys())[0]][
+            "output_points"
+        ][0]
         if isinstance(ex_data, LabelTensor):
             self.out_labels = ex_data.labels
 
-        self._create_graph_batch_from_list = self._labelise_batch(
-            self._base_create_graph_batch_from_list) if self.in_labels \
+        self._create_graph_batch_from_list = (
+            self._labelise_batch(self._base_create_graph_batch_from_list)
+            if self.in_labels
             else self._base_create_graph_batch_from_list
+        )
 
-        self._create_output_batch = self._labelise_tensor(
-            self._base_create_output_batch) if self.out_labels is not None \
+        self._create_output_batch = (
+            self._labelise_tensor(self._base_create_output_batch)
+            if self.out_labels is not None
             else self._base_create_output_batch
+        )
 
     def fetch_from_idx_list(self, idx):
         to_return_dict = {}
         for condition, data in self.conditions_dict.items():
-            cond_idx = idx[:self.max_conditions_lengths[condition]]
+            cond_idx = idx[: self.max_conditions_lengths[condition]]
             condition_len = self.conditions_length[condition]
             if self.length > condition_len:
                 cond_idx = [idx % condition_len for idx in cond_idx]
             to_return_dict[condition] = {
-                k: self._create_graph_batch_from_list([v[i] for i in idx])
-                if isinstance(v, list)
-                else self._create_output_batch(v[idx])
+                k: (
+                    self._create_graph_batch_from_list([v[i] for i in idx])
+                    if isinstance(v, list)
+                    else self._create_output_batch(v[idx])
+                )
                 for k, v in data.items()
             }
 
@@ -184,8 +208,11 @@ class PinaGraphDataset(PinaDataset):
 
     def _getitem_int(self, idx):
         return {
-            k: {k_data: v[k_data][idx % len(v['input_points'])] for k_data
-                in v.keys()} for k, v in self.conditions_dict.items()
+            k: {
+                k_data: v[k_data][idx % len(v["input_points"])]
+                for k_data in v.keys()
+            }
+            for k, v in self.conditions_dict.items()
         }
 
     def get_all_data(self):
@@ -204,6 +231,7 @@ class PinaGraphDataset(PinaDataset):
                 tmp.labels = v
                 batch[k] = tmp
             return batch
+
         return wrapper
 
     def _labelise_tensor(self, func):
@@ -213,6 +241,7 @@ class PinaGraphDataset(PinaDataset):
             if isinstance(out, LabelTensor):
                 out.labels = self.out_labels
             return out
+
         return wrapper
 
     def create_graph_batch(self, data):

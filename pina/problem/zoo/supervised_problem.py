@@ -2,6 +2,7 @@ from pina.problem import AbstractProblem
 from pina import Condition
 from pina import Graph
 
+
 class SupervisedProblem(AbstractProblem):
     """
     A problem definition for supervised learning in PINA.
@@ -15,6 +16,7 @@ class SupervisedProblem(AbstractProblem):
         >>> output_data = torch.rand((100, 10))
         >>> problem = SupervisedProblem(input_data, output_data)
     """
+
     conditions = dict()
     output_variables = None
 
@@ -29,9 +31,7 @@ class SupervisedProblem(AbstractProblem):
         """
         if isinstance(input_, Graph):
             input_ = input_.data
-        self.conditions['data'] = Condition(
-            input_points=input_,
-            output_points = output_
+        self.conditions["data"] = Condition(
+            input_points=input_, output_points=output_
         )
         super().__init__()
-        

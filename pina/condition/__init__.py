@@ -1,9 +1,9 @@
 __all__ = [
-    'Condition',
-    'ConditionInterface',
-    'DomainEquationCondition',
-    'InputPointsEquationCondition',
-    'InputOutputPointsCondition',
+    "Condition",
+    "ConditionInterface",
+    "DomainEquationCondition",
+    "InputPointsEquationCondition",
+    "InputOutputPointsCondition",
 ]
 
 from .condition_interface import ConditionInterface

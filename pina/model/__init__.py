@@ -10,7 +10,7 @@ __all__ = [
     "AveragingNeuralOperator",
     "LowRankNeuralOperator",
     "Spline",
-    "GraphNeuralOperator"
+    "GraphNeuralOperator",
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward

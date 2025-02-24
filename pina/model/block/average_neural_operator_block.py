@@ -1,4 +1,4 @@
-""" Module for Averaging Neural Operator Layer class. """
+"""Module for Averaging Neural Operator Layer class."""
 
 from torch import nn, mean
 from ...utils import check_consistency

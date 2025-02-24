@@ -34,6 +34,9 @@ test = [
     "pytest-cov",
     "scipy"
 ]
+dev = [
+    "black @ git+https://github.com/psf/black"
+]
 
 [project.urls]
 Homepage = "https://mathlab.github.io/PINA/"

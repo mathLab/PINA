@@ -1,11 +1,13 @@
-""" Module for PINA Torch Optimizer """
+"""Module for PINA Torch Optimizer"""
 
 import torch
+
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
     from torch.optim.lr_scheduler import (
-        _LRScheduler as LRScheduler, )  # torch < 2.0
+        _LRScheduler as LRScheduler,
+    )  # torch < 2.0
 
 from ..utils import check_consistency
 from .optimizer_interface import Optimizer
@@ -24,7 +26,8 @@ class TorchScheduler(Scheduler):
     def hook(self, optimizer):
         check_consistency(optimizer, Optimizer)
         self._scheduler_instance = self.scheduler_class(
-            optimizer.instance, **self.kwargs)
+            optimizer.instance, **self.kwargs
+        )
 
     @property
     def instance(self):
