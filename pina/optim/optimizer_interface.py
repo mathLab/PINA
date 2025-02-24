@@ -1,4 +1,4 @@
-""" Module for PINA Optimizer """
+"""Module for PINA Optimizer"""
 
 from abc import ABCMeta, abstractmethod
 

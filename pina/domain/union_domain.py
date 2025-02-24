@@ -1,4 +1,4 @@
-"""Module for Union class. """
+"""Module for Union class."""
 
 import torch
 from .operation_interface import OperationInterface

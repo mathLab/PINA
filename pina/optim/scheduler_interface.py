@@ -1,9 +1,9 @@
-""" Module for PINA Optimizer """
+"""Module for PINA Optimizer"""
 
 from abc import ABCMeta, abstractmethod
 
 
-class Scheduler(metaclass=ABCMeta): # TODO improve interface
+class Scheduler(metaclass=ABCMeta):  # TODO improve interface
 
     @property
     @abstractmethod

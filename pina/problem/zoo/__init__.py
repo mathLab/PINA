@@ -1,9 +1,9 @@
 __all__ = [
-    'Poisson2DSquareProblem',
-    'SupervisedProblem',
-    'InversePoisson2DSquareProblem',
-    'DiffusionReactionProblem',
-    'InverseDiffusionReactionProblem'
+    "Poisson2DSquareProblem",
+    "SupervisedProblem",
+    "InversePoisson2DSquareProblem",
+    "DiffusionReactionProblem",
+    "InverseDiffusionReactionProblem",
 ]
 
 from .poisson_2d_square import Poisson2DSquareProblem

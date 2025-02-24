@@ -1,4 +1,4 @@
-""" Embedding modulus. """
+"""Embedding modulus."""
 
 import torch
 from pina.utils import check_consistency

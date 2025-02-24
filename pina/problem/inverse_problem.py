@@ -1,4 +1,5 @@
 """Module for the ParametricProblem class"""
+
 import torch
 from abc import abstractmethod
 from .abstract_problem import AbstractProblem
@@ -51,12 +52,9 @@ class InverseProblem(AbstractProblem):
         for i, var in enumerate(self.unknown_variables):
             range_var = self.unknown_parameter_domain.range_[var]
             tensor_var = (
-                torch.rand(1, requires_grad=True) * range_var[1]
-                + range_var[0]
+                torch.rand(1, requires_grad=True) * range_var[1] + range_var[0]
             )
-            self.unknown_parameters[var] = torch.nn.Parameter(
-                tensor_var
-            )
+            self.unknown_parameters[var] = torch.nn.Parameter(tensor_var)
 
     @abstractmethod
     def unknown_parameter_domain(self):
