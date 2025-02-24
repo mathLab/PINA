@@ -1,0 +1,19 @@
+name: Black Formatter (PR Check)
+
+on:
+  pull_request:
+    branches:
+      - "**"  # Run on pull requests for all branches
+
+jobs:
+  linter:
+    name: runner / black
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run Black formatter (check mode)
+        uses: psf/black@stable
+        with:
+          options: "--check -l 80"
+          src: "./pina"

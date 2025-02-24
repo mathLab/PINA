@@ -1,7 +1,3 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "pina-mathlab"
 version = "0.2.0"
@@ -18,21 +14,44 @@ keywords = [
     "neural-operators", "equation-learning", "lightining"
 ]
 dependencies = [
-    "torch", "lightning", "torch_geometric", "matplotlib",
+    "torch",
+    "lightning",
+    "torch_geometric",
+    "matplotlib",
 ]
 requires-python = ">=3.8"
 
 [project.optional-dependencies]
 docs = [
-    "sphinx>5.0", "sphinx_rtd_theme", "sphinx_copybutton", "sphinx_design", "pydata_sphinx_theme"
+    "sphinx>5.0",
+    "sphinx_rtd_theme",
+    "sphinx_copybutton",
+    "sphinx_design",
+    "pydata_sphinx_theme"
 ]
 test = [
-    "pytest", "pytest-cov", "scipy"
+    "pytest",
+    "pytest-cov",
+    "scipy"
 ]
 
 [project.urls]
 Homepage = "https://mathlab.github.io/PINA/"
 Repository = "https://github.com/mathLab/PINA"
 
-[tool.setuptools.packages]
-find = {}
+[build-system]
+requires = [ "setuptools>=41", "wheel", "setuptools-git-versioning>=2.0,<3", ]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools-git-versioning]
+enabled = true
+template = "{tag}"
+
+[tool.setuptools.packages.find]
+include = ["pina*"]
+
+[tool.black]
+line-length = 80
+
+[tool.isort]
+profile = "black"
