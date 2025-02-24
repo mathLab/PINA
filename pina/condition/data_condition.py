@@ -25,8 +25,8 @@ class DataConditionInterface(ConditionInterface):
         self.conditional_variables = conditional_variables
 
     def __setattr__(self, key, value):
-        if (key == 'input_points') or (key == 'conditional_variables'):
+        if (key == "input_points") or (key == "conditional_variables"):
             check_consistency(value, (LabelTensor, Graph, torch.Tensor))
             DataConditionInterface.__dict__[key].__set__(self, value)
-        elif key in ('_problem', '_condition_type'):
+        elif key in ("_problem", "_condition_type"):
             super().__setattr__(key, value)

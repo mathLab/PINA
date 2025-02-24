@@ -1,4 +1,4 @@
-""" Module for EquationInterface class """
+"""Module for EquationInterface class"""
 
 from abc import ABCMeta, abstractmethod
 

@@ -1,4 +1,4 @@
-""" Module for SystemEquation. """
+"""Module for SystemEquation."""
 
 import torch
 from .equation import Equation

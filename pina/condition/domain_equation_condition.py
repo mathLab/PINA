@@ -23,11 +23,11 @@ class DomainEquationCondition(ConditionInterface):
         self.equation = equation
 
     def __setattr__(self, key, value):
-        if key == 'domain':
+        if key == "domain":
             check_consistency(value, (DomainInterface, str))
             DomainEquationCondition.__dict__[key].__set__(self, value)
-        elif key == 'equation':
+        elif key == "equation":
             check_consistency(value, (EquationInterface))
             DomainEquationCondition.__dict__[key].__set__(self, value)
-        elif key in ('_problem', '_condition_type'):
+        elif key in ("_problem", "_condition_type"):
             super().__setattr__(key, value)

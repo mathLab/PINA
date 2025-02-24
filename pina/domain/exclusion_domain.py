@@ -1,4 +1,4 @@
-"""Module for Exclusion class. """
+"""Module for Exclusion class."""
 
 import torch
 from ..label_tensor import LabelTensor

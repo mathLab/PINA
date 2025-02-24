@@ -1,4 +1,4 @@
-""" Module for ReducedOrderModelSolver """
+"""Module for ReducedOrderModelSolver"""
 
 import torch
 
@@ -126,7 +126,7 @@ class ReducedOrderModelSolver(SupervisedSolver):
             optimizer=optimizer,
             scheduler=scheduler,
             weighting=weighting,
-            use_lt=use_lt
+            use_lt=use_lt,
         )
 
         # assert reduction object contains encode/ decode

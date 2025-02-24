@@ -1,4 +1,4 @@
-""" Module for Equation. """
+"""Module for Equation."""
 
 from .equation_interface import EquationInterface
 
