@@ -210,6 +210,12 @@ class Graph:
                     # In this case there must be a additional parameter for each
                     # node
                     if val.ndim == 3:
+
+                        if val.shape[0] != data_len:
+                            raise RuntimeError(
+                                "The first dimension of the tensor "
+                                "must be equal to the number of nodes."
+                            )
                         additional_params[param] = [
                             val[i] for i in range(val.shape[0])
                         ]
@@ -227,6 +233,22 @@ class Graph:
                             additional_params[param] = [
                                 val for _ in range(data_len)
                             ]
+                # Case in which the additional parameter is a list of tensors
+                elif isinstance(val, list):
+                    # Raise error if the list contains elements that are not
+                    # tensors
+                    if not all(isinstance(v, torch.Tensor) for v in val):
+                        raise RuntimeError(
+                            "additional_params values must be tensors "
+                            "or lists of tensors."
+                        )
+                    # Check if the the length of the list is consistent with the
+                    # number of graphs
+                    if len(val) != data_len:
+                        raise RuntimeError(
+                            "The first dimension of the tensor "
+                            "must be equal to the number of nodes."
+                        )
                 elif not isinstance(val, list):
                     raise TypeError(
                         "additional_params values must be tensors "
@@ -309,6 +331,8 @@ class KNNGraph(Graph):
         :return: The edge index.
         :rtype: torch.Tensor
         """
+        if isinstance(points, LabelTensor):
+            points = points.tensor
         dist = torch.cdist(points, points, p=2)
         knn_indices = torch.topk(dist, k=k + 1, largest=False).indices[:, 1:]
         row = torch.arange(points.size(0)).repeat_interleave(k)
