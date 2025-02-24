@@ -1,9 +1,10 @@
-""" Module for LpLoss class """
+"""Module for LpLoss class"""
 
 import torch
 
 from ..utils import check_consistency
 from .loss_interface import LossInterface
+
 
 class LpLoss(LossInterface):
     r"""

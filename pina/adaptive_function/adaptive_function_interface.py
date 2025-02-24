@@ -1,4 +1,4 @@
-""" Module for adaptive functions. """
+"""Module for adaptive functions."""
 
 import torch
 

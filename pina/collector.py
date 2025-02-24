@@ -1,6 +1,7 @@
 """
 # TODO
 """
+
 from .graph import Graph
 from .utils import check_consistency
 
@@ -14,14 +15,12 @@ class Collector:
         # those variables are used for the dataloading
         self._data_collections = {name: {} for name in self.problem.conditions}
         self.conditions_name = {
-            i: name
-            for i, name in enumerate(self.problem.conditions)
+            i: name for i, name in enumerate(self.problem.conditions)
         }
 
         # variables used to check that all conditions are sampled
         self._is_conditions_ready = {
-            name: False
-            for name in self.problem.conditions
+            name: False for name in self.problem.conditions
         }
         self.full = False
 
@@ -51,13 +50,16 @@ class Collector:
         for condition_name, condition in self.problem.conditions.items():
             # if the condition is not ready and domain is not attribute
             # of condition, we get and store the data
-            if (not self._is_conditions_ready[condition_name]) and (not hasattr(
-                    condition, "domain")):
+            if (not self._is_conditions_ready[condition_name]) and (
+                not hasattr(condition, "domain")
+            ):
                 # get data
                 keys = condition.__slots__
                 values = [getattr(condition, name) for name in keys]
-                values = [value.data if isinstance(
-                    value, Graph) else value for value in values]
+                values = [
+                    value.data if isinstance(value, Graph) else value
+                    for value in values
+                ]
                 self.data_collections[condition_name] = dict(zip(keys, values))
                 # condition now is ready
                 self._is_conditions_ready[condition_name] = True
@@ -74,6 +76,6 @@ class Collector:
             samples = self.problem.discretised_domains[condition.domain]
 
             self.data_collections[condition_name] = {
-                'input_points': samples,
-                'equation': condition.equation
+                "input_points": samples,
+                "equation": condition.equation,
             }

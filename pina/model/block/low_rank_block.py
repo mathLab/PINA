@@ -1,4 +1,4 @@
-""" Module for Averaging Neural Operator Layer class. """
+"""Module for Averaging Neural Operator Layer class."""
 
 import torch
 

@@ -1,4 +1,4 @@
-""" Module for Causal PINN. """
+"""Module for Causal PINN."""
 
 import torch
 
@@ -67,14 +67,16 @@ class CausalPINN(PINN):
         :class:`~pina.problem.timedep_problem.TimeDependentProblem` class.
     """
 
-    def __init__(self,
-                 problem,
-                 model,
-                 optimizer=None,
-                 scheduler=None,
-                 weighting=None,
-                 loss=None,
-                 eps=100):
+    def __init__(
+        self,
+        problem,
+        model,
+        optimizer=None,
+        scheduler=None,
+        weighting=None,
+        loss=None,
+        eps=100,
+    ):
         """
         :param torch.nn.Module model: The neural network model to use.
         :param AbstractProblem problem: The formulation of the problem.
@@ -88,12 +90,14 @@ class CausalPINN(PINN):
             default `None`.
         :param float eps: The exponential decay parameter; default `100`.
         """
-        super().__init__(model=model,
-                         problem=problem,
-                         optimizer=optimizer,
-                         scheduler=scheduler,
-                         weighting=weighting,
-                         loss=loss)
+        super().__init__(
+            model=model,
+            problem=problem,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            weighting=weighting,
+            loss=loss,
+        )
 
         # checking consistency
         check_consistency(eps, (int, float))

@@ -3,7 +3,7 @@ from abc import ABCMeta
 
 class ConditionInterface(metaclass=ABCMeta):
 
-    condition_types = ['physics', 'supervised', 'unsupervised']
+    condition_types = ["physics", "supervised", "unsupervised"]
 
     def __init__(self, *args, **kwargs):
         self._condition_type = None
@@ -28,6 +28,7 @@ class ConditionInterface(metaclass=ABCMeta):
         for value in values:
             if value not in ConditionInterface.condition_types:
                 raise ValueError(
-                    'Unavailable type of condition, expected one of'
-                    f' {ConditionInterface.condition_types}.')
+                    "Unavailable type of condition, expected one of"
+                    f" {ConditionInterface.condition_types}."
+                )
         self._condition_type = values

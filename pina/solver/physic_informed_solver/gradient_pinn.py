@@ -1,4 +1,4 @@
-""" Module for Gradient PINN. """
+"""Module for Gradient PINN."""
 
 import torch
 
@@ -59,18 +59,20 @@ class GradientPINN(PINN):
         class.
     """
 
-    def __init__(self,
-                 problem,
-                 model,
-                 optimizer=None,
-                 scheduler=None,
-                 weighting=None,
-                 loss=None):
+    def __init__(
+        self,
+        problem,
+        model,
+        optimizer=None,
+        scheduler=None,
+        weighting=None,
+        loss=None,
+    ):
         """
         :param torch.nn.Module model: The neural network model to use.
         :param AbstractProblem problem: The formulation of the problem. It must
             inherit from at least
-            :class:`~pina.problem.spatial_problem.SpatialProblem` to compute 
+            :class:`~pina.problem.spatial_problem.SpatialProblem` to compute
             the gradient of the loss.
         :param torch.optim.Optimizer optimizer: The neural network optimizer to
             use; default `None`.
@@ -81,12 +83,14 @@ class GradientPINN(PINN):
         :param torch.nn.Module loss: The loss function to be minimized;
             default `None`.
         """
-        super().__init__(model=model,
-                         problem=problem,
-                         optimizer=optimizer,
-                         scheduler=scheduler,
-                         weighting=weighting,
-                         loss=loss)
+        super().__init__(
+            model=model,
+            problem=problem,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            weighting=weighting,
+            loss=loss,
+        )
 
         if not isinstance(self.problem, SpatialProblem):
             raise ValueError(

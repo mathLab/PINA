@@ -15,7 +15,7 @@ __all__ = [
     "AVNOBlock",
     "LowRankBlock",
     "RBFBlock",
-    "GNOBlock"
+    "GNOBlock",
 ]
 
 from .convolution_2d import ContinuousConvBlock

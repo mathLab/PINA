@@ -8,6 +8,7 @@ from ..utils import custom_warning_format
 warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=DeprecationWarning)
 warnings.warn(
-            f"'pina.adaptive_functions' is deprecated and will be removed "
-            f"in future versions. Please use 'pina.adaptive_function' instead.",
-            DeprecationWarning)
+    f"'pina.adaptive_functions' is deprecated and will be removed "
+    f"in future versions. Please use 'pina.adaptive_function' instead.",
+    DeprecationWarning,
+)
