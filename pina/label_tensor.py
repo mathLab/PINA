@@ -448,6 +448,10 @@ class LabelTensor(torch.Tensor):
 
         # Retrieve selected tensor and labels
         selected_tensor = super().__getitem__(index)
+        if hasattr(self, "_labels"):
+            original_labels=self._labels
+        else:
+            return selected_tensor
         original_labels = self._labels
         updated_labels = copy(original_labels)
 
