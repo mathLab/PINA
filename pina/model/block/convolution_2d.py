@@ -265,7 +265,7 @@ class ContinuousConvBlock(BaseContinuousConv):
 
         """
         # initialize to all zeros
-        tmp = torch.zeros_like(X)
+        tmp = torch.zeros_like(X).as_subclass(torch.Tensor)
         tmp[..., :-1] = X[..., :-1]
 
         # save on tmp
