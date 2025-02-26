@@ -308,7 +308,7 @@ class PinaDataModule(LightningDataModule):
                 if k != "equation"
                 # Equations are NEVER dataloaded
             }
-            if offset + stage_len > len_condition:
+            if offset + stage_len >= len_condition:
                 offset = len_condition - 1
                 continue
             offset += stage_len
