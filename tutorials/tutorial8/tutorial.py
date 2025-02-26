@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial: Reduced order model (POD-RBF or POD-NN) for parametric problems
+# # Tutorial: Reduced order models (POD-NN and POD-RBF) for parametric problems
 # 
-# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial8/tutorial.ipynb)
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial9/tutorial.ipynb)
 
 # The tutorial aims to show how to employ the **PINA** library in order to apply a reduced order modeling technique [1]. Such methodologies have several similarities with machine learning approaches, since the main goal consists in predicting the solution of differential equations (typically parametric PDEs) in a real-time fashion.
 # 
-# In particular we are going to use the Proper Orthogonal Decomposition with either Radial Basis Function Interpolation(POD-RBF) or Neural Network (POD-NN) [2]. Here we basically perform a dimensional reduction using the POD approach, and approximating the parametric solution manifold (at the reduced space) using an interpolation (RBF) or a regression technique (NN). In this example, we use a simple multilayer perceptron, but the plenty of different architectures can be plugged as well.
+# In particular we are going to use the Proper Orthogonal Decomposition with either Radial Basis Function Interpolation (POD-RBF) or Neural Network (POD-NN) [2]. Here we basically perform a dimensional reduction using the POD approach, approximating the parametric solution manifold (at the reduced space) using a regression technique (NN) and comparing it to an RBF interpolation. In this example, we use a simple multilayer perceptron, but the plenty of different architectures can be plugged as well.
 # 
 # #### References
 # 1. Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order Methods and Applications in Computational Fluid Dynamics, Society for Industrial and Applied Mathematics. 
@@ -36,14 +36,12 @@ import torch
 import pina
 
 from pina.domain import CartesianDomain
-
+from pina.optim import TorchOptimizer
 from pina.problem import ParametricProblem
-from pina.model.layers import PODBlock, RBFBlock
+from pina.model.block import PODBlock, RBFBlock
 from pina import Condition, LabelTensor, Trainer
 from pina.model import FeedForward
-from pina.solvers import SupervisedSolver
-
-print(f'We are using PINA version {pina.__version__}')
+from pina.solver import SupervisedSolver
 
 
 # We exploit the [Smithers](https://github.com/mathLab/Smithers) library to collect the parametric snapshots. In particular, we use the `NavierStokesDataset` class that contains a set of parametric solutions of the Navier-Stokes equations in a 2D L-shape domain. The parameter is the inflow velocity.
@@ -101,13 +99,103 @@ class SnapshotProblem(ParametricProblem):
 poisson_problem = SnapshotProblem()
 
 
-# We can then build a `PODRBF` model (using a Radial Basis Function interpolation as approximation) and a `PODNN` approach (using an MLP architecture as approximation).
+# We can then build a `POD-NN` model (using an MLP architecture as approximation) and compare it with a `POD-RBF` model (using a Radial Basis Function interpolation as approximation).
+
+# ## POD-NN reduced order model
+
+# Let's build the `PODNN` class
+
+# In[5]:
+
+
+class PODNN(torch.nn.Module):
+    """
+    Proper orthogonal decomposition with neural network model.
+    """
+    def __init__(self, pod_rank, layers, func):
+        """
+        
+        """
+        super().__init__()
+        
+        self.pod = PODBlock(pod_rank)
+        self.nn = FeedForward(
+            input_dimensions=1,
+            output_dimensions=pod_rank,
+            layers=layers,
+            func=func
+        )
+            
+
+    def forward(self, x):
+        """
+        Defines the computation performed at every call.
+
+        :param x: The tensor to apply the forward pass.
+        :type x: torch.Tensor
+        :return: the output computed by the model.
+        :rtype: torch.Tensor
+        """
+        coefficents = self.nn(x)
+        return self.pod.expand(coefficents)
+
+    def fit_pod(self, x):
+        """
+        Just call the :meth:`pina.model.layers.PODBlock.fit` method of the
+        :attr:`pina.model.layers.PODBlock` attribute.
+        """
+        self.pod.fit(x)
+
+
+# We highlight that the POD modes are directly computed by means of the singular value decomposition (computed over the input data), and not trained using the backpropagation approach. Only the weights of the MLP are actually trained during the optimization loop.
+
+# In[6]:
+
+
+pod_nn = PODNN(pod_rank=20, layers=[10, 10, 10], func=torch.nn.Tanh)
+pod_nn.fit_pod(u_train)
+
+pod_nn_stokes = SupervisedSolver(
+    problem=poisson_problem, 
+    model=pod_nn, 
+    optimizer=TorchOptimizer(torch.optim.Adam))
+
+
+# Now that we have set the `Problem` and the `Model`, we have just to train the model and use it for predicting the test snapshots.
+
+# In[7]:
+
+
+trainer = Trainer(
+    solver=pod_nn_stokes,
+    max_epochs=1000,
+    batch_size=100,
+    log_every_n_steps=5,
+    accelerator='cpu')
+trainer.train()
+
+
+# Done! Now that the computational expensive part is over, we can load in future the model to infer new parameters (simply loading the checkpoint file automatically created by `Lightning`) or test its performances. We measure the relative error for the training and test datasets, printing the mean one.
+
+# In[8]:
+
+
+u_test_nn = pod_nn_stokes(p_test)
+u_train_nn = pod_nn_stokes(p_train)
+
+relative_error_train = torch.norm(u_train_nn - u_train)/torch.norm(u_train)
+relative_error_test = torch.norm(u_test_nn - u_test)/torch.norm(u_test)
+
+print('Error summary for POD-NN model:')
+print(f'  Train: {relative_error_train.item():e}')
+print(f'  Test:  {relative_error_test.item():e}')
+
 
 # ## POD-RBF reduced order model
 
 # Then, we define the model we want to use, with the POD (`PODBlock`) and the RBF (`RBFBlock`) objects.
 
-# In[5]:
+# In[9]:
 
 
 class PODRBF(torch.nn.Module):
@@ -150,14 +238,14 @@ class PODRBF(torch.nn.Module):
 
 # We can then fit the model and ask it to predict the required field for unseen values of the parameters. Note that this model does not need a `Trainer` since it does not include any neural network or learnable parameters.
 
-# In[6]:
+# In[10]:
 
 
 pod_rbf = PODRBF(pod_rank=20, rbf_kernel='thin_plate_spline')
 pod_rbf.fit(p_train, u_train)
 
 
-# In[7]:
+# In[11]:
 
 
 u_test_rbf = pod_rbf(p_test)
@@ -167,96 +255,6 @@ relative_error_train = torch.norm(u_train_rbf - u_train)/torch.norm(u_train)
 relative_error_test = torch.norm(u_test_rbf - u_test)/torch.norm(u_test)
 
 print('Error summary for POD-RBF model:')
-print(f'  Train: {relative_error_train.item():e}')
-print(f'  Test:  {relative_error_test.item():e}')
-
-
-# ## POD-NN reduced order model
-
-# In[8]:
-
-
-class PODNN(torch.nn.Module):
-    """
-    Proper orthogonal decomposition with neural network model.
-    """
-
-    def __init__(self, pod_rank, layers, func):
-        """
-        
-        """
-        super().__init__()
-        
-        self.pod = PODBlock(pod_rank)
-        self.nn = FeedForward(
-            input_dimensions=1,
-            output_dimensions=pod_rank,
-            layers=layers,
-            func=func
-        )
-            
-
-    def forward(self, x):
-        """
-        Defines the computation performed at every call.
-
-        :param x: The tensor to apply the forward pass.
-        :type x: torch.Tensor
-        :return: the output computed by the model.
-        :rtype: torch.Tensor
-        """
-        coefficents = self.nn(x)
-        return self.pod.expand(coefficents)
-
-    def fit_pod(self, x):
-        """
-        Just call the :meth:`pina.model.layers.PODBlock.fit` method of the
-        :attr:`pina.model.layers.PODBlock` attribute.
-        """
-        self.pod.fit(x)
-
-
-# We highlight that the POD modes are directly computed by means of the singular value decomposition (computed over the input data), and not trained using the backpropagation approach. Only the weights of the MLP are actually trained during the optimization loop.
-
-# In[9]:
-
-
-pod_nn = PODNN(pod_rank=20, layers=[10, 10, 10], func=torch.nn.Tanh)
-pod_nn.fit_pod(u_train)
-
-pod_nn_stokes = SupervisedSolver(
-    problem=poisson_problem, 
-    model=pod_nn, 
-    optimizer=torch.optim.Adam,
-    optimizer_kwargs={'lr': 0.0001})
-
-
-# Now that we have set the `Problem` and the `Model`, we have just to train the model and use it for predicting the test snapshots.
-
-# In[10]:
-
-
-trainer = Trainer(
-    solver=pod_nn_stokes,
-    max_epochs=1000,
-    batch_size=100,
-    log_every_n_steps=5,
-    accelerator='cpu')
-trainer.train()
-
-
-# Done! Now that the computational expensive part is over, we can load in future the model to infer new parameters (simply loading the checkpoint file automatically created by `Lightning`) or test its performances. We measure the relative error for the training and test datasets, printing the mean one.
-
-# In[11]:
-
-
-u_test_nn = pod_nn_stokes(p_test)
-u_train_nn = pod_nn_stokes(p_train)
-
-relative_error_train = torch.norm(u_train_nn - u_train)/torch.norm(u_train)
-relative_error_test = torch.norm(u_test_nn - u_test)/torch.norm(u_test)
-
-print('Error summary for POD-NN model:')
 print(f'  Train: {relative_error_train.item():e}')
 print(f'  Test:  {relative_error_test.item():e}')
 

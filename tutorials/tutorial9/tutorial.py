@@ -29,12 +29,12 @@ if IN_COLAB:
 import torch
 import matplotlib.pyplot as plt
 plt.style.use('tableau-colorblind10')
-from pina import Condition, Plotter
+from pina import Condition#,Plotter as pl
 from pina.problem import SpatialProblem
-from pina.operators import laplacian
+from pina.operator import laplacian
 from pina.model import FeedForward
-from pina.model.layers import PeriodicBoundaryEmbedding  # The PBC module
-from pina.solvers import PINN
+from pina.model.block import PeriodicBoundaryEmbedding  # The PBC module
+from pina.solver import PINN
 from pina.trainer import Trainer
 from pina.domain import CartesianDomain
 from pina.equation import Equation
@@ -63,7 +63,7 @@ from pina.equation import Equation
 # and $f(x)=-6\pi^2\sin(3\pi x)\cos(\pi x)$ which give a solution that can be
 # computed analytically $u(x) = \sin(\pi x)\cos(3\pi x)$.
 
-# In[ ]:
+# In[2]:
 
 
 class Helmholtz(SpatialProblem):
@@ -141,7 +141,7 @@ model = torch.nn.Sequential(PeriodicBoundaryEmbedding(input_dimension=1,
 # 
 # We will now solve the problem as usually with the `PINN` and `Trainer` class.
 
-# In[ ]:
+# In[4]:
 
 
 pinn = PINN(problem=problem, model=model)
@@ -151,16 +151,16 @@ trainer.train()
 
 # We are going to plot the solution now!
 
-# In[6]:
+# In[5]:
 
 
-pl = Plotter()
-pl.plot(pinn)
+#pl = Plotter()
+#pl.plot(pinn)
 
 
 # Great, they overlap perfectly! This seems a good result, considering the simple neural network used to some this (complex) problem. We will now test the neural network on the domain $[-4, 4]$ without retraining. In principle the periodicity should be present since the $v$ function ensures the periodicity in $(-\infty, \infty)$.
 
-# In[7]:
+# In[6]:
 
 
 # plotting solution
@@ -201,5 +201,3 @@ with torch.no_grad():
 # 3. Exploit extrafeature training ?
 # 
 # 4. Many more...
-
-# 
