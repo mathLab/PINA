@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# pydmd documentation build configuration file, created by
+# PINA documentation build configuration file, created by
 # sphinx-quickstart on Mon Jun 22 16:09:40 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -72,17 +72,15 @@ numpydoc_show_class_members = False
 
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3', None),
-    # 'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    # 'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('https://matplotlib.org/stable', None),
     'torch': ('https://pytorch.org/docs/stable/', None), 
-    'pytorch_lightning': ("https://lightning.ai/docs/pytorch/stable/", None),
+    'lightning.pytorch': ("https://lightning.ai/docs/pytorch/stable/", None),
     }
 
 nitpicky = True
 nitpick_ignore = [
-    ('py:meth', 'pytorch_lightning.core.module.LightningModule.log'),
-    ('py:meth', 'pytorch_lightning.core.module.LightningModule.log_dict'),
+    ('py:meth', 'lightning.pytorch.core.module.LightningModule.log'),
+    ('py:meth', 'lightning.pytorch.core.module.LightningModule.log_dict'),
     ('py:exc', 'MisconfigurationException'),
     ('py:func', 'torch.inference_mode'),
     ('py:func', 'torch.no_grad'),
