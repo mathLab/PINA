@@ -37,6 +37,9 @@ test = [
 dev = [
     "black @ git+https://github.com/psf/black"
 ]
+tutorials = [
+    "smithers @ git+https://github.com/mathLab/smithers.git",
+]
 
 [project.urls]
 Homepage = "https://mathlab.github.io/PINA/"
