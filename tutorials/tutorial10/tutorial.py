@@ -37,7 +37,7 @@ from scipy import io
 from pina import Condition, LabelTensor
 from pina.problem import AbstractProblem
 from pina.model import AveragingNeuralOperator
-from pina.solvers import SupervisedSolver
+from pina.solver import SupervisedSolver
 from pina.trainer import Trainer
 
 
@@ -81,7 +81,7 @@ from pina.trainer import Trainer
 
 
 # load data
-data=io.loadmat("dat/Data_KS.mat")
+data=io.loadmat("data/Data_KS.mat")
 
 # converting to label tensor
 initial_cond_train = LabelTensor(torch.tensor(data['initial_cond_train'], dtype=torch.float), ['t','x','u0'])
@@ -203,7 +203,7 @@ model = AveragingNeuralOperator(lifting_net=lifting_net,
 # We will now focus on solving the KS equation using the `SupervisedSolver` class
 # and the `AveragingNeuralOperator` model. As done in the [FNO tutorial](https://github.com/mathLab/PINA/blob/master/tutorials/tutorial5/tutorial.ipynb) we now create the `NeuralOperatorProblem` class with `AbstractProblem`.
 
-# In[6]:
+# In[5]:
 
 
 # expected running time ~ 1 minute
@@ -218,7 +218,7 @@ class NeuralOperatorProblem(AbstractProblem):
 # initialize problem
 problem = NeuralOperatorProblem()
 # initialize solver
-solver = SupervisedSolver(problem=problem, model=model,optimizer_kwargs={"lr":0.001})
+solver = SupervisedSolver(problem=problem, model=model)
 # train, only CPU and avoid model summary at beginning of training (optional)
 trainer = Trainer(solver=solver, max_epochs=40, accelerator='cpu', enable_model_summary=False, log_every_n_steps=-1, batch_size=5) # we train on CPU and avoid model summary at beginning of training (optional)
 trainer.train()
@@ -226,7 +226,7 @@ trainer.train()
 
 # We can now see some plots for the solutions
 
-# In[7]:
+# In[6]:
 
 
 sample_number = 2
@@ -239,10 +239,10 @@ plot_trajectory(coords=initial_cond_test[sample_number].extract(['x', 't']),
 # As we can see we can obtain nice result considering the small trainint time and the difficulty of the problem!
 # Let's see how the training and testing error:
 
-# In[8]:
+# In[7]:
 
 
-from pina.loss.loss_interface import PowerLoss
+from pina.loss import PowerLoss
 
 error_metric = PowerLoss(p=2)                                                   # we use the MSE loss
 

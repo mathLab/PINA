@@ -175,7 +175,6 @@ plot_scatter(ax, c_e_nb_d_points, 'Difference')
 
 import torch
 from pina import LabelTensor
-import random
 
 
 # Next, we will create the `Heart(DomainInterface)` class and initialize it.
@@ -189,12 +188,6 @@ class Heart(DomainInterface):
     def __init__(self, sample_border=False):
         super().__init__()
         
-
-
-# In[ ]:
-
-
-
 
 
 # Because the `DomainInterface` class we are inheriting from requires both a `sample` method and `is_inside` method, we will create them and just add in "pass" for the moment. We also observe that the methods `sample_modes` and `variables` of the `DomainInterface` class are initialized as `abstractmethod`, so we need to redefine them both in the subclass `Heart` .

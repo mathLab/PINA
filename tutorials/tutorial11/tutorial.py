@@ -13,7 +13,7 @@
 # 
 # Let's start by importing useful modules, define the `SimpleODE` problem and the `PINN` solver.
 
-# In[18]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -28,10 +28,10 @@ if IN_COLAB:
 import torch
 
 from pina import Condition, Trainer
-from pina.solvers import PINN
+from pina.solver import PINN
 from pina.model import FeedForward
 from pina.problem import SpatialProblem
-from pina.operators import grad
+from pina.operator import grad
 from pina.domain import CartesianDomain
 from pina.equation import Equation, FixedValue
 
@@ -77,7 +77,7 @@ pinn = PINN(problem, model)
 # Till now we just followed the extact step of the previous tutorials. The `Trainer` object
 # can be initialized by simiply passing the `PINN` solver
 
-# In[3]:
+# In[2]:
 
 
 trainer = Trainer(solver=pinn)
@@ -96,7 +96,7 @@ trainer = Trainer(solver=pinn)
 # 
 # * `accelerator = {'gpu', 'cpu', 'hpu', 'mps', 'cpu', 'ipu'}` sets the accelerator to a specific one
 
-# In[5]:
+# In[3]:
 
 
 trainer = Trainer(solver=pinn,
@@ -114,7 +114,7 @@ trainer = Trainer(solver=pinn,
 # We will now import `TensorBoardLogger`, do three runs of training and then visualize the results. Notice we set `enable_model_summary=False` to avoid model summary specifications (e.g. number of parameters), set it to true if needed.
 # 
 
-# In[7]:
+# In[4]:
 
 
 from pytorch_lightning.loggers import TensorBoardLogger
@@ -161,10 +161,11 @@ for _ in range(3):
 # 
 # <!-- Suppose we want to log the accuracy on some validation poit -->
 
-# In[8]:
+# In[5]:
 
 
-from pytorch_lightning.callbacks import Callback
+from lightning.pytorch.callbacks import Callback
+from lightning.pytorch.callbacks import EarlyStopping
 import torch
 
 # define a simple callback
@@ -180,7 +181,7 @@ class NaiveMetricTracker(Callback):
 
 # Let's see the results when applyed to the `SimpleODE` problem. You can define callbacks when initializing the `Trainer` by the `callbacks` argument, which expects a list of callbacks. 
 
-# In[10]:
+# In[6]:
 
 
 model = FeedForward(
@@ -199,7 +200,7 @@ trainer.train()
 
 # We can easily access the data by calling `trainer.callbacks[0].saved_metrics` (notice the zero representing the first callback in the list given at initialization).
 
-# In[9]:
+# In[7]:
 
 
 trainer.callbacks[0].saved_metrics[:3] # only the first three epochs
@@ -207,13 +208,12 @@ trainer.callbacks[0].saved_metrics[:3] # only the first three epochs
 
 # PyTorch Lightning also has some built in `Callbacks` which can be used in **PINA**, [here an extensive list](https://lightning.ai/docs/pytorch/stable/extensions/callbacks.html#built-in-callbacks). 
 # 
-# We can for example try the `EarlyStopping` routine, which automatically stops the training when a specific metric converged (here the `mean_loss`). In order to let the training keep going forever set `max_epochs=-1`.
+# We can for example try the `EarlyStopping` routine, which automatically stops the training when a specific metric converged (here the `train_loss`). In order to let the training keep going forever set `max_epochs=-1`.
 
-# In[7]:
+# In[ ]:
 
 
-# ~2 mins
-from pytorch_lightning.callbacks import EarlyStopping
+# ~5 mins
 
 model = FeedForward(
         layers=[10, 10],
@@ -226,7 +226,7 @@ trainer = Trainer(solver=pinn,
                   accelerator='cpu',
                   max_epochs = -1,
                   enable_model_summary=False,
-                  callbacks=[EarlyStopping('mean_loss')])  # adding a callbacks
+                  callbacks=[EarlyStopping('train_loss')])  # adding a callbacks
 trainer.train()
 
 
@@ -248,11 +248,11 @@ trainer.train()
 # We will just demonstrate how to use the first two, and see the results compared to a standard training.
 # We use the [`Timer`](https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.Timer.html#lightning.pytorch.callbacks.Timer) callback from `pytorch_lightning.callbacks` to take the times. Let's start by training a simple model without any optimization (train for 2000 epochs).
 
-# In[19]:
+# In[9]:
 
 
-from pytorch_lightning.callbacks import Timer
-from pytorch_lightning import seed_everything
+from lightning.pytorch.callbacks import Timer
+from lightning.pytorch import seed_everything
 
 # setting the seed for reproducibility
 seed_everything(42, workers=True)
@@ -277,10 +277,10 @@ print(f'Total training time {trainer.callbacks[0].time_elapsed("train"):.5f} s')
 
 # Now we do the same but with StochasticWeightAveraging
 
-# In[36]:
+# In[10]:
 
 
-from pytorch_lightning.callbacks import StochasticWeightAveraging
+from lightning.pytorch.callbacks import StochasticWeightAveraging
 
 # setting the seed for reproducibility
 seed_everything(42, workers=True)
@@ -309,7 +309,7 @@ print(f'Total training time {trainer.callbacks[0].time_elapsed("train"):.5f} s')
 # 
 # We will now now do the same but clippling the gradient to be relatively small.
 
-# In[35]:
+# In[11]:
 
 
 # setting the seed for reproducibility
