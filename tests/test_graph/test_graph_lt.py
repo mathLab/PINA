@@ -2,6 +2,7 @@ import pytest
 import torch
 from pina.graph import RadiusGraph, KNNGraph, Graph
 from pina import LabelTensor
+from torch_geometric.data import Data
 
 
 @pytest.mark.parametrize(
@@ -37,232 +38,74 @@ from pina import LabelTensor
     ],
 )
 def test_build_multiple_graph_multiple_val(x, pos, edge_index):
-    graph = RadiusGraph(x=x, pos=pos, build_edge_attr=False, r=0.3)
-    assert len(graph.data) == 3
-    data = graph.data
-    assert all(torch.isclose(d_.x, x_).all() for (d_, x_) in zip(data, x))
+    data = [
+        Graph(x=x[i], pos=pos[i], edge_index=edge_index_)
+        for i, edge_index_ in enumerate(edge_index)
+    ]
+    assert all(isinstance(d, Data) for d in data)
+    assert all(torch.isclose(d.x, x_).all() for d, x_ in zip(data, x))
     assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
     assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
+    assert all(d.edge_attr is None for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = RadiusGraph(x=x, pos=pos, build_edge_attr=True, r=0.3)
-    data = graph.data
-    assert all(torch.isclose(d_.x, x_).all() for (d_, x_) in zip(data, x))
-    assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(d.edge_attr is not None for d in data)
-    assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-
-    graph = KNNGraph(x=x, pos=pos, build_edge_attr=True, k=3)
-    data = graph.data
-    assert all(torch.isclose(d_.x, x_).all() for (d_, x_) in zip(data, x))
+    data = [
+        Graph(x=x[i], pos=pos[i], edge_index=edge_index_, build_edge_attr=True)
+        for i, edge_index_ in enumerate(edge_index)
+    ]
+    assert all(isinstance(d, Data) for d in data)
+    assert all(torch.isclose(d.x, x_).all() for d, x_ in zip(data, x))
     assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
     assert all(len(d.edge_index) == 2 for d in data)
     assert all(d.edge_attr is not None for d in data)
     assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = Graph(x=x, pos=pos, edge_index=edge_index)
-    data = graph.data
-    assert all(torch.isclose(d_.x, x_).all() for (d_, x_) in zip(data, x))
+    data = [RadiusGraph(x=x[i], pos=pos[i], r=0.2) for i in range(len(x))]
+    assert all(isinstance(d, Data) for d in data)
+    assert all(torch.isclose(d.x, x_).all() for d, x_ in zip(data, x))
     assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
     assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
+    assert all(d.edge_attr is None for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = Graph(x=x, pos=pos, edge_index=edge_index, build_edge_attr=True)
-    data = graph.data
-    assert all(torch.isclose(d_.x, x_).all() for (d_, x_) in zip(data, x))
-    assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-    assert all(d.edge_attr is not None for d in data)
-    assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-
-
-def test_build_single_graph_single_val():
-    x = LabelTensor(torch.rand(10, 2), ["u", "v"])
-    pos = LabelTensor(torch.rand(10, 3), ["x", "y", "z"])
-    edge_index = torch.tensor(
-        [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]]
-    )
-    graph = RadiusGraph(x=x, pos=pos, build_edge_attr=False, r=0.3)
-    assert len(graph.data) == 1
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
-    assert all(torch.isclose(d_.pos, pos).all() for d_ in data)
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-
-    graph = RadiusGraph(x=x, pos=pos, build_edge_attr=True, r=0.3)
-    data = graph.data
-    assert len(graph.data) == 1
-    assert all(torch.isclose(d.x, x).all() for d in data)
-    assert all(torch.isclose(d_.pos, pos).all() for d_ in data)
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(d.edge_attr is not None for d in data)
-    assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-
-    graph = KNNGraph(x=x, pos=pos, build_edge_attr=True, k=3)
-    assert len(graph.data) == 1
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
-    assert all(torch.isclose(d_.pos, pos).all() for d_ in data)
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-
-    graph = Graph(x=x, pos=pos, edge_index=edge_index)
-    assert len(graph.data) == 1
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
-    assert all(torch.isclose(d_.pos, pos).all() for d_ in data)
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-
-    graph = Graph(x=x, pos=pos, edge_index=edge_index, build_edge_attr=True)
-    assert len(graph.data) == 1
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
-    assert all(torch.isclose(d_.pos, pos).all() for d_ in data)
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-    assert all(d.edge_attr is not None for d in data)
-    assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-
-
-@pytest.mark.parametrize(
-    "pos, edge_index",
-    [
-        (
-            [LabelTensor(torch.rand(10, 3), ["x", "y", "z"]) for _ in range(3)],
-            [
-                torch.tensor(
-                    [
-                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                        [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
-                    ]
-                )
-            ]
-            * 3,
-        ),
-        (
-            LabelTensor(torch.rand(3, 10, 3), ["x", "y", "z"]),
-            torch.stack(
-                [
-                    torch.tensor(
-                        [
-                            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                            [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
-                        ]
-                    )
-                ]
-                * 3
-            ),
-        ),
-    ],
-)
-def test_build_multi_graph_single_val(pos, edge_index):
-    x = LabelTensor(torch.rand(10, 2), ["u", "v"])
-    graph = RadiusGraph(x=x, pos=pos, build_edge_attr=False, r=0.3)
-    assert len(graph.data) == 3
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
-    assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-
-    graph = RadiusGraph(x=x, pos=pos, build_edge_attr=True, r=0.3)
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
+    data = [
+        RadiusGraph(x=x[i], pos=pos[i], r=0.2, build_edge_attr=True)
+        for i in range(len(x))
+    ]
+    assert all(isinstance(d, Data) for d in data)
+    assert all(torch.isclose(d.x, x_).all() for d, x_ in zip(data, x))
     assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
     assert all(len(d.edge_index) == 2 for d in data)
     assert all(d.edge_attr is not None for d in data)
     assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = KNNGraph(x=x, pos=pos, build_edge_attr=False, k=3)
-    assert len(graph.data) == 3
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
+    data = [KNNGraph(x=x[i], pos=pos[i], k=3) for i in range(len(x))]
+    assert all(isinstance(d, Data) for d in data)
+    assert all(torch.isclose(d.x, x_).all() for d, x_ in zip(data, x))
     assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
     assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
+    assert all(d.edge_attr is None for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = KNNGraph(x=x, pos=pos, build_edge_attr=True, k=3)
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
+    data = [
+        KNNGraph(x=x[i], pos=pos[i], k=3, build_edge_attr=True)
+        for i in range(len(x))
+    ]
+    assert all(isinstance(d, Data) for d in data)
+    assert all(torch.isclose(d.x, x_).all() for d, x_ in zip(data, x))
     assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
     assert all(len(d.edge_index) == 2 for d in data)
     assert all(d.edge_attr is not None for d in data)
     assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-
-    graph = Graph(x=x, pos=pos, build_edge_attr=False, edge_index=edge_index)
-    assert len(graph.data) == 3
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
-    assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-
-    graph = Graph(x=x, pos=pos, build_edge_attr=True, edge_index=edge_index)
-    assert len(graph.data) == 3
-    data = graph.data
-    assert all(torch.isclose(d.x, x).all() for d in data)
-    assert all(torch.isclose(d_.pos, pos_).all() for d_, pos_ in zip(data, pos))
-    assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
-    assert all(d.edge_attr is not None for d in data)
-    assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
 
 
 @pytest.mark.parametrize(
@@ -274,126 +117,142 @@ def test_build_multi_graph_single_val(pos, edge_index):
 )
 def test_build_single_graph_multi_val(x):
     pos = LabelTensor(torch.rand(10, 3), ["x", "y", "z"])
+    graph = RadiusGraph(pos=pos, build_edge_attr=False, r=0.3)
     edge_index = torch.tensor(
         [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]]
     )
-    graph = RadiusGraph(x=x, pos=pos, build_edge_attr=False, r=0.3)
-    assert len(graph.data) == 3
-    data = graph.data
+
+    graph = Graph(pos=pos, edge_index=edge_index)
+    data = [graph(x=x[i]) for i in range(len(x))]
+    print(type(data[0].pos))
     assert all(torch.isclose(d.pos, pos).all() for d in data)
     assert all(torch.isclose(d_.x, x_).all() for d_, x_ in zip(data, x))
     assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = RadiusGraph(x=x, pos=pos, build_edge_attr=True, r=0.3)
-    data = graph.data
+    graph = Graph(pos=pos, edge_index=edge_index, build_edge_attr=True)
+    data = [graph(x=x[i]) for i in range(len(x))]
+    assert len(data) == 3
     assert all(torch.isclose(d.pos, pos).all() for d in data)
     assert all(torch.isclose(d_.x, x_).all() for d_, x_ in zip(data, x))
     assert all(len(d.edge_index) == 2 for d in data)
     assert all(d.edge_attr is not None for d in data)
     assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = KNNGraph(x=x, pos=pos, build_edge_attr=False, k=3)
-    assert len(graph.data) == 3
-    data = graph.data
+    graph = RadiusGraph(pos=pos, r=0.3)
+    data = [graph(x=x[i]) for i in range(len(x))]
+    print(type(data[0].pos))
     assert all(torch.isclose(d.pos, pos).all() for d in data)
     assert all(torch.isclose(d_.x, x_).all() for d_, x_ in zip(data, x))
     assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = KNNGraph(x=x, pos=pos, build_edge_attr=True, k=3)
-    data = graph.data
+    graph = RadiusGraph(pos=pos, build_edge_attr=True, r=0.3)
+    data = [graph(x=x[i]) for i in range(len(x))]
+    assert len(data) == 3
     assert all(torch.isclose(d.pos, pos).all() for d in data)
     assert all(torch.isclose(d_.x, x_).all() for d_, x_ in zip(data, x))
     assert all(len(d.edge_index) == 2 for d in data)
     assert all(d.edge_attr is not None for d in data)
     assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = Graph(x=x, pos=pos, build_edge_attr=False, edge_index=edge_index)
-    assert len(graph.data) == 3
-    data = graph.data
+    graph = KNNGraph(pos=pos, k=3)
+    data = [graph(x=x[i]) for i in range(len(x))]
+    print(type(data[0].pos))
     assert all(torch.isclose(d.pos, pos).all() for d in data)
     assert all(torch.isclose(d_.x, x_).all() for d_, x_ in zip(data, x))
     assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
     assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
     assert all(d.pos.labels == ["x", "y", "z"] for d in data)
 
-    graph = Graph(x=x, pos=pos, build_edge_attr=True, edge_index=edge_index)
-    assert len(graph.data) == 3
-    data = graph.data
+    graph = KNNGraph(pos=pos, build_edge_attr=True, k=3)
+    data = [graph(x=x[i]) for i in range(len(x))]
+    assert len(data) == 3
     assert all(torch.isclose(d.pos, pos).all() for d in data)
     assert all(torch.isclose(d_.x, x_).all() for d_, x_ in zip(data, x))
     assert all(len(d.edge_index) == 2 for d in data)
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(isinstance(d.pos, LabelTensor) for d in data)
-    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
     assert all(d.edge_attr is not None for d in data)
     assert all([d.edge_index.shape[1] == d.edge_attr.shape[0]] for d in data)
+    assert all(d.x.labels == ["u", "v"] for d in data)
+    assert all(d.pos.labels == ["x", "y", "z"] for d in data)
+
+
+def test_build_none_x():
+    x = None
+    pos = LabelTensor(torch.rand(10, 3), ["x", "y", "z"])
+    edge_index = torch.tensor(
+        [
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+        ]
+    )
+    data = Graph(x=x, pos=pos, edge_index=edge_index)
+    assert isinstance(data, Data)
+    assert data.x is None
+    assert torch.isclose(data.pos, pos).all()
+    assert torch.isclose(data.edge_index, edge_index).all()
+    assert data.pos.labels == ["x", "y", "z"]
+
+    data = RadiusGraph(x=x, pos=pos, r=0.3)
+    assert isinstance(data, Data)
+    assert data.x is None
+    assert torch.isclose(data.pos, pos).all()
+    assert data.pos.labels == ["x", "y", "z"]
+
+    data = KNNGraph(x=x, pos=pos, k=3)
+    assert isinstance(data, Data)
+    assert data.x is None
+    assert torch.isclose(data.pos, pos).all()
+    assert data.pos.labels == ["x", "y", "z"]
 
 
 def test_additional_parameters_1():
-    x = LabelTensor(torch.rand(3, 10, 2), ["u", "v"])
-    pos = LabelTensor(torch.rand(3, 10, 3), ["x", "y", "z"])
-    additional_parameters = {"y": torch.ones(3)}
-    graph = RadiusGraph(
-        x=x,
-        pos=pos,
-        build_edge_attr=True,
-        r=0.3,
-        additional_params=additional_parameters,
+    edge_index = torch.tensor(
+        [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]]
     )
-    assert len(graph.data) == 3
-    data = graph.data
-    assert all(torch.isclose(d_.x, x_).all() for (d_, x_) in zip(data, x))
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(hasattr(d, "y") for d in data)
-    assert all(d_.y == 1 for d_ in data)
+    x = LabelTensor(torch.rand(10, 2), ["u", "v"])
+    pos = LabelTensor(torch.rand(10, 2), ["x", "y"])
+    y = LabelTensor(torch.ones(10, 3), ["a", "b", "c"])
 
+    data = Graph(x=x, pos=pos, edge_index=edge_index, y=y)
+    assert isinstance(data, Data)
+    assert torch.isclose(data.x, x).all()
+    assert hasattr(data, "y")
+    assert torch.isclose(data.y, y).all()
+    assert isinstance(data.y, LabelTensor)
+    assert data.y.labels == ["a", "b", "c"]
+    assert isinstance(data.x, LabelTensor)
+    assert data.x.labels == ["u", "v"]
+    assert isinstance(data.pos, LabelTensor)
+    assert data.pos.labels == ["x", "y"]
 
-@pytest.mark.parametrize(
-    "additional_parameters",
-    [
-        ({"y": LabelTensor(torch.rand(3, 10, 1), ["y"])}),
-        ({"y": [LabelTensor(torch.rand(10, 1), ["y"]) for _ in range(3)]}),
-    ],
-)
-def test_additional_parameters_2(additional_parameters):
-    x = LabelTensor(torch.rand(3, 10, 2), ["u", "v"])
-    pos = LabelTensor(torch.rand(3, 10, 3), ["x", "y", "z"])
-    graph = RadiusGraph(
-        x=x,
-        pos=pos,
-        build_edge_attr=True,
-        r=0.3,
-        additional_params=additional_parameters,
-    )
-    assert len(graph.data) == 3
-    data = graph.data
-    assert all(torch.isclose(d_.x, x_).all() for (d_, x_) in zip(data, x))
-    assert all(isinstance(d.x, LabelTensor) for d in data)
-    assert all(d.x.labels == ["u", "v"] for d in data)
-    assert all(hasattr(d, "y") for d in data)
-    assert all(torch.isclose(d_.x, x_).all() for (d_, x_) in zip(data, x))
-    assert all(isinstance(d.y, LabelTensor) for d in data)
-    assert all(d.y.labels == ["y"] for d in data)
+    data = RadiusGraph(x=x, pos=pos, build_edge_attr=True, r=0.3, y=y)
+    assert isinstance(data, Data)
+    assert torch.isclose(data.x, x).all()
+    assert hasattr(data, "y")
+    assert torch.isclose(data.y, y).all()
+    assert isinstance(data.y, LabelTensor)
+    assert data.y.labels == ["a", "b", "c"]
+    assert data.x.labels == ["u", "v"]
+    assert isinstance(data.pos, LabelTensor)
+    assert data.pos.labels == ["x", "y"]
+
+    data = KNNGraph(x=x, pos=pos, build_edge_attr=True, k=3, y=y)
+    assert isinstance(data, Data)
+    assert torch.isclose(data.x, x).all()
+    assert hasattr(data, "y")
+    assert torch.isclose(data.y, y).all()
+    assert isinstance(data.y, LabelTensor)
+    assert data.y.labels == ["a", "b", "c"]
+    assert data.x.labels == ["u", "v"]
+    assert isinstance(data.pos, LabelTensor)
+    assert data.pos.labels == ["x", "y"]
 
 
 def test_custom_build_edge_attr_func():
@@ -401,22 +260,20 @@ def test_custom_build_edge_attr_func():
     pos = LabelTensor(torch.rand(3, 10, 2), ["x", "y"])
 
     def build_edge_attr(x, pos, edge_index):
-        return LabelTensor(
-            torch.cat(
-                [pos.tensor[edge_index[0]], pos.tensor[edge_index[1]]], dim=1
-            ),
-            ["x1", "y1", "x2", "y2"],
-        )
+        return torch.cat([pos[edge_index[0]], pos[edge_index[1]]], dim=-1)
 
-    graph = RadiusGraph(
-        x=x,
-        pos=pos,
-        build_edge_attr=True,
-        r=0.3,
-        custom_build_edge_attr=build_edge_attr,
-    )
-    assert len(graph.data) == 3
-    data = graph.data
+    data = [
+        RadiusGraph(
+            x=x[i],
+            pos=pos[i],
+            build_edge_attr=True,
+            r=0.3,
+            custom_build_edge_attr=build_edge_attr,
+        )
+        for i in range(len(x))
+    ]
+
+    assert len(data) == 3
     assert all(hasattr(d, "edge_attr") for d in data)
     assert all(d.edge_attr.shape[1] == 4 for d in data)
     assert all(
@@ -425,5 +282,3 @@ def test_custom_build_edge_attr_func():
         ).all()
         for d in data
     )
-    assert all(isinstance(d.edge_attr, LabelTensor) for d in data)
-    assert all(d.edge_attr.labels == ["x1", "y1", "x2", "y2"] for d in data)
