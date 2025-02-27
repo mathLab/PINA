@@ -29,7 +29,7 @@ if IN_COLAB:
 import torch
 import matplotlib.pyplot as plt
 plt.style.use('tableau-colorblind10')
-from pina import Condition#,Plotter as pl
+from pina import Condition
 from pina.problem import SpatialProblem
 from pina.operator import laplacian
 from pina.model import FeedForward
@@ -154,8 +154,14 @@ trainer.train()
 # In[5]:
 
 
-#pl = Plotter()
-#pl.plot(pinn)
+pts = pinn.problem.spatial_domain.sample(256, 'grid', variables='x')
+predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach()
+true_output = pinn.problem.truth_solution(pts).cpu().detach()
+pts = pts.cpu()
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
+ax.plot(pts.extract(['x']), predicted_output, label='Neural Network solution')
+ax.plot(pts.extract(['x']), true_output, label='True solution')
+plt.legend()
 
 
 # Great, they overlap perfectly! This seems a good result, considering the simple neural network used to some this (complex) problem. We will now test the neural network on the domain $[-4, 4]$ without retraining. In principle the periodicity should be present since the $v$ function ensures the periodicity in $(-\infty, \infty)$.
