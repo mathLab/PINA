@@ -7,73 +7,42 @@ import warnings
 import torch
 
 from . import LabelTensor
-from .utils import check_consistency
+from .utils import check_consistency, is_function
 from torch_geometric.data import Data
 from torch_geometric.utils import to_undirected
-import inspect
 
 
-class Graph:
+class Graph(Data):
     """
     A class to build torch_geometric.data.Data objects.
     """
 
     def __new__(
         cls,
-        pos,
-        edge_index,
-        edge_attr=None,
-        build_edge_attr=False,
-        undirected=False,
-        custom_build_edge_attr=None,
         **kwargs,
     ):
         """
-        Initializes the Graph object. If x is provided, a Data object is
-        returned; otherwise, a Graph object is returned. The Graph object
-        allows constructing multiple graphs with the same structure.
-        :param torch.Tensor pos: The position tensor.
-        :param torch.Tensor edge_index: The edge index tensor.
-        :param torch.Tensor edge_attr: The edge attribute tensor.
-        :param bool build_edge_attr: Whether to build the edge attributes.
-        :param bool undirected: Whether the graph is undirected.
-        :param callable custom_build_edge_attr: A custom function to build the
-        edge attributes.
-        :param kwargs: Additional parameters.
-        :return: The Data or Graph object.
-        :rtype: torch_geometric.data.Data | Graph
+        :param kwargs: Parameters to construct the Graph object.
+        :return: The Data object.
+        :rtype: torch_geometric.data.Data
         """
+        # create class instance
+        instance = Data.__new__(cls)
 
-        instance = super().__new__(cls)
-        instance._check_pos_consistency(pos)
-        instance._check_edge_index_consistency(edge_index)
-        if custom_build_edge_attr is not None:
-            if not inspect.isfunction(custom_build_edge_attr):
-                raise TypeError(
-                    "custom_build_edge_attr must be a function or callable."
-                )
-            instance._build_edge_attr = custom_build_edge_attr
-
-        if "x" not in kwargs:
-            return instance
-
-        x = kwargs.pop("x")
-        instance._check_x_consistency(x, pos)
-        edge_index = instance._preprocess_edge_index(edge_index, undirected)
-        if build_edge_attr:
-            if edge_attr is not None:
-                warnings.warn(
-                    "build_edge_attr is set to True, but edge_attr is not "
-                    "None. The edge attributes will be computed."
-                )
-            edge_attr = instance._build_edge_attr(x, pos, edge_index)
-
-        return Data(
-            x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr, **kwargs
-        )
-
+        # check the consistency of types defined in __init__, the others are not
+        # checked (as in pyg Data object)
+        instance._check_type_consistency(**kwargs)
+        
+        return instance
+    
     def __init__(
-        self, pos, edge_index, edge_attr=None, build_edge_attr=False, **kwargs
+        self,
+        x=None,
+        edge_index=None,
+        pos=None,
+        edge_attr=None,
+        undirected=False,
+        **kwargs,
     ):
         """
         Initialize the Graph object.
@@ -83,46 +52,32 @@ class Graph:
         :param bool build_edge_attr: Whether to build the edge attributes.
         :param kwargs: Additional parameters.
         """
+        # preprocessing
+        self._preprocess_edge_index(edge_index, undirected)
 
-        self.pos = pos
-        self.edge_index = edge_index
-        self.build_edge_attr = True
-        if build_edge_attr:
-            if edge_attr is not None:
-                warnings.warn(
-                    "build_edge_attr is set to True, but edge_attr is not "
-                    "None. The edge attributes will be computed."
-                )
-        elif edge_attr is not None:
-            self.edge_attr = edge_attr
+        # calling init
+        super().__init__(x=x, edge_index=edge_index, edge_attr=edge_attr,
+                         pos=pos, **kwargs)
 
-        # Store additional parameters
-        self.kwargs = kwargs
-
-    def __call__(self, x, **kwargs):
-        """
-        Build a new Data object with the input tensor x.
-        :param torch.Tensor x: The input tensor.
-        :return: The new Data object.
-        :rtype: torch_geometric.data.Data
-        """
-        self._check_x_consistency(x, self.pos)
-        if not hasattr(self, "edge_attr"):
-            edge_attr = self._build_edge_attr(x, self.pos, self.edge_index)
-        else:
-            edge_attr = self.edge_attr
-
-        # Combine global additional parameters to the ones provided for the
-        # single Data instance
-        kwargs.update(self.kwargs)
-
-        return Data(
-            x,
-            pos=self.pos,
-            edge_index=self.edge_index,
-            edge_attr=edge_attr,
-            **kwargs,
-        )
+    def _check_type_consistency(self, **kwargs):
+        # default types, specified in cls.__new__, by default they are Nont
+        # if specified in **kwargs they get override
+        x, pos, edge_index, edge_attr = None, None, None, None
+        if "pos" in kwargs:
+            pos = kwargs["pos"]
+            self._check_pos_consistency(pos)
+        if "edge_index" in kwargs:
+            edge_index = kwargs["edge_index"]
+            self._check_edge_index_consistency(edge_index)
+        if "x" in kwargs:
+            x = kwargs["x"]
+            self._check_x_consistency(x, pos)
+        if "edge_attr" in kwargs:
+            edge_attr = kwargs["edge_attr"]
+            self._check_edge_attr_consistency(edge_attr, edge_index)
+        if "undirected" in kwargs:
+            undirected = kwargs["undirected"]
+            check_consistency(undirected, bool)
 
     @staticmethod
     def _check_pos_consistency(pos):
@@ -147,7 +102,26 @@ class Graph:
             raise ValueError("edge_index must have shape [2, num_edges].")
 
     @staticmethod
-    def _check_x_consistency(x, pos):
+    def _check_edge_attr_consistency(edge_attr, edge_index):
+        """
+        Check if the edge attr is consistent.
+        :param torch.Tensor edge_attr: The edge attribute tensor.
+
+        :param torch.Tensor edge_index: The edge index tensor.
+        """
+        check_consistency(edge_attr, (torch.Tensor, LabelTensor))
+        if edge_attr.ndim != 2:
+            raise ValueError("edge_attr must be a 2D tensor.")
+        if edge_attr.size(1) != edge_index.size(0):
+            raise ValueError(
+                "edge_attr must have shape "
+                "[num_edges, num_edge_features], expected "
+                f"num_edges {edge_index.size(0)} "
+                f"got {edge_attr.size(1)}."
+            )
+
+    @staticmethod
+    def _check_x_consistency(x, pos=None):
         """
         Check if the input tensor x is consistent with the position tensor pos.
         :param torch.Tensor x: The input tensor.
@@ -157,8 +131,9 @@ class Graph:
             check_consistency(x, (torch.Tensor, LabelTensor))
             if x.ndim != 2:
                 raise ValueError("x must be a 2D tensor.")
-            if x.size(0) != pos.size(0):
-                raise ValueError("Inconsistent number of nodes.")
+            if pos is not None:
+                if x.size(0) != pos.size(0):
+                    raise ValueError("Inconsistent number of nodes.")
 
     @staticmethod
     def _preprocess_edge_index(edge_index, undirected):
@@ -173,43 +148,22 @@ class Graph:
             edge_index = to_undirected(edge_index)
         return edge_index
 
-    @staticmethod
-    def _build_edge_attr(x, pos, edge_index):
-        """
-        Compute the edge attributes.
-        :param torch.Tensor x: The input tensor.
-        :param torch.Tensor pos: The position tensor.
-        :param torch.Tensor edge_index: The edge index.
-        :return: The edge attributes.
-        :rtype: torch.Tensor
-        """
-        distance = torch.abs(
-            pos[edge_index[0]] - pos[edge_index[1]]
-        ).as_subclass(torch.Tensor)
-        return distance
-
-
-class RadiusGraph:
-    """
-    A class to build a radius graph in the form of torch_geometric.data.Data
-    objects.
-    """
-
-    def __new__(cls, pos, r, **kwargs):
-        """
-        Initialize the RadiusGraph object.
-        :param torch.Tensor pos: The position tensor.
-        :param float r: The radius.
-        :param kwargs: Additional parameters.
-        :return: The Data object or an instance Graph class useful to create
-        multiple torch_geometric.data.Data objects.
-        :rtype: torch_geometric.data.Data | Graph
-        """
-        check_consistency(r, float)
-        Graph._check_pos_consistency(pos)
-        edge_index = cls._radius_graph(pos, r)
-        return Graph(pos=pos, edge_index=edge_index, **kwargs)
-
+class RadiusGraph(Graph):
+    def __init__(
+        self,
+        radius,
+        x=None,
+        pos=None,
+        edge_attr=None,
+        undirected=False,
+        **kwargs,
+    ):
+        super().__init__(x=x, edge_index=None, edge_attr=edge_attr,
+                         pos=pos, undirected=undirected, **kwargs)
+        edge_index = self._radius_graph(pos, radius)
+        self.radius = radius
+        self.edge_index = edge_index
+    
     @staticmethod
     def _radius_graph(points, r):
         """
@@ -226,29 +180,23 @@ class RadiusGraph:
         if isinstance(edge_index, LabelTensor):
             edge_index = edge_index.tensor
         return edge_index
-
-
-class KNNGraph:
-    """
-    A class to build a k-nearest neighbors graph in the form of
-    torch_geometric.data.Data objects.
-    """
-
-    def __new__(cls, pos, k, **kwargs):
-        """
-        Initialize the KNN graph object.
-        :param torch.Tensor pos: The position tensor.
-        :param float r: The radius.
-        :param kwargs: Additional parameters.
-        :return: The Data object or an instance Graph class useful to create
-        multiple torch_geometric.data.Data objects.
-        :rtype: torch_geometric.data.Data | Graph
-        """
-        check_consistency(k, int)
-        Graph._check_pos_consistency(pos)
-        edge_index = KNNGraph._knn_graph(pos, k)
-        return Graph(pos=pos, edge_index=edge_index, **kwargs)
-
+    
+class KNNGraph(Graph):
+    def __init__(
+        self,
+        neighboors,
+        x=None,
+        pos=None,
+        edge_attr=None,
+        undirected=False,
+        **kwargs,
+    ):
+        super().__init__(x=x, edge_index=None, edge_attr=edge_attr,
+                         pos=pos, undirected=undirected, **kwargs)
+        edge_index = self._knn_graph(pos, neighboors)
+        self.neighboors = neighboors
+        self.edge_index = edge_index
+    
     @staticmethod
     def _knn_graph(points, k):
         """
