@@ -89,7 +89,7 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 # 
 # Once the `Problem` class is initialized, we need to represent the differential equation in **PINA**. In order to do this, we need to load the **PINA** operators from `pina.operators` module. Again, we'll consider Equation (1) and represent it in **PINA**:
 
-# In[ ]:
+# In[2]:
 
 
 from pina.problem import SpatialProblem
