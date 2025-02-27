@@ -112,14 +112,12 @@ def test_pinn_collector():
 def test_supervised_graph_collector():
     pos = torch.rand((100, 3))
     x = [torch.rand((100, 3)) for _ in range(10)]
-    graph = RadiusGraph(pos=pos, build_edge_attr=True, r=0.4)
-    graph_list_1 = [graph(x=x_) for x_ in x]
+    graph_list_1 = [RadiusGraph(pos=pos, radius=0.4, x=x_) for x_ in x]
     out_1 = torch.rand((10, 100, 3))
 
     pos = torch.rand((50, 3))
     x = [torch.rand((50, 3)) for _ in range(10)]
-    graph = RadiusGraph(pos=pos, build_edge_attr=True, r=0.4)
-    graph_list_2 = [graph(x=x_) for x_ in x]
+    graph_list_2 = [RadiusGraph(pos=pos, radius=0.4, x=x_) for x_ in x]
     out_2 = torch.rand((10, 50, 3))
 
     class SupervisedProblem(AbstractProblem):
@@ -135,6 +133,3 @@ def test_supervised_graph_collector():
     # assert all(collector._is_conditions_ready.values())
     for v in collector.conditions_name.values():
         assert v in problem.conditions.keys()
-
-
-test_supervised_graph_collector()

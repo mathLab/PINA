@@ -7,7 +7,7 @@ from torch_geometric.data import Data
 x = torch.rand((100, 20, 10))
 pos = torch.rand((100, 20, 2))
 input_ = [
-    KNNGraph(x=x_, pos=pos_, k=3, build_edge_attr=True)
+    KNNGraph(x=x_, pos=pos_, neighbours=3, edge_attr=True)
     for x_, pos_ in zip(x, pos)
 ]
 output_ = torch.rand((100, 20, 10))
@@ -15,7 +15,7 @@ output_ = torch.rand((100, 20, 10))
 x_2 = torch.rand((50, 20, 10))
 pos_2 = torch.rand((50, 20, 2))
 input_2_ = [
-    KNNGraph(x=x_, pos=pos_, k=3, build_edge_attr=True)
+    KNNGraph(x=x_, pos=pos_, neighbours=3, edge_attr=True)
     for x_, pos_ in zip(x_2, pos_2)
 ]
 output_2_ = torch.rand((50, 20, 10))

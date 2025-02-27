@@ -20,7 +20,7 @@ def test_constructor_graph():
     x = torch.rand((20, 100, 10))
     pos = torch.rand((20, 100, 2))
     input_ = [
-        RadiusGraph(x=x_, pos=pos_, r=0.2, build_edge_attr=True)
+        RadiusGraph(x=x_, pos=pos_, radius=0.2, edge_attr=True)
         for x_, pos_ in zip(x, pos)
     ]
     output_ = torch.rand((100, 10))

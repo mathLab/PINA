@@ -16,8 +16,7 @@ output_tensor = torch.rand((100, 2))
 x = torch.rand((100, 50, 10))
 pos = torch.rand((100, 50, 2))
 input_graph = [
-    RadiusGraph(x=x_, pos=pos_, r=0.2, build_edge_attr=True)
-    for x_, pos_, in zip(x, pos)
+    RadiusGraph(x=x_, pos=pos_, radius=0.2) for x_, pos_, in zip(x, pos)
 ]
 output_graph = torch.rand((100, 50, 10))
 
@@ -183,8 +182,7 @@ output_tensor = LabelTensor(torch.rand((100, 3)), ["u", "v", "w"])
 x = LabelTensor(torch.rand((100, 50, 3)), ["u", "v", "w"])
 pos = LabelTensor(torch.rand((100, 50, 2)), ["x", "y"])
 input_graph = [
-    RadiusGraph(x=x[i], pos=pos[i], r=0.1, build_edge_attr=True)
-    for i in range(len(x))
+    RadiusGraph(x=x[i], pos=pos[i], radius=0.1) for i in range(len(x))
 ]
 output_graph = LabelTensor(torch.rand((100, 50, 3)), ["u", "v", "w"])
 

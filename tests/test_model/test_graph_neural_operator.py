@@ -7,7 +7,7 @@ from torch_geometric.data import Batch
 x = [torch.rand(100, 6) for _ in range(10)]
 pos = [torch.rand(100, 3) for _ in range(10)]
 graph = [
-    KNNGraph(x=x_, pos=pos_, build_edge_attr=True, k=6)
+    KNNGraph(x=x_, pos=pos_, neighbours=6, edge_attr=True)
     for x_, pos_ in zip(x, pos)
 ]
 input_ = Batch.from_data_list(graph)
