@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>OrthogonalBlock &#8212; PINA 0.1.2.post2501 documentation</title>
+    <title>OrthogonalBlock &#8212; PINA 0.1.2.post2503 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=ad75e52c"></script>
+    <script src="../../_static/documentation_options.js?v=3ef5eb5f"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.2.post2501" />
-    <meta name="docbuild:last-update" content="Jan 01, 2025"/>
+  <meta name="docsearch:version" content="0.1.2.post2503" />
+    <meta name="docbuild:last-update" content="Mar 01, 2025"/>
   </head>
   
   
@@ -120,8 +120,8 @@
       
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2501 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2501 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2503 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2503 documentation - Home"/>
   
   
 </a></div>
@@ -450,7 +450,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.model.layers.orthogonal.OrthogonalBlock">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OrthogonalBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requires_grad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/layers/orthogonal.html#OrthogonalBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.layers.orthogonal.OrthogonalBlock" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Module to make the input orthonormal.
 The module takes a tensor of size <span class="math notranslate nohighlight">\([N, M]\)</span> and returns a tensor of
 size <span class="math notranslate nohighlight">\([N, M]\)</span> where the columns are orthonormal. The block performs a
@@ -477,7 +477,7 @@ algorithm.</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Warning" title="(in Python v3.13)"><strong>Warning</strong></a> – If the dimension is greater than the other dimensions.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>X</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – The input tensor to orthogonalize. The input must
+<dd class="field-even"><p><strong>X</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The input tensor to orthogonalize. The input must
 be of dimensions <span class="math notranslate nohighlight">\([N, M]\)</span>.</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>

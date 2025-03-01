@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>KernelNeuralOperator &#8212; PINA 0.1.2.post2501 documentation</title>
+    <title>KernelNeuralOperator &#8212; PINA 0.1.2.post2503 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=ad75e52c"></script>
+    <script src="../../_static/documentation_options.js?v=3ef5eb5f"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,8 +55,8 @@
     <link rel="prev" title="Network" href="network.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.2.post2501" />
-    <meta name="docbuild:last-update" content="Jan 01, 2025"/>
+  <meta name="docsearch:version" content="0.1.2.post2503" />
+    <meta name="docbuild:last-update" content="Mar 01, 2025"/>
   </head>
   
   
@@ -122,8 +122,8 @@
       
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2501 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2501 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2503 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2503 documentation - Home"/>
   
   
 </a></div>
@@ -556,7 +556,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.model.base_no.KernelNeuralOperator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">KernelNeuralOperator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lifting_operator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integral_kernels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection_operator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/base_no.html#KernelNeuralOperator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.base_no.KernelNeuralOperator" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Base class for composing Neural Operators with integral kernels.</p>
 <p>This is a base class for composing neural operators with multiple
 integral kernels. All neural operator models defined in PINA inherit
@@ -593,11 +593,11 @@ Research, 24(89), 1-97.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>lifting_operator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a>) – The lifting operator
+<li><p><strong>lifting_operator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a>) – The lifting operator
 mapping the input to its hidden dimension.</p></li>
-<li><p><strong>integral_kernels</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a>) – List of integral kernels
+<li><p><strong>integral_kernels</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a>) – List of integral kernels
 mapping each hidden representation to the next one.</p></li>
-<li><p><strong>projection_operator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><em>torch.nn.Module</em></a>) – The projection operator
+<li><p><strong>projection_operator</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a>) – The projection operator
 mapping the hidden representation to the output function.</p></li>
 </ul>
 </dd>
@@ -630,7 +630,7 @@ Then different layers integral kernels are applied using
 to the final dimensionality by the <code class="docutils literal notranslate"><span class="pre">projection_operator</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – The input tensor for performing the
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The input tensor for performing the
 computation. It expects a tensor <span class="math notranslate nohighlight">\(B \times N \times D\)</span>,
 where <span class="math notranslate nohighlight">\(B\)</span> is the batch_size, <span class="math notranslate nohighlight">\(N\)</span> the number of points
 in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimension of the problem. In particular
@@ -642,7 +642,7 @@ outputvariables <span class="math notranslate nohighlight">\(D=4\)</span>.</p>
 <dd class="field-even"><p>The output tensor obtained from the NO.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>

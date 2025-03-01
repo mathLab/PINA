@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Low Rank layer &#8212; PINA 0.1.2.post2501 documentation</title>
+    <title>Low Rank layer &#8212; PINA 0.1.2.post2503 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=ad75e52c"></script>
+    <script src="../../_static/documentation_options.js?v=3ef5eb5f"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,8 +55,8 @@
     <link rel="prev" title="Averaging layers" href="avno_layer.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.2.post2501" />
-    <meta name="docbuild:last-update" content="Jan 01, 2025"/>
+  <meta name="docsearch:version" content="0.1.2.post2503" />
+    <meta name="docbuild:last-update" content="Mar 01, 2025"/>
   </head>
   
   
@@ -122,8 +122,8 @@
       
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2501 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2501 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2503 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2503 documentation - Home"/>
   
   
 </a></div>
@@ -556,7 +556,7 @@
 <dl class="py class">
 <dt class="sig sig-object py">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LowRankBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dimensions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_dimenion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_size=20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers=2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func=&lt;class</span> <span class="pre">'torch.nn.modules.activation.Tanh'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias=True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/layers/lowrank_layer.html#LowRankBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>The PINA implementation of the inner layer of the Averaging Neural Operator.</p>
 <p>The operator layer performs an affine transformation where the convolution
 is approximated with a local average. Given the input function
@@ -606,7 +606,7 @@ basis function network. Default is 20.</p></li>
 basis function network. Default is 2.</p></li>
 <li><p><strong>func</strong> – The activation function to use for the
 basis function network. If a single
-<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a> is passed, this is used as
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a> is passed, this is used as
 activation function after any layers, except the last one.
 If a list of Modules is passed,
 they are used as activation functions at any layers, in order.</p></li>
@@ -627,14 +627,14 @@ spatial input <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – The input tensor for performing the
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The input tensor for performing the
 computation. It expects a tensor <span class="math notranslate nohighlight">\(B \times N \times D\)</span>,
 where <span class="math notranslate nohighlight">\(B\)</span> is the batch_size, <span class="math notranslate nohighlight">\(N\)</span> the number of points
 in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimension of the problem. In particular
 <span class="math notranslate nohighlight">\(D\)</span> is the codomain of the function <span class="math notranslate nohighlight">\(v\)</span>. For example
 a scalar function has <span class="math notranslate nohighlight">\(D=1\)</span>, a 4-dimensional vector function
 <span class="math notranslate nohighlight">\(D=4\)</span>.</p></li>
-<li><p><strong>coords</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)"><em>torch.Tensor</em></a>) – The coordinates in which the field is
+<li><p><strong>coords</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The coordinates in which the field is
 evaluated for performing the  computation. It expects a
 tensor <span class="math notranslate nohighlight">\(B \times N \times d\)</span>,
 where <span class="math notranslate nohighlight">\(B\)</span> is the batch_size, <span class="math notranslate nohighlight">\(N\)</span> the number of points
@@ -645,7 +645,7 @@ in the mesh, <span class="math notranslate nohighlight">\(D\)</span> the dimensi
 <dd class="field-even"><p>The output tensor obtained from Average Neural Operator Block.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.5)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
