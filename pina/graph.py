@@ -95,9 +95,10 @@ class Graph(Data):
         :param torch.Tensor pos: The position tensor.
         """
         if pos is not None:
-            check_consistency(pos, (torch.Tensor, LabelTensor))
-            if pos.ndim != 2:
-                raise ValueError("pos must be a 2D tensor.")
+            return
+        check_consistency(pos, (torch.Tensor, LabelTensor))
+        if pos.ndim != 2:
+            raise ValueError("pos must be a 2D tensor.")
 
     @staticmethod
     def _check_edge_index_consistency(edge_index):
@@ -120,16 +121,17 @@ class Graph(Data):
         :param torch.Tensor edge_index: The edge index tensor.
         """
         if edge_attr is not None:
-            check_consistency(edge_attr, (torch.Tensor, LabelTensor))
-            if edge_attr.ndim != 2:
-                raise ValueError("edge_attr must be a 2D tensor.")
-            if edge_attr.size(0) != edge_index.size(1):
-                raise ValueError(
-                    "edge_attr must have shape "
-                    "[num_edges, num_edge_features], expected "
-                    f"num_edges {edge_index.size(1)} "
-                    f"got {edge_attr.size(0)}."
-                )
+            return
+        check_consistency(edge_attr, (torch.Tensor, LabelTensor))
+        if edge_attr.ndim != 2:
+            raise ValueError("edge_attr must be a 2D tensor.")
+        if edge_attr.size(0) != edge_index.size(1):
+            raise ValueError(
+                "edge_attr must have shape "
+                "[num_edges, num_edge_features], expected "
+                f"num_edges {edge_index.size(1)} "
+                f"got {edge_attr.size(0)}."
+            )
 
     @staticmethod
     def _check_x_consistency(x, pos=None):
@@ -139,15 +141,16 @@ class Graph(Data):
         :param torch.Tensor pos: The position tensor.
         """
         if x is not None:
-            check_consistency(x, (torch.Tensor, LabelTensor))
-            if x.ndim != 2:
-                raise ValueError("x must be a 2D tensor.")
-            if pos is not None:
-                if x.size(0) != pos.size(0):
-                    raise ValueError("Inconsistent number of nodes.")
-            if pos is not None:
-                if x.size(0) != pos.size(0):
-                    raise ValueError("Inconsistent number of nodes.")
+            return
+        check_consistency(x, (torch.Tensor, LabelTensor))
+        if x.ndim != 2:
+            raise ValueError("x must be a 2D tensor.")
+        if pos is not None:
+            if x.size(0) != pos.size(0):
+                raise ValueError("Inconsistent number of nodes.")
+        if pos is not None:
+            if x.size(0) != pos.size(0):
+                raise ValueError("Inconsistent number of nodes.")
 
     @staticmethod
     def _preprocess_edge_index(edge_index, undirected):
@@ -161,6 +164,18 @@ class Graph(Data):
         if undirected:
             edge_index = to_undirected(edge_index)
         return edge_index
+
+    def extract(self, labels):
+        """
+        Perform extraction of labels on node features (x)
+
+        :param labels: Labels to extract
+        :type labels: list[str] | tuple[str] | str
+        :return: Batch object with extraction performed on x
+        :rtype: PinaBatch
+        """
+        self.x = self.x.extract(labels)
+        return self
 
 
 class GraphBuilder:
@@ -198,28 +213,32 @@ class GraphBuilder:
         :return: A Graph instance constructed using the provided information.
         :rtype: Graph
         """
-        edge_attr = cls._create_edge_attr(
-            pos, edge_index, edge_attr, custom_edge_func or cls._build_edge_attr
-        )
-        return Graph(
+        tmp = Graph(
             x=x,
-            edge_index=edge_index,
-            edge_attr=edge_attr,
             pos=pos,
+            edge_index=edge_index,
             **kwargs,
         )
 
-    @staticmethod
-    def _create_edge_attr(pos, edge_index, edge_attr, func):
-        check_consistency(edge_attr, bool)
-        if edge_attr:
-            if is_function(func):
-                return func(pos, edge_index)
-            raise ValueError("custom_edge_func must be a function.")
-        return None
+        edge_attr = cls._create_edge_attr(
+            tmp, edge_attr, custom_edge_func or cls._build_edge_attr
+        )
+        tmp.edge_attr = edge_attr
+        return tmp
 
     @staticmethod
-    def _build_edge_attr(pos, edge_index):
+    def _create_edge_attr(graph, edge_attr, func):
+        check_consistency(edge_attr, bool)
+        if not edge_attr:
+            return None
+        if is_function(func):
+            return func(graph)
+        raise ValueError("custom_edge_func must be a function.")
+
+    @staticmethod
+    def _build_edge_attr(graph):
+        pos = graph.pos
+        edge_index = graph.edge_index
         return (
             (pos[edge_index[0]] - pos[edge_index[1]])
             .abs()

@@ -4,6 +4,10 @@ from .domain_equation_condition import DomainEquationCondition
 from .input_equation_condition import InputPointsEquationCondition
 from .input_output_condition import InputOutputPointsCondition
 from .data_condition import DataConditionInterface
+from .graph_condition import (
+    GraphInputOutputCondition,
+    GraphInputEquationCondition,
+)
 import warnings
 from ..utils import custom_warning_format
 
@@ -82,5 +86,9 @@ class Condition:
             return DataConditionInterface(**kwargs)
         elif sorted_keys == DataConditionInterface.__slots__[0]:
             return DataConditionInterface(**kwargs)
+        elif sorted_keys == sorted(GraphInputOutputCondition.__slots__):
+            return GraphInputOutputCondition(**kwargs)
+        elif sorted_keys == sorted(GraphInputEquationCondition.__slots__):
+            return GraphInputEquationCondition(**kwargs)
         else:
             raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")

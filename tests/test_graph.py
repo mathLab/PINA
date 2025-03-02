@@ -5,7 +5,9 @@ from pina.graph import RadiusGraph, KNNGraph, Graph
 from torch_geometric.data import Data
 
 
-def build_edge_attr(pos, edge_index):
+def build_edge_attr(graph):
+    pos = graph.pos
+    edge_index = graph.edge_index
     return torch.cat([pos[edge_index[0]], pos[edge_index[1]]], dim=-1)
 
 

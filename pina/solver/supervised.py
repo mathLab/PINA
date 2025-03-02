@@ -5,7 +5,7 @@ from torch.nn.modules.loss import _Loss
 from .solver import SingleSolverInterface
 from ..utils import check_consistency
 from ..loss.loss_interface import LossInterface
-from ..condition import InputOutputPointsCondition
+from ..condition import InputOutputPointsCondition, GraphInputOutputCondition
 
 
 class SupervisedSolver(SingleSolverInterface):
@@ -37,7 +37,10 @@ class SupervisedSolver(SingleSolverInterface):
     multiple (discretised) input functions.
     """
 
-    accepted_conditions_types = InputOutputPointsCondition
+    accepted_conditions_types = (
+        InputOutputPointsCondition,
+        GraphInputOutputCondition,
+    )
 
     def __init__(
         self,

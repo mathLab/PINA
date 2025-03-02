@@ -15,30 +15,37 @@ output_tensor = torch.rand((100, 2))
 
 x = torch.rand((100, 50, 10))
 pos = torch.rand((100, 50, 2))
-input_graph = [
-    RadiusGraph(x=x_, pos=pos_, radius=0.2) for x_, pos_, in zip(x, pos)
-]
 output_graph = torch.rand((100, 50, 10))
+input_graph = [
+    RadiusGraph(x=x_, pos=pos_, radius=0.2, y=y_)
+    for x_, pos_, y_ in zip(x, pos, output_graph)
+]
 
 
 @pytest.mark.parametrize(
     "input_, output_",
-    [(input_tensor, output_tensor), (input_graph, output_graph)],
+    [(input_tensor, output_tensor), (input_graph, None)],
 )
 def test_constructor(input_, output_):
-    problem = SupervisedProblem(input_=input_, output_=output_)
+    if output_ is None:
+        problem = SupervisedProblem(graph_=input_)
+    else:
+        problem = SupervisedProblem(input_=input_, output_=output_)
     PinaDataModule(problem)
 
 
 @pytest.mark.parametrize(
     "input_, output_",
-    [(input_tensor, output_tensor), (input_graph, output_graph)],
+    [(input_tensor, output_tensor), (input_graph, None)],
 )
 @pytest.mark.parametrize(
     "train_size, val_size, test_size", [(0.7, 0.2, 0.1), (0.7, 0.3, 0)]
 )
 def test_setup_train(input_, output_, train_size, val_size, test_size):
-    problem = SupervisedProblem(input_=input_, output_=output_)
+    if output_ is None:
+        problem = SupervisedProblem(graph_=input_)
+    else:
+        problem = SupervisedProblem(input_=input_, output_=output_)
     dm = PinaDataModule(
         problem, train_size=train_size, val_size=val_size, test_size=test_size
     )
@@ -64,13 +71,16 @@ def test_setup_train(input_, output_, train_size, val_size, test_size):
 
 @pytest.mark.parametrize(
     "input_, output_",
-    [(input_tensor, output_tensor), (input_graph, output_graph)],
+    [(input_tensor, output_tensor), (input_graph, None)],
 )
 @pytest.mark.parametrize(
     "train_size, val_size, test_size", [(0.7, 0.2, 0.1), (0.0, 0.0, 1.0)]
 )
 def test_setup_test(input_, output_, train_size, val_size, test_size):
-    problem = SupervisedProblem(input_=input_, output_=output_)
+    if output_ is None:
+        problem = SupervisedProblem(graph_=input_)
+    else:
+        problem = SupervisedProblem(input_=input_, output_=output_)
     dm = PinaDataModule(
         problem, train_size=train_size, val_size=val_size, test_size=test_size
     )
@@ -96,10 +106,13 @@ def test_setup_test(input_, output_, train_size, val_size, test_size):
 
 @pytest.mark.parametrize(
     "input_, output_",
-    [(input_tensor, output_tensor), (input_graph, output_graph)],
+    [(input_tensor, output_tensor), (input_graph, None)],
 )
 def test_dummy_dataloader(input_, output_):
-    problem = SupervisedProblem(input_=input_, output_=output_)
+    if output_ is None:
+        problem = SupervisedProblem(graph_=input_)
+    else:
+        problem = SupervisedProblem(input_=input_, output_=output_)
     solver = SupervisedSolver(problem=problem, model=torch.nn.Linear(10, 10))
     trainer = Trainer(
         solver, batch_size=None, train_size=0.7, val_size=0.3, test_size=0.0
@@ -134,11 +147,14 @@ def test_dummy_dataloader(input_, output_):
 
 @pytest.mark.parametrize(
     "input_, output_",
-    [(input_tensor, output_tensor), (input_graph, output_graph)],
+    [(input_tensor, output_tensor), (input_graph, None)],
 )
 @pytest.mark.parametrize("automatic_batching", [True, False])
 def test_dataloader(input_, output_, automatic_batching):
-    problem = SupervisedProblem(input_=input_, output_=output_)
+    if output_ is None:
+        problem = SupervisedProblem(graph_=input_)
+    else:
+        problem = SupervisedProblem(input_=input_, output_=output_)
     solver = SupervisedSolver(problem=problem, model=torch.nn.Linear(10, 10))
     trainer = Trainer(
         solver,
@@ -181,19 +197,21 @@ output_tensor = LabelTensor(torch.rand((100, 3)), ["u", "v", "w"])
 
 x = LabelTensor(torch.rand((100, 50, 3)), ["u", "v", "w"])
 pos = LabelTensor(torch.rand((100, 50, 2)), ["x", "y"])
-input_graph = [
-    RadiusGraph(x=x[i], pos=pos[i], radius=0.1) for i in range(len(x))
-]
 output_graph = LabelTensor(torch.rand((100, 50, 3)), ["u", "v", "w"])
+input_graph = [RadiusGraph(x=x[i], pos=pos[i], radius=0.1, y=output_graph[i]) for i in range(len(x))]
+
 
 
 @pytest.mark.parametrize(
     "input_, output_",
-    [(input_tensor, output_tensor), (input_graph, output_graph)],
+    [(input_tensor, output_tensor), (input_graph, None)],
 )
 @pytest.mark.parametrize("automatic_batching", [True, False])
 def test_dataloader_labels(input_, output_, automatic_batching):
-    problem = SupervisedProblem(input_=input_, output_=output_)
+    if output_ is None:
+        problem = SupervisedProblem(graph_=input_)
+    else:
+        problem = SupervisedProblem(input_=input_, output_=output_)
     solver = SupervisedSolver(problem=problem, model=torch.nn.Linear(10, 10))
     trainer = Trainer(
         solver,
