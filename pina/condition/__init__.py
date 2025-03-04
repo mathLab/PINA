@@ -2,11 +2,35 @@ __all__ = [
     "Condition",
     "ConditionInterface",
     "DomainEquationCondition",
-    "InputPointsEquationCondition",
-    "InputOutputPointsCondition",
+    "InputTargetCondition",
+    "TensorInputTensorTargetCondition",
+    "TensorInputGraphTargetCondition",
+    "GraphInputTensorTargetCondition",
+    "GraphInputGraphTargetCondition",
+    "InputEquationCondition",
+    "InputTensorEquationCondition",
+    "InputGraphEquationCondition",
+    "DataCondition",
+    "GraphDataCondition",
+    "TensorDataCondition"
 ]
 
 from .condition_interface import ConditionInterface
 from .domain_equation_condition import DomainEquationCondition
-from .input_equation_condition import InputPointsEquationCondition
-from .input_output_condition import InputOutputPointsCondition
+from .input_target_condition import (
+    InputTargetCondition,
+    TensorInputTensorTargetCondition,
+    TensorInputGraphTargetCondition,
+    GraphInputTensorTargetCondition,
+    GraphInputGraphTargetCondition,
+)
+from .input_equation_condition import (
+    InputEquationCondition,
+    InputTensorEquationCondition,
+    InputGraphEquationCondition,
+)
+from .data_condition import (
+    DataCondition,
+    GraphDataCondition,
+    TensorDataCondition,
+)

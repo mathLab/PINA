@@ -24,8 +24,8 @@ output_2_ = torch.rand((50, 20, 10))
 # Problem with a single condition
 conditions_dict_single = {
     "data": {
-        "input_points": input_,
-        "output_points": output_,
+        "input": input_,
+        "target": output_,
     }
 }
 max_conditions_lengths_single = {"data": 100}
@@ -33,12 +33,12 @@ max_conditions_lengths_single = {"data": 100}
 # Problem with multiple conditions
 conditions_dict_single_multi = {
     "data_1": {
-        "input_points": input_,
-        "output_points": output_,
+        "input": input_,
+        "target": output_,
     },
     "data_2": {
-        "input_points": input_2_,
-        "output_points": output_2_,
+        "input": input_2_,
+        "target": output_2_,
     },
 }
 
@@ -77,56 +77,56 @@ def test_getitem(conditions_dict, max_conditions_lengths):
     )
     data = dataset[50]
     assert isinstance(data, dict)
-    assert all([isinstance(d["input_points"], Data) for d in data.values()])
+    assert all([isinstance(d["input"], Data) for d in data.values()])
     assert all(
-        [isinstance(d["output_points"], torch.Tensor) for d in data.values()]
+        [isinstance(d["target"], torch.Tensor) for d in data.values()]
     )
     assert all(
         [
-            d["input_points"].x.shape == torch.Size((20, 10))
+            d["input"].x.shape == torch.Size((20, 10))
             for d in data.values()
         ]
     )
     assert all(
         [
-            d["output_points"].shape == torch.Size((20, 10))
+            d["target"].shape == torch.Size((20, 10))
             for d in data.values()
         ]
     )
     assert all(
         [
-            d["input_points"].edge_index.shape == torch.Size((2, 60))
+            d["input"].edge_index.shape == torch.Size((2, 60))
             for d in data.values()
         ]
     )
     assert all(
-        [d["input_points"].edge_attr.shape[0] == 60 for d in data.values()]
+        [d["input"].edge_attr.shape[0] == 60 for d in data.values()]
     )
 
     data = dataset.fetch_from_idx_list([i for i in range(20)])
     assert isinstance(data, dict)
-    assert all([isinstance(d["input_points"], Data) for d in data.values()])
+    assert all([isinstance(d["input"], Data) for d in data.values()])
     assert all(
-        [isinstance(d["output_points"], torch.Tensor) for d in data.values()]
+        [isinstance(d["target"], torch.Tensor) for d in data.values()]
     )
     assert all(
         [
-            d["input_points"].x.shape == torch.Size((400, 10))
+            d["input"].x.shape == torch.Size((400, 10))
             for d in data.values()
         ]
     )
     assert all(
         [
-            d["output_points"].shape == torch.Size((400, 10))
+            d["target"].shape == torch.Size((400, 10))
             for d in data.values()
         ]
     )
     assert all(
         [
-            d["input_points"].edge_index.shape == torch.Size((2, 1200))
+            d["input"].edge_index.shape == torch.Size((2, 1200))
             for d in data.values()
         ]
     )
     assert all(
-        [d["input_points"].edge_attr.shape[0] == 1200 for d in data.values()]
+        [d["input"].edge_attr.shape[0] == 1200 for d in data.values()]
     )

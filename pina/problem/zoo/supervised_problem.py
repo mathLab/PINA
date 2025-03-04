@@ -8,7 +8,7 @@ class SupervisedProblem(AbstractProblem):
     A problem definition for supervised learning in PINA.
 
     This class allows an easy and straightforward definition of a Supervised problem,
-    based on a single condition of type `InputOutputPointsCondition`
+    based on a single condition of type `InputTargetCondition`
 
     :Example:
         >>> import torch
@@ -32,6 +32,6 @@ class SupervisedProblem(AbstractProblem):
         if isinstance(input_, Graph):
             input_ = input_.data
         self.conditions["data"] = Condition(
-            input_points=input_, output_points=output_
+            input=input_, target=output_
         )
         super().__init__()

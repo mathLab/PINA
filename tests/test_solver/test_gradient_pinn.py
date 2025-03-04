@@ -11,8 +11,8 @@ from pina.problem.zoo import (
     InversePoisson2DSquareProblem as InversePoisson
 )
 from pina.condition import (
-    InputOutputPointsCondition,
-    InputPointsEquationCondition,
+    InputTargetCondition,
+    InputEquationCondition,
     DomainEquationCondition
 )
 from torch._dynamo.eval_frame import OptimizedModule
@@ -43,8 +43,8 @@ input_pts = LabelTensor(input_pts, problem.input_variables)
 output_pts = torch.rand(50, len(problem.output_variables))
 output_pts = LabelTensor(output_pts, problem.output_variables)
 problem.conditions['data'] = Condition(
-    input_points=input_pts,
-    output_points=output_pts
+    input=input_pts,
+    target=output_pts
 )
 
 
@@ -55,8 +55,8 @@ def test_constructor(problem):
     solver = GradientPINN(model=model, problem=problem)
 
     assert solver.accepted_conditions_types == (
-        InputOutputPointsCondition,
-        InputPointsEquationCondition,
+        InputTargetCondition,
+        InputEquationCondition,
         DomainEquationCondition
     )
 

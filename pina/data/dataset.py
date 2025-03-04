@@ -23,14 +23,14 @@ class PinaDatasetFactory:
             raise ValueError("No conditions provided")
         if all(
             [
-                isinstance(v["input_points"], torch.Tensor)
+                isinstance(v["input"], torch.Tensor)
                 for v in conditions_dict.values()
             ]
         ):
             return PinaTensorDataset(conditions_dict, **kwargs)
         elif all(
             [
-                isinstance(v["input_points"], list)
+                isinstance(v["input"], list)
                 for v in conditions_dict.values()
             ]
         ):
@@ -49,14 +49,14 @@ class PinaDataset(Dataset):
         self.conditions_dict = conditions_dict
         self.max_conditions_lengths = max_conditions_lengths
         self.conditions_length = {
-            k: len(v["input_points"]) for k, v in self.conditions_dict.items()
+            k: len(v["input"]) for k, v in self.conditions_dict.items()
         }
         self.length = max(self.conditions_length.values())
 
     def _get_max_len(self):
         max_len = 0
         for condition in self.conditions_dict.values():
-            max_len = max(max_len, len(condition["input_points"]))
+            max_len = max(max_len, len(condition["input"]))
         return max_len
 
     def __len__(self):
@@ -81,7 +81,7 @@ class PinaTensorDataset(PinaDataset):
     def _getitem_int(self, idx):
         return {
             k: {
-                k_data: v[k_data][idx % len(v["input_points"])]
+                k_data: v[k_data][idx % len(v["input"])]
                 for k_data in v.keys()
             }
             for k, v in self.conditions_dict.items()
@@ -111,11 +111,11 @@ class PinaTensorDataset(PinaDataset):
         return self._getitem_func(idx)
 
     @property
-    def input_points(self):
+    def input(self):
         """
         Method to return input points for training.
         """
-        return {k: v["input_points"] for k, v in self.conditions_dict.items()}
+        return {k: v["input"] for k, v in self.conditions_dict.items()}
 
 
 class PinaBatch(Batch):
@@ -154,13 +154,13 @@ class PinaGraphDataset(PinaDataset):
             self._getitem_func = self._getitem_dummy
 
         ex_data = conditions_dict[list(conditions_dict.keys())[0]][
-            "input_points"
+            "input"
         ][0]
         for name, attr in ex_data.items():
             if isinstance(attr, LabelTensor):
                 self.in_labels[name] = attr.stored_labels
         ex_data = conditions_dict[list(conditions_dict.keys())[0]][
-            "output_points"
+            "target"
         ][0]
         if isinstance(ex_data, LabelTensor):
             self.out_labels = ex_data.labels
@@ -209,7 +209,7 @@ class PinaGraphDataset(PinaDataset):
     def _getitem_int(self, idx):
         return {
             k: {
-                k_data: v[k_data][idx % len(v["input_points"])]
+                k_data: v[k_data][idx % len(v["input"])]
                 for k_data in v.keys()
             }
             for k, v in self.conditions_dict.items()

@@ -172,7 +172,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         # assuming batch is a custom Batch object
         batch_size = 0
         for data in batch:
-            batch_size += len(data[1]["input_points"])
+            batch_size += len(data[1]["input"])
         return batch_size
 
     @staticmethod

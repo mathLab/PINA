@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 from ..utils import check_consistency
 from ..domain import DomainInterface, CartesianDomain
 from ..condition.domain_equation_condition import DomainEquationCondition
-from ..condition import InputPointsEquationCondition
+from ..condition import InputEquationCondition
 from copy import deepcopy
 from .. import LabelTensor
 from ..utils import merge_tensors
@@ -55,8 +55,8 @@ class AbstractProblem(metaclass=ABCMeta):
     def input_pts(self):
         to_return = {}
         for cond_name, cond in self.conditions.items():
-            if hasattr(cond, "input_points"):
-                to_return[cond_name] = cond.input_points
+            if hasattr(cond, "input"):
+                to_return[cond_name] = cond.input
             elif hasattr(cond, "domain"):
                 to_return[cond_name] = self._discretised_domains[cond.domain]
         return to_return

@@ -1,9 +1,9 @@
 """Condition module."""
 
 from .domain_equation_condition import DomainEquationCondition
-from .input_equation_condition import InputPointsEquationCondition
-from .input_output_condition import InputOutputPointsCondition
-from .data_condition import DataConditionInterface
+from .input_equation_condition import InputEquationCondition
+from .input_target_condition import InputTargetCondition
+from .data_condition import DataCondition
 import warnings
 from ..utils import custom_warning_format
 
@@ -46,10 +46,10 @@ class Condition:
 
     __slots__ = list(
         set(
-            InputOutputPointsCondition.__slots__
-            + InputPointsEquationCondition.__slots__
+            InputTargetCondition.__slots__
+            + InputEquationCondition.__slots__
             + DomainEquationCondition.__slots__
-            + DataConditionInterface.__slots__
+            + DataCondition.__slots__
         )
     )
 
@@ -71,16 +71,16 @@ class Condition:
             )
 
         sorted_keys = sorted(kwargs.keys())
-
-        if sorted_keys == sorted(InputOutputPointsCondition.__slots__):
-            return InputOutputPointsCondition(**kwargs)
-        elif sorted_keys == sorted(InputPointsEquationCondition.__slots__):
-            return InputPointsEquationCondition(**kwargs)
+        if sorted_keys == sorted(InputTargetCondition.__slots__):
+            return InputTargetCondition(**kwargs)
+        elif sorted_keys == sorted(InputEquationCondition.__slots__):
+            return InputEquationCondition(**kwargs)
         elif sorted_keys == sorted(DomainEquationCondition.__slots__):
             return DomainEquationCondition(**kwargs)
-        elif sorted_keys == sorted(DataConditionInterface.__slots__):
-            return DataConditionInterface(**kwargs)
-        elif sorted_keys == DataConditionInterface.__slots__[0]:
-            return DataConditionInterface(**kwargs)
+        elif (
+            sorted_keys == sorted(DataCondition.__slots__)
+            or sorted_keys[0] == DataCondition.__slots__[0]
+        ):
+            return DataCondition(**kwargs)
         else:
             raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")

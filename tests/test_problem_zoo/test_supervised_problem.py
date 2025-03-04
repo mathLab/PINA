@@ -1,6 +1,6 @@
 import torch
 from pina.problem import AbstractProblem
-from pina.condition import InputOutputPointsCondition
+from pina.condition import InputTargetCondition
 from pina.problem.zoo.supervised_problem import SupervisedProblem
 from pina.graph import RadiusGraph
 
@@ -13,7 +13,7 @@ def test_constructor():
     assert hasattr(problem, "conditions")
     assert isinstance(problem.conditions, dict)
     assert list(problem.conditions.keys()) == ["data"]
-    assert isinstance(problem.conditions["data"], InputOutputPointsCondition)
+    assert isinstance(problem.conditions["data"], InputTargetCondition)
 
 
 def test_constructor_graph():
@@ -29,6 +29,6 @@ def test_constructor_graph():
     assert hasattr(problem, "conditions")
     assert isinstance(problem.conditions, dict)
     assert list(problem.conditions.keys()) == ["data"]
-    assert isinstance(problem.conditions["data"], InputOutputPointsCondition)
-    assert isinstance(problem.conditions["data"].input_points, list)
-    assert isinstance(problem.conditions["data"].output_points, torch.Tensor)
+    assert isinstance(problem.conditions["data"], InputTargetCondition)
+    assert isinstance(problem.conditions["data"].input, list)
+    assert isinstance(problem.conditions["data"].target, torch.Tensor)

@@ -50,7 +50,7 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
         "nil_g4": Condition(domain="g4", equation=FixedValue(0.0)),
         "laplace_D": Condition(domain="D", equation=Equation(laplace_equation)),
         "data": Condition(
-            input_points=data_input.extract(["x", "y"]),
-            output_points=data_output,
+            input=data_input.extract(["x", "y"]),
+            target=data_output,
         ),
     }
