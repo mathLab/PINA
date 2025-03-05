@@ -4,7 +4,6 @@ from abc import ABCMeta, abstractmethod
 from ..utils import check_consistency
 from ..domain import DomainInterface, CartesianDomain
 from ..condition.domain_equation_condition import DomainEquationCondition
-from ..condition import InputEquationCondition
 from copy import deepcopy
 from .. import LabelTensor
 from ..utils import merge_tensors

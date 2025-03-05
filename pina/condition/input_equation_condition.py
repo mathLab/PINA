@@ -3,13 +3,12 @@ InputEquationCondition class definition.
 """
 
 import torch
-
+from torch_geometric.data import Data
 from .condition_interface import ConditionInterface
 from ..label_tensor import LabelTensor
 from ..graph import Graph
 from ..utils import check_consistency
 from ..equation.equation_interface import EquationInterface
-from torch_geometric.data import Data
 
 
 class InputEquationCondition(ConditionInterface):
@@ -60,13 +59,12 @@ class InputEquationCondition(ConditionInterface):
         )
         if is_tensor_input:
             return InputTensorEquationCondition
-        elif is_graph_input:
+        if is_graph_input:
             return InputGraphEquationCondition
-        else:
-            raise ValueError(
-                "Invalid input types. "
-                "Please provide either torch.Tensor or Graph objects."
-            )
+        raise ValueError(
+            "Invalid input types. "
+            "Please provide either torch.Tensor or Graph objects."
+        )
 
 
 class InputTensorEquationCondition(InputEquationCondition):
@@ -74,12 +72,8 @@ class InputTensorEquationCondition(InputEquationCondition):
     InputEquationCondition subclass for torch.Tensor input data.
     """
 
-    pass
-
 
 class InputGraphEquationCondition(InputEquationCondition):
     """
     InputEquationCondition subclass for Graph input data.
     """
-
-    pass

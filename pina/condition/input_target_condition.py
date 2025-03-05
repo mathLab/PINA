@@ -3,11 +3,10 @@ InputTargetCondition class definition.
 """
 
 import torch
-
+from torch_geometric.data import Data
 from .condition_interface import ConditionInterface
 from ..label_tensor import LabelTensor
 from ..graph import Graph
-from torch_geometric.data import Data
 
 
 class InputTargetCondition(ConditionInterface):
@@ -66,33 +65,22 @@ class InputTargetCondition(ConditionInterface):
 
         if is_tensor_input and is_tensor_target:
             return TensorInputTensorTargetCondition
-        elif is_tensor_input and is_graph_target:
+        if is_tensor_input and is_graph_target:
             return TensorInputGraphTargetCondition
-        elif is_graph_input and is_tensor_target:
+        if is_graph_input and is_tensor_target:
             return GraphInputTensorTargetCondition
-        elif is_graph_input and is_graph_target:
+        if is_graph_input and is_graph_target:
             return GraphInputGraphTargetCondition
-        else:
-            raise ValueError(
-                "Invalid input and target types. "
-                "Please provide either torch.Tensor or Graph objects."
-            )
-
-    def __init__(self, input, target):
-        """
-        TODO : add docstring
-        """
-        super().__init__()
-        self.input = input
-        self.target = target
+        raise ValueError(
+            "Invalid input and target types. "
+            "Please provide either torch.Tensor or Graph objects."
+        )
 
 
 class TensorInputTensorTargetCondition(InputTargetCondition):
     """
     InputTargetCondition subclass for torch.Tensor input and target data.
     """
-
-    pass
 
 
 class TensorInputGraphTargetCondition(InputTargetCondition):
@@ -101,8 +89,6 @@ class TensorInputGraphTargetCondition(InputTargetCondition):
     data.
     """
 
-    pass
-
 
 class GraphInputTensorTargetCondition(InputTargetCondition):
     """
@@ -110,12 +96,8 @@ class GraphInputTensorTargetCondition(InputTargetCondition):
     data.
     """
 
-    pass
-
 
 class GraphInputGraphTargetCondition(InputTargetCondition):
     """
     InputTargetCondition subclass for Graph/Data input and target data.
     """
-
-    pass

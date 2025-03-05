@@ -1,10 +1,9 @@
 import torch
-
+from torch_geometric.data import Data
 from . import ConditionInterface
 from ..label_tensor import LabelTensor
 from ..graph import Graph
 from ..utils import check_consistency
-from torch_geometric.data import Data
 
 
 class DataCondition(ConditionInterface):
@@ -66,13 +65,13 @@ class DataCondition(ConditionInterface):
         )
         if is_tensor_input:
             return TensorDataCondition
-        elif is_graph_input:
+        if is_graph_input:
             return GraphDataCondition
-        else:
-            raise ValueError(
-                "Invalid input types. "
-                "Please provide either torch.Tensor or Graph objects."
-            )
+
+        raise ValueError(
+            "Invalid input types. "
+            "Please provide either torch.Tensor or Graph objects."
+        )
 
 
 class TensorDataCondition(DataCondition):
@@ -80,12 +79,8 @@ class TensorDataCondition(DataCondition):
     DataCondition for torch.Tensor input data
     """
 
-    pass
-
 
 class GraphDataCondition(DataCondition):
     """
     DataCondition for Graph/Data input data
     """
-
-    pass

@@ -73,14 +73,14 @@ class Condition:
         sorted_keys = sorted(kwargs.keys())
         if sorted_keys == sorted(InputTargetCondition.__slots__):
             return InputTargetCondition(**kwargs)
-        elif sorted_keys == sorted(InputEquationCondition.__slots__):
+        if sorted_keys == sorted(InputEquationCondition.__slots__):
             return InputEquationCondition(**kwargs)
-        elif sorted_keys == sorted(DomainEquationCondition.__slots__):
+        if sorted_keys == sorted(DomainEquationCondition.__slots__):
             return DomainEquationCondition(**kwargs)
-        elif (
+        if (
             sorted_keys == sorted(DataCondition.__slots__)
             or sorted_keys[0] == DataCondition.__slots__[0]
         ):
             return DataCondition(**kwargs)
-        else:
-            raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")
+
+        raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")
