@@ -12,7 +12,7 @@ __all__ = [
     "InputGraphEquationCondition",
     "DataCondition",
     "GraphDataCondition",
-    "TensorDataCondition"
+    "TensorDataCondition",
 ]
 
 from .condition_interface import ConditionInterface

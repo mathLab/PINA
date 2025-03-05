@@ -31,7 +31,5 @@ class SupervisedProblem(AbstractProblem):
         """
         if isinstance(input_, Graph):
             input_ = input_.data
-        self.conditions["data"] = Condition(
-            input=input_, target=output_
-        )
+        self.conditions["data"] = Condition(input=input_, target=output_)
         super().__init__()

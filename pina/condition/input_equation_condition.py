@@ -1,3 +1,7 @@
+"""
+InputEquationCondition class definition.
+"""
+
 import torch
 
 from .condition_interface import ConditionInterface
@@ -17,6 +21,17 @@ class InputEquationCondition(ConditionInterface):
     __slots__ = ["input", "equation"]
 
     def __new__(cls, input, equation):
+        """
+        Instanciate the correct subclass of InputEquationCondition by checking
+        the type of the input data (only `input`).
+
+        :param input: torch.Tensor or Graph/Data object containing the input
+        :type input: torch.Tensor or Graph or Data
+        :param EquationInterface equation: Equation object containing the
+            equation function
+        :return: InputEquationCondition subclass
+        :rtype: InputTensorEquationCondition or InputGraphEquationCondition
+        """
         subclass = cls._get_subclass(input, equation)
         if subclass is not cls:
             return object.__new__(subclass)
@@ -24,7 +39,12 @@ class InputEquationCondition(ConditionInterface):
 
     def __init__(self, input, equation):
         """
-        TODO : add docstring
+        Initialize the InputEquationCondition by storing the input and equation.
+
+        :param input: torch.Tensor or Graph/Data object containing the input
+        :type input: torch.Tensor or Graph or Data
+        :param EquationInterface equation: Equation object containing the
+            equation function
         """
         super().__init__()
         self.input = input
@@ -50,8 +70,16 @@ class InputEquationCondition(ConditionInterface):
 
 
 class InputTensorEquationCondition(InputEquationCondition):
+    """
+    InputEquationCondition subclass for torch.Tensor input data.
+    """
+
     pass
 
 
 class InputGraphEquationCondition(InputEquationCondition):
+    """
+    InputEquationCondition subclass for Graph input data.
+    """
+
     pass

@@ -29,10 +29,7 @@ class PinaDatasetFactory:
         ):
             return PinaTensorDataset(conditions_dict, **kwargs)
         elif all(
-            [
-                isinstance(v["input"], list)
-                for v in conditions_dict.values()
-            ]
+            [isinstance(v["input"], list) for v in conditions_dict.values()]
         ):
             return PinaGraphDataset(conditions_dict, **kwargs)
         raise ValueError(
@@ -80,10 +77,7 @@ class PinaTensorDataset(PinaDataset):
 
     def _getitem_int(self, idx):
         return {
-            k: {
-                k_data: v[k_data][idx % len(v["input"])]
-                for k_data in v.keys()
-            }
+            k: {k_data: v[k_data][idx % len(v["input"])] for k_data in v.keys()}
             for k, v in self.conditions_dict.items()
         }
 
@@ -153,15 +147,11 @@ class PinaGraphDataset(PinaDataset):
         else:
             self._getitem_func = self._getitem_dummy
 
-        ex_data = conditions_dict[list(conditions_dict.keys())[0]][
-            "input"
-        ][0]
+        ex_data = conditions_dict[list(conditions_dict.keys())[0]]["input"][0]
         for name, attr in ex_data.items():
             if isinstance(attr, LabelTensor):
                 self.in_labels[name] = attr.stored_labels
-        ex_data = conditions_dict[list(conditions_dict.keys())[0]][
-            "target"
-        ][0]
+        ex_data = conditions_dict[list(conditions_dict.keys())[0]]["target"][0]
         if isinstance(ex_data, LabelTensor):
             self.out_labels = ex_data.labels
 
@@ -208,10 +198,7 @@ class PinaGraphDataset(PinaDataset):
 
     def _getitem_int(self, idx):
         return {
-            k: {
-                k_data: v[k_data][idx % len(v["input"])]
-                for k_data in v.keys()
-            }
+            k: {k_data: v[k_data][idx % len(v["input"])] for k_data in v.keys()}
             for k, v in self.conditions_dict.items()
         }
 

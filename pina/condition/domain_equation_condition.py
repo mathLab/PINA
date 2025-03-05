@@ -1,3 +1,7 @@
+"""
+DomainEquationCondition class definition.
+"""
+
 import torch
 
 from .condition_interface import ConditionInterface
@@ -16,7 +20,11 @@ class DomainEquationCondition(ConditionInterface):
 
     def __init__(self, domain, equation):
         """
-        TODO : add docstring
+        Initialize the DomainEquationCondition, storing the domain and equation.
+
+        :param DomainInterface domain: Domain object containing the domain data
+        :param EquationInterface equation: Equation object containing the
+            equation data
         """
         super().__init__()
         self.domain = domain

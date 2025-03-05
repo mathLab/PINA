@@ -18,6 +18,20 @@ class DataCondition(ConditionInterface):
     __slots__ = ["input", "conditional_variables"]
 
     def __new__(cls, input, conditional_variables=None):
+        """
+        Instanciate the correct subclass of DataCondition by checking the type
+        of the input data (input and conditional_variables).
+
+        :param input: torch.Tensor or Graph/Data object containing the input
+            data
+        :type input: torch.Tensor or Graph or Data
+        :param conditional_variables: torch.Tensor or LabelTensor containing
+            the conditional variables
+        :type conditional_variables: torch.Tensor or LabelTensor
+        :return: DataCondition subclass
+        :rtype: TensorDataCondition or GraphDataCondition
+        """
+
         subclass = cls._get_subclass(input, conditional_variables)
         if subclass is not cls:
             return object.__new__(subclass)
@@ -25,7 +39,15 @@ class DataCondition(ConditionInterface):
 
     def __init__(self, input, conditional_variables=None):
         """
-        TODO : add docstring
+        Initialize the DataCondition, storing the input and conditional
+        variables (if any).
+
+        :param input: torch.Tensor or Graph/Data object containing the input
+            data
+        :type input: torch.Tensor or Graph or Data
+        :param conditional_variables: torch.Tensor or LabelTensor containing
+            the conditional variables
+        :type conditional_variables: torch.Tensor or LabelTensor
         """
         super().__init__()
         self.input = input
@@ -54,8 +76,16 @@ class DataCondition(ConditionInterface):
 
 
 class TensorDataCondition(DataCondition):
+    """
+    DataCondition for torch.Tensor input data
+    """
+
     pass
 
 
 class GraphDataCondition(DataCondition):
+    """
+    DataCondition for Graph/Data input data
+    """
+
     pass
