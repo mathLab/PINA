@@ -214,7 +214,6 @@ logging-modules=logging
 
 
 [FORMAT]
-
 # Expected format of line ending, e.g. empty (any line ending), LF or CRLF.
 expected-line-ending-format=
 
@@ -250,6 +249,8 @@ single-line-if-stmt=no
 
 
 [BASIC]
+# Allow redefinition of input builtins
+allowed-redefined-builtins=input
 
 # Naming hint for argument names
 argument-name-hint=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
