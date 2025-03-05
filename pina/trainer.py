@@ -56,7 +56,7 @@ class Trainer(lightning.pytorch.Trainer):
         :param pin_memory: Whether to use pinned memory for faster data
             transfer to GPU. Default False.
         :type pin_memory: bool
-        :param shuffle: Whether to shuffle the data for training. Default False.
+        :param shuffle: Whether to shuffle the data for training. Default True.
         :type pin_memory: bool
 
         :Keyword Arguments:
@@ -85,7 +85,7 @@ class Trainer(lightning.pytorch.Trainer):
         if shuffle is not None:
             check_consistency(shuffle, bool)
         else:
-            shuffle = False
+            shuffle = True
         if train_size + test_size + val_size + predict_size > 1:
             raise ValueError(
                 "train_size, test_size, val_size and predict_size "
