@@ -35,8 +35,8 @@ class DataCondition(ConditionInterface):
         :rtype: TensorDataCondition or GraphDataCondition
         """
 
-        subclass = cls._get_subclass(input, conditional_variables)
-        if subclass is not cls:
+        if cls == DataCondition:
+            subclass = cls._get_subclass(input, conditional_variables)
             return subclass.__new__(subclass, input, conditional_variables)
         return super().__new__(cls)
 

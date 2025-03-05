@@ -1,5 +1,5 @@
 """
-TODO docstring
+This module contains condition classes for supervised learning tasks.
 """
 
 import torch
@@ -31,8 +31,9 @@ class InputTargetCondition(ConditionInterface):
             TensorInputGraphTargetCondition or GraphInputTensorTargetCondition
             or GraphInputGraphTargetCondition
         """
-        subclass = cls._get_subclass(input, target)
-        if subclass is not cls:
+
+        if cls == InputTargetCondition:
+            subclass = cls._get_subclass(input, target)
             return subclass.__new__(subclass, input, target)
         return super().__new__(cls)
 
@@ -46,6 +47,8 @@ class InputTargetCondition(ConditionInterface):
         :type target: torch.Tensor or Graph or Data
         """
         super().__init__()
+        if hasattr(self, "_check_input_target_consistency"):
+            self._check_input_target_consistency(input, target)
         self.input = input
         self.target = target
 
@@ -82,12 +85,28 @@ class TensorInputTensorTargetCondition(InputTargetCondition):
     InputTargetCondition subclass for torch.Tensor input and target data.
     """
 
+    @staticmethod
+    def _check_input_target_consistency(input, target):
+        if len(input) != len(target):
+            raise ValueError(
+                "The input and target lists must have the same length."
+            )
+
 
 class TensorInputGraphTargetCondition(InputTargetCondition):
     """
     InputTargetCondition subclass for torch.Tensor input and Graph/Data target
     data.
     """
+
+    @staticmethod
+    def _check_input_target_consistency(input, target):
+        if isinstance(target, (Graph, Data)):
+            return
+        if len(input) != len(target):
+            raise ValueError(
+                "The input and target lists must have the same length."
+            )
 
 
 class GraphInputTensorTargetCondition(InputTargetCondition):
@@ -96,8 +115,35 @@ class GraphInputTensorTargetCondition(InputTargetCondition):
     data.
     """
 
+    @staticmethod
+    def _check_input_target_consistency(input, target):
+        if isinstance(input, (Graph, Data)):
+            return
+        if len(input) != len(target):
+            raise ValueError(
+                "The input and target lists must have the same length."
+            )
+
 
 class GraphInputGraphTargetCondition(InputTargetCondition):
     """
     InputTargetCondition subclass for Graph/Data input and target data.
     """
+
+    @staticmethod
+    def _check_input_target_consistency(input, target):
+        if isinstance(input, list) and isinstance(target, list):
+            if len(input) != len(target):
+                raise ValueError(
+                    "The input and target lists must have the same length."
+                )
+            return
+        if isinstance(target, (Graph, Data)) and isinstance(
+            input, (Graph, Data)
+        ):
+            return
+        raise ValueError(
+            "Invalid input and target types. "
+            "input and target must be either both lists or both Graph/Data "
+            "objects."
+        )

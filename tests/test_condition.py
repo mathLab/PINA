@@ -14,7 +14,6 @@ from pina.condition import (
     DomainEquationCondition,
 )
 from pina.condition import (
-    DataCondition,
     TensorDataCondition,
     GraphDataCondition,
 )
@@ -24,10 +23,10 @@ from pina.graph import RadiusGraph
 
 example_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
 
-input_tensor = torch.tensor([[0, 0, 0]])
-target_tensor = torch.tensor([[1, 2]])
-input_lt = LabelTensor(torch.tensor([[0, 0, 0]]), ["x", "y", "z"])
-target_lt = LabelTensor(torch.tensor([[1, 2]]), ["a", "b"])
+input_tensor = torch.rand((10,3))
+target_tensor = torch.rand((10,2))
+input_lt = LabelTensor(torch.rand((10,3)), ["x", "y", "z"])
+target_lt = LabelTensor(torch.rand((10,2)), ["a", "b"])
 
 x = torch.rand(10, 20, 2)
 pos = torch.rand(10, 20, 2)
@@ -69,7 +68,9 @@ def test_init_input_target():
     assert isinstance(cond, TensorInputGraphTargetCondition)
     cond = Condition(input=input_single_graph, target=target_lt)
     assert isinstance(cond, GraphInputTensorTargetCondition)
-    cond = Condition(input=input_graph, target=target_single_graph)
+    cond = Condition(input=input_graph, target=target_graph)
+    assert isinstance(cond, GraphInputGraphTargetCondition)
+    cond = Condition(input=input_single_graph, target=target_single_graph)
     assert isinstance(cond, GraphInputGraphTargetCondition)
 
     with pytest.raises(ValueError):

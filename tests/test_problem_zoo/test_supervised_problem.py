@@ -23,7 +23,7 @@ def test_constructor_graph():
         RadiusGraph(x=x_, pos=pos_, radius=0.2, edge_attr=True)
         for x_, pos_ in zip(x, pos)
     ]
-    output_ = torch.rand((100, 10))
+    output_ = torch.rand((20, 100, 10))
     problem = SupervisedProblem(input_=input_, output_=output_)
     assert isinstance(problem, AbstractProblem)
     assert hasattr(problem, "conditions")

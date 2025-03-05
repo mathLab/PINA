@@ -1,5 +1,5 @@
 """
-InputEquationCondition class definition.
+Module to define InputEquationCondition class and its subclasses.
 """
 
 import torch
@@ -31,8 +31,10 @@ class InputEquationCondition(ConditionInterface):
         :return: InputEquationCondition subclass
         :rtype: InputTensorEquationCondition or InputGraphEquationCondition
         """
-        subclass = cls._get_subclass(input, equation)
-        if subclass is not cls:
+        check_consistency(equation, (EquationInterface))
+
+        if cls == InputEquationCondition:
+            subclass = cls._get_subclass(input)
             return subclass.__new__(subclass, input, equation)
         return super().__new__(cls)
 
@@ -50,8 +52,7 @@ class InputEquationCondition(ConditionInterface):
         self.equation = equation
 
     @staticmethod
-    def _get_subclass(input, equation):
-        check_consistency(equation, (EquationInterface))
+    def _get_subclass(input):
         is_tensor_input = isinstance(input, (LabelTensor, torch.Tensor))
         is_graph_input = isinstance(input, (Data, Graph)) or (
             isinstance(input, list)
