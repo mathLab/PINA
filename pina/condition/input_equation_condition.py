@@ -33,7 +33,7 @@ class InputEquationCondition(ConditionInterface):
         """
         subclass = cls._get_subclass(input, equation)
         if subclass is not cls:
-            return object.__new__(subclass)
+            return subclass.__new__(subclass, input, equation)
         return super().__new__(cls)
 
     def __init__(self, input, equation):

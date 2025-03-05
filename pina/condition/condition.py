@@ -62,11 +62,26 @@ class Condition:
             )
 
         # back-compatibility 0.1
-        if "location" in kwargs.keys():
+        keys = list(kwargs.keys())
+        if "location" in keys:
             kwargs["domain"] = kwargs.pop("location")
             warnings.warn(
-                f"'location' is deprecated and will be removed "
-                f"in future versions. Please use 'domain' instead.",
+                "'location' is deprecated and will be removed "
+                "in future versions. Please use 'domain' instead.",
+                DeprecationWarning,
+            )
+        if "input_points" in keys:
+            kwargs["input"] = kwargs.pop("input_points")
+            warnings.warn(
+                "'input_points' is deprecated and will be removed "
+                "in future versions. Please use 'input' instead.",
+                DeprecationWarning,
+            )
+        if "output_points" in keys:
+            kwargs["target"] = kwargs.pop("output_points")
+            warnings.warn(
+                "'output_points' is deprecated and will be removed "
+                "in future versions. Please use 'target' instead.",
                 DeprecationWarning,
             )
 

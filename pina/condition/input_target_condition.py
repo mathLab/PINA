@@ -1,5 +1,5 @@
 """
-InputTargetCondition class definition.
+TODO docstring
 """
 
 import torch
@@ -33,7 +33,7 @@ class InputTargetCondition(ConditionInterface):
         """
         subclass = cls._get_subclass(input, target)
         if subclass is not cls:
-            return object.__new__(subclass)
+            return subclass.__new__(subclass, input, target)
         return super().__new__(cls)
 
     def __init__(self, input, target):

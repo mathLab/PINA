@@ -37,7 +37,7 @@ class DataCondition(ConditionInterface):
 
         subclass = cls._get_subclass(input, conditional_variables)
         if subclass is not cls:
-            return object.__new__(subclass)
+            return subclass.__new__(subclass, input, conditional_variables)
         return super().__new__(cls)
 
     def __init__(self, input, conditional_variables=None):
