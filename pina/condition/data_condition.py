@@ -88,3 +88,7 @@ class GraphDataCondition(DataCondition):
     """
     DataCondition for Graph/Data input data
     """
+
+    def __init__(self, input, conditional_variables=None):
+        self._check_graph_list_consistency(input)
+        super().__init__(input, conditional_variables)

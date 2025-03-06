@@ -99,6 +99,10 @@ class TensorInputGraphTargetCondition(InputTargetCondition):
     data.
     """
 
+    def __init__(self, input, target):
+        self._check_graph_list_consistency(target)
+        super().__init__(input, target)
+
     @staticmethod
     def _check_input_target_consistency(input, target):
         if isinstance(target, (Graph, Data)):
@@ -115,6 +119,10 @@ class GraphInputTensorTargetCondition(InputTargetCondition):
     data.
     """
 
+    def __init__(self, input, target):
+        self._check_graph_list_consistency(input)
+        super().__init__(input, target)
+
     @staticmethod
     def _check_input_target_consistency(input, target):
         if isinstance(input, (Graph, Data)):
@@ -129,6 +137,11 @@ class GraphInputGraphTargetCondition(InputTargetCondition):
     """
     InputTargetCondition subclass for Graph/Data input and target data.
     """
+
+    def __init__(self, input, target):
+        self._check_graph_list_consistency(input)
+        self._check_graph_list_consistency(target)
+        super().__init__(input, target)
 
     @staticmethod
     def _check_input_target_consistency(input, target):

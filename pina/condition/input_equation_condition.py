@@ -78,3 +78,7 @@ class InputGraphEquationCondition(InputEquationCondition):
     """
     InputEquationCondition subclass for Graph input data.
     """
+
+    def __init__(self, input, equation):
+        super().__init__(input, equation)
+        self._check_graph_list_consistency(input)

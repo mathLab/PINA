@@ -48,6 +48,26 @@ target_graph = [
     for x_, pos_ in zip(x, pos)
 ]
 
+x = LabelTensor(torch.rand(10, 20, 2), ["u", "v"])
+pos = LabelTensor(torch.rand(10, 20, 2), ["x", "y"])
+radius = 0.1
+input_graph_lt = [
+    RadiusGraph(
+        x=x[i],
+        pos=pos[i],
+        radius=radius,
+    )
+    for i in range(len(x))
+]
+target_graph_lt = [
+    RadiusGraph(
+        x=x[i],
+        pos=pos[i],
+        radius=radius,
+    )
+    for i in range(len(x))
+]
+
 input_single_graph = input_graph[0]
 target_single_graph = target_graph[0]
 
@@ -80,6 +100,16 @@ def test_init_input_target():
     with pytest.raises(ValueError):
         Condition(input=example_domain, target=example_domain)
 
+    # Test wrong graph condition initialisation
+    input = [input_graph[0], input_graph_lt[0]]
+    target = [target_graph[0], target_graph_lt[0]]
+    with pytest.raises(ValueError):
+        Condition(input=input, target=target)
+        
+    input_graph_lt[0].x.labels = ["a", "b"]
+    with pytest.raises(ValueError):
+        Condition(input=input_graph_lt, target=target_graph_lt)
+    
 
 def test_init_domain_equation():
     cond = Condition(domain=example_domain, equation=FixedValue(0.0))
