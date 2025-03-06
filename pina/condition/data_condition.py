@@ -19,6 +19,8 @@ class DataCondition(ConditionInterface):
     """
 
     __slots__ = ["input", "conditional_variables"]
+    _avail_input_cls = (torch.Tensor, LabelTensor, Data, Graph, list, tuple)
+    _avail_conditional_variables_cls = (torch.Tensor, LabelTensor)
 
     def __new__(cls, input, conditional_variables=None):
         """
@@ -34,10 +36,19 @@ class DataCondition(ConditionInterface):
         :return: DataCondition subclass
         :rtype: TensorDataCondition or GraphDataCondition
         """
-
-        if cls == DataCondition:
-            subclass = cls._get_subclass(input, conditional_variables)
+        if cls == DataCondition and isinstance(
+            input, (torch.Tensor, LabelTensor)
+        ):
+            subclass = TensorDataCondition
             return subclass.__new__(subclass, input, conditional_variables)
+
+        elif cls == DataCondition and isinstance(
+            input, (Graph, Data, list, tuple)
+        ):
+            cls._check_graph_list_consistency(input)
+            subclass = GraphDataCondition
+            return subclass.__new__(subclass, input, conditional_variables)
+
         return super().__new__(cls)
 
     def __init__(self, input, conditional_variables=None):
@@ -56,26 +67,16 @@ class DataCondition(ConditionInterface):
         self.input = input
         self.conditional_variables = conditional_variables
 
-    @staticmethod
-    def _get_subclass(input, conditional_variables):
-        if conditional_variables is not None:
-            check_consistency(
-                conditional_variables, (torch.Tensor, LabelTensor)
-            )
-        is_tensor_input = isinstance(input, (LabelTensor, torch.Tensor))
-        is_graph_input = isinstance(input, (Data, Graph)) or (
-            isinstance(input, list)
-            and all(isinstance(i, (Graph, Data)) for i in input)
-        )
-        if is_tensor_input:
-            return TensorDataCondition
-        if is_graph_input:
-            return GraphDataCondition
-
-        raise ValueError(
-            "Invalid input types. "
-            "Please provide either torch.Tensor or Graph objects."
-        )
+    def __setattr__(self, key, value):
+        if key == "input":
+            check_consistency(value, self._avail_input_cls)
+            DataCondition.__dict__[key].__set__(self, value)
+        elif key == "conditional_variables":
+            if value is not None:
+                check_consistency(value, self._avail_conditional_variables_cls)
+            DataCondition.__dict__[key].__set__(self, value)
+        elif key in ("_problem"):
+            super().__setattr__(key, value)
 
 
 class TensorDataCondition(DataCondition):
@@ -88,7 +89,3 @@ class GraphDataCondition(DataCondition):
     """
     DataCondition for Graph/Data input data
     """
-
-    def __init__(self, input, conditional_variables=None):
-        self._check_graph_list_consistency(input)
-        super().__init__(input, conditional_variables)

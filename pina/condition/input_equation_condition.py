@@ -18,6 +18,8 @@ class InputEquationCondition(ConditionInterface):
     """
 
     __slots__ = ["input", "equation"]
+    _avail_input_cls = (LabelTensor, Graph, Data, list, tuple)
+    _avail_equation_cls = EquationInterface
 
     def __new__(cls, input, equation):
         """
@@ -31,10 +33,14 @@ class InputEquationCondition(ConditionInterface):
         :return: InputEquationCondition subclass
         :rtype: InputTensorEquationCondition or InputGraphEquationCondition
         """
-        check_consistency(equation, (EquationInterface))
-
-        if cls == InputEquationCondition:
-            subclass = cls._get_subclass(input)
+        if cls == InputEquationCondition and isinstance(input, LabelTensor):
+            subclass = InputTensorEquationCondition
+            return subclass.__new__(subclass, input, equation)
+        elif cls == InputEquationCondition and isinstance(
+            input, (Graph, Data, list, tuple)
+        ):
+            cls._check_graph_list_consistency(input)
+            subclass = InputGraphEquationCondition
             return subclass.__new__(subclass, input, equation)
         return super().__new__(cls)
 
@@ -51,26 +57,20 @@ class InputEquationCondition(ConditionInterface):
         self.input = input
         self.equation = equation
 
-    @staticmethod
-    def _get_subclass(input):
-        is_tensor_input = isinstance(input, (LabelTensor, torch.Tensor))
-        is_graph_input = isinstance(input, (Data, Graph)) or (
-            isinstance(input, list)
-            and all(isinstance(i, (Graph, Data)) for i in input)
-        )
-        if is_tensor_input:
-            return InputTensorEquationCondition
-        if is_graph_input:
-            return InputGraphEquationCondition
-        raise ValueError(
-            "Invalid input types. "
-            "Please provide either torch.Tensor or Graph objects."
-        )
+    def __setattr__(self, key, value):
+        if key == "input":
+            check_consistency(value, self._avail_input_cls)
+            InputEquationCondition.__dict__[key].__set__(self, value)
+        elif key == "equation":
+            check_consistency(value, self._avail_equation_cls)
+            InputEquationCondition.__dict__[key].__set__(self, value)
+        elif key in ("_problem"):
+            super().__setattr__(key, value)
 
 
 class InputTensorEquationCondition(InputEquationCondition):
     """
-    InputEquationCondition subclass for torch.Tensor input data.
+    InputEquationCondition subclass for LabelTensor input data.
     """
 
 
@@ -79,6 +79,4 @@ class InputGraphEquationCondition(InputEquationCondition):
     InputEquationCondition subclass for Graph input data.
     """
 
-    def __init__(self, input, equation):
-        super().__init__(input, equation)
-        self._check_graph_list_consistency(input)
+    # TODO here we need to check that al least one attribute has LabelTensors

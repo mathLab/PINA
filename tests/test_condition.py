@@ -123,12 +123,12 @@ def test_init_domain_equation():
 
 
 def test_init_input_equation():
-    cond = Condition(input=input_tensor, equation=FixedValue(0.0))
-    assert isinstance(cond, InputTensorEquationCondition)
     cond = Condition(input=input_lt, equation=FixedValue(0.0))
     assert isinstance(cond, InputTensorEquationCondition)
     cond = Condition(input=input_graph, equation=FixedValue(0.0))
     assert isinstance(cond, InputGraphEquationCondition)
+    with pytest.raises(ValueError):
+        cond = Condition(input=input_tensor, equation=FixedValue(0.0))
     with pytest.raises(ValueError):
         Condition(example_domain, FixedValue(0.0))
     with pytest.raises(ValueError):

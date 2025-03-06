@@ -37,5 +37,5 @@ class DomainEquationCondition(ConditionInterface):
         elif key == "equation":
             check_consistency(value, (EquationInterface))
             DomainEquationCondition.__dict__[key].__set__(self, value)
-        elif key in ("_problem", "_condition_type"):
+        elif key in ("_problem"):
             super().__setattr__(key, value)

@@ -12,6 +12,14 @@ warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=DeprecationWarning)
 
 
+def warning_function(new, old):
+    warnings.warn(
+        f"'{old}' is deprecated and will be removed "
+        f"in future versions. Please use '{new}' instead.",
+        DeprecationWarning,
+    )
+
+
 class Condition:
     """
     The class ``Condition`` is used to represent the constraints (physical
@@ -65,25 +73,15 @@ class Condition:
         keys = list(kwargs.keys())
         if "location" in keys:
             kwargs["domain"] = kwargs.pop("location")
-            warnings.warn(
-                "'location' is deprecated and will be removed "
-                "in future versions. Please use 'domain' instead.",
-                DeprecationWarning,
-            )
+            warning_function(new="domain", old="location")
+
         if "input_points" in keys:
             kwargs["input"] = kwargs.pop("input_points")
-            warnings.warn(
-                "'input_points' is deprecated and will be removed "
-                "in future versions. Please use 'input' instead.",
-                DeprecationWarning,
-            )
+            warning_function(new="input", old="input_points")
+
         if "output_points" in keys:
             kwargs["target"] = kwargs.pop("output_points")
-            warnings.warn(
-                "'output_points' is deprecated and will be removed "
-                "in future versions. Please use 'target' instead.",
-                DeprecationWarning,
-            )
+            warning_function(new="target", old="output_points")
 
         sorted_keys = sorted(kwargs.keys())
         if sorted_keys == sorted(InputTargetCondition.__slots__):

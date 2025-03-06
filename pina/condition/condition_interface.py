@@ -37,6 +37,13 @@ class ConditionInterface(metaclass=ABCMeta):
         # anything)
         if isinstance(data_list, (Graph, Data)):
             return
+
+        # check all elements in the list are of the same type
+        if not all(isinstance(i, (Graph, Data)) for i in data_list):
+            raise ValueError(
+                "Invalid input types. "
+                "Please provide either Data or Graph objects."
+            )
         data = data_list[0]
         # Store the keys of the first element in the list
         keys = sorted(list(data.keys()))
@@ -51,8 +58,8 @@ class ConditionInterface(metaclass=ABCMeta):
             for name, tensor in data.items()
             if isinstance(tensor, LabelTensor)
         }
+
         # Iterate over the list of Data/Graph objects
-        print(data_types)
         for data in data_list[1:]:
             # Check if the keys of the current element are the same as the first
             # element
@@ -60,7 +67,6 @@ class ConditionInterface(metaclass=ABCMeta):
                 raise ValueError(
                     "All elements in the list must have the same keys."
                 )
-
             for name, tensor in data.items():
                 # Check if the type of each tensor inside the current element
                 # is the same as the first element
@@ -69,7 +75,6 @@ class ConditionInterface(metaclass=ABCMeta):
                         f"Data {name} must be a {data_types[name]}, got "
                         f"{tensor.__class__}"
                     )
-
                 # If the tensor is a LabelTensor, check if the labels are the
                 # same as the first element
                 if isinstance(tensor, LabelTensor):
