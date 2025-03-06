@@ -500,7 +500,6 @@ class ContinuousConvBlock(BaseContinuousConv):
 
         # initialize grid
         X = self._grid_transpose.clone().detach()
-        
         conv_transposed = self._grid_transpose.clone().detach()
 
         # list to iterate for calculating nn output
