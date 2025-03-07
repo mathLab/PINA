@@ -9,7 +9,7 @@
 # 
 # First of all, some useful imports.
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -22,16 +22,20 @@ if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
   
 import torch
+import matplotlib.pyplot as plt
+import warnings
 
-import matplotlib.pylab as plt
+from pina import Condition, LabelTensor
 from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.operator import laplacian, grad
 from pina.domain import CartesianDomain
 from pina.solver import PINN
 from pina.trainer import Trainer
-from pina.equation import Equation
-from pina.equation.equation_factory import FixedValue
-from pina import Condition, LabelTensor
+from pina.equation import Equation, FixedValue
+
+from lightning.pytorch.loggers import TensorBoardLogger
+
+warnings.filterwarnings('ignore')
 
 
 # ## The problem definition 
@@ -50,41 +54,65 @@ from pina import Condition, LabelTensor
 
 # Now, the wave problem is written in PINA code as a class, inheriting from `SpatialProblem` and `TimeDependentProblem` since we deal with spatial, and time dependent variables. The equations are written as `conditions` that should be satisfied in the corresponding domains. `truth_solution` is the exact solution which will be compared with the predicted one.
 
-# In[2]:
+# In[ ]:
 
 
 class Wave(TimeDependentProblem, SpatialProblem):
-    output_variables = ['u']
-    spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
-    temporal_domain = CartesianDomain({'t': [0, 1]})
+    output_variables = ["u"]
+    spatial_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
+    temporal_domain = CartesianDomain({"t": [0, 1]})
 
     def wave_equation(input_, output_):
-        u_t = grad(output_, input_, components=['u'], d=['t'])
-        u_tt = grad(u_t, input_, components=['dudt'], d=['t'])
-        nabla_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
+        u_t = grad(output_, input_, components=["u"], d=["t"])
+        u_tt = grad(u_t, input_, components=["dudt"], d=["t"])
+        nabla_u = laplacian(output_, input_, components=["u"], d=["x", "y"])
         return nabla_u - u_tt
 
     def initial_condition(input_, output_):
-        u_expected = (torch.sin(torch.pi*input_.extract(['x'])) *
-                      torch.sin(torch.pi*input_.extract(['y'])))
-        return output_.extract(['u']) - u_expected
+        u_expected = torch.sin(torch.pi * input_.extract(["x"])) * torch.sin(
+            torch.pi * input_.extract(["y"])
+        )
+        return output_.extract(["u"]) - u_expected
 
     conditions = {
-        'bound_cond1': Condition(domain=CartesianDomain({'x': [0, 1], 'y':  1, 't': [0, 1]}), equation=FixedValue(0.)),
-        'bound_cond2': Condition(domain=CartesianDomain({'x': [0, 1], 'y': 0, 't': [0, 1]}), equation=FixedValue(0.)),
-        'bound_cond3': Condition(domain=CartesianDomain({'x':  1, 'y': [0, 1], 't': [0, 1]}), equation=FixedValue(0.)),
-        'bound_cond4': Condition(domain=CartesianDomain({'x': 0, 'y': [0, 1], 't': [0, 1]}), equation=FixedValue(0.)),
-        'time_cond': Condition(domain=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': 0}), equation=Equation(initial_condition)),
-        'phys_cond': Condition(domain=CartesianDomain({'x': [0, 1], 'y': [0, 1], 't': [0, 1]}), equation=Equation(wave_equation)),
+        "bound_cond1": Condition(
+            domain=CartesianDomain({"x": [0, 1], "y": 1, "t": [0, 1]}),
+            equation=FixedValue(0.0),
+        ),
+        "bound_cond2": Condition(
+            domain=CartesianDomain({"x": [0, 1], "y": 0, "t": [0, 1]}),
+            equation=FixedValue(0.0),
+        ),
+        "bound_cond3": Condition(
+            domain=CartesianDomain({"x": 1, "y": [0, 1], "t": [0, 1]}),
+            equation=FixedValue(0.0),
+        ),
+        "bound_cond4": Condition(
+            domain=CartesianDomain({"x": 0, "y": [0, 1], "t": [0, 1]}),
+            equation=FixedValue(0.0),
+        ),
+        "time_cond": Condition(
+            domain=CartesianDomain({"x": [0, 1], "y": [0, 1], "t": 0}),
+            equation=Equation(initial_condition),
+        ),
+        "phys_cond": Condition(
+            domain=CartesianDomain({"x": [0, 1], "y": [0, 1], "t": [0, 1]}),
+            equation=Equation(wave_equation),
+        ),
     }
 
-    def wave_sol(self, pts):
-        return (torch.sin(torch.pi*pts.extract(['x'])) *
-                torch.sin(torch.pi*pts.extract(['y'])) *
-                torch.cos(torch.sqrt(torch.tensor(2.))*torch.pi*pts.extract(['t'])))
+    def truth_solution(self, pts):
+        f = (
+            torch.sin(torch.pi * pts.extract(["x"]))
+            * torch.sin(torch.pi * pts.extract(["y"]))
+            * torch.cos(
+                torch.sqrt(torch.tensor(2.0)) * torch.pi * pts.extract(["t"])
+            )
+        )
+        return LabelTensor(f, self.output_variables)
 
-    truth_solution = wave_sol
 
+# define problem
 problem = Wave()
 
 
@@ -96,7 +124,7 @@ problem = Wave()
 # 
 # where $NN$ is the neural net output. This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unknown field $u$. By construction, it is zero on the boundaries. The residuals of the equations are evaluated at several sampling points (which the user can manipulate using the method `discretise_domain`) and the loss minimized by the neural network is the sum of the residuals.
 
-# In[3]:
+# In[ ]:
 
 
 class HardMLP(torch.nn.Module):
@@ -104,120 +132,129 @@ class HardMLP(torch.nn.Module):
     def __init__(self, input_dim, output_dim):
         super().__init__()
 
-        self.layers = torch.nn.Sequential(torch.nn.Linear(input_dim, 40),
-                                          torch.nn.ReLU(),
-                                          torch.nn.Linear(40, 40),
-                                          torch.nn.ReLU(),
-                                          torch.nn.Linear(40, output_dim))
-        
+        self.layers = torch.nn.Sequential(
+            torch.nn.Linear(input_dim, 40),
+            torch.nn.ReLU(),
+            torch.nn.Linear(40, 40),
+            torch.nn.ReLU(),
+            torch.nn.Linear(40, output_dim),
+        )
+
     # here in the foward we implement the hard constraints
     def forward(self, x):
-        hard = x.extract(['x'])*(1-x.extract(['x']))*x.extract(['y'])*(1-x.extract(['y']))
-        return hard*self.layers(x)
+        hard = (
+            x.extract(["x"])
+            * (1 - x.extract(["x"]))
+            * x.extract(["y"])
+            * (1 - x.extract(["y"]))
+        )
+        return hard * self.layers(x)
 
 
 # ## Train and Inference
 
-# In this tutorial, the neural network is trained for 1000 epochs with a learning rate of 0.001 (default in `PINN`). Training takes approximately 3 minutes.
+# In this tutorial, the neural network is trained for 1000 epochs with a learning rate of 0.001 (default in `PINN`). As always, we will log using `Tensorboard`.
 
-# In[4]:
+# In[ ]:
 
 
 # generate the data
-problem.discretise_domain(1000, 'random', domains=['phys_cond', 'time_cond', 'bound_cond1', 'bound_cond2', 'bound_cond3', 'bound_cond4'])
+problem.discretise_domain(
+    1000,
+    "random",
+    domains=[
+        "phys_cond",
+        "time_cond",
+        "bound_cond1",
+        "bound_cond2",
+        "bound_cond3",
+        "bound_cond4",
+    ],
+)
+
+# define model
+model = HardMLP(len(problem.input_variables), len(problem.output_variables))
 
 # crete the solver
-pinn = PINN(problem, HardMLP(len(problem.input_variables), len(problem.output_variables)))
+pinn = PINN(problem=problem, model=model)
 
 # create trainer and train
-trainer = Trainer(pinn, max_epochs=1000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer = Trainer(
+    solver=pinn,
+    max_epochs=1000,
+    accelerator="cpu",
+    enable_model_summary=False,
+    train_size=1.0,
+    val_size=0.0,
+    test_size=0.0,
+    logger=TensorBoardLogger("tutorial_logs"),
+    enable_progress_bar=False,
+)
 trainer.train()
 
 
-# Notice that the loss on the boundaries of the spatial domain is exactly zero, as expected! After the training is completed one can now plot some results using the `Plotter` class of **PINA**.
+# Let's now plot the logging to see how the losses vary during training. For this, we will use `TensorBoard`.
 
-# In[5]:
-
-
-method='contourf'
-# plotting at fixed time t = 0.0
-print('Plotting at t=0')
-fixed_variables={'t': 0.0}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
-# plotting at fixed time t = 0.5
-print('Plotting at t=0.5')
-#plotter.plot(pinn, fixed_variables={'t': 0.5})
-fixed_variables={'t': 0.5}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
-# plotting at fixed time t = 1.
-print('Plotting at t=1')
-#plotter.plot(pinn, fixed_variables={'t': 1.0})
-fixed_variables={'t': 1.0}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
+# In[ ]:
 
 
-# The results are not so great, and we can clearly see that as time progress the solution gets worse.... Can we do better?
+# Load the TensorBoard extension
+get_ipython().run_line_magic('load_ext', 'tensorboard')
+get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")
+
+
+# Notice that the loss on the boundaries of the spatial domain is exactly zero, as expected! After the training is completed one can now plot some results using the `matplotlib`. We plot the predicted output on the left side, the true solution at the center and the difference on the right side using the `plot_solution` function.
+
+# In[ ]:
+
+
+@torch.no_grad()
+def plot_solution(solver, time):
+    # get the problem
+    problem = solver.problem
+    # get spatial points
+    spatial_samples = problem.spatial_domain.sample(30, "grid")
+    # get temporal value
+    time = LabelTensor(torch.tensor([[time]]), "t")
+    # cross data
+    points = spatial_samples.append(time, mode="cross")
+    # compute pinn solution, true solution and absolute difference
+    data = {
+        "PINN solution": solver(points),
+        "True solution": problem.truth_solution(points),
+        "Absolute Difference": torch.abs(
+            solver(points) - problem.truth_solution(points)
+        )
+    }
+    # plot the solution
+    plt.suptitle(f'Solution for time {time.item()}')
+    for idx, (title, field) in enumerate(data.items()):
+        plt.subplot(1, 3, idx + 1)
+        plt.title(title)
+        plt.tricontourf(  # convert to torch tensor + flatten
+            points.extract("x").tensor.flatten(),
+            points.extract("y").tensor.flatten(),
+            field.tensor.flatten(),
+        )
+        plt.colorbar(), plt.tight_layout()
+
+
+# Let's take a look at the results at different times, for example `0.0`, `0.5` and `1.0`:
+
+# In[ ]:
+
+
+plt.figure(figsize=(12, 6))
+plot_solution(solver=pinn, time=0)
+
+plt.figure(figsize=(12, 6))
+plot_solution(solver=pinn, time=0.5)
+
+plt.figure(figsize=(12, 6))
+plot_solution(solver=pinn, time=1)
+
+
+# The results are not so great, and we can clearly see that as time progresses the solution gets worse.... Can we do better?
 # 
 # A valid option is to impose the initial condition as hard constraint as well. Specifically, our solution is written as:
 # 
@@ -225,7 +262,7 @@ ax[2].title.set_text('Residual')
 # 
 # Let us build the network first
 
-# In[6]:
+# In[ ]:
 
 
 class HardMLPtime(torch.nn.Module):
@@ -233,118 +270,80 @@ class HardMLPtime(torch.nn.Module):
     def __init__(self, input_dim, output_dim):
         super().__init__()
 
-        self.layers = torch.nn.Sequential(torch.nn.Linear(input_dim, 40),
-                                          torch.nn.ReLU(),
-                                          torch.nn.Linear(40, 40),
-                                          torch.nn.ReLU(),
-                                          torch.nn.Linear(40, output_dim))
-        
+        self.layers = torch.nn.Sequential(
+            torch.nn.Linear(input_dim, 40),
+            torch.nn.ReLU(),
+            torch.nn.Linear(40, 40),
+            torch.nn.ReLU(),
+            torch.nn.Linear(40, output_dim),
+        )
+
     # here in the foward we implement the hard constraints
     def forward(self, x):
-        hard_space = x.extract(['x'])*(1-x.extract(['x']))*x.extract(['y'])*(1-x.extract(['y']))
-        hard_t = torch.sin(torch.pi*x.extract(['x'])) * torch.sin(torch.pi*x.extract(['y'])) * torch.cos(torch.sqrt(torch.tensor(2.))*torch.pi*x.extract(['t']))
-        return hard_space * self.layers(x) * x.extract(['t']) + hard_t
+        hard_space = (
+            x.extract(["x"])
+            * (1 - x.extract(["x"]))
+            * x.extract(["y"])
+            * (1 - x.extract(["y"]))
+        )
+        hard_t = (
+            torch.sin(torch.pi * x.extract(["x"]))
+            * torch.sin(torch.pi * x.extract(["y"]))
+            * torch.cos(
+                torch.sqrt(torch.tensor(2.0)) * torch.pi * x.extract(["t"])
+            )
+        )
+        return hard_space * self.layers(x) * x.extract(["t"]) + hard_t
 
 
-# Now let's train with the same configuration as thre previous test
+# Now let's train with the same configuration as the previous test
 
-# In[7]:
+# In[ ]:
 
 
-# generate the data
-problem.discretise_domain(1000, 'random', domains=['phys_cond', 'time_cond', 'bound_cond1', 'bound_cond2', 'bound_cond3', 'bound_cond4'])
+# define model
+model = HardMLPtime(len(problem.input_variables), len(problem.output_variables))
 
 # crete the solver
-pinn = PINN(problem, HardMLPtime(len(problem.input_variables), len(problem.output_variables)))
+pinn = PINN(problem=problem, model=model)
 
 # create trainer and train
-trainer = Trainer(pinn, max_epochs=1000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer = Trainer(
+    solver=pinn,
+    max_epochs=1000,
+    accelerator="cpu",
+    enable_model_summary=False,
+    train_size=1.0,
+    val_size=0.0,
+    test_size=0.0,
+    logger=TensorBoardLogger("tutorial_logs"),
+    enable_progress_bar=False,
+)
 trainer.train()
 
 
 # We can clearly see that the loss is way lower now. Let's plot the results
 
-# In[8]:
+# In[ ]:
 
 
-# plotting at fixed time t = 0.0
-print('Plotting at t=0')
-fixed_variables={'t': 0.0}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
-# plotting at fixed time t = 0.5
-print('Plotting at t=0.5')
-#plotter.plot(pinn, fixed_variables={'t': 0.5})
-fixed_variables={'t': 0.5}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
-# plotting at fixed time t = 1.
-print('Plotting at t=1')
-#plotter.plot(pinn, fixed_variables={'t': 1.0})
-fixed_variables={'t': 1.0}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
+plt.figure(figsize=(12, 6))
+plot_solution(solver=pinn, time=0)
+
+plt.figure(figsize=(12, 6))
+plot_solution(solver=pinn, time=0.5)
+
+plt.figure(figsize=(12, 6))
+plot_solution(solver=pinn, time=1)
 
 
-# We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem.
+# We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem. We can also see using Tensorboard how the two losses decreased:
+
+# In[ ]:
+
+
+get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")
+
 
 # ## What's next?
 # 
