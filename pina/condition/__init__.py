@@ -1,3 +1,7 @@
+"""
+Module for conditions.
+"""
+
 __all__ = [
     "Condition",
     "ConditionInterface",
@@ -16,6 +20,7 @@ __all__ = [
 ]
 
 from .condition_interface import ConditionInterface
+from .condition import Condition
 from .domain_equation_condition import DomainEquationCondition
 from .input_target_condition import (
     InputTargetCondition,

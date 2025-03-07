@@ -1,10 +1,10 @@
 """Condition module."""
 
+import warnings
+from .data_condition import DataCondition
 from .domain_equation_condition import DomainEquationCondition
 from .input_equation_condition import InputEquationCondition
 from .input_target_condition import InputTargetCondition
-from .data_condition import DataCondition
-import warnings
 from ..utils import custom_warning_format
 
 # Set the custom format for warnings
@@ -13,6 +13,13 @@ warnings.filterwarnings("always", category=DeprecationWarning)
 
 
 def warning_function(new, old):
+    """Handle the deprecation warning.
+
+    :param new: Object to use instead of the old one.
+    :type new: str
+    :param old: Object to deprecate.
+    :type old: str
+    """
     warnings.warn(
         f"'{old}' is deprecated and will be removed "
         f"in future versions. Please use '{new}' instead.",
@@ -48,7 +55,23 @@ class Condition:
 
     Example::
 
-    >>> TODO
+    >>> from pina import Condition
+    >>> condition = Condition(
+    ...     input=input,
+    ...     target=target
+    ... )
+    >>> condition = Condition(
+    ...     domain=location,
+    ...     equation=equation
+    ... )
+    >>> condition = Condition(
+    ...     input=input,
+    ...     equation=equation
+    ... )
+    >>> condition = Condition(
+    ...     input=data,
+    ...     conditional_variables=conditional_variables
+    ... )
 
     """
 

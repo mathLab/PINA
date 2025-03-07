@@ -2,7 +2,6 @@
 Module to define InputEquationCondition class and its subclasses.
 """
 
-import torch
 from torch_geometric.data import Data
 from .condition_interface import ConditionInterface
 from ..label_tensor import LabelTensor
@@ -33,17 +32,25 @@ class InputEquationCondition(ConditionInterface):
         :return: InputEquationCondition subclass
         :rtype: InputTensorEquationCondition or InputGraphEquationCondition
         """
-        if cls == InputEquationCondition and isinstance(input, LabelTensor):
-            subclass = InputTensorEquationCondition
-            return subclass.__new__(subclass, input, equation)
-        elif cls == InputEquationCondition and isinstance(
-            input, (Graph, Data, list, tuple)
-        ):
-            cls._check_graph_list_consistency(input)
+
+        # If the class is already a subclass, return the instance
+        if cls != InputEquationCondition:
+            return super().__new__(cls)
+
+        # Instanciate the correct subclass
+        if isinstance(input, (Graph, Data, list, tuple)):
             subclass = InputGraphEquationCondition
+            cls._check_graph_list_consistency(input)
             subclass._check_label_tensor(input)
             return subclass.__new__(subclass, input, equation)
-        return super().__new__(cls)
+        if isinstance(input, LabelTensor):
+            subclass = InputTensorEquationCondition
+            return subclass.__new__(subclass, input, equation)
+
+        # If the input is not a LabelTensor or a Graph object raise an error
+        raise ValueError(
+            "The input data object must be a LabelTensor or a Graph object."
+        )
 
     def __init__(self, input, equation):
         """

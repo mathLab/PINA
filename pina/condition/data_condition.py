@@ -4,10 +4,9 @@ DataCondition class
 
 import torch
 from torch_geometric.data import Data
-from . import ConditionInterface
+from .condition_interface import ConditionInterface
 from ..label_tensor import LabelTensor
 from ..graph import Graph
-from ..utils import check_consistency
 
 
 class DataCondition(ConditionInterface):
@@ -36,20 +35,21 @@ class DataCondition(ConditionInterface):
         :return: DataCondition subclass
         :rtype: TensorDataCondition or GraphDataCondition
         """
-        if cls == DataCondition and isinstance(
-            input, (torch.Tensor, LabelTensor)
-        ):
+        if cls != DataCondition:
+            return super().__new__(cls)
+        if isinstance(input, (torch.Tensor, LabelTensor)):
             subclass = TensorDataCondition
             return subclass.__new__(subclass, input, conditional_variables)
 
-        elif cls == DataCondition and isinstance(
-            input, (Graph, Data, list, tuple)
-        ):
+        if isinstance(input, (Graph, Data, list, tuple)):
             cls._check_graph_list_consistency(input)
             subclass = GraphDataCondition
             return subclass.__new__(subclass, input, conditional_variables)
 
-        return super().__new__(cls)
+        raise ValueError(
+            "Invalid input types. "
+            "Please provide either Data or Graph objects."
+        )
 
     def __init__(self, input, conditional_variables=None):
         """
@@ -66,17 +66,6 @@ class DataCondition(ConditionInterface):
         super().__init__()
         self.input = input
         self.conditional_variables = conditional_variables
-
-    def __setattr__(self, key, value):
-        if key == "input":
-            check_consistency(value, self._avail_input_cls)
-            DataCondition.__dict__[key].__set__(self, value)
-        elif key == "conditional_variables":
-            if value is not None:
-                check_consistency(value, self._avail_conditional_variables_cls)
-            DataCondition.__dict__[key].__set__(self, value)
-        elif key in ("_problem"):
-            super().__setattr__(key, value)
 
 
 class TensorDataCondition(DataCondition):

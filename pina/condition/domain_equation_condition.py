@@ -2,8 +2,6 @@
 DomainEquationCondition class definition.
 """
 
-import torch
-
 from .condition_interface import ConditionInterface
 from ..utils import check_consistency
 from ..domain import DomainInterface

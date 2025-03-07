@@ -4,10 +4,9 @@ This module contains condition classes for supervised learning tasks.
 
 import torch
 from torch_geometric.data import Data
-from .condition_interface import ConditionInterface
 from ..label_tensor import LabelTensor
 from ..graph import Graph
-from ..utils import check_consistency
+from .condition_interface import ConditionInterface
 
 
 class InputTargetCondition(ConditionInterface):
@@ -34,43 +33,41 @@ class InputTargetCondition(ConditionInterface):
             TensorInputGraphTargetCondition or GraphInputTensorTargetCondition
             or GraphInputGraphTargetCondition
         """
-        if (
-            cls == InputTargetCondition
-            and isinstance(input, (torch.Tensor, LabelTensor))
-            and isinstance(target, (torch.Tensor, LabelTensor))
+        if cls != InputTargetCondition:
+            return super().__new__(cls)
+
+        if isinstance(input, (torch.Tensor, LabelTensor)) and isinstance(
+            target, (torch.Tensor, LabelTensor)
         ):
             subclass = TensorInputTensorTargetCondition
             return subclass.__new__(subclass, input, target)
-
-        elif (
-            cls == InputTargetCondition
-            and isinstance(input, (torch.Tensor, LabelTensor))
-            and isinstance(target, (Graph, Data, list, tuple))
+        if isinstance(input, (torch.Tensor, LabelTensor)) and isinstance(
+            target, (Graph, Data, list, tuple)
         ):
             cls._check_graph_list_consistency(target)
             subclass = TensorInputGraphTargetCondition
             return subclass.__new__(subclass, input, target)
 
-        elif (
-            cls == InputTargetCondition
-            and isinstance(input, (Graph, Data, list, tuple))
-            and isinstance(target, (torch.Tensor, LabelTensor))
+        if isinstance(input, (Graph, Data, list, tuple)) and isinstance(
+            target, (torch.Tensor, LabelTensor)
         ):
             cls._check_graph_list_consistency(input)
             subclass = GraphInputTensorTargetCondition
             return subclass.__new__(subclass, input, target)
 
-        elif (
-            cls == InputTargetCondition
-            and isinstance(input, (Graph, Data, list, tuple))
-            and isinstance(target, (Graph, Data, list, tuple))
+        if isinstance(input, (Graph, Data, list, tuple)) and isinstance(
+            target, (Graph, Data, list, tuple)
         ):
             cls._check_graph_list_consistency(input)
             cls._check_graph_list_consistency(target)
             subclass = GraphInputGraphTargetCondition
             return subclass.__new__(subclass, input, target)
 
-        return super().__new__(cls)
+        raise ValueError(
+            "Invalid input/target types. "
+            "Please provide either Data, Graph, LabelTensor or torch.Tensor "
+            "objects."
+        )
 
     def __init__(self, input, target):
         """
@@ -82,28 +79,16 @@ class InputTargetCondition(ConditionInterface):
         :type target: torch.Tensor or Graph or Data
         """
         super().__init__()
-        if isinstance(input, (list, tuple)) or isinstance(
-            target, (list, tuple)
-        ):
-            self._check_input_target_len(input, target)
+        self._check_input_target_len(input, target)
         self.input = input
         self.target = target
 
-    def __setattr__(self, key, value):
-        if key == "input":
-            check_consistency(value, (torch.Tensor, LabelTensor, Data, Graph))
-            InputTargetCondition.__dict__[key].__set__(self, value)
-        elif key == "target":
-            if value is not None:
-                check_consistency(
-                    value, (torch.Tensor, LabelTensor, Data, Graph)
-                )
-            InputTargetCondition.__dict__[key].__set__(self, value)
-        elif key in ("_problem"):
-            super().__setattr__(key, value)
-
     @staticmethod
     def _check_input_target_len(input, target):
+        if isinstance(input, (Graph, Data)) or isinstance(
+            target, (Graph, Data)
+        ):
+            return
         if len(input) != len(target):
             raise ValueError(
                 "The input and target lists must have the same length."
