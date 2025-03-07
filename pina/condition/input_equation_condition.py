@@ -18,7 +18,7 @@ class InputEquationCondition(ConditionInterface):
     """
 
     __slots__ = ["input", "equation"]
-    _avail_input_cls = (LabelTensor, Graph, Data, list, tuple)
+    _avail_input_cls = (LabelTensor, Graph, list, tuple)
     _avail_equation_cls = EquationInterface
 
     def __new__(cls, input, equation):
@@ -41,6 +41,7 @@ class InputEquationCondition(ConditionInterface):
         ):
             cls._check_graph_list_consistency(input)
             subclass = InputGraphEquationCondition
+            subclass._check_label_tensor(input)
             return subclass.__new__(subclass, input, equation)
         return super().__new__(cls)
 
@@ -79,4 +80,23 @@ class InputGraphEquationCondition(InputEquationCondition):
     InputEquationCondition subclass for Graph input data.
     """
 
-    # TODO here we need to check that al least one attribute has LabelTensors
+    @staticmethod
+    def _check_label_tensor(input):
+        """
+        Check if the input is a LabelTensor.
+
+        :param input: input data
+        :type input: torch.Tensor or Graph or Data
+        """
+        # Store the fist element of the list/tuple if input is a list/tuple
+        # it is anougth to check the first element because all elements must
+        # have the same type and structure (already checked)
+        data = input[0] if isinstance(input, (list, tuple)) else input
+
+        # Check if the input data contains at least one LabelTensor
+        for v in data.values():
+            if isinstance(v, LabelTensor):
+                return
+        raise ValueError(
+            "The input data object must contain at least one LabelTensor."
+        )
