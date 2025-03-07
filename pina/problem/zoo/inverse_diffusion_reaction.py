@@ -46,8 +46,8 @@ class InverseDiffusionReactionProblem(
             equation=Equation(diffusion_reaction),
         ),
         "data": Condition(
-            input_points=LabelTensor(torch.randn(10, 2), ["x", "t"]),
-            output_points=LabelTensor(torch.randn(10, 1), ["u"]),
+            input=LabelTensor(torch.randn(10, 2), ["x", "t"]),
+            target=LabelTensor(torch.randn(10, 1), ["u"]),
         ),
     }
 

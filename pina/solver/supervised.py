@@ -5,7 +5,7 @@ from torch.nn.modules.loss import _Loss
 from .solver import SingleSolverInterface
 from ..utils import check_consistency
 from ..loss.loss_interface import LossInterface
-from ..condition import InputOutputPointsCondition
+from ..condition import InputTargetCondition
 
 
 class SupervisedSolver(SingleSolverInterface):
@@ -37,7 +37,7 @@ class SupervisedSolver(SingleSolverInterface):
     multiple (discretised) input functions.
     """
 
-    accepted_conditions_types = InputOutputPointsCondition
+    accepted_conditions_types = InputTargetCondition
 
     def __init__(
         self,
@@ -95,8 +95,8 @@ class SupervisedSolver(SingleSolverInterface):
         condition_loss = {}
         for condition_name, points in batch:
             input_pts, output_pts = (
-                points["input_points"],
-                points["output_points"],
+                points["input"],
+                points["target"],
             )
             condition_loss[condition_name] = self.loss_data(
                 input_pts=input_pts, output_pts=output_pts

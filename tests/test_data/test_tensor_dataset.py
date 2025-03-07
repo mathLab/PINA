@@ -10,19 +10,19 @@ output_tensor_2 = torch.rand((50, 2))
 
 conditions_dict_single = {
     'data': {
-        'input_points': input_tensor,
-        'output_points': output_tensor,
+        'input': input_tensor,
+        'target': output_tensor,
     }
 }
 
 conditions_dict_single_multi = {
     'data_1': {
-        'input_points': input_tensor,
-        'output_points': output_tensor,
+        'input': input_tensor,
+        'target': output_tensor,
     },
     'data_2': {
-        'input_points': input_tensor_2,
-        'output_points': output_tensor_2,
+        'input': input_tensor_2,
+        'target': output_tensor_2,
     }
 }
 
@@ -59,11 +59,11 @@ def test_getitem_single():
     assert isinstance(tensors, dict)
     assert list(tensors.keys()) == ['data']
     assert sorted(list(tensors['data'].keys())) == [
-        'input_points', 'output_points']
-    assert isinstance(tensors['data']['input_points'], torch.Tensor)
-    assert tensors['data']['input_points'].shape == torch.Size((70, 10))
-    assert isinstance(tensors['data']['output_points'], torch.Tensor)
-    assert tensors['data']['output_points'].shape == torch.Size((70, 2))
+        'input', 'target']
+    assert isinstance(tensors['data']['input'], torch.Tensor)
+    assert tensors['data']['input'].shape == torch.Size((70, 10))
+    assert isinstance(tensors['data']['target'], torch.Tensor)
+    assert tensors['data']['target'].shape == torch.Size((70, 2))
 
 
 def test_getitem_multi():
@@ -74,15 +74,15 @@ def test_getitem_multi():
     assert isinstance(tensors, dict)
     assert list(tensors.keys()) == ['data_1', 'data_2']
     assert sorted(list(tensors['data_1'].keys())) == [
-        'input_points', 'output_points']
-    assert isinstance(tensors['data_1']['input_points'], torch.Tensor)
-    assert tensors['data_1']['input_points'].shape == torch.Size((70, 10))
-    assert isinstance(tensors['data_1']['output_points'], torch.Tensor)
-    assert tensors['data_1']['output_points'].shape == torch.Size((70, 2))
+        'input', 'target']
+    assert isinstance(tensors['data_1']['input'], torch.Tensor)
+    assert tensors['data_1']['input'].shape == torch.Size((70, 10))
+    assert isinstance(tensors['data_1']['target'], torch.Tensor)
+    assert tensors['data_1']['target'].shape == torch.Size((70, 2))
 
     assert sorted(list(tensors['data_2'].keys())) == [
-        'input_points', 'output_points']
-    assert isinstance(tensors['data_2']['input_points'], torch.Tensor)
-    assert tensors['data_2']['input_points'].shape == torch.Size((50, 10))
-    assert isinstance(tensors['data_2']['output_points'], torch.Tensor)
-    assert tensors['data_2']['output_points'].shape == torch.Size((50, 2))
+        'input', 'target']
+    assert isinstance(tensors['data_2']['input'], torch.Tensor)
+    assert tensors['data_2']['input'].shape == torch.Size((50, 10))
+    assert isinstance(tensors['data_2']['target'], torch.Tensor)
+    assert tensors['data_2']['target'].shape == torch.Size((50, 2))

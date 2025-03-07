@@ -75,8 +75,8 @@ class ReducedOrderModelSolver(SupervisedSolver):
 
     .. warning::
         This solver works only for data-driven model. Hence in the ``problem``
-        definition the codition must only contain ``input_points``
-        (e.g. coefficient parameters, time parameters), and ``output_points``.
+        definition the codition must only contain ``input``
+        (e.g. coefficient parameters, time parameters), and ``target``.
 
     .. warning::
         This solver does not currently support the possibility to pass

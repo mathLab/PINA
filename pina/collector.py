@@ -76,6 +76,6 @@ class Collector:
             samples = self.problem.discretised_domains[condition.domain]
 
             self.data_collections[condition_name] = {
-                "input_points": samples,
+                "input": samples,
                 "equation": condition.equation,
             }
