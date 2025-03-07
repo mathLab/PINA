@@ -1,10 +1,10 @@
 """Module for AbstractProblem class"""
 
 from abc import ABCMeta, abstractmethod
+from copy import deepcopy
 from ..utils import check_consistency
 from ..domain import DomainInterface, CartesianDomain
 from ..condition.domain_equation_condition import DomainEquationCondition
-from copy import deepcopy
 from .. import LabelTensor
 from ..utils import merge_tensors
 
@@ -20,7 +20,12 @@ class AbstractProblem(metaclass=ABCMeta):
     """
 
     def __init__(self):
+        """
+        TODO
 
+        :return: _description_
+        :rtype: _type_
+        """
         self._discretised_domains = {}
         # create collector to manage problem data
 
@@ -42,16 +47,33 @@ class AbstractProblem(metaclass=ABCMeta):
 
     @property
     def batching_dimension(self):
+        """
+        TODO
+
+        :return: _description_
+        :rtype: _type_
+        """
         return self._batching_dimension
 
     @batching_dimension.setter
     def batching_dimension(self, value):
+        """
+        TODO
+
+        :return: _description_
+        :rtype: _type_
+        """
         self._batching_dimension = value
 
-    # TODO this should be erase when dataloading will interface collector,
-    # kept only for back compatibility
+    #  back compatibility 0.1
     @property
     def input_pts(self):
+        """
+        TODO
+
+        :return: _description_
+        :rtype: _type_
+        """
         to_return = {}
         for cond_name, cond in self.conditions.items():
             if hasattr(cond, "input"):
@@ -62,6 +84,12 @@ class AbstractProblem(metaclass=ABCMeta):
 
     @property
     def discretised_domains(self):
+        """
+        TODO
+
+        :return: _description_
+        :rtype: _type_
+        """
         return self._discretised_domains
 
     def __deepcopy__(self, memo):
@@ -90,10 +118,7 @@ class AbstractProblem(metaclass=ABCMeta):
         :rtype: bool
         """
         return all(
-            [
-                domain in self.discretised_domains
-                for domain in self.domains.keys()
-            ]
+            domain in self.discretised_domains for domain in self.domains
         )
 
     @property
@@ -127,7 +152,6 @@ class AbstractProblem(metaclass=ABCMeta):
         """
         The output variables of the problem.
         """
-        pass
 
     @property
     @abstractmethod
@@ -153,7 +177,7 @@ class AbstractProblem(metaclass=ABCMeta):
             chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
         :param variables: variable(s) to sample, defaults to 'all'.
         :type variables: str | list[str]
-        :param domains: problem's domain from where to sample, defaults to 'all'.
+        :param domains: Domain from where to sample, defaults to 'all'.
         :type domains: str | list[str]
 
         :Example:
@@ -162,11 +186,12 @@ class AbstractProblem(metaclass=ABCMeta):
             >>> pinn.discretise_domain(n=10, mode='grid', variables=['x'])
 
         .. warning::
-            ``random`` is currently the only implemented ``mode`` for all geometries, i.e.
-            ``EllipsoidDomain``, ``CartesianDomain``, ``SimplexDomain`` and the geometries
-            compositions ``Union``, ``Difference``, ``Exclusion``, ``Intersection``. The
-            modes ``latin`` or ``lh``,  ``chebyshev``, ``grid`` are only implemented for
-            ``CartesianDomain``.
+            ``random`` is currently the only implemented ``mode`` for all
+            geometries, i.e. ``EllipsoidDomain``, ``CartesianDomain``,
+            ``SimplexDomain`` and the geometries compositions ``Union``,
+            ``Difference``, ``Exclusion``, ``Intersection``. The
+            modes ``latin`` or ``lh``,  ``chebyshev``, ``grid`` are only
+            implemented for ``CartesianDomain``.
         """
 
         # check consistecy n, mode, variables, locations
