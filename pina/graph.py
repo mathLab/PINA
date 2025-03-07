@@ -162,7 +162,7 @@ class Graph(Data):
             edge_index = to_undirected(edge_index)
         return edge_index
 
-    def extract(self, labels):
+    def extract(self, labels, attr="x"):
         """
         Perform extraction of labels on node features (x)
 
@@ -171,7 +171,10 @@ class Graph(Data):
         :return: Batch object with extraction performed on x
         :rtype: PinaBatch
         """
-        self.x = self.x.extract(labels)
+        # Extract labels from LabelTensor object
+        tensor = getattr(self, attr).extract(labels)
+        # Set the extracted tensor as the new attribute
+        setattr(self, attr, tensor)
         return self
 
 
