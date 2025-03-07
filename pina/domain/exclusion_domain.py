@@ -1,21 +1,25 @@
 """Module for Exclusion class."""
 
+import random
 import torch
 from ..label_tensor import LabelTensor
-import random
 from .operation_interface import OperationInterface
 
 
 class Exclusion(OperationInterface):
+    """
+    PINA implementation of Exclusion of Domains.
+    """
 
+    # pylint: disable=W0246
     def __init__(self, geometries):
         r"""
-        PINA implementation of Exclusion of Domains.
         Given two sets :math:`A` and :math:`B` then the
         domain difference is defined as:
 
         .. math::
-            A \setminus B = \{x \mid x \in A \land x \in B \land  x \not\in (A \lor B)\},
+            A \setminus B = \{x \mid x \in A \land x \in B \land  x \not\in \\
+                (A \lor B)\},
 
         with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
         the dimension of the geometry space.
@@ -39,7 +43,8 @@ class Exclusion(OperationInterface):
         :param point: Point to be checked.
         :type point: torch.Tensor
         :param bool check_border: If ``True``, the border is considered inside.
-        :return: ``True`` if the point is inside the Exclusion domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the Exclusion domain,
+            ``False`` otherwise.
         :rtype: bool
         """
         flag = 0
@@ -53,7 +58,8 @@ class Exclusion(OperationInterface):
         Sample routine for ``Exclusion`` domain.
 
         :param int n: Number of points to sample in the shape.
-        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
+        :param str mode: Mode for sampling, defaults to ``random``. Available
+            modes include: ``random``.
         :param variables: Variables to be sampled, defaults to ``all``.
         :type variables: str | list[str]
         :return: Returns ``LabelTensor`` of n sampled points.
@@ -83,7 +89,8 @@ class Exclusion(OperationInterface):
 
         sampled = []
 
-        # calculate the number of points to sample for each geometry and the remainder.
+        # calculate the number of points to sample for each geometry and the
+        # remainder.
         remainder = n % len(self.geometries)
         num_points = n // len(self.geometries)
 

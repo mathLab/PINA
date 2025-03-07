@@ -1,16 +1,19 @@
 """Module for Intersection class."""
 
+import random
 import torch
 from ..label_tensor import LabelTensor
 from .operation_interface import OperationInterface
-import random
 
 
 class Intersection(OperationInterface):
+    """
+    PINA implementation of Intersection of Domains.
+    """
 
+    # pylint: disable=W0246
     def __init__(self, geometries):
         r"""
-        PINA implementation of Intersection of Domains.
         Given two sets :math:`A` and :math:`B` then the
         domain difference is defined as:
 
@@ -41,7 +44,8 @@ class Intersection(OperationInterface):
         :param point: Point to be checked.
         :type point: torch.Tensor
         :param bool check_border: If ``True``, the border is considered inside.
-        :return: ``True`` if the point is inside the Intersection domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the Intersection domain,
+        ``False`` otherwise.
         :rtype: bool
         """
         flag = 0
@@ -55,7 +59,8 @@ class Intersection(OperationInterface):
         Sample routine for ``Intersection`` domain.
 
         :param int n: Number of points to sample in the shape.
-        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
+        :param str mode: Mode for sampling, defaults to ``random``. Available
+            modes include: ``random``.
         :param variables: Variables to be sampled, defaults to ``all``.
         :type variables: str | list[str]
         :return: Returns ``LabelTensor`` of n sampled points.
@@ -85,7 +90,8 @@ class Intersection(OperationInterface):
 
         sampled = []
 
-        # calculate the number of points to sample for each geometry and the remainder.
+        # calculate the number of points to sample for each geometry and the
+        # remainder.
         remainder = n % len(self.geometries)
         num_points = n // len(self.geometries)
 

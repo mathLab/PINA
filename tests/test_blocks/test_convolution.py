@@ -18,8 +18,8 @@ def make_grid(x):
 
         # initializing transfomed image
         coordinates = torch.zeros(
-            [channels, prod(dimension),
-             len(dimension) + 1]).to(image.device)
+            [channels, prod(dimension), len(dimension) + 1]
+        ).to(image.device)
 
         # creating the n dimensional mesh grid
         values_mesh = [
@@ -43,9 +43,13 @@ class MLP(torch.nn.Module):
 
     def __init__(self) -> None:
         super().__init__()
-        self.model = torch.nn.Sequential(torch.nn.Linear(2, 8), torch.nn.ReLU(),
-                                         torch.nn.Linear(8, 8), torch.nn.ReLU(),
-                                         torch.nn.Linear(8, 1))
+        self.model = torch.nn.Sequential(
+            torch.nn.Linear(2, 8),
+            torch.nn.ReLU(),
+            torch.nn.Linear(8, 8),
+            torch.nn.ReLU(),
+            torch.nn.Linear(8, 1),
+        )
 
     def forward(self, x):
         return self.model(x)
@@ -61,7 +65,7 @@ stride = {
     "domain": [10, 10],
     "start": [0, 0],
     "jumps": [3, 3],
-    "direction": [1, 1.]
+    "direction": [1, 1.0],
 }
 dim_filter = len(dim)
 dim_input = (batch, channel_input, 10, dim_filter)
@@ -73,53 +77,42 @@ x = make_grid(x)
 def test_constructor():
     model = MLP
 
-    conv = ContinuousConvBlock(channel_input,
-                               channel_output,
-                               dim,
-                               stride,
-                               model=model)
-    conv = ContinuousConvBlock(channel_input,
-                               channel_output,
-                               dim,
-                               stride,
-                               model=None)
+    conv = ContinuousConvBlock(
+        channel_input, channel_output, dim, stride, model=model
+    )
+    conv = ContinuousConvBlock(
+        channel_input, channel_output, dim, stride, model=None
+    )
 
 
 def test_forward():
     model = MLP
 
     # simple forward
-    conv = ContinuousConvBlock(channel_input,
-                               channel_output,
-                               dim,
-                               stride,
-                               model=model)
+    conv = ContinuousConvBlock(
+        channel_input, channel_output, dim, stride, model=model
+    )
     conv(x)
 
     # simple forward with optimization
-    conv = ContinuousConvBlock(channel_input,
-                               channel_output,
-                               dim,
-                               stride,
-                               model=model,
-                               optimize=True)
+    conv = ContinuousConvBlock(
+        channel_input, channel_output, dim, stride, model=model, optimize=True
+    )
     conv(x)
 
 
 def test_backward():
     model = MLP
-    
+
     x = torch.rand(dim_input)
     x = make_grid(x)
     x.requires_grad = True
     # simple backward
-    conv = ContinuousConvBlock(channel_input,
-                               channel_output,
-                               dim,
-                               stride,
-                               model=model)
+    conv = ContinuousConvBlock(
+        channel_input, channel_output, dim, stride, model=model
+    )
     conv(x)
-    l=torch.mean(conv(x))
+    l = torch.mean(conv(x))
     l.backward()
     assert x._grad.shape == torch.Size([2, 2, 20, 3])
     x = torch.rand(dim_input)
@@ -127,14 +120,11 @@ def test_backward():
     x.requires_grad = True
 
     # simple backward with optimization
-    conv = ContinuousConvBlock(channel_input,
-                               channel_output,
-                               dim,
-                               stride,
-                               model=model,
-                               optimize=True)
+    conv = ContinuousConvBlock(
+        channel_input, channel_output, dim, stride, model=model, optimize=True
+    )
     conv(x)
-    l=torch.mean(conv(x))
+    l = torch.mean(conv(x))
     l.backward()
     assert x._grad.shape == torch.Size([2, 2, 20, 3])
 
@@ -143,17 +133,13 @@ def test_transpose():
     model = MLP
 
     # simple transpose
-    conv = ContinuousConvBlock(channel_input,
-                               channel_output,
-                               dim,
-                               stride,
-                               model=model)
+    conv = ContinuousConvBlock(
+        channel_input, channel_output, dim, stride, model=model
+    )
 
-    conv2 = ContinuousConvBlock(channel_output,
-                                channel_input,
-                                dim,
-                                stride,
-                                model=model)
+    conv2 = ContinuousConvBlock(
+        channel_output, channel_input, dim, stride, model=model
+    )
 
     integrals = conv(x)
     conv2.transpose(integrals[..., -1], x)

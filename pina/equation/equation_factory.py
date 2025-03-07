@@ -1,14 +1,17 @@
-"""Module"""
+"""Module for defining different equations."""
 
 from .equation import Equation
 from ..operator import grad, div, laplacian
 
 
 class FixedValue(Equation):
+    """
+    Fixed Value Equation class.
+    """
 
     def __init__(self, value, components=None):
         """
-        Fixed Value Equation class. This class can be
+        This class can be
         used to enforced a fixed value for a specific
         condition, e.g. Dirichlet Boundary conditions.
 
@@ -20,6 +23,7 @@ class FixedValue(Equation):
             Default is ``None``.
         """
 
+        # pylint: disable=W0613
         def equation(input_, output_):
             if components is None:
                 return output_ - value
@@ -29,11 +33,13 @@ class FixedValue(Equation):
 
 
 class FixedGradient(Equation):
+    """
+    Fixed Gradient Equation class.
+    """
 
     def __init__(self, value, components=None, d=None):
         """
-        Fixed Gradient Equation class. This class can be
-        used to enforced a fixed gradient for a specific
+        This class can beused to enforced a fixed gradient for a specific
         condition.
 
         :param float value: Value to be mantained fixed.
@@ -55,11 +61,13 @@ class FixedGradient(Equation):
 
 
 class FixedFlux(Equation):
+    """
+    Fixed Flux Equation class.
+    """
 
     def __init__(self, value, components=None, d=None):
         """
-        Fixed Flux Equation class. This class can be
-        used to enforced a fixed flux for a specific
+        This class can be used to enforced a fixed flux for a specific
         condition.
 
         :param float value: Value to be mantained fixed.
@@ -81,10 +89,13 @@ class FixedFlux(Equation):
 
 
 class Laplace(Equation):
+    """
+    Laplace Equation class.
+    """
 
     def __init__(self, components=None, d=None):
         """
-        Laplace Equation class. This class can be
+        This class can be
         used to enforced a Laplace equation for a specific
         condition (force term set to zero).
 

@@ -1,5 +1,8 @@
-import torch
+"""
+Module for the Ellipsoid domain.
+"""
 
+import torch
 from .domain_interface import DomainInterface
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
@@ -113,7 +116,7 @@ class EllipsoidDomain(DomainInterface):
         tmp = torch.tensor(list_dict_vals, dtype=torch.float)
         centers = LabelTensor(tmp.reshape(1, -1), self.variables)
 
-        if not all([i in ax_sq.labels for i in point.labels]):
+        if not all(i in ax_sq.labels for i in point.labels):
             raise ValueError(
                 "point labels different from constructor"
                 f" dictionary labels. Got {point.labels},"
@@ -187,6 +190,7 @@ class EllipsoidDomain(DomainInterface):
 
             # step 1.
             pts = torch.randn(size=(n, dim))
+            # pylint: disable=E1102
             pts = pts / torch.linalg.norm(pts, axis=-1).view((n, 1))
             if not self._sample_surface:  # step 2.
                 scale = torch.rand((n, 1))
@@ -202,7 +206,8 @@ class EllipsoidDomain(DomainInterface):
         """Sample routine.
 
         :param int n: Number of points to sample in the shape.
-        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
+        :param str mode: Mode for sampling, defaults to ``random``.
+            Available modes include: ``random``.
         :param variables: Variables to be sampled, defaults to ``all``.
         :type variables: str | list[str]
         :return: Returns ``LabelTensor`` of n sampled points.
@@ -242,7 +247,7 @@ class EllipsoidDomain(DomainInterface):
             result.labels = keys
 
             for variable in variables:
-                if variable in self.fixed_.keys():
+                if variable in self.fixed_:
                     value = self.fixed_[variable]
                     pts_variable = torch.tensor([[value]]).repeat(
                         result.shape[0], 1
@@ -265,7 +270,7 @@ class EllipsoidDomain(DomainInterface):
             """
             tmp = []
             for variable in variables:
-                if variable in self.fixed_.keys():
+                if variable in self.fixed_:
                     value = self.fixed_[variable]
                     pts_variable = torch.tensor([[value]]).repeat(n, 1)
                     pts_variable = pts_variable.as_subclass(LabelTensor)
@@ -288,5 +293,5 @@ class EllipsoidDomain(DomainInterface):
 
         if mode in self.sample_modes:
             return _Nd_sampler(n, mode, variables).extract(variables)
-        else:
-            raise NotImplementedError(f"mode={mode} is not implemented.")
+
+        raise NotImplementedError(f"mode={mode} is not implemented.")

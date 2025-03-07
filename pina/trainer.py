@@ -14,10 +14,9 @@ class Trainer(lightning.pytorch.Trainer):
         self,
         solver,
         batch_size=None,
-        train_size=0.7,
-        test_size=0.2,
-        val_size=0.1,
-        predict_size=0.0,
+        train_size=1.0,
+        test_size=0.0,
+        val_size=0.0,
         compile=None,
         automatic_batching=None,
         num_workers=None,
@@ -41,8 +40,6 @@ class Trainer(lightning.pytorch.Trainer):
         :type test_size: float
         :param val_size: Percentage of elements in the val dataset.
         :type val_size: float
-        :param predict_size: Percentage of elements in the predict dataset.
-        :type predict_size: float
         :param compile: if True model is compiled before training,
             default False. For Windows users compilation is always disabled.
         :type compile: bool
@@ -69,7 +66,6 @@ class Trainer(lightning.pytorch.Trainer):
         check_consistency(train_size, float)
         check_consistency(test_size, float)
         check_consistency(val_size, float)
-        check_consistency(predict_size, float)
         if automatic_batching is not None:
             check_consistency(automatic_batching, bool)
         if compile is not None:
@@ -86,17 +82,6 @@ class Trainer(lightning.pytorch.Trainer):
             check_consistency(shuffle, bool)
         else:
             shuffle = True
-        if train_size + test_size + val_size + predict_size > 1:
-            raise ValueError(
-                "train_size, test_size, val_size and predict_size "
-                "must sum up to 1."
-            )
-        for size in [train_size, test_size, val_size, predict_size]:
-            if size < 0 or size > 1:
-                raise ValueError(
-                    "splitting sizes for train, validation, test "
-                    "and prediction must be between [0, 1]."
-                )
         if batch_size is not None:
             check_consistency(batch_size, int)
 
@@ -135,7 +120,6 @@ class Trainer(lightning.pytorch.Trainer):
             train_size,
             test_size,
             val_size,
-            predict_size,
             batch_size,
             automatic_batching,
             pin_memory,
@@ -171,7 +155,6 @@ class Trainer(lightning.pytorch.Trainer):
         train_size,
         test_size,
         val_size,
-        predict_size,
         batch_size,
         automatic_batching,
         pin_memory,
@@ -187,7 +170,8 @@ class Trainer(lightning.pytorch.Trainer):
             error_message = "\n".join(
                 [
                     f"""{" " * 13} ---> Domain {key} {
-                    "sampled" if key in self.solver.problem.discretised_domains else
+                    "sampled" if key in self.solver.problem.discretised_domains 
+                    else
                     "not sampled"}"""
                     for key in self.solver.problem.domains.keys()
                 ]
@@ -202,7 +186,6 @@ class Trainer(lightning.pytorch.Trainer):
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            predict_size=predict_size,
             batch_size=batch_size,
             automatic_batching=automatic_batching,
             num_workers=num_workers,
