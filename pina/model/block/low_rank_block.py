@@ -2,8 +2,7 @@
 
 import torch
 
-from pina.utils import check_consistency
-import pina.model as pm  # avoid circular import
+from ...utils import check_consistency
 
 
 class LowRankBlock(torch.nn.Module):
@@ -78,9 +77,12 @@ class LowRankBlock(torch.nn.Module):
             basis function network.
         """
         super().__init__()
+        # Avoid circular import
+        # pylint: disable=import-outside-toplevel
+        from ..feed_forward import FeedForward
 
         # Assignment (check consistency inside FeedForward)
-        self._basis = pm.FeedForward(
+        self._basis = FeedForward(
             input_dimensions=input_dimensions,
             output_dimensions=2 * rank * embedding_dimenion,
             inner_size=inner_size,

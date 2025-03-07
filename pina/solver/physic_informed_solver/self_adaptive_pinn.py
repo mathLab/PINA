@@ -1,10 +1,10 @@
 """Module for Self-Adaptive PINN."""
 
-import torch
 from copy import deepcopy
+import torch
 
-from pina.utils import check_consistency
-from pina.problem import InverseProblem
+from ...utils import check_consistency
+from ...problem import InverseProblem
 from ..solver import MultiSolverInterface
 from .pinn_interface import PINNInterface
 
@@ -155,7 +155,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         self._vectorial_loss.reduction = "none"
 
     def forward(self, x):
-        """
+        r"""
         Forward pass implementation for the PINN
         solver. It returns the function
         evaluation :math:`\mathbf{u}(\mathbf{x})` at the control points
@@ -234,6 +234,8 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         """
         # increase by one the counter of optimization to save loggers
         (
+            # Unavoidable pylint error
+            # pylint: disable=line-too-long
             self.trainer.fit_loop.epoch_loop.manual_optimization.optim_step_progress.total.completed
         ) += 1
 
@@ -369,6 +371,9 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: torch.optim.lr_scheduler._LRScheduler
         """
         return self.schedulers[1]
+
+    # In this case self.optimizers is a list of two optimizers!!!
+    # pylint: disable=unsubscriptable-object
 
     @property
     def optimizer_model(self):

@@ -1,18 +1,25 @@
+"""
+TODO: Add description
+"""
+
 import torch
 
 
-class Stride(object):
+class Stride:
+    """
+    TODO
+    """
 
-    def __init__(self, dict):
+    def __init__(self, dict_):
         """Stride class for continous convolution
 
         :param param: type of continuous convolution
         :type param: string
         """
 
-        self._dict_stride = dict
+        self._dict_stride = dict_
         self._stride_continuous = None
-        self._stride_discrete = self._create_stride_discrete(dict)
+        self._stride_discrete = self._create_stride_discrete(dict_)
 
     def _create_stride_discrete(self, my_dict):
         """Creating the list for applying the filter
@@ -46,13 +53,13 @@ class Stride(object):
 
         # checking
 
-        if not all([len(s) == len(domain) for s in my_dict.values()]):
+        if not all(len(s) == len(domain) for s in my_dict.values()):
             raise IndexError("values in the dict must have all same length")
 
         if not all(v >= 0 for v in domain):
             raise ValueError("domain values must be greater than 0")
 
-        if not all(v == 1 or v == -1 or v == 0 for v in direction):
+        if not all(v in (0, -1, 1) for v in direction):
             raise ValueError("direction must be either equal to 1, -1 or 0")
 
         seq_jumps = [i for i, e in enumerate(jumps) if e == 0]

@@ -3,8 +3,8 @@
 import torch
 
 from .pinn import PINN
-from pina.operator import grad
-from pina.problem import SpatialProblem
+from ...operator import grad
+from ...problem import SpatialProblem
 
 
 class GradientPINN(PINN):

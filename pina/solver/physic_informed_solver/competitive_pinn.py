@@ -1,7 +1,7 @@
 """Module for Competitive PINN."""
 
-import torch
 import copy
+import torch
 
 from ...problem import InverseProblem
 from .pinn_interface import PINNInterface
@@ -211,6 +211,8 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         """
         # increase by one the counter of optimization to save loggers
         (
+            # Unavoidable long line
+            # pylint: disable=line-too-long
             self.trainer.fit_loop.epoch_loop.manual_optimization.optim_step_progress.total.completed
         ) += 1
 
@@ -235,6 +237,9 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :rtype: torch.nn.Module
         """
         return self.models[1]
+
+    # In this case self.optimizers is a list of two optimizers!!!
+    # pylint: disable=unsubscriptable-object
 
     @property
     def optimizer_model(self):

@@ -17,13 +17,15 @@ class PowerLoss(LossInterface):
 
     .. math::
         \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
-        l_n = \frac{1}{D}\left[\sum_{i=1}^{D} \left| x_n^i - y_n^i \right|^p \right],
+        l_n = \frac{1}{D}\left[\sum_{i=1}^{D} 
+        \left| x_n^i - y_n^i \right|^p\right],
     
     If ``'relative'`` is set to true:
 
     .. math::
         \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
-        l_n = \frac{ \sum_{i=1}^{D} | x_n^i - y_n^i|^p }{\sum_{i=1}^{D}|y_n^i|^p},
+        l_n = \frac{ \sum_{i=1}^{D} | x_n^i - y_n^i|^p }
+        {\sum_{i=1}^{D}|y_n^i|^p},
 
     where :math:`N` is the batch size. If ``reduction`` is not ``none``
     (default ``mean``), then:
@@ -38,16 +40,19 @@ class PowerLoss(LossInterface):
     :math:`x` and :math:`y` are tensors of arbitrary shapes with a total
     of :math:`n` elements each.
 
-    The sum operation still operates over all the elements, and divides by :math:`n`.
+    The sum operation still operates over all the elements, and divides by 
+    :math:`n`.
 
-    The division by :math:`n` can be avoided if one sets ``reduction`` to ``sum``.
+    The division by :math:`n` can be avoided if one sets ``reduction`` to 
+    ``sum``.
     """
 
     def __init__(self, p=2, reduction="mean", relative=False):
         """
         :param int p: Degree of Lp norm. It specifies the type of norm to
             be calculated. See `list of possible orders in torch linalg
-            <https://pytorch.org/docs/stable/generated/torch.linalg.norm.html#torch.linalg.norm>`_ to
+            <https://pytorch.org/docs/stable/generated/
+            torch.linalg.norm.html#torch.linalg.norm>`_ to
             see the possible degrees. Default 2 (euclidean norm).
         :param str reduction: Specifies the reduction to apply to the output:
             ``none`` | ``mean`` | ``sum``. When ``none``: no reduction

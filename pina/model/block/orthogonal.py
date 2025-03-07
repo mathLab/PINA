@@ -4,6 +4,8 @@ import torch
 from ...utils import check_consistency
 
 
+# Avoidind the pylint error E1102 (not-callable) for the torch.linalg.norm
+# pylint: disable=E1102
 class OrthogonalBlock(torch.nn.Module):
     """
     Module to make the input orthonormal.

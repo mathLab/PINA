@@ -1,3 +1,7 @@
+"""
+Module containing the building blocks for models.
+"""
+
 __all__ = [
     "ContinuousConvBlock",
     "ResidualBlock",

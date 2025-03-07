@@ -1,8 +1,8 @@
 """Module Averaging Neural Operator."""
 
 import torch
-from torch import nn, cat
-from .block import AVNOBlock
+from torch import nn
+from .block.average_neural_operator_block import AVNOBlock
 from .kernel_neural_operator import KernelNeuralOperator
 from ..utils import check_consistency
 
@@ -26,6 +26,7 @@ class AveragingNeuralOperator(KernelNeuralOperator):
         <https://arxiv.org/abs/2304.13221>`_
     """
 
+    # pylint: disable=R0917
     def __init__(
         self,
         lifting_net,
@@ -110,9 +111,9 @@ class AveragingNeuralOperator(KernelNeuralOperator):
         """
         points_tmp = x.extract(self.coordinates_indices)
         new_batch = x.extract(self.field_indices)
-        new_batch = cat((new_batch, points_tmp), dim=-1)
+        new_batch = torch.cat((new_batch, points_tmp), dim=-1)
         new_batch = self._lifting_operator(new_batch)
         new_batch = self._integral_kernels(new_batch)
-        new_batch = cat((new_batch, points_tmp), dim=-1)
+        new_batch = torch.cat((new_batch, points_tmp), dim=-1)
         new_batch = self._projection_operator(new_batch)
         return new_batch

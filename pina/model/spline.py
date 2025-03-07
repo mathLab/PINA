@@ -5,6 +5,7 @@ from ..utils import check_consistency
 
 
 class Spline(torch.nn.Module):
+    """TODO: Docstring for Spline."""
 
     def __init__(self, order=4, knots=None, control_points=None) -> None:
         """
@@ -99,6 +100,7 @@ class Spline(torch.nn.Module):
 
     @property
     def control_points(self):
+        """TODO: Docstring for control_points."""
         return self._control_points
 
     @control_points.setter
@@ -116,6 +118,7 @@ class Spline(torch.nn.Module):
 
     @property
     def knots(self):
+        """TODO: Docstring for knots."""
         return self._knots
 
     @knots.setter

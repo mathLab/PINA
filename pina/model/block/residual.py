@@ -1,5 +1,9 @@
+"""
+TODO: Add title.
+"""
+
 import torch
-import torch.nn as nn
+from torch import nn
 from ...utils import check_consistency
 
 
@@ -35,7 +39,8 @@ class ResidualBlock(nn.Module):
             (first block).
         :param bool spectral_norm: Apply spectral normalization to feedforward
             layers, defaults to False.
-        :param torch.nn.Module activation: Cctivation function after first block.
+        :param torch.nn.Module activation: Cctivation function after first
+            block.
 
         """
         super().__init__()
@@ -81,19 +86,17 @@ class ResidualBlock(nn.Module):
         return nn.utils.spectral_norm(x) if self._spectral_norm else x
 
 
-import torch
-import torch.nn as nn
-
-
 class EnhancedLinear(torch.nn.Module):
     """
     A wrapper class for enhancing a linear layer with activation and/or dropout.
 
     :param layer: The linear layer to be enhanced.
     :type layer: torch.nn.Module
-    :param activation: The activation function to be applied after the linear layer.
+    :param activation: The activation function to be applied after the linear
+        layer.
     :type activation: torch.nn.Module
-    :param dropout: The dropout probability to be applied after the activation (if provided).
+    :param dropout: The dropout probability to be applied after the activation
+        (if provided).
     :type dropout: float
 
     :Example:
@@ -110,9 +113,11 @@ class EnhancedLinear(torch.nn.Module):
 
         :param layer: The linear layer to be enhanced.
         :type layer: torch.nn.Module
-        :param activation: The activation function to be applied after the linear layer.
+        :param activation: The activation function to be applied after the
+            linear layer.
         :type activation: torch.nn.Module
-        :param dropout: The dropout probability to be applied after the activation (if provided).
+        :param dropout: The dropout probability to be applied after the
+            activation (if provided).
         :type dropout: float
         """
         super().__init__()

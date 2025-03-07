@@ -1,12 +1,12 @@
 """Definition of the Poisson problem on a square domain."""
 
-from pina.problem import SpatialProblem
-from pina.operator import laplacian
-from pina import Condition
-from pina.domain import CartesianDomain
-from pina.equation.equation import Equation
-from pina.equation.equation_factory import FixedValue
 import torch
+from ..spatial_problem import SpatialProblem
+from ...operator import laplacian
+from ... import Condition
+from ...domain import CartesianDomain
+from ...equation.equation import Equation
+from ...equation.equation_factory import FixedValue
 
 
 def laplace_equation(input_, output_):
@@ -48,6 +48,8 @@ class Poisson2DSquareProblem(SpatialProblem):
     }
 
     def poisson_sol(self, pts):
+        """TODO"""
+
         return -(
             torch.sin(pts.extract(["x"]) * torch.pi)
             * torch.sin(pts.extract(["y"]) * torch.pi)

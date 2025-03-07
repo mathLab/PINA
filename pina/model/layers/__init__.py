@@ -1,3 +1,7 @@
+"""
+Old layers module, deprecated in 0.2.0.
+"""
+
 import warnings
 
 from ..block import *
@@ -8,7 +12,7 @@ from ...utils import custom_warning_format
 warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=DeprecationWarning)
 warnings.warn(
-    f"'pina.model.layers' is deprecated and will be removed "
-    f"in future versions. Please use 'pina.model.block' instead.",
+    "'pina.model.layers' is deprecated and will be removed "
+    "in future versions. Please use 'pina.model.block' instead.",
     DeprecationWarning,
 )

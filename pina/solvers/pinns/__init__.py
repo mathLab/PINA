@@ -1,3 +1,7 @@
+"""
+Old module for the PINNs solver. Deprecated in 0.2.0.
+"""
+
 import warnings
 
 from ...solver.physic_informed_solver import *

@@ -9,6 +9,10 @@ from .solver import SolverInterface, PINNInterface
 
 
 class Trainer(lightning.pytorch.Trainer):
+    """
+    PINA custom Trainer class which allows to customize standard Lightning
+    Trainer class for PINNs training.
+    """
 
     def __init__(
         self,
@@ -25,7 +29,8 @@ class Trainer(lightning.pytorch.Trainer):
         **kwargs,
     ):
         """
-        PINA Trainer class for costumizing every aspect of training via flags.
+        Initialize the Trainer class for by calling Lightning costructor and 
+        adding many other functionalities.
 
         :param solver: A pina:class:`SolverInterface` solver for the
             differential problem.
@@ -59,31 +64,24 @@ class Trainer(lightning.pytorch.Trainer):
         :Keyword Arguments:
             The additional keyword arguments specify the training setup
             and can be choosen from the `pytorch-lightning
-            Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_
+            Trainer API <https://lightning.ai/docs/pytorch/stable/common/ \\
+                trainer.html#trainer-class-api>`_
         """
         # check consistency for init types
-        check_consistency(solver, SolverInterface)
-        check_consistency(train_size, float)
-        check_consistency(test_size, float)
-        check_consistency(val_size, float)
-        if automatic_batching is not None:
-            check_consistency(automatic_batching, bool)
-        if compile is not None:
-            check_consistency(compile, bool)
-        if pin_memory is not None:
-            check_consistency(pin_memory, bool)
-        else:
-            pin_memory = False
-        if num_workers is not None:
-            check_consistency(pin_memory, int)
-        else:
-            num_workers = 0
-        if shuffle is not None:
-            check_consistency(shuffle, bool)
-        else:
-            shuffle = True
-        if batch_size is not None:
-            check_consistency(batch_size, int)
+        # pylint: disable=too-many-function-args
+        self._check_input_consistency(
+            solver,
+            train_size,
+            test_size,
+            val_size,
+            automatic_batching,
+            compile,
+        )
+        pin_memory, num_workers, shuffle, batch_size = (
+            self._check_consistency_and_set_defaults(
+                pin_memory, num_workers, shuffle, batch_size
+            )
+        )
 
         # inference mode set to false when validating/testing PINNs otherwise
         # gradient is not tracked and optimization_cycle fails
@@ -110,6 +108,7 @@ class Trainer(lightning.pytorch.Trainer):
         self.automatic_batching = (
             automatic_batching if automatic_batching is not None else False
         )
+
         # set attributes
         self.compile = compile
         self.solver = solver
@@ -215,3 +214,44 @@ class Trainer(lightning.pytorch.Trainer):
     @solver.setter
     def solver(self, solver):
         self._solver = solver
+
+    @staticmethod
+    def _check_input_consistency(
+        solver, train_size, test_size, val_size, automatic_batching, compile
+    ):
+        """
+        Check the consistency of the input parameters."
+        """
+
+        check_consistency(solver, SolverInterface)
+        check_consistency(train_size, float)
+        check_consistency(test_size, float)
+        check_consistency(val_size, float)
+        if automatic_batching is not None:
+            check_consistency(automatic_batching, bool)
+        if compile is not None:
+            check_consistency(compile, bool)
+
+    @staticmethod
+    def _check_consistency_and_set_defaults(
+        pin_memory, num_workers, shuffle, batch_size
+    ):
+        """
+        Check the consistency of the input parameters and set the default
+        values.
+        """
+        if pin_memory is not None:
+            check_consistency(pin_memory, bool)
+        else:
+            pin_memory = False
+        if num_workers is not None:
+            check_consistency(pin_memory, int)
+        else:
+            num_workers = 0
+        if shuffle is not None:
+            check_consistency(shuffle, bool)
+        else:
+            shuffle = True
+        if batch_size is not None:
+            check_consistency(batch_size, int)
+        return pin_memory, num_workers, shuffle, batch_size

@@ -1,3 +1,7 @@
+"""
+Module for the Graph Neural Operator and Graph Neural Kernel.
+"""
+
 import torch
 from torch.nn import Tanh
 from .block import GNOBlock
@@ -30,14 +34,20 @@ class GraphNeuralKernel(torch.nn.Module):
         :type edge_features: int
         :param n_layers: The number of kernel layers.
         :type n_layers: int
-        :param internal_n_layers: The number of layers the FF Neural Network internal to each Kernel Layer.
+        :param internal_n_layers: The number of layers the FF Neural Network
+            internal to each Kernel Layer.
         :type internal_n_layers: int
-        :param internal_layers: Number of neurons of hidden layers(s) in the FF Neural Network inside for each Kernel Layer.
+        :param internal_layers: Number of neurons of hidden layers(s) in the
+            FF Neural Network inside for each Kernel Layer.
         :type internal_layers: list | tuple
-        :param internal_func: The activation function used inside the computation of the representation of the edge features in the Graph Integral Layer.
-        :param external_func: The activation function applied to the output of the Graph Integral Layer.
+        :param internal_func: The activation function used inside the
+            computation of the representation of the edge features in the
+            Graph Integral Layer.
+        :param external_func: The activation function applied to the output of
+        the Graph Integral Layer.
         :type external_func: torch.nn.Module
-        :param shared_weights: If ``True`` the weights of the Graph Integral Layers are shared.
+        :param shared_weights: If ``True`` the weights of the Graph Integral
+        Layers are shared.
         """
         super().__init__()
         if external_func is None:
@@ -56,7 +66,7 @@ class GraphNeuralKernel(torch.nn.Module):
                 external_func=external_func,
             )
             self.n_layers = n_layers
-            self.forward = self.forward_shared
+            self._forward_func = self._forward_shared
         else:
             self.layers = torch.nn.ModuleList(
                 [
@@ -72,25 +82,21 @@ class GraphNeuralKernel(torch.nn.Module):
                     for _ in range(n_layers)
                 ]
             )
+            self._forward_func = self._forward_unshared
 
-    def forward(self, x, edge_index, edge_attr):
-        """
-        The forward pass of the Graph Neural Kernel used when the weights are not shared.
-
-        :param x: The input batch.
-        :type x: torch.Tensor
-        :param edge_index: The edge index.
-        :type edge_index: torch.Tensor
-        :param edge_attr: The edge attributes.
-        :type edge_attr: torch.Tensor
-        """
+    def _forward_unshared(self, x, edge_index, edge_attr):
         for layer in self.layers:
             x = layer(x, edge_index, edge_attr)
         return x
 
-    def forward_shared(self, x, edge_index, edge_attr):
+    def _forward_shared(self, x, edge_index, edge_attr):
+        for _ in range(self.n_layers):
+            x = self.layers(x, edge_index, edge_attr)
+        return x
+
+    def forward(self, x, edge_index, edge_attr):
         """
-        The forward pass of the Graph Neural Kernel used when the weights are shared.
+        The forward pass of the Graph Neural Kernel.
 
         :param x: The input batch.
         :type x: torch.Tensor
@@ -99,9 +105,7 @@ class GraphNeuralKernel(torch.nn.Module):
         :param edge_attr: The edge attributes.
         :type edge_attr: torch.Tensor
         """
-        for _ in range(self.n_layers):
-            x = self.layers(x, edge_index, edge_attr)
-        return x
+        return self._forward_func(x, edge_index, edge_attr)
 
 
 class GraphNeuralOperator(KernelNeuralOperator):
@@ -125,23 +129,31 @@ class GraphNeuralOperator(KernelNeuralOperator):
         """
         The Graph Neural Operator constructor.
 
-        :param lifting_operator: The lifting operator mapping the node features to its hidden dimension.
+        :param lifting_operator: The lifting operator mapping the node features
+            to its hidden dimension.
         :type lifting_operator: torch.nn.Module
-        :param projection_operator: The projection operator mapping the hidden representation of the nodes features to the output function.
+        :param projection_operator: The projection operator mapping the hidden
+            representation of the nodes features to the output function.
         :type projection_operator: torch.nn.Module
         :param edge_features: Number of edge features.
         :type edge_features: int
         :param n_layers: The number of kernel layers.
         :type n_layers: int
-        :param internal_n_layers: The number of layers the Feed Forward Neural Network internal to each Kernel Layer.
+        :param internal_n_layers: The number of layers the Feed Forward Neural
+            Network internal to each Kernel Layer.
         :type internal_n_layers: int
-        :param internal_layers: Number of neurons of hidden layers(s) in the FF Neural Network inside for each Kernel Layer.
+        :param internal_layers: Number of neurons of hidden layers(s) in the
+            FF Neural Network inside for each Kernel Layer.
         :type internal_layers: list | tuple
-        :param internal_func: The activation function used inside the computation of the representation of the edge features in the Graph Integral Layer.
+        :param internal_func: The activation function used inside the
+            computation of the representation of the edge features in the
+            Graph Integral Layer.
         :type internal_func: torch.nn.Module
-        :param external_func: The activation function applied to the output of the Graph Integral Kernel.
+        :param external_func: The activation function applied to the output of
+            the Graph Integral Kernel.
         :type external_func: torch.nn.Module
-        :param shared_weights: If ``True`` the weights of the Graph Integral Layers are shared.
+        :param shared_weights: If ``True`` the weights of the Graph Integral
+            Layers are shared.
         :type shared_weights: bool
         """
 
