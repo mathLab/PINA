@@ -262,7 +262,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         for (
             condition_name,
             tensor,
-        ) in self.trainer.data_module.train_dataset.input_points.items():
+        ) in self.trainer.data_module.train_dataset.input.items():
             self.weights_dict[condition_name].sa_weights.data = torch.rand(
                 (tensor.shape[0], 1), device=device
             )
