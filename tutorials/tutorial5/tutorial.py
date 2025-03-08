@@ -24,17 +24,16 @@ if IN_COLAB:
   # get the data
   get_ipython().system('wget https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial5/Data_Darcy.mat')
 
-  
+import torch
+import matplotlib.pyplot as plt
+
 # !pip install scipy  # install scipy
 from scipy import io
-import torch
 from pina.model import FNO, FeedForward  # let's import some models
 from pina import Condition, LabelTensor
 from pina.solver import SupervisedSolver
 from pina.trainer import Trainer
 from pina.problem import AbstractProblem
-import matplotlib.pyplot as plt
-plt.style.use('tableau-colorblind10')
 
 
 # ## Data Generation
@@ -89,8 +88,8 @@ plt.show()
 class NeuralOperatorSolver(AbstractProblem):
     input_variables = k_train.full_labels[3]['dof']
     output_variables = u_train.full_labels[3]['dof']
-    conditions = {'data' : Condition(input_points=k_train, 
-                                     output_points=u_train)}
+    conditions = {'data' : Condition(input=k_train, 
+                                     target=u_train)}
 # make problem
 problem = NeuralOperatorSolver()
 
