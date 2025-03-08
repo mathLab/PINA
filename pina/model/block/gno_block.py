@@ -30,7 +30,7 @@ class GNOBlock(MessagePassing):
         """
         # Avoid circular import
         # pylint: disable=import-outside-toplevel
-        from ...model import FeedForward
+        from ...model.feed_forward import FeedForward
 
         super().__init__(aggr="mean")  # Uses PyG's default aggregation
         self.width = width

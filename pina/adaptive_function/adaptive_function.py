@@ -50,14 +50,14 @@ class AdaptiveSigmoid(AdaptiveActivationFunctionInterface):
     r"""
     Adaptive trainable :class:`~torch.nn.Sigmoid` activation function.
 
-    Given the function 
+    Given the function
     :math:`\text{Sigmoid}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
     the adaptive function
     :math:`\text{Sigmoid}_{\text{adaptive}}:\mathbb{R}^n\rightarrow\mathbb{R}^n`
     is defined as:
 
     .. math::
-        \text{Sigmoid}_{\text{adaptive}}({x})= \\
+        \text{Sigmoid}_{\text{adaptive}}({x})=
         \alpha\,\text{Sigmoid}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
@@ -344,15 +344,15 @@ class AdaptiveSoftmin(AdaptiveActivationFunctionInterface):
     r"""
     Adaptive trainable :class:`~torch.nn.Softmin` activation function.
 
-    Given the function 
+    Given the function
     :math:`\text{Softmin}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
     the adaptive function
     :math:`\text{Softmin}_{\text{adaptive}}:\mathbb{R}^n\rightarrow\mathbb{R}^n`
     is defined as:
 
     .. math::
-        \text{Softmin}_{\text{adaptive}}({x})= \\
-        \alpha\,\text{Softmin}(\beta{x}+\gamma),
+        \text{Softmin}_{\text{adaptive}}({x})=\alpha\,
+        \text{Softmin}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Softmin function is defined as:
@@ -387,15 +387,15 @@ class AdaptiveSoftmax(AdaptiveActivationFunctionInterface):
     r"""
     Adaptive trainable :class:`~torch.nn.Softmax` activation function.
 
-    Given the function 
+    Given the function
     :math:`\text{Softmax}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
     the adaptive function
     :math:`\text{Softmax}_{\text{adaptive}}:\mathbb{R}^n\rightarrow\mathbb{R}^n`
     is defined as:
 
     .. math::
-        \text{Softmax}_{\text{adaptive}}({x})= \\
-        \alpha\,\text{Softmax}(\beta{x}+\gamma),
+        \text{Softmax}_{\text{adaptive}}({x})=\alpha\,
+        \text{Softmax}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Softmax function is defined as:

@@ -32,7 +32,7 @@ class GradientPINN(PINN):
         \mathcal{L}_{\rm{problem}} =& \frac{1}{N}\sum_{i=1}^N
         \mathcal{L}(\mathcal{A}[\mathbf{u}](\mathbf{x}_i)) +
         \frac{1}{N}\sum_{i=1}^N
-        \mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i)) + \\
+        \mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i)) + 
         &\frac{1}{N}\sum_{i=1}^N
         \nabla_{\mathbf{x}}\mathcal{L}(\mathcal{A}[\mathbf{u}](\mathbf{x}_i)) +
         \frac{1}{N}\sum_{i=1}^N

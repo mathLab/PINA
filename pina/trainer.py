@@ -29,7 +29,7 @@ class Trainer(lightning.pytorch.Trainer):
         **kwargs,
     ):
         """
-        Initialize the Trainer class for by calling Lightning costructor and 
+        Initialize the Trainer class for by calling Lightning costructor and
         adding many other functionalities.
 
         :param solver: A pina:class:`SolverInterface` solver for the
@@ -64,7 +64,7 @@ class Trainer(lightning.pytorch.Trainer):
         :Keyword Arguments:
             The additional keyword arguments specify the training setup
             and can be choosen from the `pytorch-lightning
-            Trainer API <https://lightning.ai/docs/pytorch/stable/common/ \\
+            Trainer API <https://lightning.ai/docs/pytorch/stable/common/
                 trainer.html#trainer-class-api>`_
         """
         # check consistency for init types

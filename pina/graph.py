@@ -5,7 +5,7 @@ This module provides an interface to build torch_geometric.data.Data objects.
 import torch
 from torch_geometric.data import Data, Batch
 from torch_geometric.utils import to_undirected
-from . import LabelTensor
+from .label_tensor import LabelTensor
 from .utils import check_consistency, is_function
 
 

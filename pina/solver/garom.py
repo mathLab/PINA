@@ -184,7 +184,7 @@ class GAROM(MultiSolverInterface):
         # increase by one the counter of optimization to save loggers
         (
             # Unavoidable long line
-            # pylint: disable=line-too
+            # pylint: disable=line-too-long
             self.trainer.fit_loop.epoch_loop.manual_optimization.optim_step_progress.total.completed
         ) += 1
 

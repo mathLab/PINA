@@ -18,8 +18,8 @@ class Exclusion(OperationInterface):
         domain difference is defined as:
 
         .. math::
-            A \setminus B = \{x \mid x \in A \land x \in B \land  x \not\in \\
-                (A \lor B)\},
+            A \setminus B = \{x \mid x \in A \land x \in B \land
+            x \not\in(A \lor B)\},
 
         with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
         the dimension of the geometry space.

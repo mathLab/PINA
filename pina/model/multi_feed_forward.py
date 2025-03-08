@@ -1,11 +1,11 @@
 """Module for Multi FeedForward model"""
 
+from abc import ABC, abstractmethod
 import torch
-
 from .feed_forward import FeedForward
 
 
-class MultiFeedForward(torch.nn.Module):
+class MultiFeedForward(torch.nn.Module, ABC):
     """
     The PINA implementation of MultiFeedForward network.
 
@@ -24,3 +24,9 @@ class MultiFeedForward(torch.nn.Module):
 
         for name, constructor_args in ffn_dict.items():
             setattr(self, name, FeedForward(**constructor_args))
+
+    @abstractmethod
+    def forward(self, *args, **kwargs):
+        """
+        TODO: Docstring
+        """

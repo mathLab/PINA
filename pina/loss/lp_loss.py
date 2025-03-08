@@ -25,8 +25,8 @@ class LpLoss(LossInterface):
 
     .. math::
         \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
-        l_n = \frac{ [\sum_{i=1}^{D} | x_n^i - y_n^i|^p] } \\
-            {[\sum_{i=1}^{D}|y_n^i|^p]},
+        l_n = \frac{ [\sum_{i=1}^{D} | x_n^i - y_n^i|^p] }
+        {[\sum_{i=1}^{D}|y_n^i|^p]},
 
     where :math:`N` is the batch size. If ``reduction`` is not ``none``
     (default ``mean``), then:

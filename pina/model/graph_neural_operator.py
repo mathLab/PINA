@@ -4,7 +4,7 @@ Module for the Graph Neural Operator and Graph Neural Kernel.
 
 import torch
 from torch.nn import Tanh
-from .block import GNOBlock
+from .block.gno_block import GNOBlock
 from .kernel_neural_operator import KernelNeuralOperator
 
 

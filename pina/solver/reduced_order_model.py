@@ -2,7 +2,7 @@
 
 import torch
 
-from . import SupervisedSolver
+from .supervised import SupervisedSolver
 
 
 class ReducedOrderModelSolver(SupervisedSolver):
