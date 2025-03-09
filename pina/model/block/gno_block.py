@@ -28,7 +28,8 @@ class GNOBlock(MessagePassing):
         :param edges_features: Number of edge features.
         :param n_layers: Number of layers in edge transformation MLP.
         """
-        # Avoid circular import
+        # Avoid circular import. I need to import FeedForward here
+        # to avoid circular import with FeedForward itself.
         # pylint: disable=import-outside-toplevel
         from ...model.feed_forward import FeedForward
 
@@ -71,7 +72,6 @@ class GNOBlock(MessagePassing):
         """
         Updates edge features.
         """
-        # This method is done to avoid pylint warning (W0246)
         return edge_attr
 
     def update(self, aggr_out, x):

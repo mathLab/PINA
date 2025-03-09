@@ -68,7 +68,6 @@ class Trainer(lightning.pytorch.Trainer):
                 trainer.html#trainer-class-api>`_
         """
         # check consistency for init types
-        # pylint: disable=too-many-function-args
         self._check_input_consistency(
             solver,
             train_size,

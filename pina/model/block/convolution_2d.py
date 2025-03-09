@@ -379,6 +379,7 @@ class ContinuousConvBlock(BaseContinuousConv):
             ).sum(1)
         return conv
 
+    # Avoid too many arguments warning
     # pylint: disable=R0914
     def transpose_no_overlap(self, integrals, X):
         """

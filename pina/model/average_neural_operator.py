@@ -26,7 +26,6 @@ class AveragingNeuralOperator(KernelNeuralOperator):
         <https://arxiv.org/abs/2304.13221>`_
     """
 
-    # pylint: disable=R0917
     def __init__(
         self,
         lifting_net,

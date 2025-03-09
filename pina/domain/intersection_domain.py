@@ -11,7 +11,6 @@ class Intersection(OperationInterface):
     PINA implementation of Intersection of Domains.
     """
 
-    # pylint: disable=W0246
     def __init__(self, geometries):
         r"""
         Given two sets :math:`A` and :math:`B` then the

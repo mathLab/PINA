@@ -11,7 +11,6 @@ class Union(OperationInterface):
     Union of Domains.
     """
 
-    # pylint: disable=W0246
     def __init__(self, geometries):
         r"""
         PINA implementation of Unions of Domains.

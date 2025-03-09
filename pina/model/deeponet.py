@@ -26,7 +26,6 @@ class MIONet(torch.nn.Module):
 
     """
 
-    # pylint: disable=R0917
     def __init__(
         self,
         networks,
@@ -307,7 +306,6 @@ class DeepONet(MIONet):
 
     """
 
-    # pylint: disable=R0917
     def __init__(
         self,
         branch_net,
@@ -411,7 +409,6 @@ class DeepONet(MIONet):
             translation=translation,
         )
 
-    # pylint: disable=W0246
     def forward(self, x):
         """
         Defines the computation performed at every call.

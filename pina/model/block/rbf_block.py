@@ -371,7 +371,6 @@ class RBFBlock(torch.nn.Module):
                 count += 1
         return out
 
-    # pylint: disable=R0914
     @staticmethod
     def build(y, d, smoothing, kernel, epsilon, powers):
         """

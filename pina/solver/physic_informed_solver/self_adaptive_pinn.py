@@ -372,9 +372,8 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         """
         return self.schedulers[1]
 
-    # In this case self.optimizers is a list of two optimizers!!!
+    # self.optimizers is a list of two optimizers!!! (supress pylint warning)
     # pylint: disable=unsubscriptable-object
-
     @property
     def optimizer_model(self):
         """

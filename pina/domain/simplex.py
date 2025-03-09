@@ -134,8 +134,8 @@ class SimplexDomain(DomainInterface):
         point_shift = point_shift.tensor.reshape(-1, 1)
 
         # compute barycentric coordinates
-        # pylint: disable=E1102
-        lambda_ = torch.linalg.solve(
+
+        lambda_ = torch.linalg.solve(  # pylint: disable=E1102
             self._vectors_shifted * 1.0, point_shift * 1.0
         )
         lambda_1 = 1.0 - torch.sum(lambda_)
