@@ -32,7 +32,7 @@ if IN_COLAB:
 
 import torch
 import matplotlib.pyplot as plt
-plt.style.use('tableau-colorblind10')
+
 from scipy import io
 from pina import Condition, LabelTensor
 from pina.problem import AbstractProblem
@@ -211,8 +211,8 @@ model = AveragingNeuralOperator(lifting_net=lifting_net,
 class NeuralOperatorProblem(AbstractProblem):
     input_variables = initial_cond_train.labels
     output_variables = sol_train.labels
-    conditions = {'data' : Condition(input_points=initial_cond_train, 
-                                     output_points=sol_train)}
+    conditions = {'data' : Condition(input=initial_cond_train, 
+                                     target=sol_train)}
 
 
 # initialize problem

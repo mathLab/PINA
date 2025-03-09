@@ -26,16 +26,20 @@ if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
 
 import torch
+import matplotlib.pyplot as plt
+import warnings
 
-from pina import Condition, Plotter, Trainer, Plotter
+from pina import Condition, Trainer
 from pina.problem import SpatialProblem
-from pina.operators import laplacian
-from pina.solvers import PINN, SAPINN
-from pina.model.layers import FourierFeatureEmbedding
+from pina.operator import laplacian
+from pina.solver import PINN, SelfAdaptivePINN as SAPINN
+from pina.model.block import FourierFeatureEmbedding
 from pina.loss import LpLoss
 from pina.domain import CartesianDomain
 from pina.equation import Equation, FixedValue
 from pina.model import FeedForward
+
+warnings.filterwarnings('ignore')
 
 
 # ## Multiscale Problem
@@ -74,10 +78,10 @@ class Poisson(SpatialProblem):
 
     # here we write the problem conditions
     conditions = {
-        'bound_cond0' : Condition(domain=CartesianDomain({'x': 0}),
-                             equation=FixedValue(0)),
-        'bound_cond1' : Condition(domain=CartesianDomain({'x': 1}),
-                             equation=FixedValue(0)),
+        'bound_cond0' : Condition(domain=CartesianDomain({'x': 0.}),
+                             equation=FixedValue(0.)),
+        'bound_cond1' : Condition(domain=CartesianDomain({'x': 1.}),
+                             equation=FixedValue(0.)),
         'phys_cond':       Condition(domain=spatial_domain,
                              equation=Equation(poisson_equation)),
     }
@@ -88,7 +92,8 @@ class Poisson(SpatialProblem):
 problem = Poisson()
 
 # let's discretise the domain
-problem.discretise_domain(128, 'grid')
+problem.discretise_domain(128, 'grid', domains=['phys_cond'])
+problem.discretise_domain(1, 'grid', domains=['bound_cond0','bound_cond1'])
 
 
 # A standard PINN approach would be to fit this model using a Feed Forward (fully connected) Neural Network. For a conventional fully-connected neural network is easy to
@@ -96,36 +101,57 @@ problem.discretise_domain(128, 'grid')
 # 
 # Below we run a simulation using the `PINN` solver and the self adaptive `SAPINN` solver, using a [`FeedForward`](https://mathlab.github.io/PINA/_modules/pina/model/feed_forward.html#FeedForward) model. We used a `MultiStepLR` scheduler to decrease the learning rate slowly during training (it takes around 2 minutes to run on CPU).
 
-# In[19]:
+# In[3]:
 
+
+from pina.optim import TorchScheduler
 
 # training with PINN and visualize results
+model=FeedForward(input_dimensions=1, output_dimensions=1, layers=[100, 100, 100])
 pinn = PINN(problem=problem,
-            model=FeedForward(input_dimensions=1, output_dimensions=1, layers=[100, 100, 100]),
-            scheduler=torch.optim.lr_scheduler.MultiStepLR,
-            scheduler_kwargs={'milestones' : [1000, 2000, 3000, 4000], 'gamma':0.9})
-trainer = Trainer(pinn, max_epochs=5000, accelerator='cpu', enable_model_summary=False)
+            model=model,
+            scheduler=TorchScheduler(torch.optim.lr_scheduler.MultiStepLR,  # Pass the class directly, not an instance
+                milestones=[1000,2000,3000,4000],
+                gamma=0.9))
+
+trainer = Trainer(pinn, max_epochs=5000, accelerator='cpu', enable_model_summary=False, val_size=0., train_size=1., test_size=0.)
 trainer.train()
 
 # training with PINN and visualize results
 sapinn = SAPINN(problem=problem,
-                model=FeedForward(input_dimensions=1, output_dimensions=1, layers=[100, 100, 100]),
-                scheduler_model=torch.optim.lr_scheduler.MultiStepLR,
-                scheduler_model_kwargs={'milestones' : [1000, 2000, 3000, 4000], 'gamma':0.9})
-trainer_sapinn = Trainer(sapinn, max_epochs=5000, accelerator='cpu', enable_model_summary=False)
+            model=model,
+            scheduler_model=TorchScheduler(torch.optim.lr_scheduler.MultiStepLR,  
+                milestones=[1000,2000,3000,4000],
+                gamma=0.9))
+trainer_sapinn = Trainer(sapinn, max_epochs=5000, accelerator='cpu', enable_model_summary=False, val_size=0., train_size=1., test_size=0.)
 trainer_sapinn.train()
 
-# plot results
-pl = Plotter()
-pl.plot(pinn, title='PINN Solution')
-pl.plot(sapinn, title='Self Adaptive PINN Solution')
+
+# In[4]:
+
+
+#define the function to plot the solution obtained using matplotlib
+def plot_solution(pinn_to_use, title):
+    pts = pinn_to_use.problem.spatial_domain.sample(256, 'grid', variables='x')
+    predicted_output = pinn_to_use.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach()
+    true_output = pinn_to_use.problem.truth_solution(pts).cpu().detach()
+    pts = pts.cpu()
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
+    ax.plot(pts.extract(['x']), predicted_output, label='Neural Network solution')
+    ax.plot(pts.extract(['x']), true_output, label='True solution')
+    plt.title(title)
+    plt.legend()
+
+#plot the solution of the two PINNs
+plot_solution(pinn, 'PINN solution')
+plot_solution(sapinn, 'Self Adaptive PINN solution')
 
 
 # We can clearly see that the solution has not been learned by the two different solvers. Indeed the big problem is not in the optimization strategy (i.e. the solver), but in the model used to solve the problem. A simple `FeedForward` network can hardly handle multiscales if not enough collocation points are used!
 # 
 # We can also compute the $l_2$ relative error for the `PINN` and `SAPINN` solutions:
 
-# In[20]:
+# In[5]:
 
 
 # l2 loss from PINA losses
@@ -153,7 +179,7 @@ print(f'Relative l2 error SAPINN    {l2_loss(sapinn(pts), problem.truth_solution
 # In PINA we already have implemented the feature as a `layer` called [`FourierFeatureEmbedding`](https://mathlab.github.io/PINA/_rst/layers/fourier_embedding.html). Below we will build the *Multi-scale Fourier Feature Architecture*. In this architecture multiple Fourier feature embeddings (initialized with different $\sigma$)
 # are applied to input coordinates and then passed through the same fully-connected neural network, before the outputs are finally concatenated with a linear layer.
 
-# In[21]:
+# In[6]:
 
 
 class MultiscaleFourierNet(torch.nn.Module):
@@ -173,36 +199,35 @@ class MultiscaleFourierNet(torch.nn.Module):
         e2 = self.layers(self.embedding2(x))
         return self.final_layer(torch.cat([e1, e2], dim=-1))
 
-MultiscaleFourierNet()
-
 
 # We will train the `MultiscaleFourierNet` with the `PINN` solver (and feel free to try also with our PINN variants (`SAPINN`, `GPINN`, `CompetitivePINN`, ...).
 
-# In[22]:
+# In[7]:
 
 
 multiscale_pinn = PINN(problem=problem,
                        model=MultiscaleFourierNet(),
-                       scheduler=torch.optim.lr_scheduler.MultiStepLR,
-                       scheduler_kwargs={'milestones' : [1000, 2000, 3000, 4000], 'gamma':0.9})
-trainer = Trainer(multiscale_pinn, max_epochs=5000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+                       scheduler=TorchScheduler(torch.optim.lr_scheduler.MultiStepLR,  
+                milestones=[1000,2000,3000,4000],
+                gamma=0.9))
+trainer = Trainer(multiscale_pinn, max_epochs=5000, accelerator='cpu', enable_model_summary=False, val_size=0., train_size=1., test_size=0.) # we train on CPU and avoid model summary at beginning of training (optional)
 trainer.train()
 
 
 # Let us now plot the solution and compute the relative $l_2$ again!
 
-# In[24]:
+# In[8]:
 
 
-# plot the solution
-pl.plot(multiscale_pinn, title='Solution PINN with MultiscaleFourierNet')
+#plot solution obtained
+plot_solution(multiscale_pinn, 'Multiscale PINN solution')
 
 # sample new test points
 pts = pts = problem.spatial_domain.sample(100, 'grid')
-print(f'Relative l2 error PINN with MultiscaleFourierNet      {l2_loss(multiscale_pinn(pts), problem.truth_solution(pts)).item():.2%}')
+print(f'Relative l2 error PINN with MultiscaleFourierNet:   {l2_loss(multiscale_pinn(pts), problem.truth_solution(pts)).item():.2%}')
 
 
-# It is pretty clear that the network has learned the correct solution, with also a very law error. Obviously a longer training and a more expressive neural network could improve the results!
+# It is pretty clear that the network has learned the correct solution, with also a very low error. Obviously a longer training and a more expressive neural network could improve the results!
 # 
 # ## What's next?
 # 
