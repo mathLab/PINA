@@ -26,11 +26,14 @@ if IN_COLAB:
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 import matplotlib.pyplot as plt
-plt.style.use('tableau-colorblind10')
 import torch
 import pina
+import warnings
+
 from pina.model.layers import PODBlock, RBFBlock
 from pina import LabelTensor
+
+warnings.filterwarnings('ignore')
 
 
 # In this tutorial we're gonna use the `LidCavity` class from the [Smithers](https://github.com/mathLab/Smithers) library, which contains a set of parametric solutions of the Lid-driven cavity problem in a square domain. The dataset consists of 300 snapshots of the parameter fields, which in this case are the magnitude of velocity and the pressure, and the corresponding parameter values $u$ and $p$. Each snapshot corresponds to a different value of the tangential velocity $\mu$ of the lid, which has been sampled uniformly between 0.01 m/s and 1 m/s.
@@ -40,7 +43,6 @@ from pina import LabelTensor
 # In[2]:
 
 
-get_ipython().system('pip install git+https://github.com/mathLab/Smithers.git #if required --break-system-packages')
 import smithers
 from smithers.dataset import LidCavity
 dataset = LidCavity()
@@ -165,7 +167,7 @@ u_test_rbf = pod_rbfu(mu_test)
 
 # Finally we can calculate the relative error for our model:
 
-# In[ ]:
+# In[9]:
 
 
 relative_u_error_train = torch.norm(u_train_rbf - u_train)/torch.norm(u_train)
@@ -178,7 +180,7 @@ print(f'  Test:  {relative_u_error_test.item():e}')
 
 # The results are promising! Now let's visualise them, comparing four random predicted snapshots to the true ones:
 
-# In[ ]:
+# In[10]:
 
 
 import numpy as np
@@ -212,7 +214,7 @@ plt.show()
 
 # Overall we have reached a good level of approximation while avoiding time-consuming training procedures. Let's try doing the same to predict the pressure snapshots:
 
-# In[ ]:
+# In[11]:
 
 
 '''create the model'''
@@ -235,7 +237,7 @@ print(f'  Test:  {relative_p_error_test.item():e}')
 
 # Unfortunately here we obtain a very high relative test error, although this is likely due to the nature of the available data. Looking at the plots we can see that the pressure field is subject to high variations between subsequent snapshots, especially here: 
 
-# In[ ]:
+# In[12]:
 
 
 fig, axs = plt.subplots(2, 3, figsize=(14, 6))
@@ -250,7 +252,7 @@ plt.show()
 
 # Or here:
 
-# In[ ]:
+# In[13]:
 
 
 fig, axs = plt.subplots(2, 3, figsize=(14, 6))
@@ -264,7 +266,7 @@ plt.show()
 
 # Scrolling through the velocity snapshots we can observe a more regular behaviour, with no such variations in subsequent snapshots. Moreover, if we decide not to consider the abovementioned "problematic" snapshots, we can already observe a huge improvement:
 
-# In[ ]:
+# In[14]:
 
 
 '''excluding problematic snapshots'''
