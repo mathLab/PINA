@@ -9,7 +9,7 @@
 # 
 # First of all, some useful imports.
 
-# In[4]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -22,7 +22,6 @@ if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
 
 import torch
-from torch.nn import Softplus
 import matplotlib.pyplot as plt
 import warnings
 
@@ -34,8 +33,7 @@ from pina.trainer import Trainer
 from pina.domain import CartesianDomain
 from pina.equation import Equation, FixedValue
 from pina import Condition, LabelTensor
-from pina.callback import MetricTracker
-
+from torch.nn import Softplus
 from lightning.pytorch.loggers import TensorBoardLogger
 
 warnings.filterwarnings('ignore')
@@ -55,7 +53,7 @@ warnings.filterwarnings('ignore')
 # The Poisson problem is written in **PINA** code as a class. The equations are written as *conditions* that should be satisfied in the corresponding domains. The *truth_solution*
 # is the exact solution which will be compared with the predicted one.
 
-# In[5]:
+# In[2]:
 
 
 class Poisson(SpatialProblem):
@@ -98,7 +96,7 @@ problem.discretise_domain(25, 'grid', domains=['bound_cond1', 'bound_cond2', 'bo
 # 
 # In this tutorial, the neural network is composed by two hidden layers of 10 neurons each, and it is trained for 1000 epochs with a learning rate of 0.006 and $l_2$ weight regularization set to $10^{-8}$. These parameters can be modified as desired. 
 
-# In[6]:
+# In[3]:
 
 
 # make model + solver + trainer
@@ -110,12 +108,12 @@ model = FeedForward(
     input_dimensions=len(problem.input_variables)
 )
 pinn = PINN(problem, model, optimizer=TorchOptimizer(torch.optim.Adam, lr=0.006,weight_decay=1e-8))
-trainer = Trainer(pinn, max_epochs=1000, accelerator='cpu', enable_model_summary=False,
-   train_size=1.0,
+trainer = Trainer(pinn, max_epochs=1000, accelerator='cpu', enable_model_summary=False, # we train on CPU and avoid model summary at beginning of training (optional)
+    train_size=1.0,
     val_size=0.0,
     test_size=0.0,
     logger=TensorBoardLogger("tutorial_logs")
-) # we train on CPU and avoid model summary at beginning of training (optional)
+) 
 
 # train
 trainer.train()
@@ -124,7 +122,7 @@ trainer.train()
 # Now we plot the results using `matplotlib`.
 # The solution predicted by the neural network is plotted on the left, the exact one is represented at the center and on the right the error between the exact and the predicted solutions is showed. 
 
-# In[7]:
+# In[4]:
 
 
 @torch.no_grad()
@@ -153,7 +151,7 @@ def plot_solution(solver):
         plt.colorbar(), plt.tight_layout()
 
 
-# In[8]:
+# In[5]:
 
 
 plt.figure(figsize=(12, 6))
@@ -176,7 +174,7 @@ plot_solution(solver=pinn)
 # 
 # Finally, we perform the same training as before: the problem is `Poisson`, the network is composed by the same number of neurons and optimizer parameters are equal to previous test, the only change is the new extra feature.
 
-# In[9]:
+# In[6]:
 
 
 class SinSin(torch.nn.Module):
@@ -224,7 +222,7 @@ trainer_feat.train()
 # The predicted and exact solutions and the error between them are represented below.
 # We can easily note that now our network, having almost the same condition as before, is able to reach additional order of magnitudes in accuracy.
 
-# In[10]:
+# In[7]:
 
 
 plt.figure(figsize=(12, 6))
@@ -245,7 +243,7 @@ plot_solution(solver=pinn_feat)
 # where $\alpha$ and $\beta$ are the abovementioned parameters.
 # Their implementation is quite trivial: by using the class `torch.nn.Parameter` we cam define all the learnable parameters we need, and they are managed by `autograd` module!
 
-# In[11]:
+# In[8]:
 
 
 class SinSinAB(torch.nn.Module):
@@ -285,7 +283,7 @@ trainer_learn.train()
 
 # Umh, the final loss is not appreciabily better than previous model (with static extra features), despite the usage of learnable parameters. This is mainly due to the over-parametrization of the network: there are many parameter to optimize during the training, and the model in unable to understand automatically that only the parameters of the extra feature (and not the weights/bias of the FFN) should be tuned in order to fit our problem. A longer training can be helpful, but in this case the faster way to reach machine precision for solving the Poisson problem is removing all the hidden layers in the `FeedForward`, keeping only the $\alpha$ and $\beta$ parameters of the extra feature.
 
-# In[12]:
+# In[9]:
 
 
 # make model + solver + trainer
@@ -313,7 +311,7 @@ trainer_learn.train()
 
 # Let us compare the training losses for the various types of training
 
-# In[13]:
+# In[10]:
 
 
 # Load the TensorBoard extension

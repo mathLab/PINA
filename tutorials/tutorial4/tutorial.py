@@ -24,6 +24,7 @@ if IN_COLAB:
 import torch 
 import matplotlib.pyplot as plt 
 import torchvision # for MNIST dataset
+import warnings
 
 from pina.problem import AbstractProblem
 from pina.solver import SupervisedSolver
@@ -31,6 +32,8 @@ from pina.trainer import Trainer
 from pina import Condition, LabelTensor
 from pina.model.block import ContinuousConvBlock 
 from pina.model import FeedForward # for building AE and MNIST classification
+
+warnings.filterwarnings('ignore')
 
 
 # The tutorial is structured as follow: 
@@ -514,7 +517,10 @@ class CircleProblem(AbstractProblem):
 solver = SupervisedSolver(problem=CircleProblem(), model=net, loss=torch.nn.MSELoss(), use_lt=True)          
 
 # train
-trainer = Trainer(solver, max_epochs=150, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer = Trainer(solver, max_epochs=150, accelerator='cpu', enable_model_summary=False, # we train on CPU and avoid model summary at beginning of training (optional)
+            train_size=1.0,
+            val_size=0.0,
+            test_size=0.0)
 trainer.train()
         
 

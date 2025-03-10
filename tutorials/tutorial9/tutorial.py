@@ -28,6 +28,7 @@ if IN_COLAB:
 
 import torch
 import matplotlib.pyplot as plt
+import warnings
 
 from pina import Condition
 from pina.problem import SpatialProblem
@@ -38,6 +39,8 @@ from pina.solver import PINN
 from pina.trainer import Trainer
 from pina.domain import CartesianDomain
 from pina.equation import Equation
+
+warnings.filterwarnings('ignore')
 
 
 # ## The problem definition
@@ -139,19 +142,42 @@ model = torch.nn.Sequential(PeriodicBoundaryEmbedding(input_dimension=1,
 # for all dimensions using a dictionary, e.g. `periods={'x':2, 'y':3, ...}`
 # would indicate a periodicity of $2$ in $x$, $3$ in $y$, and so on...
 # 
-# We will now solve the problem as usually with the `PINN` and `Trainer` class.
+# We will now solve the problem as usually with the `PINN` and `Trainer` class, then we will look at the losses using the `MetricTracker` callback from `pina.callback`.
 
 # In[4]:
 
 
-pinn = PINN(problem=problem, model=model)
-trainer = Trainer(pinn, max_epochs=5000, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+from pina.callback import MetricTracker
+from pina.optim import TorchOptimizer
+
+pinn = PINN(problem=problem, model=model, optimizer=TorchOptimizer(torch.optim.Adam, lr=0.001))
+trainer = Trainer(pinn, max_epochs=5000, accelerator='cpu', enable_model_summary=False, # we train on CPU and avoid model summary at beginning of training (optional)
+                  logger=True,
+                  callbacks=[MetricTracker()],
+                  train_size=1.0,
+                  val_size=0.0,
+                  test_size=0.0)
 trainer.train()
+
+
+# In[5]:
+
+
+#plot loss
+trainer_metrics = trainer.callbacks[0].metrics
+print(trainer.callbacks[0].metrics)
+loss = trainer_metrics['train_loss']
+epochs = range(len(loss))
+plt.plot(epochs, loss.cpu())
+# plotting
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.yscale('log') 
 
 
 # We are going to plot the solution now!
 
-# In[5]:
+# In[6]:
 
 
 pts = pinn.problem.spatial_domain.sample(256, 'grid', variables='x')
@@ -166,7 +192,7 @@ plt.legend()
 
 # Great, they overlap perfectly! This seems a good result, considering the simple neural network used to some this (complex) problem. We will now test the neural network on the domain $[-4, 4]$ without retraining. In principle the periodicity should be present since the $v$ function ensures the periodicity in $(-\infty, \infty)$.
 
-# In[6]:
+# In[7]:
 
 
 # plotting solution
