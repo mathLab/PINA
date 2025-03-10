@@ -1,18 +1,18 @@
 """PINA Callbacks Implementations"""
 
 from lightning.pytorch.callbacks import Callback
-import torch
+from ..optim import TorchOptimizer
 from ..utils import check_consistency
-from pina.optim import TorchOptimizer
 
 
 class SwitchOptimizer(Callback):
+    """
+    PINA Implementation of a Lightning Callback to switch optimizer during
+    training.
+    """
 
     def __init__(self, new_optimizers, epoch_switch):
         """
-        PINA Implementation of a Lightning Callback to switch optimizer during
-        training.
-
         This callback allows for switching between different optimizers during
         training, enabling the exploration of multiple optimization strategies
         without the need to stop training.
@@ -44,9 +44,11 @@ class SwitchOptimizer(Callback):
         self._new_optimizers = new_optimizers
         self._epoch_switch = epoch_switch
 
+    # pylint: disable=W0212
     def on_train_epoch_start(self, trainer, __):
         """
-        Callback function to switch optimizer at the start of each training epoch.
+        Callback function to switch optimizer at the start of each
+        training epoch.
 
         :param trainer: The trainer object managing the training process.
         :type trainer: pytorch_lightning.Trainer
@@ -59,7 +61,7 @@ class SwitchOptimizer(Callback):
             optims = []
 
             for idx, optim in enumerate(self._new_optimizers):
-                optim.hook(trainer.solver.models[idx].parameters())
-                optims.append(optim.instance)
+                optim.hook(trainer.solver._pina_models[idx].parameters())
+                optims.append(optim)
 
-            trainer.optimizers = optims
+            trainer.solver._pina_optimizers = optims
