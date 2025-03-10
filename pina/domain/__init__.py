@@ -1,3 +1,7 @@
+"""
+This module contains the domain classes.
+"""
+
 __all__ = [
     "DomainInterface",
     "CartesianDomain",

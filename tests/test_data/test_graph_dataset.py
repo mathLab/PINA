@@ -78,20 +78,12 @@ def test_getitem(conditions_dict, max_conditions_lengths):
     data = dataset[50]
     assert isinstance(data, dict)
     assert all([isinstance(d["input"], Data) for d in data.values()])
+    assert all([isinstance(d["target"], torch.Tensor) for d in data.values()])
     assert all(
-        [isinstance(d["target"], torch.Tensor) for d in data.values()]
+        [d["input"].x.shape == torch.Size((20, 10)) for d in data.values()]
     )
     assert all(
-        [
-            d["input"].x.shape == torch.Size((20, 10))
-            for d in data.values()
-        ]
-    )
-    assert all(
-        [
-            d["target"].shape == torch.Size((20, 10))
-            for d in data.values()
-        ]
+        [d["target"].shape == torch.Size((20, 10)) for d in data.values()]
     )
     assert all(
         [
@@ -99,27 +91,17 @@ def test_getitem(conditions_dict, max_conditions_lengths):
             for d in data.values()
         ]
     )
-    assert all(
-        [d["input"].edge_attr.shape[0] == 60 for d in data.values()]
-    )
+    assert all([d["input"].edge_attr.shape[0] == 60 for d in data.values()])
 
     data = dataset.fetch_from_idx_list([i for i in range(20)])
     assert isinstance(data, dict)
     assert all([isinstance(d["input"], Data) for d in data.values()])
+    assert all([isinstance(d["target"], torch.Tensor) for d in data.values()])
     assert all(
-        [isinstance(d["target"], torch.Tensor) for d in data.values()]
+        [d["input"].x.shape == torch.Size((400, 10)) for d in data.values()]
     )
     assert all(
-        [
-            d["input"].x.shape == torch.Size((400, 10))
-            for d in data.values()
-        ]
-    )
-    assert all(
-        [
-            d["target"].shape == torch.Size((400, 10))
-            for d in data.values()
-        ]
+        [d["target"].shape == torch.Size((400, 10)) for d in data.values()]
     )
     assert all(
         [
@@ -127,6 +109,4 @@ def test_getitem(conditions_dict, max_conditions_lengths):
             for d in data.values()
         ]
     )
-    assert all(
-        [d["input"].edge_attr.shape[0] == 1200 for d in data.values()]
-    )
+    assert all([d["input"].edge_attr.shape[0] == 1200 for d in data.values()])

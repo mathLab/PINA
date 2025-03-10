@@ -10,18 +10,20 @@ from pina.optim import TorchOptimizer
 
 # make the problem
 poisson_problem = Poisson()
-boundaries = ['g1', 'g2', 'g3', 'g4']
+boundaries = ["g1", "g2", "g3", "g4"]
 n = 10
-poisson_problem.discretise_domain(n, 'grid', domains=boundaries)
-poisson_problem.discretise_domain(n, 'grid', domains='D')
-model = FeedForward(len(poisson_problem.input_variables),
-                    len(poisson_problem.output_variables))
+poisson_problem.discretise_domain(n, "grid", domains=boundaries)
+poisson_problem.discretise_domain(n, "grid", domains="D")
+model = FeedForward(
+    len(poisson_problem.input_variables), len(poisson_problem.output_variables)
+)
 
 # make the solver
 solver = PINN(problem=poisson_problem, model=model)
 
 adam_optimizer = TorchOptimizer(torch.optim.Adam, lr=0.01)
-lbfgs_optimizer = TorchOptimizer(torch.optim.LBFGS, lr= 0.001)
+lbfgs_optimizer = TorchOptimizer(torch.optim.LBFGS, lr=0.001)
+
 
 def test_switch_optimizer_constructor():
     SwitchOptimizer(adam_optimizer, epoch_switch=10)

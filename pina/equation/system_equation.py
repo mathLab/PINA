@@ -1,16 +1,19 @@
 """Module for SystemEquation."""
 
 import torch
+from .equation_interface import EquationInterface
 from .equation import Equation
 from ..utils import check_consistency
 
 
-class SystemEquation(Equation):
+class SystemEquation(EquationInterface):
+    """
+    System of Equation class for specifing any system
+    of equations in PINA.
+    """
 
     def __init__(self, list_equation, reduction=None):
         """
-        System of Equation class for specifing any system
-        of equations in PINA.
         Each ``equation`` passed to a ``Condition`` object
         must be an ``Equation`` or ``SystemEquation``.
         A ``SystemEquation`` is specified by a list of
@@ -37,7 +40,7 @@ class SystemEquation(Equation):
             self.reduction = torch.mean
         elif reduction == "sum":
             self.reduction = torch.sum
-        elif (reduction == None) or callable(reduction):
+        elif (reduction is None) or callable(reduction):
             self.reduction = reduction
         else:
             raise NotImplementedError(

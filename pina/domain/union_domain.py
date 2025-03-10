@@ -1,12 +1,15 @@
 """Module for Union class."""
 
+import random
 import torch
 from .operation_interface import OperationInterface
 from ..label_tensor import LabelTensor
-import random
 
 
 class Union(OperationInterface):
+    """
+    Union of Domains.
+    """
 
     def __init__(self, geometries):
         r"""
@@ -36,7 +39,7 @@ class Union(OperationInterface):
     @property
     def sample_modes(self):
         self.sample_modes = list(
-            set([geom.sample_modes for geom in self.geometries])
+            set(geom.sample_modes for geom in self.geometries)
         )
 
     def is_inside(self, point, check_border=False):
@@ -61,7 +64,8 @@ class Union(OperationInterface):
         Sample routine for ``Union`` domain.
 
         :param int n: Number of points to sample in the shape.
-        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
+        :param str mode: Mode for sampling, defaults to ``random``. Available
+            modes include: ``random``.
         :param variables: Variables to be sampled, defaults to ``all``.
         :type variables: str | list[str]
         :return: Returns ``LabelTensor`` of n sampled points.
@@ -85,7 +89,8 @@ class Union(OperationInterface):
         """
         sampled_points = []
 
-        # calculate the number of points to sample for each geometry and the remainder
+        # calculate the number of points to sample for each geometry and the
+        # remainder
         remainder = n % len(self.geometries)
         num_points = n // len(self.geometries)
 
@@ -103,7 +108,8 @@ class Union(OperationInterface):
                     num_points + int(i < remainder), mode, variables
                 )
             )
-            # in case number of sampled points is smaller than the number of geometries
+            # in case number of sampled points is smaller than the number of
+            # geometries
             if len(sampled_points) >= n:
                 break
 

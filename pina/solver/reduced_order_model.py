@@ -2,7 +2,7 @@
 
 import torch
 
-from . import SupervisedSolver
+from .supervised import SupervisedSolver
 
 
 class ReducedOrderModelSolver(SupervisedSolver):
@@ -39,7 +39,8 @@ class ReducedOrderModelSolver(SupervisedSolver):
             \mathcal{D}_{\rm{net}}[\mathcal{E}_{\rm{net}}[\mathbf{u}(\mu_i)]] -
             \mathbf{u}(\mu_i))
 
-    where :math:`\mathcal{L}` is a specific loss function, default Mean Square Error:
+    where :math:`\mathcal{L}` is a specific loss function, default 
+    Mean Square Error:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.

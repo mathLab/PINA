@@ -19,10 +19,10 @@ class EquationInterface(metaclass=ABCMeta):
         Residual computation of the equation.
 
         :param LabelTensor input_: Input points to evaluate the equation.
-        :param LabelTensor output_: Output vectors given by my model (e.g., a ``FeedForward`` model).
+        :param LabelTensor output_: Output vectors given by my model (e.g.,
+        a ``FeedForward`` model).
         :param dict params_: Dictionary of unknown parameters, eventually
             related to an ``InverseProblem``.
         :return: The residual evaluation of the specified equation.
         :rtype: LabelTensor
         """
-        pass

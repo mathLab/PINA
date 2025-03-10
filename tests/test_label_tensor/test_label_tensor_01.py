@@ -4,7 +4,7 @@ import pytest
 from pina import LabelTensor
 
 data = torch.rand((20, 3))
-labels = ['a', 'b', 'c']
+labels = ["a", "b", "c"]
 
 
 def test_constructor():
@@ -13,7 +13,7 @@ def test_constructor():
 
 def test_wrong_constructor():
     with pytest.raises(ValueError):
-        LabelTensor(data, ['a', 'b'])
+        LabelTensor(data, ["a", "b"])
 
 
 def test_labels():
@@ -25,7 +25,7 @@ def test_labels():
 
 
 def test_extract():
-    label_to_extract = ['a', 'c']
+    label_to_extract = ["a", "c"]
     tensor = LabelTensor(data, labels)
     new = tensor.extract(label_to_extract)
     assert new.labels == label_to_extract
@@ -34,7 +34,7 @@ def test_extract():
 
 
 def test_extract_onelabel():
-    label_to_extract = ['a']
+    label_to_extract = ["a"]
     tensor = LabelTensor(data, labels)
     new = tensor.extract(label_to_extract)
     assert new.ndim == 2
@@ -44,18 +44,19 @@ def test_extract_onelabel():
 
 
 def test_wrong_extract():
-    label_to_extract = ['a', 'cc']
+    label_to_extract = ["a", "cc"]
     tensor = LabelTensor(data, labels)
     with pytest.raises(ValueError):
         tensor.extract(label_to_extract)
 
 
 def test_extract_order():
-    label_to_extract = ['c', 'a']
+    label_to_extract = ["c", "a"]
     tensor = LabelTensor(data, labels)
     new = tensor.extract(label_to_extract)
-    expected = torch.cat((data[:, 2].reshape(-1, 1), data[:, 0].reshape(-1, 1)),
-                         dim=1)
+    expected = torch.cat(
+        (data[:, 2].reshape(-1, 1), data[:, 0].reshape(-1, 1)), dim=1
+    )
     assert new.labels == label_to_extract
     assert new.shape[1] == len(label_to_extract)
     assert torch.all(torch.isclose(expected, new))
@@ -63,31 +64,31 @@ def test_extract_order():
 
 def test_merge():
     tensor = LabelTensor(data, labels)
-    tensor_a = tensor.extract('a')
-    tensor_b = tensor.extract('b')
-    tensor_c = tensor.extract('c')
+    tensor_a = tensor.extract("a")
+    tensor_b = tensor.extract("b")
+    tensor_c = tensor.extract("c")
 
     tensor_bc = tensor_b.append(tensor_c)
-    assert torch.allclose(tensor_bc, tensor.extract(['b', 'c']))
+    assert torch.allclose(tensor_bc, tensor.extract(["b", "c"]))
 
 
 def test_merge2():
     tensor = LabelTensor(data, labels)
-    tensor_b = tensor.extract('b')
-    tensor_c = tensor.extract('c')
+    tensor_b = tensor.extract("b")
+    tensor_c = tensor.extract("c")
 
     tensor_bc = tensor_b.append(tensor_c)
-    assert torch.allclose(tensor_bc, tensor.extract(['b', 'c']))
+    assert torch.allclose(tensor_bc, tensor.extract(["b", "c"]))
 
 
 def test_getitem():
     tensor = LabelTensor(data, labels)
-    tensor_view = tensor['a']
-    assert tensor_view.labels == ['a']
+    tensor_view = tensor["a"]
+    assert tensor_view.labels == ["a"]
     assert torch.allclose(tensor_view.flatten(), data[:, 0])
 
-    tensor_view = tensor['a', 'c']
-    assert tensor_view.labels == ['a', 'c']
+    tensor_view = tensor["a", "c"]
+    assert tensor_view.labels == ["a", "c"]
     assert torch.allclose(tensor_view, data[:, 0::2])
 
 

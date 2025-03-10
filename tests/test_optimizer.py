@@ -3,7 +3,10 @@ import pytest
 from pina.optim import TorchOptimizer
 
 opt_list = [
-    torch.optim.Adam, torch.optim.AdamW, torch.optim.SGD, torch.optim.RMSprop
+    torch.optim.Adam,
+    torch.optim.AdamW,
+    torch.optim.SGD,
+    torch.optim.RMSprop,
 ]
 
 

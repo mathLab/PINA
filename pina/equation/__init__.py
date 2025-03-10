@@ -1,3 +1,7 @@
+"""
+Module for defining equations and system of equations.
+"""
+
 __all__ = [
     "SystemEquation",
     "Equation",

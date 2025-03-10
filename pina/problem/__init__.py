@@ -1,3 +1,5 @@
+"""Module for Problems."""
+
 __all__ = [
     "AbstractProblem",
     "SpatialProblem",

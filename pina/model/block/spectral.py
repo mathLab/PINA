@@ -1,7 +1,10 @@
+"""
+TODO: Add title.
+"""
+
 import torch
-import torch.nn as nn
+from torch import nn
 from ...utils import check_consistency
-import warnings
 
 
 ######## 1D Spectral Convolution ###########
@@ -13,7 +16,8 @@ class SpectralConvBlock1D(nn.Module):
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
         """
-        The module computes the spectral convolution of the input with a linear kernel in the
+        The module computes the spectral convolution of the input with a linear
+        kernel in the
         fourier space, and then it maps the input back to the physical
         space.
 
@@ -106,17 +110,20 @@ class SpectralConvBlock2D(nn.Module):
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
         """
-        The module computes the spectral convolution of the input with a linear kernel in the
+        The module computes the spectral convolution of the input with a linear
+        kernel in the
         fourier space, and then it maps the input back to the physical
         space.
 
-        The block expects an input of size ``[batch, input_numb_fields, Nx, Ny]``
+        The block expects an input of size
+        ``[batch, input_numb_fields, Nx, Ny]``
         and returns an output of size ``[batch, output_numb_fields, Nx, Ny]``.
 
         :param int input_numb_fields: The number of channels for the input.
         :param int output_numb_fields: The number of channels for the output.
-        :param list | tuple n_modes: Number of modes to select for each dimension.
-            It must be at most equal to the ``floor(Nx/2)+1`` and ``floor(Ny/2)+1``.
+        :param list | tuple n_modes: Number of modes to select for each
+            dimension. It must be at most equal to the ``floor(Nx/2)+1`` and
+            ``floor(Ny/2)+1``.
         """
         super().__init__()
 
@@ -234,18 +241,21 @@ class SpectralConvBlock3D(nn.Module):
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
         """
-        The module computes the spectral convolution of the input with a linear kernel in the
+        The module computes the spectral convolution of the input with a
+        linear kernel in the
         fourier space, and then it maps the input back to the physical
         space.
 
-        The block expects an input of size ``[batch, input_numb_fields, Nx, Ny, Nz]``
-        and returns an output of size ``[batch, output_numb_fields, Nx, Ny, Nz]``.
+        The block expects an input of size
+        ``[batch, input_numb_fields, Nx, Ny, Nz]``
+        and returns an output of size
+        ``[batch, output_numb_fields, Nx, Ny, Nz]``.
 
         :param int input_numb_fields: The number of channels for the input.
         :param int output_numb_fields: The number of channels for the output.
-        :param list | tuple n_modes: Number of modes to select for each dimension.
-            It must be at most equal to the ``floor(Nx/2)+1``, ``floor(Ny/2)+1``
-            and ``floor(Nz/2)+1``.
+        :param list | tuple n_modes: Number of modes to select for each
+            dimension. It must be at most equal to the ``floor(Nx/2)+1``,
+            ``floor(Ny/2)+1`` and ``floor(Nz/2)+1``.
         """
         super().__init__()
 
@@ -347,7 +357,8 @@ class SpectralConvBlock3D(nn.Module):
             ``[batch, input_numb_fields, x, y, z]``.
         :type x: torch.Tensor
         :return: The output tensor obtained from the
-            spectral convolution of size ``[batch, output_numb_fields, x, y, z]``.
+            spectral convolution of size
+            ``[batch, output_numb_fields, x, y, z]``.
         :rtype: torch.Tensor
         """
 

@@ -15,7 +15,7 @@ class AdaptiveReLU(AdaptiveActivationFunctionInterface):
     is defined as:
 
     .. math::
-        \text{ReLU}_{\text{adaptive}}({x}) = \alpha\,\text{ReLU}(\beta{x}+\gamma),
+        \text{ReLU}_{\text{adaptive}}({x})=\alpha\,\text{ReLU}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     ReLU function is defined as:
@@ -50,13 +50,15 @@ class AdaptiveSigmoid(AdaptiveActivationFunctionInterface):
     r"""
     Adaptive trainable :class:`~torch.nn.Sigmoid` activation function.
 
-    Given the function :math:`\text{Sigmoid}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
+    Given the function
+    :math:`\text{Sigmoid}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
     the adaptive function
     :math:`\text{Sigmoid}_{\text{adaptive}}:\mathbb{R}^n\rightarrow\mathbb{R}^n`
     is defined as:
 
     .. math::
-        \text{Sigmoid}_{\text{adaptive}}({x}) = \alpha\,\text{Sigmoid}(\beta{x}+\gamma),
+        \text{Sigmoid}_{\text{adaptive}}({x})=
+        \alpha\,\text{Sigmoid}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Sigmoid function is defined as:
@@ -97,7 +99,7 @@ class AdaptiveTanh(AdaptiveActivationFunctionInterface):
     is defined as:
 
     .. math::
-        \text{Tanh}_{\text{adaptive}}({x}) = \alpha\,\text{Tanh}(\beta{x}+\gamma),
+        \text{Tanh}_{\text{adaptive}}({x})=\alpha\,\text{Tanh}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Tanh function is defined as:
@@ -138,7 +140,7 @@ class AdaptiveSiLU(AdaptiveActivationFunctionInterface):
     is defined as:
 
     .. math::
-        \text{SiLU}_{\text{adaptive}}({x}) = \alpha\,\text{SiLU}(\beta{x}+\gamma),
+        \text{SiLU}_{\text{adaptive}}({x})=\alpha\,\text{SiLU}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     SiLU function is defined as:
@@ -180,7 +182,7 @@ class AdaptiveMish(AdaptiveActivationFunctionInterface):
     is defined as:
 
     .. math::
-        \text{Mish}_{\text{adaptive}}({x}) = \alpha\,\text{Mish}(\beta{x}+\gamma),
+        \text{Mish}_{\text{adaptive}}({x})=\alpha\,\text{Mish}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Mish function is defined as:
@@ -265,7 +267,7 @@ class AdaptiveCELU(AdaptiveActivationFunctionInterface):
     is defined as:
 
     .. math::
-        \text{CELU}_{\text{adaptive}}({x}) = \alpha\,\text{CELU}(\beta{x}+\gamma),
+        \text{CELU}_{\text{adaptive}}({x})=\alpha\,\text{CELU}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     CELU function is defined as:
@@ -306,13 +308,13 @@ class AdaptiveGELU(AdaptiveActivationFunctionInterface):
     is defined as:
 
     .. math::
-        \text{GELU}_{\text{adaptive}}({x}) = \alpha\,\text{GELU}(\beta{x}+\gamma),
+        \text{GELU}_{\text{adaptive}}({x})=\alpha\,\text{GELU}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     GELU function is defined as:
 
     .. math::
-        \text{GELU}(x) =  0.5 * x * (1 + \text{Tanh}(\sqrt{2 / \pi} * (x + 0.044715 * x^3)))
+        \text{GELU}(x)=0.5*x*(1+\text{Tanh}(\sqrt{2 / \pi}*(x+0.044715*x^3)))
 
 
     .. seealso::
@@ -342,13 +344,15 @@ class AdaptiveSoftmin(AdaptiveActivationFunctionInterface):
     r"""
     Adaptive trainable :class:`~torch.nn.Softmin` activation function.
 
-    Given the function :math:`\text{Softmin}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
+    Given the function
+    :math:`\text{Softmin}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
     the adaptive function
     :math:`\text{Softmin}_{\text{adaptive}}:\mathbb{R}^n\rightarrow\mathbb{R}^n`
     is defined as:
 
     .. math::
-        \text{Softmin}_{\text{adaptive}}({x}) = \alpha\,\text{Softmin}(\beta{x}+\gamma),
+        \text{Softmin}_{\text{adaptive}}({x})=\alpha\,
+        \text{Softmin}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Softmin function is defined as:
@@ -383,13 +387,15 @@ class AdaptiveSoftmax(AdaptiveActivationFunctionInterface):
     r"""
     Adaptive trainable :class:`~torch.nn.Softmax` activation function.
 
-    Given the function :math:`\text{Softmax}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
+    Given the function
+    :math:`\text{Softmax}:\mathbb{R}^n\rightarrow\mathbb{R}^n`,
     the adaptive function
     :math:`\text{Softmax}_{\text{adaptive}}:\mathbb{R}^n\rightarrow\mathbb{R}^n`
     is defined as:
 
     .. math::
-        \text{Softmax}_{\text{adaptive}}({x}) = \alpha\,\text{Softmax}(\beta{x}+\gamma),
+        \text{Softmax}_{\text{adaptive}}({x})=\alpha\,
+        \text{Softmax}(\beta{x}+\gamma),
 
     where :math:`\alpha,\,\beta,\,\gamma` are trainable parameters, and the
     Softmax function is defined as:

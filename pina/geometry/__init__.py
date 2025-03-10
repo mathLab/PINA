@@ -1,3 +1,8 @@
+"""
+Old module for geometry related classes and functions.
+Deprecated in 0.2.0.
+"""
+
 import warnings
 
 from ..domain import *

@@ -1,10 +1,6 @@
 """Module for Base Continuous Convolution class."""
 
-from abc import ABCMeta, abstractmethod
 import torch
-from .stride import Stride
-from .utils_convolution import optimizing
-import warnings
 
 
 class PODBlock(torch.nn.Module):
@@ -15,7 +11,8 @@ class PODBlock(torch.nn.Module):
     The layer is not trainable.
 
     .. note::
-        All the POD modes are stored in memory, avoiding to recompute them when the rank changes but increasing the memory usage.
+        All the POD modes are stored in memory, avoiding to recompute them when
+        the rank changes but increasing the memory usage.
     """
 
     def __init__(self, rank, scale_coefficients=True):
@@ -51,7 +48,8 @@ class PODBlock(torch.nn.Module):
     @property
     def basis(self):
         """
-        The POD basis. It is a matrix whose columns are the first `self.rank` POD modes.
+        The POD basis. It is a matrix whose columns are the first `self.rank`
+        POD modes.
 
         :rtype: torch.Tensor
         """
@@ -69,7 +67,7 @@ class PODBlock(torch.nn.Module):
         :rtype: dict
         """
         if self._scaler is None:
-            return
+            return None
 
         return {
             "mean": self._scaler["mean"][: self.rank],
@@ -115,7 +113,8 @@ class PODBlock(torch.nn.Module):
 
     def _fit_pod(self, X, randomized):
         """
-        Private method that computes the POD basis of the given tensor and stores it in the private member `_basis`.
+        Private method that computes the POD basis of the given tensor and
+        stores it in the private member `_basis`.
 
         :param torch.Tensor X: The tensor to be reduced.
         """

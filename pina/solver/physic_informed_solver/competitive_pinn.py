@@ -1,7 +1,7 @@
 """Module for Competitive PINN."""
 
-import torch
 import copy
+import torch
 
 from ...problem import InverseProblem
 from .pinn_interface import PINNInterface

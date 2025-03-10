@@ -1,10 +1,10 @@
 """Module for Self-Adaptive PINN."""
 
-import torch
 from copy import deepcopy
+import torch
 
-from pina.utils import check_consistency
-from pina.problem import InverseProblem
+from ...utils import check_consistency
+from ...problem import InverseProblem
 from ..solver import MultiSolverInterface
 from .pinn_interface import PINNInterface
 
@@ -155,7 +155,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         self._vectorial_loss.reduction = "none"
 
     def forward(self, x):
-        """
+        r"""
         Forward pass implementation for the PINN
         solver. It returns the function
         evaluation :math:`\mathbf{u}(\mathbf{x})` at the control points

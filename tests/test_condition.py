@@ -23,10 +23,10 @@ from pina.graph import RadiusGraph
 
 example_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
 
-input_tensor = torch.rand((10,3))
-target_tensor = torch.rand((10,2))
-input_lt = LabelTensor(torch.rand((10,3)), ["x", "y", "z"])
-target_lt = LabelTensor(torch.rand((10,2)), ["a", "b"])
+input_tensor = torch.rand((10, 3))
+target_tensor = torch.rand((10, 2))
+input_lt = LabelTensor(torch.rand((10, 3)), ["x", "y", "z"])
+target_lt = LabelTensor(torch.rand((10, 2)), ["a", "b"])
 
 x = torch.rand(10, 20, 2)
 pos = torch.rand(10, 20, 2)
@@ -105,12 +105,12 @@ def test_init_input_target():
     target = [target_graph[0], target_graph_lt[0]]
     with pytest.raises(ValueError):
         Condition(input=input, target=target)
-        
+
     input_graph_lt[0].x.labels = ["a", "b"]
     with pytest.raises(ValueError):
         Condition(input=input_graph_lt, target=target_graph_lt)
     input_graph_lt[0].x.labels = ["u", "v"]
-    
+
 
 def test_init_domain_equation():
     cond = Condition(domain=example_domain, equation=FixedValue(0.0))
@@ -136,7 +136,10 @@ def test_init_input_equation():
         Condition(input=3.0, equation="example")
     with pytest.raises(ValueError):
         Condition(input=example_domain, equation=input_graph)
+
+
 test_init_input_equation()
+
 
 def test_init_data_condition():
     cond = Condition(input=input_lt)
@@ -149,4 +152,3 @@ def test_init_data_condition():
     assert isinstance(cond, GraphDataCondition)
     cond = Condition(input=input_graph, conditional_variables=torch.tensor(1))
     assert isinstance(cond, GraphDataCondition)
-

@@ -12,22 +12,25 @@ def test_constructor():
     FeedForward(input_vars, output_vars)
     FeedForward(input_vars, output_vars, inner_size=10, n_layers=20)
     FeedForward(input_vars, output_vars, layers=[10, 20, 5, 2])
-    FeedForward(input_vars,
-                output_vars,
-                layers=[10, 20, 5, 2],
-                func=torch.nn.ReLU)
-    FeedForward(input_vars,
-                output_vars,
-                layers=[10, 20, 5, 2],
-                func=[torch.nn.ReLU, torch.nn.ReLU, None, torch.nn.Tanh])
+    FeedForward(
+        input_vars, output_vars, layers=[10, 20, 5, 2], func=torch.nn.ReLU
+    )
+    FeedForward(
+        input_vars,
+        output_vars,
+        layers=[10, 20, 5, 2],
+        func=[torch.nn.ReLU, torch.nn.ReLU, None, torch.nn.Tanh],
+    )
 
 
 def test_constructor_wrong():
     with pytest.raises(RuntimeError):
-        FeedForward(input_vars,
-                    output_vars,
-                    layers=[10, 20, 5, 2],
-                    func=[torch.nn.ReLU, torch.nn.ReLU])
+        FeedForward(
+            input_vars,
+            output_vars,
+            layers=[10, 20, 5, 2],
+            func=[torch.nn.ReLU, torch.nn.ReLU],
+        )
 
 
 def test_forward():
@@ -36,11 +39,12 @@ def test_forward():
     output_ = fnn(data)
     assert output_.shape == (data.shape[0], dim_out)
 
+
 def test_backward():
     dim_in, dim_out = 3, 2
     fnn = FeedForward(dim_in, dim_out)
     data.requires_grad = True
     output_ = fnn(data)
-    l=torch.mean(output_)
+    l = torch.mean(output_)
     l.backward()
-    assert data._grad.shape == torch.Size([20,3])
+    assert data._grad.shape == torch.Size([20, 3])

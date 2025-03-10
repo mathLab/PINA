@@ -1,6 +1,7 @@
 """Module for Averaging Neural Operator Layer class."""
 
-from torch import nn, mean
+import torch
+from torch import nn
 from ...utils import check_consistency
 
 
@@ -64,4 +65,4 @@ class AVNOBlock(nn.Module):
         :return: The output tensor obtained from Average Neural Operator Block.
         :rtype: torch.Tensor
         """
-        return self._func(self._nn(x) + mean(x, dim=1, keepdim=True))
+        return self._func(self._nn(x) + torch.mean(x, dim=1, keepdim=True))

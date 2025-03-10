@@ -4,7 +4,10 @@ import pytest
 from pina.model.block.pod_block import PODBlock
 
 x = torch.linspace(-1, 1, 100)
-toy_snapshots = torch.vstack([torch.exp(-x**2)*c for c in torch.linspace(0, 1, 10)])
+toy_snapshots = torch.vstack(
+    [torch.exp(-(x**2)) * c for c in torch.linspace(0, 1, 10)]
+)
+
 
 def test_constructor():
     pod = PODBlock(2)
@@ -23,6 +26,7 @@ def test_fit(rank, scale):
     assert pod.rank == rank
     assert pod.scale_coefficients == scale
 
+
 @pytest.mark.parametrize("scale", [True, False])
 @pytest.mark.parametrize("rank", [1, 2, 10])
 @pytest.mark.parametrize("randomized", [True, False])
@@ -34,14 +38,15 @@ def test_fit(rank, scale, randomized):
     assert pod.basis.shape == (rank, dof)
     assert pod._basis.shape == (n_snap, dof)
     if scale is True:
-        assert pod._scaler['mean'].shape == (n_snap,)
-        assert pod._scaler['std'].shape == (n_snap,)
-        assert pod.scaler['mean'].shape == (rank,)
-        assert pod.scaler['std'].shape == (rank,)
-        assert pod.scaler['mean'].shape[0] == pod.basis.shape[0]
+        assert pod._scaler["mean"].shape == (n_snap,)
+        assert pod._scaler["std"].shape == (n_snap,)
+        assert pod.scaler["mean"].shape == (rank,)
+        assert pod.scaler["std"].shape == (rank,)
+        assert pod.scaler["mean"].shape[0] == pod.basis.shape[0]
     else:
         assert pod._scaler == None
         assert pod.scaler == None
+
 
 def test_forward():
     pod = PODBlock(1)
@@ -64,6 +69,7 @@ def test_forward():
         torch.testing.assert_close(c.mean(dim=0), torch.zeros(pod.rank))
         torch.testing.assert_close(c.std(dim=0), torch.ones(pod.rank))
 
+
 @pytest.mark.parametrize("scale", [True, False])
 @pytest.mark.parametrize("rank", [1, 2, 10])
 @pytest.mark.parametrize("randomized", [True, False])
@@ -74,6 +80,7 @@ def test_expand(rank, scale, randomized):
     torch.testing.assert_close(pod.expand(c), toy_snapshots)
     torch.testing.assert_close(pod.expand(c[0]), toy_snapshots[0].unsqueeze(0))
 
+
 @pytest.mark.parametrize("scale", [True, False])
 @pytest.mark.parametrize("rank", [1, 2, 10])
 @pytest.mark.parametrize("randomized", [True, False])
@@ -81,9 +88,9 @@ def test_reduce_expand(rank, scale, randomized):
     pod = PODBlock(rank, scale)
     pod.fit(toy_snapshots, randomized)
     torch.testing.assert_close(
-        pod.expand(pod.reduce(toy_snapshots)),
-        toy_snapshots)
+        pod.expand(pod.reduce(toy_snapshots)), toy_snapshots
+    )
     torch.testing.assert_close(
-        pod.expand(pod.reduce(toy_snapshots[0])),
-        toy_snapshots[0].unsqueeze(0))
+        pod.expand(pod.reduce(toy_snapshots[0])), toy_snapshots[0].unsqueeze(0)
+    )
     # torch.testing.assert_close(pod.expand(pod.reduce(c[0])), c[0])

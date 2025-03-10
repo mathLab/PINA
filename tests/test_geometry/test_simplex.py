@@ -6,11 +6,13 @@ from pina.domain import SimplexDomain
 
 
 def test_constructor():
-    SimplexDomain([
-        LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
-        LabelTensor(torch.tensor([[1, 1]]), labels=["x", "y"]),
-        LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
-    ])
+    SimplexDomain(
+        [
+            LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
+            LabelTensor(torch.tensor([[1, 1]]), labels=["x", "y"]),
+            LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
+        ]
+    )
     SimplexDomain(
         [
             LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
@@ -21,32 +23,41 @@ def test_constructor():
     )
     with pytest.raises(ValueError):
         # different labels
-        SimplexDomain([
-            LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
-            LabelTensor(torch.tensor([[1, 1]]), labels=["x", "z"]),
-            LabelTensor(torch.tensor([[0, 2]]), labels=["x", "a"]),
-        ])
+        SimplexDomain(
+            [
+                LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
+                LabelTensor(torch.tensor([[1, 1]]), labels=["x", "z"]),
+                LabelTensor(torch.tensor([[0, 2]]), labels=["x", "a"]),
+            ]
+        )
         # not LabelTensor
-        SimplexDomain([
-            LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
-            [1, 1],
-            LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
-        ])
+        SimplexDomain(
+            [
+                LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
+                [1, 1],
+                LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
+            ]
+        )
         #  different number of vertices
-        SimplexDomain([
-            LabelTensor(torch.tensor([[0., -2.]]), labels=["x", "y"]),
-            LabelTensor(torch.tensor([[-.5, -.5]]), labels=["x", "y"]),
-            LabelTensor(torch.tensor([[-2., 0.]]), labels=["x", "y"]),
-            LabelTensor(torch.tensor([[-.5, .5]]), labels=["x", "y"]),
-        ])
+        SimplexDomain(
+            [
+                LabelTensor(torch.tensor([[0.0, -2.0]]), labels=["x", "y"]),
+                LabelTensor(torch.tensor([[-0.5, -0.5]]), labels=["x", "y"]),
+                LabelTensor(torch.tensor([[-2.0, 0.0]]), labels=["x", "y"]),
+                LabelTensor(torch.tensor([[-0.5, 0.5]]), labels=["x", "y"]),
+            ]
+        )
+
 
 def test_sample():
     # sampling inside
-    simplex = SimplexDomain([
-        LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
-        LabelTensor(torch.tensor([[1, 1]]), labels=["x", "y"]),
-        LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
-    ])
+    simplex = SimplexDomain(
+        [
+            LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
+            LabelTensor(torch.tensor([[1, 1]]), labels=["x", "y"]),
+            LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
+        ]
+    )
     pts = simplex.sample(10)
     assert isinstance(pts, LabelTensor)
     assert pts.size() == torch.Size([10, 2])
@@ -117,8 +128,9 @@ def test_is_inside_2D_check_border_false():
     pt6 = LabelTensor(torch.tensor([[2.5, 1]]), ["x", "y"])
     pt7 = LabelTensor(torch.tensor([[100, 100]]), ["x", "y"])
     pts = [pt1, pt2, pt3, pt4, pt5, pt6, pt7]
-    for pt, exp_result in zip(pts,
-                              [False, False, False, False, True, True, False]):
+    for pt, exp_result in zip(
+        pts, [False, False, False, False, True, True, False]
+    ):
         assert domain.is_inside(point=pt, check_border=False) == exp_result
 
 
@@ -143,7 +155,8 @@ def test_is_inside_3D_check_border_true():
     pt9 = LabelTensor(torch.tensor([[2, 1, 1]]), ["x", "y", "z"])
     pts = [pt1, pt2, pt3, pt4, pt5, pt6, pt7, pt8, pt9]
     for pt, exp_result in zip(
-            pts, [True, True, True, True, True, False, True, True, False]):
+        pts, [True, True, True, True, True, False, True, True, False]
+    ):
         assert domain.is_inside(point=pt, check_border=True) == exp_result
 
 
@@ -165,6 +178,7 @@ def test_is_inside_3D_check_border_false():
     pt6 = LabelTensor(torch.tensor([[0, 0, 20]]), ["x", "y", "z"])
     pt7 = LabelTensor(torch.tensor([[2, 1, 1]]), ["x", "y", "z"])
     pts = [pt1, pt2, pt3, pt4, pt5, pt6, pt7]
-    for pt, exp_result in zip(pts,
-                              [False, False, False, False, False, False, True]):
+    for pt, exp_result in zip(
+        pts, [False, False, False, False, False, False, True]
+    ):
         assert domain.is_inside(point=pt, check_border=False) == exp_result

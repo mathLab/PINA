@@ -1,10 +1,18 @@
+"""
+Module for performing integral for continuous convolution
+"""
+
 import torch
 
 
-class Integral(object):
+class Integral:
+    """
+    Integral class for continous convolution
+    """
 
     def __init__(self, param):
-        """Integral class for continous convolution
+        """
+        Initialize the integral class
 
         :param param: type of continuous convolution
         :type param: string

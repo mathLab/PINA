@@ -1,15 +1,18 @@
 """Module for OperationInterface class."""
 
+from abc import ABCMeta, abstractmethod
 from .domain_interface import DomainInterface
 from ..utils import check_consistency
-from abc import ABCMeta, abstractmethod
 
 
 class OperationInterface(DomainInterface, metaclass=ABCMeta):
+    """
+    Abstract class for set domains operations.
+    """
 
     def __init__(self, geometries):
         """
-        Abstract set operation class. Any geometry operation entity must inherit from this class.
+        Any geometry operation entity must inherit from this class.
 
         :param list geometries: A list of geometries from ``pina.geometry``
             such as ``EllipsoidDomain`` or ``CartesianDomain``.
@@ -57,10 +60,10 @@ class OperationInterface(DomainInterface, metaclass=ABCMeta):
         :param point: Point to be checked.
         :type point: torch.Tensor
         :param bool check_border: If ``True``, the border is considered inside.
-        :return: ``True`` if the point is inside the Intersection domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the Intersection domain,
+            ``False`` otherwise.
         :rtype: bool
         """
-        pass
 
     def _check_dimensions(self, geometries):
         """Check if the dimensions of the geometries are consistent.
@@ -71,5 +74,5 @@ class OperationInterface(DomainInterface, metaclass=ABCMeta):
         for geometry in geometries:
             if geometry.variables != geometries[0].variables:
                 raise NotImplementedError(
-                    f"The geometries need to have same dimensions and labels."
+                    "The geometries need to have same dimensions and labels."
                 )

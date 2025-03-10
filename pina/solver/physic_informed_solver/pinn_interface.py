@@ -106,7 +106,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             samples and equation.
         :rtype: LabelTensor
         """
-        pass
 
     def compute_residual(self, samples, equation):
         """

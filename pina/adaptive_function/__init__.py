@@ -1,3 +1,7 @@
+"""
+Adaptive Activation Functions Module.
+"""
+
 __all__ = [
     "AdaptiveActivationFunctionInterface",
     "AdaptiveReLU",

@@ -1,7 +1,14 @@
+"""
+TODO
+"""
+
 import torch
 
 
 def check_point(x, current_stride, dim):
+    """
+    TODO
+    """
     max_stride = current_stride + dim
     indeces = torch.logical_and(
         x[..., :-1] < max_stride, x[..., :-1] >= current_stride
@@ -33,15 +40,17 @@ def optimizing(f):
 
     def wrapper(*args, **kwargs):
 
-        if kwargs["type"] == "forward":
+        if kwargs["type_"] == "forward":
             if not wrapper.has_run_inverse:
                 wrapper.has_run_inverse = True
                 return f(*args, **kwargs)
 
-        if kwargs["type"] == "inverse":
+        if kwargs["type_"] == "inverse":
             if not wrapper.has_run:
                 wrapper.has_run = True
                 return f(*args, **kwargs)
+
+        return f(*args, **kwargs)
 
     wrapper.has_run_inverse = False
     wrapper.has_run = False

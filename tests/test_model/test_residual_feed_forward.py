@@ -9,15 +9,17 @@ def test_constructor():
 
     # wrong transformer nets (not 2)
     with pytest.raises(ValueError):
-        ResidualFeedForward(input_dimensions=2,
-                            output_dimensions=1,
-                            transformer_nets=[torch.nn.Linear(2, 20)])
+        ResidualFeedForward(
+            input_dimensions=2,
+            output_dimensions=1,
+            transformer_nets=[torch.nn.Linear(2, 20)],
+        )
 
     # wrong transformer nets (not nn.Module)
     with pytest.raises(ValueError):
-        ResidualFeedForward(input_dimensions=2,
-                            output_dimensions=1,
-                            transformer_nets=[2, 2])
+        ResidualFeedForward(
+            input_dimensions=2, output_dimensions=1, transformer_nets=[2, 2]
+        )
 
 
 def test_forward():
@@ -34,4 +36,3 @@ def test_backward():
     l = torch.mean(model(x))
     l.backward()
     assert x.grad.shape == torch.Size([10, 2])
-    

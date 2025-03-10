@@ -1,9 +1,9 @@
 """Module for DeepONet model"""
 
-import torch
-import torch.nn as nn
-from ..utils import check_consistency, is_function
 from functools import partial
+import torch
+from torch import nn
+from ..utils import check_consistency, is_function
 
 
 class MIONet(torch.nn.Module):
@@ -12,8 +12,9 @@ class MIONet(torch.nn.Module):
 
     MIONet is a general architecture for learning Operators defined
     on the tensor product of Banach spaces. Unlike traditional machine
-    learning methods MIONet is designed to map entire functions to other functions.
-    It can be trained both with Physics Informed or Supervised learning strategies.
+    learning methods MIONet is designed to map entire functions to other
+    functions. It can be trained both with Physics Informed or Supervised
+    learning strategies.
 
     .. seealso::
 
@@ -37,37 +38,45 @@ class MIONet(torch.nn.Module):
         :param dict networks: The neural networks to use as
             models. The ``dict`` takes as key a neural network, and
             as value the list of indeces to extract from the input variable
-            in the forward pass of the neural network. If a list of ``int`` is passed,
-            the corresponding columns of the inner most entries are extracted.
-            If a list of ``str`` is passed the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor`
-            are extracted. The ``torch.nn.Module`` model has to take as input a
+            in the forward pass of the neural network. If a list of ``int``
+            is passed, the corresponding columns of the inner most entries are
+            extracted.
+            If a list of ``str`` is passed the variables of the corresponding
+            :py:obj:`pina.label_tensor.LabelTensor`are extracted. The
+            ``torch.nn.Module`` model has to take as input a
             :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`.
-            Default implementation consist of different branch nets and one trunk nets.
+            Default implementation consist of different branch nets and one
+            trunk nets.
         :param str or Callable aggregator: Aggregator to be used to aggregate
             partial results from the modules in `nets`. Partial results are
             aggregated component-wise. Available aggregators include
-            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max: ``max``.
+            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max:
+                ``max``.
         :param str or Callable reduction: Reduction to be used to reduce
             the aggregated result of the modules in `nets` to the desired output
             dimension. Available reductions include
-            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max: ``max``.
-        :param bool or Callable scale: Scaling the final output before returning the
-            forward pass, default ``True``.
+            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max:
+            ``max``.
+        :param bool or Callable scale: Scaling the final output before returning
+            the forward pass, default ``True``.
         :param bool or Callable translation: Translating the final output before
             returning the forward pass, default ``True``.
 
         .. warning::
             In the forward pass we do not check if the input is instance of
-            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`. A general rule is
-            that for a :py:obj:`pina.label_tensor.LabelTensor` input both list of integers and
-            list of strings can be passed for ``input_indeces_branch_net``
-            and ``input_indeces_trunk_net``. Differently, for a :class:`torch.Tensor`
-            only a list of integers can be passed for ``input_indeces_branch_net``
-            and ``input_indeces_trunk_net``.
+            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`.
+            A general rule is that for a :py:obj:`pina.label_tensor.LabelTensor`
+            input both list of integers and list of strings can be passed for
+            ``input_indeces_branch_net``and ``input_indeces_trunk_net``.
+            Differently, for a :class:`torch.Tensor` only a list of integers
+            can be passed for ``input_indeces_branch_net``and
+            ``input_indeces_trunk_net``.
 
         :Example:
-            >>> branch_net1 = FeedForward(input_dimensons=1, output_dimensions=10)
-            >>> branch_net2 = FeedForward(input_dimensons=2, output_dimensions=10)
+            >>> branch_net1 = FeedForward(input_dimensons=1,
+            ... output_dimensions=10)
+            >>> branch_net2 = FeedForward(input_dimensons=2,
+            ... output_dimensions=10)
             >>> trunk_net = FeedForward(input_dimensons=1, output_dimensions=10)
             >>> networks = {branch_net1 : ['x'],
                             branch_net2 : ['x', 'y'],
@@ -125,7 +134,7 @@ class MIONet(torch.nn.Module):
 
         if not all(map(lambda x: x == shapes[0], shapes)):
             raise ValueError(
-                "The passed networks have not the same " "output dimension."
+                "The passed networks have not the same output dimension."
             )
 
         # assign trunk and branch net with their input indeces
@@ -163,7 +172,7 @@ class MIONet(torch.nn.Module):
         }
 
     def _init_aggregator(self, aggregator):
-        aggregator_funcs = DeepONet._symbol_functions(dim=2)
+        aggregator_funcs = self._symbol_functions(dim=2)
         if aggregator in aggregator_funcs:
             aggregator_func = aggregator_funcs[aggregator]
         elif isinstance(aggregator, nn.Module) or is_function(aggregator):
@@ -175,7 +184,7 @@ class MIONet(torch.nn.Module):
         self._aggregator_type = aggregator
 
     def _init_reduction(self, reduction):
-        reduction_funcs = DeepONet._symbol_functions(dim=-1)
+        reduction_funcs = self._symbol_functions(dim=-1)
         if reduction in reduction_funcs:
             reduction_func = reduction_funcs[reduction]
         elif isinstance(reduction, nn.Module) or is_function(reduction):
@@ -190,13 +199,13 @@ class MIONet(torch.nn.Module):
         if isinstance(indeces[0], str):
             try:
                 return x.extract(indeces)
-            except AttributeError:
+            except AttributeError as e:
                 raise RuntimeError(
                     "Not possible to extract input variables from tensor."
                     " Ensure that the passed tensor is a LabelTensor or"
                     " pass list of integers to extract variables. For"
                     " more information refer to warning in the documentation."
-                )
+                ) from e
         elif isinstance(indeces[0], int):
             return x[..., indeces]
         else:
@@ -209,7 +218,8 @@ class MIONet(torch.nn.Module):
         """
         Defines the computation performed at every call.
 
-        :param LabelTensor or torch.Tensor x: The input tensor for the forward call.
+        :param LabelTensor or torch.Tensor x: The input tensor for the forward
+            call.
         :return: The output computed by the DeepONet model.
         :rtype: LabelTensor or torch.Tensor
         """
@@ -225,7 +235,7 @@ class MIONet(torch.nn.Module):
 
         # reduce
         output_ = self._reduction(aggregated)
-        if self._reduction_type in DeepONet._symbol_functions(dim=-1):
+        if self._reduction_type in self._symbol_functions(dim=-1):
             output_ = output_.reshape(-1, 1)
 
         # scale and translate
@@ -309,47 +319,55 @@ class DeepONet(MIONet):
     ):
         """
         :param torch.nn.Module branch_net: The neural network to use as branch
-            model. It has to take as input a :py:obj:`pina.label_tensor.LabelTensor`
-            or :class:`torch.Tensor`. The number of dimensions of the output has
-            to be the same of the ``trunk_net``.
+            model. It has to take as input a
+            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`.
+            The number of dimensions of the output has to be the same of the
+            ``trunk_net``.
         :param torch.nn.Module trunk_net: The neural network to use as trunk
-            model. It has to take as input a :py:obj:`pina.label_tensor.LabelTensor`
-            or :class:`torch.Tensor`. The number of dimensions of the output
-            has to be the same of the ``branch_net``.
+            model. It has to take as input a
+            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`.
+            The number of dimensions of the output has to be the same of the
+            ``branch_net``.
         :param list(int) or list(str) input_indeces_branch_net: List of indeces
             to extract from the input variable in the forward pass for the
-            branch net. If a list of ``int`` is passed, the corresponding columns
-            of the inner most entries are extracted. If a list of ``str`` is passed
-            the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor` are extracted.
+            branch net. If a list of ``int`` is passed, the corresponding
+            columns of the inner most entries are extracted. If a list of
+            ``str`` is passed the variables of the corresponding
+            :py:obj:`pina.label_tensor.LabelTensor` are extracted.
         :param list(int) or list(str) input_indeces_trunk_net: List of indeces
             to extract from the input variable in the forward pass for the
             trunk net. If a list of ``int`` is passed, the corresponding columns
-            of the inner most entries are extracted. If a list of ``str`` is passed
-            the variables of the corresponding :py:obj:`pina.label_tensor.LabelTensor` are extracted.
+            of the inner most entries are extracted. If a list of ``str`` is
+            passed the variables of the corresponding
+            :py:obj:`pina.label_tensor.LabelTensor` are extracted.
         :param str or Callable aggregator: Aggregator to be used to aggregate
             partial results from the modules in `nets`. Partial results are
             aggregated component-wise. Available aggregators include
-            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max: ``max``.
+            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``,
+            max: ``max``.
         :param str or Callable reduction: Reduction to be used to reduce
             the aggregated result of the modules in `nets` to the desired output
             dimension. Available reductions include
-            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``, max: ``max``.
-        :param bool or Callable scale: Scaling the final output before returning the
-            forward pass, default True.
+            sum: ``+``, product: ``*``, mean: ``mean``, min: ``min``,
+            max: ``max``.
+        :param bool or Callable scale: Scaling the final output before returning
+            the forward pass, default True.
         :param bool or Callable translation: Translating the final output before
             returning the forward pass, default True.
 
         .. warning::
             In the forward pass we do not check if the input is instance of
-            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`. A general rule is
-            that for a :py:obj:`pina.label_tensor.LabelTensor` input both list of integers and
-            list of strings can be passed for ``input_indeces_branch_net``
-            and ``input_indeces_trunk_net``. Differently, for a :class:`torch.Tensor`
-            only a list of integers can be passed for ``input_indeces_branch_net``
-            and ``input_indeces_trunk_net``.
+            :py:obj:`pina.label_tensor.LabelTensor` or :class:`torch.Tensor`.
+            A general rule is that for a :py:obj:`pina.label_tensor.LabelTensor`
+            input both list of integers and list of strings can be passed for
+            ``input_indeces_branch_net`` and ``input_indeces_trunk_net``.
+            Differently, for a :class:`torch.Tensor` only a list of integers can
+            be passed for ``input_indeces_branch_net`` and
+            ``input_indeces_trunk_net``.
 
         :Example:
-            >>> branch_net = FeedForward(input_dimensons=1, output_dimensions=10)
+            >>> branch_net = FeedForward(input_dimensons=1,
+            ... output_dimensions=10)
             >>> trunk_net = FeedForward(input_dimensons=1, output_dimensions=10)
             >>> model = DeepONet(branch_net=branch_net,
             ...                  trunk_net=trunk_net,
@@ -395,7 +413,8 @@ class DeepONet(MIONet):
         """
         Defines the computation performed at every call.
 
-        :param LabelTensor or torch.Tensor x: The input tensor for the forward call.
+        :param LabelTensor or torch.Tensor x: The input tensor for the forward
+            call.
         :return: The output computed by the DeepONet model.
         :rtype: LabelTensor or torch.Tensor
         """

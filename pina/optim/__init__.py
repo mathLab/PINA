@@ -1,3 +1,5 @@
+"""Module for Optimizer class."""
+
 __all__ = [
     "Optimizer",
     "TorchOptimizer",

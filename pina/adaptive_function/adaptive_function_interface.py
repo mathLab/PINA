@@ -1,15 +1,15 @@
 """Module for adaptive functions."""
 
-import torch
-
-from pina.utils import check_consistency
 from abc import ABCMeta
+import torch
+from ..utils import check_consistency, is_function
 
 
 class AdaptiveActivationFunctionInterface(torch.nn.Module, metaclass=ABCMeta):
     r"""
     The
-    :class:`~pina.adaptive_function.adaptive_func_interface.AdaptiveActivationFunctionInterface`
+    :class:`~pina.adaptive_function.adaptive_func_interface.\
+        AdaptiveActivationFunctionInterface`
     class makes a :class:`torch.nn.Module` activation function into an adaptive
     trainable activation function. If one wants to create an adpative activation
     function, this class must be use as base class.
@@ -104,9 +104,6 @@ class AdaptiveActivationFunctionInterface(torch.nn.Module, metaclass=ABCMeta):
         else:
             self.register_buffer("gamma", gamma)
 
-        # storing the activation
-        self._func = None
-
     def forward(self, x):
         """
         Define the computation performed at every call.
@@ -143,4 +140,14 @@ class AdaptiveActivationFunctionInterface(torch.nn.Module, metaclass=ABCMeta):
         """
         The callable activation function.
         """
+        return self._func
+
+    @func.setter
+    def func(self, value):
+        """
+        Set the activation function.
+        """
+        if not is_function(value):
+            raise TypeError("The function must be callable.")
+        self._func = value
         return self._func
