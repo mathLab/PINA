@@ -32,6 +32,7 @@ if IN_COLAB:
 
 import torch
 import matplotlib.pyplot as plt
+import warnings
 
 from scipy import io
 from pina import Condition, LabelTensor
@@ -39,6 +40,8 @@ from pina.problem import AbstractProblem
 from pina.model import AveragingNeuralOperator
 from pina.solver import SupervisedSolver
 from pina.trainer import Trainer
+
+warnings.filterwarnings('ignore')
 
 
 # ## Data Generation
@@ -220,7 +223,10 @@ problem = NeuralOperatorProblem()
 # initialize solver
 solver = SupervisedSolver(problem=problem, model=model)
 # train, only CPU and avoid model summary at beginning of training (optional)
-trainer = Trainer(solver=solver, max_epochs=40, accelerator='cpu', enable_model_summary=False, log_every_n_steps=-1, batch_size=5) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer = Trainer(solver=solver, max_epochs=40, accelerator='cpu', enable_model_summary=False, log_every_n_steps=-1, batch_size=5, # we train on CPU and avoid model summary at beginning of training (optional)
+train_size=1.0,
+val_size=0.0,
+test_size=0.0)
 trainer.train()
 
 
@@ -236,8 +242,8 @@ plot_trajectory(coords=initial_cond_test[sample_number].extract(['x', 't']),
                 no_sol=no_sol[5])
 
 
-# As we can see we can obtain nice result considering the small trainint time and the difficulty of the problem!
-# Let's see how the training and testing error:
+# As we can see we can obtain nice result considering the small training time and the difficulty of the problem!
+# Let's take a look at the training and testing error:
 
 # In[7]:
 
@@ -255,14 +261,14 @@ with torch.no_grad():
     print(f'Testing error: {float(err_test):.3f}')
 
 
-# as we can see the error is pretty small, which agrees with what we can see from the previous plots.
+# As we can see the error is pretty small, which agrees with what we can see from the previous plots.
 
 # ## What's next?
 # 
 # Now you know how to solve a time dependent neural operator problem in **PINA**! There are multiple directions you can go now:
 # 
-# 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
+# 1. Train the network for longer or with different layer sizes and assert the final accuracy
 # 
-# 2. We left a more challenging dataset [Data_KS2.mat](dat/Data_KS2.mat) where $A_k \in [-0.5, 0.5]$, $\ell_k \in [1, 2, 3]$, $\phi_k \in [0, 2\pi]$ for loger training
+# 2. We left a more challenging dataset [Data_KS2.mat](dat/Data_KS2.mat) where $A_k \in [-0.5, 0.5]$, $\ell_k \in [1, 2, 3]$, $\phi_k \in [0, 2\pi]$ for longer training
 # 
 # 3. Compare the performance between the different neural operators (you can even try to implement your favourite one!)
