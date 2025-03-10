@@ -6,10 +6,6 @@ from itertools import combinations_with_replacement
 import torch
 from ...utils import check_consistency
 
-# Avoiding the pylint error E1102 (not-callable) for the torch.linalg.solve
-# and torch.linalg.matrix_rank functions
-# pylint: disable=E1102
-
 
 def linear(r):
     """

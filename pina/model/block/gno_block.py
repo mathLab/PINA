@@ -28,9 +28,7 @@ class GNOBlock(MessagePassing):
         :param edges_features: Number of edge features.
         :param n_layers: Number of layers in edge transformation MLP.
         """
-        # Avoid circular import. I need to import FeedForward here
-        # to avoid circular import with FeedForward itself.
-        # pylint: disable=import-outside-toplevel
+
         from ...model.feed_forward import FeedForward
 
         super().__init__(aggr="mean")  # Uses PyG's default aggregation

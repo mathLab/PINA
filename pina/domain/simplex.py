@@ -135,7 +135,7 @@ class SimplexDomain(DomainInterface):
 
         # compute barycentric coordinates
 
-        lambda_ = torch.linalg.solve(  # pylint: disable=E1102
+        lambda_ = torch.linalg.solve(
             self._vectors_shifted * 1.0, point_shift * 1.0
         )
         lambda_1 = 1.0 - torch.sum(lambda_)

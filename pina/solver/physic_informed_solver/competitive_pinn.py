@@ -211,8 +211,6 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         """
         # increase by one the counter of optimization to save loggers
         (
-            # Unavoidable long line
-            # pylint: disable=line-too-long
             self.trainer.fit_loop.epoch_loop.manual_optimization.optim_step_progress.total.completed
         ) += 1
 
@@ -238,8 +236,6 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         """
         return self.models[1]
 
-    # self.optimizers is a list of two optimizers!!! (supress pylint warning)
-    # pylint: disable=unsubscriptable-object
     @property
     def optimizer_model(self):
         """

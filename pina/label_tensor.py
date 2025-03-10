@@ -5,9 +5,6 @@ import torch
 from torch import Tensor
 
 
-# Avoid protected-access. We need to access the protected members of the
-# LabelTensor class to avoid repeated checking.
-# pylint: disable=protected-access
 class LabelTensor(torch.Tensor):
     """Torch tensor with a label for any column."""
 
@@ -39,9 +36,6 @@ class LabelTensor(torch.Tensor):
                     {1: {"name": "space"['a', 'b', 'c'])
 
         """
-        # Avoid unused argument warning. x is not used in the constructor
-        # of the parent class.
-        # pylint: disable=unused-argument
         super().__init__()
         if labels is not None:
             self.labels = labels

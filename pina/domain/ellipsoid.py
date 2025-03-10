@@ -190,7 +190,6 @@ class EllipsoidDomain(DomainInterface):
 
             # step 1.
             pts = torch.randn(size=(n, dim))
-            # pylint: disable=E1102
             pts = pts / torch.linalg.norm(pts, axis=-1).view((n, 1))
             if not self._sample_surface:  # step 2.
                 scale = torch.rand((n, 1))

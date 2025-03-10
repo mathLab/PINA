@@ -7,10 +7,6 @@ from torch import nn
 from ...utils import check_consistency
 
 
-# Avoiding the pylint error E1102 (not-callable) for the torch.fft.rfft
-# torch.fft.irfft, torch.fft.rfft2, torch.fft.irfft2, torch.fft.rfftn, and
-# torch.fft.irfftn
-# pylint: disable=E1102
 ######## 1D Spectral Convolution ###########
 class SpectralConvBlock1D(nn.Module):
     """

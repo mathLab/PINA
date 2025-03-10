@@ -423,9 +423,6 @@ class PinaDataModule(LightningDataModule):
         return self._create_dataloader("test", self.test_dataset)
 
     @staticmethod
-    # Unavoidable pylint error (we need to keep the same signature as the
-    # parent)
-    # pylint: disable=W0613
     def _transfer_batch_to_device_dummy(batch, device, dataloader_idx):
         return batch
 

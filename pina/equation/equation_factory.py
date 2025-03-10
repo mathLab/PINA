@@ -23,9 +23,6 @@ class FixedValue(Equation):
             Default is ``None``.
         """
 
-        # input_ is not used but it is necessary to keep the signature for
-        # consistency
-        # pylint: disable=W0613
         def equation(input_, output_):
             if components is None:
                 return output_ - value

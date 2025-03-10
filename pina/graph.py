@@ -242,10 +242,6 @@ class GraphBuilder:
         )
 
 
-# Avoid signature-differs error. This is a wanted behavior of the overriden
-# classes since KNNGraph and RadiusGraph creates edge_index based on radius
-# and k-nearest neighbors respectively.
-# pylint: disable=signature-differs
 class RadiusGraph(GraphBuilder):
     """
     A class to build a radius graph.

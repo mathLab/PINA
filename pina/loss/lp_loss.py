@@ -6,8 +6,6 @@ from ..utils import check_consistency
 from .loss_interface import LossInterface
 
 
-# Avoid pylint warning for torch.linalg.norm (it is callable)
-# pylint: disable=not-callable
 class LpLoss(LossInterface):
     r"""
     The Lp loss implementation class. Creates a criterion that measures

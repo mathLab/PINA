@@ -77,9 +77,6 @@ class LowRankBlock(torch.nn.Module):
             basis function network.
         """
         super().__init__()
-        # Avoid circular import. I need to import FeedForward here
-        # to avoid circular import with FeedForward itself.
-        # pylint: disable=import-outside-toplevel
         from ..feed_forward import FeedForward
 
         # Assignment (check consistency inside FeedForward)

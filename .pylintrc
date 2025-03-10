@@ -250,9 +250,7 @@ single-line-if-stmt=no
 
 [BASIC]
 # Allow redefinition of input builtins
-# input needed in conditions and in solver
-# compile needed in Trainer
-allowed-redefined-builtins=input,compile
+allowed-redefined-builtins=input
 
 # Naming hint for argument names
 argument-name-hint=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
@@ -377,10 +375,7 @@ known-third-party=enchant
 [DESIGN]
 
 # Maximum number of arguments for function / method
-max-args=15
-
-# Maximum nmber of positional arguments (R0917)
-max-positional-arguments=15
+max-args=10
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=15
@@ -395,7 +390,7 @@ max-branches=12
 max-locals=15
 
 # Maximum number of parents for a class (see R0901).
-max-parents=12
+max-parents=7
 
 # Maximum number of public methods for a class (see R0904).
 max-public-methods=20
