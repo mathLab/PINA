@@ -6,10 +6,12 @@ from ..label_tensor import LabelTensor
 
 
 class Difference(OperationInterface):
+    """
+    PINA implementation of Difference of Domains.
+    """
 
     def __init__(self, geometries):
         r"""
-        PINA implementation of Difference of Domains.
         Given two sets :math:`A` and :math:`B` then the
         domain difference is defined as:
 
@@ -41,7 +43,8 @@ class Difference(OperationInterface):
         :param point: Point to be checked.
         :type point: torch.Tensor
         :param bool check_border: If ``True``, the border is considered inside.
-        :return: ``True`` if the point is inside the Exclusion domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the Exclusion domain,
+            ``False`` otherwise.
         :rtype: bool
         """
         for geometry in self.geometries[1:]:
@@ -54,7 +57,8 @@ class Difference(OperationInterface):
         Sample routine for ``Difference`` domain.
 
         :param int n: Number of points to sample in the shape.
-        :param str mode: Mode for sampling, defaults to ``random``. Available modes include: ``random``.
+        :param str mode: Mode for sampling, defaults to ``random``. Available
+            modes include: ``random``.
         :param variables: Variables to be sampled, defaults to ``all``.
         :type variables: str | list[str]
         :return: Returns ``LabelTensor`` of n sampled points.

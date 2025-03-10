@@ -17,7 +17,6 @@ class DomainInterface(metaclass=ABCMeta):
         """
         Abstract method returing available samples modes for the Domain.
         """
-        pass
 
     @property
     @abstractmethod
@@ -25,7 +24,6 @@ class DomainInterface(metaclass=ABCMeta):
         """
         Abstract method returing Domain variables.
         """
-        pass
 
     @sample_modes.setter
     def sample_modes(self, values):
@@ -48,7 +46,6 @@ class DomainInterface(metaclass=ABCMeta):
         Abstract method for sampling a point from the location. To be
         implemented in the child class.
         """
-        pass
 
     @abstractmethod
     def is_inside(self, point, check_border=False):
@@ -61,4 +58,3 @@ class DomainInterface(metaclass=ABCMeta):
             of the location is considered checked to be considered inside or
             not. Defaults to ``False``.
         """
-        pass

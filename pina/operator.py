@@ -1,9 +1,11 @@
 """
-Module for operator vectorize implementation. Differential operator are used to write any differential problem.
-These operator are implemented to work on different accellerators: CPU, GPU, TPU or MPS.
-All operator take as input a tensor onto which computing the operator, a tensor with respect
-to which computing the operator, the name of the output variables to calculate the operator
-for (in case of multidimensional functions), and the variables name on which the operator is calculated.
+Module for operator vectorize implementation. Differential operator are used to
+write any differential problem. These operator are implemented to work on
+different accellerators: CPU, GPU, TPU or MPS. All operator take as input a
+tensor onto which computing the operator, a tensor with respect to which
+computing the operator, the name of the output variables to calculate the
+operator for (in case of multidimensional functions), and the variables name
+on which the operator is calculated.
 """
 
 import torch
@@ -50,7 +52,7 @@ def grad(output_, input_, components=None, d=None):
 
         if len(output_.labels) != 1:
             raise RuntimeError("only scalar function can be differentiated")
-        if not all([di in input_.labels for di in d]):
+        if not all(di in input_.labels for di in d):
             raise RuntimeError("derivative labels missing from input tensor")
 
         output_fieldname = output_.labels[0]
@@ -139,8 +141,8 @@ def div(output_, input_, components=None, d=None):
     grad_output = grad(output_, input_, components, d)
     labels = [None] * len(components)
     tensors_to_sum = []
-    for i, (c, d) in enumerate(zip(components, d)):
-        c_fields = f"d{c}d{d}"
+    for i, (c, d_) in enumerate(zip(components, d)):
+        c_fields = f"d{c}d{d_}"
         tensors_to_sum.append(grad_output.extract(c_fields))
         labels[i] = c_fields
     div_result = LabelTensor.summation(tensors_to_sum)
@@ -205,11 +207,8 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
     if method == "divgrad":
         raise NotImplementedError("divgrad not implemented as method")
-        # TODO fix
-        # grad_output = grad(output_, input_, components, d)
-        # result = div(grad_output, input_, d=d)
 
-    elif method == "std":
+    if method == "std":
         if len(components) == 1:
             result = scalar_laplace(output_, input_, components, d)
             labels = [f"dd{components[0]}"]

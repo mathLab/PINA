@@ -1,9 +1,9 @@
 """Module for Continuous Convolution class"""
 
+import torch
 from .convolution import BaseContinuousConv
 from .utils_convolution import check_point, map_points_
 from .integral import Integral
-import torch
 
 
 class ContinuousConvBlock(BaseContinuousConv):
@@ -27,8 +27,9 @@ class ContinuousConvBlock(BaseContinuousConv):
     .. seealso::
 
         **Original reference**: Coscia, D., Meneghetti, L., Demo, N. et al.
-        *A continuous convolutional trainable filter for modelling unstructured data*.
-        Comput Mech 72, 253–265 (2023). DOI `<https://doi.org/10.1007/s00466-023-02291-1>`_
+        *A continuous convolutional trainable filter for modelling
+        unstructured data*. Comput Mech 72, 253–265 (2023).
+        DOI `<https://doi.org/10.1007/s00466-023-02291-1>`_
 
     """
 
@@ -45,7 +46,8 @@ class ContinuousConvBlock(BaseContinuousConv):
         """
         :param input_numb_field: Number of fields :math:`N_{in}` in the input.
         :type input_numb_field: int
-        :param output_numb_field: Number of fields :math:`N_{out}`  in the output.
+        :param output_numb_field: Number of fields :math:`N_{out}`  in the
+            output.
         :type output_numb_field: int
         :param filter_dim: Dimension of the filter.
         :type filter_dim: tuple(int) | list(int)
@@ -134,6 +136,11 @@ class ContinuousConvBlock(BaseContinuousConv):
         # stride for continuous convolution overridden
         self._stride = self._stride._stride_discrete
 
+        # Define variables
+        self._index = None
+        self._grid = None
+        self._grid_transpose = None
+
     def _spawn_networks(self, model):
         """
         Private method to create a collection of kernels
@@ -152,7 +159,7 @@ class ContinuousConvBlock(BaseContinuousConv):
         else:
             if not isinstance(model, object):
                 raise ValueError(
-                    "Expected a python class inheriting" " from torch.nn.Module"
+                    "Expected a python class inheriting from torch.nn.Module"
                 )
 
             for _ in range(self._input_numb_field * self._output_numb_field):
@@ -271,7 +278,7 @@ class ContinuousConvBlock(BaseContinuousConv):
         # save on tmp
         self._grid_transpose = tmp
 
-    def _make_grid(self, X, type):
+    def _make_grid(self, X, type_):
         """
         Private method to create convolution grid.
 
@@ -283,14 +290,15 @@ class ContinuousConvBlock(BaseContinuousConv):
 
         """
         # choose the type of convolution
-        if type == "forward":
-            return self._make_grid_forward(X)
-        elif type == "inverse":
+        if type_ == "forward":
+            self._make_grid_forward(X)
+            return
+        if type_ == "inverse":
             self._make_grid_transpose(X)
-        else:
-            raise TypeError
+            return
+        raise TypeError
 
-    def _initialize_convolution(self, X, type="forward"):
+    def _initialize_convolution(self, X, type_="forward"):
         """
         Private method to intialize the convolution.
         The convolution is initialized by setting a grid and
@@ -304,7 +312,7 @@ class ContinuousConvBlock(BaseContinuousConv):
         """
 
         # variable for the convolution
-        self._make_grid(X, type)
+        self._make_grid(X, type_)
 
         # calculate the index
         self._find_index(X)
@@ -321,7 +329,7 @@ class ContinuousConvBlock(BaseContinuousConv):
 
         # initialize convolution
         if self.training:  # we choose what to do based on optimization
-            self._choose_initialization(X, type="forward")
+            self._choose_initialization(X, type_="forward")
 
         else:  # we always initialize on testing
             self._initialize_convolution(X, "forward")
@@ -383,12 +391,14 @@ class ContinuousConvBlock(BaseContinuousConv):
         :type integral: torch.tensor
         :param X: Input data. Expect tensor of shape
             :math:`[B, N_{in}, M,  D]` where :math:`B` is the batch_size,
-            :math`N_{in}`is the number of input fields, :math:`M` the number of points
+            :math`N_{in}`is the number of input fields, :math:`M` the number of
+                points
             in the mesh, :math:`D` the dimension of the problem.
         :type X: torch.Tensor
         :return: Feed forward transpose convolution. Tensor of shape
             :math:`[B, N_{out}, M,  D]` where :math:`B` is the batch_size,
-            :math`N_{out}`is the number of input fields, :math:`M` the number of points
+            :math`N_{out}`is the number of input fields, :math:`M` the number of
+                points
             in the mesh, :math:`D` the dimension of the problem.
         :rtype: torch.Tensor
 
@@ -399,7 +409,7 @@ class ContinuousConvBlock(BaseContinuousConv):
 
         # initialize convolution
         if self.training:  # we choose what to do based on optimization
-            self._choose_initialization(X, type="inverse")
+            self._choose_initialization(X, type_="inverse")
 
         else:  # we always initialize on testing
             self._initialize_convolution(X, "inverse")
@@ -466,12 +476,14 @@ class ContinuousConvBlock(BaseContinuousConv):
         :type integral: torch.tensor
         :param X: Input data. Expect tensor of shape
             :math:`[B, N_{in}, M,  D]` where :math:`B` is the batch_size,
-            :math`N_{in}`is the number of input fields, :math:`M` the number of points
+            :math`N_{in}`is the number of input fields, :math:`M` the number of
+                points
             in the mesh, :math:`D` the dimension of the problem.
         :type X: torch.Tensor
         :return: Feed forward transpose convolution. Tensor of shape
             :math:`[B, N_{out}, M,  D]` where :math:`B` is the batch_size,
-            :math`N_{out}`is the number of input fields, :math:`M` the number of points
+            :math`N_{out}`is the number of input fields, :math:`M` the number of
+                points
             in the mesh, :math:`D` the dimension of the problem.
         :rtype: torch.Tensor
 
@@ -481,7 +493,7 @@ class ContinuousConvBlock(BaseContinuousConv):
 
         # initialize convolution
         if self.training:  # we choose what to do based on optimization
-            self._choose_initialization(X, type="inverse")
+            self._choose_initialization(X, type_="inverse")
 
         else:  # we always initialize on testing
             self._initialize_convolution(X, "inverse")
@@ -491,7 +503,7 @@ class ContinuousConvBlock(BaseContinuousConv):
         conv_transposed = self._grid_transpose.clone().detach()
 
         # list to iterate for calculating nn output
-        tmp = [i for i in range(self._output_numb_field)]
+        tmp = list(range(self._output_numb_field))
         iterate_conv = [
             item for item in tmp for _ in range(self._input_numb_field)
         ]

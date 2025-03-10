@@ -1,10 +1,14 @@
+"""
+Module containing the Graph Integral Layer class.
+"""
+
 import torch
 from torch_geometric.nn import MessagePassing
 
 
 class GNOBlock(MessagePassing):
     """
-    TODO: Add documentation
+    Graph Neural Operator (GNO) Block using PyG MessagePassing.
     """
 
     def __init__(
@@ -18,21 +22,21 @@ class GNOBlock(MessagePassing):
         external_func=None,
     ):
         """
-        Initialize the Graph Integral Layer, inheriting from the MessagePassing class of PyTorch Geometric.
+        Initialize the GNOBlock.
 
-        :param width: The width of the hidden representation of the nodes features
-        :type width: int
-        :param edges_features: The number of edge features.
-        :type edges_features: int
-        :param n_layers: The number of layers in the Feed Forward Neural Network used to compute the representation of the edges features.
-        :type n_layers: int
+        :param width: Hidden dimension of node features.
+        :param edges_features: Number of edge features.
+        :param n_layers: Number of layers in edge transformation MLP.
         """
-        from pina.model import FeedForward
 
-        super(GNOBlock, self).__init__(aggr="mean")
+        from ...model.feed_forward import FeedForward
+
+        super().__init__(aggr="mean")  # Uses PyG's default aggregation
         self.width = width
+
         if layers is None and inner_size is None:
             inner_size = width
+
         self.dense = FeedForward(
             input_dimensions=edges_features,
             output_dimensions=width**2,
@@ -41,48 +45,50 @@ class GNOBlock(MessagePassing):
             inner_size=inner_size,
             func=internal_func,
         )
+
         self.W = torch.nn.Linear(width, width)
         self.func = external_func()
 
-    def message(self, x_j, edge_attr):
+    def message_and_aggregate(self, edge_index, x, edge_attr):
         """
-        This function computes the message passed between the nodes of the graph. Overwrite the default message function defined in the MessagePassing class.
+        Combines message and aggregation.
 
-        :param x_j: The node features of the neighboring.
-        :type x_j: torch.Tensor
-        :param edge_attr: The edge features.
-        :type edge_attr: torch.Tensor
-        :return: The message passed between the nodes of the graph.
-        :rtype: torch.Tensor
+        :param edge_index: COO format edge indices.
+        :param x: Node feature matrix [num_nodes, width].
+        :param edge_attr: Edge features [num_edges, edge_dim].
+        :return: Aggregated messages.
         """
-        x = self.dense(edge_attr).view(-1, self.width, self.width)
-        return torch.einsum("bij,bj->bi", x, x_j)
+        # Edge features are transformed into a matrix of shape
+        # [num_edges, width, width]
+        x_ = self.dense(edge_attr).view(-1, self.width, self.width)
+        # Messages are computed as the product of the edge features
+        messages = torch.einsum("bij,bj->bi", x_, x[edge_index[0]])
+        # Aggregation is performed using the mean (set in the constructor)
+        return self.aggregate(messages, edge_index[1])
+
+    def edge_update(self, edge_attr):
+        """
+        Updates edge features.
+        """
+        return edge_attr
 
     def update(self, aggr_out, x):
         """
-        This function updates the node features of the graph. Overwrite the default update function defined in the MessagePassing class.
+        Updates node features.
 
-        :param aggr_out: The aggregated messages.
-        :type aggr_out: torch.Tensor
-        :param x: The node features.
-        :type x: torch.Tensor
-        :return: The updated node features.
-        :rtype: torch.Tensor
+        :param aggr_out: Aggregated messages.
+        :param x: Node feature matrix.
+        :return: Updated node features.
         """
-        aggr_out = aggr_out + self.W(x)
-        return aggr_out
+        return aggr_out + self.W(x)
 
     def forward(self, x, edge_index, edge_attr):
         """
-        The forward pass of the Graph Integral Layer.
+        Forward pass of the GNOBlock.
 
         :param x: Node features.
-        :type x: torch.Tensor
-        :param edge_index: Edge index.
-        :type edge_index: torch.Tensor
+        :param edge_index: Edge indices.
         :param edge_attr: Edge features.
-        :type edge_attr: torch.Tensor
-        :return: Output of a single iteration over the Graph Integral Layer.
-        :rtype: torch.Tensor
+        :return: Updated node features.
         """
         return self.func(self.propagate(edge_index, x=x, edge_attr=edge_attr))

@@ -1,14 +1,17 @@
-from pina.problem import AbstractProblem
-from pina import Condition
-from pina import Graph
+"""TODO"""
+
+from ..abstract_problem import AbstractProblem
+from ... import Condition
+from ... import Graph
 
 
 class SupervisedProblem(AbstractProblem):
     """
     A problem definition for supervised learning in PINA.
 
-    This class allows an easy and straightforward definition of a Supervised problem,
-    based on a single condition of type `InputTargetCondition`
+    This class allows an easy and straightforward definition of a
+    Supervised problem, based on a single condition of type
+    `InputTargetCondition`
 
     :Example:
         >>> import torch
@@ -17,7 +20,7 @@ class SupervisedProblem(AbstractProblem):
         >>> problem = SupervisedProblem(input_data, output_data)
     """
 
-    conditions = dict()
+    conditions = {}
     output_variables = None
 
     def __init__(self, input_, output_):

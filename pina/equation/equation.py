@@ -4,10 +4,12 @@ from .equation_interface import EquationInterface
 
 
 class Equation(EquationInterface):
+    """
+    Equation class for specifing any equation in PINA.
+    """
 
     def __init__(self, equation):
         """
-        Equation class for specifing any equation in PINA.
         Each ``equation`` passed to a ``Condition`` object
         must be an ``Equation`` or ``SystemEquation``.
 

@@ -75,34 +75,29 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
         """
         super().__init__()
 
-        if isinstance(input_numb_field, int):
-            self._input_numb_field = input_numb_field
-        else:
+        if not isinstance(input_numb_field, int):
             raise ValueError("input_numb_field must be int.")
+        self._input_numb_field = input_numb_field
 
-        if isinstance(output_numb_field, int):
-            self._output_numb_field = output_numb_field
-        else:
+        if not isinstance(output_numb_field, int):
             raise ValueError("input_numb_field must be int.")
+        self._output_numb_field = output_numb_field
 
-        if isinstance(filter_dim, (tuple, list)):
-            vect = filter_dim
-        else:
+        if not isinstance(filter_dim, (tuple, list)):
             raise ValueError("filter_dim must be tuple or list.")
+        vect = filter_dim
         vect = torch.tensor(vect)
         self.register_buffer("_dim", vect, persistent=False)
 
-        if isinstance(stride, dict):
-            self._stride = Stride(stride)
-        else:
+        if not isinstance(stride, dict):
             raise ValueError("stride must be dictionary.")
+        self._stride = Stride(stride)
 
         self._net = model
 
-        if isinstance(optimize, bool):
-            self._optimize = optimize
-        else:
+        if not isinstance(optimize, bool):
             raise ValueError("optimize must be bool.")
+        self._optimize = optimize
 
         # choosing how to initialize based on optimization
         if self._optimize:
@@ -119,13 +114,18 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
 
         if no_overlap:
             raise NotImplementedError
-            self.transpose = self.transpose_no_overlap
-        else:
-            self.transpose = self.transpose_overlap
+
+        self.transpose = self.transpose_overlap
 
     class DefaultKernel(torch.nn.Module):
+        """
+        TODO
+        """
 
         def __init__(self, input_dim, output_dim):
+            """
+            TODO
+            """
             super().__init__()
             assert isinstance(input_dim, int)
             assert isinstance(output_dim, int)
@@ -138,44 +138,66 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
             )
 
         def forward(self, x):
+            """
+            TODO
+            """
             return self._model(x)
 
     @property
     def net(self):
+        """
+        TODO
+        """
         return self._net
 
     @property
     def stride(self):
+        """
+        TODO
+        """
         return self._stride
 
     @property
     def filter_dim(self):
+        """
+        TODO
+        """
         return self._dim
 
     @property
     def input_numb_field(self):
+        """
+        TODO
+        """
         return self._input_numb_field
 
     @property
     def output_numb_field(self):
+        """
+        TODO
+        """
         return self._output_numb_field
 
-    @property
     @abstractmethod
     def forward(self, X):
-        pass
+        """
+        TODO
+        """
 
-    @property
     @abstractmethod
     def transpose_overlap(self, X):
-        pass
+        """
+        TODO
+        """
 
-    @property
     @abstractmethod
     def transpose_no_overlap(self, X):
-        pass
+        """
+        TODO
+        """
 
-    @property
     @abstractmethod
-    def _initialize_convolution(self, X, type):
-        pass
+    def _initialize_convolution(self, X, type_):
+        """
+        TODO
+        """

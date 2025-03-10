@@ -2,7 +2,6 @@
 
 import torch
 from pina.utils import check_consistency
-from typing import Union, Sequence
 
 
 class PeriodicBoundaryEmbedding(torch.nn.Module):
@@ -18,8 +17,9 @@ class PeriodicBoundaryEmbedding(torch.nn.Module):
         u(\mathbf{x})  = u(\mathbf{x} + n \mathbf{L})\;\;
         \forall n\in\mathbb{N}.
 
-    The :meth:`PeriodicBoundaryEmbedding` augments the input such that the periodic conditons
-    is guarantee. The input is augmented by the following formula:
+    The :meth:`PeriodicBoundaryEmbedding` augments the input such that the
+    periodic conditonsis guarantee. The input is augmented by the following
+    formula:
 
     .. math::
         \mathbf{x} \rightarrow \tilde{\mathbf{x}} = \left[1,
@@ -135,13 +135,13 @@ class PeriodicBoundaryEmbedding(torch.nn.Module):
         if isinstance(indeces[0], str):
             try:
                 return x.extract(indeces)
-            except AttributeError:
+            except AttributeError as e:
                 raise RuntimeError(
                     "Not possible to extract input variables from tensor."
                     " Ensure that the passed tensor is a LabelTensor or"
                     " pass list of integers to extract variables. For"
                     " more information refer to warning in the documentation."
-                )
+                ) from e
         elif isinstance(indeces[0], int):
             return x[..., indeces]
         else:
@@ -159,11 +159,14 @@ class PeriodicBoundaryEmbedding(torch.nn.Module):
 
 
 class FourierFeatureEmbedding(torch.nn.Module):
+    """
+    Fourier Feature Embedding class for encoding input features
+    using random Fourier features.
+    """
+
     def __init__(self, input_dimension, output_dimension, sigma):
         r"""
-        Fourier Feature Embedding class for encoding input features
-        using random Fourier features.This class applies a Fourier
-        transformation to the input features,
+        This class applies a Fourier transformation to the input features,
         which can help in learning high-frequency variations in data.
         If multiple sigma are provided, the class
         supports multiscale feature embedding, creating embeddings for

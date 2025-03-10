@@ -1,14 +1,11 @@
 """Module for GAROM"""
 
 import torch
-
+from torch.nn.modules.loss import _Loss
 from .solver import MultiSolverInterface
-from ..utils import check_consistency
-from ..loss.loss_interface import LossInterface
 from ..condition import InputTargetCondition
 from ..utils import check_consistency
 from ..loss import LossInterface, PowerLoss
-from torch.nn.modules.loss import _Loss
 
 
 class GAROM(MultiSolverInterface):
@@ -60,18 +57,22 @@ class GAROM(MultiSolverInterface):
             rate scheduler for the generator.
         :param Scheduler scheduler_discriminator: Learning
             rate scheduler for the discriminator.
-        :param dict scheduler_discriminator_kwargs: LR scheduler constructor keyword args.
-        :param gamma: Ratio of expected loss for generator and discriminator, defaults to 0.3.
+        :param dict scheduler_discriminator_kwargs: LR scheduler constructor
+            keyword args.
+        :param gamma: Ratio of expected loss for generator and discriminator,
+            defaults to 0.3.
         :type gamma: float
-        :param lambda_k: Learning rate for control theory optimization, defaults to 0.001.
+        :param lambda_k: Learning rate for control theory optimization,
+            defaults to 0.001.
         :type lambda_k: float
-        :param regularizer: Regularization term in the GAROM loss, defaults to False.
+        :param regularizer: Regularization term in the GAROM loss,
+            defaults to False.
         :type regularizer: bool
 
         .. warning::
-            The algorithm works only for data-driven model. Hence in the ``problem`` definition
-            the codition must only contain ``input`` (e.g. coefficient parameters, time
-            parameters), and ``target``.
+            The algorithm works only for data-driven model. Hence in the
+            ``problem`` definition the codition must only contain ``input``
+            (e.g. coefficient parameters, time parameters), and ``target``.
         """
 
         # set loss
@@ -118,9 +119,11 @@ class GAROM(MultiSolverInterface):
         :param mc_steps: Number of montecarlo samples to approximate the
             expected value, defaults to 20.
         :type mc_steps: int
-        :param variance: Returining also the sample variance of the solution, defaults to False.
+        :param variance: Returining also the sample variance of the solution,
+            defaults to False.
         :type variance: bool
-        :return: The expected value of the generator distribution. If ``variance=True`` also the
+        :return: The expected value of the generator distribution. If
+            ``variance=True`` also the
             sample variance is returned.
         :rtype: torch.Tensor | tuple(torch.Tensor, torch.Tensor)
         """
@@ -139,6 +142,7 @@ class GAROM(MultiSolverInterface):
         return mean
 
     def sample(self, x):
+        """TODO"""
         # sampling
         return self.generator(x)
 
@@ -285,24 +289,30 @@ class GAROM(MultiSolverInterface):
 
     @property
     def generator(self):
+        """TODO"""
         return self.models[0]
 
     @property
     def discriminator(self):
+        """TODO"""
         return self.models[1]
 
     @property
     def optimizer_generator(self):
+        """TODO"""
         return self.optimizers[0].instance
 
     @property
     def optimizer_discriminator(self):
+        """TODO"""
         return self.optimizers[1].instance
 
     @property
     def scheduler_generator(self):
+        """TODO"""
         return self.schedulers[0].instance
 
     @property
     def scheduler_discriminator(self):
+        """TODO"""
         return self.schedulers[1].instance

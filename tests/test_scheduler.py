@@ -1,4 +1,3 @@
-
 import torch
 import pytest
 from pina.optim import TorchOptimizer, TorchScheduler
@@ -7,16 +6,16 @@ opt_list = [
     torch.optim.Adam,
     torch.optim.AdamW,
     torch.optim.SGD,
-    torch.optim.RMSprop
+    torch.optim.RMSprop,
 ]
 
-sch_list = [
-    torch.optim.lr_scheduler.ConstantLR
-]
+sch_list = [torch.optim.lr_scheduler.ConstantLR]
+
 
 @pytest.mark.parametrize("scheduler_class", sch_list)
 def test_constructor(scheduler_class):
     TorchScheduler(scheduler_class)
+
 
 @pytest.mark.parametrize("optimizer_class", opt_list)
 @pytest.mark.parametrize("scheduler_class", sch_list)

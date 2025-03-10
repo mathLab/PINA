@@ -20,4 +20,3 @@ class WeightingInterface(metaclass=ABCMeta):
         :return: The losses aggregation. It should be a scalar Tensor.
         :rtype: torch.Tensor
         """
-        pass

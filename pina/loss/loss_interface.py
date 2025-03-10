@@ -18,8 +18,8 @@ class LossInterface(_Loss, metaclass=ABCMeta):
             will be applied, ``mean``: the sum of the output will be divided
             by the number of elements in the output, ``sum``: the output will
             be summed. Note: ``size_average`` and ``reduce`` are in the
-            process of being deprecated, and in the meantime, specifying either of
-            those two args will override ``reduction``. Default: ``mean``.
+            process of being deprecated, and in the meantime, specifying either
+            of those two args will override ``reduction``. Default: ``mean``.
         """
         super().__init__(reduction=reduction, size_average=None, reduce=None)
 
@@ -32,7 +32,6 @@ class LossInterface(_Loss, metaclass=ABCMeta):
         :return: Loss evaluation.
         :rtype: torch.Tensor
         """
-        pass
 
     def _reduction(self, loss):
         """Simple helper function to check reduction
@@ -42,8 +41,8 @@ class LossInterface(_Loss, metaclass=ABCMeta):
             will be applied, ``mean``: the sum of the output will be divided
             by the number of elements in the output, ``sum``: the output will
             be summed. Note: ``size_average`` and ``reduce`` are in the
-            process of being deprecated, and in the meantime, specifying either of
-            those two args will override ``reduction``. Default: ``mean``.
+            process of being deprecated, and in the meantime, specifying either
+            of those two args will override ``reduction``. Default: ``mean``.
         :type reduction: str
         :param loss: Loss tensor for each element.
         :type loss: torch.Tensor

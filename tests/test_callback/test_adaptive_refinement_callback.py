@@ -7,12 +7,13 @@ from pina.callback import R3Refinement
 
 # make the problem
 poisson_problem = Poisson()
-boundaries = ['g1', 'g2', 'g3', 'g4']
+boundaries = ["g1", "g2", "g3", "g4"]
 n = 10
-poisson_problem.discretise_domain(n, 'grid', domains=boundaries)
-poisson_problem.discretise_domain(n, 'grid', domains='D')
-model = FeedForward(len(poisson_problem.input_variables),
-                    len(poisson_problem.output_variables))
+poisson_problem.discretise_domain(n, "grid", domains=boundaries)
+poisson_problem.discretise_domain(n, "grid", domains="D")
+model = FeedForward(
+    len(poisson_problem.input_variables), len(poisson_problem.output_variables)
+)
 
 # make the solver
 solver = PINN(problem=poisson_problem, model=model)

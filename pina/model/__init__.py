@@ -1,3 +1,7 @@
+"""
+Module containing the neural network models.
+"""
+
 __all__ = [
     "FeedForward",
     "ResidualFeedForward",
