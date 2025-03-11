@@ -33,7 +33,8 @@ class InputEquationCondition(ConditionInterface):
         :rtype: InputTensorEquationCondition | InputGraphEquationCondition
 
         :raises ValueError: If input is not of type :class:`torch.Tensor`,
-            :class:`LabelTensor`, :class:`Graph`, or :class:`Data`.
+            :class:`LabelTensor`, :class:`Graph`, or 
+            :class:`torch_geometric.data.Data`.
         """
 
         # If the class is already a subclass, return the instance
@@ -59,16 +60,16 @@ class InputEquationCondition(ConditionInterface):
         """
         Initialize the InputEquationCondition by storing the input and equation.
 
-        :param input: torch.Tensor or Graph/Data object containing the input.
+        :param input: Input data for the condition.
         :type input: torch.Tensor | Graph
         :param EquationInterface equation: Equation object containing the
             equation function.
 
         .. note::
-            If ``input`` is composed by a list of :class:`Graph`/:class:`Data`
-            objects, all elements must have the same structure (keys and data
-            types). Moreover, at least one attribute must be a
-            :class:`LabelTensor`.
+            If ``input`` is composed by a list of :class:`Graph`/
+            :class:`torch_geometric.data.Data` objects, all elements must have 
+            the same structure (keys and data types). Moreover, at least one 
+            attribute must be a :class:`LabelTensor`.
         """
 
         super().__init__()
@@ -103,7 +104,7 @@ class InputGraphEquationCondition(InputEquationCondition):
         Check if at least one LabelTensor is present in the Graph object.
 
         :param input: Input data.
-        :type input: torch.Tensor or Graph or Data
+        :type input: torch.Tensor | Graph | torch_geometric.data.Data
 
         :raises ValueError: If the input data object does not contain at least
             one LabelTensor.
