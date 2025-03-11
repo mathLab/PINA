@@ -1,8 +1,5 @@
 """PINA Callbacks Implementations"""
 
-# To remove once Callbacks are implemented again.
-# pylint: disable=W0611
-# pylint: disable=C0114
 
 import importlib.metadata
 import torch
