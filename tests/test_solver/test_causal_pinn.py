@@ -28,12 +28,11 @@ class DummySpatialProblem(SpatialProblem):
     spatial_domain = None
 
 
-# define problems and model
+# define problems
 problem = DiffusionReactionProblem()
 problem.discretise_domain(50)
 inverse_problem = InverseDiffusionReactionProblem()
 inverse_problem.discretise_domain(50)
-model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 
 # add input-output condition to test supervised learning
 input_pts = torch.rand(50, len(problem.input_variables))
@@ -41,6 +40,9 @@ input_pts = LabelTensor(input_pts, problem.input_variables)
 output_pts = torch.rand(50, len(problem.output_variables))
 output_pts = LabelTensor(output_pts, problem.output_variables)
 problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
+
+# define model
+model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
