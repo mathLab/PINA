@@ -54,9 +54,9 @@ class InverseDiffusionReactionProblem(
     TimeDependentProblem, SpatialProblem, InverseProblem
 ):
     """
-    Implementation of the diffusion-reaction inverse problem on the spatial
-    interval [-pi, pi] and temporal interval [0,1], with unknown parameter
-    domain [-1,1].
+    Implementation of the diffusion-reaction inverse problem in the spatial
+    interval [-pi, pi] and temporal interval [0, 1], with unknown parameter
+    domain [-1, 1].
     """
 
     output_variables = ["u"]

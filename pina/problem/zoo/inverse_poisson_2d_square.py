@@ -39,8 +39,8 @@ output_data = torch.load(
 
 class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     """
-    Implementation of the inverse 2-dimensional Poisson problem
-    in a square domain, with unknown parameter domain [-1, 1] x [-1, 1].
+    Implementation of the inverse 2-dimensional Poisson problem in the square
+    domain [0, 1] x [0, 1], with unknown parameter domain [-1, 1] x [-1, 1].
     """
 
     output_variables = ["u"]

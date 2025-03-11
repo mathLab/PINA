@@ -52,8 +52,8 @@ def initial_condition(input_, output_):
 
 class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
     """
-    Implementation of the diffusion-reaction problem on the spatial interval
-    [-pi, pi] and temporal interval [0,1].
+    Implementation of the diffusion-reaction problem in the spatial interval
+    [-pi, pi] and temporal interval [0, 1].
     Reference: https://www.arxiv.org/pdf/2502.04917.
     """
 
