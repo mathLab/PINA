@@ -9,7 +9,7 @@ class SupervisedProblem(AbstractProblem):
     """
     Definition of a supervised learning problem in PINA.
 
-    This class provides a simple way to define a supervised problem 
+    This class provides a simple way to define a supervised problem
     using a single condition of type `InputTargetCondition`.
 
     :Example:
