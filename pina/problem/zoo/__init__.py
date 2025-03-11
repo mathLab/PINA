@@ -1,15 +1,15 @@
 """TODO"""
 
 __all__ = [
-    "Poisson2DSquareProblem",
     "SupervisedProblem",
-    "InversePoisson2DSquareProblem",
+    "Poisson2DSquareProblem",
     "DiffusionReactionProblem",
+    "InversePoisson2DSquareProblem",
     "InverseDiffusionReactionProblem",
 ]
 
-from .poisson_2d_square import Poisson2DSquareProblem
 from .supervised_problem import SupervisedProblem
-from .inverse_poisson_2d_square import InversePoisson2DSquareProblem
+from .poisson_2d_square import Poisson2DSquareProblem
 from .diffusion_reaction import DiffusionReactionProblem
+from .inverse_poisson_2d_square import InversePoisson2DSquareProblem
 from .inverse_diffusion_reaction import InverseDiffusionReactionProblem
