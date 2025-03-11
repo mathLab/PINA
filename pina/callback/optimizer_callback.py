@@ -44,7 +44,6 @@ class SwitchOptimizer(Callback):
         self._new_optimizers = new_optimizers
         self._epoch_switch = epoch_switch
 
-    # pylint: disable=W0212
     def on_train_epoch_start(self, trainer, __):
         """
         Callback function to switch optimizer at the start of each

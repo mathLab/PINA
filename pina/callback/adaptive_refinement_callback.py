@@ -1,6 +1,5 @@
 """PINA Callbacks Implementations"""
 
-
 import importlib.metadata
 import torch
 from lightning.pytorch.callbacks import Callback
