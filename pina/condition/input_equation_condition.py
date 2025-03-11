@@ -33,7 +33,7 @@ class InputEquationCondition(ConditionInterface):
         :rtype: InputTensorEquationCondition | InputGraphEquationCondition
 
         :raises ValueError: If input is not of type :class:`torch.Tensor`,
-            :class:`LabelTensor`, :class:`Graph`, or 
+            :class:`LabelTensor`, :class:`Graph`, or
             :class:`torch_geometric.data.Data`.
         """
 
@@ -67,8 +67,8 @@ class InputEquationCondition(ConditionInterface):
 
         .. note::
             If ``input`` is composed by a list of :class:`Graph`/
-            :class:`torch_geometric.data.Data` objects, all elements must have 
-            the same structure (keys and data types). Moreover, at least one 
+            :class:`torch_geometric.data.Data` objects, all elements must have
+            the same structure (keys and data types). Moreover, at least one
             attribute must be a :class:`LabelTensor`.
         """
 

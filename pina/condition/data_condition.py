@@ -26,7 +26,7 @@ class DataCondition(ConditionInterface):
         types of input data.
 
         :param input: Input data for the condition.
-        :type input: torch.Tensor | LabelTensor | Graph | \
+        :type input: torch.Tensor | LabelTensor | Graph |
             torch_geometric.data.Data
         :param conditional_variables: Conditional variables for the condition.
         :type conditional_variables: torch.Tensor | LabelTensor
