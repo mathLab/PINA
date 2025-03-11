@@ -1,5 +1,5 @@
 """
-Module for conditions.
+Module for importing Conditions objects.
 """
 
 __all__ = [

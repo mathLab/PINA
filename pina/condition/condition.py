@@ -1,4 +1,6 @@
-"""Condition module."""
+"""
+Condition module.
+"""
 
 import warnings
 from .data_condition import DataCondition
@@ -13,12 +15,11 @@ warnings.filterwarnings("always", category=DeprecationWarning)
 
 
 def warning_function(new, old):
-    """Handle the deprecation warning.
+    """
+    Handle the deprecation warning.
 
-    :param new: Object to use instead of the old one.
-    :type new: str
-    :param old: Object to deprecate.
-    :type old: str
+    :param str new: Object to use instead of the old one.
+    :param str old: Object to deprecate.
     """
     warnings.warn(
         f"'{old}' is deprecated and will be removed "
@@ -72,7 +73,6 @@ class Condition:
     ...     input=data,
     ...     conditional_variables=conditional_variables
     ... )
-
     """
 
     __slots__ = list(
@@ -85,7 +85,19 @@ class Condition:
     )
 
     def __new__(cls, *args, **kwargs):
+        """
+        Create a new condition object based on the keyword arguments passed.
+        - ``input`` and ``target``: :class:`InputTargetCondition`
+        - ``domain`` and ``equation``: :class:`DomainEquationCondition`
+        - ``input`` and ``equation``: :class:`InputEquationCondition`
+        - ``input``: :class:`DataCondition`
+        - ``input`` and ``conditional_variables``: :class:`DataCondition`
 
+        :raises ValueError: No valid condition has been found.
+        :return: A new condition instance belonging to the proper class.
+        :rtype: ConditionInputTarget | ConditionInputEquation |
+            ConditionDomainEquation | ConditionData
+        """
         if len(args) != 0:
             raise ValueError(
                 "Condition takes only the following keyword "
