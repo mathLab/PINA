@@ -36,7 +36,7 @@ def initial_condition(input_, output_):
     return output_ - u_0
 
 
-class AllenCahn(TimeDependentProblem, SpatialProblem):
+class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
     """
     Implementation of the Allen Cahn problem in the spatial interval
     [-1, 1] and temporal interval [0, 1].
