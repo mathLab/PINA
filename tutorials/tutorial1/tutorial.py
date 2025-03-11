@@ -261,13 +261,11 @@ plt.legend()
 
 # The solution is overlapped with the actual one, and they are barely indistinguishable. We can also take a look at the loss using `TensorBoard`:
 
-# In[10]:
+# In[ ]:
 
 
-# Load the TensorBoard extension
-get_ipython().run_line_magic('load_ext', 'tensorboard')
-# Show saved losses
-get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")
+print('\nTo load TensorBoard run load_ext tensorboard on your terminal')
+print("To visualize the loss you can run tensorboard --logdir 'tutorial_logs' on your terminal\n")
 
 
 # As we can see the loss has not reached a minimum, suggesting that we could train for longer! Alternatively, we can also take look at the loss using callbacks. Here we use `MetricTracker` from `pina.callback`:
