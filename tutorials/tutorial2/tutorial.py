@@ -311,12 +311,11 @@ trainer_learn.train()
 
 # Let us compare the training losses for the various types of training
 
-# In[10]:
+# In[ ]:
 
 
-# Load the TensorBoard extension
-get_ipython().run_line_magic('load_ext', 'tensorboard')
-get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")
+print('To load TensorBoard run load_ext tensorboard on your terminal')
+print("To visualize the loss you can run tensorboard --logdir 'tutorial_logs' on your terminal")
 
 
 # ## What's next?
