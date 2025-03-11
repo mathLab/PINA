@@ -20,9 +20,9 @@ class DomainEquationCondition(ConditionInterface):
         """
         Initialize the DomainEquationCondition, storing the domain and equation.
 
-        :param DomainInterface domain: Domain object containing the domain data
+        :param DomainInterface domain: Domain object containing the domain data.
         :param EquationInterface equation: Equation object containing the
-            equation data
+            equation data.
         """
         super().__init__()
         self.domain = domain

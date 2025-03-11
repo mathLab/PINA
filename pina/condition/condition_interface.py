@@ -21,17 +21,36 @@ class ConditionInterface(metaclass=ABCMeta):
         """
         Return the problem to which the condition is associated.
 
-        :return: Problem to which the condition is associated
+        :return: Problem to which the condition is associated.
         :rtype: pina.problem.AbstractProblem
         """
+
         return self._problem
 
     @problem.setter
     def problem(self, value):
+        """
+        Set the problem to which the condition is associated.
+
+        :param value: Problem to which the condition is associated.
+        :type value: pina.problem.AbstractProblem
+        """
+
         self._problem = value
 
     @staticmethod
     def _check_graph_list_consistency(data_list):
+        """
+        Check if the list of Data/Graph objects is consistent.
+
+        :param data_list: list of Data/Graph objects.
+        :type data_list: list(Data) | list(Graph)
+
+        :raises ValueError: Input data must be either Data or Graph objects.
+        :raises ValueError: All elements in the list must have the same keys.
+        :raises ValueError: Type mismatch in data tensors.
+        :raises ValueError: Label mismatch in LabelTensors.
+        """
 
         # If the data is a Graph or Data object, return (do not need to check
         # anything)
