@@ -17,9 +17,8 @@ class R3Refinement(Callback):
         This callback implements the R3 (Retain-Resample-Release) routine for
         sampling new points based on adaptive search.
         The algorithm incrementally accumulates collocation points in regions
-        of high PDE residuals, and releases those
-        with low residuals. Points are sampled uniformly in all regions
-        where sampling is needed.
+        of high PDE residuals, and releases those with low residuals.
+        Points are sampled uniformly in all regions where sampling is needed.
 
         .. seealso::
 
@@ -36,9 +35,9 @@ class R3Refinement(Callback):
             >>> r3_callback = R3Refinement(sample_every=5)
         """
         raise NotImplementedError(
-            "R3Refinement callbacks is being refactoring in the "
-            f"pina {importlib.metadata.metadata('pina-mathlab')['Verison']} "
-            "version. Please use version 0.1 if R3Refinement is needed."
+            "R3Refinement callback is being refactored in the pina "
+            f"{importlib.metadata.metadata('pina-mathlab')['Version']} "
+            "version. Please use version 0.1 if R3Refinement is required."
         )
 
     #     super().__init__()

@@ -13,15 +13,15 @@ class SwitchOptimizer(Callback):
 
     def __init__(self, new_optimizers, epoch_switch):
         """
-        This callback allows for switching between different optimizers during
+        This callback allows switching between different optimizers during
         training, enabling the exploration of multiple optimization strategies
-        without the need to stop training.
+        without interrupting the training process.
 
         :param new_optimizers: The model optimizers to switch to. Can be a
-            single :class:`torch.optim.Optimizer` or a list of them for multiple
-            model solver.
+            single :class:`torch.optim.Optimizer` instance or a list of them
+            for multiple model solver.
         :type new_optimizers: pina.optim.TorchOptimizer | list
-        :param epoch_switch: The epoch at which to switch to the new optimizer.
+        :param epoch_switch: The epoch at which the optimizer switch occurs.
         :type epoch_switch: int
 
         Example:
@@ -46,8 +46,7 @@ class SwitchOptimizer(Callback):
 
     def on_train_epoch_start(self, trainer, __):
         """
-        Callback function to switch optimizer at the start of each
-        training epoch.
+        Switch the optimizer at the start of the specified training epoch.
 
         :param trainer: The trainer object managing the training process.
         :type trainer: pytorch_lightning.Trainer

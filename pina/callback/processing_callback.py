@@ -17,7 +17,7 @@ class MetricTracker(Callback):
 
     def __init__(self, metrics_to_track=None):
         """
-        Tracks specific metrics during the training process.
+        Tracks specified metrics during training.
 
         :param metrics_to_track: List of metrics to track.
             Defaults to train loss.
@@ -87,8 +87,7 @@ class MetricTracker(Callback):
 
 class PINAProgressBar(TQDMProgressBar):
     """
-    PINA Implementation of a Lightning Callback for enriching the progress
-    bar.
+    PINA Implementation of a Lightning Callback for enriching the progress bar.
     """
 
     BAR_FORMAT = (
@@ -98,18 +97,16 @@ class PINAProgressBar(TQDMProgressBar):
 
     def __init__(self, metrics="val", **kwargs):
         """
-        This class provides functionality to display only relevant metrics
-        during the training process.
+        This class enables the display of only relevant metrics during training.
 
-        :param metrics: Logged metrics to display during the training. It should
-            be a subset of the conditions keys defined in
+        :param metrics: Logged metrics to be shown during the training.
+            Must be a subset of the conditions keys defined in
             :obj:`pina.condition.Condition`.
         :type metrics: str | list(str) | tuple(str)
 
         :Keyword Arguments:
-            The additional keyword arguments specify the progress bar
-            and can be choosen from the `pytorch-lightning
-            TQDMProgressBar API
+            The additional keyword arguments specify the progress bar and can be
+            choosen from the `pytorch-lightning TQDMProgressBar API
             <https://lightning.ai/docs/pytorch/stable/_modules/lightning/pytorch/callback/progress/tqdm_progress.html#TQDMProgressBar>`_
 
         Example:
@@ -125,9 +122,9 @@ class PINAProgressBar(TQDMProgressBar):
         self._sorted_metrics = metrics
 
     def get_metrics(self, trainer, pl_module):
-        r"""Combines progress bar metrics collected from the trainer with
+        r"""Combine progress bar metrics collected from the trainer with
         standard metrics from get_standard_metrics.
-        Implement this to override the items displayed in the progress bar.
+        Override this method to customize the items shown in the progress bar.
         The progress bar metrics are sorted according to ``metrics``.
 
         Here is an example of how to override the defaults:
@@ -142,7 +139,6 @@ class PINAProgressBar(TQDMProgressBar):
 
         :return: Dictionary with the items to be displayed in the progress bar.
         :rtype: tuple(dict)
-
         """
         standard_metrics = get_standard_metrics(trainer)
         pbar_metrics = trainer.progress_bar_metrics
@@ -156,8 +152,7 @@ class PINAProgressBar(TQDMProgressBar):
 
     def setup(self, trainer, pl_module, stage):
         """
-        Check that the metrics defined in the initialization are available,
-        i.e. are correctly logged.
+        Check that the initialized metrics are available and correctly logged.
 
         :param trainer: The trainer object managing the training process.
         :type trainer: pytorch_lightning.Trainer
