@@ -56,23 +56,23 @@ class Condition:
 
     Example::
 
-    >>> from pina import Condition
-    >>> condition = Condition(
-    ...     input=input,
-    ...     target=target
-    ... )
-    >>> condition = Condition(
-    ...     domain=location,
-    ...     equation=equation
-    ... )
-    >>> condition = Condition(
-    ...     input=input,
-    ...     equation=equation
-    ... )
-    >>> condition = Condition(
-    ...     input=data,
-    ...     conditional_variables=conditional_variables
-    ... )
+        >>> from pina import Condition
+        >>> condition = Condition(
+        ...     input=input,
+        ...     target=target
+        ... )
+        >>> condition = Condition(
+        ...     domain=location,
+        ...     equation=equation
+        ... )
+        >>> condition = Condition(
+        ...     input=input,
+        ...     equation=equation
+        ... )
+        >>> condition = Condition(
+        ...     input=data,
+        ...     conditional_variables=conditional_variables
+        ... )
     """
 
     __slots__ = list(
@@ -87,6 +87,7 @@ class Condition:
     def __new__(cls, *args, **kwargs):
         """
         Create a new condition object based on the keyword arguments passed.
+
         - ``input`` and ``target``: :class:`InputTargetCondition`
         - ``domain`` and ``equation``: :class:`DomainEquationCondition`
         - ``input`` and ``equation``: :class:`InputEquationCondition`
@@ -95,8 +96,8 @@ class Condition:
 
         :raises ValueError: No valid condition has been found.
         :return: A new condition instance belonging to the proper class.
-        :rtype: ConditionInputTarget | ConditionInputEquation |
-            ConditionDomainEquation | ConditionData
+        :rtype: InputTargetCondition | DomainEquationCondition |
+                InputEquationCondition | DataCondition
         """
         if len(args) != 0:
             raise ValueError(
