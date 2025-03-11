@@ -5,6 +5,7 @@ from ... import Condition
 from ...operator import grad
 from ...equation import Equation
 from ...domain import CartesianDomain
+from ...utils import check_consistency
 from ...problem import SpatialProblem, TimeDependentProblem
 
 
@@ -17,9 +18,11 @@ class AdvectionEquation(Equation):
         """
         Initialize the advection equation.
 
-        :param float c: The advection velocity parameter.
+        :param c: The advection velocity parameter.
+        :type c: float | int
         """
         self.c = c
+        check_consistency(self.c, (float, int))
 
         def equation(input_, output_):
             """
@@ -73,10 +76,14 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
         """
         Initialize the advection problem.
 
-        :param float c: The advection velocity parameter.
+        :param c: The advection velocity parameter.
+        :type c: float | int
         """
         super().__init__()
+
         self.c = c
+        check_consistency(self.c, (float, int))
+
         self.conditions["D"] = Condition(
             domain="D", equation=AdvectionEquation(self.c)
         )

@@ -2,10 +2,11 @@
 
 import torch
 from ... import Condition
-from ...problem import SpatialProblem
-from ...equation import Equation, FixedValue
-from ...domain import CartesianDomain
 from ...operator import laplacian
+from ...domain import CartesianDomain
+from ...problem import SpatialProblem
+from ...utils import check_consistency
+from ...equation import Equation, FixedValue
 
 
 class HelmholtzEquation(Equation):
@@ -17,9 +18,11 @@ class HelmholtzEquation(Equation):
         """
         Initialize the Helmholtz equation.
 
-        :param float alpha: Parameter of the forcing term.
+        :param alpha: Parameter of the forcing term.
+        :type alpha: float | int
         """
         self.alpha = alpha
+        check_consistency(alpha, (int, float))
 
         def equation(input_, output_):
             """
@@ -69,10 +72,14 @@ class HelmholtzProblem(SpatialProblem):
         """
         Initialize the Helmholtz problem.
 
-        :param float alpha: Parameter of the forcing term.
+        :param alpha: Parameter of the forcing term.
+        :type alpha: float | int
         """
         super().__init__()
+
         self.alpha = alpha
+        check_consistency(alpha, (int, float))
+
         self.conditions["D"] = Condition(
             domain="D", equation=HelmholtzEquation(self.alpha)
         )

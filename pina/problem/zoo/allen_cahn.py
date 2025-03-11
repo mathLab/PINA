@@ -2,9 +2,9 @@
 
 import torch
 from ... import Condition
-from ...operator import grad, laplacian
 from ...equation import Equation
 from ...domain import CartesianDomain
+from ...operator import grad, laplacian
 from ...problem import SpatialProblem, TimeDependentProblem
 
 
