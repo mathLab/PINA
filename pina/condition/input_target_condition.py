@@ -87,7 +87,7 @@ class InputTargetCondition(ConditionInterface):
 
         .. note::
             If either ``input`` or ``target`` are composed by a list of
-            :class:`Graph`/:class:`torch_geometric.data.Data` objects, all 
+            :class:`Graph`/:class:`torch_geometric.data.Data` objects, all
             elements must have the same structure (keys and data types)
         """
 
