@@ -1,5 +1,5 @@
 """
-Import data classes
+Module for data data module and dataset.
 """
 
 __all__ = ["PinaDataModule", "PinaDataset"]
