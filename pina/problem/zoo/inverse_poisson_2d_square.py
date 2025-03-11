@@ -27,19 +27,20 @@ def laplace_equation(input_, output_, params_):
 
 
 # Load data
-data_output = torch.load(
+input_data = torch.load(
+    f="../../../tutorials/tutorial7/data/pts_0.5_0.5", weights_only=False
+).extract(["x", "y"])
+
+output_data = torch.load(
     f="../../../tutorials/tutorial7/data/pinn_solution_0.5_0.5",
     weights_only=False,
 )
-data_input = torch.load(
-    f="../../../tutorials/tutorial7/data/pts_0.5_0.5", weights_only=False
-).extract(["x", "y"])
 
 
 class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     """
     Implementation of the inverse 2-dimensional Poisson problem
-    in a square domain, with parameter domain [-1, 1] x [-1, 1].
+    in a square domain, with unknown parameter domain [-1, 1] x [-1, 1].
     """
 
     output_variables = ["u"]
@@ -62,5 +63,5 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
         "g3": Condition(domain="g3", equation=FixedValue(0.0)),
         "g4": Condition(domain="g4", equation=FixedValue(0.0)),
         "D": Condition(domain="D", equation=Equation(laplace_equation)),
-        "data": Condition(input=data_input, target=data_output),
+        "data": Condition(input=input_data, target=output_data),
     }

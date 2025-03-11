@@ -36,10 +36,10 @@ class Poisson2DSquareProblem(SpatialProblem):
 
     domains = {
         "D": CartesianDomain({"x": [0, 1], "y": [0, 1]}),
-        "g1": CartesianDomain({"x": [0, 1], "y": 1}),
-        "g2": CartesianDomain({"x": [0, 1], "y": 0}),
-        "g3": CartesianDomain({"x": 1, "y": [0, 1]}),
-        "g4": CartesianDomain({"x": 0, "y": [0, 1]}),
+        "g1": CartesianDomain({"x": [0, 1], "y": 1.0}),
+        "g2": CartesianDomain({"x": [0, 1], "y": 0.0}),
+        "g3": CartesianDomain({"x": 1.0, "y": [0, 1]}),
+        "g4": CartesianDomain({"x": 0.0, "y": [0, 1]}),
     }
 
     conditions = {
