@@ -12,5 +12,5 @@ def test_constructor(alpha):
     assert hasattr(problem, "conditions")
     assert isinstance(problem.conditions, dict)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         HelmholtzProblem(alpha="a")
