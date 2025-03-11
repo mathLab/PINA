@@ -83,7 +83,7 @@ class InverseDiffusionReactionProblem(
         Initialization of the inverse diffusion-reaction problem.
         """
         super().__init__()
-        pts = self.spatial_domain.sample(100)
+        pts = self.domains["D"].sample(100)
         self.conditions["data"] = Condition(
             input=pts, target=self.solution(pts)
         )

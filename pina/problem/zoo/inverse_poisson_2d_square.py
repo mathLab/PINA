@@ -1,5 +1,6 @@
 """Formulation of the inverse Poisson problem in a square domain."""
 
+import os
 import torch
 from ... import Condition
 from ...operator import laplacian
@@ -26,14 +27,21 @@ def laplace_equation(input_, output_, params_):
     return delta_u - force_term
 
 
-# Load data
+# Absolute path to the data directory
+data_dir = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__), "../../../tutorials/tutorial7/data/"
+    )
+)
+
+# Load input data
 input_data = torch.load(
-    f="../../../tutorials/tutorial7/data/pts_0.5_0.5", weights_only=False
+    f=os.path.join(data_dir, "pts_0.5_0.5"), weights_only=False
 ).extract(["x", "y"])
 
+# Load output data
 output_data = torch.load(
-    f="../../../tutorials/tutorial7/data/pinn_solution_0.5_0.5",
-    weights_only=False,
+    f=os.path.join(data_dir, "pinn_solution_0.5_0.5"), weights_only=False
 )
 
 

@@ -5,7 +5,7 @@ from ... import Condition
 from ...problem import SpatialProblem
 from ...equation import Equation, FixedValue
 from ...domain import CartesianDomain
-from ...operators import laplacian
+from ...operator import laplacian
 
 
 class HelmholtzEquation(Equation):
