@@ -72,8 +72,8 @@ class InputTargetCondition(ConditionInterface):
 
         raise ValueError(
             "Invalid input/target types. "
-            "Please provide either torch_geometric.data.Data, Graph, LabelTensor "
-            "or torch.Tensor objects."
+            "Please provide either torch_geometric.data.Data, Graph, "
+            "LabelTensor or torch.Tensor objects."
         )
 
     def __init__(self, input, target):
