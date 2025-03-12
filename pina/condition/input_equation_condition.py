@@ -12,8 +12,8 @@ from ..equation.equation_interface import EquationInterface
 
 class InputEquationCondition(ConditionInterface):
     """
-    Condition for input/equation data. This condition must be used every
-    time a Physics Informed Loss is needed in the Solver.
+    Condition defined by input data and an equation. This condition can be
+    used in a Physics Informed problems.
     """
 
     __slots__ = ["input", "equation"]
@@ -22,10 +22,10 @@ class InputEquationCondition(ConditionInterface):
 
     def __new__(cls, input, equation):
         """
-        Instantiate the appropriate subclass of InputEquationCondition based on
-        the type of input data.
+        Instantiate the appropriate subclass of :class:`InputEquationCondition`
+        based on the type of `input`.
 
-        :param input: Input data. It can be a LabelTensor or a Graph object.
+        :param input: Input data for the condition.
         :type input: LabelTensor | Graph |  list[Graph] | tuple[Graph]
         :param EquationInterface equation: Equation object containing the
             equation function.
