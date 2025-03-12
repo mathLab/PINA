@@ -8,14 +8,14 @@ from .utils import check_consistency
 
 class Collector:
     """
-    Collector class for retrieving data from different conditions in the 
+    Collector class for retrieving data from different conditions in the
     problem.
     """
 
     def __init__(self, problem):
         """
         Initialize the Collector class, by creating a hook between the collector
-        and the problem and initializing the data collections (dictionary where 
+        and the problem and initializing the data collections (dictionary where
         data will be stored).
 
         :param AbstractProblem problem: The problem to collect data from.
@@ -114,7 +114,7 @@ class Collector:
         Store inside data collections the sampled data of the problem. These
         comes from the conditions that require sampling.
         """
-        
+
         for condition_name in self.problem.conditions:
             condition = self.problem.conditions[condition_name]
             if not hasattr(condition, "domain"):
