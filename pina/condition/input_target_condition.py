@@ -85,13 +85,13 @@ class InputTargetCondition(ConditionInterface):
         Initialize the InputTargetCondition, storing the input and target data.
 
         :param input: Input data for the condition.
-        :type input: torch.Tensor | LabelTensor | Graph | 
-            torch_geometric.data.Data | list[Graph] | 
+        :type input: torch.Tensor | LabelTensor | Graph |
+            torch_geometric.data.Data | list[Graph] |
             list[torch_geometric.data.Data] | tuple[Graph] |
             tuple[torch_geometric.data.Data]
         :param target: Target data for the condition.
-        :type target: torch.Tensor | LabelTensor | Graph | 
-            torch_geometric.data.Data | list[Graph] | 
+        :type target: torch.Tensor | LabelTensor | Graph |
+            torch_geometric.data.Data | list[Graph] |
             list[torch_geometric.data.Data] | tuple[Graph] |
             tuple[torch_geometric.data.Data]
 
