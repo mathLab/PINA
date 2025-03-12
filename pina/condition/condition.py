@@ -89,15 +89,15 @@ class Condition:
         Create a new condition object based on the keyword arguments passed.
 
         - `input` and `target`:
-            :class:`pina.condition.input_target_condition.InputTargetCondition`
+            :class:`~pina.condition.input_target_condition.InputTargetCondition`
         - `domain` and `equation`:
-            :class:`pina.condition.domain_equation_condition.
+            :class:`~pina.condition.domain_equation_condition.
             DomainEquationCondition`
-        - `input` and `equation`: :class:`pina.condition.
+        - `input` and `equation`: :class:`~pina.condition.
             input_equation_condition.InputEquationCondition`
-        - `input`: :class:`pina.condition.data_condition.DataCondition`
+        - `input`: :class:`~pina.condition.data_condition.DataCondition`
         - `input` and `conditional_variables`:
-            :class:`pina.condition.data_condition.DataCondition`
+            :class:`~pina.condition.data_condition.DataCondition`
 
         :raises ValueError: No valid condition has been found.
         :return: A new condition instance belonging to the proper class.

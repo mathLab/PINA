@@ -35,7 +35,7 @@ class InputEquationCondition(ConditionInterface):
             pina.condition.input_equation_condition.InputGraphEquationCondition
 
         :raises ValueError: If input is not of type
-            :class:`pina.label_tensor.LabelTensor`, :class:`pina.graph.Graph`.
+            :class:`~pina.label_tensor.LabelTensor`, :class:`~pina.graph.Graph`.
         """
 
         # If the class is already a subclass, return the instance
@@ -62,15 +62,16 @@ class InputEquationCondition(ConditionInterface):
         Initialize the InputEquationCondition by storing the input and equation.
 
         :param input: Input data for the condition.
-        :type input: LabelTensor | Graph |  list[Graph] | tuple[Graph]
+        :type input: pina.label_tensor.LabelTensor | pina.graph.Graph |  
+            list[pina.graph.Graph] | tuple[pina.graph.Graph]
         :param EquationInterface equation: Equation object containing the
             equation function.
 
         .. note::
-            If `input` is composed by a list of :class:`pina.graph.Graph`
+            If `input` is composed by a list of :class:`~pina.graph.Graph`
             objects, all elements must have the same structure (keys and data
             types). Moreover, at least one attribute must be a
-            :class:`pina.label_tensor.LabelTensor`.
+            :class:`~pina.label_tensor.LabelTensor`.
         """
 
         super().__init__()
@@ -90,21 +91,21 @@ class InputEquationCondition(ConditionInterface):
 
 class InputTensorEquationCondition(InputEquationCondition):
     """
-    InputEquationCondition subclass for :class:`pina.label_tensor.LabelTensor`
+    InputEquationCondition subclass for :class:`~pina.label_tensor.LabelTensor`
     input data.
     """
 
 
 class InputGraphEquationCondition(InputEquationCondition):
     """
-    InputEquationCondition subclass for :class:`pina.graph.Graph` input data.
+    InputEquationCondition subclass for :class:`~pina.graph.Graph` input data.
     """
 
     @staticmethod
     def _check_label_tensor(input):
         """
-        Check if at least one :class:`pina.label_tensor.LabelTensor` is present
-        in the :class:`pina.graph.Graph` object.
+        Check if at least one :class:`~pina.label_tensor.LabelTensor` is present
+        in the :class:`~pina.graph.Graph` object.
 
         :param input: Input data.
         :type input: torch.Tensor | Graph | Data
