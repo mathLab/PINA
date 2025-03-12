@@ -29,7 +29,7 @@ We encourage all contributions, big or small!
 
 ## Reporting Bugs
 
-If you find a bug, please open an [issue](https://github.com/your-username/PINA/issues) and include:
+If you find a bug, please open an [issue](https://github.com/mathLab/PINA/issues) and include:
 - A clear and descriptive title
 - Steps to reproduce the problem
 - What you expected to happen
@@ -47,7 +47,7 @@ We welcome new ideas! If you have an idea to improve PINA:
    - The enhancement you'd like
    - Why it would be useful
    - Any ideas on how to implement it (optional but helpful)
-3. If you are not sure about (something of) the enhancement, we suggest to open a discussion to confront on that with the PINA community
+3. If you are not sure about (something of) the enhancement, we suggest to open a discussion to collaborate on it with the PINA community
 
 ---
 
@@ -56,7 +56,7 @@ We welcome new ideas! If you have an idea to improve PINA:
 Before submitting a PR:
 
 1. Ensure there’s an open issue related to your contribution (or create one).
-2. [Fork](https://help.github.com/articles/fork-a-repo) the repository and create a new branch from `main`:
+2. [Fork](https://help.github.com/articles/fork-a-repo) the repository and create a new branch from `master`:
    ```bash
    git checkout -b feature/my-feature
     ```
