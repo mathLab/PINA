@@ -37,11 +37,10 @@ class Collector:
     @property
     def full(self):
         """
-        Whether all conditions are ready to be passed to the data module.
-        The collector is said to be full is all conditions have some entries
-        in data_collection dict.
-        
-        :return: True if all conditions are ready.
+        Returns True if the collector is full. The collector is considered full
+        if all conditions have entries in the data_collection dictionary.
+
+        :return: True if all conditions are ready, False otherwise.
         :rtype: bool
         """
 
@@ -50,17 +49,18 @@ class Collector:
     @full.setter
     def full(self, value):
         """
-        Set the full flag.
+        Set the full variable.
 
         :param bool value: The value to set the full property to.
         """
+
         check_consistency(value, bool)
         self._full = value
 
     @property
     def data_collections(self):
         """
-        Return the data collections.
+        Return the data collections (dictionary where data is stored). 
 
         :return: The data collections where the data is stored.
         :rtype: dict
@@ -116,7 +116,8 @@ class Collector:
     def store_sample_domains(self):
         """
         Store inside data collections the sampled data of the problem. These
-        comes from the conditions that require sampling.
+        comes from the conditions that require sampling (e.g. 
+        DomainEquationCondition).
         """
 
         for condition_name in self.problem.conditions:
