@@ -20,8 +20,8 @@ class Graph(Data):
         **kwargs,
     ):
         """
-        Create a new instance of the :class:`~pina.graph.Graph` class by checking
-        the consistency of the input data and storing the attributes.
+        Create a new instance of the :class:`~pina.graph.Graph` class by
+        checking the consistency of the input data and storing the attributes.
 
         :param kwargs: Parameters used to initialize the
             :class:`~pina.graph.Graph` object.
@@ -339,8 +339,8 @@ class KNNGraph(GraphBuilder):
 
     def __new__(cls, pos, neighbours, **kwargs):
         """
-        Extends the :class:`~pina.graph.GraphBuilder` class to compute edge_index
-        based on a K-nearest neighbors algorithm.
+        Extends the :class:`~pina.graph.GraphBuilder` class to compute
+        edge_index based on a K-nearest neighbors algorithm.
 
         :param pos: A tensor of shape (N, D) representing the positions of N
             points in D-dimensional space.
