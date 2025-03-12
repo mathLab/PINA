@@ -1,0 +1,78 @@
+name: "Export tutorials"
+
+on:
+  push:
+    branches:
+      - "**"  # Run on push on all branches
+    # paths:
+    #   - 'tutorials/**/*.ipynb'
+
+jobs:
+  export_tutorials:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    env:
+      TUTORIAL_TIMEOUT: 1200s
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        # Dependencies for tutorials
+        python3 -m pip install --upgrade pip .[tutorial] black[jupyter]
+
+    - name: Setup FFmpeg
+      uses: FedericoCarboni/setup-ffmpeg@v2
+        
+    - id: files
+      uses: jitterbit/get-changed-files@v1
+      continue-on-error: true
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        format: space-delimited
+
+    - name: Configure git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+    - name: Export tutorials to .py and RST
+      run: |
+        set -x
+        for file in ${{ steps.files.outputs.all }}; do
+          if [[ $file == *.ipynb ]]; then
+            filename=$(basename $file)
+
+            pyfilename=$(echo ${filename%?????})py
+            timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to python --output $pyfilename
+
+            rstfilename=$(echo ${filename%?????} | sed -e 's/-//g')rst
+            output_dir="docs/source/_rst/_tutorials"
+            timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to rst --output $rstfilename --output-dir=$output_dir/$(dirname $file | sed 's|tutorials/||')
+          fi
+        done
+        set +x
+        
+    - name: Run formatter
+      run: black tutorials/
+    
+    - uses: benjlevesque/short-sha@v2.1
+      id: short-sha
+
+    - name: Remove unwanted files
+      run: |
+        rm -rf build/
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5.0.2
+      with:
+        labels: maintenance
+        title: Export tutorial changed in ${{ steps.short-sha.outputs.sha }}
+        branch: export-tutorial-${{ steps.short-sha.outputs.sha }}
+        commit-message: export tutorials changed in ${{ steps.short-sha.outputs.sha }}
+        delete-branch: true

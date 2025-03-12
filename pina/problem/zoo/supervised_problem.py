@@ -24,7 +24,9 @@ class SupervisedProblem(AbstractProblem):
     output_variables = None
     input_variables = None
 
-    def __init__(self, input_, output_, input_variables=None, output_variables=None):
+    def __init__(
+        self, input_, output_, input_variables=None, output_variables=None
+    ):
         """
         Initialize the SupervisedProblem class.
 
