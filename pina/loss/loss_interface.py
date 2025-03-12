@@ -1,4 +1,4 @@
-"""Module for Loss Interface"""
+"""Module for the Loss Interface"""
 
 from abc import ABCMeta, abstractmethod
 from torch.nn.modules.loss import _Loss
@@ -7,45 +7,37 @@ import torch
 
 class LossInterface(_Loss, metaclass=ABCMeta):
     """
-    The abstract ``LossInterface`` class. All the class defining a PINA Loss
-    should be inheritied from this class.
+    Abstract base class for all losses. All classes defining a loss function
+    should inherit from this interface.
     """
 
     def __init__(self, reduction="mean"):
         """
-        :param str reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction
-            will be applied, ``mean``: the sum of the output will be divided
-            by the number of elements in the output, ``sum``: the output will
-            be summed. Note: ``size_average`` and ``reduce`` are in the
-            process of being deprecated, and in the meantime, specifying either
-            of those two args will override ``reduction``. Default: ``mean``.
+        Initialization of the :class:`LossInterface` class.
+
+        :param str reduction: The reduction method for the loss.
+            Available options: ``none``, ``mean``, ``sum``.
+            If ``none``, no reduction is applied. If ``mean``, the sum of the
+            loss values is divided by the number of values. If ``sum``, the loss
+            values are summed. Default is ``mean``.
         """
         super().__init__(reduction=reduction, size_average=None, reduce=None)
 
     @abstractmethod
     def forward(self, input, target):
-        """Forward method for loss function.
+        """
+        Forward method of the loss function.
 
         :param torch.Tensor input: Input tensor from real data.
         :param torch.Tensor target: Model tensor output.
-        :return: Loss evaluation.
-        :rtype: torch.Tensor
         """
 
     def _reduction(self, loss):
-        """Simple helper function to check reduction
+        """
+        Apply the reduction to the loss.
 
-        :param reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``. When ``none``: no reduction
-            will be applied, ``mean``: the sum of the output will be divided
-            by the number of elements in the output, ``sum``: the output will
-            be summed. Note: ``size_average`` and ``reduce`` are in the
-            process of being deprecated, and in the meantime, specifying either
-            of those two args will override ``reduction``. Default: ``mean``.
-        :type reduction: str
-        :param loss: Loss tensor for each element.
-        :type loss: torch.Tensor
+        :param torch.Tensor loss: The tensor containing the pointwise losses.
+        :raises ValueError: If the reduction method is not valid.
         :return: Reduced loss.
         :rtype: torch.Tensor
         """

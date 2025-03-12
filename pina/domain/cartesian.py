@@ -270,7 +270,8 @@ class CartesianDomain(DomainInterface):
         :param LabelTensor point: Point to be checked.
         :param bool check_border: If ``True``, the border is considered inside
             the hypercube. Default is ``False``.
-        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the domain,
+            ``False`` otherwise.
         :rtype: bool
         """
         is_inside = []

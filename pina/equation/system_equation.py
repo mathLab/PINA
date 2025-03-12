@@ -53,7 +53,8 @@ class SystemEquation(EquationInterface):
         aggregate it according to the ``reduction`` specified in the
         ``__init__`` method.
 
-        :param LabelTensor input_: Input points where each equation is evaluated.
+        :param LabelTensor input_: Input points where each equation of the
+            system is evaluated.
         :param LabelTensor output_: Output tensor, eventually produced by a
             :class:`~torch.nn.Module` instance.
         :param dict params_: Dictionary of unknown parameters, associated with a

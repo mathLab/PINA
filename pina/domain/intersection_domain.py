@@ -24,8 +24,8 @@ class Intersection(OperationInterface):
         Initialization of the :class:`Intersection` class.
 
         :param list[DomainInterface] geometries: A list of instances of the
-            :class:`~pina.domain.DomainInterface` class on which the intersection
-            operation is performed.
+            :class:`~pina.domain.DomainInterface` class on which the
+            intersection operation is performed.
 
         :Example:
             >>> # Create two ellipsoid domains
@@ -43,7 +43,8 @@ class Intersection(OperationInterface):
         :param LabelTensor point: Point to be checked.
         :param bool check_border: If ``True``, the border is considered inside
             the domain. Default is ``False``.
-        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the domain,
+            ``False`` otherwise.
         :rtype: bool
         """
         flag = 0

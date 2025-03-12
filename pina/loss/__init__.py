@@ -1,6 +1,4 @@
-"""
-Module for loss functions and weighting functions.
-"""
+"""Module for loss functions and weighting functions."""
 
 __all__ = [
     "LossInterface",
