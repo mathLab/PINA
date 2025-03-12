@@ -8,13 +8,15 @@ from .utils import check_consistency
 
 class Collector:
     """
-    Collector class for collecting data from the problem.
+    Collector class for retrieving data from different conditions in the 
+    problem.
     """
 
     def __init__(self, problem):
-        """ "
+        """
         Initialize the Collector class, by creating a hook between the collector
-        and the problem and initializing the data collections.
+        and the problem and initializing the data collections (dictionary where 
+        data will be stored).
 
         :param AbstractProblem problem: The problem to collect data from.
         """
@@ -34,7 +36,10 @@ class Collector:
     @property
     def full(self):
         """
-        Return True if all conditions are ready.
+        Whether all conditions are ready or not.
+
+        :return: True if all conditions are ready.
+        :rtype: bool
         """
 
         return all(self._is_conditions_ready.values())
@@ -42,7 +47,7 @@ class Collector:
     @full.setter
     def full(self, value):
         """
-        Set the full property of the collector. Admit only boolean values.
+        Check the consistency of the value and set the full property.
 
         :param bool value: The value to set the full property to.
         """
@@ -52,10 +57,9 @@ class Collector:
     @property
     def data_collections(self):
         """
-        Return the data collections, created by combining together all condition
-        in the problem.
+        Return the data collections.
 
-        :return: The data collections.
+        :return: The data collections where the data is stored.
         :rtype: dict
         """
 
@@ -64,9 +68,9 @@ class Collector:
     @property
     def problem(self):
         """
-        Property that return the problem connected to the collector.
+        Problem connected to the collector.
 
-        :return: The problem connected to the collector.
+        :return: The problem from which the data is collected.
         :rtype: AbstractProblem
         """
         return self._problem
@@ -74,10 +78,9 @@ class Collector:
     @problem.setter
     def problem(self, value):
         """
-        Return the problem connected to the collector.
+        Ser the problem connected to the collector.
 
-        return: The problem connected to the collector.
-        rtype: AbstractProblem
+        :param AbstractProblem value: The problem to connect to the collector.
         """
 
         self._problem = value
@@ -111,6 +114,7 @@ class Collector:
         Store inside data collections the sampled data of the problem. These
         comes from the conditions that require sampling.
         """
+        
         for condition_name in self.problem.conditions:
             condition = self.problem.conditions[condition_name]
             if not hasattr(condition, "domain"):
