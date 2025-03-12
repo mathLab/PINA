@@ -62,7 +62,7 @@ class InputEquationCondition(ConditionInterface):
         Initialize the InputEquationCondition by storing the input and equation.
 
         :param input: Input data for the condition.
-        :type input: pina.label_tensor.LabelTensor | pina.graph.Graph |  
+        :type input: pina.label_tensor.LabelTensor | pina.graph.Graph |
             list[pina.graph.Graph] | tuple[pina.graph.Graph]
         :param EquationInterface equation: Equation object containing the
             equation function.
