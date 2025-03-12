@@ -32,8 +32,8 @@ class ConditionInterface(metaclass=ABCMeta):
         """
         Set the problem to which the condition is associated.
 
-        :param value: Problem to which the condition is associated.
-        :type value: pina.problem.AbstractProblem
+        :param pina.problem.AbstractProblem value: Problem to which the
+        condition is associated.
         """
 
         self._problem = value

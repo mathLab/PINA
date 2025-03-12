@@ -25,23 +25,26 @@ class InputTargetCondition(ConditionInterface):
         the types of input and target data.
 
         :param input: Input data for the condition.
-        :type input: torch.Tensor | LabelTensor | Graph | 
-            torch_geometric.data.Data | list[Graph] | 
+        :type input: torch.Tensor | LabelTensor | Graph |
+            torch_geometric.data.Data | list[Graph] |
             list[torch_geometric.data.Data] | tuple[Graph] |
             tuple[torch_geometric.data.Data]
         :param target: Target data for the condition.
-        :type target: torch.Tensor | LabelTensor | Graph | 
-            torch_geometric.data.Data | list[Graph] | 
+        :type target: torch.Tensor | LabelTensor | Graph |
+            torch_geometric.data.Data | list[Graph] |
             list[torch_geometric.data.Data] | tuple[Graph] |
             tuple[torch_geometric.data.Data]
         :return: Subclass of InputTargetCondition
-        :rtype: TensorInputTensorTargetCondition | \
-            TensorInputGraphTargetCondition | \
-            GraphInputTensorTargetCondition | \
-            GraphInputGraphTargetCondition
+        :rtype: pina.condition.input_target_condition.
+            TensorInputTensorTargetCondition |
+            pina.condition.input_target_condition.
+            TensorInputGraphTargetCondition |
+            pina.condition.input_target_condition.
+            GraphInputTensorTargetCondition |
+            pina.condition.input_target_condition.GraphInputGraphTargetCondition
 
         :raises ValueError: If input and or target are not of type
-            :class:`torch.Tensor`, :class:`pina.label_tensor.LabelTensor`, 
+            :class:`torch.Tensor`, :class:`pina.label_tensor.LabelTensor`,
             :class:`pina.graph.Graph`, or :class:`~torch_geometric.data.Data`.
         """
         if cls != InputTargetCondition:
