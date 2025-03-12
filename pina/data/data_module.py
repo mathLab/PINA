@@ -17,7 +17,7 @@ from ..collector import Collector
 
 class DummyDataloader:
     """
-    Dataloader used when batch size is ``None``. It returns the entire dataset
+    Dataloader used when batch size is `None`. It returns the entire dataset
     in a single batch.
     """
 
@@ -38,7 +38,7 @@ class DummyDataloader:
         :param dataset: The dataset object to be processed.
         :type dataset: PinaDataset
 
-        .. note:: This data loader is used when the batch size is ``None``.
+        .. note:: This data loader is used when the batch size is `None`.
         """
 
         if (
@@ -157,7 +157,7 @@ class Collator:
     def _collate_tensor_dataset(data_list):
         """
         Function used to collate the data when the dataset is a
-        :class:`PinaTensorDataset`.
+        :class:`pina.data.dataset.PinaTensorDataset`.
 
         :param data_list: Elements to be collated.
         :type data_list: list[torch.Tensor] | list[LabelTensor]
@@ -165,7 +165,7 @@ class Collator:
         :rtype: dict
 
         :raises RuntimeError: If the data is not a :class:`torch.Tensor` or a
-            :class:`LabelTensor`.
+            :class:`pina.label_tensor.LabelTensor`.
         """
 
         if isinstance(data_list[0], LabelTensor):
@@ -177,15 +177,15 @@ class Collator:
     def _collate_graph_dataset(self, data_list):
         """
         Function used to collate the data when the dataset is a
-        :class:`PinaGraphDataset`.
+        :class:`pina.data.dataset.PinaGraphDataset`.
 
         :param data_list: Elememts to be collated.
-        :type data_list: list[torch_geometric.data.Data] | list[Graph]
+        :type data_list: list[Data] | list[Graph]
         :return: Batch of data.
         :rtype: dict
 
         :raises RuntimeError: If the data is not a
-            :class:`torch_geometric.data.Data` or a :class:`Graph`.
+            :class:`~torch_geometric.data.Data` or a :class:`pina.graph.Graph`.
         """
 
         if isinstance(data_list[0], LabelTensor):
@@ -248,7 +248,7 @@ class PinaSampler:
 
 class PinaDataModule(LightningDataModule):
     """
-    This class extends :class:`pytorch_lightning.LightningDataModule`,
+    This class extends :class:`lightning.pytorch.LightningDataModule`,
     allowing proper creation and management of different types of datasets
     defined in PINA.
     """
@@ -536,8 +536,7 @@ class PinaDataModule(LightningDataModule):
         """
         Define the maximum length of the conditions.
 
-        :param split:  The splits of the dataset.
-        :type split: dict
+        :param dict split:  The splits of the dataset.
         :return: The maximum length of the conditions.
         :rtype: dict
         """
@@ -559,7 +558,7 @@ class PinaDataModule(LightningDataModule):
         Create the validation dataloader.
 
         :return: The validation dataloader
-        :rtype: DataLoader
+        :rtype: torch.utils.data.DataLoader
         """
         return self._create_dataloader("val", self.val_dataset)
 
@@ -568,7 +567,7 @@ class PinaDataModule(LightningDataModule):
         Create the training dataloader
 
         :return: The training dataloader
-        :rtype: DataLoader
+        :rtype: torch.utils.data.DataLoader
         """
         return self._create_dataloader("train", self.train_dataset)
 
@@ -577,7 +576,7 @@ class PinaDataModule(LightningDataModule):
         Create the testing dataloader
 
         :return: The testing dataloader
-        :rtype: DataLoader
+        :rtype: torch.utils.data.DataLoader
         """
         return self._create_dataloader("test", self.test_dataset)
 
