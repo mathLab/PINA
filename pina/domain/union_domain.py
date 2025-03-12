@@ -1,4 +1,4 @@
-"""Module for Union class."""
+"""Module for the Union Operation."""
 
 import random
 import torch
@@ -7,51 +7,51 @@ from ..label_tensor import LabelTensor
 
 
 class Union(OperationInterface):
-    """
-    Union of Domains.
+    r"""
+    Implementation of the union operation between of a list of domains.
+
+    Given two sets :math:`A` and :math:`B`, define the union of the two sets as:
+
+    .. math::
+        A \cup B = \{x \mid x \in A \lor x \in B\},
+
+    where :math:`x` is a point in :math:`\mathbb{R}^N`.
     """
 
     def __init__(self, geometries):
-        r"""
-        PINA implementation of Unions of Domains.
-        Given two sets :math:`A` and :math:`B` then the
-        domain difference is defined as:
+        """
+        Initialization of the :class:`Union` class.
 
-        .. math::
-            A \cup B = \{x \mid x \in A \lor x \in B\},
-
-        with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
-        the dimension of the geometry space.
-
-        :param list geometries: A list of geometries from ``pina.geometry``
-            such as ``EllipsoidDomain`` or ``CartesianDomain``.
+        :param list[DomainInterface] geometries: A list of instances of the
+            :class:`~pina.domain.DomainInterface` class on which the union
+            operation is performed.
 
         :Example:
             >>> # Create two ellipsoid domains
             >>> ellipsoid1 = EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1]})
             >>> ellipsoid2 = EllipsoidDomain({'x': [0, 2], 'y': [0, 2]})
-            >>> # Create a union of the ellipsoid domains
-            >>> union = GeometryUnion([ellipsoid1, ellipsoid2])
-
+            >>> # Define the union of the domains
+            >>> union = Union([ellipsoid1, ellipsoid2])
         """
         super().__init__(geometries)
 
     @property
     def sample_modes(self):
+        """
+        List of available sampling modes.
+        """
         self.sample_modes = list(
             set(geom.sample_modes for geom in self.geometries)
         )
 
     def is_inside(self, point, check_border=False):
         """
-        Check if a point is inside the ``Union`` domain.
+        Check if a point is inside the resulting domain.
 
-        :param point: Point to be checked.
-        :type point: LabelTensor
-        :param check_border: Check if the point is also on the frontier
-            of the ellipsoid, default ``False``.
-        :type check_border: bool
-        :return: Returning ``True`` if the point is inside, ``False`` otherwise.
+        :param LabelTensor point: Point to be checked.
+        :param bool check_border: If ``True``, the border is considered inside
+            the domain. Default is ``False``.
+        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
         :rtype: bool
         """
         for geometry in self.geometries:
@@ -61,21 +61,20 @@ class Union(OperationInterface):
 
     def sample(self, n, mode="random", variables="all"):
         """
-        Sample routine for ``Union`` domain.
+        Sampling routine.
 
-        :param int n: Number of points to sample in the shape.
-        :param str mode: Mode for sampling, defaults to ``random``. Available
-            modes include: ``random``.
-        :param variables: Variables to be sampled, defaults to ``all``.
-        :type variables: str | list[str]
-        :return: Returns ``LabelTensor`` of n sampled points.
+        :param int n: Number of points to sample.
+        :param str mode: Sampling method. Default is ``random``.
+            Available modes: random sampling, ``random``;
+        :param list[str] variables: variables to be sampled. Default is ``all``.
+        :return: Sampled points.
         :rtype: LabelTensor
 
         :Example:
-            >>> # Create two ellipsoid domains
+            >>> # Create two cartesian domains
             >>> cartesian1 = CartesianDomain({'x': [0, 2], 'y': [0, 2]})
             >>> cartesian2 = CartesianDomain({'x': [1, 3], 'y': [1, 3]})
-            >>> # Create a union of the ellipsoid domains
+            >>> # Define the union of the domains
             >>> union = Union([cartesian1, cartesian2])
             >>> # Sample
             >>> union.sample(n=5)

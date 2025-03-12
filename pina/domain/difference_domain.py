@@ -1,4 +1,4 @@
-"""Module for Difference class."""
+"""Module for the Difference Operation."""
 
 import torch
 from .operation_interface import OperationInterface
@@ -6,45 +6,46 @@ from ..label_tensor import LabelTensor
 
 
 class Difference(OperationInterface):
-    """
-    PINA implementation of Difference of Domains.
+    r"""
+    Implementation of the difference operation between of a list of domains.
+
+    Given two sets :math:`A` and :math:`B`, define the difference of the two
+    sets as:
+
+    .. math::
+        A - B = \{x \mid x \in A \land x \not\in B\},
+
+    where :math:`x` is a point in :math:`\mathbb{R}^N`.
     """
 
     def __init__(self, geometries):
-        r"""
-        Given two sets :math:`A` and :math:`B` then the
-        domain difference is defined as:
+        """
+        Initialization of the :class:`Difference` class.
 
-        .. math::
-            A - B = \{x \mid x \in A \land x \not\in B\},
-
-        with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
-        the dimension of the geometry space.
-
-        :param list geometries: A list of geometries from ``pina.geometry``
-            such as ``EllipsoidDomain`` or ``CartesianDomain``. The first
-            geometry in the list is the geometry from which points are
-            sampled. The rest of the geometries are the geometries that
-            are excluded from the first geometry to find the difference.
+        :param list[DomainInterface] geometries: A list of instances of the
+            :class:`~pina.domain.DomainInterface` class on which the difference
+            operation is performed. The first domain in the list serves as the
+            base from which points are sampled, while the remaining domains
+            define the regions to be excluded from the base domain to compute
+            the difference.
 
         :Example:
             >>> # Create two ellipsoid domains
             >>> ellipsoid1 = EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1]})
             >>> ellipsoid2 = EllipsoidDomain({'x': [0, 2], 'y': [0, 2]})
-            >>> # Create a Difference of the ellipsoid domains
+            >>> # Define the difference between the domains
             >>> difference = Difference([ellipsoid1, ellipsoid2])
         """
         super().__init__(geometries)
 
     def is_inside(self, point, check_border=False):
         """
-        Check if a point is inside the ``Difference`` domain.
+        Check if a point is inside the resulting domain.
 
-        :param point: Point to be checked.
-        :type point: torch.Tensor
-        :param bool check_border: If ``True``, the border is considered inside.
-        :return: ``True`` if the point is inside the Exclusion domain,
-            ``False`` otherwise.
+        :param LabelTensor point: Point to be checked.
+        :param bool check_border: If ``True``, the border is considered inside
+            the domain. Default is ``False``.
+        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
         :rtype: bool
         """
         for geometry in self.geometries[1:]:
@@ -54,21 +55,21 @@ class Difference(OperationInterface):
 
     def sample(self, n, mode="random", variables="all"):
         """
-        Sample routine for ``Difference`` domain.
+        Sampling routine.
 
-        :param int n: Number of points to sample in the shape.
-        :param str mode: Mode for sampling, defaults to ``random``. Available
-            modes include: ``random``.
-        :param variables: Variables to be sampled, defaults to ``all``.
-        :type variables: str | list[str]
-        :return: Returns ``LabelTensor`` of n sampled points.
+        :param int n: Number of points to sample.
+        :param str mode: Sampling method. Default is ``random``.
+            Available modes: random sampling, ``random``;
+        :param list[str] variables: variables to be sampled. Default is ``all``.
+        :raises NotImplementedError: If the sampling method is not implemented.
+        :return: Sampled points.
         :rtype: LabelTensor
 
         :Example:
             >>> # Create two Cartesian domains
             >>> cartesian1 = CartesianDomain({'x': [0, 2], 'y': [0, 2]})
             >>> cartesian2 = CartesianDomain({'x': [1, 3], 'y': [1, 3]})
-            >>> # Create a Difference of the ellipsoid domains
+            >>> # Define the difference between the domains
             >>> difference = Difference([cartesian1, cartesian2])
             >>> # Sampling
             >>> difference.sample(n=5)

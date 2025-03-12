@@ -1,4 +1,4 @@
-"""Module for Exclusion class."""
+"""Module for the Exclusion Operation."""
 
 import random
 import torch
@@ -7,43 +7,44 @@ from .operation_interface import OperationInterface
 
 
 class Exclusion(OperationInterface):
-    """
-    PINA implementation of Exclusion of Domains.
+    r"""
+    Implementation of the exclusion operation between of a list of domains.
+
+    Given two sets :math:`A` and :math:`B`, define the exclusion of the two
+    sets as:
+
+    .. math::
+        A \setminus B = \{x \mid x \in A \land x \in B \land
+        x \not\in(A \lor B)\},
+
+    where :math:`x` is a point in :math:`\mathbb{R}^N`.
     """
 
     def __init__(self, geometries):
-        r"""
-        Given two sets :math:`A` and :math:`B` then the
-        domain difference is defined as:
+        """
+        Initialization of the :class:`Exclusion` class.
 
-        .. math::
-            A \setminus B = \{x \mid x \in A \land x \in B \land
-            x \not\in(A \lor B)\},
-
-        with :math:`x` a point in :math:`\mathbb{R}^N` and :math:`N`
-        the dimension of the geometry space.
-
-        :param list geometries: A list of geometries from ``pina.geometry``
-            such as ``EllipsoidDomain`` or ``CartesianDomain``.
+        :param list[DomainInterface] geometries: A list of instances of the
+            :class:`~pina.domain.DomainInterface` class on which the exclusion
+            operation is performed.
 
         :Example:
             >>> # Create two ellipsoid domains
             >>> ellipsoid1 = EllipsoidDomain({'x': [-1, 1], 'y': [-1, 1]})
             >>> ellipsoid2 = EllipsoidDomain({'x': [0, 2], 'y': [0, 2]})
-            >>> # Create a Exclusion of the ellipsoid domains
+            >>> # Define the exclusion between the domains
             >>> exclusion = Exclusion([ellipsoid1, ellipsoid2])
         """
         super().__init__(geometries)
 
     def is_inside(self, point, check_border=False):
         """
-        Check if a point is inside the ``Exclusion`` domain.
+        Check if a point is inside the resulting domain.
 
-        :param point: Point to be checked.
-        :type point: torch.Tensor
-        :param bool check_border: If ``True``, the border is considered inside.
-        :return: ``True`` if the point is inside the Exclusion domain,
-            ``False`` otherwise.
+        :param LabelTensor point: Point to be checked.
+        :param bool check_border: If ``True``, the border is considered inside
+            the domain. Default is ``False``.
+        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
         :rtype: bool
         """
         flag = 0
@@ -54,21 +55,21 @@ class Exclusion(OperationInterface):
 
     def sample(self, n, mode="random", variables="all"):
         """
-        Sample routine for ``Exclusion`` domain.
+        Sampling routine.
 
-        :param int n: Number of points to sample in the shape.
-        :param str mode: Mode for sampling, defaults to ``random``. Available
-            modes include: ``random``.
-        :param variables: Variables to be sampled, defaults to ``all``.
-        :type variables: str | list[str]
-        :return: Returns ``LabelTensor`` of n sampled points.
+        :param int n: Number of points to sample.
+        :param str mode: Sampling method. Default is ``random``.
+            Available modes: random sampling, ``random``;
+        :param list[str] variables: variables to be sampled. Default is ``all``.
+        :raises NotImplementedError: If the sampling method is not implemented.
+        :return: Sampled points.
         :rtype: LabelTensor
 
         :Example:
             >>> # Create two Cartesian domains
             >>> cartesian1 = CartesianDomain({'x': [0, 2], 'y': [0, 2]})
             >>> cartesian2 = CartesianDomain({'x': [1, 3], 'y': [1, 3]})
-            >>> # Create a Exclusion of the ellipsoid domains
+            >>> # Define the exclusion between the domains
             >>> Exclusion = Exclusion([cartesian1, cartesian2])
             >>> # Sample
             >>> Exclusion.sample(n=5)
@@ -79,7 +80,6 @@ class Exclusion(OperationInterface):
                             [0.1978, 0.3526]])
             >>> len(Exclusion.sample(n=5)
                 5
-
         """
         if mode not in self.sample_modes:
             raise NotImplementedError(

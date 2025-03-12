@@ -1,6 +1,4 @@
-"""
-This module contains the domain classes.
-"""
+"""Modules to create and handle domains."""
 
 __all__ = [
     "DomainInterface",

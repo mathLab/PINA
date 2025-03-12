@@ -1,4 +1,4 @@
-"""Module for CartesianDomain class."""
+"""Module for the Cartesian Domain."""
 
 import torch
 
@@ -14,12 +14,12 @@ class CartesianDomain(DomainInterface):
 
     def __init__(self, cartesian_dict):
         """
-        Initialize the :class:`~pina.domain.CartesianDomain` class.
+        Initialization of the :class:`CartesianDomain` class.
 
-        :param dict cartesian_dict: A dictionary where the keys are the 
-            variable names and the values are the domain extrema. The domain 
-            extrema can be either a list with two elements or a single number. 
-            If the domain extrema is a single number, the variable is fixed to 
+        :param dict cartesian_dict: A dictionary where the keys are the
+            variable names and the values are the domain extrema. The domain
+            extrema can be either a list with two elements or a single number.
+            If the domain extrema is a single number, the variable is fixed to
             that value.
 
         :Example:
@@ -58,11 +58,10 @@ class CartesianDomain(DomainInterface):
 
     def update(self, new_domain):
         """
-        Add new dimensions to an existing :class:`~pina.domain.CartesianDomain` 
-        object.
+        Add new dimensions to an existing :class:`CartesianDomain` object.
 
-        :param :class:`~pina.domain.CartesianDomain` new_domain: New domain to 
-            be added to an existing :class:`~pina.domain.CartesianDomain` object.
+        :param CartesianDomain new_domain: New domain to be added to an existing
+            :class:`CartesianDomain` object.
 
         :Example:
             >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
@@ -111,26 +110,25 @@ class CartesianDomain(DomainInterface):
 
         :param int n: Number of points to sample, see Note below for reference.
         :param str mode: Sampling method. Default is ``random``.
-            Available modes: random sampling, ``random``; 
-            latin hypercube sampling, ``latin`` or ``lh``; 
+            Available modes: random sampling, ``random``;
+            latin hypercube sampling, ``latin`` or ``lh``;
             chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
-        :param variables: variables to be sampled. Default is ``all``.
-        :type variables: str | list[str]
+        :param list[str] variables: variables to be sampled. Default is ``all``.
         :return: Sampled points.
         :rtype: LabelTensor
 
         .. note::
-            When multiple variables are involved, the total number of sampled 
-            points may differ from ``n``, depending on the chosen ``mode``. 
-            If ``mode`` is ``grid`` or ``chebyshev``, points are sampled 
-            independently for each variable and then combined, resulting in a 
-            total number of points equal to ``n`` raised to the power of the 
-            number of variables. If 'mode' is 'random', ``lh`` or ``latin``, 
-            all variables are sampled together, and the total number of points 
+            When multiple variables are involved, the total number of sampled
+            points may differ from ``n``, depending on the chosen ``mode``.
+            If ``mode`` is ``grid`` or ``chebyshev``, points are sampled
+            independently for each variable and then combined, resulting in a
+            total number of points equal to ``n`` raised to the power of the
+            number of variables. If 'mode' is 'random', ``lh`` or ``latin``,
+            all variables are sampled together, and the total number of points
             remains ``n``.
 
         .. warning::
-            The extrema of CartesianDomain are only sampled when using the 
+            The extrema of CartesianDomain are only sampled when using the
             ``grid`` mode.
 
         :Example:
@@ -165,8 +163,7 @@ class CartesianDomain(DomainInterface):
 
             :param int n: Number of points to sample.
             :param str mode: Sampling method.
-            :param variables: variables to be sampled.
-            :type variables: str | list[str]
+            :param list[str] variables: variables to be sampled.
             :return: Sampled points.
             :rtype: list[LabelTensor]
             """
@@ -203,8 +200,7 @@ class CartesianDomain(DomainInterface):
 
             :param int n: Number of points to sample.
             :param str mode: Sampling method.
-            :param variables: variables to be sampled.
-            :type variables: str | list[str]
+            :param list[str] variables: variables to be sampled.
             :return: Sampled points.
             :rtype: list[LabelTensor]
             """
@@ -232,8 +228,7 @@ class CartesianDomain(DomainInterface):
             Sample a single point in one dimension.
 
             :param int n: Number of points to sample.
-            :param variables: variables to be sampled.
-            :type variables: str | list[str]
+            :param list[str] variables: variables to be sampled.
             :return: Sampled points.
             :rtype: list[torch.Tensor]
             """
@@ -273,8 +268,8 @@ class CartesianDomain(DomainInterface):
         Check if a point is inside the hypercube.
 
         :param LabelTensor point: Point to be checked.
-        :param bool check_border: Determines whether to check if the point lies 
-            on the boundary of the hypercube. Default is ``False``.
+        :param bool check_border: If ``True``, the border is considered inside
+            the hypercube. Default is ``False``.
         :return: ``True`` if the point is inside the domain, ``False`` otherwise.
         :rtype: bool
         """
