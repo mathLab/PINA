@@ -194,11 +194,12 @@ trainer.train()
 
 # Let's now plot the logging to see how the losses vary during training. For this, we will use `TensorBoard`.
 
-# In[ ]:
+# In[5]:
 
 
-print('\nTo load TensorBoard run load_ext tensorboard on your terminal')
-print("To visualize the loss you can run tensorboard --logdir 'tutorial_logs' on your terminal\n")
+# Load the TensorBoard extension
+get_ipython().run_line_magic('load_ext', 'tensorboard')
+get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")
 
 
 # Notice that the loss on the boundaries of the spatial domain is exactly zero, as expected! After the training is completed one can now plot some results using the `matplotlib`. We plot the predicted output on the left side, the true solution at the center and the difference on the right side using the `plot_solution` function.
@@ -334,12 +335,12 @@ plt.figure(figsize=(12, 6))
 plot_solution(solver=pinn, time=1)
 
 
-# We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem. We can also see how the two losses decreased using Tensorboard.
+# We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem. We can also see using Tensorboard how the two losses decreased:
 
-# In[ ]:
+# In[11]:
 
 
-print("To visualize the loss you can run tensorboard --logdir 'tutorial_logs' on your terminal")
+get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")
 
 
 # ## What's next?
