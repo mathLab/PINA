@@ -9,7 +9,7 @@
 # 
 # First of all, some useful imports.
 
-# In[12]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -23,7 +23,6 @@ if IN_COLAB:
   
 import torch
 
-import matplotlib.pylab as plt
 from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.operator import laplacian, grad
 from pina.domain import CartesianDomain
@@ -31,7 +30,7 @@ from pina.solver import PINN
 from pina.trainer import Trainer
 from pina.equation import Equation
 from pina.equation.equation_factory import FixedValue
-from pina import Condition, LabelTensor
+from pina import Condition
 
 
 # ## The problem definition 
@@ -50,7 +49,7 @@ from pina import Condition, LabelTensor
 
 # Now, the wave problem is written in PINA code as a class, inheriting from `SpatialProblem` and `TimeDependentProblem` since we deal with spatial, and time dependent variables. The equations are written as `conditions` that should be satisfied in the corresponding domains. `truth_solution` is the exact solution which will be compared with the predicted one.
 
-# In[13]:
+# In[2]:
 
 
 class Wave(TimeDependentProblem, SpatialProblem):
@@ -96,7 +95,7 @@ problem = Wave()
 # 
 # where $NN$ is the neural net output. This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unknown field $u$. By construction, it is zero on the boundaries. The residuals of the equations are evaluated at several sampling points (which the user can manipulate using the method `discretise_domain`) and the loss minimized by the neural network is the sum of the residuals.
 
-# In[14]:
+# In[3]:
 
 
 class HardMLP(torch.nn.Module):
@@ -120,7 +119,7 @@ class HardMLP(torch.nn.Module):
 
 # In this tutorial, the neural network is trained for 1000 epochs with a learning rate of 0.001 (default in `PINN`). Training takes approximately 3 minutes.
 
-# In[15]:
+# In[4]:
 
 
 # generate the data
@@ -136,88 +135,22 @@ trainer.train()
 
 # Notice that the loss on the boundaries of the spatial domain is exactly zero, as expected! After the training is completed one can now plot some results using the `Plotter` class of **PINA**.
 
-# In[16]:
+# In[5]:
 
 
 #plotter = Plotter()
 
 # plotting at fixed time t = 0.0
-print('Plotting at t=0')
+#print('Plotting at t=0')
 #plotter.plot(pinn, fixed_variables={'t': 0.0})
-fixed_variables={'t': 0.0}
-method='contourf'
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
+
 # plotting at fixed time t = 0.5
-print('Plotting at t=0.5')
+#print('Plotting at t=0.5')
 #plotter.plot(pinn, fixed_variables={'t': 0.5})
-fixed_variables={'t': 0.5}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
+
 # plotting at fixed time t = 1.
-print('Plotting at t=1')
+#print('Plotting at t=1')
 #plotter.plot(pinn, fixed_variables={'t': 1.0})
-fixed_variables={'t': 1.0}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
 
 
 # The results are not so great, and we can clearly see that as time progress the solution gets worse.... Can we do better?
@@ -228,7 +161,7 @@ ax[2].title.set_text('Residual')
 # 
 # Let us build the network first
 
-# In[17]:
+# In[6]:
 
 
 class HardMLPtime(torch.nn.Module):
@@ -251,7 +184,7 @@ class HardMLPtime(torch.nn.Module):
 
 # Now let's train with the same configuration as thre previous test
 
-# In[18]:
+# In[7]:
 
 
 # generate the data
@@ -267,88 +200,22 @@ trainer.train()
 
 # We can clearly see that the loss is way lower now. Let's plot the results
 
-# In[19]:
+# In[8]:
 
 
 #plotter = Plotter()
 
 # plotting at fixed time t = 0.0
-print('Plotting at t=0')
+#print('Plotting at t=0')
 #plotter.plot(pinn, fixed_variables={'t': 0.0})
-fixed_variables={'t': 0.0}
-method='contourf'
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
+
 # plotting at fixed time t = 0.5
-print('Plotting at t=0.5')
+#print('Plotting at t=0.5')
 #plotter.plot(pinn, fixed_variables={'t': 0.5})
-fixed_variables={'t': 0.5}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
+
 # plotting at fixed time t = 1.
-print('Plotting at t=1')
+#print('Plotting at t=1')
 #plotter.plot(pinn, fixed_variables={'t': 1.0})
-fixed_variables={'t': 1.0}
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables=['x','y'])
-fixed_pts = torch.ones(pts.shape[0], len(fixed_variables))
-fixed_pts *= torch.tensor(list(fixed_variables.values()))
-fixed_pts = fixed_pts.as_subclass(LabelTensor)
-fixed_pts.labels = list(fixed_variables.keys())
-pts = pts.append(fixed_pts)
-pts = pts.to(device=pinn.device)
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach().reshape(256,256)
-true_output = pinn.problem.truth_solution(pts).cpu().detach().reshape(256,256)
-pts = pts.cpu()
-grids = [p_.reshape(256, 256) for p_ in pts.extract(['x','y']).T]
-fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(16, 6))
-cb = getattr(ax[0], method)(*grids, predicted_output)
-fig.colorbar(cb, ax=ax[0])
-ax[0].title.set_text('Neural Network prediction')
-cb = getattr(ax[1], method)(*grids, true_output)
-fig.colorbar(cb, ax=ax[1])
-ax[1].title.set_text('True solution')
-cb = getattr(ax[2],method)(*grids,(true_output - predicted_output))
-fig.colorbar(cb, ax=ax[2])
-ax[2].title.set_text('Residual')
 
 
 # We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem.

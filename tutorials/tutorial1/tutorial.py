@@ -89,7 +89,7 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 # 
 # Once the `Problem` class is initialized, we need to represent the differential equation in **PINA**. In order to do this, we need to load the **PINA** operators from `pina.operators` module. Again, we'll consider Equation (1) and represent it in **PINA**:
 
-# In[2]:
+# In[ ]:
 
 
 from pina.problem import SpatialProblem
@@ -167,7 +167,7 @@ problem.discretise_domain(n=20, mode='random')
 
 
 # sampling for training
-problem.discretise_domain(1, 'random', domains=['x0']) # TODO check
+problem.discretise_domain(20, 'random', domains=['x0']) # TODO check
 problem.discretise_domain(20, 'lh', domains=['D'])
 
 
@@ -180,32 +180,28 @@ print('Input points:', problem.discretised_domains)
 print('Input points labels:', problem.discretised_domains['D'].labels)
 
 
-# To visualize the sampled points we can use `matplotlib.pyplot`:
+# To visualize the sampled points we can use the `.plot_samples` method of the `Plotter` class
 
 # In[6]:
 
 
-import matplotlib.pyplot as plt
-variables=problem.spatial_variables
-fig = plt.figure()
-proj = "3d" if len(variables) == 3 else None
-ax = fig.add_subplot(projection=proj)
-for location in problem.input_pts:
-    coords = problem.input_pts[location].extract(variables).T.detach()
-    ax.plot(coords.flatten(),torch.zeros(coords.flatten().shape),".",label=location)
+#from pina import Plotter
+
+#pl = Plotter()
+#pl.plot_samples(problem=problem)
 
 
 # ## Perform a small training
 
-# Once we have defined the problem and generated the data we can start the modelling. Here we will choose a `FeedForward` neural network available in `pina.model`, and we will train using the `PINN` solver from `pina.solver`. We highlight that this training is fairly simple, for more advanced stuff consider the tutorials in the ***Physics Informed Neural Networks*** section of ***Tutorials***. For training we use the `Trainer` class from `pina.trainer`. Here we show a very short training and some method for plotting the results. Notice that by default all relevant metrics (e.g. MSE error during training) are going to be tracked using a `lightning` logger, by default `CSVLogger`. If you want to track the metric by yourself without a logger, use `pina.callbacks.MetricTracker`.
+# Once we have defined the problem and generated the data we can start the modelling. Here we will choose a `FeedForward` neural network available in `pina.model`, and we will train using the `PINN` solver from `pina.solvers`. We highlight that this training is fairly simple, for more advanced stuff consider the tutorials in the ***Physics Informed Neural Networks*** section of ***Tutorials***. For training we use the `Trainer` class from `pina.trainer`. Here we show a very short training and some method for plotting the results. Notice that by default all relevant metrics (e.g. MSE error during training) are going to be tracked using a `lightining` logger, by default `CSVLogger`. If you want to track the metric by yourself without a logger, use `pina.callbacks.MetricTracker`.
 
 # In[7]:
 
 
 from pina import Trainer
-from pina.solver import PINN
+from pina.solvers import PINN
 from pina.model import FeedForward
-from pina.callback import MetricTracker
+from pina.callbacks import MetricTracker
 
 
 # build the model
@@ -233,22 +229,15 @@ trainer.train()
 
 # inspecting final loss
 trainer.logged_metrics
-print(type(problem.truth_solution))
 
 
-# By using `matplotlib` we can also do some qualitative plots of the solution. 
+# By using the `Plotter` class from **PINA** we can also do some quatitative plots of the solution. 
 
 # In[9]:
 
 
-pts = pinn.problem.spatial_domain.sample(256, 'grid', variables='x')
-predicted_output = pinn.forward(pts).extract('u').as_subclass(torch.Tensor).cpu().detach()
-true_output = pinn.problem.truth_solution(pts).cpu().detach()
-pts = pts.cpu()
-fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
-ax.plot(pts.extract(['x']), predicted_output, label='Neural Network solution')
-ax.plot(pts.extract(['x']), true_output, label='True solution')
-plt.legend()
+# plotting the solution
+#pl.plot(solver=pinn)
 
 
 # The solution is overlapped with the actual one, and they are barely indistinguishable. We can also plot easily the loss:
@@ -256,20 +245,7 @@ plt.legend()
 # In[10]:
 
 
-list_ = [
-            idx for idx, s in enumerate(trainer.callbacks)
-            if isinstance(s, MetricTracker)
-        ]
-print(list_[0])
-trainer_metrics = trainer.callbacks[list_[0]].metrics
-
-loss = trainer_metrics['val_loss']
-epochs = range(len(loss))
-plt.plot(epochs, loss.cpu())
-# plotting
-plt.xlabel('epoch')
-plt.ylabel('loss')
-plt.yscale('log')
+#pl.plot_loss(trainer=trainer, label = 'mean_loss', logy=True)
 
 
 # As we can see the loss has not reached a minimum, suggesting that we could train for longer
