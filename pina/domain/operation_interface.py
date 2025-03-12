@@ -70,7 +70,8 @@ class OperationInterface(DomainInterface, metaclass=ABCMeta):
         :param LabelTensor point: Point to be checked.
         :param bool check_border: If ``True``, the border is considered inside
             the resulting domain. Default is ``False``.
-        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the domain,
+            ``False`` otherwise.
         :rtype: bool
         """
 

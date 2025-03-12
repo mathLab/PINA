@@ -18,7 +18,7 @@ class EllipsoidDomain(DomainInterface):
         :param dict ellipsoid_dict: A dictionary where the keys are the variable
             names and the values are the domain extrema.
         :param bool sample_surface: A flag to choose the sampling strategy.
-            If ``True``, samples are taken only from the surface of the ellipsoid.
+            If ``True``, samples are taken from the surface of the ellipsoid.
             If ``False``, samples are taken from the interior of the ellipsoid.
             Default is ``False``.
         :raises TypeError: If the input dictionary is not correctly formatted.
@@ -26,7 +26,8 @@ class EllipsoidDomain(DomainInterface):
         .. warning::
             Sampling for dimensions greater or equal to 10 could result in a
             shrinkage of the ellipsoid, which degrades the quality of the
-            samples. For dimensions higher than 10, use other sampling algorithms.
+            samples. For dimensions higher than 10, use other sampling
+            algorithms.
             .. seealso::
                 **Original reference**: Dezert, Jean, and Musso, Christian.
                 *An efficient method for generating points uniformly distributed
@@ -101,7 +102,8 @@ class EllipsoidDomain(DomainInterface):
             the ellipsoid. Default is ``False``.
         :raises ValueError: If the labels of the point are different from those
             passed in the ``__init__`` method.
-        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the domain,
+            ``False`` otherwise.
         :rtype: bool
 
         .. note::
@@ -147,7 +149,6 @@ class EllipsoidDomain(DomainInterface):
         return bool(eqn < 0)
 
     def _sample_range(self, n, mode, variables):
-        """"""
         """
         Rescale the samples to fit within the specified bounds.
 
