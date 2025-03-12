@@ -1,11 +1,15 @@
 """
-Module for operator vectorize implementation. Differential operator are used to
-write any differential problem. These operator are implemented to work on
-different accellerators: CPU, GPU, TPU or MPS. All operator take as input a
-tensor onto which computing the operator, a tensor with respect to which
-computing the operator, the name of the output variables to calculate the
-operator for (in case of multidimensional functions), and the variables name
-on which the operator is calculated.
+Module for vectorized differential operators implementation.
+
+Differential operators are used to define differential problems and are
+implemented to run efficiently on various accelerators, including CPU, GPU, TPU,
+and MPS.
+
+Each differential operator takes the following inputs:
+- A tensor on which the operator is applied.
+- A tensor with respect to which the operator is computed.
+- The names of the output variables for which the operator is evaluated.
+- The names of the variables with respect to which the operator is computed.
 """
 
 import torch
@@ -14,39 +18,44 @@ from pina.label_tensor import LabelTensor
 
 def grad(output_, input_, components=None, d=None):
     """
-    Perform gradient operation. The operator works for vectorial and scalar
-    functions, with multiple input coordinates.
+    Compute the gradient of the ``output_`` with respect to the ``input``.
 
-    :param LabelTensor output_: the output tensor onto which computing the
-        gradient.
-    :param LabelTensor input_: the input tensor with respect to which computing
-        the gradient.
-    :param list(str) components: the name of the output variables to calculate
-        the gradient for. It should be a subset of the output labels. If None,
-        all the output variables are considered. Default is None.
-    :param list(str) d: the name of the input variables on which the gradient is
-        calculated. d should be a subset of the input labels. If None, all the
-        input variables are considered. Default is None.
+    This operator supports both vector-valued and scalar-valued functions with
+    one or multiple input coordinates.
 
-    :return: the gradient tensor.
+    :param LabelTensor output_: The output tensor on which the gradient is
+        computed.
+    :param LabelTensor input_: The input tensor with respect to which the
+        gradient is computed.
+    :param list[str] components: The names of the output variables for which to
+        compute the gradient. It must be a subset of the output labels.
+        If ``None``, all output variables are considered. Default is ``None``.
+    :param list[str] d: The names of the input variables with respect to which
+        the gradient is computed. It must be a subset of the input labels.
+        If ``None``, all input variables are considered. Default is ``None``.
+    :raises TypeError: If the input tensor is not a LabelTensor.
+    :raises RuntimeError: If the output is a scalar field and the components
+        are not equal to the output labels.
+    :raises NotImplementedError: If the output is neither a vector field nor a
+        scalar field.
+    :return: The computed gradient tensor.
     :rtype: LabelTensor
     """
 
     def grad_scalar_output(output_, input_, d):
         """
-        Perform gradient operation for a scalar output.
+        Compute the gradient of a scalar-valued ``output_``.
 
-        :param LabelTensor output_: the output tensor onto which computing the
-            gradient. It has to be a column tensor.
-        :param LabelTensor input_: the input tensor with respect to which
-            computing the gradient.
-        :param list(str) d: the name of the input variables on which the
-            gradient is calculated. d should be a subset of the input labels. If
-            None, all the input variables are considered. Default is None.
-
-        :raises RuntimeError: a vectorial function is passed.
-        :raises RuntimeError: missing derivative labels.
-        :return: the gradient tensor.
+        :param LabelTensor output_: The output tensor on which the gradient is
+            computed. It must be a column tensor.
+        :param LabelTensor input_: The input tensor with respect to which the
+            gradient is computed.
+        :param list[str] d: The names of the input variables with respect to
+            which the gradient is computed. It must be a subset of the input
+            labels. If ``None``, all input variables are considered.
+        :raises RuntimeError: If a vectorial function is passed.
+        :raises RuntimeError: If missing derivative labels.
+        :return: The computed gradient tensor.
         :rtype: LabelTensor
         """
 
@@ -102,25 +111,26 @@ def grad(output_, input_, components=None, d=None):
 
 def div(output_, input_, components=None, d=None):
     """
-    Perform divergence operation. The operator works for vectorial functions,
-    with multiple input coordinates.
+    Compute the divergence of the ``output_`` with respect to ``input``.
 
-    :param LabelTensor output_: the output tensor onto which computing the
-        divergence.
-    :param LabelTensor input_: the input tensor with respect to which computing
-        the divergence.
-    :param list(str) components: the name of the output variables to calculate
-        the divergence for. It should be a subset of the output labels. If None,
-        all the output variables are considered. Default is None.
-    :param list(str) d: the name of the input variables on which the divergence
-        is calculated. d should be a subset of the input labels. If None, all
-        the input variables are considered. Default is None.
+    This operator supports vector-valued functions with multiple input
+    coordinates.
 
-    :raises TypeError: div operator works only for LabelTensor.
-    :raises ValueError: div operator works only for vector fields.
-    :raises ValueError: div operator must derive all components with
-        respect to all coordinates.
-    :return: the divergenge tensor.
+    :param LabelTensor output_: The output tensor on which the divergence is
+        computed.
+    :param LabelTensor input_: The input tensor with respect to which the
+        divergence is computed.
+    :param list[str] components: The names of the output variables for which to
+        compute the divergence. It must be a subset of the output labels.
+        If ``None``, all output variables are considered. Default is ``None``.
+    :param list[str] d: The names of the input variables with respect to which
+        the divergence is computed. It must be a subset of the input labels.
+        If ``None``, all input variables are considered. Default is ``None``.
+    :raises TypeError: If the input tensor is not a LabelTensor.
+    :raises ValueError: If the output is a scalar field.
+    :raises ValueError: If the number of components is not equal to the number
+        of input variables.
+    :return: The computed divergence tensor.
     :rtype: LabelTensor
     """
     if not isinstance(input_, LabelTensor):
@@ -151,42 +161,43 @@ def div(output_, input_, components=None, d=None):
 
 def laplacian(output_, input_, components=None, d=None, method="std"):
     """
-    Compute Laplace operator. The operator works for vectorial and
-    scalar functions, with multiple input coordinates.
+    Compute the laplacian of the ``output_`` with respect to ``input``.
 
-    :param LabelTensor output_: the output tensor onto which computing the
-        Laplacian.
-    :param LabelTensor input_: the input tensor with respect to which computing
-        the Laplacian.
-    :param list(str) components: the name of the output variables to calculate
-        the Laplacian for. It should be a subset of the output labels. If None,
-        all the output variables are considered. Default is None.
-    :param list(str) d: the name of the input variables on which the Laplacian
-        is calculated. d should be a subset of the input labels. If None, all
-        the input variables are considered. Default is None.
-    :param str method: used method to calculate Laplacian, defaults to 'std'.
+    This operator supports both vector-valued and scalar-valued functions with
+    one or multiple input coordinates.
 
-    :raises NotImplementedError: 'divgrad' not implemented as method.
-    :return: The tensor containing the result of the Laplacian operator.
+    :param LabelTensor output_: The output tensor on which the laplacian is
+        computed.
+    :param LabelTensor input_: The input tensor with respect to which the
+        laplacian is computed.
+    :param list[str] components: The names of the output variables for which to
+        compute the laplacian. It must be a subset of the output labels.
+        If ``None``, all output variables are considered. Default is ``None``.
+    :param list[str] d: The names of the input variables with respect to which
+        the laplacian is computed. It must be a subset of the input labels.
+        If ``None``, all input variables are considered. Default is ``None``.
+    :param str method: The method used to compute the Laplacian. Default is
+        ``std``.
+    :raises NotImplementedError: If ``std=divgrad``.
+    :return: The computed laplacian tensor.
     :rtype: LabelTensor
     """
 
     def scalar_laplace(output_, input_, components, d):
         """
-        Compute Laplace operator for a scalar output.
+        Compute the laplacian of a scalar-valued ``output_``.
 
-        :param LabelTensor output_: the output tensor onto which computing the
-            Laplacian. It has to be a column tensor.
-        :param LabelTensor input_: the input tensor with respect to which
-            computing the Laplacian.
-        :param list(str) components: the name of the output variables to
-            calculate the Laplacian for. It should be a subset of the output
-            labels. If None, all the output variables are considered.
-        :param list(str) d: the name of the input variables on which the
-            Laplacian is computed. d should be a subset of the input labels.
-            If None, all the input variables are considered. Default is None.
-
-        :return: The tensor containing the result of the Laplacian operator.
+        :param LabelTensor output_: The output tensor on which the laplacian is
+            computed. It must be a column tensor.
+        :param LabelTensor input_: The input tensor with respect to which the
+            laplacian is computed.
+        :param list[str] components: The names of the output variables for which
+            to compute the laplacian. It must be a subset of the output labels.
+            If ``None``, all output variables are considered.
+        :param list[str] d: The names of the input variables with respect to
+            which the laplacian is computed. It must be a subset of the input
+            labels. If ``None``, all input variables are considered.
+        :return: The computed laplacian tensor.
         :rtype: LabelTensor
         """
 
@@ -230,22 +241,23 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
 def advection(output_, input_, velocity_field, components=None, d=None):
     """
-    Perform advection operation. The operator works for vectorial functions,
-    with multiple input coordinates.
+    Perform the advection operation on the ``output_`` with respect to the
+    ``input``. This operator support vector-valued functions with multiple input
+    coordinates.
 
-    :param LabelTensor output_: the output tensor onto which computing the
-        advection.
-    :param LabelTensor input_: the input tensor with respect to which computing
-        the advection.
-    :param str velocity_field: the name of the output variables which is used
-        as velocity field. It should be a subset of the output labels.
-    :param list(str) components: the name of the output variables to calculate
-        the Laplacian for. It should be a subset of the output labels. If None,
-        all the output variables are considered. Default is None.
-    :param list(str) d: the name of the input variables on which the advection
-        is calculated. d should be a subset of the input labels. If None, all
-        the input variables are considered. Default is None.
-    :return: the tensor containing the result of the advection operator.
+    :param LabelTensor output_: The output tensor on which the advection is
+        computed.
+    :param LabelTensor input_: the input tensor with respect to which advection
+        is computed.
+    :param str velocity_field: The name of the output variable used as velocity
+        field. It must be chosen among the output labels.
+    :param list[str] components: The names of the output variables for which
+        to compute the advection. It must be a subset of the output labels.
+        If ``None``, all output variables are considered. Default is ``None``.
+    :param list[str] d: The names of the input variables with respect to which
+        the advection is computed. It must be a subset of the input labels.
+        If ``None``, all input variables are considered. Default is ``None``.
+    :return: The computed advection tensor.
     :rtype: LabelTensor
     """
     if d is None:
