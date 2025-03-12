@@ -53,7 +53,7 @@
 # What if our equation is also time-dependent? In this case, our `class` will inherit from both `SpatialProblem` and `TimeDependentProblem`:
 # 
 
-# In[1]:
+# In[10]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -65,12 +65,8 @@ except:
 if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
 
-import warnings
-
 from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.domain import CartesianDomain
-
-warnings.filterwarnings('ignore')
 
 class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
     
@@ -93,17 +89,17 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 # 
 # Once the `Problem` class is initialized, we need to represent the differential equation in **PINA**. In order to do this, we need to load the **PINA** operators from `pina.operator` module. Again, we'll consider Equation (1) and represent it in **PINA**:
 
-# In[2]:
+# In[1]:
 
-
-import torch
-import matplotlib.pyplot as plt
 
 from pina.problem import SpatialProblem
 from pina.operator import grad
 from pina import Condition
 from pina.domain import CartesianDomain
 from pina.equation import Equation, FixedValue
+
+import torch
+import matplotlib.pyplot as plt
 
 class SimpleODE(SpatialProblem):
 
@@ -151,7 +147,7 @@ problem = SimpleODE()
 # 
 # Data for training can come in form of direct numerical simulation results, or points in the domains. In case we perform unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in **PINA** is very easy, here we show three examples using the `.discretise_domain` method of the `AbstractProblem` class.
 
-# In[3]:
+# In[2]:
 
 
 # sampling 20 points in [0, 1] through discretization in all locations
@@ -167,7 +163,7 @@ problem.discretise_domain(n=20, mode='random')
 
 # We are going to use latin hypercube points for sampling. We need to sample in all the conditions domains. In our case we sample in `D` and `x0`.
 
-# In[4]:
+# In[3]:
 
 
 # sampling for training
@@ -177,7 +173,7 @@ problem.discretise_domain(20, 'lh', domains=['D'])
 
 # The points are saved in a python `dict`, and can be accessed by calling the attribute `input_pts` of the problem 
 
-# In[5]:
+# In[4]:
 
 
 print('Input points:', problem.discretised_domains)
@@ -186,7 +182,7 @@ print('Input points labels:', problem.discretised_domains['D'].labels)
 
 # To visualize the sampled points we can use `matplotlib.pyplot`:
 
-# In[6]:
+# In[5]:
 
 
 variables=problem.spatial_variables
@@ -202,14 +198,13 @@ for location in problem.input_pts:
 
 # Once we have defined the problem and generated the data we can start the modelling. Here we will choose a `FeedForward` neural network available in `pina.model`, and we will train using the `PINN` solver from `pina.solver`. We highlight that this training is fairly simple, for more advanced stuff consider the tutorials in the ***Physics Informed Neural Networks*** section of ***Tutorials***. For training we use the `Trainer` class from `pina.trainer`. Here we show a very short training and some method for plotting the results. Notice that by default all relevant metrics (e.g. MSE error during training) are going to be tracked using a `lightning` logger, by default `CSVLogger`. If you want to track the metric by yourself without a logger, use `pina.callback.MetricTracker`.
 
-# In[7]:
+# In[6]:
 
 
 from pina import Trainer
 from pina.solver import PINN
 from pina.model import FeedForward
 from lightning.pytorch.loggers import TensorBoardLogger
-from pina.optim import TorchOptimizer
 
 
 # build the model
@@ -221,15 +216,10 @@ model = FeedForward(
 )
 
 # create the PINN object
-pinn = PINN(problem, model, TorchOptimizer(torch.optim.Adam, lr=0.005))
+pinn = PINN(problem, model)
 
 # create the trainer
-trainer = Trainer(solver=pinn, max_epochs=1500, logger=TensorBoardLogger('tutorial_logs'), 
-                  accelerator='cpu',
-                  train_size=1.0,
-                  test_size=0.0,
-                  val_size=0.0,
-                  enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
+trainer = Trainer(solver=pinn, max_epochs=1500, logger=TensorBoardLogger('tutorial_logs'), accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
 
 # train
 trainer.train()
@@ -237,7 +227,7 @@ trainer.train()
 
 # After the training we can inspect trainer logged metrics (by default **PINA** logs mean square error residual loss). The logged metrics can be accessed online using one of the `Lightning` loggers. The final loss can be accessed by `trainer.logged_metrics`
 
-# In[8]:
+# In[7]:
 
 
 # inspecting final loss
@@ -246,7 +236,7 @@ trainer.logged_metrics
 
 # By using `matplotlib` we can also do some qualitative plots of the solution. 
 
-# In[9]:
+# In[8]:
 
 
 pts = pinn.problem.spatial_domain.sample(256, 'grid', variables='x')
@@ -261,7 +251,7 @@ plt.legend()
 
 # The solution is overlapped with the actual one, and they are barely indistinguishable. We can also take a look at the loss using `TensorBoard`:
 
-# In[10]:
+# In[9]:
 
 
 # Load the TensorBoard extension
@@ -270,46 +260,7 @@ get_ipython().run_line_magic('load_ext', 'tensorboard')
 get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")
 
 
-# As we can see the loss has not reached a minimum, suggesting that we could train for longer! Alternatively, we can also take look at the loss using callbacks. Here we use `MetricTracker` from `pina.callback`:
-
-# In[11]:
-
-
-from pina.callback import MetricTracker
-
-#create the model
-newmodel = FeedForward(
-    layers=[10, 10],
-    func=torch.nn.Tanh,
-    output_dimensions=len(problem.output_variables),
-    input_dimensions=len(problem.input_variables)
-)
-
-# create the PINN object
-newpinn = PINN(problem, newmodel, optimizer=TorchOptimizer(torch.optim.Adam, lr=0.005))
-
-# create the trainer
-newtrainer = Trainer(solver=newpinn, max_epochs=1500, logger=True, #enable parameter logging
-                  callbacks=[MetricTracker()],
-                  accelerator='cpu',
-                  train_size=1.0,
-                  test_size=0.0,
-                  val_size=0.0,
-                  enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
-
-# train
-newtrainer.train()
-
-#plot loss
-trainer_metrics = newtrainer.callbacks[0].metrics
-loss = trainer_metrics['train_loss']
-epochs = range(len(loss))
-plt.plot(epochs, loss.cpu())
-# plotting
-plt.xlabel('epoch')
-plt.ylabel('loss')
-plt.yscale('log') 
-
+# As we can see the loss has not reached a minimum, suggesting that we could train for longer
 
 # ## What's next?
 # 

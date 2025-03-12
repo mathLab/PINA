@@ -30,7 +30,7 @@ import torch
 import pina
 import warnings
 
-from pina.model.block import PODBlock, RBFBlock
+from pina.model.layers import PODBlock, RBFBlock
 from pina import LabelTensor
 
 warnings.filterwarnings('ignore')
@@ -247,6 +247,7 @@ for ax, par, u in zip(axs.ravel(), dataset.params[66:72], dataset.snapshots['p']
     ax.set_title(f'$p$ field for $\mu$ = {par[0]:.4f}')
 plt.tight_layout()
 plt.show()
+
 
 
 # Or here:

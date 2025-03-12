@@ -38,14 +38,14 @@ except:
 if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
 
-import torch
-
 #useful imports
 from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.equation import Equation, FixedValue
 from pina.domain import CartesianDomain
+import torch
 from pina.operator import grad, laplacian
 from pina import Condition
+
 
 
 # In[2]:

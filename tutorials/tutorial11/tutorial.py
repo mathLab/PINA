@@ -26,7 +26,6 @@ if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
 
 import torch
-import warnings
 
 from pina import Condition, Trainer
 from pina.solver import PINN
@@ -35,8 +34,6 @@ from pina.problem import SpatialProblem
 from pina.operator import grad
 from pina.domain import CartesianDomain
 from pina.equation import Equation, FixedValue
-
-warnings.filterwarnings('ignore')
 
 class SimpleODE(SpatialProblem):
 
@@ -134,11 +131,8 @@ for _ in range(3):
     pinn = PINN(problem, model)
     trainer = Trainer(solver=pinn,
                       accelerator='cpu',
-                      logger=TensorBoardLogger(save_dir='training_log'),
-                      enable_model_summary=False,
-                      train_size=1.0,
-                      val_size=0.0,
-                      test_size=0.0)
+                      logger=TensorBoardLogger(save_dir='simpleode'),
+                      enable_model_summary=False)
     trainer.train()
 
 
@@ -199,12 +193,8 @@ model = FeedForward(
 pinn = PINN(problem, model)
 trainer = Trainer(solver=pinn,
                   accelerator='cpu',
-                  logger=True,
-                  callbacks=[NaiveMetricTracker()],  # adding a callbacks
                   enable_model_summary=False,
-                  train_size=1.0,
-                  val_size=0.0,
-                  test_size=0.0)
+                  callbacks=[NaiveMetricTracker()])  # adding a callbacks
 trainer.train()
 
 
@@ -220,7 +210,7 @@ trainer.callbacks[0].saved_metrics[:3] # only the first three epochs
 # 
 # We can for example try the `EarlyStopping` routine, which automatically stops the training when a specific metric converged (here the `train_loss`). In order to let the training keep going forever set `max_epochs=-1`.
 
-# In[8]:
+# In[ ]:
 
 
 # ~5 mins

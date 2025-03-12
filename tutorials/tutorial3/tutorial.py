@@ -9,7 +9,7 @@
 # 
 # First of all, some useful imports.
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -54,7 +54,7 @@ warnings.filterwarnings('ignore')
 
 # Now, the wave problem is written in PINA code as a class, inheriting from `SpatialProblem` and `TimeDependentProblem` since we deal with spatial, and time dependent variables. The equations are written as `conditions` that should be satisfied in the corresponding domains. `truth_solution` is the exact solution which will be compared with the predicted one.
 
-# In[2]:
+# In[ ]:
 
 
 class Wave(TimeDependentProblem, SpatialProblem):
@@ -124,7 +124,7 @@ problem = Wave()
 # 
 # where $NN$ is the neural net output. This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unknown field $u$. By construction, it is zero on the boundaries. The residuals of the equations are evaluated at several sampling points (which the user can manipulate using the method `discretise_domain`) and the loss minimized by the neural network is the sum of the residuals.
 
-# In[3]:
+# In[ ]:
 
 
 class HardMLP(torch.nn.Module):
@@ -155,7 +155,7 @@ class HardMLP(torch.nn.Module):
 
 # In this tutorial, the neural network is trained for 1000 epochs with a learning rate of 0.001 (default in `PINN`). As always, we will log using `Tensorboard`.
 
-# In[4]:
+# In[ ]:
 
 
 # generate the data
@@ -187,14 +187,15 @@ trainer = Trainer(
     train_size=1.0,
     val_size=0.0,
     test_size=0.0,
-    logger=TensorBoardLogger("tutorial_logs")
+    logger=TensorBoardLogger("tutorial_logs"),
+    enable_progress_bar=False,
 )
 trainer.train()
 
 
 # Let's now plot the logging to see how the losses vary during training. For this, we will use `TensorBoard`.
 
-# In[5]:
+# In[ ]:
 
 
 # Load the TensorBoard extension
@@ -204,7 +205,7 @@ get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")
 
 # Notice that the loss on the boundaries of the spatial domain is exactly zero, as expected! After the training is completed one can now plot some results using the `matplotlib`. We plot the predicted output on the left side, the true solution at the center and the difference on the right side using the `plot_solution` function.
 
-# In[6]:
+# In[ ]:
 
 
 @torch.no_grad()
@@ -240,7 +241,7 @@ def plot_solution(solver, time):
 
 # Let's take a look at the results at different times, for example `0.0`, `0.5` and `1.0`:
 
-# In[7]:
+# In[ ]:
 
 
 plt.figure(figsize=(12, 6))
@@ -261,7 +262,7 @@ plot_solution(solver=pinn, time=1)
 # 
 # Let us build the network first
 
-# In[8]:
+# In[ ]:
 
 
 class HardMLPtime(torch.nn.Module):
@@ -297,7 +298,7 @@ class HardMLPtime(torch.nn.Module):
 
 # Now let's train with the same configuration as the previous test
 
-# In[9]:
+# In[ ]:
 
 
 # define model
@@ -315,14 +316,15 @@ trainer = Trainer(
     train_size=1.0,
     val_size=0.0,
     test_size=0.0,
-    logger=TensorBoardLogger("tutorial_logs")
+    logger=TensorBoardLogger("tutorial_logs"),
+    enable_progress_bar=False,
 )
 trainer.train()
 
 
 # We can clearly see that the loss is way lower now. Let's plot the results
 
-# In[10]:
+# In[ ]:
 
 
 plt.figure(figsize=(12, 6))
@@ -337,7 +339,7 @@ plot_solution(solver=pinn, time=1)
 
 # We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem. We can also see using Tensorboard how the two losses decreased:
 
-# In[11]:
+# In[ ]:
 
 
 get_ipython().run_line_magic('tensorboard', "--logdir 'tutorial_logs'")

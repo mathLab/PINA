@@ -25,7 +25,7 @@
 
 # Let's start with useful imports.
 
-# In[1]:
+# In[9]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -43,7 +43,6 @@ if IN_COLAB:
   
 import matplotlib.pyplot as plt
 import torch
-import warnings
 
 from pina.problem import SpatialProblem, InverseProblem
 from pina.operator import laplacian
@@ -53,12 +52,10 @@ from pina import Condition, Trainer
 from pina.solver import PINN
 from pina.domain import CartesianDomain
 
-warnings.filterwarnings('ignore')
-
 
 # Then, we import the pre-saved data, for ($\mu_1$, $\mu_2$)=($0.5$, $0.5$). These two values are the optimal parameters that we want to find through the neural network training. In particular, we import the `input` points (the spatial coordinates), and the `target` points (the corresponding $u$ values evaluated at the `input`).
 
-# In[2]:
+# In[10]:
 
 
 data_output = torch.load('data/pinn_solution_0.5_0.5', weights_only = False).detach()
@@ -67,7 +64,7 @@ data_input = torch.load('data/pts_0.5_0.5', weights_only = False)
 
 # Moreover, let's plot also the data points and the reference solution: this is the expected output of the neural network.
 
-# In[3]:
+# In[11]:
 
 
 points = data_input.extract(['x', 'y']).detach().numpy()
@@ -83,7 +80,7 @@ plt.show()
 
 # Then, we initialize the Poisson problem, that is inherited from the `SpatialProblem` and from the `InverseProblem` classes. We here have to define all the variables, and the domain where our unknown parameters ($\mu_1$, $\mu_2$) belong. Notice that the Laplace equation takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
 
-# In[4]:
+# In[12]:
 
 
 ### Define ranges of variables
@@ -137,7 +134,7 @@ problem = Poisson()
 
 # Then, we define the neural network model we want to use. Here we used a model which imposes hard constrains on the boundary conditions, as also done in the Wave tutorial!
 
-# In[5]:
+# In[13]:
 
 
 model = FeedForward(
@@ -150,7 +147,7 @@ model = FeedForward(
 
 # After that, we discretize the spatial domain.
 
-# In[6]:
+# In[14]:
 
 
 problem.discretise_domain(20, 'grid', domains=['phys_cond'])
@@ -161,7 +158,7 @@ problem.discretise_domain(1000, 'random', domains=['bound_cond1', 'bound_cond2',
 # Here, we define a simple callback for the trainer. We use this callback to save the parameters predicted by the neural network during the training. The parameters are saved every 100 epochs as `torch` tensors in a specified directory (`tmp_dir` in our case).
 # The goal is to read the saved parameters after training and plot their trend across the epochs.
 
-# In[7]:
+# In[15]:
 
 
 from lightning.pytorch.callbacks import Callback
@@ -179,7 +176,7 @@ class SaveParameters(Callback):
 
 # Then, we define the `PINN` object and train the solver using the `Trainer`.
 
-# In[8]:
+# In[16]:
 
 
 ### train the problem with PINN
@@ -188,16 +185,13 @@ max_epochs = 5000
 pinn = PINN(problem, model, optimizer=TorchOptimizer(torch.optim.Adam, lr=0.005))
 # define the trainer for the solver
 trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=max_epochs,
-        default_root_dir=tmp_dir, enable_model_summary=False, callbacks=[SaveParameters()],
-        train_size=1.0,
-        val_size=0.0,
-        test_size=0.0)
+        default_root_dir=tmp_dir, enable_model_summary=False, callbacks=[SaveParameters()])
 trainer.train()
 
 
 # One can now see how the parameters vary during the training by reading the saved solution and plotting them. The plot shows that the parameters stabilize to their true value before reaching the epoch $1000$!
 
-# In[9]:
+# In[17]:
 
 
 epochs_saved = range(99, max_epochs, 100)

@@ -26,7 +26,6 @@ if IN_COLAB:
 
 import torch
 import matplotlib.pyplot as plt
-import warnings
 
 # !pip install scipy  # install scipy
 from scipy import io
@@ -35,8 +34,6 @@ from pina import Condition, LabelTensor
 from pina.solver import SupervisedSolver
 from pina.trainer import Trainer
 from pina.problem import AbstractProblem
-
-warnings.filterwarnings('ignore')
 
 
 # ## Data Generation
@@ -112,11 +109,8 @@ model = FeedForward(input_dimensions=1, output_dimensions=1)
 solver = SupervisedSolver(problem=problem, model=model)
 
 # make the trainer and train
-trainer = Trainer(solver=solver, max_epochs=10, accelerator='cpu', enable_model_summary=False, batch_size=10,
+trainer = Trainer(solver=solver, max_epochs=10, accelerator='cpu', enable_model_summary=False, batch_size=10) 
 # We train on CPU and avoid model summary at the beginning of training (optional)
-train_size=1.0,
-val_size=0.0,
-test_size=0.0)
 trainer.train()
 
 
@@ -160,11 +154,7 @@ model = FNO(lifting_net=lifting_net,
 solver = SupervisedSolver(problem=problem, model=model)
 
 # make the trainer and train
-trainer = Trainer(solver=solver, max_epochs=10, accelerator='cpu', enable_model_summary=False, # We train on CPU and avoid model summary at the beginning of training (optional)
-batch_size=10,
-train_size=1.0,
-val_size=0.0,
-test_size=0.0)
+trainer = Trainer(solver=solver, max_epochs=10, accelerator='cpu', enable_model_summary=False, batch_size=10) # we train on CPU and avoid model summary at beginning of training (optional)
 trainer.train()
 
 

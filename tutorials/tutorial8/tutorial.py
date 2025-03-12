@@ -16,7 +16,7 @@
 # Let's start with the necessary imports.
 # It's important to note the minimum PINA version to run this tutorial is the `0.1`.
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -172,10 +172,7 @@ trainer = Trainer(
     max_epochs=1000,
     batch_size=100,
     log_every_n_steps=5,
-    accelerator='cpu',
-    train_size=1.0,
-    val_size=0.0,
-    test_size=0.0)
+    accelerator='cpu')
 trainer.train()
 
 

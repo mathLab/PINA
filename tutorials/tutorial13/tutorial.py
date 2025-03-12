@@ -107,8 +107,9 @@ problem.discretise_domain(1, 'grid', domains=['bound_cond0','bound_cond1'])
 from pina.optim import TorchScheduler
 
 # training with PINN and visualize results
+model=FeedForward(input_dimensions=1, output_dimensions=1, layers=[100, 100, 100])
 pinn = PINN(problem=problem,
-            model=FeedForward(input_dimensions=1, output_dimensions=1, layers=[100, 100, 100]),
+            model=model,
             scheduler=TorchScheduler(torch.optim.lr_scheduler.MultiStepLR,  # Pass the class directly, not an instance
                 milestones=[1000,2000,3000,4000],
                 gamma=0.9))
@@ -118,7 +119,7 @@ trainer.train()
 
 # training with PINN and visualize results
 sapinn = SAPINN(problem=problem,
-            model=FeedForward(input_dimensions=1, output_dimensions=1, layers=[100, 100, 100]),
+            model=model,
             scheduler_model=TorchScheduler(torch.optim.lr_scheduler.MultiStepLR,  
                 milestones=[1000,2000,3000,4000],
                 gamma=0.9))
