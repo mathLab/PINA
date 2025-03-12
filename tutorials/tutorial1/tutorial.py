@@ -38,7 +38,7 @@
 # 
 # ```python
 # from pina.problem import SpatialProblem
-# from pina.domain import CartesianProblem
+# from pina.geometry import CartesianProblem
 # 
 # class SimpleODE(SpatialProblem):
 #     
@@ -233,6 +233,7 @@ trainer.train()
 
 # inspecting final loss
 trainer.logged_metrics
+print(type(problem.truth_solution))
 
 
 # By using `matplotlib` we can also do some qualitative plots of the solution. 
@@ -259,6 +260,7 @@ list_ = [
             idx for idx, s in enumerate(trainer.callbacks)
             if isinstance(s, MetricTracker)
         ]
+print(list_[0])
 trainer_metrics = trainer.callbacks[list_[0]].metrics
 
 loss = trainer_metrics['val_loss']

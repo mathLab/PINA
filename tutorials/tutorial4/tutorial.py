@@ -25,10 +25,10 @@ import torch
 import matplotlib.pyplot as plt 
 plt.style.use('tableau-colorblind10')
 from pina.problem import AbstractProblem
-from pina.solver import SupervisedSolver
+from pina.solvers import SupervisedSolver
 from pina.trainer import Trainer
 from pina import Condition, LabelTensor
-from pina.model.block import ContinuousConvBlock 
+from pina.model.layers import ContinuousConvBlock 
 import torchvision # for MNIST dataset
 from pina.model import FeedForward # for building AE and MNIST classification
 
