@@ -12,7 +12,7 @@ from ..graph import Graph
 class DataCondition(ConditionInterface):
     """
     This condition must be used every time a Unsupervised Loss is needed in
-    the Solver. The conditionalvariable can be passed as extra-input when
+    the Solver. The `conditional_variable` can be passed as extra-input when
     the model learns a conditional distribution.
     """
 
@@ -31,7 +31,8 @@ class DataCondition(ConditionInterface):
         :param conditional_variables: Conditional variables for the condition.
         :type conditional_variables: torch.Tensor | LabelTensor
         :return: Subclass of DataCondition.
-        :rtype: TensorDataCondition | GraphDataCondition
+        :rtype: pina.condition.data_condition.TensorDataCondition |
+            pina.condition.data_condition.GraphDataCondition
 
         :raises ValueError: If input is not of type :class:`torch.Tensor`,
             :class:`pina.label_tensor.LabelTensor`, :class:`pina.graph.Graph`,
