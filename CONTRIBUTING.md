@@ -1,40 +1,94 @@
-## How to contribute
-We'd love to accept your patches and contributions to this project. There are just a few small guidelines you need to follow.
+# Contributing to PINA
 
-### Submitting a patch
+First off, thanks for taking the time to contribute to **PINA**! 🎉 Your help makes the project better for everyone. This document outlines the process for contributing, reporting issues, suggesting features, and submitting pull requests.
 
-  1. It's generally best to start by opening a new issue describing the bug or
-     feature you're intending to fix.  Even if you think it's relatively minor,
-     it's helpful to know what people are working on.  Mention in the initial
-     issue that you are planning to work on that bug or feature so that it can
-     be assigned to you.
+---
 
-  2. Follow the normal process of [forking][] the project, and setup a new
-     branch to work in.  It's important that each group of changes be done in
-     separate branches in order to ensure that a pull request only includes the
-     commits related to that bug or feature.
+## Table of Contents
 
-  3. To ensure properly formatted code, please make sure to use 4
-     spaces to indent the code. The easy way is to run on your bash the provided
-     script: ./code_formatter.sh. You should also run [pylint][] over your code.
-     It's not strictly necessary that your code be completely "lint-free",
-     but this will help you find common style issues.
+1. [How to Contribute](#how-to-contribute)
+2. [Reporting Bugs](#reporting-bugs)
+3. [Suggesting Enhancements](#suggesting-enhancements)
+4. [Pull Request Process](#pull-request-process)
+5. [Code Style & Guidelines](#code-style--guidelines)
+6. [Community Standards](#community-standards)
 
-  4. Any significant changes should almost always be accompanied by tests.  The
-     project already has good test coverage, so look at some of the existing
-     tests if you're unsure how to go about it. We're using [coveralls][] that
-     is an invaluable tools for seeing which parts of your code aren't being
-     exercised by your tests.
+---
 
-  5. Do your best to have [well-formed commit messages][] for each change.
-     This provides consistency throughout the project, and ensures that commit
-     messages are able to be formatted properly by various git tools.
+## How to Contribute
 
-  6. Finally, push the commits to your fork and submit a [pull request][]. Please,
-     remember to rebase properly in order to maintain a clean, linear git history.
+You can contribute in several ways:
+- Reporting bugs
+- Suggesting features/enhancements
+- Submitting fixes or improvements via Pull Requests (PRs)
+- Improving documentation
 
-[forking]: https://help.github.com/articles/fork-a-repo
-[pylint]: https://www.pylint.org/
-[coveralls]: https://coveralls.io
-[well-formed commit messages]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
-[pull request]: https://help.github.com/articles/creating-a-pull-request
+We encourage all contributions, big or small!
+
+---
+
+## Reporting Bugs
+
+If you find a bug, please open an [issue](https://github.com/your-username/PINA/issues) and include:
+- A clear and descriptive title
+- Steps to reproduce the problem
+- What you expected to happen
+- What actually happened
+- Any relevant logs, screenshots, or error messages
+- Environment info (OS, Python version, dependencies, etc.)
+
+---
+
+## Suggesting Enhancements
+
+We welcome new ideas! If you have an idea to improve PINA:
+1. Check the [issue tracker](https://github.com/mathLab/PINA/issues) or the [discussions](https://github.com/mathLab/PINA/discussions) to see if someone has already suggested it.
+2. If not, open a new issue describing:
+   - The enhancement you'd like
+   - Why it would be useful
+   - Any ideas on how to implement it (optional but helpful)
+3. If you are not sure about (something of) the enhancement, we suggest to open a discussion to confront on that with the PINA community
+
+---
+
+## Pull Request Process
+
+Before submitting a PR:
+
+1. Ensure there’s an open issue related to your contribution (or create one).
+2. [Fork](https://help.github.com/articles/fork-a-repo) the repository and create a new branch from `main`:
+   ```bash
+   git checkout -b feature/my-feature
+    ```
+3. Make your changes:
+  - Write clear, concise, and well-documented code
+  - Add or update tests where appropriate
+  - Update documentation if necessary
+4. Verify your changes by running tests:
+  ```bash
+  pytest
+  ```
+5. Properly format your code. If you want save time, simply run:
+  ```bash
+  bash code_formatter.sh
+  ```
+7. Submit a [pull request](https://help.github.com/articles/creating-a-pull-request) with a clear explanation of your changes and reference the related issue if applicable.
+
+### Pull Request Checklist
+ - [ ] Code follows the project’s style guidelines
+ - [ ] Tests have been added or updated
+ - [ ] Documentation has been updated if necessary
+ - [ ] Pull request is linked to an open issue (if applicable)
+
+---
+
+## Code Style & Guidelines
+- Follow PEP8 for Python code.
+- Use descriptive commit messages (e.g. `Fix parser crash on empty input`).
+- Write clear docstrings for public classes, methods, and functions.
+- Keep functions small and focused; do one thing and do it well.
+
+---
+
+## Community Standards
+By participating in this project, you agree to abide by our Code of Conduct. We are committed to maintaining a welcoming and inclusive community.
