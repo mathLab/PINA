@@ -30,7 +30,9 @@ class InputEquationCondition(ConditionInterface):
         :param EquationInterface equation: Equation object containing the
             equation function.
         :return: Subclass of InputEquationCondition, based on the input type.
-        :rtype: InputTensorEquationCondition | InputGraphEquationCondition
+        :rtype: pina.condition.input_equation_condition.
+            InputTensorEquationCondition |
+            pina.condition.input_equation_condition.InputGraphEquationCondition
 
         :raises ValueError: If input is not of type
             :class:`pina.label_tensor.LabelTensor`, :class:`pina.graph.Graph`.
@@ -105,7 +107,7 @@ class InputGraphEquationCondition(InputEquationCondition):
         in the :class:`pina.graph.Graph` object.
 
         :param input: Input data.
-        :type input: torch.Tensor | Graph | torch_geometric.data.Data
+        :type input: torch.Tensor | Graph | Data
 
         :raises ValueError: If the input data object does not contain at least
             one LabelTensor.
