@@ -1,12 +1,12 @@
-"""Module for the DomainInterface class."""
+"""Module for the Domain Interface."""
 
 from abc import ABCMeta, abstractmethod
 
 
 class DomainInterface(metaclass=ABCMeta):
     """
-    Abstract Location class.
-    Any geometry entity should inherit from this class.
+    Abstract base class for geometric domains. All specific domain types should
+    inherit from this class.
     """
 
     available_sampling_modes = ["random", "grid", "lh", "chebyshev", "latin"]
@@ -15,20 +15,24 @@ class DomainInterface(metaclass=ABCMeta):
     @abstractmethod
     def sample_modes(self):
         """
-        Abstract method returing available samples modes for the Domain.
+        Abstract method defining sampling methods.
         """
 
     @property
     @abstractmethod
     def variables(self):
         """
-        Abstract method returing Domain variables.
+        Abstract method returning the domain variables.
         """
 
     @sample_modes.setter
     def sample_modes(self, values):
         """
-        TODO
+        Setter for the sample_modes property.
+
+        :param values: Sampling modes to be set.
+        :type values: str | list[str]
+        :raises TypeError: Invalid sampling mode.
         """
         if not isinstance(values, (list, tuple)):
             values = [values]
@@ -43,18 +47,15 @@ class DomainInterface(metaclass=ABCMeta):
     @abstractmethod
     def sample(self):
         """
-        Abstract method for sampling a point from the location. To be
-        implemented in the child class.
+        Abstract method for the sampling routine.
         """
 
     @abstractmethod
     def is_inside(self, point, check_border=False):
         """
-        Abstract method for checking if a point is inside the location. To be
-        implemented in the child class.
+        Abstract method for checking if a point is inside the domain.
 
-        :param torch.Tensor point: A tensor point to be checked.
-        :param bool check_border: A boolean that determines whether the border
-            of the location is considered checked to be considered inside or
-            not. Defaults to ``False``.
+        :param LabelTensor point: Point to be checked.
+        :param bool check_border: If ``True``, the border is considered inside
+            the domain. Default is ``False``.
         """
