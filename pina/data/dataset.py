@@ -75,7 +75,7 @@ class PinaDatasetFactory:
 class PinaDataset(Dataset, ABC):
     """
     Abstract class for the PINA dataset. It defines the common interface for
-    the :class:`~pina.data.dataset.PinaTensorDataset` and
+    :class:`~pina.data.dataset.PinaTensorDataset` and
     :class:`~pina.data.dataset.PinaGraphDataset` classes.
     """
 
@@ -83,9 +83,8 @@ class PinaDataset(Dataset, ABC):
         self, conditions_dict, max_conditions_lengths, automatic_batching
     ):
         """
-        Initialize a :class:`~pina.data.dataset.PinaDataset` instance by storing
-        the providedconditions dictionary, the maximum number of conditions to
-        consider, and the automatic batching flag.
+        Initialize :class:`~pina.data.dataset.PinaDataset` instance by storing
+        the provided conditions dictionary, and the automatic batching flag.
 
         :param dict conditions_dict: Dictionary containing the conditions with
             data.
