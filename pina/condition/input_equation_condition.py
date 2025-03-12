@@ -26,7 +26,7 @@ class InputEquationCondition(ConditionInterface):
         the type of input data.
 
         :param input: Input data. It can be a LabelTensor or a Graph object.
-        :type input: LabelTensor | Graph
+        :type input: LabelTensor | Graph |  list[Graph] | tuple[Graph]
         :param EquationInterface equation: Equation object containing the
             equation function.
         :return: Subclass of InputEquationCondition, based on the input type.
@@ -61,7 +61,7 @@ class InputEquationCondition(ConditionInterface):
         Initialize the InputEquationCondition by storing the input and equation.
 
         :param input: Input data for the condition.
-        :type input: torch.Tensor | Graph
+        :type input: LabelTensor | Graph |  list[Graph] | tuple[Graph]
         :param EquationInterface equation: Equation object containing the
             equation function.
 
