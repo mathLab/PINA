@@ -32,9 +32,8 @@ class InputEquationCondition(ConditionInterface):
         :return: Subclass of InputEquationCondition, based on the input type.
         :rtype: InputTensorEquationCondition | InputGraphEquationCondition
 
-        :raises ValueError: If input is not of type :class:`torch.Tensor`,
-            :class:`LabelTensor`, :class:`Graph`, or
-            :class:`torch_geometric.data.Data`.
+        :raises ValueError: If input is not of type
+            :class:`pina.label_tensor.LabelTensor`, :class:`pina.graph.Graph`.
         """
 
         # If the class is already a subclass, return the instance
@@ -66,10 +65,10 @@ class InputEquationCondition(ConditionInterface):
             equation function.
 
         .. note::
-            If ``input`` is composed by a list of :class:`Graph`/
-            :class:`torch_geometric.data.Data` objects, all elements must have
-            the same structure (keys and data types). Moreover, at least one
-            attribute must be a :class:`LabelTensor`.
+            If `input` is composed by a list of :class:`pina.graph.Graph`
+            objects, all elements must have the same structure (keys and data
+            types). Moreover, at least one attribute must be a
+            :class:`pina.label_tensor.LabelTensor`.
         """
 
         super().__init__()
@@ -89,19 +88,21 @@ class InputEquationCondition(ConditionInterface):
 
 class InputTensorEquationCondition(InputEquationCondition):
     """
-    InputEquationCondition subclass for LabelTensor input data.
+    InputEquationCondition subclass for :class:`pina.label_tensor.LabelTensor`
+    input data.
     """
 
 
 class InputGraphEquationCondition(InputEquationCondition):
     """
-    InputEquationCondition subclass for Graph input data.
+    InputEquationCondition subclass for :class:`pina.graph.Graph` input data.
     """
 
     @staticmethod
     def _check_label_tensor(input):
         """
-        Check if at least one LabelTensor is present in the Graph object.
+        Check if at least one :class:`pina.label_tensor.LabelTensor` is present
+        in the :class:`pina.graph.Graph` object.
 
         :param input: Input data.
         :type input: torch.Tensor | Graph | torch_geometric.data.Data

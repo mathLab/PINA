@@ -18,7 +18,7 @@ class DomainEquationCondition(ConditionInterface):
 
     def __init__(self, domain, equation):
         """
-        Initialize the DomainEquationCondition, storing the domain and equation.
+        Initialize the object by storing the domain and equation.
 
         :param DomainInterface domain: Domain object containing the domain data.
         :param EquationInterface equation: Equation object containing the

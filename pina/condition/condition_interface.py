@@ -41,14 +41,13 @@ class ConditionInterface(metaclass=ABCMeta):
     @staticmethod
     def _check_graph_list_consistency(data_list):
         """
-        Check if the list of :class:`torch_geometric.data.Data`/:class:`Graph`
-        objects is consistent.
+        Check if the list of :class:`~torch_geometric.data.Data` or
+        class:`pina.graphGraph` objects is consistent.
 
         :param data_list: List of graph type objects.
-        :type data_list: torch_geometric.data.Data | Graph|
-            list[torch_geometric.data.Data] | list[Graph]
+        :type data_list: Data | Graph | list[Data] | list[Graph]
 
-        :raises ValueError: Input data must be either torch_geometric.data.Data
+        :raises ValueError: Input data must be either Data
             or Graph objects.
         :raises ValueError: All elements in the list must have the same keys.
         :raises ValueError: Type mismatch in data tensors.
