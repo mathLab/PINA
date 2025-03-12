@@ -25,7 +25,7 @@
 
 # Let's start with useful imports.
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -44,12 +44,13 @@ if IN_COLAB:
 import matplotlib.pyplot as plt
 plt.style.use('tableau-colorblind10')
 import torch
+from pytorch_lightning.callbacks import Callback
 from pina.problem import SpatialProblem, InverseProblem
-from pina.operator import laplacian
+from pina.operators import laplacian
 from pina.model import FeedForward
 from pina.equation import Equation, FixedValue
 from pina import Condition, Trainer
-from pina.solver import PINN
+from pina.solvers import PINN
 from pina.domain import CartesianDomain
 
 
@@ -80,7 +81,7 @@ plt.show()
 
 # Then, we initialize the Poisson problem, that is inherited from the `SpatialProblem` and from the `InverseProblem` classes. We here have to define all the variables, and the domain where our unknown parameters ($\mu_1$, $\mu_2$) belong. Notice that the Laplace equation takes as inputs also the unknown variables, that will be treated as parameters that the neural network optimizes during the training process.
 
-# In[4]:
+# In[ ]:
 
 
 ### Define ranges of variables
@@ -147,12 +148,12 @@ model = FeedForward(
 
 # After that, we discretize the spatial domain.
 
-# In[6]:
+# In[ ]:
 
 
-problem.discretise_domain(20, 'grid', domains=['phys_cond'])
-problem.discretise_domain(1000, 'random', domains=['bound_cond1', 'bound_cond2',
-    'bound_cond3', 'bound_cond4'])
+problem.discretise_domain(20, 'grid', locations=['phys_cond'], variables=['x', 'y'])
+problem.discretise_domain(1000, 'random', locations=['bound_cond1', 'bound_cond2',
+    'bound_cond3', 'bound_cond4'], variables=['x', 'y'])
 
 
 # Here, we define a simple callback for the trainer. We use this callback to save the parameters predicted by the neural network during the training. The parameters are saved every 100 epochs as `torch` tensors in a specified directory (`tmp_dir` in our case).
@@ -161,7 +162,6 @@ problem.discretise_domain(1000, 'random', domains=['bound_cond1', 'bound_cond2',
 # In[7]:
 
 
-from lightning.pytorch.callbacks import Callback
 # temporary directory for saving logs of training
 tmp_dir = "tmp_poisson_inverse"
 
@@ -176,15 +176,15 @@ class SaveParameters(Callback):
 
 # Then, we define the `PINN` object and train the solver using the `Trainer`.
 
-# In[8]:
+# In[ ]:
 
 
 ### train the problem with PINN
 max_epochs = 5000
-pinn = PINN(problem, model)
+pinn = PINN(problem, model, optimizer_kwargs={'lr':0.005})
 # define the trainer for the solver
 trainer = Trainer(solver=pinn, accelerator='cpu', max_epochs=max_epochs,
-        default_root_dir=tmp_dir, enable_model_summary=False, callbacks=[SaveParameters()])
+        default_root_dir=tmp_dir, callbacks=[SaveParameters()])
 trainer.train()
 
 

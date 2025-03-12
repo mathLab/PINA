@@ -24,13 +24,13 @@ if IN_COLAB:
 import torch
 
 from pina.problem import SpatialProblem, TimeDependentProblem
-from pina.operator import laplacian, grad
+from pina.operators import laplacian, grad
 from pina.domain import CartesianDomain
-from pina.solver import PINN
+from pina.solvers import PINN
 from pina.trainer import Trainer
 from pina.equation import Equation
 from pina.equation.equation_factory import FixedValue
-from pina import Condition
+from pina import Condition, Plotter
 
 
 # ## The problem definition 
@@ -138,19 +138,19 @@ trainer.train()
 # In[5]:
 
 
-#plotter = Plotter()
+plotter = Plotter()
 
 # plotting at fixed time t = 0.0
-#print('Plotting at t=0')
-#plotter.plot(pinn, fixed_variables={'t': 0.0})
+print('Plotting at t=0')
+plotter.plot(pinn, fixed_variables={'t': 0.0})
 
 # plotting at fixed time t = 0.5
-#print('Plotting at t=0.5')
-#plotter.plot(pinn, fixed_variables={'t': 0.5})
+print('Plotting at t=0.5')
+plotter.plot(pinn, fixed_variables={'t': 0.5})
 
 # plotting at fixed time t = 1.
-#print('Plotting at t=1')
-#plotter.plot(pinn, fixed_variables={'t': 1.0})
+print('Plotting at t=1')
+plotter.plot(pinn, fixed_variables={'t': 1.0})
 
 
 # The results are not so great, and we can clearly see that as time progress the solution gets worse.... Can we do better?
@@ -203,19 +203,19 @@ trainer.train()
 # In[8]:
 
 
-#plotter = Plotter()
+plotter = Plotter()
 
 # plotting at fixed time t = 0.0
-#print('Plotting at t=0')
-#plotter.plot(pinn, fixed_variables={'t': 0.0})
+print('Plotting at t=0')
+plotter.plot(pinn, fixed_variables={'t': 0.0})
 
 # plotting at fixed time t = 0.5
-#print('Plotting at t=0.5')
-#plotter.plot(pinn, fixed_variables={'t': 0.5})
+print('Plotting at t=0.5')
+plotter.plot(pinn, fixed_variables={'t': 0.5})
 
 # plotting at fixed time t = 1.
-#print('Plotting at t=1')
-#plotter.plot(pinn, fixed_variables={'t': 1.0})
+print('Plotting at t=1')
+plotter.plot(pinn, fixed_variables={'t': 1.0})
 
 
 # We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem.

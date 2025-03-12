@@ -9,7 +9,7 @@
 
 # First of all we import the modules needed for the tutorial:
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -476,7 +476,7 @@ class Decoder(torch.nn.Module):
 
 # Very good! Notice that in the `Decoder` class in the `forward` pass we have used the `.transpose()` method of the `ContinuousConvolution` class. This method accepts the `weights` for upsampling and the `grid` on where to upsample. Let's now build the autoencoder! We set the hidden dimension in the `hidden_dimension` variable. We apply the sigmoid on the output since the field value is between $[0, 1]$. 
 
-# In[14]:
+# In[17]:
 
 
 class Autoencoder(torch.nn.Module):
@@ -500,18 +500,17 @@ net = Autoencoder()
 
 # Let's now train the autoencoder, minimizing the mean square error loss and optimizing using Adam. We use the `SupervisedSolver` as solver, and the problem is a simple problem created by inheriting from `AbstractProblem`. It takes approximately two minutes to train on CPU.
 
-# In[15]:
+# In[19]:
 
 
 # define the problem
 class CircleProblem(AbstractProblem):
     input_variables = ['x', 'y', 'f']
     output_variables = input_variables
-    al=LabelTensor(input_data, input_variables)
     conditions = {'data' : Condition(input_points=LabelTensor(input_data, input_variables), output_points=LabelTensor(input_data, output_variables))}
 
 # define the solver
-solver = SupervisedSolver(problem=CircleProblem(), model=net, loss=torch.nn.MSELoss(), use_lt=True)          
+solver = SupervisedSolver(problem=CircleProblem(), model=net, loss=torch.nn.MSELoss())          
 
 # train
 trainer = Trainer(solver, max_epochs=150, accelerator='cpu', enable_model_summary=False) # we train on CPU and avoid model summary at beginning of training (optional)
@@ -521,7 +520,7 @@ trainer.train()
 
 # Let's visualize the two solutions side by side!
 
-# In[16]:
+# In[20]:
 
 
 net.eval()
@@ -530,21 +529,21 @@ net.eval()
 output = net(input_data).detach()
 
 # visualize data
-#fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 3))
-#pic1 = axes[0].scatter(grid[:, 0], grid[:, 1], c=input_data[0, 0, :, -1])
-#axes[0].set_title("Real")
-#fig.colorbar(pic1)
-#plt.subplot(1, 2, 2)
-#pic2 = axes[1].scatter(grid[:, 0], grid[:, 1], c=output[0, 0, :, -1])
-#axes[1].set_title("Autoencoder")
-#fig.colorbar(pic2)
-#plt.tight_layout()
-#plt.show()
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 3))
+pic1 = axes[0].scatter(grid[:, 0], grid[:, 1], c=input_data[0, 0, :, -1])
+axes[0].set_title("Real")
+fig.colorbar(pic1)
+plt.subplot(1, 2, 2)
+pic2 = axes[1].scatter(grid[:, 0], grid[:, 1], c=output[0, 0, :, -1])
+axes[1].set_title("Autoencoder")
+fig.colorbar(pic2)
+plt.tight_layout()
+plt.show()
 
 
 # As we can see, the two solutions are really similar! We can compute the $l_2$ error quite easily as well:
 
-# In[17]:
+# In[21]:
 
 
 def l2_error(input_, target):
@@ -560,7 +559,7 @@ print(f'l2 error: {l2_error(input_data[0, 0, :, -1], output[0, 0, :, -1]):.2%}')
 # 
 # Suppose we have already the hidden representation and we want to upsample on a differen grid with more points. Let's see how to do it:
 
-# In[18]:
+# In[22]:
 
 
 # setting the seed
@@ -579,21 +578,21 @@ latent = net.encoder(input_data)
 output = net.decoder(latent, input_data2).detach()
 
 # show the picture
-#fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 3))
-#pic1 = axes[0].scatter(grid2[:, 0], grid2[:, 1], c=input_data2[0, 0, :, -1])
-#axes[0].set_title("Real")
-#fig.colorbar(pic1)
-#plt.subplot(1, 2, 2)
-#pic2 = axes[1].scatter(grid2[:, 0], grid2[:, 1], c=output[0, 0, :, -1])
-# axes[1].set_title("Up-sampling")
-#fig.colorbar(pic2)
-#plt.tight_layout()
-#plt.show()
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 3))
+pic1 = axes[0].scatter(grid2[:, 0], grid2[:, 1], c=input_data2[0, 0, :, -1])
+axes[0].set_title("Real")
+fig.colorbar(pic1)
+plt.subplot(1, 2, 2)
+pic2 = axes[1].scatter(grid2[:, 0], grid2[:, 1], c=output[0, 0, :, -1])
+axes[1].set_title("Up-sampling")
+fig.colorbar(pic2)
+plt.tight_layout()
+plt.show()
 
 
 # As we can see we have a very good approximation of the original function, even thought some noise is present. Let's calculate the error now:
 
-# In[19]:
+# In[23]:
 
 
 print(f'l2 error: {l2_error(input_data2[0, 0, :, -1], output[0, 0, :, -1]):.2%}')
@@ -602,7 +601,7 @@ print(f'l2 error: {l2_error(input_data2[0, 0, :, -1], output[0, 0, :, -1]):.2%}'
 # ### Autoencoding at different resolutions
 # In the previous example we already had the hidden representation (of the original input) and we used it to upsample. Sometimes however we could have a finer mesh solution and we would simply want to encode it. This can be done without retraining! This procedure can be useful in case we have many points in the mesh and just a smaller part of them are needed for training. Let's see the results of this:
 
-# In[20]:
+# In[ ]:
 
 
 # setting the seed
@@ -621,19 +620,20 @@ latent = net.encoder(input_data2)
 output = net.decoder(latent, input_data2).detach()
 
 # show the picture
-#fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 3))
-#pic1 = axes[0].scatter(grid2[:, 0], grid2[:, 1], c=input_data2[0, 0, :, -1])
-#axes[0].set_title("Real")
-#fig.colorbar(pic1)
-#plt.subplot(1, 2, 2)
-#pic2 = axes[1].scatter(grid2[:, 0], grid2[:, 1], c=output[0, 0, :, -1])
-#axes[1].set_title("Autoencoder not re-trained")
-#fig.colorbar(pic2)
-#plt.tight_layout()
-#plt.show()
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 3))
+pic1 = axes[0].scatter(grid2[:, 0], grid2[:, 1], c=input_data2[0, 0, :, -1])
+axes[0].set_title("Real")
+fig.colorbar(pic1)
+plt.subplot(1, 2, 2)
+pic2 = axes[1].scatter(grid2[:, 0], grid2[:, 1], c=output[0, 0, :, -1])
+axes[1].set_title("Autoencoder not re-trained")
+fig.colorbar(pic2)
+plt.tight_layout()
+plt.show()
 
 # calculate l2 error
-print(f'l2 error: {l2_error(input_data2[0, 0, :, -1], output[0, 0, :, -1]):.2%}')
+print(
+    f'l2 error: {l2_error(input_data2[0, 0, :, -1], output[0, 0, :, -1]):.2%}')
 
 
 # ## What's next?

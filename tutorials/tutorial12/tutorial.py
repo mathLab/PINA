@@ -43,7 +43,7 @@ from pina.problem import SpatialProblem, TimeDependentProblem
 from pina.equation import Equation, FixedValue
 from pina.domain import CartesianDomain
 import torch
-from pina.operator import grad, laplacian
+from pina.operators import grad, laplacian
 from pina import Condition
 
 
