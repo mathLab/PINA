@@ -20,13 +20,13 @@ class Graph(Data):
         **kwargs,
     ):
         """
-        Create a new instance of the :class:`pina.graph.Graph` class by checking
+        Create a new instance of the :class:`~pina.graph.Graph` class by checking
         the consistency of the input data and storing the attributes.
 
         :param kwargs: Parameters used to initialize the
-            :class:`pina.graph.Graph` object.
+            :class:`~pina.graph.Graph` object.
         :type kwargs: dict
-        :return: A new instance of the :class:`pina.graph.Graph` class.
+        :return: A new instance of the :class:`~pina.graph.Graph` class.
         :rtype: Graph
         """
 
@@ -230,7 +230,7 @@ class GraphBuilder:
     ):
         """
         Compute the edge attributes and create a new instance of the
-        :class:`pina.graph.Graph` class.
+        :class:`~pina.graph.Graph` class.
 
         :param pos: A tensor of shape `(N, D)` representing the positions of `N`
             points in `D`-dimensional space.
@@ -248,8 +248,8 @@ class GraphBuilder:
             If provided, overrides `edge_attr`.
         :type custom_edge_func: callable, optional
         :param kwargs: Additional keyword arguments passed to the
-            :class:`pina.graph.Graph` class constructor.
-        :return: A :class:`pina.graph.Graph` instance constructed using the
+            :class:`~pina.graph.Graph` class constructor.
+        :return: A :class:`~pina.graph.Graph` instance constructed using the
             provided   information.
         :rtype: Graph
         """
@@ -289,7 +289,7 @@ class RadiusGraph(GraphBuilder):
 
     def __new__(cls, pos, radius, **kwargs):
         """
-        Extends the :class:`pina.graph.GraphBuilder` class to compute
+        Extends the :class:`~pina.graph.GraphBuilder` class to compute
         edge_index based on a radius. Each point is connected to all the points
         within the radius.
 
@@ -299,9 +299,9 @@ class RadiusGraph(GraphBuilder):
         :param radius: The radius within which points are connected.
         :type radius: float
         :param kwargs: Additional keyword arguments to be passed to the
-            :class:`pina.graph.GraphBuilder` and :class:`pina.graph.Graph`
+            :class:`~pina.graph.GraphBuilder` and :class:`~pina.graph.Graph`
             constructors.
-        :return: A :class:`pina.graph.Graph` instance containing the input
+        :return: A :class:`~pina.graph.Graph` instance containing the input
             information and the computed edge_index.
         :rtype: Graph
         """
@@ -339,7 +339,7 @@ class KNNGraph(GraphBuilder):
 
     def __new__(cls, pos, neighbours, **kwargs):
         """
-        Extends the :class:`pina.graph.GraphBuilder` class to compute edge_index
+        Extends the :class:`~pina.graph.GraphBuilder` class to compute edge_index
         based on a K-nearest neighbors algorithm.
 
         :param pos: A tensor of shape (N, D) representing the positions of N
@@ -351,7 +351,7 @@ class KNNGraph(GraphBuilder):
             The additional keyword arguments to be passed to GraphBuilder
             and Graph classes
 
-        :return: A :class:`pina.graph.Graph` instance containg the
+        :return: A :class:`~pina.graph.Graph` instance containg the
             information passed in input and the computed edge_index
         :rtype: Graph
         """

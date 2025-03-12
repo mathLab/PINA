@@ -157,7 +157,7 @@ class Collator:
     def _collate_tensor_dataset(data_list):
         """
         Function used to collate the data when the dataset is a
-        :class:`pina.data.dataset.PinaTensorDataset`.
+        :class:`~pina.data.dataset.PinaTensorDataset`.
 
         :param data_list: Elements to be collated.
         :type data_list: list[torch.Tensor] | list[LabelTensor]
@@ -165,7 +165,7 @@ class Collator:
         :rtype: dict
 
         :raises RuntimeError: If the data is not a :class:`torch.Tensor` or a
-            :class:`pina.label_tensor.LabelTensor`.
+            :class:`~pina.label_tensor.LabelTensor`.
         """
 
         if isinstance(data_list[0], LabelTensor):
@@ -177,7 +177,7 @@ class Collator:
     def _collate_graph_dataset(self, data_list):
         """
         Function used to collate the data when the dataset is a
-        :class:`pina.data.dataset.PinaGraphDataset`.
+        :class:`~pina.data.dataset.PinaGraphDataset`.
 
         :param data_list: Elememts to be collated.
         :type data_list: list[Data] | list[Graph]
@@ -185,7 +185,7 @@ class Collator:
         :rtype: dict
 
         :raises RuntimeError: If the data is not a
-            :class:`~torch_geometric.data.Data` or a :class:`pina.graph.Graph`.
+            :class:`~torch_geometric.data.Data` or a :class:`~pina.graph.Graph`.
         """
 
         if isinstance(data_list[0], LabelTensor):
