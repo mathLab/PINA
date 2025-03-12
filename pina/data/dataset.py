@@ -175,7 +175,7 @@ class PinaDataset(Dataset, ABC):
         Return data from the dataset given a list of indices.
 
         :param idx: List of indices.
-        :type idx: list
+        :type idx: list[int]
         :return: A dictionary containing the data at the given indices.
         :rtype: dict
         """
@@ -216,7 +216,7 @@ class PinaTensorDataset(PinaDataset):
         :param data: Dictionary containing the data
             (only torch.Tensor/LableTensor).
         :type data: dict
-        :param list(int) idx_list: indices to retrieve.
+        :param list[int] idx_list: indices to retrieve.
         :return: Dictionary containing the data at the given indices.
         :rtype: dict
         """
@@ -246,7 +246,7 @@ class PinaGraphDataset(PinaDataset):
         :class:`torch_geometric.data.Data` objects.
 
         :param data: List of items to collate in a single batch.
-        :type data: list(torch_geometric.data.Data) | list(Graph)
+        :type data: list[torch_geometric.data.Data] | list[Graph]
         :return: LabelBatch object all the graph collated in a single batch
             disconnected graphs.
         :rtype: LabelBatch
@@ -256,7 +256,8 @@ class PinaGraphDataset(PinaDataset):
 
     def _create_tensor_batch(self, data):
         """
-        Create a torch.Tensor object from a list of torch.Tensor objects.
+        Reshape properly ``data`` tensor to be processed handle by the graph
+        based models.
 
         :param data: torch.Tensor object of shape (N, ...) where N is the
             number of data points.
@@ -273,7 +274,7 @@ class PinaGraphDataset(PinaDataset):
         objects.
 
         :param data: List of items to collate in a single batch.
-        :type data: list
+        :type data: list[torch_geometric.data.Data] | list[Graph]
         :return: Batch object.
         :rtype: Batch | PinaBatch
         """
@@ -288,7 +289,7 @@ class PinaGraphDataset(PinaDataset):
         Retrieve data from the dataset given a list of indices.
 
         :param dict data: Dictionary containing the data.
-        :param list idx_list: List of indices to retrieve.
+        :param list[int] idx_list: List of indices to retrieve.
         :return: Dictionary containing the data at the given indices.
         :rtype: dict
         """
