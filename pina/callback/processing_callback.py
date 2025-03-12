@@ -21,7 +21,7 @@ class MetricTracker(Callback):
 
         :param metrics_to_track: List of metrics to track.
             Defaults to train loss.
-        :type metrics_to_track: list, optional
+        :type metrics_to_track: list[str], optional
         """
         super().__init__()
         self._collection = []
