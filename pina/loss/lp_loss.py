@@ -8,26 +8,26 @@ from .loss_interface import LossInterface
 
 class LpLoss(LossInterface):
     r"""
-    The Lp loss implementation class. Creates a criterion that measures
-    the Lp error between each element in the input :math:`x` and
+    Implementation of the Lp Loss. It defines a criterion to measures the 
+    pointwise Lp error between values in the input :math:`x` and values in the
     target :math:`y`.
 
-    The unreduced (i.e. with ``reduction`` set to ``none``) loss can
-    be described as:
+    If ``reduction`` is set to ``none``, the loss can be written as:
 
     .. math::
         \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
         l_n = \left[\sum_{i=1}^{D} \left| x_n^i - y_n^i \right|^p \right],
     
-    If ``'relative'`` is set to true:
+    If ``relative`` is set to ``True``, the relative Lp error is computed:
 
     .. math::
         \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
         l_n = \frac{ [\sum_{i=1}^{D} | x_n^i - y_n^i|^p] }
         {[\sum_{i=1}^{D}|y_n^i|^p]},
 
-    where :math:`N` is the batch size. If ``reduction`` is not ``none``
-    (default ``mean``), then:
+    where :math:`N` is the batch size.
+    
+    If ``reduction`` is not ``none``, then:
 
     .. math::
         \ell(x, y) =
@@ -35,30 +35,21 @@ class LpLoss(LossInterface):
             \operatorname{mean}(L), & \text{if reduction} = \text{`mean';}\\
             \operatorname{sum}(L),  & \text{if reduction} = \text{`sum'.}
         \end{cases}
-
-    :math:`x` and :math:`y` are tensors of arbitrary shapes with a total
-    of :math:`n` elements each.
-
-    The sum operation still operates over all the elements, and divides by 
-    :math:`n`.
-
-    The division by :math:`n` can be avoided if one sets ``reduction`` to 
-    ``sum``.
     """
 
     def __init__(self, p=2, reduction="mean", relative=False):
         """
-        :param int p: Degree of Lp norm. It specifies the type of norm to
-            be calculated. See `list of possible orders in torch linalg
-            `torch.linalg.norm <https://pytorch.org/docs/stable/generated/
-            torch.linalg.norm.html#torch.linalg.norm>`_
-            for possible degrees. Default 2 (euclidean norm).
-        :param str reduction: Specifies the reduction to apply to the output:
-            ``none`` | ``mean`` | ``sum``. ``none``: no reduction
-            will be applied, ``mean``: the sum of the output will be divided
-            by the number of elements in the output, ``sum``: the output will
-            be summed.
-        :param bool relative: Specifies if relative error should be computed.
+        Initialization of the :class:`LpLoss` class.
+
+        :param int p: Degree of the Lp norm. It specifies the norm to be
+            computed. Default is ``2`` (euclidean norm).
+        :param str reduction: The reduction method for the loss.
+            Available options: ``none``, ``mean``, ``sum``.
+            If ``none``, no reduction is applied. If ``mean``, the sum of the
+            loss values is divided by the number of values. If ``sum``, the loss
+            values are summed. Default is ``mean``.
+        :param bool relative: If ``True``, the relative error is computed.
+            Default is ``False``.
         """
         super().__init__(reduction=reduction)
 
@@ -70,7 +61,8 @@ class LpLoss(LossInterface):
         self.relative = relative
 
     def forward(self, input, target):
-        """Forward method for loss function.
+        """
+        Forward method of the loss function.
 
         :param torch.Tensor input: Input tensor from real data.
         :param torch.Tensor target: Model tensor output.

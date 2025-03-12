@@ -98,7 +98,7 @@ class SimplexDomain(DomainInterface):
         """
         Build the cartesian border for a simplex domain to be used in sampling.
 
-        :param list[LabelTensor] vertices: Matrix of vertices defining the domain.
+        :param list[LabelTensor] vertices: list of vertices defining the domain.
         :return: The cartesian border for the simplex domain.
         :rtype: CartesianDomain
         """
@@ -124,7 +124,8 @@ class SimplexDomain(DomainInterface):
             the simplex. Default is ``False``.
         :raises ValueError: If the labels of the point are different from those
             passed in the ``__init__`` method.
-        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
+        :return: ``True`` if the point is inside the domain,
+            ``False`` otherwise.
         :rtype: bool
         """
 
