@@ -275,7 +275,8 @@ class LabelTensor(torch.Tensor):
 
     def __str__(self):
         """
-        The string representation of the :class:`~pina.label_tensor.LabelTensor`.
+        The string representation of the
+        :class:`~pina.label_tensor.LabelTensor`.
 
         :return: String representation of the
             :class:`~pina.label_tensor.LabelTensor` instance.
@@ -295,8 +296,8 @@ class LabelTensor(torch.Tensor):
         Concatenate a list of tensors along a specified dimension. For more
         details, see :meth:`torch.cat`.
 
-        :param list[LabelTensor] tensors: :class:`~pina.label_tensor.LabelTensor`
-            instances to concatenate
+        :param list[LabelTensor] tensors:
+            :class:`~pina.label_tensor.LabelTensor` instances to concatenate
         :param int dim: dimensions on which you want to perform the operation
             (default is 0)
         :return: A new :class:`LabelTensor' instance obtained by concatenating
@@ -472,8 +473,8 @@ class LabelTensor(torch.Tensor):
         Stack tensors vertically. For more details, see :meth:`torch.vstack`.
 
         :param list of LabelTensor label_tensors: The
-            :class:`~pina.label_tensor.LabelTensor` instances to stack. They need
-            to have equal labels.
+            :class:`~pina.label_tensor.LabelTensor` instances to stack. They
+            need to have equal labels.
         :return: A new :class:`~pina.label_tensor.LabelTensor` instance obtained
             by stacking the input tensors vertically.
         :rtype: LabelTensor
