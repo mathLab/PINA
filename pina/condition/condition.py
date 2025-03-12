@@ -30,7 +30,7 @@ def warning_function(new, old):
 
 class Condition:
     """
-    The class ``Condition`` is used to represent the constraints (physical
+    The class `Condition` is used to represent the constraints (physical
     equations, boundary conditions, etc.) that should be satisfied in the
     problem at hand. Condition objects are used to formulate the
     PINA :obj:`pina.problem.abstract_problem.AbstractProblem` object.
@@ -88,11 +88,16 @@ class Condition:
         """
         Create a new condition object based on the keyword arguments passed.
 
-        - ``input`` and ``target``: :class:`InputTargetCondition`
-        - ``domain`` and ``equation``: :class:`DomainEquationCondition`
-        - ``input`` and ``equation``: :class:`InputEquationCondition`
-        - ``input``: :class:`DataCondition`
-        - ``input`` and ``conditional_variables``: :class:`DataCondition`
+        - `input` and `target`:
+            :class:`pina.condition.input_target_condition.InputTargetCondition`
+        - `domain` and `equation`:
+            :class:`pina.condition.domain_equation_condition.
+            DomainEquationCondition`
+        - `input` and `equation`: :class:`pina.condition.
+            input_equation_condition.InputEquationCondition`
+        - `input`: :class:`pina.condition.data_condition.DataCondition`
+        - `input` and `conditional_variables`:
+            :class:`pina.condition.data_condition.DataCondition`
 
         :raises ValueError: No valid condition has been found.
         :return: A new condition instance belonging to the proper class.

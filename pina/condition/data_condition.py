@@ -27,17 +27,15 @@ class DataCondition(ConditionInterface):
 
         :param input: Input data for the condition.
         :type input: torch.Tensor | LabelTensor | Graph |
-            torch_geometric.data.Data | list[Graph] |
-            list[torch_geometric.data.Data] | tuple[Graph] |
-            tuple[torch_geometric.data.Data]
+            Data | list[Graph] | list[Data] | tuple[Graph] | tuple[Data]
         :param conditional_variables: Conditional variables for the condition.
         :type conditional_variables: torch.Tensor | LabelTensor
         :return: Subclass of DataCondition.
         :rtype: TensorDataCondition | GraphDataCondition
 
         :raises ValueError: If input is not of type :class:`torch.Tensor`,
-            :class:`LabelTensor`, :class:`Graph`, or
-            :class:`torch_geometric.data.Data`.
+            :class:`pina.label_tensor.LabelTensor`, :class:`pina.graph.Graph`,
+            or :class:`~torch_geometric.data.Data`.
 
 
         """
@@ -59,21 +57,19 @@ class DataCondition(ConditionInterface):
 
     def __init__(self, input, conditional_variables=None):
         """
-        Initialize the DataCondition, storing the input and conditional
+        Initialize the object by storing the input and conditional
         variables (if any).
 
         :param input: Input data for the condition.
-        :type input: torch.Tensor | LabelTensor | Graph |
-            torch_geometric.data.Data | list[Graph] |
-            list[torch_geometric.data.Data] | tuple[Graph] |
-            tuple[torch_geometric.data.Data]
+        :type input: torch.Tensor | LabelTensor | Graph | Data | list[Graph] |
+            list[Data] | tuple[Graph] | tuple[Data]
         :param conditional_variables: Conditional variables for the condition.
         :type conditional_variables: torch.Tensor or LabelTensor
 
         .. note::
-            If either `input` is composed by a list of :class:`Graph`/
-            :class:`torch_geometric.data.Data` objects, all elements must have
-            the same structure (keys and data types)
+            If either `input` is composed by a list of :class:`pina.graph.Graph`
+            or :class:`~torch_geometric.data.Data` objects, all elements must
+            have the same structure (keys and data types)
         """
         super().__init__()
         self.input = input
@@ -82,11 +78,13 @@ class DataCondition(ConditionInterface):
 
 class TensorDataCondition(DataCondition):
     """
-    DataCondition for torch.Tensor input data
+    DataCondition for :class:`torch.Tensor` or
+    :class:`pina.label_tensor.LabelTensor` input data
     """
 
 
 class GraphDataCondition(DataCondition):
     """
-    DataCondition for Graph/Data input data
+    DataCondition for :class:`pina.graph.Graph` or
+    :class:`~torch_geometric.data.Data` input data
     """
