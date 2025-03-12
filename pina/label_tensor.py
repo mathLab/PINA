@@ -668,7 +668,7 @@ class LabelTensor(torch.Tensor):
         Computes the summation of a list of :class:`LabelTensor` instances.
 
 
-        :param list[LabelTensor] tensors: A list of tensors to sum. All 
+        :param list[LabelTensor] tensors: A list of tensors to sum. All
             tensors must have the same shape and labels.
         :return: A new `LabelTensor` containing the element-wise sum of the
                  input tensors.

@@ -45,7 +45,7 @@ class ConditionInterface(metaclass=ABCMeta):
         objects is consistent.
 
         :param data_list: List of graph type objects.
-        :type data_list: torch_geometric.data.Data | Graph| 
+        :type data_list: torch_geometric.data.Data | Graph|
             list[torch_geometric.data.Data] | list[Graph]
 
         :raises ValueError: Input data must be either torch_geometric.data.Data
