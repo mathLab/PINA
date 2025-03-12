@@ -37,7 +37,7 @@ class Collector:
     @property
     def full(self):
         """
-        Whether all conditions are ready or not.
+        Whether all conditions are ready to be passed to the collector.
 
         :return: True if all conditions are ready.
         :rtype: bool
@@ -48,7 +48,7 @@ class Collector:
     @full.setter
     def full(self, value):
         """
-        Check the consistency of the value and set the full property.
+        Set the full flag.
 
         :param bool value: The value to set the full property to.
         """
