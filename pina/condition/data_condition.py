@@ -68,10 +68,12 @@ class DataCondition(ConditionInterface):
         :type conditional_variables: torch.Tensor or LabelTensor
 
         .. note::
-            If either `input` is composed by a list of :class:`~pina.graph.Graph`
-            or :class:`~torch_geometric.data.Data` objects, all elements must
-            have the same structure (keys and data types)
+            If either `input` is composed by a list of
+            :class:`~pina.graph.Graph` or :class:`~torch_geometric.data.Data`
+            objects, all elements must have the same structure (keys and data
+            types)
         """
+
         super().__init__()
         self.input = input
         self.conditional_variables = conditional_variables
