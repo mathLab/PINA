@@ -1,21 +1,22 @@
-"""Module for Equation."""
+"""Module for the Equation."""
 
 from .equation_interface import EquationInterface
 
 
 class Equation(EquationInterface):
     """
-    Equation class for specifing any equation in PINA.
+    Implementation of the Equation class. Every ``equation`` passed to a
+    :class:`~pina.condition.Condition` object must be either a :class:`Equation`
+    or a :class:`~pina.equation.SystemEquation` instance.
     """
 
     def __init__(self, equation):
         """
-        Each ``equation`` passed to a ``Condition`` object
-        must be an ``Equation`` or ``SystemEquation``.
+        Initialization of the :class:`Equation` class.
 
-        :param equation: A ``torch`` callable equation to
-            evaluate the residual.
-        :type equation: Callable
+        :param Callable equation: A ``torch`` callable function used to compute
+            the residual of a mathematical equation.
+        :raises ValueError: If the equation is not a callable function.
         """
         if not callable(equation):
             raise ValueError(
@@ -27,20 +28,16 @@ class Equation(EquationInterface):
 
     def residual(self, input_, output_, params_=None):
         """
-        Residual computation of the equation.
+        Compute the residual of the equation.
 
-        :param LabelTensor input_: Input points to evaluate the equation.
-        :param LabelTensor output_: Output vectors given by a model (e.g,
-            a ``FeedForward`` model).
-        :param dict params_: Dictionary of parameters related to the inverse
-            problem (if any).
-            If the equation is not related to an ``InverseProblem``, the
-            parameters are initialized to ``None`` and the residual is
-            computed as ``equation(input_, output_)``.
-            Otherwise, the parameters are automatically initialized in the
-            ranges specified by the user.
-
-        :return: The residual evaluation of the specified equation.
+        :param LabelTensor input_: Input points where the equation is evaluated.
+        :param LabelTensor output_: Output tensor, eventually produced by a
+            :class:`~torch.nn.Module` instance.
+        :param dict params_: Dictionary of unknown parameters, associated with a
+            :class:`~pina.problem.InverseProblem` instance. If the equation is
+            not related to a :class:`~pina.problem.InverseProblem` instance, the
+            parameters must be initialized to ``None``. Default is ``None``.
+        :return: The computed residual of the equation.
         :rtype: LabelTensor
         """
         if params_ is None:

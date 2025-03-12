@@ -1,4 +1,4 @@
-"""Module for SystemEquation."""
+"""Module for the System of Equation."""
 
 import torch
 from .equation_interface import EquationInterface
@@ -8,25 +8,25 @@ from ..utils import check_consistency
 
 class SystemEquation(EquationInterface):
     """
-    System of Equation class for specifing any system
-    of equations in PINA.
+    Implementation of the System of Equations. Every ``equation`` passed to a
+    :class:`~pina.condition.Condition` object must be either a :class:`Equation`
+    or a :class:`~pina.equation.SystemEquation` instance.
     """
 
     def __init__(self, list_equation, reduction=None):
         """
-        Each ``equation`` passed to a ``Condition`` object
-        must be an ``Equation`` or ``SystemEquation``.
-        A ``SystemEquation`` is specified by a list of
-        equations.
+        Initialization of the :class:`SystemEquation` class.
 
-        :param Callable equation: A ``torch`` callable equation to
-            evaluate the residual
-        :param str reduction: Specifies the reduction to apply to the output:
-            None | ``mean`` | ``sum``  | callable. None: no reduction
-            will be applied, ``mean``: the output sum will be divided
-            by the number of elements in the output, ``sum``: the output will
-            be summed. *callable* is a callable function to perform reduction,
-            no checks guaranteed. Default: None.
+        :param Callable equation: A ``torch`` callable function used to compute
+            the residual of a mathematical equation.
+        :param str reduction: The reduction method to aggregate the residuals of
+            each equation. Available options are: ``None``, ``mean``, ``sum``,
+            ``callable``.
+            If ``None``, no reduction is applied. If ``mean``, the output sum is
+            divided by the number of elements in the output. If ``sum``, the
+            output is summed. ``callable`` is a user-defined callable function
+            to perform reduction, no checks guaranteed. Default is ``None``.
+        :raises NotImplementedError: If the reduction is not implemented.
         """
         check_consistency([list_equation], list)
 
@@ -49,22 +49,19 @@ class SystemEquation(EquationInterface):
 
     def residual(self, input_, output_, params_=None):
         """
-        Residual computation for the equations of the system.
+        Compute the residual for each equation in the system of equations and
+        aggregate it according to the ``reduction`` specified in the
+        ``__init__`` method.
 
-        :param LabelTensor input_: Input points to evaluate the system of
-            equations.
-        :param LabelTensor output_: Output vectors given by a model (e.g,
-            a ``FeedForward`` model).
-        :param dict params_: Dictionary of parameters related to the inverse
-            problem (if any).
-            If the equation is not related to an ``InverseProblem``, the
-            parameters are initialized to ``None`` and the residual is
-            computed as ``equation(input_, output_)``.
-            Otherwise, the parameters are automatically initialized in the
-            ranges specified by the user.
+        :param LabelTensor input_: Input points where each equation is evaluated.
+        :param LabelTensor output_: Output tensor, eventually produced by a
+            :class:`~torch.nn.Module` instance.
+        :param dict params_: Dictionary of unknown parameters, associated with a
+            :class:`~pina.problem.InverseProblem` instance. If the equation is
+            not related to a :class:`~pina.problem.InverseProblem` instance, the
+            parameters must be initialized to ``None``. Default is ``None``.
 
-        :return: The residual evaluation of the specified system of equations,
-            aggregated by the ``reduction`` defined in the ``__init__``.
+        :return: The aggregated residuals of the system of equations.
         :rtype: LabelTensor
         """
         residual = torch.hstack(

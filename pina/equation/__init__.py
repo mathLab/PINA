@@ -1,5 +1,5 @@
 """
-Module for defining equations and system of equations.
+Module to define equations and systems of equations.
 """
 
 __all__ = [
