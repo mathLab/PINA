@@ -1,4 +1,4 @@
-"""Modules to create and handle domains."""
+"""Module to create and handle domains."""
 
 __all__ = [
     "DomainInterface",
