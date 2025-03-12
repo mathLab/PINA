@@ -1,17 +1,23 @@
-"""Definition of the inverse Poisson problem on a square domain."""
+"""Formulation of the inverse Poisson problem in a square domain."""
 
+import os
 import torch
-from pina import Condition, LabelTensor
-from pina.problem import SpatialProblem, InverseProblem
-from pina.operator import laplacian
-from pina.domain import CartesianDomain
-from pina.equation.equation import Equation
-from pina.equation.equation_factory import FixedValue
+from ... import Condition
+from ...operator import laplacian
+from ...domain import CartesianDomain
+from ...equation import Equation, FixedValue
+from ...problem import SpatialProblem, InverseProblem
 
 
 def laplace_equation(input_, output_, params_):
     """
     Implementation of the laplace equation.
+
+    :param LabelTensor input_: Input data of the problem.
+    :param LabelTensor output_: Output data of the problem.
+    :param dict params_: Parameters of the problem.
+    :return: The residual of the laplace equation.
+    :rtype: LabelTensor
     """
     force_term = torch.exp(
         -2 * (input_.extract(["x"]) - params_["mu1"]) ** 2
@@ -21,17 +27,34 @@ def laplace_equation(input_, output_, params_):
     return delta_u - force_term
 
 
+# Absolute path to the data directory
+data_dir = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__), "../../../tutorials/tutorial7/data/"
+    )
+)
+
+# Load input data
+input_data = torch.load(
+    f=os.path.join(data_dir, "pts_0.5_0.5"), weights_only=False
+).extract(["x", "y"])
+
+# Load output data
+output_data = torch.load(
+    f=os.path.join(data_dir, "pinn_solution_0.5_0.5"), weights_only=False
+)
+
+
 class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
-    """
-    Implementation of the inverse 2-dimensional Poisson problem
-    on a square domain, with parameter domain [-1, 1] x [-1, 1].
+    r"""
+    Implementation of the inverse 2-dimensional Poisson problem in the square
+    domain :math:`[0, 1] \times [0, 1]`,
+    with unknown parameter domain :math:`[-1, 1] \times [-1, 1]`.
     """
 
     output_variables = ["u"]
     x_min, x_max = -2, 2
     y_min, y_max = -2, 2
-    data_input = LabelTensor(torch.rand(10, 2), ["x", "y"])
-    data_output = LabelTensor(torch.rand(10, 1), ["u"])
     spatial_domain = CartesianDomain({"x": [x_min, x_max], "y": [y_min, y_max]})
     unknown_parameter_domain = CartesianDomain({"mu1": [-1, 1], "mu2": [-1, 1]})
 
@@ -44,13 +67,10 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     }
 
     conditions = {
-        "nil_g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "nil_g2": Condition(domain="g2", equation=FixedValue(0.0)),
-        "nil_g3": Condition(domain="g3", equation=FixedValue(0.0)),
-        "nil_g4": Condition(domain="g4", equation=FixedValue(0.0)),
-        "laplace_D": Condition(domain="D", equation=Equation(laplace_equation)),
-        "data": Condition(
-            input=data_input.extract(["x", "y"]),
-            target=data_output,
-        ),
+        "g1": Condition(domain="g1", equation=FixedValue(0.0)),
+        "g2": Condition(domain="g2", equation=FixedValue(0.0)),
+        "g3": Condition(domain="g3", equation=FixedValue(0.0)),
+        "g4": Condition(domain="g4", equation=FixedValue(0.0)),
+        "D": Condition(domain="D", equation=Equation(laplace_equation)),
+        "data": Condition(input=input_data, target=output_data),
     }

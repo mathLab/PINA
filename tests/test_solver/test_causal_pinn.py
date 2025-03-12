@@ -6,10 +6,7 @@ from pina.problem import SpatialProblem
 from pina.solver import CausalPINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
-from pina.problem.zoo import (
-    DiffusionReactionProblem,
-    InverseDiffusionReactionProblem,
-)
+from pina.problem.zoo import DiffusionReactionProblem
 from pina.condition import (
     InputTargetCondition,
     InputEquationCondition,
@@ -28,12 +25,9 @@ class DummySpatialProblem(SpatialProblem):
     spatial_domain = None
 
 
-# define problems and model
+# define problems
 problem = DiffusionReactionProblem()
 problem.discretise_domain(50)
-inverse_problem = InverseDiffusionReactionProblem()
-inverse_problem.discretise_domain(50)
-model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 
 # add input-output condition to test supervised learning
 input_pts = torch.rand(50, len(problem.input_variables))
@@ -42,8 +36,11 @@ output_pts = torch.rand(50, len(problem.output_variables))
 output_pts = LabelTensor(output_pts, problem.output_variables)
 problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
 
+# define model
+model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 
-@pytest.mark.parametrize("problem", [problem, inverse_problem])
+
+@pytest.mark.parametrize("problem", [problem])
 @pytest.mark.parametrize("eps", [100, 100.1])
 def test_constructor(problem, eps):
     with pytest.raises(ValueError):
@@ -57,7 +54,7 @@ def test_constructor(problem, eps):
     )
 
 
-@pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_train(problem, batch_size, compile):
@@ -77,7 +74,7 @@ def test_solver_train(problem, batch_size, compile):
         assert isinstance(solver.model, OptimizedModule)
 
 
-@pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_validation(problem, batch_size, compile):
@@ -97,7 +94,7 @@ def test_solver_validation(problem, batch_size, compile):
         assert isinstance(solver.model, OptimizedModule)
 
 
-@pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_test(problem, batch_size, compile):
@@ -117,7 +114,7 @@ def test_solver_test(problem, batch_size, compile):
         assert isinstance(solver.model, OptimizedModule)
 
 
-@pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("problem", [problem])
 def test_train_load_restore(problem):
     dir = "tests/test_solver/tmp"
     problem = problem

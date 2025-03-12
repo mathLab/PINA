@@ -17,12 +17,16 @@ from pina.problem.zoo import (
 from torch._dynamo.eval_frame import OptimizedModule
 
 
-# define problems and model
+# define problems
 problem = Poisson()
 problem.discretise_domain(50)
 inverse_problem = InversePoisson()
 inverse_problem.discretise_domain(50)
-model = FeedForward(len(problem.input_variables), len(problem.output_variables))
+
+# reduce the number of data points to speed up testing
+data_condition = inverse_problem.conditions["data"]
+data_condition.input = data_condition.input[:10]
+data_condition.target = data_condition.target[:10]
 
 # add input-output condition to test supervised learning
 input_pts = torch.rand(50, len(problem.input_variables))
@@ -30,6 +34,9 @@ input_pts = LabelTensor(input_pts, problem.input_variables)
 output_pts = torch.rand(50, len(problem.output_variables))
 output_pts = LabelTensor(output_pts, problem.output_variables)
 problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
+
+# define model
+model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
