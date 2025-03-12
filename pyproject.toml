@@ -39,6 +39,10 @@ dev = [
 ]
 tutorials = [
     "smithers @ git+https://github.com/mathLab/smithers.git",
+    "torchvision",
+    "tensorboard",
+    "scipy",
+    "numpy",
 ]
 
 [project.urls]
