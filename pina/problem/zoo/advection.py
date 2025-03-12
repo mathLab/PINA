@@ -53,10 +53,16 @@ def initial_condition(input_, output_):
 
 
 class AdvectionProblem(SpatialProblem, TimeDependentProblem):
-    """
-    Implementation of the advection problem in the spatial interval [0, 2*pi]
-    and temporal interval [0, 1].
-    Reference: https://arxiv.org/pdf/2308.08468.
+    r"""
+    Implementation of the advection problem in the spatial interval
+    :math:`[0, 2 \pi]` and temporal interval :math:`[0, 1]`.
+
+    .. seealso::
+
+        **Original reference**: Wang, Sifan, et al. *An expert's guide to
+        training physics-informed neural networks*.
+        arXiv preprint arXiv:2308.08468 (2023).
+        DOI: `arXiv:2308.08468  <https://arxiv.org/abs/2308.08468>`_.
     """
 
     output_variables = ["u"]

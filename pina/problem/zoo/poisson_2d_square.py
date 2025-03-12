@@ -27,9 +27,9 @@ def laplace_equation(input_, output_):
 
 
 class Poisson2DSquareProblem(SpatialProblem):
-    """
+    r"""
     Implementation of the 2-dimensional Poisson problem in the square domain
-    [0, 1] x [0, 1].
+    :math:`[0, 1] \times [0, 1]`.
     """
 
     output_variables = ["u"]

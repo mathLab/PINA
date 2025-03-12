@@ -5,7 +5,7 @@ from pina.problem import SpatialProblem, TimeDependentProblem
 
 @pytest.mark.parametrize("c", [1.5, 3])
 def test_constructor(c):
-    print(f"Testing with c = {c} (type: {type(c)})") 
+    print(f"Testing with c = {c} (type: {type(c)})")
     problem = AdvectionProblem(c=c)
     problem.discretise_domain(n=10, mode="random", domains="all")
     assert problem.are_all_domains_discretised

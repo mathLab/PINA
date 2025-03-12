@@ -51,10 +51,14 @@ def initial_condition(input_, output_):
 
 
 class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
-    """
+    r"""
     Implementation of the diffusion-reaction problem in the spatial interval
-    [-pi, pi] and temporal interval [0, 1].
-    Reference: https://www.arxiv.org/pdf/2502.04917.
+    :math:`[-\pi, \pi]` and temporal interval :math:`[0, 1]`.
+
+    .. seealso::
+        **Original reference**: Si, Chenhao, et al. *Complex Physics-Informed
+        Neural Network.* arXiv preprint arXiv:2502.04917 (2025).
+        DOI: `arXiv:2502.04917 <https://arxiv.org/abs/2502.04917>`_.
     """
 
     output_variables = ["u"]

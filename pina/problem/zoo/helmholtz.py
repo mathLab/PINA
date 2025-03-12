@@ -45,9 +45,14 @@ class HelmholtzEquation(Equation):
 
 
 class HelmholtzProblem(SpatialProblem):
-    """
+    r"""
     Implementation of the Helmholtz problem in the square domain
-    [-1, 1] x [-1, 1]. Reference: https://www.arxiv.org/pdf/2502.04917.
+    :math:`[-1, 1] \times [-1, 1]`.
+
+    .. seealso::
+        **Original reference**: Si, Chenhao, et al. *Complex Physics-Informed
+        Neural Network.* arXiv preprint arXiv:2502.04917 (2025).
+        DOI: `arXiv:2502.04917 <https://arxiv.org/abs/2502.04917>`_.
     """
 
     output_variables = ["u"]

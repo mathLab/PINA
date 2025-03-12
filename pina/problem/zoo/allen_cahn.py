@@ -37,10 +37,18 @@ def initial_condition(input_, output_):
 
 
 class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
-    """
+    r"""
     Implementation of the Allen Cahn problem in the spatial interval
-    [-1, 1] and temporal interval [0, 1].
-    Reference: https://arxiv.org/pdf/2307.00379.
+    :math:`[-1, 1]` and temporal interval :math:`[0, 1]`.
+
+    .. seealso::
+        **Original reference**: Sokratis J. Anagnostopoulos, Juan D. Toscano,
+        Nikolaos Stergiopulos, and George E. Karniadakis.
+        *Residual-based attention and connection to information
+        bottleneck theory in PINNs*.
+        Computer Methods in Applied Mechanics and Engineering 421 (2024): 116805
+        DOI: `10.1016/
+        j.cma.2024.116805 <https://doi.org/10.1016/j.cma.2024.116805>`_.
     """
 
     output_variables = ["u"]
