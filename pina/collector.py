@@ -37,8 +37,10 @@ class Collector:
     @property
     def full(self):
         """
-        Whether all conditions are ready to be passed to the collector.
-
+        Whether all conditions are ready to be passed to the data module.
+        The collector is said to be full is all conditions have some entries
+        in data_collection dict.
+        
         :return: True if all conditions are ready.
         :rtype: bool
         """
