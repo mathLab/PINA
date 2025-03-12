@@ -8,14 +8,19 @@ from ..utils import torch_lhs, chebyshev_roots
 
 
 class CartesianDomain(DomainInterface):
-    """PINA implementation of Hypercube domain."""
+    """
+    Implementation of the hypercube domain.
+    """
 
     def __init__(self, cartesian_dict):
         """
-        :param cartesian_dict: A dictionary with dict-key a string representing
-            the input variables for the pinn, and dict-value a list with
-            the domain extrema.
-        :type cartesian_dict: dict
+        Initialize the :class:`~pina.domain.CartesianDomain` class.
+
+        :param dict cartesian_dict: A dictionary where the keys are the 
+            variable names and the values are the domain extrema. The domain 
+            extrema can be either a list with two elements or a single number. 
+            If the domain extrema is a single number, the variable is fixed to 
+            that value.
 
         :Example:
             >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
@@ -33,22 +38,31 @@ class CartesianDomain(DomainInterface):
 
     @property
     def sample_modes(self):
+        """
+        List of available sampling modes.
+
+        :return: List of available sampling modes.
+        :rtype: list[str]
+        """
         return ["random", "grid", "lh", "chebyshev", "latin"]
 
     @property
     def variables(self):
-        """Spatial variables.
+        """
+        List of variables of the domain.
 
-        :return: Spatial variables defined in ``__init__()``
+        :return: List of variables of the domain.
         :rtype: list[str]
         """
         return sorted(list(self.fixed_.keys()) + list(self.range_.keys()))
 
     def update(self, new_domain):
-        """Adding new dimensions on the ``CartesianDomain``
+        """
+        Add new dimensions to an existing :class:`~pina.domain.CartesianDomain` 
+        object.
 
-        :param CartesianDomain new_domain: A new ``CartesianDomain`` object
-            to merge
+        :param :class:`~pina.domain.CartesianDomain` new_domain: New domain to 
+            be added to an existing :class:`~pina.domain.CartesianDomain` object.
 
         :Example:
             >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
@@ -63,24 +77,20 @@ class CartesianDomain(DomainInterface):
         self.range_.update(new_domain.range_)
 
     def _sample_range(self, n, mode, bounds):
-        """Rescale the samples to the correct bounds
+        """
+        Rescale the samples to fit within the specified bounds.
 
-        :param n: Number of points to sample, see Note below
-            for reference.
-        :type n: int
-        :param mode: Mode for sampling, defaults to ``random``.
-            Available modes include: random sampling, ``random``;
-            latin hypercube sampling, ``latin`` or ``lh``;
-            chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
-        :type mode: str
-        :param bounds: Bounds to rescale the samples.
-        :type bounds: torch.Tensor
+        :param int n: Number of points to sample.
+        :param str mode: Sampling method. Default is ``random``.
+        :param torch.Tensor bounds: Bounds of the domain.
+        :raises RuntimeError: Wrong bounds initialization.
+        :raises ValueError: Invalid sampling mode.
         :return: Rescaled sample points.
         :rtype: torch.Tensor
         """
         dim = bounds.shape[0]
         if mode in ["chebyshev", "grid"] and dim != 1:
-            raise RuntimeError("Something wrong in Cartesian...")
+            raise RuntimeError("Wrong bounds initialization")
 
         if mode == "random":
             pts = torch.rand(size=(n, dim))
@@ -88,7 +98,6 @@ class CartesianDomain(DomainInterface):
             pts = chebyshev_roots(n).mul(0.5).add(0.5).reshape(-1, 1)
         elif mode == "grid":
             pts = torch.linspace(0, 1, n).reshape(-1, 1)
-        # elif mode == 'lh' or mode == 'latin':
         elif mode in ["lh", "latin"]:
             pts = torch_lhs(n, dim)
         else:
@@ -97,36 +106,35 @@ class CartesianDomain(DomainInterface):
         return pts * (bounds[:, 1] - bounds[:, 0]) + bounds[:, 0]
 
     def sample(self, n, mode="random", variables="all"):
-        """Sample routine.
+        """
+        Sampling routine.
 
-        :param n: Number of points to sample, see Note below
-            for reference.
-        :type n: int
-        :param mode: Mode for sampling, defaults to ``random``.
-            Available modes include: random sampling, ``random``;
-            latin hypercube sampling, ``latin`` or ``lh``;
+        :param int n: Number of points to sample, see Note below for reference.
+        :param str mode: Sampling method. Default is ``random``.
+            Available modes: random sampling, ``random``; 
+            latin hypercube sampling, ``latin`` or ``lh``; 
             chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
-        :type mode: str
-        :param variables: pinn variable to be sampled, defaults to ``all``.
+        :param variables: variables to be sampled. Default is ``all``.
         :type variables: str | list[str]
-        :return: Returns ``LabelTensor`` of n sampled points.
+        :return: Sampled points.
         :rtype: LabelTensor
 
         .. note::
-            The total number of points sampled in case of multiple variables
-            is not ``n``, and it depends on the chosen ``mode``. If ``mode`` is
-            'grid' or ``chebyshev``, the points are sampled independentely
-            across the variables and the results crossed together, i.e. the
-            final number of points is ``n`` to the power of the number of
-            variables. If 'mode' is 'random', ``lh`` or ``latin``, the variables
-            are sampled all together, and the final number of points
+            When multiple variables are involved, the total number of sampled 
+            points may differ from ``n``, depending on the chosen ``mode``. 
+            If ``mode`` is ``grid`` or ``chebyshev``, points are sampled 
+            independently for each variable and then combined, resulting in a 
+            total number of points equal to ``n`` raised to the power of the 
+            number of variables. If 'mode' is 'random', ``lh`` or ``latin``, 
+            all variables are sampled together, and the total number of points 
+            remains ``n``.
 
         .. warning::
-            The extrema values of Span are always sampled only for ``grid``
-            mode.
+            The extrema of CartesianDomain are only sampled when using the 
+            ``grid`` mode.
 
         :Example:
-            >>> spatial_domain = Span({'x': [0, 1], 'y': [0, 1]})
+            >>> spatial_domain = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
             >>> spatial_domain.sample(n=4, mode='random')
                 tensor([[0.0108, 0.7643],
                         [0.4477, 0.8015],
@@ -152,7 +160,16 @@ class CartesianDomain(DomainInterface):
         """
 
         def _1d_sampler(n, mode, variables):
-            """Sample independentely the variables and cross the results"""
+            """
+            Sample each variable independently.
+
+            :param int n: Number of points to sample.
+            :param str mode: Sampling method.
+            :param variables: variables to be sampled.
+            :type variables: str | list[str]
+            :return: Sampled points.
+            :rtype: list[LabelTensor]
+            """
             tmp = []
             for variable in variables:
                 if variable in self.range_:
@@ -181,19 +198,15 @@ class CartesianDomain(DomainInterface):
             return result
 
         def _Nd_sampler(n, mode, variables):
-            """Sample all the variables together
+            """
+            Sample all variables together.
 
-            :param n: Number of points to sample.
-            :type n: int
-            :param mode: Mode for sampling, defaults to ``random``.
-                Available modes include: random sampling, ``random``;
-                latin hypercube sampling, ``latin`` or ``lh``;
-                chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
-            :type mode: str.
-            :param variables: pinn variable to be sampled, defaults to ``all``.
-            :type variables: str or list[str].
-            :return: Sample points.
-            :rtype: list[torch.Tensor]
+            :param int n: Number of points to sample.
+            :param str mode: Sampling method.
+            :param variables: variables to be sampled.
+            :type variables: str | list[str]
+            :return: Sampled points.
+            :rtype: list[LabelTensor]
             """
             pairs = [(k, v) for k, v in self.range_.items() if k in variables]
             keys, values = map(list, zip(*pairs))
@@ -215,13 +228,13 @@ class CartesianDomain(DomainInterface):
             return result
 
         def _single_points_sample(n, variables):
-            """Sample a single point in one dimension.
+            """
+            Sample a single point in one dimension.
 
-            :param n: Number of points to sample.
-            :type n: int
-            :param variables: Variables to sample from.
-            :type variables: list[str]
-            :return: Sample points.
+            :param int n: Number of points to sample.
+            :param variables: variables to be sampled.
+            :type variables: str | list[str]
+            :return: Sampled points.
             :rtype: list[torch.Tensor]
             """
             tmp = []
@@ -256,14 +269,13 @@ class CartesianDomain(DomainInterface):
         raise ValueError(f"mode={mode} is not valid.")
 
     def is_inside(self, point, check_border=False):
-        """Check if a point is inside the ellipsoid.
+        """
+        Check if a point is inside the hypercube.
 
-        :param point: Point to be checked
-        :type point: LabelTensor
-        :param check_border: Check if the point is also on the frontier
-            of the hypercube, default ``False``.
-        :type check_border: bool
-        :return: Returning ``True`` if the point is inside, ``False`` otherwise.
+        :param LabelTensor point: Point to be checked.
+        :param bool check_border: Determines whether to check if the point lies 
+            on the boundary of the hypercube. Default is ``False``.
+        :return: ``True`` if the point is inside the domain, ``False`` otherwise.
         :rtype: bool
         """
         is_inside = []
