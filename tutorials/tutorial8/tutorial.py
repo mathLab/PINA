@@ -16,7 +16,7 @@
 # Let's start with the necessary imports.
 # It's important to note the minimum PINA version to run this tutorial is the `0.1`.
 
-# In[ ]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -31,9 +31,9 @@ if IN_COLAB:
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 import matplotlib.pyplot as plt
+plt.style.use('tableau-colorblind10')
 import torch
 import pina
-import warnings
 
 from pina.domain import CartesianDomain
 from pina.optim import TorchOptimizer
@@ -42,8 +42,6 @@ from pina.model.block import PODBlock, RBFBlock
 from pina import Condition, LabelTensor, Trainer
 from pina.model import FeedForward
 from pina.solver import SupervisedSolver
-
-warnings.filterwarnings('ignore')
 
 
 # We exploit the [Smithers](https://github.com/mathLab/Smithers) library to collect the parametric snapshots. In particular, we use the `NavierStokesDataset` class that contains a set of parametric solutions of the Navier-Stokes equations in a 2D L-shape domain. The parameter is the inflow velocity.
@@ -54,6 +52,7 @@ warnings.filterwarnings('ignore')
 # In[2]:
 
 
+get_ipython().system('pip install git+https://github.com/mathLab/Smithers.git')
 import smithers
 from smithers.dataset import NavierStokesDataset
 dataset = NavierStokesDataset()
@@ -84,7 +83,7 @@ u_train, u_test = u[:n_train], u[n_train:]
 p_train, p_test = p[:n_train], p[n_train:]
 
 
-# It is now time to define the problem! We inherit from `ParametricProblem` (since the space invariance typical of this methodology), just defining a simple *input-target* condition.
+# It is now time to define the problem! We inherit from `ParametricProblem` (since the space invariant typically of this methodology), just defining a simple *input-output* condition.
 
 # In[4]:
 
@@ -94,7 +93,7 @@ class SnapshotProblem(ParametricProblem):
     parameter_domain = CartesianDomain({'mu': [0, 100]})
 
     conditions = {
-        'io': Condition(input=p_train, target=u_train)
+        'io': Condition(input_points=p_train, output_points=u_train)
     }
 
 poisson_problem = SnapshotProblem()
@@ -159,7 +158,7 @@ pod_nn.fit_pod(u_train)
 pod_nn_stokes = SupervisedSolver(
     problem=poisson_problem, 
     model=pod_nn, 
-    optimizer=TorchOptimizer(torch.optim.Adam, lr=0.0001))
+    optimizer=TorchOptimizer(torch.optim.Adam))
 
 
 # Now that we have set the `Problem` and the `Model`, we have just to train the model and use it for predicting the test snapshots.
