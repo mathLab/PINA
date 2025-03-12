@@ -10,15 +10,16 @@ from ..equation.equation_interface import EquationInterface
 
 class DomainEquationCondition(ConditionInterface):
     """
-    Condition for domain/equation data. This condition must be used every
-    time a Physics Informed Loss is needed in the Solver.
+    Condition defined by a domain and an equation. It can be used in Physics
+    Informed problems. Before using this condition, make sure that input data
+    are correctly sampled from the domain.
     """
 
     __slots__ = ["domain", "equation"]
 
     def __init__(self, domain, equation):
         """
-        Initialize the object by storing the domain and equation.
+        Initialise the object by storing the domain and equation.
 
         :param DomainInterface domain: Domain object containing the domain data.
         :param EquationInterface equation: Equation object containing the

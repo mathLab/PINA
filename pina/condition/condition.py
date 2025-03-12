@@ -98,11 +98,11 @@ class Condition:
         - `input`: :class:`~pina.condition.data_condition.DataCondition`
         - `input` and `conditional_variables`:
             :class:`~pina.condition.data_condition.DataCondition`
-
-        :raises ValueError: No valid condition has been found.
         :return: A new condition instance belonging to the proper class.
         :rtype: InputTargetCondition | DomainEquationCondition |
                 InputEquationCondition | DataCondition
+
+        :raises ValueError: No valid condition has been found.
         """
         if len(args) != 0:
             raise ValueError(
