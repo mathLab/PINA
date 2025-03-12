@@ -287,14 +287,19 @@ class PinaDataModule(LightningDataModule):
         :param automatic_batching: Whether to enable automatic batching.
             Default False.
         :param int num_workers: Number of worker threads for data loading.
-            Default 0 (serial loading). For more information, see
-            https://pytorch.org/docs/stable/data.html#multi-process-data-loading
+            Default 0 (serial loading).
         :param bool pin_memory: Whether to use pinned memory for faster data
-            transfer to GPU. (Default False). For more information, see
-            https://pytorch.org/docs/stable/data.html#memory-pinning
+            transfer to GPU. (Default False).
 
         :raises ValueError: If at least one of the splits is negative.
         :raises ValueError: If the sum of the splits is different from 1.
+
+        .. seealso::
+            For more information on multi-process data loading, see:
+            https://pytorch.org/docs/stable/data.html#multi-process-data-loading
+
+            For details on memory pinning, see:
+            https://pytorch.org/docs/stable/data.html#memory-pinning
         """
         super().__init__()
 
