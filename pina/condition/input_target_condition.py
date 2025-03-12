@@ -44,8 +44,8 @@ class InputTargetCondition(ConditionInterface):
             pina.condition.input_target_condition.GraphInputGraphTargetCondition
 
         :raises ValueError: If input and or target are not of type
-            :class:`torch.Tensor`, :class:`pina.label_tensor.LabelTensor`,
-            :class:`pina.graph.Graph`, or :class:`~torch_geometric.data.Data`.
+            :class:`torch.Tensor`, :class:`~pina.label_tensor.LabelTensor`,
+            :class:`~pina.graph.Graph`, or :class:`~torch_geometric.data.Data`.
         """
         if cls != InputTargetCondition:
             return super().__new__(cls)
@@ -97,7 +97,7 @@ class InputTargetCondition(ConditionInterface):
 
         .. note::
             If either `input` or `target` are composed by a list of
-            :class:`pina.graph.Graph` or :class:`~torch_geometric.data.Data`
+            :class:`~pina.graph.Graph` or :class:`~torch_geometric.data.Data`
             objects, all elements must have the same structure (keys and data
             types)
         """
@@ -122,29 +122,29 @@ class InputTargetCondition(ConditionInterface):
 class TensorInputTensorTargetCondition(InputTargetCondition):
     """
     InputTargetCondition subclass for :class:`torch.Tensor` or
-    :class:`pina.label_tensor.LabelTensor` input and target data.
+    :class:`~pina.label_tensor.LabelTensor` input and target data.
     """
 
 
 class TensorInputGraphTargetCondition(InputTargetCondition):
     """
     InputTargetCondition subclass for :class:`torch.Tensor` or
-    :class:`pina.label_tensor.LabelTensor` input and
-    :class:`pina.graph.Graph` or :class:`~torch_geometric.data.Data` target
+    :class:`~pina.label_tensor.LabelTensor` input and
+    :class:`~pina.graph.Graph` or :class:`~torch_geometric.data.Data` target
     data.
     """
 
 
 class GraphInputTensorTargetCondition(InputTargetCondition):
     """
-    InputTargetCondition subclass for :class:`pina.graph.Graph` o
+    InputTargetCondition subclass for :class:`~pina.graph.Graph` o
     :class:`~torch_geometric.data.Data` input and :class:`torch.Tensor` or
-    :class:`pina.label_tensor.LabelTensor` target data.
+    :class:`~pina.label_tensor.LabelTensor` target data.
     """
 
 
 class GraphInputGraphTargetCondition(InputTargetCondition):
     """
-    InputTargetCondition subclass for :class:`pina.graph.Graph`/
+    InputTargetCondition subclass for :class:`~pina.graph.Graph`/
     :class:`~torch_geometric.data.Data` input and target data.
     """

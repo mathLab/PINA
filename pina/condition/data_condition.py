@@ -35,7 +35,7 @@ class DataCondition(ConditionInterface):
             pina.condition.data_condition.GraphDataCondition
 
         :raises ValueError: If input is not of type :class:`torch.Tensor`,
-            :class:`pina.label_tensor.LabelTensor`, :class:`pina.graph.Graph`,
+            :class:`~pina.label_tensor.LabelTensor`, :class:`~pina.graph.Graph`,
             or :class:`~torch_geometric.data.Data`.
 
 
@@ -68,7 +68,7 @@ class DataCondition(ConditionInterface):
         :type conditional_variables: torch.Tensor or LabelTensor
 
         .. note::
-            If either `input` is composed by a list of :class:`pina.graph.Graph`
+            If either `input` is composed by a list of :class:`~pina.graph.Graph`
             or :class:`~torch_geometric.data.Data` objects, all elements must
             have the same structure (keys and data types)
         """
@@ -80,12 +80,12 @@ class DataCondition(ConditionInterface):
 class TensorDataCondition(DataCondition):
     """
     DataCondition for :class:`torch.Tensor` or
-    :class:`pina.label_tensor.LabelTensor` input data
+    :class:`~pina.label_tensor.LabelTensor` input data
     """
 
 
 class GraphDataCondition(DataCondition):
     """
-    DataCondition for :class:`pina.graph.Graph` or
+    DataCondition for :class:`~pina.graph.Graph` or
     :class:`~torch_geometric.data.Data` input data
     """
