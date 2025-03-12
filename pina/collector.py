@@ -18,7 +18,7 @@ class Collector:
         and the problem and initializing the data collections (dictionary where
         data will be stored).
 
-        :param pina.problem.abstract_problem.AbstractProblem problem: The 
+        :param pina.problem.abstract_problem.AbstractProblem problem: The
             problem to collect data from.
         """
         # creating a hook between collector and problem
@@ -81,7 +81,7 @@ class Collector:
         """
         Set the problem connected to the collector.
 
-        :param pina.problem.abstract_problem.AbstractProblem value: The problem 
+        :param pina.problem.abstract_problem.AbstractProblem value: The problem
             to connect to the collector.
         """
 
