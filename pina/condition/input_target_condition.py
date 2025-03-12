@@ -25,11 +25,15 @@ class InputTargetCondition(ConditionInterface):
         the types of input and target data.
 
         :param input: Input data for the condition.
-        :type input: torch.Tensor | Graph | torch_geometric.data.Data | list | \
-            tuple
+        :type input: torch.Tensor | LabelTensor | Graph | 
+            torch_geometric.data.Data | list[Graph] | 
+            list[torch_geometric.data.Data] | tuple[Graph] |
+            tuple[torch_geometric.data.Data]
         :param target: Target data for the condition.
-        :type target: torch.Tensor | Graph | torch_geometric.data.Data | list \
-            | tuple
+        :type target: torch.Tensor | LabelTensor | Graph | 
+            torch_geometric.data.Data | list[Graph] | 
+            list[torch_geometric.data.Data] | tuple[Graph] |
+            tuple[torch_geometric.data.Data]
         :return: Subclass of InputTargetCondition
         :rtype: TensorInputTensorTargetCondition | \
             TensorInputGraphTargetCondition | \
@@ -81,9 +85,15 @@ class InputTargetCondition(ConditionInterface):
         Initialize the InputTargetCondition, storing the input and target data.
 
         :param input: Input data for the condition.
-        :type input: torch.Tensor | Graph | torch_geometric.data.Data
+        :type input: torch.Tensor | LabelTensor | Graph | 
+            torch_geometric.data.Data | list[Graph] | 
+            list[torch_geometric.data.Data] | tuple[Graph] |
+            tuple[torch_geometric.data.Data]
         :param target: Target data for the condition.
-        :type target: torch.Tensor | Graph | torch_geometric.data.Data
+        :type target: torch.Tensor | LabelTensor | Graph | 
+            torch_geometric.data.Data | list[Graph] | 
+            list[torch_geometric.data.Data] | tuple[Graph] |
+            tuple[torch_geometric.data.Data]
 
         .. note::
             If either ``input`` or ``target`` are composed by a list of
