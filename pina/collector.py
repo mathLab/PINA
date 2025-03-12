@@ -60,7 +60,7 @@ class Collector:
     @property
     def data_collections(self):
         """
-        Return the data collections (dictionary where data is stored). 
+        Return the data collections (dictionary where data is stored).
 
         :return: The data collections where the data is stored.
         :rtype: dict
@@ -116,7 +116,7 @@ class Collector:
     def store_sample_domains(self):
         """
         Store inside data collections the sampled data of the problem. These
-        comes from the conditions that require sampling (e.g. 
+        comes from the conditions that require sampling (e.g.
         DomainEquationCondition).
         """
 
