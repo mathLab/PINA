@@ -23,13 +23,13 @@ if IN_COLAB:
 
 import torch 
 import matplotlib.pyplot as plt 
-import torchvision # for MNIST dataset
-
+plt.style.use('tableau-colorblind10')
 from pina.problem import AbstractProblem
 from pina.solver import SupervisedSolver
 from pina.trainer import Trainer
 from pina import Condition, LabelTensor
 from pina.model.block import ContinuousConvBlock 
+import torchvision # for MNIST dataset
 from pina.model import FeedForward # for building AE and MNIST classification
 
 
@@ -508,7 +508,7 @@ class CircleProblem(AbstractProblem):
     input_variables = ['x', 'y', 'f']
     output_variables = input_variables
     al=LabelTensor(input_data, input_variables)
-    conditions = {'data' : Condition(input=LabelTensor(input_data, input_variables), target=LabelTensor(input_data, output_variables))}
+    conditions = {'data' : Condition(input_points=LabelTensor(input_data, input_variables), output_points=LabelTensor(input_data, output_variables))}
 
 # define the solver
 solver = SupervisedSolver(problem=CircleProblem(), model=net, loss=torch.nn.MSELoss(), use_lt=True)          

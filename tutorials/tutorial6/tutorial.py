@@ -26,7 +26,7 @@ if IN_COLAB:
   get_ipython().system('pip install "pina-mathlab"')
 
 import matplotlib.pyplot as plt
-
+plt.style.use('tableau-colorblind10')
 from pina.domain import EllipsoidDomain, Difference, CartesianDomain, Union, SimplexDomain, DomainInterface
 from pina.label_tensor import LabelTensor
 
