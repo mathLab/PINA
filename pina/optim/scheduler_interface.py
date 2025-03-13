@@ -1,25 +1,23 @@
-"""Module for PINA Scheduler."""
+"""Module for the PINA Scheduler."""
 
 from abc import ABCMeta, abstractmethod
 
 
 class Scheduler(metaclass=ABCMeta):
     """
-    TODO
-
-    :param metaclass: _description_, defaults to ABCMeta
-    :type metaclass: _type_, optional
+    Abstract base class for defining a scheduler. All specific schedulers should
+    inherit form this class and implement the required methods.
     """
 
     @property
     @abstractmethod
     def instance(self):
         """
-        TODO
+        Abstract property to retrieve the scheduler instance.
         """
 
     @abstractmethod
     def hook(self):
         """
-        TODO
+        Abstract method to define the hook logic for the scheduler.
         """

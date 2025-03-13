@@ -1,4 +1,4 @@
-"""Module for PINA Torch Optimizer"""
+"""Module for the PINA Torch Optimizer"""
 
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
@@ -14,18 +14,17 @@ from .scheduler_interface import Scheduler
 
 class TorchScheduler(Scheduler):
     """
-    TODO
-
-    :param Scheduler: _description_
-    :type Scheduler: _type_
+    A wrapper class for using PyTorch schedulers.
     """
 
     def __init__(self, scheduler_class, **kwargs):
         """
-        TODO
+        Initialization of the :class:`TorchScheduler` class.
 
-        :param scheduler_class: _description_
-        :type scheduler_class: _type_
+        :param torch.optim.LRScheduler scheduler_class: The PyTorch scheduler
+            class.
+        :param dict kwargs: Additional parameters passed to `scheduler_class`,
+            see more: <https://pytorch.org/docs/stable/optim.html#algorithms>_.
         """
         check_consistency(scheduler_class, LRScheduler, subclass=True)
 
@@ -35,10 +34,9 @@ class TorchScheduler(Scheduler):
 
     def hook(self, optimizer):
         """
-        TODO
+        Initialize the scheduler instance with the given parameters.
 
-        :param optimizer: _description_
-        :type optimizer: _type_
+        :param dict parameters: The parameters of the optimizer.
         """
         check_consistency(optimizer, Optimizer)
         self._scheduler_instance = self.scheduler_class(
@@ -48,6 +46,9 @@ class TorchScheduler(Scheduler):
     @property
     def instance(self):
         """
-        Scheduler instance.
+        Get the scheduler instance.
+
+        :return: The scheduelr instance.
+        :rtype: torch.optim.LRScheduler
         """
         return self._scheduler_instance

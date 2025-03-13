@@ -1,24 +1,23 @@
-"""Module for PINA Optimizer."""
+"""Module for the PINA Optimizer."""
 
 from abc import ABCMeta, abstractmethod
 
 
 class Optimizer(metaclass=ABCMeta):
     """
-    TODO
-    :param metaclass: _description_, defaults to ABCMeta
-    :type metaclass: _type_, optional
+    Abstract base class for defining an optimizer. All specific optimizers
+    should inherit form this class and implement the required methods.
     """
 
     @property
     @abstractmethod
     def instance(self):
         """
-        TODO
+        Abstract property to retrieve the optimizer instance.
         """
 
     @abstractmethod
     def hook(self):
         """
-        TODO
+        Abstract method to define the hook logic for the optimizer.
         """

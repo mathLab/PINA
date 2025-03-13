@@ -1,4 +1,4 @@
-"""Module for Optimizer class."""
+"""Module for the Optimizers and Schedulers."""
 
 __all__ = [
     "Optimizer",
