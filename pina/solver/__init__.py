@@ -1,6 +1,4 @@
-"""
-TODO
-"""
+"""Module for the solver classes."""
 
 __all__ = [
     "SolverInterface",
