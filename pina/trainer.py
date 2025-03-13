@@ -64,8 +64,7 @@ class Trainer(lightning.pytorch.Trainer):
         :Keyword Arguments:
             The additional keyword arguments specify the training setup
             and can be choosen from the `pytorch-lightning
-            Trainer API <https://lightning.ai/docs/pytorch/stable/common/
-                trainer.html#trainer-class-api>`_
+            Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_
         """
         # check consistency for init types
         self._check_input_consistency(
@@ -96,7 +95,6 @@ class Trainer(lightning.pytorch.Trainer):
 
         # Setting default kwargs, overriding lightning defaults
         kwargs.setdefault("enable_progress_bar", True)
-        kwargs.setdefault("logger", None)
 
         super().__init__(**kwargs)
 
@@ -127,9 +125,6 @@ class Trainer(lightning.pytorch.Trainer):
 
         # logging
         self.logging_kwargs = {
-            "logger": bool(
-                kwargs["logger"] is not None or kwargs["logger"] is True
-            ),
             "sync_dist": bool(
                 len(self._accelerator_connector._parallel_devices) > 1
             ),
