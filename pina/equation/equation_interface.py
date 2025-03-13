@@ -10,7 +10,7 @@ class EquationInterface(metaclass=ABCMeta):
     Equations in PINA simplify the training process. When defining a problem,
     each equation passed to a :class:`~pina.condition.condition.Condition`
     object must be either an :class:`~pina.equation.equation.Equation` or a
-    :class:`~pina.equation.system_equation.SystemEquation` instance.  
+    :class:`~pina.equation.system_equation.SystemEquation` instance.
 
     An :class:`~pina.equation.equation.Equation` is a wrapper for a callable
     function, while :class:`~pina.equation.system_equation.SystemEquation`

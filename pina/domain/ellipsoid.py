@@ -27,7 +27,7 @@ class EllipsoidDomain(DomainInterface):
             Sampling for dimensions greater or equal to 10 could result in a
             shrinkage of the ellipsoid, which degrades the quality of the
             samples. For dimensions higher than 10, see the following reference.
-        
+
         .. seealso::
             **Original reference**: Dezert, Jean, and Musso, Christian.
             *An efficient method for generating points uniformly distributed
