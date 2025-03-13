@@ -50,6 +50,9 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     Implementation of the inverse 2-dimensional Poisson problem in the square
     domain :math:`[0, 1] \times [0, 1]`,
     with unknown parameter domain :math:`[-1, 1] \times [-1, 1]`.
+
+    :Example:
+        >>> problem = InversePoisson2DSquareProblem()
     """
 
     output_variables = ["u"]

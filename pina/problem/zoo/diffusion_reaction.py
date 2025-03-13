@@ -59,6 +59,9 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
         **Original reference**: Si, Chenhao, et al. *Complex Physics-Informed
         Neural Network.* arXiv preprint arXiv:2502.04917 (2025).
         DOI: `arXiv:2502.04917 <https://arxiv.org/abs/2502.04917>`_.
+
+    :Example:
+        >>> problem = DiffusionReactionProblem()
     """
 
     output_variables = ["u"]

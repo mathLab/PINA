@@ -94,10 +94,10 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
     .. seealso::
         **Original reference**: McClenny, Levi D., and Ulisses M. Braga-Neto.
-        "Self-adaptive physics-informed neural networks."
+        *Self-adaptive physics-informed neural networks.*
         Journal of Computational Physics 474 (2023): 111722.
-        DOI: `10.1016/
-        j.jcp.2022.111722 <https://doi.org/10.1016/j.jcp.2022.111722>`_.
+        DOI: `10.1016/j.jcp.2022.111722
+        <https://doi.org/10.1016/j.jcp.2022.111722>`_.
     """
 
     def __init__(
@@ -119,22 +119,25 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :param torch.nn.Module model: The model to be used.
         :param torch.nn.Module weight_function: The Self-Adaptive mask model.
             Default is ``torch.nn.Sigmoid()``.
-        :param torch.optim.Optimizer optimizer_model: The optimizer of the
-            ``model``. If `None`, the Adam optimizer is used.
+        :param Optimizer optimizer_model: The optimizer of the ``model``.
+            If `None`, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param torch.optim.Optimizer optimizer_weights: The optimizer of the
-            ``weight_function``. If `None`, the Adam optimizer is used.
+        :param Optimizer optimizer_weights: The optimizer of the
+            ``weight_function``.
+            If `None`, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param torch.optim.LRScheduler scheduler_model: Learning rate scheduler
-            for the ``model``. If `None`, the constant learning rate scheduler
-            is used. Default is ``None``.
-        :param torch.optim.LRScheduler scheduler_weights: Learning rate
-            scheduler for the ``weight_function``. If `None`, the constant
-            learning rate scheduler is used. Default is ``None``.
+        :param Scheduler scheduler_model: Learning rate scheduler for the
+            ``model``.
+            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            scheduler is used. Default is ``None``.
+        :param Scheduler scheduler_weights: Learning rate scheduler for the
+            ``weight_function``.
+            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If `None`, no weighting schema is used. Default is ``None``.
         :param torch.nn.Module loss: The loss function to be minimized.
-            If `None`, the Mean Squared Error (MSE) loss is used.
+            If `None`, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         """
         # check consistency weitghs_function
@@ -175,7 +178,8 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         """
         Solver training step, overridden to perform manual optimization.
 
-        :param dict batch: The batch element in the dataloader.
+        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
+            tuple containing a condition name and a dictionary of points.
         :return: The aggregated loss.
         :rtype: LabelTensor
         """
@@ -198,7 +202,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         Optimizer configuration.
 
         :return: The optimizers and the schedulers
-        :rtype: tuple(list, list)
+        :rtype: tuple[list[Optimizer], list[Scheduler]]
         """
         # If the problem is an InverseProblem, add the unknown parameters
         # to the parameters to be optimized
@@ -227,7 +231,8 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
         :param torch.Tensor outputs: The ``model``'s output for the current
             batch.
-        :param dict batch: The current batch of data.
+        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
+            tuple containing a condition name and a dictionary of points.
         :param int batch_idx: The index of the current batch.
         """
         # increase by one the counter of optimization to save loggers
@@ -307,7 +312,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :param LabelTensor loss_value: the tensor of pointwise losses.
         :raises RuntimeError: If the loss reduction is not ``mean`` or ``sum``.
         :return: The computed scalar loss.
-        :rtype LabelTensor
+        :rtype: LabelTensor
         """
         if self.loss.reduction == "mean":
             ret = torch.mean(loss_value)
@@ -346,7 +351,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         The scheduler associated to the model.
 
         :return: The scheduler for the model.
-        :rtype: torch.optim.lr_scheduler._LRScheduler
+        :rtype: Scheduler
         """
         return self.schedulers[0]
 
@@ -356,7 +361,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         The scheduler associated to the mask model.
 
         :return: The scheduler for the mask model.
-        :rtype: torch.optim.lr_scheduler._LRScheduler
+        :rtype: Scheduler
         """
         return self.schedulers[1]
 
@@ -366,7 +371,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         Returns the optimizer associated to the model.
 
         :return: The optimizer for the model.
-        :rtype: torch.optim.Optimizer
+        :rtype: Optimizer
         """
         return self.optimizers[0]
 
@@ -376,6 +381,6 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         The optimizer associated to the mask model.
 
         :return: The optimizer for the mask model.
-        :rtype: torch.optim.Optimizer
+        :rtype: Optimizer
         """
         return self.optimizers[1]
