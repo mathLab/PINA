@@ -110,8 +110,8 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
     def loss_data(self, input_pts, output_pts):
         """
         Compute the data loss for the PINN solver by evaluating the loss
-        between the network's output and the true solution. This method
-        should only be overridden intentionally.
+        between the network's output and the true solution. This method should
+        not be overridden, if not intentionally.
 
         :param LabelTensor input_pts: The input points to the neural network.
         :param LabelTensor output_pts: The true solution to compare with the

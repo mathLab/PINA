@@ -1,19 +1,17 @@
 """Module for ReducedOrderModelSolver"""
 
 import torch
-
 from .supervised import SupervisedSolver
 
 
 class ReducedOrderModelSolver(SupervisedSolver):
     r"""
-    ReducedOrderModelSolver solver class. This class implements a
-    Reduced Order Model solver, using user specified ``reduction_network`` and
+    Reduced Order Model solver class. This class implements the Reduced Order
+    Model solver, using user specified ``reduction_network`` and
     ``interpolation_network`` to solve a specific ``problem``.
 
-    The  Reduced Order Model approach aims to find
-    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`
-    of the differential problem:
+    The Reduced Order Model solver aims to find the solution
+    :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m` of a differential problem:
 
     .. math::
 
@@ -23,13 +21,13 @@ class ReducedOrderModelSolver(SupervisedSolver):
         \mathbf{x}\in\partial\Omega
         \end{cases}
 
-    This is done by using two neural networks. The ``reduction_network``, which
-    contains an encoder :math:`\mathcal{E}_{\rm{net}}`, a decoder
-    :math:`\mathcal{D}_{\rm{net}}`; and an ``interpolation_network``
+    This is done by means of two neural networks: the ``reduction_network``,
+    which defines an encoder :math:`\mathcal{E}_{\rm{net}}`, and a decoder
+    :math:`\mathcal{D}_{\rm{net}}`; and the ``interpolation_network``
     :math:`\mathcal{I}_{\rm{net}}`. The input is assumed to be discretised in
     the spatial dimensions.
 
-    The following loss function is minimized during training
+    The following loss function is minimized during training:
 
     .. math::
         \mathcal{L}_{\rm{problem}} = \frac{1}{N}\sum_{i=1}^N
@@ -39,49 +37,46 @@ class ReducedOrderModelSolver(SupervisedSolver):
             \mathcal{D}_{\rm{net}}[\mathcal{E}_{\rm{net}}[\mathbf{u}(\mu_i)]] -
             \mathbf{u}(\mu_i))
 
-    where :math:`\mathcal{L}` is a specific loss function, default 
-    Mean Square Error:
+    where :math:`\mathcal{L}` is a specific loss function, typically the MSE:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.
 
-
     .. seealso::
 
         **Original reference**: Hesthaven, Jan S., and Stefano Ubbiali.
-        "Non-intrusive reduced order modeling of nonlinear problems
-        using neural networks." Journal of Computational
-        Physics 363 (2018): 55-78.
+        "Non-intrusive reduced order modeling of nonlinear problems using
+        neural networks."
+        Journal of Computational Physics 363 (2018): 55-78.
         DOI `10.1016/j.jcp.2018.02.037
         <https://doi.org/10.1016/j.jcp.2018.02.037>`_.
         
     .. note::
-        The specified ``reduction_network`` must contain two methods,
-        namely ``encode`` for input encoding and ``decode`` for decoding the
-        former result. The ``interpolation_network`` network ``forward`` output
-        represents the interpolation of the latent space obtain with
+        The specified ``reduction_network`` must contain two methods, namely
+        ``encode`` for input encoding, and ``decode`` for decoding the former
+        result. The ``interpolation_network`` network ``forward`` output
+        represents the interpolation of the latent space obtained with
         ``reduction_network.encode``.
 
     .. note::
         This solver uses the end-to-end training strategy, i.e. the
         ``reduction_network`` and ``interpolation_network`` are trained
-        simultaneously. For reference on this trainig strategy look at:
-        Pichi, Federico, Beatriz Moya, and Jan S. Hesthaven. 
+        simultaneously. For reference on this trainig strategy look at the
+        following:
+    
+    ..seealso::
+        **Original reference**: Pichi, Federico, Beatriz Moya, and Jan S.
+        Hesthaven. 
         "A graph convolutional autoencoder approach to model order reduction
-        for parametrized PDEs." Journal of
-        Computational Physics 501 (2024): 112762.
-        DOI 
-        `10.1016/j.jcp.2024.112762 <https://doi.org/10.1016/
-        j.jcp.2024.112762>`_.
+        for parametrized PDEs."
+        Journal of Computational Physics 501 (2024): 112762.
+        DOI `10.1016/j.jcp.2024.112762
+        <https://doi.org/10.1016/j.jcp.2024.112762>`_.
 
     .. warning::
         This solver works only for data-driven model. Hence in the ``problem``
         definition the codition must only contain ``input``
         (e.g. coefficient parameters, time parameters), and ``target``.
-
-    .. warning::
-        This solver does not currently support the possibility to pass
-        ``extra_feature``.
     """
 
     def __init__(
@@ -96,22 +91,28 @@ class ReducedOrderModelSolver(SupervisedSolver):
         use_lt=True,
     ):
         """
+        Initialization of the :class:`ReducedOrderModelSolver` class.
+
         :param AbstractProblem problem: The formualation of the problem.
         :param torch.nn.Module reduction_network: The reduction network used
-            for reducing the input space. It must contain two methods,
-            namely ``encode`` for input encoding and ``decode`` for decoding the
+            for reducing the input space. It must contain two methods, namely
+            ``encode`` for input encoding, and ``decode`` for decoding the
             former result.
         :param torch.nn.Module interpolation_network: The interpolation network
-            for interpolating the control parameters to latent space obtain by
+            for interpolating the control parameters to latent space obtained by
             the ``reduction_network`` encoding.
-        :param torch.nn.Module loss: The loss function used as minimizer,
-            default :class:`torch.nn.MSELoss`.
-        :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default is :class:`torch.optim.Adam`.
-        :param torch.optim.LRScheduler scheduler: Learning
-            rate scheduler.
-        :param WeightingInterface weighting: The loss weighting to use.
-        :param bool use_lt: Using LabelTensors as input during training.
+        :param torch.nn.Module loss: The loss function to be minimized.
+            If `None`, the :class:`torch.nn.MSELoss` loss is used.
+            Default is `None`.
+        :param Optimizer optimizer: The optimizer to be used.
+            If `None`, the :class:`torch.optim.Adam`. optimizer is used.
+            Default is ``None``.
+        :param Scheduler scheduler: Learning rate scheduler. If `None`,
+            the constant learning rate scheduler is used. Default is ``None``.
+        :param WeightingInterface weighting: The weighting schema to be used.
+            If `None`, no weighting schema is used. Default is ``None``.
+        :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
+            Default is ``True``.
         """
         model = torch.nn.ModuleDict(
             {
@@ -146,10 +147,10 @@ class ReducedOrderModelSolver(SupervisedSolver):
 
     def forward(self, x):
         """
-        Forward pass implementation for the solver. It finds the encoder
-        representation by calling ``interpolation_network.forward`` on the
-        input, and maps this representation to output space by calling
-        ``reduction_network.decode``.
+        Forward pass implementation.
+        It computes the encoder representation by calling the forward method
+        of the ``interpolation_network`` on the input, and maps it to output
+        space by calling the decode methode of the ``reduction_network``.
 
         :param torch.Tensor x: Input tensor.
         :return: Solver solution.
@@ -161,15 +162,14 @@ class ReducedOrderModelSolver(SupervisedSolver):
 
     def loss_data(self, input_pts, output_pts):
         """
-        The data loss for the ReducedOrderModelSolver solver.
-        It computes the loss between
-        the network output against the true solution. This function
-        should not be override if not intentionally.
+        Compute the data loss by evaluating the loss between the network's
+        output and the true solution. This method should not be overridden, if
+        not intentionally.
 
-        :param LabelTensor input_tensor: The input to the neural networks.
-        :param LabelTensor output_tensor: The true solution to compare the
-            network solution.
-        :return: The residual loss averaged on the input coordinates
+        :param LabelTensor input_pts: The input points to the neural network.
+        :param LabelTensor output_pts: The true solution to compare with the
+            network's output.
+        :return: The supervised loss, averaged over the number of observations.
         :rtype: torch.Tensor
         """
         # extract networks
