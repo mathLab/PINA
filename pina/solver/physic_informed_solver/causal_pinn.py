@@ -53,14 +53,16 @@ class CausalPINN(PINN):
     .. seealso::
 
         **Original reference**: Wang, Sifan, Shyam Sankaran, and Paris
-        Perdikaris. "Respecting causality for training physics-informed
-        neural networks." Computer Methods in Applied Mechanics
-        and Engineering 421 (2024): 116813.
-        DOI `10.1016 <https://doi.org/10.1016/j.cma.2024.116813>`_.
+        Perdikaris. 
+        *Respecting causality for training physics-informed
+        neural networks.*
+        Computer Methods in Applied Mechanics and Engineering 421 (2024):116813.
+        DOI: `10.1016 <https://doi.org/10.1016/j.cma.2024.116813>`_.
 
     .. note::
         This class is only compatible with problems that inherit from  the
-        :class:`~pina.problem.TimeDependentProblem` class.
+        :class:`~pina.problem.time_dependent_problem.TimeDependentProblem`
+        class.
     """
 
     def __init__(
@@ -77,17 +79,19 @@ class CausalPINN(PINN):
         Initialization of the :class:`CausalPINN` class.
 
         :param AbstractProblem problem: The problem to be solved. It must
-            inherit from at least :class:`~pina.problem.TimeDependentProblem`.
+            inherit from at least
+            :class:`~pina.problem.time_dependent_problem.TimeDependentProblem`.
         :param torch.nn.Module model: The neural network model to be used.
-        :param torch.optim.Optimizer optimizer: The optimizer to be used
-            If `None`, the Adam optimizer is used. Default is ``None``.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
-            If `None`, the constant learning rate scheduler is used.
+        :param Optimizer optimizer: The optimizer to be used.
+            If `None`, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
+            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If `None`, no weighting schema is used. Default is ``None``.
         :param torch.nn.Module loss: The loss function to be minimized.
-            If `None`, the Mean Squared Error (MSE) loss is used.
+            If `None`, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         :param float eps: The exponential decay parameter. Default is ``100``.
         :raises ValueError: If the problem is not a TimeDependentProblem.

@@ -42,7 +42,8 @@ class PINN(PINNInterface, SingleSolverInterface):
 
         **Original reference**: Karniadakis, G. E., Kevrekidis, I. G., Lu, L.,
         Perdikaris, P., Wang, S., & Yang, L. (2021).
-        Physics-informed machine learning. Nature Reviews Physics, 3, 422-440.
+        *Physics-informed machine learning.*
+        Nature Reviews Physics, 3, 422-440.
         DOI: `10.1038 <https://doi.org/10.1038/s42254-021-00314-5>`_.
     """
 
@@ -60,15 +61,16 @@ class PINN(PINNInterface, SingleSolverInterface):
 
         :param AbstractProblem problem: The problem to be solved.
         :param torch.nn.Module model: The neural network model to be used.
-        :param torch.optim.Optimizer optimizer: The optimizer to be used.
-            If `None`, the Adam optimizer is used. Default is ``None``.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
-            If `None`, the constant learning rate scheduler is used.
+        :param Optimizer optimizer: The optimizer to be used.
+            If `None`, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
+        :param Scheduler scheduler: Learning rate scheduler.
+            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If `None`, no weighting schema is used. Default is ``None``.
         :param torch.nn.Module loss: The loss function to be minimized.
-            If `None`, the Mean Squared Error (MSE) loss is used.
+            If `None`, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         """
         super().__init__(
@@ -101,7 +103,7 @@ class PINN(PINNInterface, SingleSolverInterface):
         Optimizer configuration for the PINN solver.
 
         :return: The optimizers and the schedulers
-        :rtype: tuple(list, list)
+        :rtype: tuple[list[Optimizer], list[Scheduler]]
         """
         # If the problem is an InverseProblem, add the unknown parameters
         # to the parameters to be optimized.

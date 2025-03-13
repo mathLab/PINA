@@ -45,8 +45,8 @@ class ReducedOrderModelSolver(SupervisedSolver):
     .. seealso::
 
         **Original reference**: Hesthaven, Jan S., and Stefano Ubbiali.
-        "Non-intrusive reduced order modeling of nonlinear problems using
-        neural networks."
+        *Non-intrusive reduced order modeling of nonlinear problems using
+        neural networks.*
         Journal of Computational Physics 363 (2018): 55-78.
         DOI `10.1016/j.jcp.2018.02.037
         <https://doi.org/10.1016/j.jcp.2018.02.037>`_.
@@ -67,8 +67,8 @@ class ReducedOrderModelSolver(SupervisedSolver):
     ..seealso::
         **Original reference**: Pichi, Federico, Beatriz Moya, and Jan S.
         Hesthaven. 
-        "A graph convolutional autoencoder approach to model order reduction
-        for parametrized PDEs."
+        *A graph convolutional autoencoder approach to model order reduction
+        for parametrized PDEs.*
         Journal of Computational Physics 501 (2024): 112762.
         DOI `10.1016/j.jcp.2024.112762
         <https://doi.org/10.1016/j.jcp.2024.112762>`_.
@@ -105,10 +105,11 @@ class ReducedOrderModelSolver(SupervisedSolver):
             If `None`, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         :param Optimizer optimizer: The optimizer to be used.
-            If `None`, the :class:`torch.optim.Adam`. optimizer is used.
+            If `None`, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param Scheduler scheduler: Learning rate scheduler. If `None`,
-            the constant learning rate scheduler is used. Default is ``None``.
+        :param Scheduler scheduler: Learning rate scheduler.
+            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If `None`, no weighting schema is used. Default is ``None``.
         :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
@@ -152,9 +153,10 @@ class ReducedOrderModelSolver(SupervisedSolver):
         of the ``interpolation_network`` on the input, and maps it to output
         space by calling the decode methode of the ``reduction_network``.
 
-        :param torch.Tensor x: Input tensor.
+        :param x: Input tensor.
+        :type x: torch.Tensor | LabelTensor
         :return: Solver solution.
-        :rtype: torch.Tensor
+        :rtype: torch.Tensor | LabelTensor
         """
         reduction_network = self.model["reduction_network"]
         interpolation_network = self.model["interpolation_network"]
