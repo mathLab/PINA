@@ -1,4 +1,4 @@
-"""Module for Physics Informed Neural Network."""
+"""Module for the Physics-Informed Neural Network solver."""
 
 import torch
 
@@ -9,14 +9,13 @@ from ...problem import InverseProblem
 
 class PINN(PINNInterface, SingleSolverInterface):
     r"""
-    Physics Informed Neural Network (PINN) solver class.
-    This class implements Physics Informed Neural
-    Network solver, using a user specified ``model`` to solve a specific
-    ``problem``. It can be used for solving both forward and inverse problems.
+    Physics-Informed Neural Network (PINN) solver class.
+    This class implements Physics-Informed Neural Network solver, using a user
+    specified ``model`` to solve a specific ``problem``.
+    It can be used to solve both forward and inverse problems.
 
-    The Physics Informed Network aims to find
-    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`
-    of the differential problem:
+    The Physics Informed Neural Network solver aims to find the solution
+    :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m` of a differential problem:
 
     .. math::
 
@@ -26,16 +25,15 @@ class PINN(PINNInterface, SingleSolverInterface):
         \mathbf{x}\in\partial\Omega
         \end{cases}
 
-    minimizing the loss function
+    minimizing the loss function:
 
     .. math::
         \mathcal{L}_{\rm{problem}} = \frac{1}{N}\sum_{i=1}^N
         \mathcal{L}(\mathcal{A}[\mathbf{u}](\mathbf{x}_i)) +
         \frac{1}{N}\sum_{i=1}^N
-        \mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i))
+        \mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i)),
 
-    where :math:`\mathcal{L}` is a specific loss function,
-    default Mean Square Error:
+    where :math:`\mathcal{L}` is a specific loss function, typically the MSE:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.
@@ -58,16 +56,20 @@ class PINN(PINNInterface, SingleSolverInterface):
         loss=None,
     ):
         """
-        :param torch.nn.Module model: The neural network model to use.
-        :param AbstractProblem problem: The formulation of the problem.
-        :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default `None`.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
-            default `None`.
-        :param WeightingInterface weighting: The weighting schema to use;
-            default `None`.
-        :param torch.nn.Module loss: The loss function to be minimized;
-            default `None`.
+        Initialization of the :class:`PINN` class.
+
+        :param AbstractProblem problem: The problem to be solved.
+        :param torch.nn.Module model: The neural network model to be used.
+        :param torch.optim.Optimizer optimizer: The optimizer to be used.
+            If `None`, the Adam optimizer is used. Default is ``None``.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
+            If `None`, the constant learning rate scheduler is used.
+            Default is ``None``.
+        :param WeightingInterface weighting: The weighting schema to be used.
+            If `None`, no weighting schema is used. Default is ``None``.
+        :param torch.nn.Module loss: The loss function to be minimized.
+            If `None`, the Mean Squared Error (MSE) loss is used.
+            Default is `None`.
         """
         super().__init__(
             model=model,
@@ -80,14 +82,12 @@ class PINN(PINNInterface, SingleSolverInterface):
 
     def loss_phys(self, samples, equation):
         """
-        Computes the physics loss for the PINN solver based on given
-        samples and equation.
+        Computes the physics loss for the physics-informed solver based on the
+        provided samples and equation.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation
-            representing the physics.
-        :return: The physics loss calculated based on given
-            samples and equation.
+        :param EquationInterface equation: The governing equation.
+        :return: The computed physics loss.
         :rtype: LabelTensor
         """
         residual = self.compute_residual(samples=samples, equation=equation)
