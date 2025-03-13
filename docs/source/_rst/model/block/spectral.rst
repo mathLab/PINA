@@ -1,6 +1,6 @@
-Spectral Convolution
-======================
-.. currentmodule:: pina.model.layers.spectral
+Spectral Convolution Block
+============================
+.. currentmodule:: pina.model.block.spectral
     
 .. autoclass:: SpectralConvBlock1D
     :members:
