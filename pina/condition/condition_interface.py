@@ -11,9 +11,15 @@ from ..graph import Graph
 class ConditionInterface(metaclass=ABCMeta):
     """
     Abstract class which defines a common interface for all the conditions.
+    It defined a common interface for all the conditions.
+
     """
 
     def __init__(self):
+        """
+        Initialize the ConditionInterface object.
+        """
+
         self._problem = None
 
     @property
@@ -21,10 +27,9 @@ class ConditionInterface(metaclass=ABCMeta):
         """
         Return the problem to which the condition is associated.
 
-        :return: Problem to which the condition is associated.
+        :return: Problem to which the condition is associated
         :rtype: pina.problem.AbstractProblem
         """
-
         return self._problem
 
     @problem.setter
@@ -32,26 +37,35 @@ class ConditionInterface(metaclass=ABCMeta):
         """
         Set the problem to which the condition is associated.
 
-        :param pina.problem.AbstractProblem value: Problem to which the
-        condition is associated.
+        :param pina.problem.abstract_problem.AbstractProblem value: Problem to
+            which the condition is associated
         """
-
         self._problem = value
 
     @staticmethod
     def _check_graph_list_consistency(data_list):
         """
-        Check if the list of :class:`~torch_geometric.data.Data` or
-        class:`pina.graphGraph` objects is consistent.
+        Check the consistency of the list of Data/Graph objects. It performs
+        the following checks:
 
-        :param data_list: List of graph type objects.
-        :type data_list: Data | Graph | list[Data] | list[Graph]
+        1. All elements in the list must be of the same type (either Data or
+        Graph).
+        2. All elements in the list must have the same keys.
+        3. The type of each tensor must be consistent across all elements in
+        the list.
+        4. If the tensor is a LabelTensor, the labels must be consistent across
+        all elements in the list.
 
-        :raises ValueError: Input data must be either Data
-            or Graph objects.
-        :raises ValueError: All elements in the list must have the same keys.
-        :raises ValueError: Type mismatch in data tensors.
-        :raises ValueError: Label mismatch in LabelTensors.
+        :param data_list: List of Data/Graph objects to check
+        :type data_list: list[Data] | list[Graph] | tuple[Data] | tuple[Graph]
+
+        :raises ValueError:  If the input types are invalid.
+        :raises ValueError: If all elements in the list do not have the same
+            keys.
+        :raises ValueError: If the type of each tensor is not consistent across
+            all elements in the list.
+        :raises ValueError: If the labels of the LabelTensors are not consistent
+            across all elements in the list.
         """
 
         # If the data is a Graph or Data object, return (do not need to check

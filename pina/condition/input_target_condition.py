@@ -12,7 +12,20 @@ from .condition_interface import ConditionInterface
 class InputTargetCondition(ConditionInterface):
     """
     Condition defined by input and target data. This condition can be used in
-    both supervised learning and Physics-informed problems.
+    both supervised learning and Physics-informed problems. Based on the type of
+    the input and target, different condition implementations are available:
+
+    - :class:`TensorInputTensorTargetCondition`: For :class:`torch.Tensor` or
+        :class:`~pina.label_tensor.LabelTensor` input and target data.
+    - :class:`TensorInputGraphTargetCondition`: For :class:`torch.Tensor` or
+        :class:`~pina.label_tensor.LabelTensor` input and
+        :class:`~pina.graph.Graph` or :class:`~torch_geometric.data.Data`
+        target data.
+    - :class:`GraphInputTensorTargetCondition`: For :class:`~pina.graph.Graph`
+        or :class:`~torch_geometric.data.Data` input and :class:`torch.Tensor`
+        or :class:`~pina.label_tensor.LabelTensor` target data.
+    - :class:`GraphInputGraphTargetCondition`: For :class:`~pina.graph.Graph` or
+        :class:`~torch_geometric.data.Data` input and target data.
     """
 
     __slots__ = ["input", "target"]
