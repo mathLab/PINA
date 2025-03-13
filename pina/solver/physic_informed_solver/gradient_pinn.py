@@ -1,4 +1,4 @@
-"""Module for Gradient PINN."""
+"""Module for the Gradient PINN solver."""
 
 import torch
 
@@ -9,14 +9,14 @@ from ...problem import SpatialProblem
 
 class GradientPINN(PINN):
     r"""
-    Gradient Physics Informed Neural Network (GradientPINN) solver class.
-    This class implements Gradient Physics Informed Neural
-    Network solver, using a user specified ``model`` to solve a specific
-    ``problem``. It can be used for solving both forward and inverse problems.
+    Gradient Physics-Informed Neural Network (GradientPINN) solver class.
+    This class implements the Gradient Physics-Informed Neural Network solver,
+    using a user specified ``model`` to solve a specific ``problem``.
+    It can be used to solve both forward and inverse problems.
 
-    The Gradient Physics Informed Network aims to find
-    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`
-    of the differential problem:
+    The Gradient Physics-Informed Neural Network solver aims to find the
+    solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m` of a differential
+    problem:
 
     .. math::
 
@@ -26,7 +26,7 @@ class GradientPINN(PINN):
         \mathbf{x}\in\partial\Omega
         \end{cases}
 
-    minimizing the loss function
+    minimizing the loss function;
 
     .. math::
         \mathcal{L}_{\rm{problem}} =& \frac{1}{N}\sum_{i=1}^N
@@ -39,8 +39,7 @@ class GradientPINN(PINN):
         \nabla_{\mathbf{x}}\mathcal{L}(\mathcal{B}[\mathbf{u}](\mathbf{x}_i))
 
 
-    where :math:`\mathcal{L}` is a specific loss function,
-    default Mean Square Error:
+    where :math:`\mathcal{L}` is a specific loss function, typically the MSE:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.
@@ -54,9 +53,8 @@ class GradientPINN(PINN):
         DOI: `10.1016 <https://doi.org/10.1016/j.cma.2022.114823>`_.
 
     .. note::
-        This class can only work for problems inheriting
-        from at least :class:`~pina.problem.spatial_problem.SpatialProblem`
-        class.
+        This class is only compatible with problems that inherit from  the
+        :class:`~pina.problem.SpatialProblem` class. 
     """
 
     def __init__(
@@ -69,19 +67,23 @@ class GradientPINN(PINN):
         loss=None,
     ):
         """
-        :param torch.nn.Module model: The neural network model to use.
-        :param AbstractProblem problem: The formulation of the problem. It must
-            inherit from at least
-            :class:`~pina.problem.spatial_problem.SpatialProblem` to compute
-            the gradient of the loss.
-        :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default `None`.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
-            default `None`.
-        :param WeightingInterface weighting: The weighting schema to use;
-            default `None`.
-        :param torch.nn.Module loss: The loss function to be minimized;
-            default `None`.
+        Initialization of the :class:`GradientPINN` class.
+
+        :param AbstractProblem problem: The problem to be solved.
+            It must inherit from at least :class:`~pina.problem.SpatialProblem`
+            to compute the gradient of the loss.
+        :param torch.nn.Module model: The neural network model to be used.
+        :param torch.optim.Optimizer optimizer: The optimizer to be used.
+            If `None`, the Adam optimizer is used. Default is ``None``.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
+            If `None`, the constant learning rate scheduler is used.
+            Default is ``None``.
+        :param WeightingInterface weighting: The weighting schema to be used.
+            If `None`, no weighting schema is used. Default is ``None``.
+        :param torch.nn.Module loss: The loss function to be minimized.
+            If `None`, the Mean Squared Error (MSE) loss is used.
+            Default is `None`.
+        :raises ValueError: If the problem is not a SpatialProblem.
         """
         super().__init__(
             model=model,
@@ -102,14 +104,12 @@ class GradientPINN(PINN):
 
     def loss_phys(self, samples, equation):
         """
-        Computes the physics loss for the GPINN solver based on given
-        samples and equation.
+        Computes the physics loss for the physics-informed solver based on the
+        provided samples and equation.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation
-            representing the physics.
-        :return: The physics loss calculated based on given
-            samples and equation.
+        :param EquationInterface equation: The governing equation.
+        :return: The computed physics loss.
         :rtype: LabelTensor
         """
         # classical PINN loss
