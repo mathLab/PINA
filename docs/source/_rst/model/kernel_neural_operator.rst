@@ -1,6 +1,6 @@
 KernelNeuralOperator
 =======================
-.. currentmodule:: pina.model.base_no
+.. currentmodule:: pina.model.kernel_neural_operator
 
 .. autoclass:: KernelNeuralOperator
    :members:

@@ -1,6 +1,6 @@
-Fourier Layers
-===================
-.. currentmodule:: pina.model.layers.fourier
+Fourier Neural Operator Block
+======================================
+.. currentmodule:: pina.model.block.fourier_block
 
 
 .. autoclass:: FourierBlock1D
