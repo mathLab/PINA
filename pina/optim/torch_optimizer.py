@@ -15,8 +15,8 @@ class TorchOptimizer(Optimizer):
         """
         Initialization of the :class:`TorchOptimizer` class.
 
-        :param torch.optim.Optimizer optimizer_class: The PyTorch optimizer
-            class.
+        :param torch.optim.Optimizer optimizer_class: A
+            :class:`torch.optim.Optimizer` class.
         :param dict kwargs: Additional parameters passed to `optimizer_class`,
             see more: <https://pytorch.org/docs/stable/optim.html#algorithms>_.
         """

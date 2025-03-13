@@ -23,11 +23,11 @@ class Difference(OperationInterface):
         Initialization of the :class:`Difference` class.
 
         :param list[DomainInterface] geometries: A list of instances of the
-            :class:`~pina.domain.DomainInterface` class on which the difference
-            operation is performed. The first domain in the list serves as the
-            base from which points are sampled, while the remaining domains
-            define the regions to be excluded from the base domain to compute
-            the difference.
+            :class:`~pina.domain.domain_interface.DomainInterface` class on
+            which the difference operation is performed. The first domain in the
+            list serves as the base from which points are sampled, while the
+            remaining domains define the regions to be excluded from the base
+            domain to compute the difference.
 
         :Example:
             >>> # Create two ellipsoid domains
