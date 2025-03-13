@@ -1,4 +1,4 @@
-"""Module for Problems."""
+"""Module for the Problems."""
 
 __all__ = [
     "AbstractProblem",

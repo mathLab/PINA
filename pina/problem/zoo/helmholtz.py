@@ -16,7 +16,7 @@ class HelmholtzEquation(Equation):
 
     def __init__(self, alpha):
         """
-        Initialize the Helmholtz equation.
+        Initialization of the :class:`HelmholtzEquation` class.
 
         :param alpha: Parameter of the forcing term.
         :type alpha: float | int
@@ -75,7 +75,7 @@ class HelmholtzProblem(SpatialProblem):
 
     def __init__(self, alpha=3.0):
         """
-        Initialize the Helmholtz problem.
+        Initialization of the :class:`HelmholtzProblem` class.
 
         :param alpha: Parameter of the forcing term.
         :type alpha: float | int

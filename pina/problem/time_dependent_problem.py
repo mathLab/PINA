@@ -7,13 +7,8 @@ from .abstract_problem import AbstractProblem
 
 class TimeDependentProblem(AbstractProblem):
     """
-    The class for the definition of time-dependent problems, i.e., for problems
-    depending on time.
-
-    Here's an example of a 1D wave problem.
-
-    :Example:
-        TODO
+    Class for defining time-dependent problems, where the system's behavior
+    changes with respect to time.
     """
 
     @abstractmethod
@@ -25,6 +20,9 @@ class TimeDependentProblem(AbstractProblem):
     @property
     def temporal_variable(self):
         """
-        The time variable of the problem.
+        Get the time variable of the problem.
+
+        :return: The time variable of the problem.
+        :rtype: list[str]
         """
         return self.temporal_domain.variables
