@@ -12,7 +12,13 @@ from ..graph import Graph
 class DataCondition(ConditionInterface):
     """
     Condition defined by input data and conditional variables. It can be used
-    in unsupervised learning problems.
+    in unsupervised learning problems. Based on the type of the input,
+    different condition implementations are available:
+
+    - :class:`TensorDataCondition`: For :class:`torch.Tensor` or
+      :class:`~pina.label_tensor.LabelTensor` input data.
+    - :class:`GraphDataCondition`: For :class:`~pina.graph.Graph` or
+      :class:`~torch_geometric.data.Data` input data.
     """
 
     __slots__ = ["input", "conditional_variables"]

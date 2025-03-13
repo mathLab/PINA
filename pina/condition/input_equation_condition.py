@@ -13,7 +13,13 @@ from ..equation.equation_interface import EquationInterface
 class InputEquationCondition(ConditionInterface):
     """
     Condition defined by input data and an equation. This condition can be
-    used in a Physics Informed problems.
+    used in a Physics Informed problems. Based on the type of the input,
+    different condition implementations are available:
+
+    - :class:`InputTensorEquationCondition`: For
+        :class:`~pina.label_tensor.LabelTensor` input data.
+    - :class:`InputGraphEquationCondition`: For :class:`~pina.graph.Graph`
+        input data.
     """
 
     __slots__ = ["input", "equation"]
