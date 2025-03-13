@@ -2,12 +2,11 @@
 
 from ..abstract_problem import AbstractProblem
 from ... import Condition
-from ... import LabelTensor
 
 
 class SupervisedProblem(AbstractProblem):
     """
-    Definition of a supervised learning problem in PINA.
+    Definition of a supervised-learning problem.
 
     This class provides a simple way to define a supervised problem
     using a single condition of type
@@ -28,7 +27,7 @@ class SupervisedProblem(AbstractProblem):
         self, input_, output_, input_variables=None, output_variables=None
     ):
         """
-        Initialize the SupervisedProblem class.
+        Initialization of the :class:`SupervisedProblem` class.
 
         :param input_: Input data of the problem.
         :type input_: torch.Tensor | LabelTensor | Graph | Data

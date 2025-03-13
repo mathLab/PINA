@@ -7,13 +7,8 @@ from .abstract_problem import AbstractProblem
 
 class SpatialProblem(AbstractProblem):
     """
-    The class for the definition of spatial problems, i.e., for problems
-    with spatial input variables.
-
-    Here's an example of a spatial 1-dimensional ODE problem.
-
-    :Example:
-        TODO
+    Class for defining spatial problems, where the problem domain is defined in
+    terms of spatial variables.
     """
 
     @abstractmethod
@@ -25,6 +20,9 @@ class SpatialProblem(AbstractProblem):
     @property
     def spatial_variables(self):
         """
-        The spatial input variables of the problem.
+        Get the spatial input variables of the problem.
+
+        :return: The spatial input variables of the problem.
+        :rtype: list[str]
         """
         return self.spatial_domain.variables

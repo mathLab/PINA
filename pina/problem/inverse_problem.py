@@ -1,4 +1,4 @@
-"""Module for the ParametricProblem class"""
+"""Module for the InverseProblem class"""
 
 from abc import abstractmethod
 import torch
@@ -7,19 +7,14 @@ from .abstract_problem import AbstractProblem
 
 class InverseProblem(AbstractProblem):
     """
-    The class for the definition of inverse problems, i.e., problems
-    with unknown parameters that have to be learned during the training process
-    from given data.
-
-    Here's an example of a spatial inverse ODE problem, i.e., a spatial
-    ODE problem with an unknown parameter `alpha` as coefficient of the
-    derivative term.
-
-    :Example:
-        TODO
+    Class for defining inverse problems, where the objective is to determine
+    unknown parameters through training, based on given data.
     """
 
     def __init__(self):
+        """
+        Initialization of the :class:`InverseProblem` class.
+        """
         super().__init__()
         # storing unknown_parameters for optimization
         self.unknown_parameters = {}
@@ -33,23 +28,34 @@ class InverseProblem(AbstractProblem):
     @abstractmethod
     def unknown_parameter_domain(self):
         """
-        The parameters' domain of the problem.
+        The domain of the unknown parameters of the problem.
         """
 
     @property
     def unknown_variables(self):
         """
-        The parameters of the problem.
+        Get the unknown variables of the problem.
+
+        :return: The unknown variables of the problem.
+        :rtype: list[str]
         """
         return self.unknown_parameter_domain.variables
 
     @property
     def unknown_parameters(self):
         """
-        The parameters of the problem.
+        Get the unknown parameters of the problem.
+
+        :return: The unknown parameters of the problem.
+        :rtype: torch.nn.Parameter
         """
         return self.__unknown_parameters
 
     @unknown_parameters.setter
     def unknown_parameters(self, value):
+        """
+        Set the unknown parameters of the problem.
+
+        :param torch.nn.Parameter value: The unknown parameters of the problem.
+        """
         self.__unknown_parameters = value

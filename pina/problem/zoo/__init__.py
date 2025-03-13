@@ -1,4 +1,4 @@
-"""TODO"""
+"""Module for implemented problems."""
 
 __all__ = [
     "SupervisedProblem",

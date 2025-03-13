@@ -16,7 +16,7 @@ class AdvectionEquation(Equation):
 
     def __init__(self, c):
         """
-        Initialize the advection equation.
+        Initialization of the :class:`AdvectionEquation`.
 
         :param c: The advection velocity parameter.
         :type c: float | int
@@ -80,7 +80,7 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
 
     def __init__(self, c=1.0):
         """
-        Initialize the advection problem.
+        Initialization of the :class:`AdvectionProblem`.
 
         :param c: The advection velocity parameter.
         :type c: float | int

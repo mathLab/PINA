@@ -1,4 +1,4 @@
-"""Module for AbstractProblem class"""
+"""Module for the AbstractProblem class"""
 
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
@@ -11,20 +11,16 @@ from ..utils import merge_tensors
 
 class AbstractProblem(metaclass=ABCMeta):
     """
-    The abstract `AbstractProblem` class. All the class defining a PINA Problem
-    should be inherited from this class.
+    Abstract base class for PINA problems. All specific problem types should
+    inherit from this class.
 
-    In the definition of a PINA problem, the fundamental elements are:
-    the output variables, the condition(s), and the domain(s) where the
-    conditions are applied.
+    A PINA problem is defined by key components, which typically include output
+    variables, conditions, and domains over which the conditions are applied.
     """
 
     def __init__(self):
         """
-        TODO
-
-        :return: _description_
-        :rtype: _type_
+        Initialization of the :class:`AbstractProblem` class.
         """
         self._discretised_domains = {}
         # create collector to manage problem data
@@ -48,20 +44,19 @@ class AbstractProblem(metaclass=ABCMeta):
     @property
     def batching_dimension(self):
         """
-        TODO
+        Get batching dimension.
 
-        :return: _description_
-        :rtype: _type_
+        :return: The batching dimension.
+        :rtype int
         """
         return self._batching_dimension
 
     @batching_dimension.setter
     def batching_dimension(self, value):
         """
-        TODO
+        Set the batching dimension.
 
-        :return: _description_
-        :rtype: _type_
+        :param int value: The batching dimension.
         """
         self._batching_dimension = value
 
@@ -69,10 +64,11 @@ class AbstractProblem(metaclass=ABCMeta):
     @property
     def input_pts(self):
         """
-        TODO
+        Return a dictionary mapping condition names to their corresponding
+        input points.
 
-        :return: _description_
-        :rtype: _type_
+        :return: The input points of the problem.
+        :rtype: dict
         """
         to_return = {}
         for cond_name, cond in self.conditions.items():
@@ -85,21 +81,21 @@ class AbstractProblem(metaclass=ABCMeta):
     @property
     def discretised_domains(self):
         """
-        TODO
+        Return a dictionary mapping domains to their corresponding sampled
+        points.
 
-        :return: _description_
-        :rtype: _type_
+        :return: The discretised domains.
+        :rtype dict
         """
         return self._discretised_domains
 
     def __deepcopy__(self, memo):
         """
-        Implements deepcopy for the
-        :class:`~pina.problem.abstract_problem.AbstractProblem` class.
+        Perform a deep copy of the :class:`AbstractProblem` instance.
 
-        :param dict memo: Memory dictionary, to avoid excess copy
-        :return: The deep copy of the
-            :class:`~pina.problem.abstract_problem.AbstractProblem` class
+        :param dict memo: A dictionary used to track objects already copied
+            during the deep copy process to prevent redundant copies.
+        :return: A deep copy of the :class:`AbstractProblem` instance.
         :rtype: AbstractProblem
         """
         cls = self.__class__
@@ -114,7 +110,7 @@ class AbstractProblem(metaclass=ABCMeta):
         """
         Check if all the domains are discretised.
 
-        :return: True if all the domains are discretised, False otherwise
+        :return: ``True`` if all domains are discretised, ``False`` otherwise.
         :rtype: bool
         """
         return all(
@@ -124,12 +120,10 @@ class AbstractProblem(metaclass=ABCMeta):
     @property
     def input_variables(self):
         """
-        The input variables of the AbstractProblem, whose type depends on the
-        type of domain (spatial, temporal, and parameter).
+        Get the input variables of the problem.
 
-        :return: the input variables of self
-        :rtype: list
-
+        :return: The input variables of the problem.
+        :rtype: list[str]
         """
         variables = []
 
@@ -144,20 +138,29 @@ class AbstractProblem(metaclass=ABCMeta):
 
     @input_variables.setter
     def input_variables(self, variables):
+        """
+        Set the input variables of the AbstractProblem.
+
+        :param list[str] variables: The input variables of the problem.
+        :raises RuntimeError: Not implemented.
+        """
         raise RuntimeError
 
     @property
     @abstractmethod
     def output_variables(self):
         """
-        The output variables of the problem.
+        Get the output variables of the problem.
         """
 
     @property
     @abstractmethod
     def conditions(self):
         """
-        The conditions of the problem.
+        Get the conditions of the problem.
+
+        :return: The conditions of the problem.
+        :rtype: dict
         """
         return self.conditions
 
@@ -165,30 +168,28 @@ class AbstractProblem(metaclass=ABCMeta):
         self, n=None, mode="random", domains="all", sample_rules=None
     ):
         """
-        Generate a set of points to span the `Location` of all the conditions of
-        the problem.
+        Discretize the problem's domains by sampling a specified number of
+        points according to the selected sampling mode.
 
-        :param n: Number of points to sample, see Note below
-            for reference.
-        :type n: int
-        :param mode: Mode for sampling, defaults to ``random``.
+        :param int n: The number of points to sample.
+        :param mode: The sampling method. Default is ``random``.
             Available modes include: random sampling, ``random``;
             latin hypercube sampling, ``latin`` or ``lh``;
             chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
-        :param variables: variable(s) to sample, defaults to 'all'.
-        :type variables: str | list[str]
-        :param domains: Domain from where to sample, defaults to 'all'.
+        :param domains: The domains from which to sample. Default is ``all``.
         :type domains: str | list[str]
+        :param dict sample_rules: A dictionary of custom sampling rules.
+        :raises RuntimeError: If both ``n`` and ``sample_rules`` are specified.
+        :raises RuntimeError: If neither ``n`` nor ``sample_rules`` are set.
 
         :Example:
-            >>> pinn.discretise_domain(n=10, mode='grid')
-            >>> pinn.discretise_domain(n=10, mode='grid', domain=['bound1'])
-            >>> pinn.discretise_domain(n=10, mode='grid', variables=['x'])
+            >>> problem.discretise_domain(n=10, mode='grid')
+            >>> problem.discretise_domain(n=10, mode='grid', domains=['gamma1'])
 
         .. warning::
             ``random`` is currently the only implemented ``mode`` for all
             geometries, i.e. ``EllipsoidDomain``, ``CartesianDomain``,
-            ``SimplexDomain`` and the geometries compositions ``Union``,
+            ``SimplexDomain``, and geometry compositions ``Union``,
             ``Difference``, ``Exclusion``, ``Intersection``. The
             modes ``latin`` or ``lh``,  ``chebyshev``, ``grid`` are only
             implemented for ``CartesianDomain``.
@@ -218,12 +219,31 @@ class AbstractProblem(metaclass=ABCMeta):
             raise RuntimeError("You have to specify either n or sample_rules.")
 
     def _apply_default_discretization(self, n, mode, domains):
+        """
+        Apply default discretization to the problem's domains.
+
+        :param int n: The number of points to sample.
+        :param mode: The sampling method.
+        :param domains: The domains from which to sample.
+        :type domains: str | list[str]
+        """
         for domain in domains:
             self.discretised_domains[domain] = (
                 self.domains[domain].sample(n, mode).sort_labels()
             )
 
     def _apply_custom_discretization(self, sample_rules, domains):
+        """
+        Apply custom discretization to the problem's domains.
+
+        :param dict sample_rules: A dictionary of custom sampling rules.
+        :param domains: The domains from which to sample.
+        :type domains: str | list[str]
+        :raises RuntimeError: If the keys of the sample_rules dictionary are not
+            the same as the input variables.
+        :raises RuntimeError: If custom discretisation is applied on a domain
+            that is not a CartesianDomain.
+        """
         if sorted(list(sample_rules.keys())) != sorted(self.input_variables):
             raise RuntimeError(
                 "The keys of the sample_rules dictionary must be the same as "
@@ -247,10 +267,10 @@ class AbstractProblem(metaclass=ABCMeta):
 
     def add_points(self, new_points_dict):
         """
-        Add input points to a sampled condition
-        :param new_points_dict: Dictionary of input points (condition_name:
-        LabelTensor)
-        :raises RuntimeError: if at least one condition is not already sampled
+        Add new points to an already sampled domain.
+
+        :param dict new_points_dict: The dictionary mapping new points to their
+            corresponding domain.
         """
         for k, v in new_points_dict.items():
             self.discretised_domains[k] = LabelTensor.vstack(
