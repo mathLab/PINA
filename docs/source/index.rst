@@ -9,32 +9,32 @@ Welcome to PINA’s documentation!
   .. grid-item::
 
       .. image:: index_files/tutorial_13_3.png
-        :target: _rst/tutorials/tutorial2/tutorial.html
+        :target: tutorials/tutorial2/tutorial.html
 
   .. grid-item::
 
       .. image:: index_files/tutorial_32_0.png
-        :target: _rst/tutorials/tutorial4/tutorial.html
+        :target: tutorials/tutorial4/tutorial.html
 
   .. grid-item::
 
       .. image:: index_files/tutorial_13_01.png
-        :target: _rst/tutorials/tutorial9/tutorial.html
+        :target: tutorials/tutorial9/tutorial.html
 
   .. grid-item::
 
       .. image:: index_files/tutorial_36_0.png
-        :target: _rst/tutorials/tutorial6/tutorial.html
+        :target: tutorials/tutorial6/tutorial.html
 
   .. grid-item::
 
       .. image:: index_files/tutorial_15_0.png
-        :target: _rst/tutorials/tutorial13/tutorial.html
+        :target: tutorials/tutorial13/tutorial.html
 
   .. grid-item::
 
       .. image:: index_files/tutorial_5_0.png
-        :target: _rst/tutorials/tutorial10/tutorial.html
+        :target: tutorials/tutorial10/tutorial.html
 
 .. grid:: 1 1 3 3
 
@@ -63,11 +63,11 @@ Welcome to PINA’s documentation!
     .. toctree::
       :maxdepth: 1
 
-      Installing <_rst/_installation>
-      Tutorial <_rst/_tutorial>
+      Installing <_installation>
+      Tutorial <_tutorial>
       API <_rst/_code>
       Team & Foundings <_team.rst>
-      Contributing <_rst/_contributing>
+      Contributing <_contributing>
       License <_LICENSE.rst>
       Cite PINA <_cite.rst>
 
