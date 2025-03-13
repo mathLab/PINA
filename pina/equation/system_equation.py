@@ -9,8 +9,9 @@ from ..utils import check_consistency
 class SystemEquation(EquationInterface):
     """
     Implementation of the System of Equations. Every ``equation`` passed to a
-    :class:`~pina.condition.Condition` object must be either a :class:`Equation`
-    or a :class:`~pina.equation.SystemEquation` instance.
+    :class:`~pina.condition.condition.Condition` object must be either a
+    :class:`~pina.equation.equation.Equation` or a
+    :class:`~pina.equation.system_equation.SystemEquation` instance.
     """
 
     def __init__(self, list_equation, reduction=None):
@@ -56,10 +57,11 @@ class SystemEquation(EquationInterface):
         :param LabelTensor input_: Input points where each equation of the
             system is evaluated.
         :param LabelTensor output_: Output tensor, eventually produced by a
-            :class:`~torch.nn.Module` instance.
+            :class:`torch.nn.Module` instance.
         :param dict params_: Dictionary of unknown parameters, associated with a
-            :class:`~pina.problem.InverseProblem` instance. If the equation is
-            not related to a :class:`~pina.problem.InverseProblem` instance, the
+            :class:`~pina.problem.inverse_problem.InverseProblem` instance.
+            If the equation is not related to a
+            :class:`~pina.problem.inverse_problem.InverseProblem` instance, the
             parameters must be initialized to ``None``. Default is ``None``.
 
         :return: The aggregated residuals of the system of equations.

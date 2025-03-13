@@ -15,8 +15,8 @@ class OperationInterface(DomainInterface, metaclass=ABCMeta):
         Initialization of the :class:`OperationInterface` class.
 
         :param list[DomainInterface] geometries: A list of instances of the
-            :class:`~pina.domain.DomainInterface` class on which the set
-            operation is performed.
+            :class:`~pina.domain.domain_interface.DomainInterface` class on
+            which the set operation is performed.
         """
         # check consistency geometries
         check_consistency(geometries, DomainInterface)

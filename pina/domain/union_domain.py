@@ -23,8 +23,8 @@ class Union(OperationInterface):
         Initialization of the :class:`Union` class.
 
         :param list[DomainInterface] geometries: A list of instances of the
-            :class:`~pina.domain.DomainInterface` class on which the union
-            operation is performed.
+            :class:`~pina.domain.domain_interface.DomainInterface` class on
+            which the union operation is performed.
 
         :Example:
             >>> # Create two ellipsoid domains

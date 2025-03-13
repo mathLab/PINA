@@ -188,11 +188,15 @@ class AbstractProblem(metaclass=ABCMeta):
 
         .. warning::
             ``random`` is currently the only implemented ``mode`` for all
-            geometries, i.e. ``EllipsoidDomain``, ``CartesianDomain``,
-            ``SimplexDomain``, and geometry compositions ``Union``,
-            ``Difference``, ``Exclusion``, ``Intersection``. The
-            modes ``latin`` or ``lh``,  ``chebyshev``, ``grid`` are only
-            implemented for ``CartesianDomain``.
+            geometries, i.e. :class:`~pina.domain.ellipsoid.EllipsoidDomain`,
+            :class:`~pina.domain.cartesian.CartesianDomain`,
+            :class:`~pina.domain.simplex.SimplexDomain`, and geometry
+            compositions :class:`~pina.domain.union_domain.Union`,
+            :class:`~pina.domain.difference_domain.Difference`,
+            :class:`~pina.domain.exclusion_domain.Exclusion`, and
+            :class:`~pina.domain.intersection_domain.Intersection`.
+            The modes ``latin`` or ``lh``,  ``chebyshev``, ``grid`` are only
+            implemented for :class:`~pina.domain.cartesian.CartesianDomain`.
         """
 
         # check consistecy n, mode, variables, locations
