@@ -1,4 +1,4 @@
-"""Module for PINA Torch Optimizer"""
+"""Module for the PINA Torch Optimizer"""
 
 import torch
 
@@ -8,18 +8,17 @@ from .optimizer_interface import Optimizer
 
 class TorchOptimizer(Optimizer):
     """
-    TODO
-
-    :param Optimizer: _description_
-    :type Optimizer: _type_
+    A wrapper class for using PyTorch optimizers.
     """
 
     def __init__(self, optimizer_class, **kwargs):
         """
-        TODO
+        Initialization of the :class:`TorchOptimizer` class.
 
-        :param optimizer_class: _description_
-        :type optimizer_class: _type_
+        :param torch.optim.Optimizer optimizer_class: The PyTorch optimizer
+            class.
+        :param dict kwargs: Additional parameters passed to `optimizer_class`,
+            see more: <https://pytorch.org/docs/stable/optim.html#algorithms>_.
         """
         check_consistency(optimizer_class, torch.optim.Optimizer, subclass=True)
 
@@ -29,10 +28,9 @@ class TorchOptimizer(Optimizer):
 
     def hook(self, parameters):
         """
-        TODO
+        Initialize the optimizer instance with the given parameters.
 
-        :param parameters: _description_
-        :type parameters: _type_
+        :param dict parameters: The parameters of the model to be optimized.
         """
         self._optimizer_instance = self.optimizer_class(
             parameters, **self.kwargs
@@ -41,6 +39,9 @@ class TorchOptimizer(Optimizer):
     @property
     def instance(self):
         """
-        Optimizer instance.
+        Get the optimizer instance.
+
+        :return: The optimizer instance.
+        :rtype: torch.optim.Optimizer
         """
         return self._optimizer_instance
