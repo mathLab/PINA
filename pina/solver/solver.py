@@ -63,7 +63,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     def _check_solver_consistency(self, problem):
         """
         Check the consistency of the solver with the problem formulation.
-        
+
         :param AbstractProblem problem: The problem to be solved.
         """
         for condition in problem.conditions.values():
@@ -290,6 +290,7 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
     """
     Base class for PINA solvers using a single :class:`torch.nn.Module`.
     """
+
     def __init__(
         self,
         problem,

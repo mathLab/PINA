@@ -34,7 +34,7 @@ class Trainer(lightning.pytorch.Trainer):
         """
         Initialization of the :class:`Trainer` class.
 
-        :param SolverInterface solver: A 
+        :param SolverInterface solver: A
             :class:`~pina.solver.solver.SolverInterface` solver used to solve a
             :class:`~pina.problem.abstract_problem.AbstractProblem`.
         :param int batch_size: The number of samples per batch to load.
