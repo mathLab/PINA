@@ -18,12 +18,14 @@ The pipeline to solve differential equations with PINA follows just five steps:
     5. Train the model with the PINA :doc:`Trainer <solvers/solver_interface>`, enhance the train with `Callback`_
 
 
-Training and Datamodules
--------------------------
+Trainer, Dataset and Datamodule
+--------------------------------
 .. toctree::
     :titlesonly:
 
     Trainer <trainer.rst>
+    Dataset <data/dataset.rst>
+    DataModule <data/data_module.rst>
 
 Data Types
 ------------
@@ -71,36 +73,45 @@ Models
     :titlesonly:
     :maxdepth: 5
 
-    Network <models/network.rst>
-    KernelNeuralOperator <models/base_no.rst>
-    FeedForward <models/fnn.rst>
-    MultiFeedForward <models/multifeedforward.rst>
-    ResidualFeedForward <models/fnn_residual.rst>
-    Spline <models/spline.rst>
-    DeepONet <models/deeponet.rst>
-    MIONet <models/mionet.rst>
-    FourierIntegralKernel <models/fourier_kernel.rst>
-    FNO <models/fno.rst>
-    AveragingNeuralOperator <models/avno.rst>
-    LowRankNeuralOperator <models/lno.rst>
+    FeedForward <model/feed_forward.rst>
+    MultiFeedForward <model/multi_feed_forward.rst>
+    ResidualFeedForward <model/residual_feed_forward.rst>
+    Spline <model/spline.rst>
+    DeepONet <model/deeponet.rst>
+    MIONet <model/mionet.rst>
+    KernelNeuralOperator <model/kernel_neural_operator.rst>
+    FourierIntegralKernel <model/fourier_integral_kernel.rst>
+    FNO <model/fourier_neural_operator.rst>
+    AveragingNeuralOperator <model/average_neural_operator.rst>
+    LowRankNeuralOperator <model/low_rank_neural_operator.rst>
+    GraphNeuralOperator <model/>
 
-Layers
+Blocks
 -------------
 
 .. toctree::
     :titlesonly:
 
-    Residual layer <layers/residual.rst>
-    EnhancedLinear layer <layers/enhanced_linear.rst>
-    Spectral convolution <layers/spectral.rst>
-    Fourier layers <layers/fourier.rst>
-    Averaging layer <layers/avno_layer.rst>
-    Low Rank layer <layers/lowrank_layer.rst>
-    Continuous convolution <layers/convolution.rst>
-    Proper Orthogonal Decomposition <layers/pod.rst>
-    Periodic Boundary Condition Embedding <layers/pbc_embedding.rst>
-    Fourier Feature Embedding <layers/fourier_embedding.rst>
-    Radial Basis Function Interpolation <layers/rbf_layer.rst>
+    Residual Block <model/block/residual.rst>
+    EnhancedLinear Block <model/block/enhanced_linear.rst>
+    Spectral Convolution Block <model/block/spectral.rst>
+    Fourier Block <model/block/fourier_block.rst>
+    Averaging Block <model/block/average_neural_operator_block.rst>
+    Low Rank Block <model/block/low_rank_block.rst>
+    Continuous Convolution Block <model/block/convolution.rst>
+
+
+Reduction and Embeddings
+--------------------------
+
+.. toctree::
+    :titlesonly:
+
+    Proper Orthogonal Decomposition <model/block/pod_block.rst>
+    Periodic Boundary Condition Embedding <model/block/pbc_embedding.rst>
+    Fourier Feature Embedding <model/block/fourier_embedding.rst>
+    Radial Basis Function Interpolation <model/block/rbf_block.rst>
+
 
 Adaptive Activation Functions
 -------------------------------
@@ -123,7 +134,19 @@ Adaptive Activation Functions
     Adaptive Exp <adaptive_function/AdaptiveExp.rst>
 
 
-Equations and Operators
+Equations
+-------------
+
+.. toctree::
+    :titlesonly:
+
+    EquationInterface <equation.equation_interface.rst>
+    Equation <equation.equation.rst>
+    SystemEquation <equation.system_equation.rst>
+    Equation Factory <equation.equation_factory.rst>
+
+
+Differential Operators
 -------------------------
 
 .. toctree::
@@ -133,7 +156,7 @@ Equations and Operators
     Differential Operators <operators.rst>
 
 
-Problem
+Problems
 --------------
 
 .. toctree::
@@ -144,8 +167,8 @@ Problem
     TimeDependentProblem <problem/timedepproblem.rst>
     ParametricProblem <problem/parametricproblem.rst>
 
-Domains
------------------
+Geometrical Domains
+---------------------
 
 .. toctree::
     :titlesonly:
@@ -155,8 +178,8 @@ Domains
     EllipsoidDomain <domain/ellipsoid.rst>
     SimplexDomain <domain/simplex.rst>
 
-domain set operations
-------------------------
+Domain Operations
+------------------
 
 .. toctree::
     :titlesonly:
@@ -178,8 +201,8 @@ Callback
     Refinment callback <callback/adaptive_refinment_callback.rst>
     Weighting callback <callback/linear_weight_update_callback.rst>
 
-Metrics and Losses
---------------------
+Losses and Weightings
+---------------------
 
 .. toctree::
     :titlesonly:
@@ -187,3 +210,5 @@ Metrics and Losses
     LossInterface <loss/loss_interface.rst>
     LpLoss <loss/lploss.rst>
     PowerLoss <loss/powerloss.rst>
+    WeightingInterface <loss/weighting_interface.rst>
+    ScalarWeighting <loss/scalar_weighting.rst>

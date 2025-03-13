@@ -1,8 +1,8 @@
 PowerLoss
 ====================
-.. currentmodule:: pina.loss
+.. currentmodule:: pina.loss.power_loss
 
-.. automodule:: pina.loss
+.. automodule:: pina.loss.power_loss
    :no-index:
 
 .. autoclass:: PowerLoss

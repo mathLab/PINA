@@ -1,6 +1,6 @@
-Residual layer
+Residual Block
 ===================
-.. currentmodule:: pina.model.layers.residual
+.. currentmodule:: pina.model.block.residual
 
 .. autoclass:: ResidualBlock
     :members:

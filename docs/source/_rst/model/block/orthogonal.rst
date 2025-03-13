@@ -1,6 +1,6 @@
-OrthogonalBlock
+Orthogonal Block
 ======================
-.. currentmodule:: pina.model.layers.orthogonal
+.. currentmodule:: pina.model.block.orthogonal
     
 .. autoclass:: OrthogonalBlock
     :members:

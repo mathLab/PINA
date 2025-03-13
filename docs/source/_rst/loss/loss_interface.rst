@@ -1,8 +1,8 @@
-LpLoss
+LossInterface
 ===============
-.. currentmodule:: pina.loss
+.. currentmodule:: pina.loss.loss_interface
 
-.. automodule:: pina.loss
+.. automodule:: pina.loss.loss_interface
 
 .. autoclass:: LossInterface
    :members:

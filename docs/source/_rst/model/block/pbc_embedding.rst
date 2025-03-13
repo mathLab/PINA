@@ -1,6 +1,6 @@
 Periodic Boundary Condition Embedding
 =======================================
-.. currentmodule:: pina.model.layers.embedding
+.. currentmodule:: pina.model.block.embedding
     
 .. autoclass:: PeriodicBoundaryEmbedding
     :members:

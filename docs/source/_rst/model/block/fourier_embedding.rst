@@ -1,6 +1,6 @@
 Fourier Feature Embedding
 =======================================
-.. currentmodule:: pina.model.layers.embedding
+.. currentmodule:: pina.model.block.embedding
     
 .. autoclass:: FourierFeatureEmbedding
     :members:
