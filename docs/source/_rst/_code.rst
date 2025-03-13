@@ -14,8 +14,8 @@ The pipeline to solve differential equations with PINA follows just five steps:
     1. Define the `Problem`_ the user aim to solve
     2. Generate data using built in `Domains`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
     3. Choose or build one or more `Models`_ to solve the problem
-    4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solvers/solver_interface>`
-    5. Train the model with the PINA :doc:`Trainer <solvers/solver_interface>`, enhance the train with `Callback`_
+    4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solver/solver_interface>`
+    5. Train the model with the PINA :doc:`Trainer <solver/solver_interface>`, enhance the train with `Callback`_
 
 
 Trainer, Dataset and Datamodule
@@ -33,6 +33,18 @@ Data Types
     :titlesonly:
 
     LabelTensor <label_tensor.rst>
+    Graph <graph/graph.rst>
+
+
+Graphs Structures
+------------------
+.. toctree::
+    :titlesonly:
+
+    Graph <graph/graph.rst>
+    GraphBuilder <graph/graph_builder.rst>
+    RadiusGraph <graph/radius_graph.rst>
+    KNNGraph <graph/knn_graph.rst>
 
 
 Conditions
@@ -53,17 +65,19 @@ Solvers
 .. toctree::
     :titlesonly:
 
-    SolverInterface <solvers/solver_interface.rst>
-    PINNInterface <solvers/basepinn.rst>
-    PINN <solvers/pinn.rst>
-    GPINN <solvers/gpinn.rst>
-    CausalPINN <solvers/causalpinn.rst>
-    CompetitivePINN <solvers/competitivepinn.rst>
-    SAPINN <solvers/sapinn.rst>
-    RBAPINN <solvers/rba_pinn.rst>
-    Supervised solver <solvers/supervised.rst>
-    ReducedOrderModelSolver <solvers/rom.rst>
-    GAROM <solvers/garom.rst>
+    SolverInterface <solver/solver_interface.rst>
+    SingleSolverInterface <solver/single_solver_interface.rst>
+    MultiSolverInterface <solver/multi_solver_interface.rst>
+    PINNInterface <solver/physic_informed_solver/pinn_interface.rst>
+    PINN <solver/physic_informed_solver/pinn.rst>
+    GradientPINN <solver/physic_informed_solver/gradient_pinn.rst>
+    CausalPINN <solver/physic_informed_solver/causal_pinn.rst>
+    CompetitivePINN <solver/physic_informed_solver/competitive_pinn.rst>
+    SelfAdaptivePINN <solver/physic_informed_solver/self_adaptive_pinn.rst>
+    RBAPINN <solver/physic_informed_solver/rba_pinn.rst>
+    SupervisedSolver <solver/supervised.rst>
+    ReducedOrderModelSolver <solver/reduced_order_model.rst>
+    GAROM <solver/garom.rst>
 
 
 Models
@@ -112,6 +126,17 @@ Reduction and Embeddings
     Fourier Feature Embedding <model/block/fourier_embedding.rst>
     Radial Basis Function Interpolation <model/block/rbf_block.rst>
 
+Optimizers and Schedulers
+--------------------------
+
+.. toctree::
+    :titlesonly:
+
+    Optimizer <optim/optimizer_interface.rst>
+    Scheduler <optim/scheduler_interface.rst>
+    TorchOptimizer <optim/torch_optimizer.rst>
+    TorchScheduler <optim/torch_scheduler.rst>
+    
 
 Adaptive Activation Functions
 -------------------------------
@@ -134,8 +159,8 @@ Adaptive Activation Functions
     Adaptive Exp <adaptive_function/AdaptiveExp.rst>
 
 
-Equations
--------------
+Equations and Differential Operators
+---------------------------------------
 
 .. toctree::
     :titlesonly:
@@ -144,16 +169,7 @@ Equations
     Equation <equation.equation.rst>
     SystemEquation <equation.system_equation.rst>
     Equation Factory <equation.equation_factory.rst>
-
-
-Differential Operators
--------------------------
-
-.. toctree::
-    :titlesonly:
-
-    Equations <equations.rst>
-    Differential Operators <operators.rst>
+    Differential Operators <operator.rst>
 
 
 Problems
@@ -162,10 +178,26 @@ Problems
 .. toctree::
     :titlesonly:
 
-    AbstractProblem <problem/abstractproblem.rst>
-    SpatialProblem <problem/spatialproblem.rst>
-    TimeDependentProblem <problem/timedepproblem.rst>
-    ParametricProblem <problem/parametricproblem.rst>
+    AbstractProblem <problem/abstract_problem.rst>
+    InverseProblem <problem/inverse_problem.rst>
+    ParametricProblem <problem/parametric_problem.rst>
+    SpatialProblem <problem/spatial_problem.rst>
+    TimeDependentProblem <problem/time_dependent_problem.rst>
+
+Problems Zoo
+--------------
+
+.. toctree::
+    :titlesonly:
+
+    AdvectionProblem <problem/zoo/advection.rst>
+    AllenCahnProblem <problem/zoo/allen_cahn.rst>
+    DiffusionReactionProblem <problem/zoo/diffusion_reaction.rst>
+    HelmholtzProblem <problem/zoo/helmholtz.rst>
+    InversePoisson2DSquareProblem <problem/zoo/inverse_poisson_2d_square.rst>
+    Poisson2DSquareProblem <problem/zoo/poisson_2d_square.rst>
+    SupervisedProblem <problem/zoo/supervised_problem.rst>
+
 
 Geometrical Domains
 ---------------------
