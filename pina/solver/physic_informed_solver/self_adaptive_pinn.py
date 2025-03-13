@@ -11,13 +11,15 @@ from .pinn_interface import PINNInterface
 
 class Weights(torch.nn.Module):
     """
-    This class aims to implements the mask model for the
-    self-adaptive weights of the Self-Adaptive PINN solver.
+    Implementation of the mask model for the self-adaptive weights of the
+    :class:`SelfAdaptivePINN` solver.
     """
 
     def __init__(self, func):
         """
-        :param torch.nn.Module func: the mask module of SAPINN.
+        Initialization of the :class:`Weights` class.
+
+        :param torch.nn.Module func: the mask model.
         """
         super().__init__()
         check_consistency(func, torch.nn.Module)
@@ -27,7 +29,6 @@ class Weights(torch.nn.Module):
     def forward(self):
         """
         Forward pass implementation for the mask module.
-        It returns the function on the weights evaluation.
 
         :return: evaluation of self adaptive weights through the mask.
         :rtype: torch.Tensor
@@ -37,14 +38,14 @@ class Weights(torch.nn.Module):
 
 class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
     r"""
-    Self Adaptive Physics Informed Neural Network (SelfAdaptivePINN)
-    solver class. This class implements Self-Adaptive Physics Informed Neural
+    Self-Adaptive Physics-Informed Neural Network (SelfAdaptivePINN) solver
+    class. This class implements the Self-Adaptive Physics-Informed Neural
     Network solver, using a user specified ``model`` to solve a specific
-    ``problem``. It can be used for solving both forward and inverse problems.
+    ``problem``. It can be used to solve both forward and inverse problems.
 
-    The Self Adapive Physics Informed Neural Network aims to find
-    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`
-    of the differential problem:
+    The Self-Adapive Physics-Informed Neural Network solver aims to find the
+    solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m` of a differential
+    problem:
 
     .. math::
 
@@ -54,9 +55,10 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         \mathbf{x}\in\partial\Omega
         \end{cases}
     
-    integrating the pointwise loss evaluation through a mask :math:`m` and
-    self adaptive weights that permit to focus the loss function on 
-    specific training samples.
+    integrating pointwise loss evaluation using a mask :math:m and self-adaptive
+    weights, which allow the model to focus on regions of the domain where the
+    residual is higher.
+
     The loss function to solve the problem is
 
     .. math::
@@ -69,24 +71,23 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         \left( \mathcal{B}[\mathbf{u}](\mathbf{x})
         \right),
     
-
     denoting the self adaptive weights as
     :math:`\lambda_{\Omega}^1, \dots, \lambda_{\Omega}^{N_\Omega}` and
     :math:`\lambda_{\partial \Omega}^1, \dots, 
     \lambda_{\Omega}^{N_\partial \Omega}`
     for :math:`\Omega` and :math:`\partial \Omega`, respectively.
 
-    Self Adaptive Physics Informed Neural Network identifies the solution
-    and appropriate self adaptive weights by solving the following problem
+    The Self-Adaptive Physics-Informed Neural Network solver identifies the
+    solution and appropriate self adaptive weights by solving the following
+    optimization problem:
 
     .. math::
 
         \min_{w} \max_{\lambda_{\Omega}^k, \lambda_{\partial \Omega}^s}
         \mathcal{L} ,
     
-    where :math:`w` denotes the network parameters, and
-    :math:`\mathcal{L}` is a specific loss
-    function, default Mean Square Error:
+    where :math:`w` denotes the network parameters, and :math:`\mathcal{L}` is a
+    specific loss function, , typically the MSE:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.
@@ -112,23 +113,29 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         loss=None,
     ):
         """
-        :param AbstractProblem problem: The formulation of the problem.
-        :param torch.nn.Module model: The neural network model to use for
-            the model.
-        :param torch.nn.Module weight_function: The neural network model
-            related to the Self-Adaptive PINN mask; default `torch.nn.Sigmoid()`
-        :param torch.optim.Optimizer optimizer_model: The neural network
-            optimizer to use for the model network; default `None`.
-        :param torch.optim.Optimizer optimizer_weights: The neural network
-            optimizer to use for mask model; default `None`.
+        Initialization of the :class:`SelfAdaptivePINN` class.
+
+        :param AbstractProblem problem: The problem to be solved.
+        :param torch.nn.Module model: The model to be used.
+        :param torch.nn.Module weight_function: The Self-Adaptive mask model.
+            Default is ``torch.nn.Sigmoid()``.
+        :param torch.optim.Optimizer optimizer_model: The optimizer of the
+            ``model``. If `None`, the Adam optimizer is used.
+            Default is ``None``.
+        :param torch.optim.Optimizer optimizer_weights: The optimizer of the
+            ``weight_function``. If `None`, the Adam optimizer is used.
+            Default is ``None``.
         :param torch.optim.LRScheduler scheduler_model: Learning rate scheduler
-            for the model; default `None`.
+            for the ``model``. If `None`, the constant learning rate scheduler
+            is used. Default is ``None``.
         :param torch.optim.LRScheduler scheduler_weights: Learning rate
-            scheduler for the mask model; default `None`.
-        :param WeightingInterface weighting: The weighting schema to use;
-            default `None`.
-        :param torch.nn.Module loss: The loss function to be minimized;
-            default `None`.
+            scheduler for the ``weight_function``. If `None`, the constant
+            learning rate scheduler is used. Default is ``None``.
+        :param WeightingInterface weighting: The weighting schema to be used.
+            If `None`, no weighting schema is used. Default is ``None``.
+        :param torch.nn.Module loss: The loss function to be minimized.
+            If `None`, the Mean Squared Error (MSE) loss is used.
+            Default is `None`.
         """
         # check consistency weitghs_function
         check_consistency(weight_function, torch.nn.Module)
@@ -155,16 +162,11 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         self._vectorial_loss.reduction = "none"
 
     def forward(self, x):
-        r"""
-        Forward pass implementation for the PINN
-        solver. It returns the function
-        evaluation :math:`\mathbf{u}(\mathbf{x})` at the control points
-        :math:`\mathbf{x}`.
+        """
+        Forward pass.
 
-        :param LabelTensor x: Input tensor for the SAPINN solver. It expects
-            a tensor :math:`N \\times D`, where :math:`N` the number of points
-            in the mesh, :math:`D` the dimension of the problem,
-        :return: PINN solution.
+        :param LabelTensor x: Input tensor.
+        :return: The output of the neural network.
         :rtype: LabelTensor
         """
         return self.model(x)
@@ -173,9 +175,8 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         """
         Solver training step, overridden to perform manual optimization.
 
-        :param batch: The batch element in the dataloader.
-        :type batch: tuple
-        :return: The sum of the loss functions.
+        :param dict batch: The batch element in the dataloader.
+        :return: The aggregated loss.
         :rtype: LabelTensor
         """
         # Weights optimization
@@ -194,7 +195,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
     def configure_optimizers(self):
         """
-        Optimizer configuration for the SelfAdaptive PINN solver.
+        Optimizer configuration.
 
         :return: The optimizers and the schedulers
         :rtype: tuple(list, list)
@@ -221,16 +222,13 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
     def on_train_batch_end(self, outputs, batch, batch_idx):
         """
-        This method is called at the end of each training batch, and ovverides
-        the PytorchLightining implementation for logging the checkpoints.
+        This method is called at the end of each training batch and overrides
+        the PyTorch Lightning implementation to log checkpoints.
 
-        :param torch.Tensor outputs: The output from the model for the
-            current batch.
-        :param tuple batch: The current batch of data.
+        :param torch.Tensor outputs: The ``model``'s output for the current
+            batch.
+        :param dict batch: The current batch of data.
         :param int batch_idx: The index of the current batch.
-        :return: Whatever is returned by the parent
-            method ``on_train_batch_end``.
-        :rtype: Any
         """
         # increase by one the counter of optimization to save loggers
         (
@@ -241,12 +239,10 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
     def on_train_start(self):
         """
-        This method is called at the start of the training for setting
-        the self adaptive weights as parameters of the mask model.
+        This method is called at the start of the training process to set the
+        self-adaptive weights as parameters of the mask model.
 
-        :return: Whatever is returned by the parent
-            method ``on_train_start``.
-        :rtype: Any
+        :raises NotImplementedError: If the batch size is not ``None``.
         """
         if self.trainer.batch_size is not None:
             raise NotImplementedError(
@@ -270,9 +266,9 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
     def on_load_checkpoint(self, checkpoint):
         """
-        Override the Pytorch Lightning ``on_load_checkpoint`` to handle
-        checkpoints for Self-Adaptive Weights. This method should not be
-        overridden if not intentionally.
+        Override of the Pytorch Lightning ``on_load_checkpoint`` method to
+        handle checkpoints for Self-Adaptive Weights. This method should not be
+        overridden, if not intentionally.
 
         :param dict checkpoint: Pytorch Lightning checkpoint dict.
         """
@@ -289,14 +285,13 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
     def loss_phys(self, samples, equation):
         """
-        Computation of the physical loss for SelfAdaptive PINN solver.
+        Computes the physics loss for the physics-informed solver based on the
+        provided samples and equation.
 
-        :param LabelTensor samples: Input samples to evaluate the physics loss.
-        :param EquationInterface equation: the governing equation representing
-            the physics.
-
-        :return: tuple with weighted and not weighted scalar loss
-        :rtype: List[LabelTensor, LabelTensor]
+        :param LabelTensor samples: The samples to evaluate the physics loss.
+        :param EquationInterface equation: The governing equation.
+        :return: The computed physics loss.
+        :rtype: LabelTensor
         """
         residual = self.compute_residual(samples, equation)
         weights = self.weights_dict[self.current_condition_name].forward()
@@ -307,12 +302,11 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
 
     def _vect_to_scalar(self, loss_value):
         """
-        Elaboration of the pointwise loss through the mask model and the
-        self adaptive weights
+        Computation of the scalar loss.
 
-        :param LabelTensor loss_value: the matrix of pointwise loss
-
-        :return: the scalar loss
+        :param LabelTensor loss_value: the tensor of pointwise losses.
+        :raises RuntimeError: If the loss reduction is not ``mean`` or ``sum``.
+        :return: The computed scalar loss.
         :rtype LabelTensor
         """
         if self.loss.reduction == "mean":
@@ -329,33 +323,29 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
     @property
     def model(self):
         """
-        Return the mask models associate to the application of
-        the mask to the self adaptive weights for each loss that
-        compones the global loss of the problem.
+        The model.
 
-        :return: The ModuleDict for mask models.
-        :rtype: torch.nn.ModuleDict
+        :return: The model.
+        :rtype: torch.nn.Module
         """
         return self.models[0]
 
     @property
     def weights_dict(self):
         """
-        Return the mask models associate to the application of
-        the mask to the self adaptive weights for each loss that
-        compones the global loss of the problem.
+        The self-adaptive weights.
 
-        :return: The ModuleDict for mask models.
-        :rtype: torch.nn.ModuleDict
+        :return: The self-adaptive weights.
+        :rtype: torch.nn.Module
         """
         return self.models[1]
 
     @property
     def scheduler_model(self):
         """
-        Returns the scheduler associated with the neural network model.
+        The scheduler associated to the model.
 
-        :return: The scheduler for the neural network model.
+        :return: The scheduler for the model.
         :rtype: torch.optim.lr_scheduler._LRScheduler
         """
         return self.schedulers[0]
@@ -363,7 +353,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
     @property
     def scheduler_weights(self):
         """
-        Returns the scheduler associated with the mask model (if applicable).
+        The scheduler associated to the mask model.
 
         :return: The scheduler for the mask model.
         :rtype: torch.optim.lr_scheduler._LRScheduler
@@ -373,9 +363,9 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
     @property
     def optimizer_model(self):
         """
-        Returns the optimizer associated with the neural network model.
+        Returns the optimizer associated to the model.
 
-        :return: The optimizer for the neural network model.
+        :return: The optimizer for the model.
         :rtype: torch.optim.Optimizer
         """
         return self.optimizers[0]
@@ -383,7 +373,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
     @property
     def optimizer_weights(self):
         """
-        Returns the optimizer associated with the mask model (if applicable).
+        The optimizer associated to the mask model.
 
         :return: The optimizer for the mask model.
         :rtype: torch.optim.Optimizer

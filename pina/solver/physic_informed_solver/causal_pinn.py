@@ -1,4 +1,4 @@
-"""Module for Causal PINN."""
+"""Module for the Causal PINN solver."""
 
 import torch
 
@@ -9,14 +9,13 @@ from ...utils import check_consistency
 
 class CausalPINN(PINN):
     r"""
-    Causal Physics Informed Neural Network (CausalPINN) solver class.
-    This class implements Causal Physics Informed Neural
-    Network solver, using a user specified ``model`` to solve a specific
-    ``problem``. It can be used for solving both forward and inverse problems.
+    Causal Physics-Informed Neural Network (CausalPINN) solver class.
+    This class implements the Causal Physics-Informed Neural Network solver,
+    using a user specified ``model`` to solve a specific ``problem``.
+    It can be used to solve both forward and inverse problems.
 
-    The Causal Physics Informed Network aims to find
-    the solution :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m`
-    of the differential problem:
+    The Causal Physics-Informed Neural Network solver aims to find the solution
+    :math:`\mathbf{u}:\Omega\rightarrow\mathbb{R}^m` of a differential problem:
 
     .. math::
 
@@ -26,7 +25,7 @@ class CausalPINN(PINN):
         \mathbf{x}\in\partial\Omega
         \end{cases}
 
-    minimizing the loss function
+    minimizing the loss function:
 
     .. math::
         \mathcal{L}_{\rm{problem}} = \frac{1}{N_t}\sum_{i=1}^{N_t}
@@ -45,13 +44,11 @@ class CausalPINN(PINN):
     .. math::
         \omega_i = \exp\left(\epsilon \sum_{k=1}^{i-1}\mathcal{L}_r(t_k)\right).
 
-    :math:`\epsilon` is an hyperparameter, default set to :math:`100`, while
-    :math:`\mathcal{L}` is a specific loss function,
-    default Mean Square Error:
+    :math:`\epsilon` is an hyperparameter, set by default to :math:`100`, while
+    :math:`\mathcal{L}` is a specific loss function, typically the MSE:
 
     .. math::
         \mathcal{L}(v) = \| v \|^2_2.
-
 
     .. seealso::
 
@@ -62,9 +59,8 @@ class CausalPINN(PINN):
         DOI `10.1016 <https://doi.org/10.1016/j.cma.2024.116813>`_.
 
     .. note::
-        This class can only work for problems inheriting
-        from at least
-        :class:`~pina.problem.timedep_problem.TimeDependentProblem` class.
+        This class is only compatible with problems that inherit from  the
+        :class:`~pina.problem.TimeDependentProblem` class.
     """
 
     def __init__(
@@ -78,17 +74,23 @@ class CausalPINN(PINN):
         eps=100,
     ):
         """
-        :param torch.nn.Module model: The neural network model to use.
-        :param AbstractProblem problem: The formulation of the problem.
-        :param torch.optim.Optimizer optimizer: The neural network optimizer to
-            use; default `None`.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler;
-            default `None`.
-        :param WeightingInterface weighting: The weighting schema to use;
-            default `None`.
-        :param torch.nn.Module loss: The loss function to be minimized;
-            default `None`.
-        :param float eps: The exponential decay parameter; default `100`.
+        Initialization of the :class:`CausalPINN` class.
+
+        :param AbstractProblem problem: The problem to be solved. It must
+            inherit from at least :class:`~pina.problem.TimeDependentProblem`.
+        :param torch.nn.Module model: The neural network model to be used.
+        :param torch.optim.Optimizer optimizer: The optimizer to be used
+            If `None`, the Adam optimizer is used. Default is ``None``.
+        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
+            If `None`, the constant learning rate scheduler is used.
+            Default is ``None``.
+        :param WeightingInterface weighting: The weighting schema to be used.
+            If `None`, no weighting schema is used. Default is ``None``.
+        :param torch.nn.Module loss: The loss function to be minimized.
+            If `None`, the Mean Squared Error (MSE) loss is used.
+            Default is `None`.
+        :param float eps: The exponential decay parameter. Default is ``100``.
+        :raises ValueError: If the problem is not a TimeDependentProblem.
         """
         super().__init__(
             model=model,
@@ -110,14 +112,12 @@ class CausalPINN(PINN):
 
     def loss_phys(self, samples, equation):
         """
-        Computes the physics loss for the Causal PINN solver based on given
-        samples and equation.
+        Computes the physics loss for the physics-informed solver based on the
+        provided samples and equation.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation
-            representing the physics.
-        :return: The physics loss calculated based on given
-            samples and equation.
+        :param EquationInterface equation: The governing equation.
+        :return: The computed physics loss.
         :rtype: LabelTensor
         """
         # split sequentially ordered time tensors into chunks
@@ -146,13 +146,16 @@ class CausalPINN(PINN):
     def eps(self):
         """
         The exponential decay parameter.
+
+        :return: The exponential decay parameter.
+        :rtype: float
         """
         return self._eps
 
     @eps.setter
     def eps(self, value):
         """
-        Setter method for the eps parameter.
+        Set the exponential decay parameter.
 
         :param float value: The exponential decay parameter.
         """
@@ -161,10 +164,10 @@ class CausalPINN(PINN):
 
     def _sort_label_tensor(self, tensor):
         """
-        Sorts the label tensor based on time variables.
+        Sort the tensor with respect to the temporal variables.
 
-        :param LabelTensor tensor: The label tensor to be sorted.
-        :return: The sorted label tensor based on time variables.
+        :param LabelTensor tensor: The tensor to be sorted.
+        :return: The tensor sorted with respect to the temporal variables.
         :rtype: LabelTensor
         """
         # labels input tensors
@@ -179,11 +182,12 @@ class CausalPINN(PINN):
 
     def _split_tensor_into_chunks(self, tensor):
         """
-        Splits the label tensor into chunks based on time.
+        Split the tensor into chunks based on time.
 
-        :param LabelTensor tensor: The label tensor to be split.
-        :return: Tuple containing the chunks and the original labels.
-        :rtype: Tuple[List[LabelTensor], List]
+        :param LabelTensor tensor: The tensor to be split.
+        :return: A tuple containing the list of tensor chunks and the
+            corresponding labels.
+        :rtype: tuple[list[LabelTensor], list[str]]
         """
         # extract labels
         labels = tensor.labels
@@ -199,7 +203,7 @@ class CausalPINN(PINN):
 
     def _compute_weights(self, loss):
         """
-        Computes the weights for the physics loss based on the cumulative loss.
+        Compute the weights for the physics loss based on the cumulative loss.
 
         :param LabelTensor loss: The physics loss values.
         :return: The computed weights for the physics loss.
