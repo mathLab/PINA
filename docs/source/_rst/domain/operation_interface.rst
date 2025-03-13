@@ -1,8 +1,8 @@
 OperationInterface
 ======================
-.. currentmodule:: pina.geometry.operation_interface
+.. currentmodule:: pina.domain.operation_interface
 
-.. automodule:: pina.geometry.operation_interface
+.. automodule:: pina.domain.operation_interface
 
 .. autoclass:: OperationInterface
     :members:
