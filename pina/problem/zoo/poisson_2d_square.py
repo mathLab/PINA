@@ -30,6 +30,9 @@ class Poisson2DSquareProblem(SpatialProblem):
     r"""
     Implementation of the 2-dimensional Poisson problem in the square domain
     :math:`[0, 1] \times [0, 1]`.
+
+    :Example:
+        >>> problem = Poisson2DSquareProblem()
     """
 
     output_variables = ["u"]

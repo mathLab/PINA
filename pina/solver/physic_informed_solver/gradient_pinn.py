@@ -46,15 +46,15 @@ class GradientPINN(PINN):
 
     .. seealso::
 
-        **Original reference**: Yu, Jeremy, et al. "Gradient-enhanced
-        physics-informed neural networks for forward and inverse
-        PDE problems." Computer Methods in Applied Mechanics
-        and Engineering 393 (2022): 114823.
+        **Original reference**: Yu, Jeremy, et al.
+        *Gradient-enhanced physics-informed neural networks for forward and
+        inverse PDE problems.*
+        Computer Methods in Applied Mechanics and Engineering 393 (2022):114823.
         DOI: `10.1016 <https://doi.org/10.1016/j.cma.2022.114823>`_.
 
     .. note::
         This class is only compatible with problems that inherit from  the
-        :class:`~pina.problem.SpatialProblem` class. 
+        :class:`~pina.problem.spatial_problem.SpatialProblem` class. 
     """
 
     def __init__(
@@ -70,18 +70,20 @@ class GradientPINN(PINN):
         Initialization of the :class:`GradientPINN` class.
 
         :param AbstractProblem problem: The problem to be solved.
-            It must inherit from at least :class:`~pina.problem.SpatialProblem`
-            to compute the gradient of the loss.
+            It must inherit from at least
+            :class:`~pina.problem.spatial_problem.SpatialProblem` to compute the
+            gradient of the loss.
         :param torch.nn.Module model: The neural network model to be used.
-        :param torch.optim.Optimizer optimizer: The optimizer to be used.
-            If `None`, the Adam optimizer is used. Default is ``None``.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
-            If `None`, the constant learning rate scheduler is used.
+        :param Optimizer optimizer: The optimizer to be used.
+            If `None`, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
+        :param Scheduler scheduler: Learning rate scheduler.
+            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If `None`, no weighting schema is used. Default is ``None``.
         :param torch.nn.Module loss: The loss function to be minimized.
-            If `None`, the Mean Squared Error (MSE) loss is used.
+            If `None`, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         :raises ValueError: If the problem is not a SpatialProblem.
         """

@@ -63,6 +63,9 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
         training physics-informed neural networks*.
         arXiv preprint arXiv:2308.08468 (2023).
         DOI: `arXiv:2308.08468  <https://arxiv.org/abs/2308.08468>`_.
+
+    :Example:
+        >>> problem = AdvectionProblem(c=1.0)
     """
 
     output_variables = ["u"]
