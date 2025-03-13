@@ -1,8 +1,8 @@
 Difference
 ======================
-.. currentmodule:: pina.geometry.difference_domain
+.. currentmodule:: pina.domain.difference_domain
 
-.. automodule:: pina.geometry.difference_domain
+.. automodule:: pina.domain.difference_domain
 
 .. autoclass:: Difference
     :members:

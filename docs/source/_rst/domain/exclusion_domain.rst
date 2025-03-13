@@ -1,8 +1,8 @@
 Exclusion
 ======================
-.. currentmodule:: pina.geometry.exclusion_domain
+.. currentmodule:: pina.domain.exclusion_domain
 
-.. automodule:: pina.geometry.exclusion_domain
+.. automodule:: pina.domain.exclusion_domain
 
 .. autoclass:: Exclusion
     :members:
