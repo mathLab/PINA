@@ -36,7 +36,7 @@ class Equation(EquationInterface):
             :class:`torch.nn.Module` instance.
         :param dict params_: Dictionary of unknown parameters, associated with a
             :class:`~pina.problem.inverse_problem.InverseProblem` instance.
-            If the equation is not related to a 
+            If the equation is not related to a
             :class:`~pina.problem.inverse_problem.InverseProblem` instance, the
             parameters must be initialized to ``None``. Default is ``None``.
         :return: The computed residual of the equation.
