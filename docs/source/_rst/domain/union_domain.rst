@@ -1,8 +1,8 @@
 Union
 ======================
-.. currentmodule:: pina.geometry.union_domain
+.. currentmodule:: pina.domain.union_domain
 
-.. automodule:: pina.geometry.union_domain
+.. automodule:: pina.domain.union_domain
 
 .. autoclass:: Union
     :members:

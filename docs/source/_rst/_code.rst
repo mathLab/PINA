@@ -12,21 +12,38 @@ The high-level structure of the package is depicted in our API.
 The pipeline to solve differential equations with PINA follows just five steps:
 
     1. Define the `Problem`_ the user aim to solve
-    2. Generate data using built in `Geometries`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
+    2. Generate data using built in `Domains`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
     3. Choose or build one or more `Models`_ to solve the problem
     4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solvers/solver_interface>`
-    5. Train the model with the PINA :doc:`Trainer <solvers/solver_interface>`, enhance the train with `Callbacks`_
+    5. Train the model with the PINA :doc:`Trainer <solvers/solver_interface>`, enhance the train with `Callback`_
 
-PINA Features
---------------
+
+Training and Datamodules
+-------------------------
+.. toctree::
+    :titlesonly:
+
+    Trainer <trainer.rst>
+
+Data Types
+------------
 .. toctree::
     :titlesonly:
 
     LabelTensor <label_tensor.rst>
-    Condition <condition.rst>
-    Trainer <trainer.rst>
-    Plotter <plotter.rst>
 
+
+Conditions
+-------------
+.. toctree::
+    :titlesonly:
+
+    ConditionInterface <condition/condition_interface.rst>
+    Condition <condition/condition.rst>
+    DataCondition <condition/data_condition.rst>
+    DomainEquationCondition <condition/domain_equation_condition.rst>
+    InputEquationCondition <condition/input_equation_condition.rst>
+    InputTargetCondition <condition/input_target_condition.rst>
 
 Solvers
 --------------
@@ -91,19 +108,19 @@ Adaptive Activation Functions
 .. toctree::
     :titlesonly:
 
-    Adaptive Function Interface <adaptive_functions/AdaptiveFunctionInterface.rst>
-    Adaptive ReLU <adaptive_functions/AdaptiveReLU.rst>
-    Adaptive Sigmoid <adaptive_functions/AdaptiveSigmoid.rst>
-    Adaptive Tanh <adaptive_functions/AdaptiveTanh.rst>
-    Adaptive SiLU <adaptive_functions/AdaptiveSiLU.rst>
-    Adaptive Mish <adaptive_functions/AdaptiveMish.rst>
-    Adaptive ELU <adaptive_functions/AdaptiveELU.rst>
-    Adaptive CELU <adaptive_functions/AdaptiveCELU.rst>
-    Adaptive GELU <adaptive_functions/AdaptiveGELU.rst>
-    Adaptive Softmin <adaptive_functions/AdaptiveSoftmin.rst>
-    Adaptive Softmax <adaptive_functions/AdaptiveSoftmax.rst>
-    Adaptive SIREN <adaptive_functions/AdaptiveSIREN.rst>
-    Adaptive Exp <adaptive_functions/AdaptiveExp.rst>
+    Adaptive Function Interface <adaptive_function/AdaptiveFunctionInterface.rst>
+    Adaptive ReLU <adaptive_function/AdaptiveReLU.rst>
+    Adaptive Sigmoid <adaptive_function/AdaptiveSigmoid.rst>
+    Adaptive Tanh <adaptive_function/AdaptiveTanh.rst>
+    Adaptive SiLU <adaptive_function/AdaptiveSiLU.rst>
+    Adaptive Mish <adaptive_function/AdaptiveMish.rst>
+    Adaptive ELU <adaptive_function/AdaptiveELU.rst>
+    Adaptive CELU <adaptive_function/AdaptiveCELU.rst>
+    Adaptive GELU <adaptive_function/AdaptiveGELU.rst>
+    Adaptive Softmin <adaptive_function/AdaptiveSoftmin.rst>
+    Adaptive Softmax <adaptive_function/AdaptiveSoftmax.rst>
+    Adaptive SIREN <adaptive_function/AdaptiveSIREN.rst>
+    Adaptive Exp <adaptive_function/AdaptiveExp.rst>
 
 
 Equations and Operators
@@ -127,38 +144,39 @@ Problem
     TimeDependentProblem <problem/timedepproblem.rst>
     ParametricProblem <problem/parametricproblem.rst>
 
-Geometries
+Domains
 -----------------
 
 .. toctree::
     :titlesonly:
 
-    Location <geometry/location.rst>
-    CartesianDomain <geometry/cartesian.rst>
-    EllipsoidDomain <geometry/ellipsoid.rst>
-    SimplexDomain <geometry/simplex.rst>
+    Domain <domain/domain.rst>
+    CartesianDomain <domain/cartesian.rst>
+    EllipsoidDomain <domain/ellipsoid.rst>
+    SimplexDomain <domain/simplex.rst>
 
-Geometry set operations
+domain set operations
 ------------------------
 
 .. toctree::
     :titlesonly:
 
-    OperationInterface <geometry/operation_interface.rst>
-    Union <geometry/union_domain.rst>
-    Intersection <geometry/intersection_domain.rst>
-    Difference <geometry/difference_domain.rst>
-    Exclusion <geometry/exclusion_domain.rst>
+    OperationInterface <domain/operation_interface.rst>
+    Union <domain/union_domain.rst>
+    Intersection <domain/intersection_domain.rst>
+    Difference <domain/difference_domain.rst>
+    Exclusion <domain/exclusion_domain.rst>
 
-Callbacks
+Callback
 --------------------
 
 .. toctree::
     :titlesonly:
 
-    Processing Callbacks <callbacks/processing_callbacks.rst>
-    Optimizer Callbacks <callbacks/optimizer_callbacks.rst>
-    Adaptive Refinment Callback <callbacks/adaptive_refinment_callbacks.rst>
+    Processing callback <callback/processing_callback.rst>
+    Optimizer callback <callback/optimizer_callback.rst>
+    Refinment callback <callback/adaptive_refinment_callback.rst>
+    Weighting callback <callback/linear_weight_update_callback.rst>
 
 Metrics and Losses
 --------------------

@@ -1,8 +1,8 @@
 EllipsoidDomain
 ======================
-.. currentmodule:: pina.geometry.ellipsoid
+.. currentmodule:: pina.domain.ellipsoid
 
-.. automodule:: pina.geometry.ellipsoid
+.. automodule:: pina.domain.ellipsoid
 
 .. autoclass:: EllipsoidDomain
     :members:
