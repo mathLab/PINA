@@ -1,6 +1,4 @@
-"""
-Condition module.
-"""
+"""Condition module."""
 
 import warnings
 from .data_condition import DataCondition
@@ -15,11 +13,12 @@ warnings.filterwarnings("always", category=DeprecationWarning)
 
 
 def warning_function(new, old):
-    """
-    Handle the deprecation warning.
+    """Handle the deprecation warning.
 
-    :param str new: Object to use instead of the old one.
-    :param str old: Object to deprecate.
+    :param new: Object to use instead of the old one.
+    :type new: str
+    :param old: Object to deprecate.
+    :type old: str
     """
     warnings.warn(
         f"'{old}' is deprecated and will be removed "
@@ -30,49 +29,58 @@ def warning_function(new, old):
 
 class Condition:
     """
-    The class `Condition` is used to represent the constraints (physical
+    The class ``Condition`` is used to represent the constraints (physical
     equations, boundary conditions, etc.) that should be satisfied in the
     problem at hand. Condition objects are used to formulate the
     PINA :obj:`pina.problem.abstract_problem.AbstractProblem` object.
     Conditions can be specified in four ways:
 
-        1. By specifying the input and output points of the condition; in such a
+        1. By specifying the input and target of the condition; in such a
         case, the model is trained to produce the output points given the input
-        points. Those points can either be torch.Tensor, LabelTensors, Graph
+        points. Those points can either be torch.Tensor, LabelTensors, Graph.
+        Based on the type of the input and target, there are different
+        implementations of the condition. For more details, see
+        :class:`~pina.condition.input_target_condition.InputTargetCondition`.
 
-        2. By specifying the location and the equation of the condition; in such
+        2. By specifying the domain and the equation of the condition; in such
         a case, the model is trained to minimize the equation residual by
-        evaluating it at some samples of the location.
+        evaluating it at some samples of the domain.
 
-        3. By specifying the input points and the equation of the condition; in
+        3. By specifying the input and the equation of the condition; in
         such a case, the model is trained to minimize the equation residual by
         evaluating it at the passed input points. The input points must be
-        a LabelTensor.
+        a LabelTensor. Based on the type of the input, there are different
+        implementations of the condition. For more details, see
+        :class:`~pina.condition.input_equation_condition.InputEquationCondition`
+        .
 
-        4. By specifying only the data matrix; in such a case the model is
+        4. By specifying only the input data; in such a case the model is
         trained with an unsupervised costum loss and uses the data in training.
         Additionaly conditioning variables can be passed, whenever the model
-        has extra conditioning variable it depends on.
+        has extra conditioning variable it depends on. Based on the type of the
+        input, there are different implementations of the condition. For more
+        details, see :class:`~pina.condition.data_condition.DataCondition`.
 
     Example::
 
-        >>> from pina import Condition
-        >>> condition = Condition(
-        ...     input=input,
-        ...     target=target
-        ... )
-        >>> condition = Condition(
-        ...     domain=location,
-        ...     equation=equation
-        ... )
-        >>> condition = Condition(
-        ...     input=input,
-        ...     equation=equation
-        ... )
-        >>> condition = Condition(
-        ...     input=data,
-        ...     conditional_variables=conditional_variables
-        ... )
+    >>> from pina import Condition
+    >>> condition = Condition(
+    ...     input=input,
+    ...     target=target
+    ... )
+    >>> condition = Condition(
+    ...     domain=location,
+    ...     equation=equation
+    ... )
+    >>> condition = Condition(
+    ...     input=input,
+    ...     equation=equation
+    ... )
+    >>> condition = Condition(
+    ...     input=data,
+    ...     conditional_variables=conditional_variables
+    ... )
+
     """
 
     __slots__ = list(
@@ -86,24 +94,14 @@ class Condition:
 
     def __new__(cls, *args, **kwargs):
         """
-        Create a new condition object based on the keyword arguments passed.
+        Check the input arguments and return the appropriate Condition object.
 
-        - `input` and `target`:
-            :class:`~pina.condition.input_target_condition.InputTargetCondition`
-        - `domain` and `equation`:
-            :class:`~pina.condition.domain_equation_condition.
-            DomainEquationCondition`
-        - `input` and `equation`: :class:`~pina.condition.
-            input_equation_condition.InputEquationCondition`
-        - `input`: :class:`~pina.condition.data_condition.DataCondition`
-        - `input` and `conditional_variables`:
-            :class:`~pina.condition.data_condition.DataCondition`
-        :return: A new condition instance belonging to the proper class.
-        :rtype: InputTargetCondition | DomainEquationCondition |
-                InputEquationCondition | DataCondition
-
-        :raises ValueError: No valid condition has been found.
+        :raises ValueError: If no keyword arguments are passed.
+        :raises ValueError: If the keyword arguments are invalid.
+        :return: The appropriate Condition object.
+        :rtype: ConditionInterface
         """
+
         if len(args) != 0:
             raise ValueError(
                 "Condition takes only the following keyword "
