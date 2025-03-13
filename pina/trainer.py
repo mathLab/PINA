@@ -127,9 +127,6 @@ class Trainer(lightning.pytorch.Trainer):
 
         # logging
         self.logging_kwargs = {
-            "logger": bool(
-                kwargs["logger"] is not None or kwargs["logger"] is True
-            ),
             "sync_dist": bool(
                 len(self._accelerator_connector._parallel_devices) > 1
             ),
