@@ -23,17 +23,18 @@ def test_metric_tracker_constructor():
     MetricTracker()
 
 
-# def test_metric_tracker_routine(): #TODO revert
-#     # make the trainer
-#     trainer = Trainer(solver=solver,
-#                       callback=[
-#                           MetricTracker()
-#                       ],
-#                       accelerator='cpu',
-#                       max_epochs=5)
-#     trainer.train()
-#     # get the tracked metrics
-#     metrics = trainer.callback[0].metrics
-#     # assert the logged metrics are correct
-#     logged_metrics = sorted(list(metrics.keys()))
-#     assert logged_metrics == ['train_loss_epoch', 'train_loss_step', 'val_loss']
+def test_metric_tracker_routine():
+    # make the trainer
+    trainer = Trainer(
+        solver=solver,
+        callbacks=[MetricTracker()],
+        accelerator="cpu",
+        max_epochs=5,
+        log_every_n_steps=1,
+    )
+    trainer.train()
+    # get the tracked metrics
+    metrics = trainer.callbacks[0].metrics
+    # assert the logged metrics are correct
+    logged_metrics = sorted(list(metrics.keys()))
+    assert logged_metrics == ["train_loss"]
