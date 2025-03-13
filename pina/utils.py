@@ -60,14 +60,14 @@ def check_consistency(object_, object_instance, subclass=False):
 
 def labelize_forward(forward, input_variables, output_variables):
     """
-    Decorator to enable or disable the use of :class:`~pina.LabelTensor`
-    during the forward pass.
+    Decorator to enable or disable the use of
+    :class:`~pina.label_tensor.LabelTensor` during the forward pass.
 
     :param Callable forward: The forward function of a :class:`torch.nn.Module`.
     :param list[str] input_variables: The names of the input variables of a
-        :class:`~pina.problem.AbstractProblem`.
+        :class:`~pina.problem.abstract_problem.AbstractProblem`.
     :param list[str] output_variables: The names of the output variables of a
-        :class:`~pina.problem.AbstractProblem`.
+        :class:`~pina.problem.abstract_problem.AbstractProblem`.
     :return: The decorated forward function.
     :rtype: Callable
     """
@@ -95,9 +95,9 @@ def labelize_forward(forward, input_variables, output_variables):
 
 def merge_tensors(tensors):
     """
-    Merge a list of :class:`~pina.LabelTensor` instances into a single
-    :class:`~pina.LabelTensor` tensor, by applying iteratively the cartesian
-    product.
+    Merge a list of :class:`~pina.label_tensor.LabelTensor` instances into a
+    single :class:`~pina.label_tensor.LabelTensor` tensor, by applying
+    iteratively the cartesian product.
 
     :param list[LabelTensor] tensors: The list of tensors to merge.
     :raises ValueError: If the list of tensors is empty.
@@ -111,8 +111,9 @@ def merge_tensors(tensors):
 
 def merge_two_tensors(tensor1, tensor2):
     """
-    Merge two :class:`~pina.LabelTensor` instances into a single
-    :class:`~pina.LabelTensor` tensor, by applying the cartesian product.
+    Merge two :class:`~pina.label_tensor.LabelTensor` instances into a single
+    :class:`~pina.label_tensor.LabelTensor` tensor, by applying the cartesian
+    product.
 
     :param LabelTensor tensor1: The first tensor to merge.
     :param LabelTensor tensor2: The second tensor to merge.

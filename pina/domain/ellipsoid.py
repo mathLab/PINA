@@ -26,14 +26,14 @@ class EllipsoidDomain(DomainInterface):
         .. warning::
             Sampling for dimensions greater or equal to 10 could result in a
             shrinkage of the ellipsoid, which degrades the quality of the
-            samples. For dimensions higher than 10, use other sampling
-            algorithms.
-            .. seealso::
-                **Original reference**: Dezert, Jean, and Musso, Christian.
-                *An efficient method for generating points uniformly distributed
-                in hyperellipsoids.*
-                Proceedings of the Workshop on Estimation, Tracking and Fusion:
-                A Tribute to Yaakov Bar-Shalom. 2001.
+            samples. For dimensions higher than 10, see the following reference.
+        
+        .. seealso::
+            **Original reference**: Dezert, Jean, and Musso, Christian.
+            *An efficient method for generating points uniformly distributed
+            in hyperellipsoids.*
+            Proceedings of the Workshop on Estimation, Tracking and Fusion:
+            A Tribute to Yaakov Bar-Shalom. 2001.
 
         :Example:
             >>> spatial_domain = Ellipsoid({'x':[-1, 1], 'y':[-1,1]})

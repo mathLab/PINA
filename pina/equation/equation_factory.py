@@ -28,7 +28,7 @@ class FixedValue(Equation):
             :param LabelTensor input_: Input points where the equation is
                 evaluated.
             :param LabelTensor output_: Output tensor, eventually produced by a
-                :class:`~torch.nn.Module` instance.
+                :class:`torch.nn.Module` instance.
             :return: The computed residual of the equation.
             :rtype: LabelTensor
             """
@@ -66,7 +66,7 @@ class FixedGradient(Equation):
             :param LabelTensor input_: Input points where the equation is
                 evaluated.
             :param LabelTensor output_: Output tensor, eventually produced by a
-                :class:`~torch.nn.Module` instance.
+                :class:`torch.nn.Module` instance.
             :return: The computed residual of the equation.
             :rtype: LabelTensor
             """
@@ -101,7 +101,7 @@ class FixedFlux(Equation):
             :param LabelTensor input_: Input points where the equation is
                 evaluated.
             :param LabelTensor output_: Output tensor, eventually produced by a
-                :class:`~torch.nn.Module` instance.
+                :class:`torch.nn.Module` instance.
             :return: The computed residual of the equation.
             :rtype: LabelTensor
             """
@@ -136,7 +136,7 @@ class Laplace(Equation):
             :param LabelTensor input_: Input points where the equation is
                 evaluated.
             :param LabelTensor output_: Output tensor, eventually produced by a
-                :class:`~torch.nn.Module` instance.
+                :class:`torch.nn.Module` instance.
             :return: The computed residual of the equation.
             :rtype: LabelTensor
             """
