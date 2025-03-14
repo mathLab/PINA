@@ -1,5 +1,5 @@
 """
-Module containing the building blocks for models.
+Module for the building blocks of the neural models.
 """
 
 __all__ = [
