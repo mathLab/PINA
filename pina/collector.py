@@ -118,7 +118,7 @@ class Collector:
         """
         Store inside data collections the sampled data of the problem. These
         comes from the conditions that require sampling (e.g.
-        :class:`~pina.condition.domain_equation_condition.
+        :class:`~pina.condition.domain_equation_condition.\
         DomainEquationCondition`).
         """
 

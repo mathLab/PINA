@@ -10,9 +10,9 @@ class KernelNeuralOperator(torch.nn.Module):
     r"""
     Base class for Neural Operators with integral kernels.
 
-    This class serves as a foundation for building Neural Operators that 
-    incorporate multiple integral kernels. All Neural Operator models in 
-    PINA inherit from this class. The design follows the framework proposed 
+    This class serves as a foundation for building Neural Operators that
+    incorporate multiple integral kernels. All Neural Operator models in
+    PINA inherit from this class. The design follows the framework proposed
     by Kovachki et al., as illustrated in Figure 2 of their work.
 
     Neural Operators derived from this class can be expressed as:

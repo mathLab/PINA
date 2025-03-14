@@ -216,10 +216,10 @@ class LabelTensor(torch.Tensor):
     def extract(self, labels_to_extract):
         """
         Extract the subset of the original tensor by returning all the positions
-        corresponding to the passed ``label_to_extract``. If ``label_to_extract``
-        is a dictionary, the keys are the dimension names and the values are the
-        labels to extract. If a single label or a list of labels is passed, the
-        last dimension is considered.
+        corresponding to the passed ``label_to_extract``. If
+        ``label_to_extract`` is a dictionary, the keys are the dimension names
+        and the values are the labels to extract. If a single label or a list
+        of labels is passed, the last dimension is considered.
 
         :Example:
             >>> from pina import LabelTensor
