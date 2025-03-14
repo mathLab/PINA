@@ -12,12 +12,13 @@ class PinaDatasetFactory:
     """
     Factory class for the PINA dataset.
 
-    Depending on the type inside the conditions, it creates a different dataset
-    object:
+    Depending on the data type inside the conditions, it instanciate an object
+    belonging to the appropriate subclass of 
+    :class:`~pina.data.dataset.PinaDataset`. The possible subclasses are:
 
-    - :class:`~pina.data.dataset.PinaTensorDataset` for handling
+    - :class:`~pina.data.dataset.PinaTensorDataset`, for handling \
         :class:`torch.Tensor` and :class:`~pina.label_tensor.LabelTensor` data.
-    - :class:`~pina.data.dataset.PinaGraphDataset` for handling
+    - :class:`~pina.data.dataset.PinaGraphDataset`, for handling \
         :class:`~pina.graph.Graph` and :class:`~torch_geometric.data.Data` data.
     """
 
@@ -33,8 +34,7 @@ class PinaDatasetFactory:
         :param dict conditions_dict: Dictionary containing all the conditions
             to be included in the dataset instance.
         :return: A subclass of :class:`~pina.data.dataset.PinaDataset`.
-        :rtype: pina.data.dataset.PinaTensorDataset |
-            pina.data.dataset.PinaGraphDataset
+        :rtype: PinaTensorDataset | PinaGraphDataset
 
         :raises ValueError: If an empty dictionary is provided.
         """
@@ -74,8 +74,9 @@ class PinaDatasetFactory:
 
 class PinaDataset(Dataset, ABC):
     """
-    Abstract class for the PINA dataset. It defines the common interface for
-    :class:`~pina.data.dataset.PinaTensorDataset` and
+    Abstract class for the PINA dataset which extends the PyTorch
+    :class:`~torch.utils.data.Dataset` class. It defines the common interface
+    for :class:`~pina.data.dataset.PinaTensorDataset` and
     :class:`~pina.data.dataset.PinaGraphDataset` classes.
     """
 
@@ -83,13 +84,15 @@ class PinaDataset(Dataset, ABC):
         self, conditions_dict, max_conditions_lengths, automatic_batching
     ):
         """
-        Initialize :class:`~pina.data.dataset.PinaDataset` instance by storing
-        the provided conditions dictionary, and the automatic batching flag.
+        Initialize the instance by storing the conditions dictionary, the
+        maximum number of items per conditions to consider, and the automatic
+        batching flag.
 
-        :param dict conditions_dict: Dictionary containing the conditions with
-            data.
-        :param dict max_conditions_lengths: Specifies the maximum number of data
-            points to include in a single batch for each condition.
+        :param dict conditions_dict: A dictionary mapping condition names to
+            their respective data. Each key represents a condition name, and the
+            corresponding value is a dictionary containing the associated data.
+        :param dict max_conditions_lengths: Maximum number of data points that
+            can be included in a single batch per condition.
         :param bool automatic_batching: Indicates whether PyTorch automatic
             batching is enabled in
             :class:`~pina.data.data_module.PinaDataModule`.
@@ -258,8 +261,8 @@ class PinaGraphDataset(PinaDataset):
         Reshape properly ``data`` tensor to be processed handle by the graph
         based models.
 
-        :param data: torch.Tensor object of shape (N, ...) where N is the
-            number of data points.
+        :param data: torch.Tensor object of shape ``(N, ...)`` where ``N`` is
+            the number of data objects.
         :type data: torch.Tensor | LabelTensor
         :return: Reshaped tensor object.
         :rtype: torch.Tensor | LabelTensor
@@ -275,7 +278,7 @@ class PinaGraphDataset(PinaDataset):
         :param data: List of items to collate in a single batch.
         :type data: list[Data] | list[Graph]
         :return: Batch object.
-        :rtype: Batch | PinaBatch
+        :rtype: Batch | LabelBatch
         """
 
         if isinstance(data[0], Data):

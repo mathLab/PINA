@@ -154,7 +154,7 @@ class ResidualFeedForward(torch.nn.Module):
         :param transformer_nets: The two :class:`torch.nn.Module` acting as
             transformer network. The input dimension of both networks must be
             equal to ``input_dimensions``, and the output dimension must be
-            equal to ``inner_size``. If ``None``, two 
+            equal to ``inner_size``. If ``None``, two
             :class:`~pina.model.block.residual.EnhancedLinear` layers are used.
             Default is ``None``.
         :type transformer_nets: list[torch.nn.Module] | tuple[torch.nn.Module]
