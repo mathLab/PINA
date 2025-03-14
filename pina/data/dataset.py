@@ -33,8 +33,8 @@ class PinaDatasetFactory:
         :param dict conditions_dict: Dictionary containing all the conditions
             to be included in the dataset instance.
         :return: A subclass of :class:`~pina.data.dataset.PinaDataset`.
-        :rtype: :class:`~pina.data.dataset.PinaTensorDataset` |
-            :class:`~pina.data.dataset.PinaGraphDataset`
+        :rtype: pina.data.dataset.PinaTensorDataset |
+            pina.data.dataset.PinaGraphDataset
 
         :raises ValueError: If an empty dictionary is provided.
         """
@@ -255,7 +255,7 @@ class PinaGraphDataset(PinaDataset):
 
     def _create_tensor_batch(self, data):
         """
-        Reshape properly `data` tensor to be processed handle by the graph
+        Reshape properly ``data`` tensor to be processed handle by the graph
         based models.
 
         :param data: torch.Tensor object of shape (N, ...) where N is the

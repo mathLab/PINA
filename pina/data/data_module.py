@@ -17,7 +17,7 @@ from ..collector import Collector
 
 class DummyDataloader:
     """
-    Dataloader used when batch size is `None`. It returns the entire dataset
+    Dataloader used when batch size is ``None``. It returns the entire dataset
     in a single batch.
     """
 
@@ -38,7 +38,7 @@ class DummyDataloader:
         :param dataset: The dataset object to be processed.
         :type dataset: PinaDataset
 
-        .. note:: This data loader is used when the batch size is `None`.
+        .. note:: This data loader is used when the batch size is ``None``.
         """
 
         if (
@@ -273,7 +273,7 @@ class PinaDataModule(LightningDataModule):
         be in the range [0, 1].
         :param float val_size: Fraction of elements in the validation split. It
         must be in the range [0, 1].
-        :param batch_size: The batch size used for training. If `None`, the
+        :param batch_size: The batch size used for training. If ``None``, the
             entire dataset is returned in a single batch.
         :type batch_size: int | None
         :param bool shuffle: Whether to shuffle the dataset before splitting.

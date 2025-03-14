@@ -32,7 +32,7 @@ class Condition:
     The class ``Condition`` is used to represent the constraints (physical
     equations, boundary conditions, etc.) that should be satisfied in the
     problem at hand. Condition objects are used to formulate the
-    PINA :obj:`pina.problem.abstract_problem.AbstractProblem` object.
+    PINA :class:`~pina.problem.abstract_problem.AbstractProblem` object.
     Conditions can be specified in four ways:
 
         1. By specifying the input and target of the condition; in such a
@@ -61,7 +61,7 @@ class Condition:
         input, there are different implementations of the condition. For more
         details, see :class:`~pina.condition.data_condition.DataCondition`.
 
-    Example::
+    :Example:
 
     >>> from pina import Condition
     >>> condition = Condition(
