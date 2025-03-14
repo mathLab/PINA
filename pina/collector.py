@@ -37,10 +37,11 @@ class Collector:
     @property
     def full(self):
         """
-        Returns True if the collector is full. The collector is considered full
-        if all conditions have entries in the data_collection dictionary.
+        Returns ``True`` if the collector is full. The collector is considered
+        full if all conditions have entries in the ``data_collection``
+        dictionary.
 
-        :return: True if all conditions are ready, False otherwise.
+        :return: ``True`` if all conditions are ready, ``False`` otherwise.
         :rtype: bool
         """
 
@@ -49,9 +50,9 @@ class Collector:
     @full.setter
     def full(self, value):
         """
-        Set the full variable.
+        Set the ``_full`` variable.
 
-        :param bool value: The value to set the full property to.
+        :param bool value: The value to set the ``_full`` variable.
         """
 
         check_consistency(value, bool)
@@ -117,7 +118,8 @@ class Collector:
         """
         Store inside data collections the sampled data of the problem. These
         comes from the conditions that require sampling (e.g.
-        DomainEquationCondition).
+        :class:`~pina.condition.domain_equation_condition.
+        DomainEquationCondition`).
         """
 
         for condition_name in self.problem.conditions:

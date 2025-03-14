@@ -29,7 +29,7 @@ class InputEquationCondition(ConditionInterface):
     def __new__(cls, input, equation):
         """
         Instantiate the appropriate subclass of :class:`InputEquationCondition`
-        based on the type of `input`.
+        based on the type of ``input``.
 
         :param input: Input data for the condition.
         :type input: LabelTensor | Graph |  list[Graph] | tuple[Graph]
@@ -74,7 +74,7 @@ class InputEquationCondition(ConditionInterface):
             equation function.
 
         .. note::
-            If `input` is composed by a list of :class:`~pina.graph.Graph`
+            If ``input`` is composed by a list of :class:`~pina.graph.Graph`
             objects, all elements must have the same structure (keys and data
             types). Moreover, at least one attribute must be a
             :class:`~pina.label_tensor.LabelTensor`.
