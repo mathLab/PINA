@@ -28,7 +28,7 @@ class DataCondition(ConditionInterface):
     def __new__(cls, input, conditional_variables=None):
         """
         Instantiate the appropriate subclass of :class:`DataCondition` based on
-        the type of `input`.
+        the type of ``input``.
 
         :param input: Input data for the condition.
         :type input: torch.Tensor | LabelTensor | Graph |
@@ -72,7 +72,7 @@ class DataCondition(ConditionInterface):
         :type conditional_variables: torch.Tensor or LabelTensor
 
         .. note::
-            If either `input` is composed by a list of
+            If either ``input`` is composed by a list of
             :class:`~pina.graph.Graph` or :class:`~torch_geometric.data.Data`,
             all elements must have the same structure (keys and data
             types)
