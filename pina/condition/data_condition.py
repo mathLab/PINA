@@ -1,6 +1,4 @@
-"""
-DataCondition class
-"""
+"""Module for the DataCondition class."""
 
 import torch
 from torch_geometric.data import Data

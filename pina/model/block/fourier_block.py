@@ -1,6 +1,4 @@
-"""
-Module for the Fourier Neural Operator Block class.
-"""
+"""Module for the Fourier Neural Operator Block class."""
 
 import torch
 from torch import nn

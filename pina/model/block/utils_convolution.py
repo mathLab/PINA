@@ -1,6 +1,4 @@
-"""
-Module for utility functions for the convolutional layer.
-"""
+"""Module for utility functions for the convolutional layer."""
 
 import torch
 

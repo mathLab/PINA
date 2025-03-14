@@ -1,4 +1,4 @@
-"""Module for the ParametricProblem class"""
+"""Module for the ParametricProblem class."""
 
 from abc import abstractmethod
 

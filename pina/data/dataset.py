@@ -1,6 +1,4 @@
-"""
-Module for the PINA dataset
-"""
+"""Module for the PINA dataset classes."""
 
 from abc import abstractmethod, ABC
 from torch.utils.data import Dataset

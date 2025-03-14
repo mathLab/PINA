@@ -1,6 +1,4 @@
-"""
-Module to define InputEquationCondition class and its subclasses.
-"""
+"""Module for the InputEquationCondition class and its subclasses."""
 
 from torch_geometric.data import Data
 from .condition_interface import ConditionInterface

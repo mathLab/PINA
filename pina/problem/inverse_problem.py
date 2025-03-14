@@ -1,4 +1,4 @@
-"""Module for the InverseProblem class"""
+"""Module for the InverseProblem class."""
 
 from abc import abstractmethod
 import torch

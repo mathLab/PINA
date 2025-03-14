@@ -1,4 +1,4 @@
-"""Module for adaptive functions."""
+"""Module for the Adaptive Functions."""
 
 import torch
 from ..utils import check_consistency

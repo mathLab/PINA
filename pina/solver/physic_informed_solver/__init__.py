@@ -1,4 +1,4 @@
-"""Module for the physics-informed solvers."""
+"""Module for the Physics-Informed solvers."""
 
 __all__ = [
     "PINNInterface",

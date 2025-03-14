@@ -1,4 +1,4 @@
-"""Module for the SpatialProblem class"""
+"""Module for the SpatialProblem class."""
 
 from abc import abstractmethod
 

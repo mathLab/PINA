@@ -1,6 +1,4 @@
-"""
-DomainEquationCondition class definition.
-"""
+"""Module for the DomainEquationCondition class."""
 
 from .condition_interface import ConditionInterface
 from ..utils import check_consistency

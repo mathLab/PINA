@@ -1,6 +1,4 @@
-"""
-Module for the Kernel Neural Operator model class.
-"""
+"""Module for the Kernel Neural Operator model class."""
 
 import torch
 from ..utils import check_consistency

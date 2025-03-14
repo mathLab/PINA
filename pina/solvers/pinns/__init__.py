@@ -1,6 +1,4 @@
-"""
-Old module for the PINNs solver. Deprecated in 0.2.0.
-"""
+"""Old module for the PINNs solver. Deprecated in 0.2.0."""
 
 import warnings
 

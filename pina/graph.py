@@ -1,6 +1,4 @@
-"""
-Module to build Graph objects and perform operations on them.
-"""
+"""Module to build Graph objects and perform operations on them."""
 
 import torch
 from torch_geometric.data import Data, Batch

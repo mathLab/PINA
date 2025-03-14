@@ -1,6 +1,4 @@
-"""
-Module for the Graph Neural Operator model class.
-"""
+"""Module for the Graph Neural Operator model class."""
 
 import torch
 from torch.nn import Tanh

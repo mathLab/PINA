@@ -1,6 +1,4 @@
-"""
-Module for residual blocks and enhanced linear layers.
-"""
+"""Module for residual blocks and enhanced linear layers."""
 
 import torch
 from torch import nn

@@ -1,6 +1,4 @@
-"""
-Module for the Collector class.
-"""
+"""Module for the Collector class."""
 
 from .graph import Graph
 from .utils import check_consistency

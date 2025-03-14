@@ -1,4 +1,4 @@
-"""Module for the AbstractProblem class"""
+"""Module for the AbstractProblem class."""
 
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
