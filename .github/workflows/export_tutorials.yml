@@ -6,9 +6,6 @@ on:
       - "**"  # Run on push on all branches
     paths:
       - 'tutorials/**/*.ipynb'
-  pull_request:
-    paths:
-      - 'tutorials/**/*.ipynb'
 jobs:
   export_tutorials:
     permissions: write-all
