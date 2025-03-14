@@ -64,6 +64,7 @@ class LowRankNeuralOperator(KernelNeuralOperator):
             the same length as ``n_layers``. If a single function is passed, it
             is used for all layers, except for the last one.
             Default is :class:`torch.nn.Tanh`.
+        :type func: torch.nn.Module | list[torch.nn.Module]
         :param bool bias: If ``True`` bias is considered for the basis function
             neural network. Default is ``True``.
         :raises ValueError: If the input dimension does not match with the

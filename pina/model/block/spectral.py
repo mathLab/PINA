@@ -1,5 +1,5 @@
 """
-TODO: Add title.
+Module for spectral convolution blocks.
 """
 
 import torch
@@ -10,24 +10,23 @@ from ...utils import check_consistency
 ######## 1D Spectral Convolution ###########
 class SpectralConvBlock1D(nn.Module):
     """
-    PINA implementation of Spectral Convolution Block for one
-    dimensional tensors.
+    Spectral Convolution Block for one-dimensional tensors.
+
+    This class computes the spectral convolution of the input with a linear
+    kernel in the fourier space, and then it maps the input back to the physical
+    space.
+    The block expects an input of size [``batch``, ``input_numb_fields``, ``N``]
+    and returns an output of size [``batch``, ``output_numb_fields``, ``N``].
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
-        """
-        The module computes the spectral convolution of the input with a linear
-        kernel in the
-        fourier space, and then it maps the input back to the physical
-        space.
-
-        The block expects an input of size ``[batch, input_numb_fields, N]``
-        and returns an output of size ``[batch, output_numb_fields, N]``.
+        r"""
+        Initialization of the :class:`SpectralConvBlock1D` class.
 
         :param int input_numb_fields: The number of channels for the input.
         :param int output_numb_fields: The number of channels for the output.
-        :param int n_modes: Number of modes to select, it must be at most equal
-            to the ``floor(N/2)+1``.
+        :param int n_modes: The number of modes to select for each dimension.
+            It must be at most equal to :math:`\floor(Nx/2)+1`.
         """
         super().__init__()
 
@@ -54,30 +53,26 @@ class SpectralConvBlock1D(nn.Module):
 
     def _compute_mult1d(self, input, weights):
         """
-        Compute the matrix multiplication of the input
-        with the linear kernel weights.
+        Compute the matrix multiplication of the input and the linear kernel
+        weights.
 
-        :param input: The input tensor, expect of size
-            ``[batch, input_numb_fields, x]``.
-        :type input: torch.Tensor
-        :param weights: The kernel weights, expect of
-            size ``[input_numb_fields, output_numb_fields, x]``.
-        :type weights: torch.Tensor
-        :return: The matrix multiplication of the input
-            with the linear kernel weights.
+        :param torch.Tensor input: The input tensor. Expected of size
+            [``batch``, ``input_numb_fields``, ``N``].
+        :param torch.Tensor weights: The kernel weights. Expected of size
+            [``input_numb_fields``, ``output_numb_fields``, ``N``].
+        :return: The result of the matrix multiplication.
         :rtype: torch.Tensor
         """
         return torch.einsum("bix,iox->box", input, weights)
 
     def forward(self, x):
         """
-        Forward computation for Spectral Convolution.
+        Forward pass.
 
-        :param x: The input tensor, expect of size
-            ``[batch, input_numb_fields, x]``.
-        :type x: torch.Tensor
-        :return: The output tensor obtained from the
-            spectral convolution of size ``[batch, output_numb_fields, x]``.
+        :param torch.Tensor x: The input tensor. Expected of size
+            [``batch``, ``input_numb_fields``, ``N``].
+        :return: The input tensor. Expected of size
+            [``batch``, ``output_numb_fields``, ``N``].
         :rtype: torch.Tensor
         """
         batch_size = x.shape[0]
@@ -104,26 +99,29 @@ class SpectralConvBlock1D(nn.Module):
 ######## 2D Spectral Convolution ###########
 class SpectralConvBlock2D(nn.Module):
     """
-    PINA implementation of spectral convolution block for two
-    dimensional tensors.
+    Spectral Convolution Block for two-dimensional tensors.
+
+    This class computes the spectral convolution of the input with a linear
+    kernel in the fourier space, and then it maps the input back to the physical
+    space.
+    The block expects an input of size
+    [``batch``, ``input_numb_fields``, ``Nx``, ``Ny``]
+    and returns an output of size
+    [``batch``, ``output_numb_fields``, ``Nx``, ``Ny``].
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
-        """
-        The module computes the spectral convolution of the input with a linear
-        kernel in the
-        fourier space, and then it maps the input back to the physical
-        space.
-
-        The block expects an input of size
-        ``[batch, input_numb_fields, Nx, Ny]``
-        and returns an output of size ``[batch, output_numb_fields, Nx, Ny]``.
+        r"""
+        Initialization of the :class:`SpectralConvBlock2D` class.
 
         :param int input_numb_fields: The number of channels for the input.
         :param int output_numb_fields: The number of channels for the output.
-        :param list | tuple n_modes: Number of modes to select for each
-            dimension. It must be at most equal to the ``floor(Nx/2)+1`` and
-            ``floor(Ny/2)+1``.
+        :param n_modes: The number of modes to select for each dimension.
+            It must be at most equal to :math:`\floor(Nx/2)+1`,
+            :math:`\floor(Ny/2)+1`.
+        :type n_modes: list[int] | tuple[int]
+        :raises ValueError: If the number of modes is not consistent.
+        :raises ValueError: If the number of modes is not a list or tuple.
         """
         super().__init__()
 
@@ -178,30 +176,26 @@ class SpectralConvBlock2D(nn.Module):
 
     def _compute_mult2d(self, input, weights):
         """
-        Compute the matrix multiplication of the input
-        with the linear kernel weights.
+        Compute the matrix multiplication of the input and the linear kernel
+        weights.
 
-        :param input: The input tensor, expect of size
-            ``[batch, input_numb_fields, x, y]``.
-        :type input: torch.Tensor
-        :param weights: The kernel weights, expect of
-            size ``[input_numb_fields, output_numb_fields, x, y]``.
-        :type weights: torch.Tensor
-        :return: The matrix multiplication of the input
-            with the linear kernel weights.
+        :param torch.Tensor input: The input tensor. Expected of size
+            [``batch``, ``input_numb_fields``, ``Nx``, ``Ny``].
+        :param torch.Tensor weights: The kernel weights. Expected of size
+            [``input_numb_fields``, ``output_numb_fields``, ``Nx``, ``Ny``].
+        :return: The result of the matrix multiplication.
         :rtype: torch.Tensor
         """
         return torch.einsum("bixy,ioxy->boxy", input, weights)
 
     def forward(self, x):
         """
-        Forward computation for Spectral Convolution.
+        Forward pass.
 
-        :param x: The input tensor, expect of size
-            ``[batch, input_numb_fields, x, y]``.
-        :type x: torch.Tensor
-        :return: The output tensor obtained from the
-            spectral convolution of size ``[batch, output_numb_fields, x, y]``.
+        :param torch.Tensor x: The input tensor. Expected of size
+            [``batch``, ``input_numb_fields``, ``Nx``, ``Ny``].
+        :return: The input tensor. Expected of size
+            [``batch``, ``output_numb_fields``, ``Nx``, ``Ny``].
         :rtype: torch.Tensor
         """
 
@@ -235,27 +229,29 @@ class SpectralConvBlock2D(nn.Module):
 ######## 3D Spectral Convolution ###########
 class SpectralConvBlock3D(nn.Module):
     """
-    PINA implementation of spectral convolution block for three
-    dimensional tensors.
+    Spectral Convolution Block for three-dimensional tensors.
+
+    This class computes the spectral convolution of the input with a linear
+    kernel in the fourier space, and then it maps the input back to the physical
+    space.
+    The block expects an input of size
+    [``batch``, ``input_numb_fields``, ``Nx``, ``Ny``, ``Nz``]
+    and returns an output of size
+    [``batch``, ``output_numb_fields``, ``Nx``, ``Ny``, ``Nz``].
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
-        """
-        The module computes the spectral convolution of the input with a
-        linear kernel in the
-        fourier space, and then it maps the input back to the physical
-        space.
-
-        The block expects an input of size
-        ``[batch, input_numb_fields, Nx, Ny, Nz]``
-        and returns an output of size
-        ``[batch, output_numb_fields, Nx, Ny, Nz]``.
+        r"""
+        Initialization of the :class:`SpectralConvBlock3D` class.
 
         :param int input_numb_fields: The number of channels for the input.
         :param int output_numb_fields: The number of channels for the output.
-        :param list | tuple n_modes: Number of modes to select for each
-            dimension. It must be at most equal to the ``floor(Nx/2)+1``,
-            ``floor(Ny/2)+1`` and ``floor(Nz/2)+1``.
+        :param n_modes: The number of modes to select for each dimension.
+            It must be at most equal to :math:`\floor(Nx/2)+1`,
+            :math:`\floor(Ny/2)+1`, :math:`\floor(Nz/2)+1`.
+        :type n_modes: list[int] | tuple[int]
+        :raises ValueError: If the number of modes is not consistent.
+        :raises ValueError: If the number of modes is not a list or tuple.
         """
         super().__init__()
 
@@ -334,31 +330,27 @@ class SpectralConvBlock3D(nn.Module):
 
     def _compute_mult3d(self, input, weights):
         """
-        Compute the matrix multiplication of the input
-        with the linear kernel weights.
+        Compute the matrix multiplication of the input and the linear kernel
+        weights.
 
-        :param input: The input tensor, expect of size
-            ``[batch, input_numb_fields, x, y, z]``.
-        :type input: torch.Tensor
-        :param weights: The kernel weights, expect of
-            size ``[input_numb_fields, output_numb_fields, x, y, z]``.
-        :type weights: torch.Tensor
-        :return: The matrix multiplication of the input
-            with the linear kernel weights.
+        :param torch.Tensor input: The input tensor. Expected of size
+            [``batch``, ``input_numb_fields``, ``Nx``, ``Ny``, ``Nz``].
+        :param torch.Tensor weights: The kernel weights. Expected of size
+            [``input_numb_fields``, ``output_numb_fields``, ``Nx``, ``Ny``,
+            ``Nz``].
+        :return: The result of the matrix multiplication.
         :rtype: torch.Tensor
         """
         return torch.einsum("bixyz,ioxyz->boxyz", input, weights)
 
     def forward(self, x):
         """
-        Forward computation for Spectral Convolution.
+        Forward pass.
 
-        :param x: The input tensor, expect of size
-            ``[batch, input_numb_fields, x, y, z]``.
-        :type x: torch.Tensor
-        :return: The output tensor obtained from the
-            spectral convolution of size
-            ``[batch, output_numb_fields, x, y, z]``.
+        :param torch.Tensor x: The input tensor. Expected of size
+            [``batch``, ``input_numb_fields``, ``Nx``, ``Ny``, ``Nz``].
+        :return: The input tensor. Expected of size
+            [``batch``, ``output_numb_fields``, ``Nx``, ``Ny``, ``Nz``].
         :rtype: torch.Tensor
         """
 

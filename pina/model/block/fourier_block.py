@@ -1,5 +1,5 @@
 """
-Module for Fourier Block implementation.
+Module for the Fourier Neural Operator Block class.
 """
 
 import torch
@@ -15,15 +15,19 @@ from .spectral import (
 
 class FourierBlock1D(nn.Module):
     """
-    Fourier block implementation for three dimensional
-    input tensor. The combination of Fourier blocks
-    make up the Fourier Neural Operator
+    The inner block of the Fourier Neural Operator for 1-dimensional input
+    tensors.
+
+    The module computes the spectral convolution of the input with a linear
+    kernel in the fourier space, and then it maps the input back to the physical
+    space. The output is then added to a Linear tranformation of the input in
+    the physical space. Finally an activation function is applied to the output.
 
     .. seealso::
 
         **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K.,
-        Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020). *Fourier
-        neural operator for parametric partial differential equations*.
+        Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020).
+        *Fourier neural operator for parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
 
@@ -36,22 +40,16 @@ class FourierBlock1D(nn.Module):
         n_modes,
         activation=torch.nn.Tanh,
     ):
-        """
-        PINA implementation of Fourier block one dimension. The module computes
-        the spectral convolution of the input with a linear kernel in the
-        fourier space, and then it maps the input back to the physical
-        space. The output is then added to a Linear tranformation of the
-        input in the physical space. Finally an activation function is
-        applied to the output.
-
-        The block expects an input of size ``[batch, input_numb_fields, N]``
-        and returns an output of size ``[batch, output_numb_fields, N]``.
+        r"""
+        Initialization of the :class:`FourierBlock1D` class.
 
         :param int input_numb_fields: The number of channels for the input.
         :param int output_numb_fields: The number of channels for the output.
-        :param list | tuple n_modes: Number of modes to select for each
-            dimension. It must be at most equal to the ``floor(N/2)+1``.
+        :param n_modes: The number of modes to select for each dimension.
+            It must be at most equal to :math:`\floor(Nx/2)+1`.
+        :type n_modes: list[int] | tuple[int]
         :param torch.nn.Module activation: The activation function.
+            Default is :class:`torch.nn.Tanh`.
         """
 
         super().__init__()
@@ -70,15 +68,11 @@ class FourierBlock1D(nn.Module):
 
     def forward(self, x):
         """
-        Forward computation for Fourier Block. It performs a spectral
-        convolution and a linear transformation of the input and sum the
-        results.
+        Forward pass of the block. It performs a spectral convolution and a
+        linear transformation of the input. Then, it sums the results.
 
-        :param x: The input tensor for fourier block, expect of size
-            ``[batch, input_numb_fields, x]``.
-        :type x: torch.Tensor
-        :return: The output tensor obtained from the
-            fourier block of size ``[batch, output_numb_fields, x]``.
+        :param torch.Tensor x: The input tensor for performing the computation.
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
         return self._activation(self._spectral_conv(x) + self._linear(x))
@@ -86,18 +80,21 @@ class FourierBlock1D(nn.Module):
 
 class FourierBlock2D(nn.Module):
     """
-    Fourier block implementation for two dimensional
-    input tensor. The combination of Fourier blocks
-    make up the Fourier Neural Operator
+    The inner block of the Fourier Neural Operator for 2-dimensional input
+    tensors.
+
+    The module computes the spectral convolution of the input with a linear
+    kernel in the fourier space, and then it maps the input back to the physical
+    space. The output is then added to a Linear tranformation of the input in
+    the physical space. Finally an activation function is applied to the output.
 
     .. seealso::
 
-        **Original reference**: Li, Zongyi, et al.
-        *Fourier neural operator for parametric partial
-        differential equations*. arXiv preprint
-        arXiv:2010.08895 (2020)
-        <https://arxiv.org/abs/2010.08895.pdf>`_.
-
+        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K.,
+        Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020).
+        *Fourier neural operator for parametric partial differential equations*.
+        DOI: `arXiv preprint arXiv:2010.08895.
+        <https://arxiv.org/abs/2010.08895>`_
     """
 
     def __init__(
@@ -107,24 +104,17 @@ class FourierBlock2D(nn.Module):
         n_modes,
         activation=torch.nn.Tanh,
     ):
-        """
-        PINA implementation of Fourier block two dimensions. The module computes
-        the spectral convolution of the input with a linear kernel in the
-        fourier space, and then it maps the input back to the physical
-        space. The output is then added to a Linear tranformation of the
-        input in the physical space. Finally an activation function is
-        applied to the output.
-
-        The block expects an input of size
-        ``[batch, input_numb_fields, Nx, Ny]`` and returns an output of size
-        ``[batch, output_numb_fields, Nx, Ny]``.
+        r"""
+        Initialization of the :class:`FourierBlock2D` class.
 
         :param int input_numb_fields: The number of channels for the input.
         :param int output_numb_fields: The number of channels for the output.
-        :param list | tuple n_modes: Number of modes to select for each
-            dimension. It must be at most equal to the ``floor(Nx/2)+1``
-            and ``floor(Ny/2)+1``.
+        :param n_modes: The number of modes to select for each dimension.
+            It must be at most equal to :math:`\floor(Nx/2)+1`,
+            :math:`\floor(Ny/2)+1`.
+        :type n_modes: list[int] | tuple[int]
         :param torch.nn.Module activation: The activation function.
+            Default is :class:`torch.nn.Tanh`.
         """
         super().__init__()
 
@@ -142,15 +132,11 @@ class FourierBlock2D(nn.Module):
 
     def forward(self, x):
         """
-        Forward computation for Fourier Block. It performs a spectral
-        convolution and a linear transformation of the input and sum the
-        results.
+        Forward pass of the block. It performs a spectral convolution and a
+        linear transformation of the input. Then, it sums the results.
 
-        :param x: The input tensor for fourier block, expect of size
-            ``[batch, input_numb_fields, x, y]``.
-        :type x: torch.Tensor
-        :return: The output tensor obtained from the
-            fourier block of size ``[batch, output_numb_fields, x, y, z]``.
+        :param torch.Tensor x: The input tensor for performing the computation.
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
         return self._activation(self._spectral_conv(x) + self._linear(x))
@@ -158,18 +144,21 @@ class FourierBlock2D(nn.Module):
 
 class FourierBlock3D(nn.Module):
     """
-    Fourier block implementation for three dimensional
-    input tensor. The combination of Fourier blocks
-    make up the Fourier Neural Operator
+    The inner block of the Fourier Neural Operator for 3-dimensional input
+    tensors.
+
+    The module computes the spectral convolution of the input with a linear
+    kernel in the fourier space, and then it maps the input back to the physical
+    space. The output is then added to a Linear tranformation of the input in
+    the physical space. Finally an activation function is applied to the output.
 
     .. seealso::
 
-        **Original reference**: Li, Zongyi, et al.
-        *Fourier neural operator for parametric partial
-        differential equations*. arXiv preprint
-        arXiv:2010.08895 (2020)
-        <https://arxiv.org/abs/2010.08895.pdf>`_.
-
+        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K.,
+        Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020).
+        *Fourier neural operator for parametric partial differential equations*.
+        DOI: `arXiv preprint arXiv:2010.08895.
+        <https://arxiv.org/abs/2010.08895>`_
     """
 
     def __init__(
@@ -179,24 +168,17 @@ class FourierBlock3D(nn.Module):
         n_modes,
         activation=torch.nn.Tanh,
     ):
-        """
-        PINA implementation of Fourier block three dimensions. The module
-        computes the spectral convolution of the input with a linear kernel in
-        the fourier space, and then it maps the input back to the physical
-        space. The output is then added to a Linear tranformation of the
-        input in the physical space. Finally an activation function is
-        applied to the output.
-
-        The block expects an input of size
-        ``[batch, input_numb_fields, Nx, Ny, Nz]`` and returns an output of size
-        ``[batch, output_numb_fields, Nx, Ny, Nz]``.
+        r"""
+        Initialization of the :class:`FourierBlock3D` class.
 
         :param int input_numb_fields: The number of channels for the input.
         :param int output_numb_fields: The number of channels for the output.
-        :param list | tuple n_modes: Number of modes to select for each
-            dimension. It must be at most equal to the ``floor(Nx/2)+1``,
-            ``floor(Ny/2)+1`` and ``floor(Nz/2)+1``.
+        :param n_modes: The number of modes to select for each dimension.
+            It must be at most equal to :math:`\floor(Nx/2)+1`,
+            :math:`\floor(Ny/2)+1`, :math:`\floor(Nz/2)+1`.
+        :type n_modes: list[int] | tuple[int]
         :param torch.nn.Module activation: The activation function.
+            Default is :class:`torch.nn.Tanh`.
         """
         super().__init__()
 
@@ -214,15 +196,11 @@ class FourierBlock3D(nn.Module):
 
     def forward(self, x):
         """
-        Forward computation for Fourier Block. It performs a spectral
-        convolution and a linear transformation of the input and sum the
-        results.
+        Forward pass of the block. It performs a spectral convolution and a
+        linear transformation of the input. Then, it sums the results.
 
-        :param x: The input tensor for fourier block, expect of size
-            ``[batch, input_numb_fields, x, y, z]``.
-        :type x: torch.Tensor
-        :return: The output tensor obtained from the
-            fourier block of size ``[batch, output_numb_fields, x, y, z]``.
+        :param torch.Tensor x: The input tensor for performing the computation.
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
         return self._activation(self._spectral_conv(x) + self._linear(x))

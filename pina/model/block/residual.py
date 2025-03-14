@@ -1,5 +1,5 @@
 """
-TODO: Add title.
+Module for residual blocks and enhanced linear layers.
 """
 
 import torch
@@ -8,16 +8,16 @@ from ...utils import check_consistency
 
 
 class ResidualBlock(nn.Module):
-    """Residual block base class. Implementation of a residual block.
+    """
+    Residual block class.
 
     .. seealso::
 
         **Original reference**: He, Kaiming, et al.
         *Deep residual learning for image recognition.*
-        Proceedings of the IEEE conference on computer vision
-        and pattern recognition. 2016..
+        Proceedings of the IEEE conference on computer vision and pattern
+        recognition. 2016.
         DOI: `<https://arxiv.org/pdf/1512.03385.pdf>`_.
-
     """
 
     def __init__(
@@ -29,18 +29,15 @@ class ResidualBlock(nn.Module):
         activation=torch.nn.ReLU(),
     ):
         """
-        Initializes the ResidualBlock module.
+        Initialization of the :class:`ResidualBlock` class.
 
-        :param int input_dim: Dimension of the input to pass to the
-            feedforward linear layer.
-        :param int output_dim: Dimension of the output from the
-            residual layer.
-        :param int hidden_dim: Hidden dimension for mapping the input
-            (first block).
-        :param bool spectral_norm: Apply spectral normalization to feedforward
-            layers, defaults to False.
-        :param torch.nn.Module activation: Cctivation function after first
-            block.
+        :param int input_dim: The input dimension.
+        :param int output_dim: The output dimension.
+        :param int hidden_dim: The hidden dimension.
+        :param bool spectral_norm: If ``True``, the spectral normalization is
+            applied to the feedforward layers. Default is ``False``.
+        :param torch.nn.Module activation: The activation function.
+            Default is :class:`torch.nn.ReLU`.
 
         """
         super().__init__()
@@ -64,10 +61,11 @@ class ResidualBlock(nn.Module):
         self._l3 = self._spect_norm(nn.Linear(input_dim, output_dim))
 
     def forward(self, x):
-        """Forward pass for residual block layer.
+        """
+        Forward pass.
 
-        :param torch.Tensor x: Input tensor for the residual layer.
-        :return: Output tensor for the residual layer.
+        :param torch.Tensor x: The input tensor.
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
         y = self._activation(self._l1(x))
@@ -76,10 +74,10 @@ class ResidualBlock(nn.Module):
         return y + x
 
     def _spect_norm(self, x):
-        """Perform spectral norm on the layers.
+        """
+        Perform spectral normalization on the network layers.
 
-        :param x: A torch.nn.Module Linear layer
-        :type x: torch.nn.Module
+        :param torch.nn.Module x: A :class:`torch.nn.Linear` layer.
         :return: The spectral norm of the layer
         :rtype: torch.nn.Module
         """
@@ -88,37 +86,31 @@ class ResidualBlock(nn.Module):
 
 class EnhancedLinear(torch.nn.Module):
     """
-    A wrapper class for enhancing a linear layer with activation and/or dropout.
+    Enhanced Linear layer class.
 
-    :param layer: The linear layer to be enhanced.
-    :type layer: torch.nn.Module
-    :param activation: The activation function to be applied after the linear
-        layer.
-    :type activation: torch.nn.Module
-    :param dropout: The dropout probability to be applied after the activation
-        (if provided).
-    :type dropout: float
-
-    :Example:
-
-    >>> linear_layer = torch.nn.Linear(10, 20)
-    >>> activation = torch.nn.ReLU()
-    >>> dropout_prob = 0.5
-    >>> enhanced_linear = EnhancedLinear(linear_layer, activation, dropout_prob)
+    This class is a wrapper for enhancing a linear layer with activation and/or
+    dropout.
     """
 
     def __init__(self, layer, activation=None, dropout=None):
         """
-        Initializes the EnhancedLinear module.
+        Initialization of the :class:`EnhancedLinear` class.
 
-        :param layer: The linear layer to be enhanced.
-        :type layer: torch.nn.Module
-        :param activation: The activation function to be applied after the
-            linear layer.
-        :type activation: torch.nn.Module
-        :param dropout: The dropout probability to be applied after the
-            activation (if provided).
-        :type dropout: float
+        :param torch.nn.Module layer: The linear layer to be enhanced.
+        :param torch.nn.Module activation: The activation function. Default is
+            ``None``.
+        :param float dropout: The dropout probability. Default is ``None``.
+
+        :Example:
+
+            >>> linear_layer = torch.nn.Linear(10, 20)
+            >>> activation = torch.nn.ReLU()
+            >>> dropout_prob = 0.5
+            >>> enhanced_linear = EnhancedLinear(
+            ...     linear_layer,
+            ...     activation,
+            ...     dropout_prob
+            ... )
         """
         super().__init__()
 
@@ -146,23 +138,19 @@ class EnhancedLinear(torch.nn.Module):
 
     def forward(self, x):
         """
-        Forward pass through the enhanced linear module.
+        Forward pass.
 
-        :param x: Input tensor.
-        :type x: torch.Tensor
-
-        :return: Output tensor after passing through the enhanced linear module.
+        :param torch.Tensor x: The input tensor.
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
         return self._model(x)
 
     def _drop(self, p):
         """
-        Applies dropout with probability p.
+        Apply dropout with probability p.
 
-        :param p: Dropout probability.
-        :type p: float
-
+        :param float p: Dropout probability.
         :return: Dropout layer with the specified probability.
         :rtype: torch.nn.Dropout
         """
