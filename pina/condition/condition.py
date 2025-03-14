@@ -29,37 +29,49 @@ def warning_function(new, old):
 
 class Condition:
     """
-    The class ``Condition`` is used to represent the constraints (physical
-    equations, boundary conditions, etc.) that should be satisfied in the
-    problem at hand. Condition objects are used to formulate the
-    PINA :class:`~pina.problem.abstract_problem.AbstractProblem` object.
-    Conditions can be specified in four ways:
+    Represents constraints (such as physical equations, boundary conditions,
+    etc.) that must be satisfied in a given problem. Condition objects are used
+    to formulate the PINA
+    :class:`~pina.problem.abstract_problem.AbstractProblem` object.
 
-        1. By specifying the input and target of the condition; in such a
-        case, the model is trained to produce the output points given the input
-        points. Those points can either be torch.Tensor, LabelTensors, Graph.
-        Based on the type of the input and target, there are different
-        implementations of the condition. For more details, see
-        :class:`~pina.condition.input_target_condition.InputTargetCondition`.
+    There are different types of conditions:
 
-        2. By specifying the domain and the equation of the condition; in such
-        a case, the model is trained to minimize the equation residual by
-        evaluating it at some samples of the domain.
+    - :class:`~pina.condition.input_target_condition.InputTargetCondition`:
+      Defined by specifying both the input and the target of the condition. In
+      this case, the model is trained to produce the target given the input. The
+      input and output   data must be one of the :class:`torch.Tensor`,
+      :class:`~pina.label_tensor.LabelTensor`,
+      :class:`~torch_geometric.data.Data`, or :class:`~pina.graph.Graph`.
+      Different implementations exist depending on the type of input and target.
+      For more details, see
+      :class:`~pina.condition.input_target_condition.InputTargetCondition`.
 
-        3. By specifying the input and the equation of the condition; in
-        such a case, the model is trained to minimize the equation residual by
-        evaluating it at the passed input points. The input points must be
-        a LabelTensor. Based on the type of the input, there are different
-        implementations of the condition. For more details, see
-        :class:`~pina.condition.input_equation_condition.InputEquationCondition`
-        .
+    - :class:`~pina.condition.domain_equation_condition.DomainEquationCondition`
+      : Defined by specifying both the domain and the equation of the condition.
+      Here, the model is trained to minimize the equation residual by evaluating
+      it at sampled points within the domain.
 
-        4. By specifying only the input data; in such a case the model is
-        trained with an unsupervised costum loss and uses the data in training.
-        Additionaly conditioning variables can be passed, whenever the model
-        has extra conditioning variable it depends on. Based on the type of the
-        input, there are different implementations of the condition. For more
-        details, see :class:`~pina.condition.data_condition.DataCondition`.
+    - :class:`~pina.condition.input_equation_condition.InputEquationCondition`:
+      Defined by specifying the input and the equation of the condition. In this
+      case, the model is trained to minimize the equation residual by evaluating
+      it at the provided input. The input must be either a
+      :class:`~pina.label_tensor.LabelTensor` or a :class:`~pina.graph.Graph`.
+      Different implementations exist depending on the type of input. For more
+      details, see
+      :class:`~pina.condition.input_equation_condition.InputEquationCondition`.
+
+    - :class:`~pina.condition.data_condition.DataCondition`:
+      Defined by specifying only the input. In this case, the model is trained
+      with an unsupervised custom loss while using the provided data during
+      training. The input data must be one of :class:`torch.Tensor`,
+      :class:`~pina.label_tensor.LabelTensor`,
+      :class:`~torch_geometric.data.Data`, or :class:`~pina.graph.Graph`.
+      Additionally, conditional variables can be provided when the model
+      depends on extra parameters. These conditional variables must be either
+      :class:`torch.Tensor` or :class:`~pina.label_tensor.LabelTensor`.
+      Different implementations exist depending on the type of input.
+      For more details, see
+      :class:`~pina.condition.data_condition.DataCondition`.
 
     :Example:
 
@@ -94,7 +106,8 @@ class Condition:
 
     def __new__(cls, *args, **kwargs):
         """
-        Check the input arguments and return the appropriate Condition object.
+        Instantiate the appropriate Condition object based on the keyword
+        arguments passed.
 
         :raises ValueError: If no keyword arguments are passed.
         :raises ValueError: If the keyword arguments are invalid.
