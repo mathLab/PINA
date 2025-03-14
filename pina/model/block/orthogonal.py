@@ -1,4 +1,4 @@
-"""Module for OrthogonalBlock."""
+"""Module for the Orthogonal Block class."""
 
 import torch
 from ...utils import check_consistency
@@ -6,21 +6,24 @@ from ...utils import check_consistency
 
 class OrthogonalBlock(torch.nn.Module):
     """
-    Module to make the input orthonormal.
-    The module takes a tensor of size :math:`[N, M]` and returns a tensor of
-    size :math:`[N, M]` where the columns are orthonormal. The block performs a
-    Gram Schmidt orthogonalization process for the input, see
+    Orthogonal Block.
+
+    This block transforms an input tensor of shape :math:`[N, M]` into a tensor
+    of the same shape whose columns are orthonormal. The block performs the
+    Gram Schmidt orthogonalization, see
     `here <https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process>` for
     details.
     """
 
     def __init__(self, dim=-1, requires_grad=True):
         """
-        Initialize the OrthogonalBlock module.
+        Initialization of the :class:`OrthogonalBlock` class.
 
-        :param int dim: The dimension where to orthogonalize.
-        :param bool requires_grad: If autograd should record operations on
-            the returned tensor, defaults to True.
+        :param int dim: The dimension on which orthogonalization is performed.
+            If ``-1``, the orthogonalization is performed on the last dimension.
+            Default is ``-1``.
+        :param bool requires_grad: If ``True``, the gradients are computed
+            during the backward pass. Default is ``True``
         """
         super().__init__()
         # store dim
@@ -31,14 +34,13 @@ class OrthogonalBlock(torch.nn.Module):
 
     def forward(self, X):
         """
-        Forward pass of the OrthogonalBlock module using a Gram-Schmidt
-        algorithm.
+        Forward pass.
 
-        :raises Warning: If the dimension is greater than the other dimensions.
-
-        :param torch.Tensor X: The input tensor to orthogonalize. The input must
-            be of dimensions :math:`[N, M]`.
+        :param torch.Tensor X: The input tensor to orthogonalize.
+        :raises Warning: If the chosen dimension is greater than the other
+            dimensions in the input.
         :return: The orthonormal tensor.
+        :rtype: torch.Tensor
         """
         # check dim is less than all the other dimensions
         if X.shape[self.dim] > min(X.shape):
@@ -65,13 +67,12 @@ class OrthogonalBlock(torch.nn.Module):
 
     def _differentiable_copy(self, result, idx, value):
         """
-        Perform a differentiable copy operation on a tensor.
+        Perform a differentiable copy operation.
 
-        :param torch.Tensor result: The tensor where values will be copied to.
+        :param torch.Tensor result: The tensor where values are be copied to.
         :param int idx: The index along the specified dimension where the
-            value will be copied.
-        :param torch.Tensor value: The tensor value to copy into the
-            result tensor.
+            values are copied.
+        :param torch.Tensor value: The tensor value to copy into ``result``.
         :return: A new tensor with the copied values.
         :rtype: torch.Tensor
         """
@@ -82,7 +83,7 @@ class OrthogonalBlock(torch.nn.Module):
     @property
     def dim(self):
         """
-        Get the dimension along which operations are performed.
+        The dimension along which operations are performed.
 
         :return: The current dimension value.
         :rtype: int
@@ -94,10 +95,11 @@ class OrthogonalBlock(torch.nn.Module):
         """
         Set the dimension along which operations are performed.
 
-        :param value: The dimension to be set, which must be 0, 1, or -1.
+        :param value: The dimension to be set. Must be either ``0``, ``1``, or
+            ``-1``.
         :type value: int
-        :raises IndexError: If the provided dimension is not in the
-            range [-1, 1].
+        :raises IndexError: If the provided dimension is not ``0``, ``1``, or
+            ``-1``.
         """
         # check consistency
         check_consistency(value, int)
@@ -115,7 +117,7 @@ class OrthogonalBlock(torch.nn.Module):
         Indicates whether gradient computation is required for operations
         on the tensors.
 
-        :return: True if gradients are required, False otherwise.
+        :return: ``True`` if gradients are required, ``False`` otherwise.
         :rtype: bool
         """
         return self._requires_grad

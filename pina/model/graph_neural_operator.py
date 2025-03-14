@@ -49,10 +49,10 @@ class GraphNeuralKernel(torch.nn.Module):
         :type internal_layers: list[int] | tuple[int]
         :param torch.nn.Module internal_func: The activation function used
             inside each kernel layer. If ``None``, it uses the
-            :class:`torch.nn.Tanh`. activation. Default is ``None``.
+            :class:`torch.nn.Tanh` activation. Default is ``None``.
         :param torch.nn.Module external_func: The activation function applied to
             the output of the each kernel layer. If ``None``, it uses the
-            :class:`torch.nn.Tanh`. activation. Default is ``None``.
+            :class:`torch.nn.Tanh` activation. Default is ``None``.
         :param bool shared_weights: If ``True``, the weights of each kernel
             layer are shared. Default is ``False``.
         """

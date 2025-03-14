@@ -5,23 +5,26 @@ import torch
 
 class PODBlock(torch.nn.Module):
     """
-    POD layer: it projects the input field on the proper orthogonal
-    decomposition basis.  It needs to be fitted to the data before being used
-    with the method :meth:`fit`, which invokes the singular value decomposition.
-    The layer is not trainable.
+    Proper Orthogonal Decomposition block.
+
+    This block projects the input field on the proper orthogonal decomposition
+    basis. Before being used, it must be fitted to the data with the ``fit``
+    method, which invokes the singular value decomposition. This block is not
+    trainable.
 
     .. note::
         All the POD modes are stored in memory, avoiding to recompute them when
-        the rank changes but increasing the memory usage.
+        the rank changes, leading to increased memory usage.
     """
 
     def __init__(self, rank, scale_coefficients=True):
         """
-        Build the POD layer with the given rank.
+        Initialization of the :class:`PODBlock` class.
 
         :param int rank: The rank of the POD layer.
-        :param bool scale_coefficients: If True, the coefficients are scaled
+        :param bool scale_coefficients: If ``True``, the coefficients are scaled
             after the projection to have zero mean and unit variance.
+            Default is ``True``.
         """
         super().__init__()
         self.__scale_coefficients = scale_coefficients
@@ -34,12 +37,19 @@ class PODBlock(torch.nn.Module):
         """
         The rank of the POD layer.
 
+        :return: The rank of the POD layer.
         :rtype: int
         """
         return self._rank
 
     @rank.setter
     def rank(self, value):
+        """
+        Set the rank of the POD layer.
+
+        :param int value: The new rank of the POD layer.
+        :raises ValueError: If the rank is not a positive integer.
+        """
         if value < 1 or not isinstance(value, int):
             raise ValueError("The rank must be positive integer")
 
@@ -48,9 +58,10 @@ class PODBlock(torch.nn.Module):
     @property
     def basis(self):
         """
-        The POD basis. It is a matrix whose columns are the first `self.rank`
-        POD modes.
+        The POD basis. It is a matrix whose columns are the first ``rank`` POD
+        modes.
 
+        :return: The POD basis.
         :rtype: torch.Tensor
         """
         if self._basis is None:
@@ -61,9 +72,11 @@ class PODBlock(torch.nn.Module):
     @property
     def scaler(self):
         """
-        The scaler. It is a dictionary with the keys `'mean'` and `'std'` that
-        store the mean and the standard deviation of the coefficients.
+        Return the scaler dictionary, having keys ``mean`` and ``std``
+        corresponding to the mean and the standard deviation of the
+        coefficients, respectively.
 
+        :return: The scaler dictionary.
         :rtype: dict
         """
         if self._scaler is None:
@@ -77,9 +90,9 @@ class PODBlock(torch.nn.Module):
     @property
     def scale_coefficients(self):
         """
-        If True, the coefficients are scaled after the projection to have zero
-        mean and unit variance.
+        The flag indicating if the coefficients are scaled after the projection.
 
+        :return: The flag indicating if the coefficients are scaled.
         :rtype: bool
         """
         return self.__scale_coefficients
@@ -87,10 +100,10 @@ class PODBlock(torch.nn.Module):
     def fit(self, X, randomized=True):
         """
         Set the POD basis by performing the singular value decomposition of the
-        given tensor. If `self.scale_coefficients` is True, the coefficients
+        given tensor. If ``self.scale_coefficients`` is True, the coefficients
         are scaled after the projection to have zero mean and unit variance.
 
-        :param torch.Tensor X: The tensor to be reduced.
+        :param torch.Tensor X: The input tensor to be reduced.
         """
         self._fit_pod(X, randomized)
 
@@ -99,10 +112,8 @@ class PODBlock(torch.nn.Module):
 
     def _fit_scaler(self, coeffs):
         """
-        Private merhod that computes the mean and the standard deviation of the
-        given coefficients, allowing to scale them to have zero mean and unit
-        variance. Mean and standard deviation are stored in the private member
-        `_scaler`.
+        Compute the mean and the standard deviation of the given coefficients,
+        which are then stored in ``self._scaler``.
 
         :param torch.Tensor coeffs: The coefficients to be scaled.
         """
@@ -113,8 +124,8 @@ class PODBlock(torch.nn.Module):
 
     def _fit_pod(self, X, randomized):
         """
-        Private method that computes the POD basis of the given tensor and
-        stores it in the private member `_basis`.
+        Compute the POD basis of the given tensor, which is then stored in
+        ``self._basis``.
 
         :param torch.Tensor X: The tensor to be reduced.
         """
@@ -136,9 +147,7 @@ class PODBlock(torch.nn.Module):
 
     def forward(self, X):
         """
-        The forward pass of the POD layer. By default it executes the
-        :meth:`reduce` method, reducing the input tensor to its POD
-        representation. The POD layer needs to be fitted before being used.
+        The forward pass of the POD layer.
 
         :param torch.Tensor X: The input tensor to be reduced.
         :return: The reduced tensor.
@@ -148,10 +157,11 @@ class PODBlock(torch.nn.Module):
 
     def reduce(self, X):
         """
-        Reduce the input tensor to its POD representation. The POD layer needs
-        to be fitted before being used.
+        Reduce the input tensor to its POD representation. The POD layer must
+        be fitted before being used.
 
         :param torch.Tensor X: The input tensor to be reduced.
+        :raises RuntimeError: If the POD layer is not fitted.
         :return: The reduced tensor.
         :rtype: torch.Tensor
         """
@@ -176,6 +186,7 @@ class PODBlock(torch.nn.Module):
         to be fitted before being used.
 
         :param torch.Tensor coeff: The coefficients to be expanded.
+        :raises RuntimeError: If the POD layer is not fitted.
         :return: The expanded tensor.
         :rtype: torch.Tensor
         """
