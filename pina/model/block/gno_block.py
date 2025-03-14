@@ -1,6 +1,4 @@
-"""
-Module for the Graph Neural Operator Block class.
-"""
+"""Module for the Graph Neural Operator Block class."""
 
 import torch
 from torch_geometric.nn import MessagePassing

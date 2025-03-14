@@ -1,7 +1,4 @@
-"""
-Old module for geometry related classes and functions.
-Deprecated in 0.2.0.
-"""
+"""Old module for geometry classes and functions. Deprecated in 0.2.0."""
 
 import warnings
 

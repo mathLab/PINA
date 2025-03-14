@@ -1,4 +1,4 @@
-"""PINA Callbacks Implementations"""
+"""Module for the Processing Callbacks."""
 
 import copy
 import torch

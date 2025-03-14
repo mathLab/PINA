@@ -1,4 +1,4 @@
-"""Condition module."""
+"""Module for the Condition class."""
 
 import warnings
 from .data_condition import DataCondition

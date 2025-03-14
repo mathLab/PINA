@@ -1,4 +1,4 @@
-"""Module for the DeepONet and MIONet model classes"""
+"""Module for the DeepONet and MIONet model classes."""
 
 from functools import partial
 import torch

@@ -1,4 +1,4 @@
-"""Module for the Loss Interface"""
+"""Module for the Loss Interface."""
 
 from abc import ABCMeta, abstractmethod
 from torch.nn.modules.loss import _Loss

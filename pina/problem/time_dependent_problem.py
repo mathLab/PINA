@@ -1,4 +1,4 @@
-"""Module for the TimeDependentProblem class"""
+"""Module for the TimeDependentProblem class."""
 
 from abc import abstractmethod
 

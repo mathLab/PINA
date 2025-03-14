@@ -1,6 +1,4 @@
-"""
-Module for data data module and dataset.
-"""
+"""Module for data, data module, and dataset."""
 
 __all__ = ["PinaDataModule", "PinaDataset"]
 

@@ -1,4 +1,4 @@
-"""Module for Continuous Convolution class"""
+"""Module for the Continuous Convolution class."""
 
 import torch
 from .convolution import BaseContinuousConv

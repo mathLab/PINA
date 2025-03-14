@@ -1,6 +1,4 @@
-"""
-Module for the Pina library.
-"""
+"""Module for the Pina library."""
 
 __all__ = [
     "Trainer",

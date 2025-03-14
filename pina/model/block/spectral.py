@@ -1,6 +1,4 @@
-"""
-Module for spectral convolution blocks.
-"""
+"""Module for spectral convolution blocks."""
 
 import torch
 from torch import nn

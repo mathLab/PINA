@@ -1,4 +1,4 @@
-"""Module for the Feed Forward model class"""
+"""Module for the Feed Forward model class."""
 
 import torch
 from torch import nn

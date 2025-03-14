@@ -1,4 +1,4 @@
-"""Module for the Spline model class"""
+"""Module for the Spline model class."""
 
 import torch
 from ..utils import check_consistency

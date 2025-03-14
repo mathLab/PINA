@@ -1,6 +1,4 @@
-"""
-Module for the Stride class.
-"""
+"""Module for the Stride class."""
 
 import torch
 

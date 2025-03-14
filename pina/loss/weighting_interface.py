@@ -1,4 +1,4 @@
-"""Module for the Weighting Interface"""
+"""Module for the Weighting Interface."""
 
 from abc import ABCMeta, abstractmethod
 

@@ -1,4 +1,4 @@
-"""Module for ReducedOrderModelSolver"""
+"""Module for the Reduced Order Model solver"""
 
 import torch
 from .supervised import SupervisedSolver

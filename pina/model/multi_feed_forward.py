@@ -1,4 +1,4 @@
-"""Module for the Multi Feed Forward model class"""
+"""Module for the Multi Feed Forward model class."""
 
 from abc import ABC, abstractmethod
 import torch

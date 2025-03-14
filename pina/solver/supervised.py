@@ -1,4 +1,4 @@
-"""Module for the Supervised Solver."""
+"""Module for the Supervised solver."""
 
 import torch
 from torch.nn.modules.loss import _Loss

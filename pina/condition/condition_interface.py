@@ -1,6 +1,4 @@
-"""
-Module that defines the ConditionInterface class.
-"""
+"""Module for the Condition interface."""
 
 from abc import ABCMeta
 from torch_geometric.data import Data
