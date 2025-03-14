@@ -1,4 +1,4 @@
-"""Module for FeedForward model"""
+"""Module for the Feed Forward model class"""
 
 import torch
 from torch import nn
@@ -8,28 +8,8 @@ from .block.residual import EnhancedLinear
 
 class FeedForward(torch.nn.Module):
     """
-    The PINA implementation of feedforward network, also refered as multilayer
-    perceptron.
-
-    :param int input_dimensions: The number of input components of the model.
-        Expected tensor shape of the form :math:`(*, d)`, where *
-        means any number of dimensions including none, and :math:`d` the
-        ``input_dimensions``.
-    :param int output_dimensions: The number of output components of the model.
-        Expected tensor shape of the form :math:`(*, d)`, where *
-        means any number of dimensions including none, and :math:`d` the
-        ``output_dimensions``.
-    :param int inner_size: number of neurons in the hidden layer(s). Default is
-        20.
-    :param int n_layers: number of hidden layers. Default is 2.
-    :param torch.nn.Module func: the activation function to use. If a single
-        :class:`torch.nn.Module` is passed, this is used as activation function
-        after any layers, except the last one. If a list of Modules is passed,
-        they are used as activation functions at any layers, in order.
-    :param list(int) | tuple(int) layers: a list containing the number of
-        neurons for any hidden layers. If specified, the parameters ``n_layers``
-        and ``inner_size`` are not considered.
-    :param bool bias: If ``True`` the MLP will consider some bias.
+    Feed Forward neural network model class, also known as Multi-layer
+    Perceptron.
     """
 
     def __init__(
@@ -42,7 +22,36 @@ class FeedForward(torch.nn.Module):
         layers=None,
         bias=True,
     ):
-        """ """
+        """
+        Initialization of the :class:`FeedForward` class.
+
+        :param int input_dimensions: The number of input components.
+            The expected tensor shape is :math:`(*, d)`, where *
+            represents any number of preceding dimensions (including none), and
+            :math:`d` corresponds to ``input_dimensions``.
+        :param int output_dimensions: The number of output components .
+            The expected tensor shape is :math:`(*, d)`, where *
+            represents any number of preceding dimensions (including none), and
+            :math:`d` corresponds to ``output_dimensions``.
+        :param int inner_size: The number of neurons for each hidden layer.
+            Default is ``20``.
+        :param int n_layers: The number of hidden layers. Default is ``2``.
+        ::param func: The activation function. If a list is passed, it must have
+            the same length as ``n_layers``. If a single function is passed, it
+            is used for all layers, except for the last one.
+            Default is :class:`torch.nn.Tanh`.
+        :type func: torch.nn.Module | list[torch.nn.Module]
+        :param list[int] layers: The list of the dimension of inner layers.
+            If ``None``, ``n_layers`` of dimension ``inner_size`` are used.
+            Otherwise, it overrides the values passed to ``n_layers`` and
+            ``inner_size``. Default is ``None``.
+        :param bool bias: If ``True`` bias is considered for the basis function
+            neural network. Default is ``True``.
+        :raises ValueError: If the input dimension is not an integer.
+        :raises ValueError: If the output dimension is not an integer.
+        :raises RuntimeError: If the number of layers and functions are
+            inconsistent.
+        """
         super().__init__()
 
         if not isinstance(input_dimensions, int):
@@ -71,7 +80,7 @@ class FeedForward(torch.nn.Module):
             self.functions = [func for _ in range(len(self.layers) - 1)]
 
         if len(self.layers) != len(self.functions) + 1:
-            raise RuntimeError("uncosistent number of layers and functions")
+            raise RuntimeError("Incosistent number of layers and functions")
 
         unique_list = []
         for layer, func_ in zip(self.layers[:-1], self.functions):
@@ -84,52 +93,31 @@ class FeedForward(torch.nn.Module):
 
     def forward(self, x):
         """
-        Defines the computation performed at every call.
+        Forward pass for the :class:`FeedForward` model.
 
-        :param x: The tensor to apply the forward pass.
-        :type x: torch.Tensor
-        :return: the output computed by the model.
-        :rtype: torch.Tensor
+        :param x: The input tensor.
+        :type x: torch.Tensor | LabelTensor
+        :return: The output tensor.
+        :rtype: torch.Tensor | LabelTensor
         """
         return self.model(x)
 
 
 class ResidualFeedForward(torch.nn.Module):
     """
-    The PINA implementation of feedforward network, also with skipped connection
-    and transformer network, as presented in **Understanding and mitigating
-    gradient pathologies in physics-informed neural networks**
+    Residual Feed Forward neural network model class.
+
+    The model is composed of a series of linear layers with a residual
+    connection between themm as presented in the following:
 
     .. seealso::
 
-        **Original reference**: Wang, Sifan, Yujun Teng, and Paris Perdikaris.
+        **Original reference**: Wang, S., Teng, Y., and Perdikaris, P. (2021).
         *Understanding and mitigating gradient flow pathologies in
-        physics-informed neural networks*. SIAM Journal on Scientific Computing
-        43.5 (2021): A3055-A3081.
+        physics-informed neural networks*.
+        SIAM Journal on Scientific Computing 43.5 (2021): A3055-A3081.
         DOI: `10.1137/20M1318043
         <https://epubs.siam.org/doi/abs/10.1137/20M1318043>`_
-
-
-    :param int input_dimensions: The number of input components of the model.
-        Expected tensor shape of the form :math:`(*, d)`, where *
-        means any number of dimensions including none, and :math:`d` the
-        ``input_dimensions``.
-    :param int output_dimensions: The number of output components of the model.
-        Expected tensor shape of the form :math:`(*, d)`, where *
-        means any number of dimensions including none, and :math:`d` the
-        ``output_dimensions``.
-    :param int inner_size: number of neurons in the hidden layer(s). Default is
-        20.
-    :param int n_layers: number of hidden layers. Default is 2.
-    :param torch.nn.Module func: the activation function to use. If a single
-        :class:`torch.nn.Module` is passed, this is used as activation function
-        after any layers, except the last one. If a list of Modules is passed,
-        they are used as activation functions at any layers, in order.
-    :param bool bias: If ``True`` the MLP will consider some bias.
-    :param list | tuple transformer_nets: a list or tuple containing the two
-        torch.nn.Module which act as transformer network. The input dimension
-        of the network must be the same as ``input_dimensions``, and the output
-        dimension must be the same as ``inner_size``.
     """
 
     def __init__(
@@ -142,7 +130,37 @@ class ResidualFeedForward(torch.nn.Module):
         bias=True,
         transformer_nets=None,
     ):
-        """ """
+        """
+        Initialization of the :class:`ResidualFeedForward` class.
+
+        :param int input_dimensions: The number of input components.
+            The expected tensor shape is :math:`(*, d)`, where *
+            represents any number of preceding dimensions (including none), and
+            :math:`d` corresponds to ``input_dimensions``.
+        :param int output_dimensions: The number of output components .
+            The expected tensor shape is :math:`(*, d)`, where *
+            represents any number of preceding dimensions (including none), and
+            :math:`d` corresponds to ``output_dimensions``.
+        :param int inner_size: The number of neurons for each hidden layer.
+            Default is ``20``.
+        :param int n_layers: The number of hidden layers. Default is ``2``.
+        ::param func: The activation function. If a list is passed, it must have
+            the same length as ``n_layers``. If a single function is passed, it
+            is used for all layers, except for the last one.
+            Default is :class:`torch.nn.Tanh`.
+        :type func: torch.nn.Module | list[torch.nn.Module]
+        :param bool bias: If ``True`` bias is considered for the basis function
+            neural network. Default is ``True``.
+        :param transformer_nets: The two :class:`torch.nn.Module` acting as
+            transformer network. The input dimension of both networks must be
+            equal to ``input_dimensions``, and the output dimension must be
+            equal to ``inner_size``. If ``None``, two 
+            :class:`~pina.model.block.residual.EnhancedLinear` layers are used.
+            Default is ``None``.
+        :type transformer_nets: list[torch.nn.Module] | tuple[torch.nn.Module]
+        :raises RuntimeError: If the number of layers and functions are
+            inconsistent.
+        """
         super().__init__()
 
         # check type consistency
@@ -179,7 +197,7 @@ class ResidualFeedForward(torch.nn.Module):
             self.functions = [func() for _ in range(len(self.layers))]
 
         if len(self.layers) != len(self.functions):
-            raise RuntimeError("uncosistent number of layers and functions")
+            raise RuntimeError("Incosistent number of layers and functions")
 
         unique_list = []
         for layer, func_ in zip(self.layers, self.functions):
@@ -188,12 +206,12 @@ class ResidualFeedForward(torch.nn.Module):
 
     def forward(self, x):
         """
-        Defines the computation performed at every call.
+        Forward pass for the :class:`ResidualFeedForward` model.
 
-        :param x: The tensor to apply the forward pass.
-        :type x: torch.Tensor
-        :return: the output computed by the model.
-        :rtype: torch.Tensor
+        :param x: The input tensor.
+        :type x: torch.Tensor | LabelTensor
+        :return: The output tensor.
+        :rtype: torch.Tensor | LabelTensor
         """
         # enhance the input with transformer
         input_ = []
@@ -210,6 +228,26 @@ class ResidualFeedForward(torch.nn.Module):
 
     @staticmethod
     def _check_transformer_nets(transformer_nets, input_dimensions, inner_size):
+        """
+        Check the transformer networks consistency.
+
+        :param transformer_nets: The two :class:`torch.nn.Module` acting as
+            transformer network.
+        :type transformer_nets: list[torch.nn.Module] | tuple[torch.nn.Module]
+        :param int input_dimensions: The number of input components.
+        :param int inner_size: The number of neurons for each hidden layer.
+        :raises ValueError: If the passed ``transformer_nets`` is not a list of
+            length two.
+        :raises ValueError: If the passed ``transformer_nets`` is not a list of
+            :class:`torch.nn.Module`.
+        :raises ValueError: If the input dimension of the transformer network
+            is incompatible with the input dimension of the model.
+        :raises ValueError: If the output dimension of the transformer network
+            is incompatible with the inner size of the model.
+        :raises RuntimeError: If unexpected error occurs.
+        :return: The two :class:`torch.nn.Module` acting as transformer network.
+        :rtype: list[torch.nn.Module] | tuple[torch.nn.Module]
+        """
         # check transformer nets
         if transformer_nets is None:
             transformer_nets = [

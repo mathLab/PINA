@@ -1,5 +1,5 @@
 """
-Module containing the neural network models.
+Module for the Neural model classes.
 """
 
 __all__ = [
