@@ -123,8 +123,8 @@ class LabelTensor(torch.Tensor):
     @labels.setter
     def labels(self, labels):
         """
-        Set labels stored insider the instance by checking the type of the 
-        input labels and handling it accordingly. The following types are 
+        Set labels stored insider the instance by checking the type of the
+        input labels and handling it accordingly. The following types are
         accepted:
 
         - **list**: The list of labels is assigned to the last dimension.
