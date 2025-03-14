@@ -1,8 +1,10 @@
 """Formulation of the inverse Poisson problem in a square domain."""
 
-import os
+import requests
 import torch
+from io import BytesIO
 from ... import Condition
+from ... import LabelTensor
 from ...operator import laplacian
 from ...domain import CartesianDomain
 from ...equation import Equation, FixedValue
@@ -27,21 +29,27 @@ def laplace_equation(input_, output_, params_):
     return delta_u - force_term
 
 
-# Absolute path to the data directory
-data_dir = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__), "../../../tutorials/tutorial7/data/"
-    )
+# URL of the file
+url = "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pts_0.5_0.5"
+# Download the file
+response = requests.get(url)
+response.raise_for_status()
+file_like_object = BytesIO(response.content)
+# Set the data
+input_data = LabelTensor(
+    torch.load(file_like_object, weights_only=False).tensor.detach(),
+    ["x", "y", "mu1", "mu2"],
 )
 
-# Load input data
-input_data = torch.load(
-    f=os.path.join(data_dir, "pts_0.5_0.5"), weights_only=False
-).extract(["x", "y"])
-
-# Load output data
-output_data = torch.load(
-    f=os.path.join(data_dir, "pinn_solution_0.5_0.5"), weights_only=False
+# URL of the file
+url = "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pinn_solution_0.5_0.5"
+# Download the file
+response = requests.get(url)
+response.raise_for_status()
+file_like_object = BytesIO(response.content)
+# Set the data
+output_data = LabelTensor(
+    torch.load(file_like_object, weights_only=False).tensor.detach(), ["u"]
 )
 
 
