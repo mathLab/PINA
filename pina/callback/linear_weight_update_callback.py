@@ -1,4 +1,4 @@
-"""PINA Callbacks Implementations"""
+"""Module for the LinearWeightUpdate callback."""
 
 import warnings
 from lightning.pytorch.callbacks import Callback

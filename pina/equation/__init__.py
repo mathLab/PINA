@@ -1,6 +1,4 @@
-"""
-Module to define equations and systems of equations.
-"""
+"""Module to define equations and systems of equations."""
 
 __all__ = [
     "SystemEquation",

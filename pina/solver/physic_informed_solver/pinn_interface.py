@@ -1,4 +1,4 @@
-"""Module for the Physics Informed Neural Network Interface."""
+"""Module for the Physics-Informed Neural Network Interface."""
 
 from abc import ABCMeta, abstractmethod
 import torch

@@ -1,4 +1,4 @@
-"""Module for Self-Adaptive PINN."""
+"""Module for the Self-Adaptive PINN solver."""
 
 from copy import deepcopy
 import torch

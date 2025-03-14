@@ -1,4 +1,4 @@
-"""Module for PowerLoss class"""
+"""Module for the PowerLoss class."""
 
 import torch
 

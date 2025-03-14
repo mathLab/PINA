@@ -1,6 +1,4 @@
-"""
-Adaptive Activation Functions Module.
-"""
+"""Adaptive Activation Functions Module."""
 
 __all__ = [
     "AdaptiveActivationFunctionInterface",

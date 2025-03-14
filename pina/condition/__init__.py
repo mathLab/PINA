@@ -1,6 +1,4 @@
-"""
-Module for importing Conditions objects.
-"""
+"""Module for PINA Conditions classes."""
 
 __all__ = [
     "Condition",

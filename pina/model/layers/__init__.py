@@ -1,6 +1,4 @@
-"""
-Old layers module, deprecated in 0.2.0.
-"""
+"""Old layers module, deprecated in 0.2.0."""
 
 import warnings
 

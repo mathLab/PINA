@@ -1,3 +1,5 @@
+"""Module for the Pina Callbacks."""
+
 __all__ = [
     "SwitchOptimizer",
     "R3Refinement",

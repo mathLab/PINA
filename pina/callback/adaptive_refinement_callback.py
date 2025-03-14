@@ -1,4 +1,4 @@
-"""PINA Callbacks Implementations"""
+"""Module for the R3Refinement callback."""
 
 import importlib.metadata
 import torch

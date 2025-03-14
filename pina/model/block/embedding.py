@@ -1,4 +1,4 @@
-"""Modules for the Embedding blocks."""
+"""Modules for the the Embedding blocks."""
 
 import torch
 from pina.utils import check_consistency

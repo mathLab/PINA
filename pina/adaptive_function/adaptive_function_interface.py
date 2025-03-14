@@ -1,4 +1,4 @@
-"""Module for adaptive functions."""
+"""Module for the Adaptive Function interface."""
 
 from abc import ABCMeta
 import torch

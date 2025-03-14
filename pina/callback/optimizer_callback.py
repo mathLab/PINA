@@ -1,4 +1,4 @@
-"""PINA Callbacks Implementations"""
+"""Module for the SwitchOptimizer callback."""
 
 from lightning.pytorch.callbacks import Callback
 from ..optim import TorchOptimizer

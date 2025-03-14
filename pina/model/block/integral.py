@@ -1,6 +1,4 @@
-"""
-Module to perform integration for continuous convolution.
-"""
+"""Module to perform integration for continuous convolution."""
 
 import torch
 

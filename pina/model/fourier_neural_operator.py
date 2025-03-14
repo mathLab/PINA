@@ -1,6 +1,4 @@
-"""
-Module for the Fourier Neural Operator model class.
-"""
+"""Module for the Fourier Neural Operator model class."""
 
 import warnings
 import torch

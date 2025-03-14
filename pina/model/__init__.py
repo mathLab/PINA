@@ -1,6 +1,4 @@
-"""
-Module for the Neural model classes.
-"""
+"""Module for the Neural model classes."""
 
 __all__ = [
     "FeedForward",

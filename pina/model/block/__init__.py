@@ -1,6 +1,4 @@
-"""
-Module for the building blocks of the neural models.
-"""
+"""Module for the building blocks of the neural models."""
 
 __all__ = [
     "ContinuousConvBlock",
