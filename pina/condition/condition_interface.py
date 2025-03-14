@@ -27,8 +27,8 @@ class ConditionInterface(metaclass=ABCMeta):
         """
         Return the problem to which the condition is associated.
 
-        :return: Problem to which the condition is associated
-        :rtype: pina.problem.AbstractProblem
+        :return: Problem to which the condition is associated.
+        :rtype: ~pina.problem.abstract_problem.AbstractProblem
         """
         return self._problem
 
