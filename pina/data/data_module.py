@@ -244,7 +244,7 @@ class PinaSampler:
 
 class PinaDataModule(LightningDataModule):
     """
-    This class extends :class:`lightning.pytorch.LightningDataModule`,
+    This class extends :class:`~lightning.pytorch.core.LightningDataModule`,
     allowing proper creation and management of different types of datasets
     defined in PINA.
     """
@@ -268,24 +268,24 @@ class PinaDataModule(LightningDataModule):
         :param AbstractProblem problem: The problem containing the data on which
             to create the datasets and dataloaders.
         :param float train_size: Fraction of elements in the training split. It
-        must be in the range [0, 1].
+            must be in the range [0, 1].
         :param float test_size: Fraction of elements in the test split. It must
-        be in the range [0, 1].
+            be in the range [0, 1].
         :param float val_size: Fraction of elements in the validation split. It
-        must be in the range [0, 1].
+            must be in the range [0, 1].
         :param batch_size: The batch size used for training. If ``None``, the
-            entire dataset is returned in a single batch.
-        :type batch_size: int | None
+            entire dataset is returned in a single batch. Default is ``None``.
+        :type batch_size: int
         :param bool shuffle: Whether to shuffle the dataset before splitting.
-            Default True.
+            Default ``Tru``e.
         :param bool repeat: Whether to repeat the dataset indefinitely.
-            Default False.
+            Default ``False``.
         :param automatic_batching: Whether to enable automatic batching.
-            Default False.
+            Default ``False``.
         :param int num_workers: Number of worker threads for data loading.
-            Default 0 (serial loading).
+            Default ``0`` (serial loading).
         :param bool pin_memory: Whether to use pinned memory for faster data
-            transfer to GPU. Default False.
+            transfer to GPU. Default ``False``.
 
         :raises ValueError: If at least one of the splits is negative.
         :raises ValueError: If the sum of the splits is different from 1.
@@ -643,7 +643,7 @@ class PinaDataModule(LightningDataModule):
         Return all the input points coming from all the datasets.
 
         :return: The input points for training.
-        :rtype dict
+        :rtype: dict
         """
 
         to_return = {}
