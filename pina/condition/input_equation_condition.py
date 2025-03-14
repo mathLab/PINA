@@ -16,9 +16,9 @@ class InputEquationCondition(ConditionInterface):
     used in a Physics Informed problems. Based on the type of the input,
     different condition implementations are available:
 
-    - :class:`InputTensorEquationCondition`: For
+    - :class:`InputTensorEquationCondition`: For \
         :class:`~pina.label_tensor.LabelTensor` input data.
-    - :class:`InputGraphEquationCondition`: For :class:`~pina.graph.Graph`
+    - :class:`InputGraphEquationCondition`: For :class:`~pina.graph.Graph` \
         input data.
     """
 
@@ -65,19 +65,18 @@ class InputEquationCondition(ConditionInterface):
 
     def __init__(self, input, equation):
         """
-        Initialize the InputEquationCondition by storing the input and equation.
+        Initialize the object by storing the input data and equation object.
 
         :param input: Input data for the condition.
-        :type input: pina.label_tensor.LabelTensor | pina.graph.Graph |
-            list[pina.graph.Graph] | tuple[pina.graph.Graph]
+        :type input: LabelTensor | Graph |
+            list[Graph] | tuple[Graph]
         :param EquationInterface equation: Equation object containing the
             equation function.
 
         .. note::
-            If ``input`` is composed by a list of :class:`~pina.graph.Graph`
-            objects, all elements must have the same structure (keys and data
-            types). Moreover, at least one attribute must be a
-            :class:`~pina.label_tensor.LabelTensor`.
+            If ``input`` consists of a list of :class:`~pina.graph.Graph` or
+            :class:`~torch_geometric.data.Data`, all elements must have the same
+            structure (keys and data types)
         """
 
         super().__init__()
