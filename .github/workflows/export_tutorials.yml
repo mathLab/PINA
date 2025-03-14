@@ -47,7 +47,7 @@ jobs:
           if [[ $file == *.ipynb ]]; then
             filename=$(basename $file)
             pyfilename=$(echo ${filename%?????})py
-            timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to python --output $pyfilename --output-dir=$(dirname $file)
+            timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert $file --to python --output $pyfilename --output-dir=$(dirname $file)
             htmlfilename=$(echo ${filename%?????} | sed -e 's/-//g')html
             htmldir="docs/source"/$(echo ${file%?????} | sed -e 's/-//g')html 
             timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to html --output $htmlfilename --output-dir=$htmldir
