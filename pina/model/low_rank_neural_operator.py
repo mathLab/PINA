@@ -1,4 +1,4 @@
-"""Module LowRank Neural Operator."""
+"""Module for the Low Rank Neural Operator model class."""
 
 import torch
 from torch import nn
@@ -11,23 +11,20 @@ from .block.low_rank_block import LowRankBlock
 
 class LowRankNeuralOperator(KernelNeuralOperator):
     """
-    Implementation of LowRank Neural Operator.
+    Low Rank Neural Operator model class.
 
-    LowRank Neural Operator is a general architecture for
-    learning Operators. Unlike traditional machine learning methods
-    LowRankNeuralOperator is designed to map entire functions
-    to other functions. It can be trained with Supervised or PINN based
-    learning strategies.
-    LowRankNeuralOperator does convolution by performing a low rank
-    approximation, see :class:`~pina.model.block.lowrank_layer.LowRankBlock`.
+    The Low Rank Neural Operator is a general architecture for learning
+    operators, which map functions to functions. It can be trained both with
+    Supervised and Physics-Informed learning strategies. The Low Rank Neural
+    Operator performs convolution by means of a low rank approximation.
 
     .. seealso::
 
-        **Original reference**: Kovachki, N., Li, Z., Liu, B.,
-        Azizzadenesheli, K., Bhattacharya, K., Stuart, A., & Anandkumar, A.
-        (2023). *Neural operator: Learning maps between function
-        spaces with applications to PDEs*. Journal of Machine Learning
-        Research, 24(89), 1-97.
+        **Original reference**: Kovachki, N., Li, Z., Liu, B., Azizzadenesheli,
+        K., Bhattacharya, K., Stuart, A., & Anandkumar, A. (2023).
+        *Neural operator: Learning maps between function spaces with
+        applications to PDEs*.
+        Journal of Machine Learning Research, 24(89), 1-97.
     """
 
     def __init__(
@@ -44,32 +41,35 @@ class LowRankNeuralOperator(KernelNeuralOperator):
         bias=True,
     ):
         """
-        :param torch.nn.Module lifting_net: The neural network for lifting
-            the input. It must take as input the input field and the coordinates
-            at which the input field is avaluated. The output of the lifting
-            net is chosen as embedding dimension of the problem
-        :param torch.nn.Module projecting_net: The neural network for
-            projecting the output. It must take as input the embedding dimension
-            (output of the ``lifting_net``) plus the dimension
-            of the coordinates.
-        :param list[str] field_indices: the label of the fields
-            in the input tensor.
-        :param list[str] coordinates_indices: the label of the
-            coordinates in the input tensor.
-        :param int n_kernel_layers: number of hidden kernel layers.
-            Default is 4.
-        :param int inner_size: Number of neurons in the hidden layer(s) for the
-            basis function network. Default is 20.
-        :param int n_layers: Number of hidden layers. for the
-            basis function network. Default is 2.
-        :param func: The activation function to use for the
-            basis function network. If a single
-            :class:`torch.nn.Module` is passed, this is used as
-            activation function after any layers, except the last one.
-            If a list of Modules is passed,
-            they are used as activation functions at any layers, in order.
-        :param bool bias: If ``True`` the MLP will consider some bias for the
-            basis function network.
+        Initialization of the :class:`LowRankNeuralOperator` class.
+
+        :param torch.nn.Module lifting_net: The lifting neural network mapping
+            the input to its hidden dimension. It must take as input the input
+            field and the coordinates at which the input field is evaluated.
+        :param torch.nn.Module projecting_net: The projection neural network
+            mapping the hidden representation to the output function. It must
+            take as input the embedding dimension plus the dimension of the
+            coordinates.
+        :param list[str] field_indices: The labels of the fields in the input
+            tensor.
+        :param list[str] coordinates_indices: The labels of the coordinates in
+            the input tensor.
+        :param int n_kernel_layers: The number of hidden kernel layers.
+        :param int rank: The rank of the low rank approximation.
+        :param int inner_size: The number of neurons for each hidden layer in
+            the basis function neural network. Default is ``20``.
+        :param int n_layers: The number of hidden layers in the basis function
+            neural network. Default is ``2``.
+        :param func: The activation function. If a list is passed, it must have
+            the same length as ``n_layers``. If a single function is passed, it
+            is used for all layers, except for the last one.
+            Default is :class:`torch.nn.Tanh`.
+        :param bool bias: If ``True`` bias is considered for the basis function
+            neural network. Default is ``True``.
+        :raises ValueError: If the input dimension does not match with the
+            labels of the fields and coordinates.
+        :raises ValueError: If the input dimension of the projecting network
+            does not match with the hidden dimension of the lifting network.
         """
 
         # check consistency
@@ -122,19 +122,20 @@ class LowRankNeuralOperator(KernelNeuralOperator):
 
     def forward(self, x):
         r"""
-        Forward computation for LowRank Neural Operator. It performs a
-        lifting of the input by the ``lifting_net``. Then different layers
-        of LowRank Neural Operator Blocks are applied.
-        Finally the output is projected to the final dimensionality
-        by the ``projecting_net``.
+        Forward pass for the :class:`LowRankNeuralOperator` model.
 
-        :param torch.Tensor x: The input tensor for fourier block,
-            depending on ``dimension`` in the initialization. It expects
-            a tensor :math:`B \times N \times D`,
-            where :math:`B` is the batch_size, :math:`N` the number of points
-            in the mesh, :math:`D` the dimension of the problem, i.e. the sum
-            of ``len(coordinates_indices)+len(field_indices)``.
-        :return: The output tensor obtained from Average Neural Operator.
+        The ``lifting_net`` maps the input to the hidden dimension.
+        Then, several layers of
+        :class:`~pina.model.block.low_rank_block.LowRankBlock` are
+        applied. Finally, the ``projecting_net`` maps the hidden representation
+        to the output function.
+
+        :param LabelTensor x: The input tensor for performing the computation.
+            It expects a tensor :math:`B \times N \times D`, where :math:`B` is
+            the batch_size, :math:`N` the number of points in the mesh,
+            :math:`D` the dimension of the problem, i.e. the sum
+            of ``len(coordinates_indices)`` and ``len(field_indices)``.
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
         # extract points

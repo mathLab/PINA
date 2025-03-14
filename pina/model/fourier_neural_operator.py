@@ -1,5 +1,5 @@
 """
-Fourier Neural Operator Module.
+Module for the Fourier Neural Operator model class.
 """
 
 import warnings
@@ -13,18 +13,16 @@ from .kernel_neural_operator import KernelNeuralOperator
 
 class FourierIntegralKernel(torch.nn.Module):
     """
-    Implementation of Fourier Integral Kernel network.
+    Fourier Integral Kernel model class.
 
-    This class implements the Fourier Integral Kernel network, which is a
-    PINA implementation of Fourier Neural Operator kernel network.
-    It performs global convolution by operating in the Fourier space.
+    This class implements the Fourier Integral Kernel network, which 
+    performs global convolution in the Fourier space.
 
     .. seealso::
 
-        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli,
-        K., Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A.
-        (2020). *Fourier neural operator for parametric partial
-        differential equations*.
+        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K., Liu,
+        B., Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020).
+        *Fourier neural operator for parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
     """
@@ -43,16 +41,31 @@ class FourierIntegralKernel(torch.nn.Module):
         layers=None,
     ):
         """
-        :param int input_numb_fields: Number of input fields.
-        :param int output_numb_fields: Number of output fields.
-        :param int | list[int] n_modes: Number of modes.
-        :param int dimensions: Number of dimensions (1, 2, or 3).
-        :param int padding: Padding size, defaults to 8.
-        :param str padding_type: Type of padding, defaults to "constant".
-        :param int inner_size: Inner size, defaults to 20.
-        :param int n_layers: Number of layers, defaults to 2.
-        :param torch.nn.Module func: Activation function, defaults to nn.Tanh.
-        :param list[int] layers: List of layer sizes, defaults to None.
+        Initialization of the :class:`FourierIntegralKernel` class.
+
+        :param int input_numb_fields: The number of input fields.
+        :param int output_numb_fields: The number of output fields.
+        :param n_modes: The number of modes.
+        :type n_modes: int | list[int]
+        :param int dimensions: The number of dimensions. It can be set to ``1``,
+            ``2``, or ``3``. Default is ``3``.
+        :param int padding: The padding size. Default is ``8``.
+        :param str padding_type: The padding strategy. Default is ``constant``.
+        :param int inner_size: The inner size. Default is ``20``.
+        :param int n_layers: The number of layers. Default is ``2``.
+        :param func: The activation function. If a list is passed, it must have
+            the same length as ``n_layers``. If a single function is passed, it
+            is used for all layers, except for the last one.
+            Default is :class:`torch.nn.Tanh`.
+        :type func: torch.nn.Module | list[torch.nn.Module]
+        :param list[int] layers: The list of the dimension of inner layers.
+            If ``None``, ``n_layers`` of dimension ``inner_size`` are used.
+            Otherwise, it overrides the values passed to ``n_layers`` and
+            ``inner_size``. Default is ``None``.
+        :raises RuntimeError: If the number of layers and functions are
+            inconsistent.
+        :raises RunTimeError: If the number of layers and modes are
+            inconsistent.
         """
         super().__init__()
 
@@ -84,7 +97,7 @@ class FourierIntegralKernel(torch.nn.Module):
         if isinstance(func, list):
             if len(layers) != len(func):
                 raise RuntimeError(
-                    "Uncosistent number of layers and functions."
+                    "Inconsistent number of layers and functions."
                 )
             _functions = func
         else:
@@ -97,7 +110,7 @@ class FourierIntegralKernel(torch.nn.Module):
                 n_modes
             ):
                 raise RuntimeError(
-                    "Uncosistent number of layers and functions."
+                    "Inconsistent number of layers and modes."
                 )
             if all(isinstance(i, int) for i in n_modes):
                 n_modes = [n_modes] * len(layers)
@@ -129,19 +142,17 @@ class FourierIntegralKernel(torch.nn.Module):
 
     def forward(self, x):
         """
-        Forward computation for Fourier Neural Operator. It performs a
-        lifting of the input by the ``lifting_net``. Then different layers
-        of Fourier Blocks are applied. Finally the output is projected
-        to the final dimensionality by the ``projecting_net``.
+        Forward pass for the :class:`FourierIntegralKernel` model.
 
-        :param torch.Tensor x: The input tensor for fourier block,
-            depending on ``dimension`` in the initialization.
-            In particular it is expected:
-
+        :param x: The input tensor for performing the computation. Depending
+            on the ``dimensions`` in the initialization, it expects a tensor
+            with the following shapes:
             * 1D tensors: ``[batch, X, channels]``
             * 2D tensors: ``[batch, X, Y, channels]``
             * 3D tensors: ``[batch, X, Y, Z, channels]``
-        :return: The output tensor obtained from the kernels convolution.
+        :type x: torch.Tensor | LabelTensor
+        :raises Warning: If a LabelTensor is passed as input.
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
         if isinstance(x, LabelTensor):
@@ -181,6 +192,22 @@ class FourierIntegralKernel(torch.nn.Module):
         layers,
         n_modes,
     ):
+        """
+        Check the consistency of the input parameters.
+
+
+        :param int dimensions: The number of dimensions.
+        :param int padding: The padding size.
+        :param str padding_type: The padding strategy.
+        :param int inner_size: The inner size.
+        :param int n_layers: The number of layers.
+        :param func: The activation function.
+        :type func: torch.nn.Module | list[torch.nn.Module]
+        :param list[int] layers: The list of the dimension of inner layers.
+        :param n_modes: The number of modes.
+        :type n_modes: int | list[int]
+        :raises ValueError: If the input is not consistent.
+        """
         check_consistency(dimensions, int)
         check_consistency(padding, int)
         check_consistency(padding_type, str)
@@ -201,6 +228,15 @@ class FourierIntegralKernel(torch.nn.Module):
 
     @staticmethod
     def _get_fourier_block(dimensions):
+        """
+        Retrieve the Fourier Block class based on the number of dimensions.
+
+        :param int dimensions: The number of dimensions.
+        :raises NotImplementedError: If the number of dimensions is not 1, 2,
+            or 3.
+        :return: The Fourier Block class.
+        :rtype: FourierBlock1D | FourierBlock2D | FourierBlock3D
+        """
         if dimensions == 1:
             return FourierBlock1D
         if dimensions == 2:
@@ -212,20 +248,18 @@ class FourierIntegralKernel(torch.nn.Module):
 
 class FNO(KernelNeuralOperator):
     """
-    The PINA implementation of Fourier Neural Operator network.
+    Fourier Neural Operator model class.
 
-    Fourier Neural Operator (FNO) is a general architecture for
-    learning Operators. Unlike traditional machine learning methods
-    FNO is designed to map entire functions to other functions. It
-    can be trained with Supervised learning strategies. FNO does global
-    convolution by performing the operation on the Fourier space.
+    The Fourier Neural Operator (FNO) is a general architecture for learning
+    operators, which  map functions to functions. It can be trained both with
+    Supervised and Physics_Informed learning strategies. The Fourier Neural
+    Operator performs global convolution in the Fourier space.
 
     .. seealso::
 
-        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli,
-        K., Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A.
-        (2020). *Fourier neural operator for parametric partial
-        differential equations*.
+        **Original reference**: Li, Z., Kovachki, N., Azizzadenesheli, K.,
+        Liu, B., Bhattacharya, K., Stuart, A., & Anandkumar, A. (2020).
+        *Fourier neural operator for parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
     """
@@ -244,18 +278,27 @@ class FNO(KernelNeuralOperator):
         layers=None,
     ):
         """
-        :param torch.nn.Module lifting_net: The neural network for lifting
-            the input.
-        :param torch.nn.Module projecting_net: The neural network for
-            projecting the output.
-        :param int | list[int] n_modes: Number of modes.
-        :param int dimensions: Number of dimensions (1, 2, or 3).
-        :param int padding: Padding size, defaults to 8.
-        :param str padding_type: Type of padding, defaults to `constant`.
-        :param int inner_size: Inner size, defaults to 20.
-        :param int n_layers: Number of layers, defaults to 2.
-        :param torch.nn.Module func: Activation function, defaults to nn.Tanh.
-        :param list[int] layers: List of layer sizes, defaults to None.
+        param torch.nn.Module lifting_net: The lifting neural network mapping
+            the input to its hidden dimension.
+        :param torch.nn.Module projecting_net: The projection neural network
+            mapping the hidden representation to the output function.
+        :param n_modes: The number of modes.
+        :type n_modes: int | list[int]
+        :param int dimensions: The number of dimensions. It can be set to ``1``,
+            ``2``, or ``3``. Default is ``3``.
+        :param int padding: The padding size. Default is ``8``.
+        :param str padding_type: The padding strategy. Default is ``constant``.
+        :param int inner_size: The inner size. Default is ``20``.
+        :param int n_layers: The number of layers. Default is ``2``.
+        :param func: The activation function. If a list is passed, it must have
+            the same length as ``n_layers``. If a single function is passed, it
+            is used for all layers, except for the last one.
+            Default is :class:`torch.nn.Tanh`.
+        :type func: torch.nn.Module | list[torch.nn.Module]
+        :param list[int] layers: The list of the dimension of inner layers.
+            If ``None``, ``n_layers`` of dimension ``inner_size`` are used.
+            Otherwise, it overrides the values passed to ``n_layers`` and
+            ``inner_size``. Default is ``None``.
         """
         lifting_operator_out = lifting_net(
             torch.rand(size=next(lifting_net.parameters()).size())
@@ -279,19 +322,21 @@ class FNO(KernelNeuralOperator):
 
     def forward(self, x):
         """
-        Forward computation for Fourier Neural Operator. It performs a
-        lifting of the input by the ``lifting_net``. Then different layers
-        of Fourier Blocks are applied. Finally the output is projected
-        to the final dimensionality by the ``projecting_net``.
+        Forward pass for the :class:`FourierNeuralOperator` model.
 
-        :param torch.Tensor x: The input tensor for fourier block,
-            depending on ``dimension`` in the initialization. In
-            particular it is expected:
+        The ``lifting_net`` maps the input to the hidden dimension.
+        Then, several layers of Fourier blocks are applied. Finally, the
+        ``projection_net`` maps the hidden representation to the output
+        function.
 
+:       param x: The input tensor for performing the computation. Depending
+            on the ``dimensions`` in the initialization, it expects a tensor
+            with the following shapes:
             * 1D tensors: ``[batch, X, channels]``
             * 2D tensors: ``[batch, X, Y, channels]``
             * 3D tensors: ``[batch, X, Y, Z, channels]``
-        :return: The output tensor obtained from FNO.
+        :type x: torch.Tensor | LabelTensor
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
 

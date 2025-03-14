@@ -1,4 +1,4 @@
-"""Module for Multi FeedForward model"""
+"""Module for the Multi Feed Forward model class"""
 
 from abc import ABC, abstractmethod
 import torch
@@ -7,16 +7,21 @@ from .feed_forward import FeedForward
 
 class MultiFeedForward(torch.nn.Module, ABC):
     """
-    The PINA implementation of MultiFeedForward network.
+    Multi Feed Forward neural network model class.
 
-    This model allows to create a network with multiple FeedForward combined
-    together. The user has to define the `forward` method choosing how to
-    combine the different FeedForward networks.
-
-    :param dict ffn_dict: dictionary of FeedForward networks.
+    This model allows to create a network with multiple Feed Forward neural
+    networks combined together. The user is required to define the ``forward``
+    method to choose how to combine the networks.
     """
 
     def __init__(self, ffn_dict):
+        """
+        Initialization of the :class:`MultiFeedForward` class.
+
+        :param dict ffn_dict: A dictionary containing the Feed Forward neural
+            networks to be combined.
+        :raises TypeError: If the input is not a dictionary.
+        """
         super().__init__()
 
         if not isinstance(ffn_dict, dict):
@@ -28,5 +33,8 @@ class MultiFeedForward(torch.nn.Module, ABC):
     @abstractmethod
     def forward(self, *args, **kwargs):
         """
-        TODO: Docstring
+        Forward pass for the :class:`MultiFeedForward` model.
+
+        The user is required to define this method to choose how to combine the
+        networks.
         """

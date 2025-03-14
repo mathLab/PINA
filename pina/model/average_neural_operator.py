@@ -1,4 +1,4 @@
-"""Module Averaging Neural Operator."""
+"""Module for the Averaging Neural Operator model class."""
 
 import torch
 from torch import nn
@@ -9,19 +9,17 @@ from ..utils import check_consistency
 
 class AveragingNeuralOperator(KernelNeuralOperator):
     """
-    Implementation of Averaging Neural Operator.
+    Averaging Neural Operator model class.
 
-    Averaging Neural Operator is a general architecture for
-    learning Operators. Unlike traditional machine learning methods
-    AveragingNeuralOperator is designed to map entire functions
-    to other functions. It can be trained with Supervised learning strategies.
-    AveragingNeuralOperator does convolution by performing a field average.
+    The Averaging Neural Operator is a general architecture for learning
+    operators, which map functions to functions. It can be trained both with
+    Supervised and Physics-Informed learning strategies. The Averaging Neural
+    Operator performs convolution by means of a field average.
 
     .. seealso::
 
-        **Original reference**: Lanthaler S. Li, Z., Kovachki,
-        Stuart, A. (2020). *The Nonlocal Neural Operator:
-        Universal Approximation*.
+        **Original reference**: Lanthaler S., Li, Z., Stuart, A. (2020).
+        *The Nonlocal Neural Operator: Universal Approximation*.
         DOI: `arXiv preprint arXiv:2304.13221.
         <https://arxiv.org/abs/2304.13221>`_
     """
@@ -36,21 +34,26 @@ class AveragingNeuralOperator(KernelNeuralOperator):
         func=nn.GELU,
     ):
         """
-        :param torch.nn.Module lifting_net: The neural network for lifting
-            the input. It must take as input the input field and the coordinates
-            at which the input field is avaluated. The output of the lifting
-            net is chosen as embedding dimension of the problem
-        :param torch.nn.Module projecting_net: The neural network for
-            projecting the output. It must take as input the embedding dimension
-            (output of the ``lifting_net``) plus the dimension
-            of the coordinates.
-        :param list[str] field_indices: the label of the fields
-            in the input tensor.
-        :param list[str] coordinates_indices: the label of the
-            coordinates in the input tensor.
-        :param int n_layers: number of hidden layers. Default is 4.
-        :param torch.nn.Module func: the activation function to use,
-            default to torch.nn.GELU.
+        Initialization of the :class:`AveragingNeuralOperator` class.
+
+        :param torch.nn.Module lifting_net: The lifting neural network mapping
+            the input to its hidden dimension. It must take as input the input
+            field and the coordinates at which the input field is evaluated.
+        :param torch.nn.Module projecting_net: The projection neural network
+            mapping the hidden representation to the output function. It must
+            take as input the embedding dimension plus the dimension of the
+            coordinates.
+        :param list[str] field_indices: The labels of the fields in the input
+            tensor.
+        :param list[str] coordinates_indices: The labels of the coordinates in
+            the input tensor.
+        :param int n_layers: The number of hidden layers. Default is ``4``.
+        :param torch.nn.Module func: The activation function to use.
+            Default is :class:`torch.nn.GELU`.
+        :raises ValueError: If the input dimension does not match with the
+            labels of the fields and coordinates.
+        :raises ValueError: If the input dimension of the projecting network
+            does not match with the hidden dimension of the lifting network.
         """
 
         # check consistency
@@ -93,19 +96,20 @@ class AveragingNeuralOperator(KernelNeuralOperator):
 
     def forward(self, x):
         r"""
-        Forward computation for Averaging Neural Operator. It performs a
-        lifting of the input by the ``lifting_net``. Then different layers
-        of Averaging Neural Operator Blocks are applied.
-        Finally the output is projected to the final dimensionality
-        by the ``projecting_net``.
+        Forward pass for the :class:`AveragingNeuralOperator` model.
 
-        :param torch.Tensor x: The input tensor for fourier block,
-            depending on ``dimension`` in the initialization. It expects
-            a tensor :math:`B \times N \times D`,
-            where :math:`B` is the batch_size, :math:`N` the number of points
-            in the mesh, :math:`D` the dimension of the problem, i.e. the sum
-            of ``len(coordinates_indices)+len(field_indices)``.
-        :return: The output tensor obtained from Average Neural Operator.
+        The ``lifting_net`` maps the input to the hidden dimension.
+        Then, several layers of
+        :class:`~pina.model.block.average_neural_operator_block.AVNOBlock` are
+        applied. Finally, the ``projection_net`` maps the hidden representation
+        to the output function.
+
+        :param LabelTensor x: The input tensor for performing the computation.
+            It expects a tensor :math:`B \times N \times D`, where :math:`B` is
+            the batch_size, :math:`N` the number of points in the mesh,
+            :math:`D` the dimension of the problem, i.e. the sum
+            of ``len(coordinates_indices)`` and ``len(field_indices)``.
+        :return: The output tensor.
         :rtype: torch.Tensor
         """
         points_tmp = x.extract(self.coordinates_indices)
