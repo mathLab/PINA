@@ -12,7 +12,7 @@
 # Let's start with the necessary imports.
 # It's important to note the minimum PINA version to run this tutorial is the `0.1`.
 
-# In[82]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab

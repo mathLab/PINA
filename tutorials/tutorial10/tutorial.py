@@ -14,7 +14,7 @@
 # First of all, some useful imports. Note we use `scipy` for i/o operations.
 #
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab

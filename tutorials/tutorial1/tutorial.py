@@ -53,7 +53,7 @@
 # What if our equation is also time-dependent? In this case, our `class` will inherit from both `SpatialProblem` and `TimeDependentProblem`:
 #
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab

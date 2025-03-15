@@ -11,7 +11,7 @@
 
 # Let's start with the necessary imports. We're particularly interested in the `PODBlock` and `RBFBlock` classes which will allow us to define the POD-RBF model.
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
