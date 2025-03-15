@@ -72,5 +72,6 @@ jobs:
         labels: maintenance
         title: Export tutorial changed in ${{ steps.short-sha.outputs.sha }}
         branch: export-tutorial-${{ steps.short-sha.outputs.sha }}
+        base: ${{ github.head_ref }}
         commit-message: export tutorials changed in ${{ steps.short-sha.outputs.sha }}
         delete-branch: true
