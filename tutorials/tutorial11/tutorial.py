@@ -13,7 +13,7 @@
 #
 # Let's start by importing useful modules, define the `SimpleODE` problem and the `PINN` solver.
 
-# In[1]:
+# In[ ]:
 
 
 try:

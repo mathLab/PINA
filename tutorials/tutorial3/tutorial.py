@@ -9,7 +9,7 @@
 #
 # First of all, some useful imports.
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
