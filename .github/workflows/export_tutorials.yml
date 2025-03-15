@@ -60,7 +60,7 @@ jobs:
 
     - name: Remove unwanted files
       run: |
-        rm -rf build/
+        rm -rf build/ tutorials/tutorial4/data/
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5.0.2
       with:
