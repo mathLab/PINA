@@ -6,9 +6,6 @@ on:
       - "**"  # Run on push on all branches
     paths:
       - 'tutorials/**/*.ipynb'
-  workflow_dispatch:
-    branches:
-    - "**"  # Run on push on all branches
 jobs:
   export_tutorials:
     permissions: write-all
