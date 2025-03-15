@@ -25,7 +25,7 @@
 
 # Let's start with useful imports.
 
-# In[20]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
