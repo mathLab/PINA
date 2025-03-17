@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python
       uses: ammaraskar/sphinx-action@7.4.7
       with:
-        pre-build-command: "python3 -m pip install .[docs]"
+        pre-build-command: "python3 -m pip install .[doc]"
         docs-folder: "docs/"
 
     - name: Build Sphinx documentation
