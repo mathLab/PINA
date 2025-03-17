@@ -1,4 +1,4 @@
-"""Module for Loss Interface"""
+"""Module for Scalar Weighting Class"""
 
 from .weighting_interface import WeightingInterface
 from ..utils import check_consistency
