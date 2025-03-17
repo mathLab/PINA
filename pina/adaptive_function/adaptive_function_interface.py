@@ -7,9 +7,7 @@ from ..utils import check_consistency, is_function
 
 class AdaptiveActivationFunctionInterface(torch.nn.Module, metaclass=ABCMeta):
     r"""
-    The
-    :class:`~pina.adaptive_function.adaptive_func_interface.\
-        AdaptiveActivationFunctionInterface`
+    The :class:`AdaptiveActivationFunctionInterface`
     class makes a :class:`torch.nn.Module` activation function into an adaptive
     trainable activation function. If one wants to create an adpative activation
     function, this class must be use as base class.

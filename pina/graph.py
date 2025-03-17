@@ -399,8 +399,9 @@ class LabelBatch(Batch):
         :param data_list: List of :class:`~torch_geometric.data.Data` or
             :class:`~pina.graph.Graph` objects.
         :type data_list: list[Data] | list[Graph]
-        :return: A :class:`Batch` object containing the input data.
-        :rtype: Batch
+        :return: A :class:`~torch_geometric.data.Batch` object containing
+            the input data.
+        :rtype: :class:`~torch_geometric.data.Batch`
         """
         # Store the labels of Data/Graph objects (all data have the same labels)
         # If the data do not contain labels, labels is an empty dictionary,

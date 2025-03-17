@@ -15,10 +15,13 @@ class ContinuousConvBlock(BaseContinuousConv):
     batch_size, :math:`N_{in}` is the number of input fields, :math:`N`
     the number of points in the mesh, :math:`D` the dimension of the problem.
     In particular:
+
     *   :math:`D` is the number of spatial variables + 1. The last column must
-        contain the field value.
-    *   :math:`N_{in}` represents the number of function components.
-        For instance, a vectorial function :math:`f = [f_1, f_2]` has
+        contain the field value. For example for 2D problems :math:`D=3` and
+        the tensor will be something like ``[first coordinate, second
+        coordinate, field value]``.
+    *   :math:`N_{in}` represents the number of vectorial function presented.
+        For example a vectorial function :math:`f = [f_1, f_2]` will have
         :math:`N_{in}=2`.
 
     .. seealso::

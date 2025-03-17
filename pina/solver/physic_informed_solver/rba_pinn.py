@@ -82,7 +82,7 @@ class RBAPINN(PINN):
 
         :param AbstractProblem problem: The problem to be solved.
         :param torch.nn.Module model: The neural network model to be used.
-        param Optimizer optimizer: The optimizer to be used.
+        :param Optimizer optimizer: The optimizer to be used.
             If `None`, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
         :param Scheduler scheduler: Learning rate scheduler.

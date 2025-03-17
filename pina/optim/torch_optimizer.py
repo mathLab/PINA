@@ -17,8 +17,9 @@ class TorchOptimizer(Optimizer):
 
         :param torch.optim.Optimizer optimizer_class: A
             :class:`torch.optim.Optimizer` class.
-        :param dict kwargs: Additional parameters passed to `optimizer_class`,
-            see more: <https://pytorch.org/docs/stable/optim.html#algorithms>_.
+        :param dict kwargs: Additional parameters passed to ``optimizer_class``,
+            see more 
+            `here <https://pytorch.org/docs/stable/optim.html#algorithms>`_.
         """
         check_consistency(optimizer_class, torch.optim.Optimizer, subclass=True)
 

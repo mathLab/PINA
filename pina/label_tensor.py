@@ -389,14 +389,15 @@ class LabelTensor(torch.Tensor):
 
     def requires_grad_(self, mode=True):
         """
-        Override the requires_grad_ method to handle the labels in the new
-        tensor. For more details, see :meth:`torch.Tensor.requires_grad_`.
+        Override the :meth:`~torch.Tensor.requires_grad_` method to handle 
+        the labels in the new tensor.
+        For more details, see :meth:`~torch.Tensor.requires_grad_`.
 
         :param bool mode: A boolean value indicating whether the tensor should
             track gradients.If `True`, the tensor will track gradients;
             if `False`, it will not.
         :return: The :class:`~pina.label_tensor.LabelTensor` itself with the
-            updated `requires_grad` state and retained labels.
+            updated ``requires_grad`` state and retained labels.
         :rtype: LabelTensor
         """
 
