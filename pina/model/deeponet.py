@@ -412,7 +412,8 @@ class DeepONet(MIONet):
             Differently, for a :class:`torch.Tensor` only a list of integers can
             be passed for ``input_indeces_branch_net`` and
             ``input_indeces_trunk_net``.
-                .. warning::
+
+        .. warning::
             No checks are performed in the forward pass to verify if the input
             is instance of either :class:`~pina.label_tensor.LabelTensor` or
             :class:`torch.Tensor`. In general, in case of a

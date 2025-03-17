@@ -276,7 +276,8 @@ class PinaGraphDataset(PinaDataset):
         :param data: List of items to collate in a single batch.
         :type data: list[Data] | list[Graph]
         :return: Batch object.
-        :rtype: Batch | LabelBatch
+        :rtype: :class:`~torch_geometric.data.Batch` 
+            | :class:`~pina.graph.LabelBatch`
         """
 
         if isinstance(data[0], Data):

@@ -11,11 +11,11 @@ The high-level structure of the package is depicted in our API.
 
 The pipeline to solve differential equations with PINA follows just five steps:
 
-    1. Define the `Problem`_ the user aim to solve
-    2. Generate data using built in `Domains`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
+    1. Define the `Problems`_ the user aim to solve
+    2. Generate data using built in `Geometrical Domains`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
     3. Choose or build one or more `Models`_ to solve the problem
     4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solver/solver_interface>`
-    5. Train the model with the PINA :doc:`Trainer <solver/solver_interface>`, enhance the train with `Callback`_
+    5. Train the model with the PINA :doc:`Trainer <solver/solver_interface>`, enhance the train with `Callbacks`_
 
 
 Trainer, Dataset and Datamodule
@@ -34,6 +34,7 @@ Data Types
 
     LabelTensor <label_tensor.rst>
     Graph <graph/graph.rst>
+    LabelBatch <graph/label_batch.rst>
 
 
 Graphs Structures
@@ -41,7 +42,6 @@ Graphs Structures
 .. toctree::
     :titlesonly:
 
-    Graph <graph/graph.rst>
     GraphBuilder <graph/graph_builder.rst>
     RadiusGraph <graph/radius_graph.rst>
     KNNGraph <graph/knn_graph.rst>
@@ -98,7 +98,8 @@ Models
     FNO <model/fourier_neural_operator.rst>
     AveragingNeuralOperator <model/average_neural_operator.rst>
     LowRankNeuralOperator <model/low_rank_neural_operator.rst>
-    GraphNeuralOperator <model/>
+    GraphNeuralOperator <model/graph_neural_operator.rst>
+    GraphNeuralKernel <model/graph_neural_operator_integral_kernel.rst>
 
 Blocks
 -------------
@@ -112,7 +113,10 @@ Blocks
     Fourier Block <model/block/fourier_block.rst>
     Averaging Block <model/block/average_neural_operator_block.rst>
     Low Rank Block <model/block/low_rank_block.rst>
+    Graph Neural Operator Block <model/block/gno_block.rst>
+    Continuous Convolution Interface <model/block/convolution_interface.rst>
     Continuous Convolution Block <model/block/convolution.rst>
+    Orthogonal Block <model/block/orthogonal.rst>
 
 
 Reduction and Embeddings
@@ -144,7 +148,7 @@ Adaptive Activation Functions
 .. toctree::
     :titlesonly:
 
-    Adaptive Function Interface <adaptive_function/AdaptiveFunctionInterface.rst>
+    Adaptive Function Interface <adaptive_function/AdaptiveActivationFunctionInterface.rst>
     Adaptive ReLU <adaptive_function/AdaptiveReLU.rst>
     Adaptive Sigmoid <adaptive_function/AdaptiveSigmoid.rst>
     Adaptive Tanh <adaptive_function/AdaptiveTanh.rst>
@@ -165,10 +169,10 @@ Equations and Differential Operators
 .. toctree::
     :titlesonly:
 
-    EquationInterface <equation.equation_interface.rst>
-    Equation <equation.equation.rst>
-    SystemEquation <equation.system_equation.rst>
-    Equation Factory <equation.equation_factory.rst>
+    EquationInterface <equation/equation_interface.rst>
+    Equation <equation/equation.rst>
+    SystemEquation <equation/system_equation.rst>
+    Equation Factory <equation/equation_factory.rst>
     Differential Operators <operator.rst>
 
 
@@ -200,7 +204,7 @@ Problems Zoo
 
 
 Geometrical Domains
----------------------
+--------------------
 
 .. toctree::
     :titlesonly:
@@ -222,8 +226,8 @@ Domain Operations
     Difference <domain/difference_domain.rst>
     Exclusion <domain/exclusion_domain.rst>
 
-Callback
---------------------
+Callbacks
+-----------
 
 .. toctree::
     :titlesonly:
