@@ -178,14 +178,14 @@ class AbstractProblem(metaclass=ABCMeta):
             chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
         :param domains: The domains from which to sample. Default is ``all``.
         :type domains: str | list[str]
-        :param dict sample_rules: A dictionary defining custom sampling rules 
-            for input variables. If provided, it must contain a dictionary 
-            specifying the sampling rule for each variable, overriding the 
-            ``n`` and ``mode`` arguments. Each key must correspond to the 
-            input variables from 
-            :meth:~pina.problem.AbstractProblem.input_variables, and its value 
-            should be another dictionary with 
-            two keys: ``n`` (number of points to sample) and ``mode`` 
+        :param dict sample_rules: A dictionary defining custom sampling rules
+            for input variables. If provided, it must contain a dictionary
+            specifying the sampling rule for each variable, overriding the
+            ``n`` and ``mode`` arguments. Each key must correspond to the
+            input variables from
+            :meth:~pina.problem.AbstractProblem.input_variables, and its value
+            should be another dictionary with
+            two keys: ``n`` (number of points to sample) and ``mode``
             (sampling method). Defaults to None.
         :raises RuntimeError: If both ``n`` and ``sample_rules`` are specified.
         :raises RuntimeError: If neither ``n`` nor ``sample_rules`` are set.
@@ -214,8 +214,8 @@ class AbstractProblem(metaclass=ABCMeta):
             implemented for :class:`~pina.domain.cartesian.CartesianDomain`.
 
         .. warning::
-            If custom discretisation is applied by setting ``sample_rules`` not 
-            to ``None``, then the discretised domain must be of class 
+            If custom discretisation is applied by setting ``sample_rules`` not
+            to ``None``, then the discretised domain must be of class
             :class:`~pina.domain.cartesian.CartesianDomain`
         """
 

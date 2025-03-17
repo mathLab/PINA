@@ -389,7 +389,7 @@ class LabelTensor(torch.Tensor):
 
     def requires_grad_(self, mode=True):
         """
-        Override the :meth:`~torch.Tensor.requires_grad_` method to handle 
+        Override the :meth:`~torch.Tensor.requires_grad_` method to handle
         the labels in the new tensor.
         For more details, see :meth:`~torch.Tensor.requires_grad_`.
 

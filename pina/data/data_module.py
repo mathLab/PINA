@@ -20,18 +20,18 @@ class DummyDataloader:
     def __init__(self, dataset):
         """
         Prepare a dataloader object that returns the entire dataset in a single
-        batch. Depending on the number of GPUs, the dataset is managed 
+        batch. Depending on the number of GPUs, the dataset is managed
         as follows:
 
-        - **Distributed Environment** (multiple GPUs): Divides dataset across 
-            processes using the rank and world size. Fetches only portion of 
+        - **Distributed Environment** (multiple GPUs): Divides dataset across
+            processes using the rank and world size. Fetches only portion of
             data corresponding to the current process.
-        - **Non-Distributed Environment** (single GPU): Fetches the entire 
+        - **Non-Distributed Environment** (single GPU): Fetches the entire
             dataset.
 
         :param PinaDataset dataset: The dataset object to be processed.
 
-        .. note:: 
+        .. note::
            This dataloader is used when the batch size is ``None``.
         """
 
@@ -78,8 +78,8 @@ class Collator:
         Initialize the object, setting the collate function based on whether
         automatic batching is enabled or not.
 
-        :param dict max_conditions_lengths: ``dict`` containing the maximum 
-            number  of data points to consider in a single batch for 
+        :param dict max_conditions_lengths: ``dict`` containing the maximum
+            number  of data points to consider in a single batch for
             each condition.
         :param bool automatic_batching: Whether to enable automatic batching.
         :param PinaDataset dataset: The dataset where the data is stored.
