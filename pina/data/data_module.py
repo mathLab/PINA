@@ -283,10 +283,20 @@ class PinaDataModule(LightningDataModule):
             Default is ``None``.
         :param bool shuffle: Whether to shuffle the dataset before splitting.
             Default ``True``.
-        :param bool repeat: Whether to repeat the dataset indefinitely.
-            Default ``False``.
-        :param automatic_batching: Whether to enable automatic batching.
-            Default ``False``.
+        :param bool repeat: If ``True``, in case of batch size larger than the
+            number of elements in a specific condition, the elements are
+            repeated until the batch size is reached. If ``False``, the number
+            of elements in the batch is the minimum between the batch size and
+            the number of elements in the condition. Default is ``False``.
+        :param automatic_batching: If ``True``, automatic PyTorch batching
+            is performed, which consists of extracting one element at a time
+            from the dataset and collating them into a batch. This is useful
+            when the dataset is too large to fit into memory. On the other hand,
+            if ``False``, the items are retrieved from the dataset all at once
+            avoind the overhead of collating them into a batch and reducing the
+            __getitem__ calls to the dataset. This is useful when the dataset
+            fits into memory. Avoid using automatic batching when ``batch_size``
+            is large. Default is ``False``.
         :param int num_workers: Number of worker threads for data loading.
             Default ``0`` (serial loading).
         :param bool pin_memory: Whether to use pinned memory for faster data
