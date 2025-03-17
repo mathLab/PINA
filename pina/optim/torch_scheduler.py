@@ -24,7 +24,7 @@ class TorchScheduler(Scheduler):
         :param torch.optim.LRScheduler scheduler_class: A
             :class:`torch.optim.LRScheduler` class.
         :param dict kwargs: Additional parameters passed to ``scheduler_class``,
-            see more 
+            see more
             `here <https://pytorch.org/docs/stable/optim.html#algorithms>_`.
         """
         check_consistency(scheduler_class, LRScheduler, subclass=True)
