@@ -170,7 +170,15 @@ class Trainer(lightning.pytorch.Trainer):
             validation dataset.
         :param int batch_size: The number of samples per batch to load.
         :param bool automatic_batching: Whether to perform automatic batching
-            with PyTorch.
+            with PyTorch. If ``True``, automatic PyTorch batching
+            is performed, which consists of extracting one element at a time
+            from the dataset and collating them into a batch. This is useful
+            when the dataset is too large to fit into memory. On the other hand,
+            if ``False``, the items are retrieved from the dataset all at once
+            avoind the overhead of collating them into a batch and reducing the
+            __getitem__ calls to the dataset. This is useful when the dataset
+            fits into memory. Avoid using automatic batching when ``batch_size``
+            is large. Default is ``False``.
         :param bool pin_memory: Whether to use pinned memory for faster data
             transfer to GPU.
         :param int num_workers: The number of worker threads for data loading.
