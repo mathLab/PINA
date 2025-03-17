@@ -4,7 +4,7 @@ Contributing to PINA
 First off, thanks for taking the time to contribute to **PINA**! 🎉 Your help makes the project better for everyone. This document outlines the process for contributing, reporting issues, suggesting features, and submitting pull requests.
 
 Table of Contents
-=================
+------------------------
 
 1. `How to Contribute`_
 2. `Reporting Bugs`_
@@ -14,7 +14,7 @@ Table of Contents
 6. `Community Standards`_
 
 How to Contribute
-=================
+------------------------
 
 You can contribute in several ways:
 
@@ -26,7 +26,7 @@ You can contribute in several ways:
 We encourage all contributions, big or small!
 
 Reporting Bugs
-==============
+------------------------
 
 If you find a bug, please open an `issue <https://github.com/mathLab/PINA/issues>`_ and include:
 
@@ -38,7 +38,7 @@ If you find a bug, please open an `issue <https://github.com/mathLab/PINA/issues
 - Environment info (OS, Python version, dependencies, etc.)
 
 Suggesting Enhancements
-=======================
+------------------------
 
 We welcome new ideas! If you have an idea to improve PINA:
 
@@ -50,7 +50,7 @@ We welcome new ideas! If you have an idea to improve PINA:
 3. If you are not sure about (something of) the enhancement, we suggest opening a discussion to collaborate on it with the PINA community.
 
 Pull Request Process
-====================
+------------------------
 
 Before submitting a PR:
 
@@ -87,7 +87,7 @@ Pull Request Checklist
 4. Pull request is linked to an open issue (if applicable)
 
 Code Style & Guidelines
-=======================
+------------------------
 
 - Follow PEP8 for Python code.
 - Use descriptive commit messages (e.g. ``Fix parser crash on empty input``).
@@ -95,6 +95,6 @@ Code Style & Guidelines
 - Keep functions small and focused; do one thing and do it well.
 
 Community Standards
-===================
+------------------------
 
 By participating in this project, you agree to abide by our Code of Conduct. We are committed to maintaining a welcoming and inclusive community.
