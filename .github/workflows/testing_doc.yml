@@ -11,11 +11,12 @@ on:
 jobs:
   docs:
     runs-on: ubuntu-latest
-
     steps:
+    - uses: actions/checkout@v4
+
     - name: Checkout Doc
-      uses: actions/checkout@v2
       uses: ammaraskar/sphinx-action@7.4.7
       with:
         pre-build-command: "python3 -m pip install .[doc]"
+        build-command: "make html SPHINXOPTS='-W'"
         docs-folder: "docs/"
