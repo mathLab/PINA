@@ -81,7 +81,7 @@ class Collator:
         :param dict max_conditions_lengths: ``dict`` containing the maximum
             number  of data points to consider in a single batch for
             each condition.
-        :param bool automatic_batching: Whether to enable automatic batching. 
+        :param bool automatic_batching: Whether to enable automatic batching.
             If ``True``, automatic PyTorch batching
             is performed, which consists of extracting one element at a time
             from the dataset and collating them into a batch. This is useful
