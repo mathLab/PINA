@@ -244,7 +244,7 @@ trainer.callbacks[0].saved_metrics[:3]  # only the first three epochs
 #
 # We can for example try the `EarlyStopping` routine, which automatically stops the training when a specific metric converged (here the `train_loss`). In order to let the training keep going forever set `max_epochs=-1`.
 
-# In[9]:
+# In[ ]:
 
 
 model = FeedForward(
@@ -259,6 +259,7 @@ trainer = Trainer(
     accelerator="cpu",
     max_epochs=-1,
     enable_model_summary=False,
+    enable_progress_bar=False,
     val_size=0.2,
     train_size=0.8,
     test_size=0.0,
