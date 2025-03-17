@@ -14,9 +14,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Checkout Doc
-      uses: ammaraskar/sphinx-action@7.4.7
-      with:
-        pre-build-command: "python3 -m pip install .[doc]"
-        build-command: "make html SPHINXOPTS='-W'"
-        docs-folder: "docs/"
+    - name: Install Python dependencies
+      run: python3 -m pip install .[doc]
+
+    - name: Build Documentation
+      run: |
+        make html SPHINXOPTS+='-W'
+      working-directory: docs/
