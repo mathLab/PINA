@@ -18,7 +18,7 @@ class LinearWeightUpdate(Callback):
         """
         Callback initialization.
 
-        :param int target_epoch: The epoch at which the weight of the condition
+        param int target_epoch: The epoch at which the weight of the condition
             should reach the target value.
         :param str condition_name: The name of the condition whose weight
             should be adjusted.
