@@ -4,6 +4,6 @@ Domain
 
 .. automodule:: pina.domain.domain_interface
 
-.. autoclass:: Domain
+.. autoclass:: DomainInterface
     :members:
     :show-inheritance:

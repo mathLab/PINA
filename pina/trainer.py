@@ -13,8 +13,9 @@ class Trainer(lightning.pytorch.Trainer):
     PINA custom Trainer class to extend the standard Lightning functionality.
 
     This class enables specific features or behaviors required by the PINA
-    framework. It modifies the standard :class:`lightning.pytorch.Trainer` class
-    to better support the training process in PINA.
+    framework. It modifies the standard 
+    :class:`lightning.pytorch.Trainer <lightning.pytorch.trainer.trainer.Trainer>` 
+    class to better support the training process in PINA.
     """
 
     def __init__(
@@ -207,7 +208,9 @@ class Trainer(lightning.pytorch.Trainer):
         """
         Manage the training process of the solver.
 
-        :param dict kwargs: Additional keyword arguments.
+        :param dict kwargs: Additional keyword arguments. See `pytorch-lightning
+            Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_ 
+            for details.
         """
         return super().fit(self.solver, datamodule=self.data_module, **kwargs)
 
@@ -215,7 +218,9 @@ class Trainer(lightning.pytorch.Trainer):
         """
         Manage the test process of the solver.
 
-        :param dict kwargs: Additional keyword arguments.
+        :param dict kwargs: Additional keyword arguments. See `pytorch-lightning
+            Trainer API <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_ 
+            for details.
         """
         return super().test(self.solver, datamodule=self.data_module, **kwargs)
 

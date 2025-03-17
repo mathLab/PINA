@@ -36,7 +36,7 @@ class FeedForward(torch.nn.Module):
         :param int inner_size: The number of neurons for each hidden layer.
             Default is ``20``.
         :param int n_layers: The number of hidden layers. Default is ``2``.
-        ::param func: The activation function. If a list is passed, it must have
+        :param func: The activation function. If a list is passed, it must have
             the same length as ``n_layers``. If a single function is passed, it
             is used for all layers, except for the last one.
             Default is :class:`torch.nn.Tanh`.
@@ -144,7 +144,7 @@ class ResidualFeedForward(torch.nn.Module):
         :param int inner_size: The number of neurons for each hidden layer.
             Default is ``20``.
         :param int n_layers: The number of hidden layers. Default is ``2``.
-        ::param func: The activation function. If a list is passed, it must have
+        :param func: The activation function. If a list is passed, it must have
             the same length as ``n_layers``. If a single function is passed, it
             is used for all layers, except for the last one.
             Default is :class:`torch.nn.Tanh`.

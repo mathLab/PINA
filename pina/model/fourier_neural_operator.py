@@ -274,7 +274,7 @@ class FNO(KernelNeuralOperator):
         layers=None,
     ):
         """
-        param torch.nn.Module lifting_net: The lifting neural network mapping
+        :param torch.nn.Module lifting_net: The lifting neural network mapping
             the input to its hidden dimension.
         :param torch.nn.Module projecting_net: The projection neural network
             mapping the hidden representation to the output function.
@@ -318,22 +318,24 @@ class FNO(KernelNeuralOperator):
 
     def forward(self, x):
         """
-                Forward pass for the :class:`FourierNeuralOperator` model.
+        Forward pass for the :class:`FourierNeuralOperator` model.
 
-                The ``lifting_net`` maps the input to the hidden dimension.
-                Then, several layers of Fourier blocks are applied. Finally, the
-                ``projection_net`` maps the hidden representation to the output
-                function.
+        The ``lifting_net`` maps the input to the hidden dimension.
+        Then, several layers of Fourier blocks are applied. Finally, the
+        ``projection_net`` maps the hidden representation to the output
+        function.
 
-        :       param x: The input tensor for performing the computation. Depending
-                    on the ``dimensions`` in the initialization, it expects a tensor
-                    with the following shapes:
-                    * 1D tensors: ``[batch, X, channels]``
-                    * 2D tensors: ``[batch, X, Y, channels]``
-                    * 3D tensors: ``[batch, X, Y, Z, channels]``
-                :type x: torch.Tensor | LabelTensor
-                :return: The output tensor.
-                :rtype: torch.Tensor
+        :param x: The input tensor for performing the computation. Depending 
+            on the ``dimensions`` in the initialization, it expects a tensor
+            with the following shapes:
+            
+            * 1D tensors: ``[batch, X, channels]``
+            * 2D tensors: ``[batch, X, Y, channels]``
+            * 3D tensors: ``[batch, X, Y, Z, channels]``
+    
+        :type x: torch.Tensor | LabelTensor
+        :return: The output tensor.
+        :rtype: torch.Tensor
         """
 
         if isinstance(x, LabelTensor):

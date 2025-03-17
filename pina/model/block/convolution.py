@@ -15,6 +15,7 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
     batch_size, :math:`N_{in}` is the number of input fields, :math:`N`
     the number of points in the mesh, :math:`D` the dimension of the problem.
     In particular:
+
     *   :math:`D` is the number of spatial variables + 1. The last column must
         contain the field value.
     *   :math:`N_{in}` represents the number of function components.

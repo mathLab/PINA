@@ -1,7 +1,7 @@
 Processing callbacks
 =======================
 
-.. currentmodule:: pina.callbacks.processing_callback
+.. currentmodule:: pina.callback.processing_callback
 .. autoclass:: MetricTracker
    :members:
    :show-inheritance:

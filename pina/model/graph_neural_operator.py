@@ -8,9 +8,9 @@ from .kernel_neural_operator import KernelNeuralOperator
 
 class GraphNeuralKernel(torch.nn.Module):
     """
-    Graph Neural Kernel model class.
+    Graph Neural Operator kernel model class.
 
-    This class implements the Graph Neural Kernel network.
+    This class implements the Graph Neural Operator kernel network.
 
     .. seealso::
 
@@ -18,8 +18,7 @@ class GraphNeuralKernel(torch.nn.Module):
         Liu, B., Bhattacharya, K., Stuart, A., Anandkumar, A. (2020).
         *Neural Operator: Graph Kernel Network for Partial Differential
         Equations*.
-        DOI: `arXiv preprint arXiv:2003.03485.
-        <https://arxiv.org/abs/2003.03485>`_
+        DOI: `arXiv preprint arXiv:2003.03485 <https://arxiv.org/abs/2003.03485>`_
     """
 
     def __init__(
@@ -171,7 +170,7 @@ class GraphNeuralOperator(KernelNeuralOperator):
         """
         Initialization of the :class:`GraphNeuralOperator` class.
 
-        param torch.nn.Module lifting_operator: The lifting neural network
+        :param torch.nn.Module lifting_operator: The lifting neural network
             mapping the input to its hidden dimension.
         :param torch.nn.Module projection_operator: The projection neural
             network mapping the hidden representation to the output function.
