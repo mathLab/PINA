@@ -1,14 +1,10 @@
 name: Test Sphinx Documentation Build
 
 on:
-  push:
-    branches:
-      - "master"
-    paths:
-      - 'docs/**'
   pull_request:
     branches:
       - "master"
+      - "0.2"
     paths:
       - 'docs/**'
 
@@ -29,5 +25,4 @@ jobs:
     - name: Build Sphinx documentation
       run: |
         cd docs
-        make html
-
+        make html SPHINXOPTS="-W"
