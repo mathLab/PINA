@@ -325,14 +325,14 @@ class FNO(KernelNeuralOperator):
         ``projection_net`` maps the hidden representation to the output
         function.
 
-        :param x: The input tensor for performing the computation. Depending 
+        :param x: The input tensor for performing the computation. Depending
             on the ``dimensions`` in the initialization, it expects a tensor
             with the following shapes:
-            
+
             * 1D tensors: ``[batch, X, channels]``
             * 2D tensors: ``[batch, X, Y, channels]``
             * 3D tensors: ``[batch, X, Y, Z, channels]``
-    
+
         :type x: torch.Tensor | LabelTensor
         :return: The output tensor.
         :rtype: torch.Tensor
