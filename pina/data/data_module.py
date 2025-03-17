@@ -231,7 +231,7 @@ class PinaSampler:
         :param PinaDataset dataset: The dataset from which to sample.
         :param bool shuffle: Whether to shuffle the dataset.
         :return: The sampler instance.
-        :rtype: torch.utils.data.Sampler
+        :rtype: :class:`torch.utils.data.Sampler`
         """
 
         if (
@@ -278,11 +278,11 @@ class PinaDataModule(LightningDataModule):
             be in the range [0, 1].
         :param float val_size: Fraction of elements in the validation split. It
             must be in the range [0, 1].
-        :param batch_size: The batch size used for training. If ``None``, the
-            entire dataset is returned in a single batch. Default is ``None``.
-        :type batch_size: int
+        :param int batch_size: The batch size used for training. If ``None``, 
+            the entire dataset is returned in a single batch.
+            Default is ``None``.
         :param bool shuffle: Whether to shuffle the dataset before splitting.
-            Default ``Tru``e.
+            Default ``True``.
         :param bool repeat: Whether to repeat the dataset indefinitely.
             Default ``False``.
         :param automatic_batching: Whether to enable automatic batching.
