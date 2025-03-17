@@ -14,21 +14,19 @@
 
 import sys
 import os
-import sphinx_rtd_theme
+import time
 import importlib.metadata
 
 
 # -- Project information -----------------------------------------------------
 _DISTRIBUTION_METADATA = importlib.metadata.metadata("pina-mathlab")
 project = _DISTRIBUTION_METADATA["Name"]
-copyright = _DISTRIBUTION_METADATA["License-File"]
+copyright = f'2021-{time.strftime("%Y")}'
 author = "PINA Contributors"
 version = _DISTRIBUTION_METADATA["Version"]
 
 
-sys.path.insert(
-    0, os.path.abspath("../sphinx_extensions")
-)
+sys.path.insert(0, os.path.abspath("../sphinx_extensions"))
 
 # -- General configuration ------------------------------------------------
 
@@ -54,7 +52,7 @@ extensions = [
 exclude_patterns = ["build", "docstrings", "nextgen", "Thumbs.db", ".DS_Store"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
-# default_role = 'literal'
+default_role = "literal"
 
 # Generate the API documentation when building
 autosummary_generate = True
@@ -70,21 +68,6 @@ intersphinx_mapping = {
         None,
     ),
 }
-
-# nitpicky = True
-# nitpick_ignore = [
-#     ("py:meth", "lightning.pytorch.core.module.LightningModule.log"),
-#     ("py:meth", "lightning.pytorch.core.module.LightningModule.log_dict"),
-#     ("py:exc", "MisconfigurationException"),
-#     ("py:func", "torch.inference_mode"),
-#     ("py:func", "torch.no_grad"),
-#     ("py:class", "torch.utils.data.DistributedSampler"),
-#     ("py:class", "pina.model.layers.convolution.BaseContinuousConv"),
-#     ("py:class", "Module"),
-#     ("py:class", "torch.nn.modules.loss._Loss"),  # TO FIX
-#     ("py:class", "torch.optim.LRScheduler"),  # TO FIX
-# ]
-
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -148,13 +131,6 @@ html_theme = "pydata_sphinx_theme"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-# html_theme_options = {}
-
-# Add any paths that contain custom themes here, relative to this directory.
-# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-
-# The name of an image file (relative to this directory) to place at the top
-# of the sidebar.
 html_logo = "index_files/PINA_logo.png"
 html_theme_options = {
     "icon_links": [
@@ -181,6 +157,10 @@ html_theme_options = {
     "navbar_start": ["navbar-logo"],
     "navbar_end": ["navbar-icon-links"],
     "header_links_before_dropdown": 8,
+}
+
+html_context = {
+    "default_mode": "light",
 }
 
 # If not ''i, a 'Last updated on:' timestamp is inserted at every page bottom,
@@ -256,7 +236,6 @@ texinfo_documents = [
         "PINA Documentation",
         author,
         "pina",
-        "One line description of project.",
         "Miscellaneous",
     ),
 ]
