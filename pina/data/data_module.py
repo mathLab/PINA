@@ -278,7 +278,7 @@ class PinaDataModule(LightningDataModule):
             be in the range [0, 1].
         :param float val_size: Fraction of elements in the validation split. It
             must be in the range [0, 1].
-        :param int batch_size: The batch size used for training. If ``None``, 
+        :param int batch_size: The batch size used for training. If ``None``,
             the entire dataset is returned in a single batch.
             Default is ``None``.
         :param bool shuffle: Whether to shuffle the dataset before splitting.
