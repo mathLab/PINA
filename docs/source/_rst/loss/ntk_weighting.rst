@@ -4,6 +4,6 @@ NeuralTangentKernelWeighting
 
 .. automodule:: pina.loss.ntk_weighting
 
-.. autoclass:: NeuralTangetKernelWeighting
+.. autoclass:: NeuralTangentKernelWeighting
    :members:
    :show-inheritance:

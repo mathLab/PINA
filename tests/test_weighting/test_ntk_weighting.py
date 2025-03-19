@@ -3,7 +3,7 @@ from pina import Trainer
 from pina.solver import PINN
 from pina.model import FeedForward
 from pina.problem.zoo import Poisson2DSquareProblem
-from pina.loss import NeuralTangetKernelWeighting
+from pina.loss import NeuralTangentKernelWeighting
 
 problem = Poisson2DSquareProblem()
 condition_names = problem.conditions.keys()
@@ -21,13 +21,13 @@ condition_names = problem.conditions.keys()
     ],
 )
 def test_constructor(model, alpha):
-    NeuralTangetKernelWeighting(model=model, alpha=alpha)
+    NeuralTangentKernelWeighting(model=model, alpha=alpha)
 
 
 @pytest.mark.parametrize("model", [0.5])
 def test_wrong_constructor1(model):
     with pytest.raises(ValueError):
-        NeuralTangetKernelWeighting(model)
+        NeuralTangentKernelWeighting(model)
 
 
 @pytest.mark.parametrize(
@@ -43,7 +43,7 @@ def test_wrong_constructor1(model):
 )
 def test_wrong_constructor2(model, alpha):
     with pytest.raises(ValueError):
-        NeuralTangetKernelWeighting(model, alpha)
+        NeuralTangentKernelWeighting(model, alpha)
 
 
 @pytest.mark.parametrize(
@@ -58,7 +58,7 @@ def test_wrong_constructor2(model, alpha):
     ],
 )
 def test_train_aggregation(model, alpha):
-    weighting = NeuralTangetKernelWeighting(model=model, alpha=alpha)
+    weighting = NeuralTangentKernelWeighting(model=model, alpha=alpha)
     problem.discretise_domain(50)
     solver = PINN(problem=problem, model=model, weighting=weighting)
     trainer = Trainer(solver=solver, max_epochs=5, accelerator="cpu")
