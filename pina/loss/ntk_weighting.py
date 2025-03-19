@@ -53,7 +53,7 @@ class NeuralTangetKernelWeighting(WeightingInterface):
             * self.weights.get(condition, self.default_value_weights)
             + (1 - self.alpha)
             * losses_norm[condition]
-            / torch.sum(losses_norm.values())
+            / sum(losses_norm.values())
             for condition in losses
         }
         return sum(
