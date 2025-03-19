@@ -248,3 +248,4 @@ Losses and Weightings
     PowerLoss <loss/powerloss.rst>
     WeightingInterface <loss/weighting_interface.rst>
     ScalarWeighting <loss/scalar_weighting.rst>
+    NeuralTangentKernelWeighting <loss/ntk_weighting.rst>
