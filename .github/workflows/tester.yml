@@ -59,6 +59,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install .[test]
+        
       - name: Generate coverage report
         run: |
             python3 -m pytest --cov-report term --cov-report xml:cobertura.xml --cov=pina
