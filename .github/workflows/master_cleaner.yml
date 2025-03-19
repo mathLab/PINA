@@ -1,4 +1,4 @@
-name: Black Formatter
+name: Master Cleaner
 
 on:
   push:
@@ -6,15 +6,14 @@ on:
       - master
       
 jobs:
-  linter:
+  formatter:
     name: runner / black
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: psf/black@stable
         with:
-          options: "-l 80"
           src: "./pina"
 
       - name: Create Pull Request

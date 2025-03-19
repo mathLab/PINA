@@ -3,9 +3,11 @@ name: "Export Tutorials"
 on:
   push:
     branches:
-      - "**"  # Run on push on all branches
+      - "dev"
+      - "master"
     paths:
       - 'tutorials/**/*.ipynb'
+
 jobs:
   export_tutorials:
     permissions: write-all
@@ -37,6 +39,7 @@ jobs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
     - name: Export tutorials to .py and .html
       run: |
         set -x
@@ -61,6 +64,7 @@ jobs:
     - name: Remove unwanted files
       run: |
         rm -rf build/ tutorials/tutorial4/data/
+
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5.0.2
       with:
