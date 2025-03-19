@@ -1,6 +1,7 @@
 """Module for Base Continuous Convolution class."""
 
 import torch
+import warnings
 
 
 class PODBlock(torch.nn.Module):
