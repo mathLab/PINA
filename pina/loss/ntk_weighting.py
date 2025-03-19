@@ -6,17 +6,27 @@ from .weighting_interface import WeightingInterface
 from ..utils import check_consistency
 
 
-class _NoWeighting(WeightingInterface):
-    def aggregate(self, losses):
-        return sum(losses.values())
-
-
-class NeuralTangetKernelWeighting(WeightingInterface):
+class NeuralTangentKernelWeighting(WeightingInterface):
     """
-    TODO
+    A neural tangent kernel scheme for weighting different losses to 
+    boost the convergence.
+
+    .. seealso::
+
+        **Original reference**: Jacot, Gabriel, Hongler, *ANeural Tangent
+        Kernel: Convergence and Generalization in Neural Networks*.
+        arXiv preprint arXiv:1806.07572 (2018).
+        DOI: `arXiv:1806.07572  <https://arxiv.org/abs/1806.07572>`_.    
+    
     """
 
     def __init__(self, model, alpha=0.5):
+        """
+        Initialization of the :class:`NeuralTangentKernelWeighting` class.
+
+        :param float alpha: The alpha parameter.
+        """
+
         super().__init__()
         check_consistency(alpha, float)
         check_consistency(model, Module)
@@ -30,15 +40,11 @@ class NeuralTangetKernelWeighting(WeightingInterface):
     def aggregate(self, losses):
         """
         Weights the losses according to the Neural Tangent Kernel
+        algorithm.
 
         :param dict(torch.Tensor) input: The dictionary of losses.
         :return: The losses aggregation. It should be a scalar Tensor.
         :rtype: torch.Tensor
-
-        Reference:
-        Wang, S., Sankaran, S., Wang, H., & Perdikaris, P. (2023).
-        An expert's guide to training physics-informed neural networks.
-        arXiv preprint arXiv:2308.08468.
         """
         losses_norm = {}
         for condition in losses:
