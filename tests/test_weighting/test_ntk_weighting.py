@@ -26,7 +26,7 @@ def test_constructor(model, alpha):
 
 @pytest.mark.parametrize("model", [0.5])
 def test_wrong_constructor1(model):
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         NeuralTangetKernelWeighting(model)
 
 
