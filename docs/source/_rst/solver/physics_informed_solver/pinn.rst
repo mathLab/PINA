@@ -1,6 +1,6 @@
 PINN
 ======
-.. currentmodule:: pina.solver.physic_informed_solver.pinn
+.. currentmodule:: pina.solver.physics_informed_solver.pinn
 
 .. autoclass:: PINN
    :members:

@@ -1,6 +1,6 @@
 CompetitivePINN
 =================
-.. currentmodule:: pina.solver.physic_informed_solver.competitive_pinn
+.. currentmodule:: pina.solver.physics_informed_solver.competitive_pinn
 
 .. autoclass:: CompetitivePINN
    :members:
