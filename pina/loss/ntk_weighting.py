@@ -8,22 +8,26 @@ from ..utils import check_consistency
 
 class NeuralTangentKernelWeighting(WeightingInterface):
     """
-    A neural tangent kernel scheme for weighting different losses to 
+    A neural tangent kernel scheme for weighting different losses to
     boost the convergence.
 
     .. seealso::
 
-        **Original reference**: Jacot, Gabriel, Hongler, *ANeural Tangent
-        Kernel: Convergence and Generalization in Neural Networks*.
-        arXiv preprint arXiv:1806.07572 (2018).
-        DOI: `arXiv:1806.07572  <https://arxiv.org/abs/1806.07572>`_.    
-    
+        **Original reference**: Wang, Sifan, Xinling Yu, and
+        Paris Perdikaris. *When and why PINNs fail to train:
+        A neural tangent kernel perspective*. Journal of
+        Computational Physics 449 (2022): 110768.
+        DOI: `10.1016/j.jcp.2021.110768 <https://doi.org/10.1016/j.jcp.2021.110768>`_.
+
+
+
     """
 
     def __init__(self, model, alpha=0.5):
         """
         Initialization of the :class:`NeuralTangentKernelWeighting` class.
 
+        :param torch.nn.Module model: The neural network model.
         :param float alpha: The alpha parameter.
         """
 
