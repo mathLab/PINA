@@ -1,9 +1,9 @@
 NeuralTangentKernelWeighting
-===============
-.. currentmodule:: pina.loss
+=============================
+.. currentmodule:: pina.loss.ntk_weighting
 
-.. automodule:: pina.loss
+.. automodule:: pina.loss.ntk_weighting
 
-.. autoclass:: WeightingInterface
+.. autoclass:: NeuralTangetKernelWeighting
    :members:
    :show-inheritance:
