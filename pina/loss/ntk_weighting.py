@@ -28,8 +28,6 @@ class NeuralTangetKernelWeighting(WeightingInterface):
         Weights the losses according to the Neural Tangent Kernel
 
         :param dict(torch.Tensor) input: The dictionary of losses.
-        :param alpha(float) input: The parameter alpha that regulates the moving average
-        between old and new weights.
         :return: The losses aggregation. It should be a scalar Tensor.
         :rtype: torch.Tensor
 
