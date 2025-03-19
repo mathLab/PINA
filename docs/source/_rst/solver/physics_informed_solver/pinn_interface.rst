@@ -1,6 +1,6 @@
 PINNInterface
 =================
-.. currentmodule:: pina.solver.physic_informed_solver.pinn_interface
+.. currentmodule:: pina.solver.physics_informed_solver.pinn_interface
 
 .. autoclass:: PINNInterface
    :members:

@@ -1,6 +1,6 @@
 SelfAdaptivePINN
 ==================
-.. currentmodule:: pina.solver.physic_informed_solver.self_adaptive_pinn
+.. currentmodule:: pina.solver.physics_informed_solver.self_adaptive_pinn
 
 .. autoclass:: SelfAdaptivePINN
    :members:

@@ -1,6 +1,6 @@
 CausalPINN
 ==============
-.. currentmodule:: pina.solver.physic_informed_solver.causal_pinn
+.. currentmodule:: pina.solver.physics_informed_solver.causal_pinn
 
 .. autoclass:: CausalPINN
    :members:

@@ -68,13 +68,13 @@ Solvers
     SolverInterface <solver/solver_interface.rst>
     SingleSolverInterface <solver/single_solver_interface.rst>
     MultiSolverInterface <solver/multi_solver_interface.rst>
-    PINNInterface <solver/physic_informed_solver/pinn_interface.rst>
-    PINN <solver/physic_informed_solver/pinn.rst>
-    GradientPINN <solver/physic_informed_solver/gradient_pinn.rst>
-    CausalPINN <solver/physic_informed_solver/causal_pinn.rst>
-    CompetitivePINN <solver/physic_informed_solver/competitive_pinn.rst>
-    SelfAdaptivePINN <solver/physic_informed_solver/self_adaptive_pinn.rst>
-    RBAPINN <solver/physic_informed_solver/rba_pinn.rst>
+    PINNInterface <solver/physics_informed_solver/pinn_interface.rst>
+    PINN <solver/physics_informed_solver/pinn.rst>
+    GradientPINN <solver/physics_informed_solver/gradient_pinn.rst>
+    CausalPINN <solver/physics_informed_solver/causal_pinn.rst>
+    CompetitivePINN <solver/physics_informed_solver/competitive_pinn.rst>
+    SelfAdaptivePINN <solver/physics_informed_solver/self_adaptive_pinn.rst>
+    RBAPINN <solver/physics_informed_solver/rba_pinn.rst>
     SupervisedSolver <solver/supervised.rst>
     ReducedOrderModelSolver <solver/reduced_order_model.rst>
     GAROM <solver/garom.rst>
