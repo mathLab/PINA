@@ -1,0 +1,73 @@
+name: "Testing Pull Request"
+
+on:
+  pull_request:
+    branches:
+      - "master"
+      - "dev"
+
+jobs:
+  unittests: #################################################################
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
+        
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Python dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install .[test]
+
+    - name: Test with pytest
+      run: |
+        python3 -m pytest
+
+  linter: ####################################################################
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Black formatter (check mode)
+        uses: psf/black@stable
+        with:
+          src: "./pina"
+
+  testdocs: ##################################################################
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Python dependencies
+      run: python3 -m pip install .[doc]
+
+    - name: Build Documentation
+      run: |
+        make html SPHINXOPTS+='-W'
+      working-directory: docs/
+
+  coverage: ##################################################################
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate coverage report
+        run: |
+            python3 -m pytest --cov-report term --cov-report xml:cobertura.xml --cov=pina
+
+      - name: Produce the coverage report
+        uses: insightsengineering/coverage-action@v2
+        with:
+          path: ./cobertura.xml
+          threshold: 80.123
+          fail: true
+          publish: true
+          coverage-summary-title: "Code Coverage Summary"
