@@ -24,10 +24,11 @@ def test_constructor(model, alpha):
     NeuralTangetKernelWeighting(model=model, alpha=alpha)
 
 
-@pytest.mark.parametrize("model", [(0.5)])
+@pytest.mark.parametrize("model", [0.5])
 def test_wrong_constructor1(model):
     with pytest.raises(TypeError):
         NeuralTangetKernelWeighting(model)
+
 
 @pytest.mark.parametrize(
     "model,alpha",
@@ -43,8 +44,6 @@ def test_wrong_constructor1(model):
 def test_wrong_constructor2(model, alpha):
     with pytest.raises(ValueError):
         NeuralTangetKernelWeighting(model, alpha)
-
-
 
 
 @pytest.mark.parametrize(
