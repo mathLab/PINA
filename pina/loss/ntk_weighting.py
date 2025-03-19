@@ -5,9 +5,11 @@ from torch.nn import Module
 from .weighting_interface import WeightingInterface
 from ..utils import check_consistency
 
+
 class _NoWeighting(WeightingInterface):
     def aggregate(self, losses):
         return sum(losses.values())
+
 
 class NeuralTangetKernelWeighting(WeightingInterface):
     """
