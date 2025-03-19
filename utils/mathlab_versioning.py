@@ -4,8 +4,8 @@ import argparse
 
 
 module = 'pina'
-meta_file = os.path.join(module, 'meta.py')
 version_line = r'__version__.*=.*"(.+?)"'
+pyproject_file = 'pyproject.toml'
 
 
 class Version:
@@ -34,11 +34,11 @@ class Version:
 
 
 def get_version():
-    with open(meta_file, 'r') as fp:
+    with open(pyproject_file, 'r') as fp:
         content = fp.read()
 
     try:
-        found = re.search(r'__version__.*=.*"(.+?)"', content).group(1)
+        found = re.search(r'version.*=.*"(.+?)"', content).group(1)
     except AttributeError:
         pass
 
@@ -48,13 +48,13 @@ def get_version():
 
 
 def set_version(version):
-    with open(meta_file, 'r') as fp:
+    with open(pyproject_file, 'r') as fp:
         content = fp.read()
 
-    line_string = '__version__ = "{}"'.format(version)
-    text_after = re.sub('__version__.*=.*"(.+?)"', line_string, content)
+    line_string = 'version = "{}"'.format(version)
+    text_after = re.sub('version.*=.*"(.+?)"', line_string, content)
 
-    with open(meta_file, 'w') as fp:
+    with open(pyproject_file, 'w') as fp:
         fp.write(text_after)
 
 
