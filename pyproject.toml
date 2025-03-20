@@ -35,11 +35,11 @@ test = [
     "scipy"
 ]
 dev = [
-    "black @ git+https://github.com/psf/black"
+    "black"
 ]
 tutorial = [
     "jupyter",
-    "smithers @ git+https://github.com/mathLab/smithers.git",
+    "smithers",
     "torchvision",
     "tensorboard",
     "scipy",
