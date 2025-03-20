@@ -1,7 +1,7 @@
 Cite PINA
 ==============
 
-If PINA has been significant in your research, and you would like to acknowledge the project in your academic publication,
+If **PINA** has been significant in your research, and you would like to acknowledge the project in your academic publication,
 we suggest citing the following paper:
 
 *Coscia, D., Ivagnes, A., Demo, N., & Rozza, G. (2023). Physics-Informed Neural networks for Advanced modeling. Journal of Open Source Software, 8(87), 5352.*

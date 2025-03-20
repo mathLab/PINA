@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="../../" >
+<html lang="en" data-content_root="../../" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.label_tensor &#8212; PINA 0.1.2.post2503 documentation</title>
+    <title>pina.label_tensor &#8212; pina-mathlab 0.2.0 documentation</title>
   
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   <!--
     this give us a css class that will be invisible only if js is disabled
@@ -32,7 +32,6 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="/css/custom.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -40,8 +39,8 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=3ef5eb5f"></script>
-    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -51,12 +50,12 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.2.post2503" />
-    <meta name="docbuild:last-update" content="Mar 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.0" />
+    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
 
   
   
@@ -115,11 +114,9 @@
   
     
     
-      
     
-    
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="PINA 0.1.2.post2503 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="PINA 0.1.2.post2503 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.0 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.0 documentation - Home"/>
   
   
 </a></div>
@@ -135,22 +132,22 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_rst/_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../_rst/_code.html">
+    API
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_rst/_tutorial.html">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
     Tutorial
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_rst/_code.html">
-    API
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
   </a>
 </li>
 
@@ -163,7 +160,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_rst/_contributing.html">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
     Contributing
   </a>
 </li>
@@ -286,22 +283,22 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_rst/_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../_rst/_code.html">
+    API
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_rst/_tutorial.html">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
     Tutorial
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_rst/_code.html">
-    API
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
   </a>
 </li>
 
@@ -314,7 +311,7 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_rst/_contributing.html">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
     Contributing
   </a>
 </li>
@@ -443,9 +440,9 @@
                 <article class="bd-article">
                   
   <h1>Source code for pina.label_tensor</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Module for LabelTensor &quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Module for LabelTensor&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
 
@@ -453,156 +450,434 @@
 <div class="viewcode-block" id="LabelTensor">
 <a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor">[docs]</a>
 <span class="k">class</span> <span class="nc">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Torch tensor with a label for any column.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extension of the :class:`torch.Tensor` class that includes labels for</span>
+<span class="sd">    each dimension.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new instance of the :class:`~pina.label_tensor.LabelTensor`</span>
+<span class="sd">        class.</span>
+
+<span class="sd">        :param torch.Tensor x: :class:`torch.tensor` instance to be casted as a</span>
+<span class="sd">            :class:`~pina.label_tensor.LabelTensor`.</span>
+<span class="sd">        :param labels: Labels to assign to the tensor.</span>
+<span class="sd">        :type labels: str | list[str] | dict</span>
+<span class="sd">        :return: The instance of the :class:`~pina.label_tensor.LabelTensor`</span>
+<span class="sd">            class.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the tensor part of the :class:`~pina.label_tensor.LabelTensor`</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        :return: Tensor part of the :class:`~pina.label_tensor.LabelTensor`.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">Tensor</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Construct a `LabelTensor` by passing a tensor and a list of column</span>
-<span class="sd">        labels. Such labels uniquely identify the columns of the tensor,</span>
-<span class="sd">        allowing for an easier manipulation.</span>
+<span class="sd">        Initialize the :class:`~pina.label_tensor.LabelTensor` instance, by</span>
+<span class="sd">        checking the consistency of the labels and the tensor. Specifically, the</span>
+<span class="sd">        labels must match the following conditions:</span>
 
-<span class="sd">        :param torch.Tensor x: The data tensor.</span>
-<span class="sd">        :param labels: The labels of the columns.</span>
-<span class="sd">        :type labels: str | list(str) | tuple(str)</span>
+<span class="sd">        - At each dimension, the number of labels must match the size of the \</span>
+<span class="sd">            dimension.</span>
+<span class="sd">        - At each dimension, the labels must be unique.</span>
+
+<span class="sd">        The labels can be passed in the following formats:</span>
 
 <span class="sd">        :Example:</span>
 <span class="sd">            &gt;&gt;&gt; from pina import LabelTensor</span>
-<span class="sd">            &gt;&gt;&gt; tensor = LabelTensor(torch.rand((2000, 3)), [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])</span>
-<span class="sd">            &gt;&gt;&gt; tensor</span>
-<span class="sd">            tensor([[6.7116e-02, 4.8892e-01, 8.9452e-01],</span>
-<span class="sd">                [9.2392e-01, 8.2065e-01, 4.1986e-04],</span>
-<span class="sd">                [8.9266e-01, 5.5446e-01, 6.3500e-01],</span>
-<span class="sd">                ...,</span>
-<span class="sd">                [5.8194e-01, 9.4268e-01, 4.1841e-01],</span>
-<span class="sd">                [1.0246e-01, 9.5179e-01, 3.7043e-02],</span>
-<span class="sd">                [9.6150e-01, 8.0656e-01, 8.3824e-01]])</span>
-<span class="sd">            &gt;&gt;&gt; tensor.extract(&#39;a&#39;)</span>
-<span class="sd">            tensor([[0.0671],</span>
-<span class="sd">                    [0.9239],</span>
-<span class="sd">                    [0.8927],</span>
-<span class="sd">                    ...,</span>
-<span class="sd">                    [0.5819],</span>
-<span class="sd">                    [0.1025],</span>
-<span class="sd">                    [0.9615]])</span>
-<span class="sd">            &gt;&gt;&gt; tensor[&#39;a&#39;]</span>
-<span class="sd">            tensor([[0.0671],</span>
-<span class="sd">                    [0.9239],</span>
-<span class="sd">                    [0.8927],</span>
-<span class="sd">                    ...,</span>
-<span class="sd">                    [0.5819],</span>
-<span class="sd">                    [0.1025],</span>
-<span class="sd">                    [0.9615]])</span>
-<span class="sd">            &gt;&gt;&gt; tensor.extract([&#39;a&#39;, &#39;b&#39;])</span>
-<span class="sd">            tensor([[0.0671, 0.4889],</span>
-<span class="sd">                    [0.9239, 0.8207],</span>
-<span class="sd">                    [0.8927, 0.5545],</span>
-<span class="sd">                    ...,</span>
-<span class="sd">                    [0.5819, 0.9427],</span>
-<span class="sd">                    [0.1025, 0.9518],</span>
-<span class="sd">                    [0.9615, 0.8066]])</span>
-<span class="sd">            &gt;&gt;&gt; tensor.extract([&#39;b&#39;, &#39;a&#39;])</span>
-<span class="sd">            tensor([[0.4889, 0.0671],</span>
-<span class="sd">                    [0.8207, 0.9239],</span>
-<span class="sd">                    [0.5545, 0.8927],</span>
-<span class="sd">                    ...,</span>
-<span class="sd">                    [0.9427, 0.5819],</span>
-<span class="sd">                    [0.9518, 0.1025],</span>
-<span class="sd">                    [0.8066, 0.9615]])</span>
+<span class="sd">            &gt;&gt;&gt; tensor = LabelTensor(</span>
+<span class="sd">            &gt;&gt;&gt;     torch.rand((2000, 3)),</span>
+<span class="sd">            ...     {1: {&quot;name&quot;: &quot;space&quot;, &quot;dof&quot;: [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])</span>
+<span class="sd">            &gt;&gt;&gt; tensor = LabelTensor(</span>
+<span class="sd">            &gt;&gt;&gt;     torch.rand((2000, 3)),</span>
+<span class="sd">            ...     [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])</span>
+<span class="sd">        </span>
+<span class="sd">        The keys of the dictionary are the dimension indices, and the values are</span>
+<span class="sd">        dictionaries containing the labels and the name of the dimension. If </span>
+<span class="sd">        the labels are passed as a list, these are assigned to the last </span>
+<span class="sd">        dimension.</span>
+
+<span class="sd">        :param torch.Tensor x: The tensor to be casted as a</span>
+<span class="sd">            :class:`~pina.label_tensor.LabelTensor`.</span>
+<span class="sd">        :param labels: Labels to assign to the tensor.</span>
+<span class="sd">        :type labels: str | list[str] | dict</span>
+<span class="sd">        :raises ValueError: If the labels are not consistent with the tensor.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">!=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;the tensor has not the same number of columns of &quot;</span>
-                <span class="s2">&quot;the passed labels.&quot;</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
-
-    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Implements deepcopy for label tensor. By default it stores the</span>
-<span class="sd">        current labels and use the :meth:`~torch._tensor.Tensor.__deepcopy__`</span>
-<span class="sd">        method for creating a new :class:`pina.label_tensor.LabelTensor`.</span>
-
-<span class="sd">        :param __: Placeholder parameter.</span>
-<span class="sd">        :type __: None</span>
-<span class="sd">        :return: The deep copy of the :class:`pina.label_tensor.LabelTensor`.</span>
-<span class="sd">        :rtype: LabelTensor</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span>
-        <span class="n">copy_tensor</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">copy_tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property decorator for labels</span>
+    <span class="k">def</span> <span class="nf">full_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the full labels of the tensor, even for the dimensions that are</span>
+<span class="sd">        not labeled.</span>
 
-<span class="sd">        :return: labels of self</span>
-<span class="sd">        :rtype: list</span>
+<span class="sd">        :return: The full labels of the tensor</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">to_return_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">shape_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shape_tensor</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">:</span>
+                <span class="n">to_return_dict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">to_return_dict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">to_return_dict</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stored_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the labels stored inside the instance.</span>
+
+<span class="sd">        :return: The labels stored inside the instance.</span>
+<span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the labels of the last dimension of the instance.</span>
+
+<span class="sd">        :return: labels of last dimension</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
     <span class="nd">@labels</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>  <span class="c1"># small check</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The tensor has not the same number of columns of &quot;</span>
-                <span class="s2">&quot;the passed labels.&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set labels stored insider the instance by checking the type of the</span>
+<span class="sd">        input labels and handling it accordingly. The following types are</span>
+<span class="sd">        accepted:</span>
+
+<span class="sd">        - **list**: The list of labels is assigned to the last dimension.</span>
+<span class="sd">        - **dict**: The dictionary of labels is assigned to the tensor.</span>
+<span class="sd">        - **str**: The string is assigned to the last dimension.</span>
+
+<span class="sd">        :param labels: Labels to assign to the class variable _labels.</span>
+<span class="sd">        :type labels: str | list[str] | dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_labels&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_labels_from_dict</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">range</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_labels_from_list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_labels_from_list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;labels must be list, dict or string.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LabelTensor._init_labels_from_dict">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor._init_labels_from_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">_init_labels_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the internal label representation according to the values</span>
+<span class="sd">        passed as input.</span>
+
+<span class="sd">        :param dict labels: The label(s) to update.</span>
+<span class="sd">        :raises ValueError: If the dof list contains duplicates or the number of</span>
+<span class="sd">                            dof does not match the tensor shape.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">tensor_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">def</span> <span class="nf">validate_dof</span><span class="p">(</span><span class="n">dof_list</span><span class="p">,</span> <span class="n">dim_size</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Validate the &#39;dof&#39; list for uniqueness and size.&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dof_list</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dof_list</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dof must be unique&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dof_list</span><span class="p">)</span> <span class="o">!=</span> <span class="n">dim_size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Number of dof (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dof_list</span><span class="p">)</span><span class="si">}</span><span class="s2">) does not match &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;tensor shape (</span><span class="si">{</span><span class="n">dim_size</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">label</span><span class="p">:</span>
+                    <span class="n">label</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim</span>
+                <span class="k">if</span> <span class="s2">&quot;dof&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">label</span><span class="p">:</span>
+                    <span class="n">label</span><span class="p">[</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">tensor_shape</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
+                <span class="k">if</span> <span class="s2">&quot;dof&quot;</span> <span class="ow">in</span> <span class="n">label</span> <span class="ow">and</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">label</span><span class="p">:</span>
+                    <span class="n">dof</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span>
+                    <span class="n">dof_list</span> <span class="o">=</span> <span class="n">dof</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dof</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">range</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="n">dof</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dof_list</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">range</span><span class="p">)):</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;&#39;dof&#39; should be a list or range, not&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dof_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">validate_dof</span><span class="p">(</span><span class="n">dof_list</span><span class="p">,</span> <span class="n">tensor_shape</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Labels dictionary must contain either &quot;</span>
+                        <span class="s2">&quot; both &#39;name&#39; and &#39;dof&#39; keys&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid label format for </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">: Expected &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;list or dictionary, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Assign validated label data to internal labels</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span></div>
+
+
+<div class="viewcode-block" id="LabelTensor._init_labels_from_list">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor._init_labels_from_list">[docs]</a>
+    <span class="k">def</span> <span class="nf">_init_labels_from_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a list of dof, this method update the internal label</span>
+<span class="sd">        representation by assigning the dof to the last dimension.</span>
+
+<span class="sd">        :param labels: The label(s) to update.</span>
+<span class="sd">        :type labels: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Create a dict with labels</span>
+        <span class="n">last_dim_labels</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="n">labels</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_labels_from_dict</span><span class="p">(</span><span class="n">last_dim_labels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LabelTensor.extract">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.extract">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels_to_extract</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract the subset of the original tensor by returning all the positions</span>
+<span class="sd">        corresponding to the passed ``label_to_extract``. If</span>
+<span class="sd">        ``label_to_extract`` is a dictionary, the keys are the dimension names</span>
+<span class="sd">        and the values are the labels to extract. If a single label or a list</span>
+<span class="sd">        of labels is passed, the last dimension is considered.</span>
+
+<span class="sd">        :Example:</span>
+<span class="sd">            &gt;&gt;&gt; from pina import LabelTensor</span>
+<span class="sd">            &gt;&gt;&gt; labels = {1: {&#39;dof&#39;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;], &#39;name&#39;: &#39;space&#39;}}</span>
+<span class="sd">            &gt;&gt;&gt; tensor = LabelTensor(torch.rand((2000, 3)), labels)</span>
+<span class="sd">            &gt;&gt;&gt; tensor.extract(&quot;a&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; tensor.extract([&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; tensor.extract({&quot;space&quot;: [&quot;a&quot;, &quot;b&quot;]})</span>
+
+<span class="sd">        :param labels_to_extract: The label(s) to extract.</span>
+<span class="sd">        :type labels_to_extract: str | list[str] | tuple[str] | dict</span>
+<span class="sd">        :return: The extracted tensor with the updated labels.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+
+<span class="sd">        :raises TypeError: Labels are not ``str``, ``list[str]`` or ``dict``</span>
+<span class="sd">            properly setted.</span>
+<span class="sd">        :raises ValueError: Label to extract is not in the labels ``list``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">get_label_indices</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">,</span> <span class="n">labels_te</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels_te</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+                <span class="n">labels_te</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels_te</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">dim_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels_te</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels_te</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+                <span class="k">else</span> <span class="nb">slice</span><span class="p">(</span>
+                    <span class="n">dim_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">labels_te</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="n">dim_labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">labels_te</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>  <span class="c1"># assign the label</span>
+        <span class="c1"># Ensure labels_to_extract is a list or dict</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels_to_extract</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="n">labels_to_extract</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels_to_extract</span><span class="p">]</span>
 
-<div class="viewcode-block" id="LabelTensor.vstack">
-<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.vstack">[docs]</a>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">)</span>
+
+        <span class="c1"># Get the dimension names and the respective dimension index</span>
+        <span class="n">dim_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">labels</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span> <span class="n">dim</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">}</span>
+        <span class="n">ndim</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">ndim</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+
+        <span class="c1"># Convert list/tuple to a dict for the last dimension if applicable</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels_to_extract</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">last_dim</span> <span class="o">=</span> <span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">dim_name</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">last_dim</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="n">labels_to_extract</span> <span class="o">=</span> <span class="p">{</span><span class="n">dim_name</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">labels_to_extract</span><span class="p">)}</span>
+
+        <span class="c1"># Validate the labels_to_extract type</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels_to_extract</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;labels_to_extract must be a string, list, or dictionary.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Perform the extraction for each specified dimension</span>
+        <span class="k">for</span> <span class="n">dim_name</span><span class="p">,</span> <span class="n">labels_te</span> <span class="ow">in</span> <span class="n">labels_to_extract</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dim_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dim_names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot extract labels for dimension &#39;</span><span class="si">{</span><span class="n">dim_name</span><span class="si">}</span><span class="s2">&#39; as it is&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; not present in the original labels.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">idx_dim</span> <span class="o">=</span> <span class="n">dim_names</span><span class="p">[</span><span class="n">dim_name</span><span class="p">]</span>
+            <span class="n">dim_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">idx_dim</span><span class="p">][</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">get_label_indices</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">,</span> <span class="n">labels_te</span><span class="p">)</span>
+
+            <span class="n">extractor</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span> <span class="o">*</span> <span class="n">ndim</span>
+            <span class="n">extractor</span><span class="p">[</span><span class="n">idx_dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices</span>
+            <span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">extractor</span><span class="p">)]</span>
+
+            <span class="n">labels</span><span class="p">[</span><span class="n">idx_dim</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="n">labels_te</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">dim_name</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The string representation of the</span>
+<span class="sd">        :class:`~pina.label_tensor.LabelTensor`.</span>
+
+<span class="sd">        :return: String representation of the</span>
+<span class="sd">            :class:`~pina.label_tensor.LabelTensor` instance.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<div class="viewcode-block" id="LabelTensor.cat">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.cat">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">vstack</span><span class="p">(</span><span class="n">label_tensors</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cat</span><span class="p">(</span><span class="n">tensors</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stack tensors vertically. For more details, see</span>
-<span class="sd">        :meth:`torch.vstack`.</span>
+<span class="sd">        Concatenate a list of tensors along a specified dimension. For more</span>
+<span class="sd">        details, see :meth:`torch.cat`.</span>
 
-<span class="sd">        :param list(LabelTensor) label_tensors: the tensors to stack. They need</span>
-<span class="sd">            to have equal labels.</span>
-<span class="sd">        :return: the stacked tensor</span>
+<span class="sd">        :param list[LabelTensor] tensors:</span>
+<span class="sd">            :class:`~pina.label_tensor.LabelTensor` instances to concatenate</span>
+<span class="sd">        :param int dim: Dimensions on which you want to perform the operation</span>
+<span class="sd">            (default is 0)</span>
+<span class="sd">        :return: A new :class:`LabelTensor` instance obtained by concatenating</span>
+<span class="sd">            the input instances.</span>
+
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        :raises ValueError: either number dof or dimensions names differ.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tensors</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>  <span class="c1"># Handle empty list</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Return single tensor as-is</span>
+
+            <span class="c1"># Perform concatenation</span>
+        <span class="n">cat_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">tensors</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+        <span class="n">tensors_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">tensor</span><span class="o">.</span><span class="n">stored_labels</span> <span class="k">for</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">]</span>
+
+        <span class="c1"># Check label consistency across tensors, excluding the</span>
+        <span class="c1"># concatenation dimension</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">tensors_labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="n">dim</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="n">tensors_labels</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">tensors_labels</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tensors_labels</span><span class="p">))</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Tensors must have the same labels along all &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;dimensions except </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># Copy and update the &#39;dof&#39; for the concatenation dimension</span>
+        <span class="n">cat_labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tensors_labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="c1"># Update labels if the concatenation dimension has labels</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stored_labels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">cat_labels</span><span class="p">:</span>
+                <span class="n">cat_dofs</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">tensors_labels</span><span class="p">]</span>
+                <span class="n">cat_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cat_dofs</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cat_labels</span> <span class="o">=</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stored_labels</span>
+
+        <span class="c1"># Assign updated labels to the concatenated tensor</span>
+        <span class="n">cat_tensor</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">cat_labels</span>
+        <span class="k">return</span> <span class="n">cat_tensor</span></div>
+
+
+<div class="viewcode-block" id="LabelTensor.stack">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.stack">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">stack</span><span class="p">(</span><span class="n">tensors</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stacks a list of tensors along a new dimension. For more details, see</span>
+<span class="sd">        :meth:`torch.stack`.</span>
+
+<span class="sd">        :param list[LabelTensor] tensors: A list of tensors to stack.</span>
+<span class="sd">            All tensors must have the same shape.</span>
+<span class="sd">        :return: A new :class:`~pina.label_tensor.LabelTensor` instance obtained</span>
+<span class="sd">            by stacking the input tensors.</span>
 <span class="sd">        :rtype: LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_tensors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="n">all_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span> <span class="k">for</span> <span class="n">lt</span> <span class="ow">in</span> <span class="n">label_tensors</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">lt</span><span class="o">.</span><span class="n">labels</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_labels</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">label_tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">labels</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The tensors to stack have different labels&quot;</span><span class="p">)</span>
+        <span class="c1"># Perform stacking in torch</span>
+        <span class="n">new_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span>
 
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">label_tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">labels</span>
-        <span class="n">tensors</span> <span class="o">=</span> <span class="p">[</span><span class="n">lt</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="k">for</span> <span class="n">lt</span> <span class="ow">in</span> <span class="n">label_tensors</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">tensors</span><span class="p">),</span> <span class="n">labels</span><span class="p">)</span></div>
+        <span class="c1"># Increase labels keys by 1</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_labels</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">new_tensor</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="k">return</span> <span class="n">new_tensor</span></div>
 
 
-<div class="viewcode-block" id="LabelTensor.clone">
-<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.clone">[docs]</a>
-    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="LabelTensor.requires_grad_">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.requires_grad_">[docs]</a>
+    <span class="k">def</span> <span class="nf">requires_grad_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Clone the LabelTensor. For more details, see</span>
-<span class="sd">        :meth:`torch.Tensor.clone`.</span>
+<span class="sd">        Override the :meth:`~torch.Tensor.requires_grad_` method to handle</span>
+<span class="sd">        the labels in the new tensor.</span>
+<span class="sd">        For more details, see :meth:`~torch.Tensor.requires_grad_`.</span>
 
-<span class="sd">        :return: A copy of the tensor.</span>
+<span class="sd">        :param bool mode: A boolean value indicating whether the tensor should</span>
+<span class="sd">            track gradients.If `True`, the tensor will track gradients;</span>
+<span class="sd">            if `False`, it will not.</span>
+<span class="sd">        :return: The :class:`~pina.label_tensor.LabelTensor` itself with the</span>
+<span class="sd">            updated ``requires_grad`` state and retained labels.</span>
 <span class="sd">        :rtype: LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># # used before merging</span>
-        <span class="c1"># try:</span>
-        <span class="c1">#     out = LabelTensor(super().clone(*args, **kwargs), self.labels)</span>
-        <span class="c1"># except:</span>
-        <span class="c1">#     out = super().clone(*args, **kwargs)</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span></div>
 
+        <span class="n">lt</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+        <span class="n">lt</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+        <span class="k">return</span> <span class="n">lt</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Give the ``dtype`` of the tensor. For more details, see</span>
+<span class="sd">        :meth:`torch.dtype`.</span>
+
+<span class="sd">        :return: The data type of the tensor.</span>
+<span class="sd">        :rtype: torch.dtype</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dtype</span>
 
 <div class="viewcode-block" id="LabelTensor.to">
 <a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.to">[docs]</a>
@@ -610,189 +885,367 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs Tensor dtype and/or device conversion. For more details, see</span>
 <span class="sd">        :meth:`torch.Tensor.to`.</span>
+
+<span class="sd">        :return: A new :class:`~pina.label_tensor.LabelTensor` instance with the</span>
+<span class="sd">            updated dtype and/or device and retained labels.</span>
+<span class="sd">        :rtype: LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">data</span>
-        <span class="k">return</span> <span class="n">new</span></div>
+
+        <span class="n">lt</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">lt</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+        <span class="k">return</span> <span class="n">lt</span></div>
 
 
-<div class="viewcode-block" id="LabelTensor.select">
-<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.select">[docs]</a>
-    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="LabelTensor.clone">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.clone">[docs]</a>
+    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Performs Tensor selection. For more details, see :meth:`torch.Tensor.select`.</span>
+<span class="sd">        Clone the :class:`~pina.label_tensor.LabelTensor`. For more details, see</span>
+<span class="sd">        :meth:`torch.Tensor.clone`.</span>
+
+<span class="sd">        :return: A new :class:`~pina.label_tensor.LabelTensor` instance with the</span>
+<span class="sd">            same data and labels but allocated in a different memory location.</span>
+<span class="sd">        :rtype: LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">tmp</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
-        <span class="k">return</span> <span class="n">tmp</span></div>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
 
 
-<div class="viewcode-block" id="LabelTensor.cuda">
-<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.cuda">[docs]</a>
-    <span class="k">def</span> <span class="nf">cuda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="LabelTensor.append">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.append">[docs]</a>
+    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Send Tensor to cuda. For more details, see :meth:`torch.Tensor.cuda`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">data</span>
-        <span class="k">return</span> <span class="n">new</span></div>
+<span class="sd">        Appends a given tensor to the current tensor along the last dimension.</span>
+<span class="sd">        This method supports two types of appending operations:</span>
 
+<span class="sd">        1. **Standard append** (&quot;std&quot;): Concatenates the input tensor with the \</span>
+<span class="sd">            current tensor along the last dimension.</span>
+<span class="sd">        2. **Cross append** (&quot;cross&quot;): Creates a cross-product of the current \</span>
+<span class="sd">            tensor and the input tensor.</span>
 
-<div class="viewcode-block" id="LabelTensor.cpu">
-<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.cpu">[docs]</a>
-    <span class="k">def</span> <span class="nf">cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Send Tensor to cpu. For more details, see :meth:`torch.Tensor.cpu`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">new</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">data</span>
-        <span class="k">return</span> <span class="n">new</span></div>
+<span class="sd">        :param tensor: The tensor to append to the current tensor.</span>
+<span class="sd">        :type tensor: LabelTensor</span>
+<span class="sd">        :param mode: The append mode to use. Defaults to ``st``.</span>
+<span class="sd">        :type mode: str, optional</span>
+<span class="sd">        :return: A new :class:`LabelTensor` instance obtained by appending the </span>
+<span class="sd">            input tensor.</span>
+<span class="sd">        :rtype: LabelTensor</span>
 
-
-<div class="viewcode-block" id="LabelTensor.extract">
-<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.extract">[docs]</a>
-    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_to_extract</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extract the subset of the original tensor by returning all the columns</span>
-<span class="sd">        corresponding to the passed ``label_to_extract``.</span>
-
-<span class="sd">        :param label_to_extract: The label(s) to extract.</span>
-<span class="sd">        :type label_to_extract: str | list(str) | tuple(str)</span>
-<span class="sd">        :raises TypeError: Labels are not ``str``.</span>
-<span class="sd">        :raises ValueError: Label to extract is not in the labels ``list``.</span>
+<span class="sd">        :raises ValueError: If the mode is not &quot;std&quot; or &quot;cross&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label_to_extract</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">label_to_extract</span> <span class="o">=</span> <span class="p">[</span><span class="n">label_to_extract</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label_to_extract</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>  <span class="c1"># TODO</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s2">&quot;`label_to_extract` should be a str, or a str iterator&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span>
+            <span class="c1"># Call cat on last dimension</span>
+            <span class="n">new_label_tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_label_tensor</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;cross&quot;</span><span class="p">:</span>
+            <span class="c1"># Crete tensor and call cat on last dimension</span>
+            <span class="n">tensor1</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">tensor2</span> <span class="o">=</span> <span class="n">tensor</span>
+            <span class="n">n1</span> <span class="o">=</span> <span class="n">tensor1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">n2</span> <span class="o">=</span> <span class="n">tensor2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tensor1</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tensor1</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">tensor1</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+            <span class="n">tensor2</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
+                <span class="n">tensor2</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">tensor2</span><span class="o">.</span><span class="n">labels</span>
+            <span class="p">)</span>
+            <span class="n">new_label_tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_label_tensor</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;mode must be either &quot;std&quot; or &quot;cross&quot;&#39;</span><span class="p">)</span></div>
 
-        <span class="n">indeces</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">label_to_extract</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">indeces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">` not in the labels list&quot;</span><span class="p">)</span>
 
-        <span class="n">new_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Tensor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">indeces</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">new_labels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indeces</span><span class="p">]</span>
+<div class="viewcode-block" id="LabelTensor.vstack">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.vstack">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">vstack</span><span class="p">(</span><span class="n">tensors</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stack tensors vertically. For more details, see :meth:`torch.vstack`.</span>
 
-        <span class="n">extracted_tensor</span> <span class="o">=</span> <span class="n">new_data</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
-        <span class="n">extracted_tensor</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">new_labels</span>
+<span class="sd">        :param list of LabelTensor label_tensors: The</span>
+<span class="sd">            :class:`~pina.label_tensor.LabelTensor` instances to stack. They</span>
+<span class="sd">            need to have equal labels.</span>
+<span class="sd">        :return: A new :class:`~pina.label_tensor.LabelTensor` instance obtained</span>
+<span class="sd">            by stacking the input tensors vertically.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">extracted_tensor</span></div>
+        <span class="k">return</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">tensors</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+    <span class="c1"># This method is used to update labels</span>
+<div class="viewcode-block" id="LabelTensor._update_single_label">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor._update_single_label">[docs]</a>
+    <span class="k">def</span> <span class="nf">_update_single_label</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">old_labels</span><span class="p">,</span> <span class="n">to_update_labels</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">to_update_dim</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the labels of the tensor based on the index (or list of indices).</span>
+
+<span class="sd">        :param dict old_labels: Labels from which retrieve data.</span>
+<span class="sd">        :param dict to_update_labels: Labels to update.</span>
+<span class="sd">        :param index: Index of dof to retain.</span>
+<span class="sd">        :type index: int | slice | list[int] | tuple[int] | torch.Tensor</span>
+<span class="sd">        :param int dim: The dimension to update.</span>
+
+<span class="sd">        :raises: ValueError: If the index type is not supported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">old_dof</span> <span class="o">=</span> <span class="n">old_labels</span><span class="p">[</span><span class="n">to_update_dim</span><span class="p">][</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span>
+        <span class="n">label_name</span> <span class="o">=</span> <span class="n">old_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="c1"># Handle slicing</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="n">to_update_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="n">old_dof</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">label_name</span><span class="p">}</span>
+        <span class="c1"># Handle single integer index</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">to_update_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">old_dof</span><span class="p">[</span><span class="n">index</span><span class="p">]],</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">label_name</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="c1"># Handle lists or tensors</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)):</span>
+            <span class="c1"># Handle list of bools</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">index</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+            <span class="n">to_update_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="p">[</span><span class="n">old_dof</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">old_dof</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                    <span class="k">else</span> <span class="n">index</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">label_name</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported index type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected slice, int, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;list, or torch.Tensor.&quot;</span>
+            <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;</span>
+<span class="sd">        Override the __getitem__ method to handle the labels of the</span>
+<span class="sd">        :class:`~pina.label_tensor.LabelTensor` instance. It first performs</span>
+<span class="sd">        __getitem__ operation on the :class:`torch.Tensor` part of the instance,</span>
+<span class="sd">        then updates the labels based on the index.</span>
+
+<span class="sd">        :param index: The index used to access the item</span>
+<span class="sd">        :type index: int | str | tuple of int  | list ot int | torch.Tensor</span>
+<span class="sd">        :return: A new :class:`~pina.label_tensor.LabelTensor` instance obtained</span>
+<span class="sd">            `__getitem__` operation on :class:`torch.Tensor` part of the</span>
+<span class="sd">            instance, with the updated labels.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+
+<span class="sd">        :raises KeyError: If an invalid label index is provided.</span>
+<span class="sd">        :raises IndexError: If an invalid index is accessed in the tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Handle string index</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="c1"># Retrieve selected tensor and labels</span>
+        <span class="n">selected_tensor</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_labels&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">selected_tensor</span>
+
+        <span class="n">original_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+        <span class="n">updated_labels</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">original_labels</span><span class="p">)</span>
+
+        <span class="c1"># Ensure the index is iterable</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="c1"># Update labels based on the index</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_labels</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="n">selected_tensor</span> <span class="o">=</span> <span class="n">selected_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_update_single_label</span><span class="p">(</span>
+                        <span class="n">original_labels</span><span class="p">,</span> <span class="n">updated_labels</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">offset</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Adjust label keys if dimension is reduced (case of integer</span>
+                <span class="c1"># index on a non-labeled dimension)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="n">updated_labels</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="n">key</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">key</span> <span class="o">&gt;</span> <span class="n">dim</span> <span class="k">else</span> <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">updated_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="p">}</span>
+                    <span class="k">continue</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Update the selected tensor&#39;s labels</span>
+        <span class="n">selected_tensor</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">updated_labels</span>
+        <span class="k">return</span> <span class="n">selected_tensor</span>
+
+<div class="viewcode-block" id="LabelTensor.sort_labels">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.sort_labels">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sort the labels along the specified dimension and apply. It applies the</span>
+<span class="sd">        same sorting to the tensor part of the instance.</span>
+
+<span class="sd">        :param int dim: The dimension along which to sort the labels.</span>
+<span class="sd">            If ``None``, the last dimension is used.</span>
+<span class="sd">        :return: A new tensor with sorted labels along the specified dimension.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">arg_sort</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">lst</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span>
+        <span class="n">sorted_index</span> <span class="o">=</span> <span class="n">arg_sort</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="c1"># Define an indexer to sort the tensor along the specified dimension</span>
+        <span class="n">indexer</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span>
+        <span class="c1"># Assigned the sorted index to the specified dimension</span>
+        <span class="n">indexer</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">sorted_index</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">indexer</span><span class="p">)]</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a deep copy of the object. For more details, see</span>
+<span class="sd">        :meth:`copy.deepcopy`.</span>
+
+<span class="sd">        :param memo: LabelTensor object to be copied.</span>
+<span class="sd">        :type memo: LabelTensor</span>
+<span class="sd">        :return: A deep copy of the original LabelTensor object.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_labels</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="LabelTensor.permute">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.permute">[docs]</a>
+    <span class="k">def</span> <span class="nf">permute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dims</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Permutes the dimensions of the tensor and the associated labels</span>
+<span class="sd">        accordingly. For more details, see :meth:`torch.Tensor.permute`.</span>
+
+<span class="sd">        :param dims: The dimensions to permute the tensor to.</span>
+<span class="sd">        :type dims: tuple[int] | list[int]</span>
+<span class="sd">        :return: A new object with permuted dimensions and reordered labels.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Call the base class permute method</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="o">*</span><span class="n">dims</span><span class="p">)</span>
+
+        <span class="c1"># Update lables</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+        <span class="n">keys_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="o">*</span><span class="n">dims</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">keys_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="c1"># Assign labels to the new tensor</span>
+        <span class="n">tensor</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="k">return</span> <span class="n">tensor</span></div>
 
 
 <div class="viewcode-block" id="LabelTensor.detach">
 <a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.detach">[docs]</a>
     <span class="k">def</span> <span class="nf">detach</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">detached</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Detaches the tensor from the computation graph and retains the stored</span>
+<span class="sd">        labels. For more details, see :meth:`torch.Tensor.detach`.</span>
+
+<span class="sd">        :return: A new tensor detached from the computation graph.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">lt</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+        <span class="c1"># Copy the labels to the new tensor only if present</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_labels&quot;</span><span class="p">):</span>
-            <span class="n">detached</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
-        <span class="k">return</span> <span class="n">detached</span></div>
-
-
-<div class="viewcode-block" id="LabelTensor.requires_grad_">
-<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.requires_grad_">[docs]</a>
-    <span class="k">def</span> <span class="nf">requires_grad_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="n">lt</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
-        <span class="n">lt</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span>
+            <span class="n">lt</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_labels</span>
         <span class="k">return</span> <span class="n">lt</span></div>
 
 
-<div class="viewcode-block" id="LabelTensor.append">
-<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.append">[docs]</a>
-    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lt</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="LabelTensor.summation">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.summation">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">summation</span><span class="p">(</span><span class="n">tensors</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a copy of the merged tensors.</span>
+<span class="sd">        Computes the summation of a list of</span>
+<span class="sd">        :class:`~pina.label_tensor.LabelTensor` instances.</span>
 
-<span class="sd">        :param LabelTensor lt: The tensor to merge.</span>
-<span class="sd">        :param str mode: {&#39;std&#39;, &#39;first&#39;, &#39;cross&#39;}</span>
-<span class="sd">        :return: The merged tensors.</span>
+
+<span class="sd">        :param list[LabelTensor] tensors: A list of tensors to sum. All</span>
+<span class="sd">            tensors must have the same shape and labels.</span>
+<span class="sd">        :return: A new `LabelTensor` containing the element-wise sum of the</span>
+<span class="sd">                 input tensors.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+
+<span class="sd">        :raises ValueError: If the input `tensors` list is empty.</span>
+<span class="sd">        :raises RuntimeError: If the tensors have different shapes and/or</span>
+<span class="sd">                              mismatched labels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tensors</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The tensors list must not be empty.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Initialize result tensor and labels</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">last_dim_labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Accumulate tensors</span>
+        <span class="k">for</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">tensor</span>
+            <span class="n">last_dim_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="c1"># Construct last dimension labels</span>
+        <span class="n">last_dim_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="k">for</span> <span class="n">items</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">last_dim_labels</span><span class="p">)]</span>
+
+        <span class="c1"># Update the labels for the resulting tensor</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stored_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">labels</span><span class="p">[</span><span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="n">last_dim_labels</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LabelTensor.reshape">
+<a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor.reshape">[docs]</a>
+    <span class="k">def</span> <span class="nf">reshape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Override the reshape method to update the labels of the tensor.</span>
+<span class="sd">        For more details, see :meth:`torch.Tensor.reshape`.</span>
+
+<span class="sd">        :param tuple of int shape: The new shape of the tensor.</span>
+<span class="sd">        :return: A new :class:`~pina.label_tensor.LabelTensor` instance with the</span>
+<span class="sd">            updated shape and labels.</span>
 <span class="sd">        :rtype: LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">lt</span><span class="o">.</span><span class="n">labels</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The tensors to merge have common labels&quot;</span><span class="p">)</span>
 
-        <span class="n">new_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">+</span> <span class="n">lt</span><span class="o">.</span><span class="n">labels</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span>
-            <span class="n">new_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">lt</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;first&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;cross&quot;</span><span class="p">:</span>
-            <span class="n">tensor1</span> <span class="o">=</span> <span class="bp">self</span>
-            <span class="n">tensor2</span> <span class="o">=</span> <span class="n">lt</span>
-            <span class="n">n1</span> <span class="o">=</span> <span class="n">tensor1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">n2</span> <span class="o">=</span> <span class="n">tensor2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-            <span class="n">tensor1</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tensor1</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">tensor1</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
-            <span class="n">tensor2</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
-                <span class="n">tensor2</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">tensor2</span><span class="o">.</span><span class="n">labels</span>
-            <span class="p">)</span>
-            <span class="n">new_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="n">new_tensor</span> <span class="o">=</span> <span class="n">new_tensor</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
-        <span class="n">new_tensor</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">new_labels</span>
-        <span class="k">return</span> <span class="n">new_tensor</span></div>
-
-
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a copy of the selected tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
-            <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">index</span><span class="p">)</span>
-        <span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-
-        <span class="n">selected_lt</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Tensor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">len_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="n">len_index</span> <span class="o">=</span> <span class="mi">1</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">len_index</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">selected_lt</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">selected_lt</span> <span class="o">=</span> <span class="n">selected_lt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">):</span>
-                <span class="n">selected_lt</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span>
-        <span class="k">elif</span> <span class="n">len_index</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">selected_lt</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">selected_lt</span> <span class="o">=</span> <span class="n">selected_lt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="n">selected_lt</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">selected_lt</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">selected_lt</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span>
-
-        <span class="k">return</span> <span class="n">selected_lt</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">Tensor</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">):</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;labels(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;no labels</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">s</span> <span class="o">+=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">s</span></div>
+        <span class="c1"># As for now the reshape method is used only in the context of the</span>
+        <span class="c1"># dataset, the labels are not</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_labels&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:]):</span>
+            <span class="k">return</span> <span class="n">tensor</span>
+        <span class="n">tensor</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span>
+        <span class="k">return</span> <span class="n">tensor</span></div>
+</div>
 
 </pre></div>
 
@@ -820,45 +1273,18 @@
   <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
 <script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
-  <footer class="bd-footer">
-<div class="bd-footer__inner bd-page-width">
-  
-    <div class="footer-items__start">
-      
-        <div class="footer-item">
-
-  <p class="copyright">
-    
-      © Copyright 2021-2024, PINA Contributors.
-      <br/>
-    
-  </p>
-</div>
-      
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
-    <br/>
-  </p>
-</div>
-      
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2025, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
     </div>
-  
-  
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
-</p></div>
-      
     </div>
-  
-</div>
-
-  </footer>
+</footer>
   </body>
 </html>

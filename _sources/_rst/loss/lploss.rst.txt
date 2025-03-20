@@ -1,9 +1,6 @@
 LpLoss
 ===============
-.. currentmodule:: pina.loss
-
-.. automodule:: pina.loss
-   :no-index:
+.. currentmodule:: pina.loss.lp_loss
 
 .. autoclass:: LpLoss
    :members:

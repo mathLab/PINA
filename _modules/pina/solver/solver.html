@@ -1,0 +1,1077 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pina.solver.solver &#8212; pina-mathlab 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/solver/solver';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.0 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina.solver.solver</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pina.solver.solver</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Solver module.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">lightning</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">torch._dynamo.eval_frame</span> <span class="kn">import</span> <span class="n">OptimizedModule</span>
+<span class="kn">from</span> <span class="nn">..problem</span> <span class="kn">import</span> <span class="n">AbstractProblem</span>
+<span class="kn">from</span> <span class="nn">..optim</span> <span class="kn">import</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">TorchOptimizer</span><span class="p">,</span> <span class="n">TorchScheduler</span>
+<span class="kn">from</span> <span class="nn">..loss</span> <span class="kn">import</span> <span class="n">WeightingInterface</span>
+<span class="kn">from</span> <span class="nn">..loss.scalar_weighting</span> <span class="kn">import</span> <span class="n">_NoWeighting</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span><span class="p">,</span> <span class="n">labelize_forward</span>
+
+
+<div class="viewcode-block" id="SolverInterface">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface">[docs]</a>
+<span class="k">class</span> <span class="nc">SolverInterface</span><span class="p">(</span><span class="n">lightning</span><span class="o">.</span><span class="n">pytorch</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for PINA solvers. All specific solvers should inherit</span>
+<span class="sd">    from this interface. This class is a wrapper of</span>
+<span class="sd">    :class:`~lightning.pytorch.LightningModule`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">,</span> <span class="n">weighting</span><span class="p">,</span> <span class="n">use_lt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`SolverInterface` class.</span>
+
+<span class="sd">        :param AbstractProblem problem: The problem to be solved.</span>
+<span class="sd">        :param WeightingInterface weighting: The weighting schema to be used.</span>
+<span class="sd">            If `None`, no weighting schema is used. Default is ``None``.</span>
+<span class="sd">        :param bool use_lt: If ``True``, the solver uses LabelTensors as input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># check consistency of the problem</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">AbstractProblem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_solver_consistency</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span> <span class="o">=</span> <span class="n">problem</span>
+
+        <span class="c1"># check consistency of the weighting and hook the condition names</span>
+        <span class="k">if</span> <span class="n">weighting</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weighting</span> <span class="o">=</span> <span class="n">_NoWeighting</span><span class="p">()</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">weighting</span><span class="p">,</span> <span class="n">WeightingInterface</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_weighting</span> <span class="o">=</span> <span class="n">weighting</span>
+        <span class="n">weighting</span><span class="o">.</span><span class="n">condition_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># check consistency use_lt</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">use_lt</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_lt</span> <span class="o">=</span> <span class="n">use_lt</span>
+
+        <span class="c1"># if use_lt is true add extract operation in input</span>
+        <span class="k">if</span> <span class="n">use_lt</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="n">labelize_forward</span><span class="p">(</span>
+                <span class="n">forward</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span>
+                <span class="n">input_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span><span class="p">,</span>
+                <span class="n">output_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">output_variables</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># PINA private attributes (some are overridden by derived classes)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span> <span class="o">=</span> <span class="n">problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_schedulers</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_check_solver_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check the consistency of the solver with the problem formulation.</span>
+
+<span class="sd">        :param AbstractProblem problem: The problem to be solved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">check_consistency</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accepted_conditions_types</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_optimization_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aggregate the loss for each condition in the batch.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :return: The losses computed for all conditions in the batch, casted</span>
+<span class="sd">            to a subclass of :class:`torch.Tensor`. It should return a dict</span>
+<span class="sd">            containing the condition name and the associated scalar loss.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimization_cycle</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">losses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_loss&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighting</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span>
+
+<div class="viewcode-block" id="SolverInterface.training_step">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.training_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver training step.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :return: The loss of the training step.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimization_cycle</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span><span class="s2">&quot;train_loss&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.validation_step">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.validation_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver validation step.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimization_cycle</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span><span class="s2">&quot;val_loss&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.test_step">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.test_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver test step.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimization_cycle</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span><span class="s2">&quot;test_loss&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.store_log">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.store_log">[docs]</a>
+    <span class="k">def</span> <span class="nf">store_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the log of the solver.</span>
+
+<span class="sd">        :param str name: The name of the log.</span>
+<span class="sd">        :param torch.Tensor value: The value of the log.</span>
+<span class="sd">        :param int batch_size: The size of the batch.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">logging_kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.forward">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.forward">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abstract method for the forward pass implementation.</span>
+
+<span class="sd">        :param args: The input tensor.</span>
+<span class="sd">        :type args: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param dict kwargs: Additional keyword arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.optimization_cycle">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.optimization_cycle">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">optimization_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The optimization cycle for the solvers.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :return: The losses computed for all conditions in the batch, casted</span>
+<span class="sd">            to a subclass of :class:`torch.Tensor`. It should return a dict</span>
+<span class="sd">            containing the condition name and the associated scalar loss.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The problem instance.</span>
+
+<span class="sd">        :return: The problem instance.</span>
+<span class="sd">        :rtype: :class:`~pina.problem.abstract_problem.AbstractProblem`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">use_lt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Using LabelTensors as input during training.</span>
+
+<span class="sd">        :return: The use_lt attribute.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_lt</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">weighting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The weighting schema.</span>
+
+<span class="sd">        :return: The weighting schema.</span>
+<span class="sd">        :rtype: :class:`~pina.loss.weighting_interface.WeightingInterface`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_weighting</span>
+
+<div class="viewcode-block" id="SolverInterface.get_batch_size">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.get_batch_size">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the batch size.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :return: The size of the batch.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+            <span class="n">batch_size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">batch_size</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.default_torch_optimizer">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.default_torch_optimizer">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">default_torch_optimizer</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the default optimizer to :class:`torch.optim.Adam`.</span>
+
+<span class="sd">        :return: The default optimizer.</span>
+<span class="sd">        :rtype: Optimizer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TorchOptimizer</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.default_torch_scheduler">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.default_torch_scheduler">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">default_torch_scheduler</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the default scheduler to</span>
+<span class="sd">        :class:`torch.optim.lr_scheduler.ConstantLR`.</span>
+
+<span class="sd">        :return: The default scheduler.</span>
+<span class="sd">        :rtype: Scheduler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">TorchScheduler</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ConstantLR</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.on_train_start">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.on_train_start">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is called at the start of the training process to compile</span>
+<span class="sd">        the model if the :class:`~pina.trainer.Trainer` ``compile`` is ``True``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_start</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">compile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compile_model</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SolverInterface.on_test_start">
+<a class="viewcode-back" href="../../../_rst/solver/solver_interface.html#pina.solver.solver.SolverInterface.on_test_start">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_test_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is called at the start of the test process to compile</span>
+<span class="sd">        the model if the :class:`~pina.trainer.Trainer` ``compile`` is ``True``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_start</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">compile</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_already_compiled</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compile_model</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_check_already_compiled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model is already compiled.</span>
+
+<span class="sd">        :return: ``True`` if the model is already compiled, ``False`` otherwise.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span>
+        <span class="p">):</span>
+            <span class="n">models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">OptimizedModule</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_perform_compilation</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform the compilation of the model.</span>
+
+<span class="sd">        :param torch.nn.Module model: The model to compile.</span>
+<span class="sd">        :raises Exception: If the compilation fails.</span>
+<span class="sd">        :return: The compiled model.</span>
+<span class="sd">        :rtype: torch.nn.Module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">model_device</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">device</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">model_device</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;mps:0&quot;</span><span class="p">):</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;eager&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;inductor&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compilation failed, running in normal mode.:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="SingleSolverInterface">
+<a class="viewcode-back" href="../../../_rst/solver/single_solver_interface.html#pina.solver.solver.SingleSolverInterface">[docs]</a>
+<span class="k">class</span> <span class="nc">SingleSolverInterface</span><span class="p">(</span><span class="n">SolverInterface</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for PINA solvers using a single :class:`torch.nn.Module`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">weighting</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_lt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`SingleSolverInterface` class.</span>
+
+<span class="sd">        :param AbstractProblem problem: The problem to be solved.</span>
+<span class="sd">        :param torch.nn.Module model: The neural network model to be used.</span>
+<span class="sd">        :param Optimizer optimizer: The optimizer to be used.</span>
+<span class="sd">            If `None`, the :class:`torch.optim.Adam` optimizer is</span>
+<span class="sd">            used. Default is ``None``.</span>
+<span class="sd">        :param Scheduler scheduler: The scheduler to be used.</span>
+<span class="sd">            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
+<span class="sd">            scheduler is used. Default is ``None``.</span>
+<span class="sd">        :param WeightingInterface weighting: The weighting schema to be used.</span>
+<span class="sd">            If `None`, no weighting schema is used. Default is ``None``.</span>
+<span class="sd">        :param bool use_lt: If ``True``, the solver uses LabelTensors as input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">optimizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_torch_optimizer</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_torch_scheduler</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">use_lt</span><span class="o">=</span><span class="n">use_lt</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="n">weighting</span><span class="p">)</span>
+
+        <span class="c1"># check consistency of models argument and encapsulate in list</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+        <span class="c1"># check scheduler consistency and encapsulate in list</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">)</span>
+        <span class="c1"># check optimizer consistency and encapsulate in list</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">)</span>
+
+        <span class="c1"># initialize the model (needed by Lightining to go to different devices)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">model</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span> <span class="o">=</span> <span class="p">[</span><span class="n">optimizer</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_schedulers</span> <span class="o">=</span> <span class="p">[</span><span class="n">scheduler</span><span class="p">]</span>
+
+<div class="viewcode-block" id="SingleSolverInterface.forward">
+<a class="viewcode-back" href="../../../_rst/solver/single_solver_interface.html#pina.solver.solver.SingleSolverInterface.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass implementation.</span>
+
+<span class="sd">        :param x: Input tensor.</span>
+<span class="sd">        :type x: torch.Tensor | LabelTensor</span>
+<span class="sd">        :return: Solver solution.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="SingleSolverInterface.configure_optimizers">
+<a class="viewcode-back" href="../../../_rst/solver/single_solver_interface.html#pina.solver.solver.SingleSolverInterface.configure_optimizers">[docs]</a>
+    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optimizer configuration for the solver.</span>
+
+<span class="sd">        :return: The optimizer and the scheduler</span>
+<span class="sd">        :rtype: tuple[list[Optimizer], list[Scheduler]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">instance</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">instance</span><span class="p">])</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_compile_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compile_module_dict</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compile_single_model</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_compile_module_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile the model if it is a :class:`torch.nn.ModuleDict`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_compilation</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compile_single_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile the model if it is a single :class:`torch.nn.Module`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_compilation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The model used for training.</span>
+
+<span class="sd">        :return: The model used for training.</span>
+<span class="sd">        :rtype: torch.nn.Module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The scheduler used for training.</span>
+
+<span class="sd">        :return: The scheduler used for training.</span>
+<span class="sd">        :rtype: Scheduler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_schedulers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The optimizer used for training.</span>
+
+<span class="sd">        :return: The optimizer used for training.</span>
+<span class="sd">        :rtype: Optimizer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="MultiSolverInterface">
+<a class="viewcode-back" href="../../../_rst/solver/multi_solver_interface.html#pina.solver.solver.MultiSolverInterface">[docs]</a>
+<span class="k">class</span> <span class="nc">MultiSolverInterface</span><span class="p">(</span><span class="n">SolverInterface</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for PINA solvers using multiple :class:`torch.nn.Module`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">,</span>
+        <span class="n">models</span><span class="p">,</span>
+        <span class="n">optimizers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">schedulers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">weighting</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_lt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`MultiSolverInterface` class.</span>
+
+<span class="sd">        :param AbstractProblem problem: The problem to be solved.</span>
+<span class="sd">        :param models: The neural network models to be used.</span>
+<span class="sd">        :type model: list[torch.nn.Module] | tuple[torch.nn.Module]</span>
+<span class="sd">        :param list[Optimizer] optimizers: The optimizers to be used.</span>
+<span class="sd">            If `None`, the :class:`torch.optim.Adam` optimizer is used for all</span>
+<span class="sd">            models. Default is ``None``.</span>
+<span class="sd">        :param list[Scheduler] schedulers: The schedulers to be used.</span>
+<span class="sd">            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
+<span class="sd">            scheduler is used for all the models. Default is ``None``.</span>
+<span class="sd">        :param WeightingInterface weighting: The weighting schema to be used.</span>
+<span class="sd">            If `None`, no weighting schema is used. Default is ``None``.</span>
+<span class="sd">        :param bool use_lt: If ``True``, the solver uses LabelTensors as input.</span>
+<span class="sd">        :raises ValueError: If the models are not a list or tuple with length</span>
+<span class="sd">            greater than one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;models should be list[torch.nn.Module] or &quot;</span>
+                <span class="s2">&quot;tuple[torch.nn.Module] with len greater than &quot;</span>
+                <span class="s2">&quot;one.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">opt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">optimizers</span><span class="p">):</span>
+            <span class="n">optimizers</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">default_torch_optimizer</span><span class="p">()</span> <span class="k">if</span> <span class="n">opt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">opt</span>
+                <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">optimizers</span>
+            <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">sched</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">sched</span> <span class="ow">in</span> <span class="n">schedulers</span><span class="p">):</span>
+            <span class="n">schedulers</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">default_torch_scheduler</span><span class="p">()</span> <span class="k">if</span> <span class="n">sched</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sched</span>
+                <span class="k">for</span> <span class="n">sched</span> <span class="ow">in</span> <span class="n">schedulers</span>
+            <span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">use_lt</span><span class="o">=</span><span class="n">use_lt</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="n">weighting</span><span class="p">)</span>
+
+        <span class="c1"># check consistency of models argument and encapsulate in list</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+
+        <span class="c1"># check scheduler consistency and encapsulate in list</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">schedulers</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">)</span>
+
+        <span class="c1"># check optimizer consistency and encapsulate in list</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">optimizers</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">)</span>
+
+        <span class="c1"># check length consistency optimizers</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimizers</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;You must define one optimizer for each model.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span><span class="si">}</span><span class="s2"> models, and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">optimizers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot; optimizers.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># initialize the model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span> <span class="o">=</span> <span class="n">optimizers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_schedulers</span> <span class="o">=</span> <span class="n">schedulers</span>
+
+<div class="viewcode-block" id="MultiSolverInterface.configure_optimizers">
+<a class="viewcode-back" href="../../../_rst/solver/multi_solver_interface.html#pina.solver.solver.MultiSolverInterface.configure_optimizers">[docs]</a>
+    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optimizer configuration for the solver.</span>
+
+<span class="sd">        :return: The optimizer and the scheduler</span>
+<span class="sd">        :rtype: tuple[list[Optimizer], list[Scheduler]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span>
+        <span class="p">):</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+            <span class="n">scheduler</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">optimizer</span><span class="o">.</span><span class="n">instance</span> <span class="k">for</span> <span class="n">optimizer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">],</span>
+            <span class="p">[</span><span class="n">scheduler</span><span class="o">.</span><span class="n">instance</span> <span class="k">for</span> <span class="n">scheduler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_compile_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compile the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_compilation</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The models used for training.</span>
+
+<span class="sd">        :return: The models used for training.</span>
+<span class="sd">        :rtype: torch.nn.ModuleList</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The optimizers used for training.</span>
+
+<span class="sd">        :return: The optimizers used for training.</span>
+<span class="sd">        :rtype: list[Optimizer]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schedulers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The schedulers used for training.</span>
+
+<span class="sd">        :return: The schedulers used for training.</span>
+<span class="sd">        :rtype: list[Scheduler]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_schedulers</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2025, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

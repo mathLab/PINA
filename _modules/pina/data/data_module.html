@@ -1,0 +1,1171 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pina.data.data_module &#8212; pina-mathlab 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/data/data_module';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.0 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina.data.data_module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pina.data.data_module</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the PinaDataModule class, which extends the</span>
+<span class="sd">LightningDataModule class to allow proper creation and management of</span>
+<span class="sd">different types of Datasets defined in PINA.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">lightning.pytorch</span> <span class="kn">import</span> <span class="n">LightningDataModule</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">SequentialSampler</span><span class="p">,</span> <span class="n">RandomSampler</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data.distributed</span> <span class="kn">import</span> <span class="n">DistributedSampler</span>
+<span class="kn">from</span> <span class="nn">..label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="kn">from</span> <span class="nn">.dataset</span> <span class="kn">import</span> <span class="n">PinaDatasetFactory</span><span class="p">,</span> <span class="n">PinaTensorDataset</span>
+<span class="kn">from</span> <span class="nn">..collector</span> <span class="kn">import</span> <span class="n">Collector</span>
+
+
+<span class="k">class</span> <span class="nc">DummyDataloader</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare a dataloader object that returns the entire dataset in a single</span>
+<span class="sd">        batch. Depending on the number of GPUs, the dataset is managed</span>
+<span class="sd">        as follows:</span>
+
+<span class="sd">        - **Distributed Environment** (multiple GPUs): Divides dataset across</span>
+<span class="sd">            processes using the rank and world size. Fetches only portion of</span>
+<span class="sd">            data corresponding to the current process.</span>
+<span class="sd">        - **Non-Distributed Environment** (single GPU): Fetches the entire</span>
+<span class="sd">            dataset.</span>
+
+<span class="sd">        :param PinaDataset dataset: The dataset object to be processed.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">           This dataloader is used when the batch size is ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">rank</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
+            <span class="n">world_size</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">get_world_size</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">world_size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Dimension of the dataset smaller than world size.&quot;</span>
+                    <span class="s2">&quot; Increase the size of the partition or use a single GPU&quot;</span>
+                <span class="p">)</span>
+            <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">rank</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+                <span class="n">idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="n">world_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">fetch_from_idx_list</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span>
+
+
+<div class="viewcode-block" id="Collator">
+<a class="viewcode-back" href="../../../_rst/data/data_module.html#pina.data.data_module.Collator">[docs]</a>
+<span class="k">class</span> <span class="nc">Collator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This callable class is used to collate the data points fetched from the</span>
+<span class="sd">    dataset. The collation is performed based on the type of dataset used and</span>
+<span class="sd">    on the batching strategy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">max_conditions_lengths</span><span class="p">,</span> <span class="n">automatic_batching</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the object, setting the collate function based on whether</span>
+<span class="sd">        automatic batching is enabled or not.</span>
+
+<span class="sd">        :param dict max_conditions_lengths: ``dict`` containing the maximum</span>
+<span class="sd">            number  of data points to consider in a single batch for</span>
+<span class="sd">            each condition.</span>
+<span class="sd">        :param bool automatic_batching: Whether automatic PyTorch batching is</span>
+<span class="sd">            enabled or not. For more information, see the</span>
+<span class="sd">            :class:`~pina.data.data_module.PinaDataModule` class.</span>
+<span class="sd">        :param PinaDataset dataset: The dataset where the data is stored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_conditions_lengths</span> <span class="o">=</span> <span class="n">max_conditions_lengths</span>
+        <span class="c1"># Set the collate function based on the batching strategy</span>
+        <span class="c1"># collate_pina_dataloader is used when automatic batching is disabled</span>
+        <span class="c1"># collate_torch_dataloader is used when automatic batching is enabled</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callable_function</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_collate_torch_dataloader</span>
+            <span class="k">if</span> <span class="n">automatic_batching</span>
+            <span class="k">else</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collate_pina_dataloader</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+
+        <span class="c1"># Set the function which performs the actual collation</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">PinaTensorDataset</span><span class="p">):</span>
+            <span class="c1"># If the dataset is a PinaTensorDataset, use this collate function</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_collate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collate_tensor_dataset</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If the dataset is a PinaDataset, use this collate function</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_collate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collate_graph_dataset</span>
+
+    <span class="k">def</span> <span class="nf">_collate_pina_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function used to create a batch when automatic batching is disabled.</span>
+
+<span class="sd">        :param list[int] batch: List of integers representing the indices of</span>
+<span class="sd">            the data points to be fetched.</span>
+<span class="sd">        :return: Dictionary containing the data points fetched from the dataset.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Call the fetch_from_idx_list method of the dataset</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">fetch_from_idx_list</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_collate_torch_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function used to collate the batch</span>
+
+<span class="sd">        :param list[dict] batch: List of retrieved data.</span>
+<span class="sd">        :return: Dictionary containing the data points fetched from the dataset,</span>
+<span class="sd">            collated.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">batch_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">batch</span>
+        <span class="n">conditions_names</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="c1"># Condition names</span>
+        <span class="k">for</span> <span class="n">condition_name</span> <span class="ow">in</span> <span class="n">conditions_names</span><span class="p">:</span>
+            <span class="n">single_cond_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">condition_args</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">condition_name</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">condition_args</span><span class="p">:</span>
+                <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">batch</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">condition_name</span><span class="p">][</span><span class="n">arg</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                        <span class="nb">min</span><span class="p">(</span>
+                            <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">max_conditions_lengths</span><span class="p">[</span><span class="n">condition_name</span><span class="p">],</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">single_cond_dict</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+
+            <span class="n">batch_dict</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">single_cond_dict</span>
+        <span class="k">return</span> <span class="n">batch_dict</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_collate_tensor_dataset</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function used to collate the data when the dataset is a</span>
+<span class="sd">        :class:`~pina.data.dataset.PinaTensorDataset`.</span>
+
+<span class="sd">        :param data_list: Elements to be collated.</span>
+<span class="sd">        :type data_list: list[torch.Tensor] | list[LabelTensor]</span>
+<span class="sd">        :return: Batch of data.</span>
+<span class="sd">        :rtype: dict</span>
+
+<span class="sd">        :raises RuntimeError: If the data is not a :class:`torch.Tensor` or a</span>
+<span class="sd">            :class:`~pina.label_tensor.LabelTensor`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">LabelTensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Data must be Tensors or LabelTensor &quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_collate_graph_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function used to collate data when the dataset is a</span>
+<span class="sd">        :class:`~pina.data.dataset.PinaGraphDataset`.</span>
+
+<span class="sd">        :param data_list: Elememts to be collated.</span>
+<span class="sd">        :type data_list: list[Data] | list[Graph]</span>
+<span class="sd">        :return: Batch of data.</span>
+<span class="sd">        :rtype: dict</span>
+
+<span class="sd">        :raises RuntimeError: If the data is not a</span>
+<span class="sd">            :class:`~torch_geometric.data.Data` or a :class:`~pina.graph.Graph`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">LabelTensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Data</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">create_batch</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;Data must be Tensors or LabelTensor or pyG &quot;</span>
+            <span class="s2">&quot;torch_geometric.data.Data&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform the collation of data fetched from the dataset. The behavoior</span>
+<span class="sd">        of the function is set based on the batching strategy during class</span>
+<span class="sd">        initialization.</span>
+
+<span class="sd">        :param batch: List of retrieved data or sampled indices.</span>
+<span class="sd">        :type batch: list[int] | list[dict]</span>
+<span class="sd">        :return: Dictionary containing colleted data fetched from the dataset.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">callable_function</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PinaSampler">
+<a class="viewcode-back" href="../../../_rst/data/data_module.html#pina.data.data_module.PinaSampler">[docs]</a>
+<span class="k">class</span> <span class="nc">PinaSampler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is used to create the sampler instance based on the shuffle</span>
+<span class="sd">    parameter and the environment in which the code is running.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate and initialize the sampler.</span>
+
+<span class="sd">        :param PinaDataset dataset: The dataset from which to sample.</span>
+<span class="sd">        :param bool shuffle: Whether to shuffle the dataset.</span>
+<span class="sd">        :return: The sampler instance.</span>
+<span class="sd">        :rtype: :class:`torch.utils.data.Sampler`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">RandomSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">SequentialSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sampler</span></div>
+
+
+
+<div class="viewcode-block" id="PinaDataModule">
+<a class="viewcode-back" href="../../../_rst/data/data_module.html#pina.data.data_module.PinaDataModule">[docs]</a>
+<span class="k">class</span> <span class="nc">PinaDataModule</span><span class="p">(</span><span class="n">LightningDataModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class extends :class:`~lightning.pytorch.core.LightningDataModule`,</span>
+<span class="sd">    allowing proper creation and management of different types of datasets</span>
+<span class="sd">    defined in PINA.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">,</span>
+        <span class="n">train_size</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">val_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">repeat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">automatic_batching</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">pin_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the object and creating datasets based on the input problem.</span>
+
+<span class="sd">        :param AbstractProblem problem: The problem containing the data on which</span>
+<span class="sd">            to create the datasets and dataloaders.</span>
+<span class="sd">        :param float train_size: Fraction of elements in the training split. It</span>
+<span class="sd">            must be in the range [0, 1].</span>
+<span class="sd">        :param float test_size: Fraction of elements in the test split. It must</span>
+<span class="sd">            be in the range [0, 1].</span>
+<span class="sd">        :param float val_size: Fraction of elements in the validation split. It</span>
+<span class="sd">            must be in the range [0, 1].</span>
+<span class="sd">        :param int batch_size: The batch size used for training. If ``None``,</span>
+<span class="sd">            the entire dataset is returned in a single batch.</span>
+<span class="sd">            Default is ``None``.</span>
+<span class="sd">        :param bool shuffle: Whether to shuffle the dataset before splitting.</span>
+<span class="sd">            Default ``True``.</span>
+<span class="sd">        :param bool repeat: If ``True``, in case of batch size larger than the</span>
+<span class="sd">            number of elements in a specific condition, the elements are</span>
+<span class="sd">            repeated until the batch size is reached. If ``False``, the number</span>
+<span class="sd">            of elements in the batch is the minimum between the batch size and</span>
+<span class="sd">            the number of elements in the condition. Default is ``False``.</span>
+<span class="sd">        :param automatic_batching: If ``True``, automatic PyTorch batching</span>
+<span class="sd">            is performed, which consists of extracting one element at a time</span>
+<span class="sd">            from the dataset and collating them into a batch. This is useful</span>
+<span class="sd">            when the dataset is too large to fit into memory. On the other hand,</span>
+<span class="sd">            if ``False``, the items are retrieved from the dataset all at once</span>
+<span class="sd">            avoind the overhead of collating them into a batch and reducing the</span>
+<span class="sd">            ``__getitem__`` calls to the dataset. This is useful when the</span>
+<span class="sd">            dataset fits into memory. Avoid using automatic batching when</span>
+<span class="sd">            ``batch_size`` is large. Default is ``False``.</span>
+<span class="sd">        :param int num_workers: Number of worker threads for data loading.</span>
+<span class="sd">            Default ``0`` (serial loading).</span>
+<span class="sd">        :param bool pin_memory: Whether to use pinned memory for faster data</span>
+<span class="sd">            transfer to GPU. Default ``False``.</span>
+
+<span class="sd">        :raises ValueError: If at least one of the splits is negative.</span>
+<span class="sd">        :raises ValueError: If the sum of the splits is different from 1.</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            For more information on multi-process data loading, see:</span>
+<span class="sd">            https://pytorch.org/docs/stable/data.html#multi-process-data-loading</span>
+
+<span class="sd">            For details on memory pinning, see:</span>
+<span class="sd">            https://pytorch.org/docs/stable/data.html#memory-pinning</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Store fixed attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="n">repeat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automatic_batching</span> <span class="o">=</span> <span class="n">automatic_batching</span>
+
+        <span class="c1"># If batch size is None, num_workers has no effect</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_workers</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Setting num_workers when batch_size is None has no effect on &quot;</span>
+                <span class="s2">&quot;the DataLoading process.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
+
+        <span class="c1"># If batch size is None, pin_memory has no effect</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pin_memory</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Setting pin_memory to True has no effect when &quot;</span>
+                <span class="s2">&quot;batch_size is None.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pin_memory</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pin_memory</span> <span class="o">=</span> <span class="n">pin_memory</span>
+
+        <span class="c1"># Collect data</span>
+        <span class="n">collector</span> <span class="o">=</span> <span class="n">Collector</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+        <span class="n">collector</span><span class="o">.</span><span class="n">store_fixed_data</span><span class="p">()</span>
+        <span class="n">collector</span><span class="o">.</span><span class="n">store_sample_domains</span><span class="p">()</span>
+
+        <span class="c1"># Check if the splits are correct</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_slit_sizes</span><span class="p">(</span><span class="n">train_size</span><span class="p">,</span> <span class="n">test_size</span><span class="p">,</span> <span class="n">val_size</span><span class="p">)</span>
+
+        <span class="c1"># Split input data into subsets</span>
+        <span class="n">splits_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">train_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">splits_dict</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use the super method to create the train dataloader which</span>
+            <span class="c1"># raises NotImplementedError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">train_dataloader</span>
+        <span class="k">if</span> <span class="n">test_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">splits_dict</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use the super method to create the train dataloader which</span>
+            <span class="c1"># raises NotImplementedError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_dataloader</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">test_dataloader</span>
+        <span class="k">if</span> <span class="n">val_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">splits_dict</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use the super method to create the train dataloader which</span>
+            <span class="c1"># raises NotImplementedError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">val_dataloader</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">collector_splits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_splits</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">splits_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transfer_batch_to_device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transfer_batch_to_device</span>
+
+<div class="viewcode-block" id="PinaDataModule.setup">
+<a class="viewcode-back" href="../../../_rst/data/data_module.html#pina.data.data_module.PinaDataModule.setup">[docs]</a>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the dataset objects for the given stage.</span>
+<span class="sd">        If the stage is &quot;fit&quot;, the training and validation datasets are created.</span>
+<span class="sd">        If the stage is &quot;test&quot;, the testing dataset is created.</span>
+
+<span class="sd">        :param str stage: The stage for which to perform the dataset setup.</span>
+
+<span class="sd">        :raises ValueError: If the stage is neither &quot;fit&quot; nor &quot;test&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;fit&quot;</span> <span class="ow">or</span> <span class="n">stage</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">PinaDatasetFactory</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">collector_splits</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
+                <span class="n">max_conditions_lengths</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_max_conditions_lengths</span><span class="p">(</span>
+                    <span class="s2">&quot;train&quot;</span>
+                <span class="p">),</span>
+                <span class="n">automatic_batching</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">automatic_batching</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;val&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collector_splits</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="o">=</span> <span class="n">PinaDatasetFactory</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">collector_splits</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">],</span>
+                    <span class="n">max_conditions_lengths</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_max_conditions_lengths</span><span class="p">(</span>
+                        <span class="s2">&quot;val&quot;</span>
+                    <span class="p">),</span>
+                    <span class="n">automatic_batching</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">automatic_batching</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_dataset</span> <span class="o">=</span> <span class="n">PinaDatasetFactory</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">collector_splits</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
+                <span class="n">max_conditions_lengths</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_max_conditions_lengths</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">),</span>
+                <span class="n">automatic_batching</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">automatic_batching</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;stage must be either &#39;fit&#39; or &#39;test&#39;.&quot;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_split_condition</span><span class="p">(</span><span class="n">single_condition_dict</span><span class="p">,</span> <span class="n">splits_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split the condition into different stages.</span>
+
+<span class="sd">        :param dict single_condition_dict: The condition to be split.</span>
+<span class="sd">        :param dict splits_dict: The dictionary containing the number of</span>
+<span class="sd">            elements in each stage.</span>
+<span class="sd">        :return: A dictionary containing the split condition.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">len_condition</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">single_condition_dict</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+
+        <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">len_condition</span> <span class="o">*</span> <span class="n">length</span><span class="p">)</span> <span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">splits_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">]</span>
+
+        <span class="n">remainder</span> <span class="o">=</span> <span class="n">len_condition</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">remainder</span><span class="p">):</span>
+            <span class="n">lengths</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">lengths</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">splits_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">splits_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">lengths</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">to_return_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">stage</span><span class="p">,</span> <span class="n">stage_len</span> <span class="ow">in</span> <span class="n">splits_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">to_return_dict</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">offset</span> <span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">stage_len</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">single_condition_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;equation&quot;</span>
+                <span class="c1"># Equations are NEVER dataloaded</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">stage_len</span> <span class="o">&gt;=</span> <span class="n">len_condition</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="n">len_condition</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="n">stage_len</span>
+        <span class="k">return</span> <span class="n">to_return_dict</span>
+
+    <span class="k">def</span> <span class="nf">_create_splits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collector</span><span class="p">,</span> <span class="n">splits_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the dataset objects putting data in the correct splits.</span>
+
+<span class="sd">        :param Collector collector: The collector object containing the data.</span>
+<span class="sd">        :param dict splits_dict: The dictionary containing the number of</span>
+<span class="sd">            elements in each stage.</span>
+<span class="sd">        :return: The dictionary containing the dataset objects.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># ----------- Auxiliary function ------------</span>
+        <span class="k">def</span> <span class="nf">_apply_shuffle</span><span class="p">(</span><span class="n">condition_dict</span><span class="p">,</span> <span class="n">len_data</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">len_data</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">condition_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;equation&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">condition_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+                    <span class="n">condition_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+                    <span class="n">condition_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2"> not supported&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ----------- End auxiliary function ------------</span>
+
+        <span class="n">split_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">splits_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">dataset_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">split_names</span><span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">condition_name</span><span class="p">,</span>
+            <span class="n">condition_dict</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="n">collector</span><span class="o">.</span><span class="n">data_collections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">len_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition_dict</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">:</span>
+                <span class="n">_apply_shuffle</span><span class="p">(</span><span class="n">condition_dict</span><span class="p">,</span> <span class="n">len_data</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_condition</span><span class="p">(</span>
+                <span class="n">condition_dict</span><span class="p">,</span> <span class="n">splits_dict</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">dataset_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">condition_name</span><span class="p">:</span> <span class="n">data</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">dataset_dict</span>
+
+    <span class="k">def</span> <span class="nf">_create_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;</span>
+<span class="sd">        Create the dataloader for the given split.</span>
+
+<span class="sd">        :param str split: The split on which to create the dataloader.</span>
+<span class="sd">        :param str dataset: The dataset to be used for the dataloader.</span>
+<span class="sd">        :return: The dataloader for the given split.</span>
+<span class="sd">        :rtype: torch.utils.data.DataLoader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">shuffle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="k">if</span> <span class="n">split</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="c1"># Suppress the warning about num_workers.</span>
+        <span class="c1"># In many cases, especially for PINNs,</span>
+        <span class="c1"># serial data loading can outperform parallel data loading.</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
+            <span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+                <span class="s2">&quot;The &#39;(train|val|test)_dataloader&#39; does not have many workers &quot;</span>
+                <span class="s2">&quot;which may be a bottleneck.&quot;</span>
+            <span class="p">),</span>
+            <span class="n">module</span><span class="o">=</span><span class="s2">&quot;lightning.pytorch.trainer.connectors.data_connector&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Use custom batching (good if batch size is large)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">PinaSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">automatic_batching</span><span class="p">:</span>
+                <span class="n">collate</span> <span class="o">=</span> <span class="n">Collator</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">find_max_conditions_lengths</span><span class="p">(</span><span class="n">split</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">automatic_batching</span><span class="p">,</span>
+                    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">collate</span> <span class="o">=</span> <span class="n">Collator</span><span class="p">(</span>
+                    <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">automatic_batching</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">dataset</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate</span><span class="p">,</span>
+                <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">dataloader</span> <span class="o">=</span> <span class="n">DummyDataloader</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">dataloader</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transfer_batch_to_device</span><span class="p">(</span>
+            <span class="n">dataloader</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">root_device</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transfer_batch_to_device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transfer_batch_to_device_dummy</span>
+        <span class="k">return</span> <span class="n">dataloader</span>
+
+<div class="viewcode-block" id="PinaDataModule.find_max_conditions_lengths">
+<a class="viewcode-back" href="../../../_rst/data/data_module.html#pina.data.data_module.PinaDataModule.find_max_conditions_lengths">[docs]</a>
+    <span class="k">def</span> <span class="nf">find_max_conditions_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">split</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define the maximum length for each conditions.</span>
+
+<span class="sd">        :param dict split: The split of the dataset.</span>
+<span class="sd">        :return: The maximum length per condition.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">max_conditions_lengths</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collector_splits</span><span class="p">[</span><span class="n">split</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">max_conditions_lengths</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span><span class="p">:</span>
+                <span class="n">max_conditions_lengths</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">max_conditions_lengths</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">max_conditions_lengths</span></div>
+
+
+<div class="viewcode-block" id="PinaDataModule.val_dataloader">
+<a class="viewcode-back" href="../../../_rst/data/data_module.html#pina.data.data_module.PinaDataModule.val_dataloader">[docs]</a>
+    <span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the validation dataloader.</span>
+
+<span class="sd">        :return: The validation dataloader</span>
+<span class="sd">        :rtype: torch.utils.data.DataLoader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataloader</span><span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PinaDataModule.train_dataloader">
+<a class="viewcode-back" href="../../../_rst/data/data_module.html#pina.data.data_module.PinaDataModule.train_dataloader">[docs]</a>
+    <span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the training dataloader</span>
+
+<span class="sd">        :return: The training dataloader</span>
+<span class="sd">        :rtype: torch.utils.data.DataLoader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataloader</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PinaDataModule.test_dataloader">
+<a class="viewcode-back" href="../../../_rst/data/data_module.html#pina.data.data_module.PinaDataModule.test_dataloader">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the testing dataloader</span>
+
+<span class="sd">        :return: The testing dataloader</span>
+<span class="sd">        :rtype: torch.utils.data.DataLoader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataloader</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_dataset</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_transfer_batch_to_device_dummy</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transfer the batch to the device. This method is used when the batch</span>
+<span class="sd">        size is None: batch has already been transferred to the device.</span>
+
+<span class="sd">        :param list[tuple] batch: List of tuple where the first element of the</span>
+<span class="sd">            tuple is the condition name and the second element is the data.</span>
+<span class="sd">        :param torch.device device: Device to which the batch is transferred.</span>
+<span class="sd">        :param int dataloader_idx: Index of the dataloader.</span>
+<span class="sd">        :return: The batch transferred to the device.</span>
+<span class="sd">        :rtype: list[tuple]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">batch</span>
+
+    <span class="k">def</span> <span class="nf">_transfer_batch_to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transfer the batch to the device. This method is called in the</span>
+<span class="sd">        training loop and is used to transfer the batch to the device.</span>
+
+<span class="sd">        :param dict batch: The batch to be transferred to the device.</span>
+<span class="sd">        :param torch.device device: The device to which the batch is</span>
+<span class="sd">            transferred.</span>
+<span class="sd">        :param int dataloader_idx: The index of the dataloader.</span>
+<span class="sd">        :return: The batch transferred to the device.</span>
+<span class="sd">        :rtype: list[tuple]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="n">k</span><span class="p">,</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">LightningDataModule</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">transfer_batch_to_device</span><span class="p">(</span>
+                    <span class="n">v</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">dataloader_idx</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">batch</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">batch</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_slit_sizes</span><span class="p">(</span><span class="n">train_size</span><span class="p">,</span> <span class="n">test_size</span><span class="p">,</span> <span class="n">val_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the splits are correct. The splits sizes must be positive and</span>
+<span class="sd">        the sum of the splits must be 1.</span>
+
+<span class="sd">        :param float train_size: The size of the training split.</span>
+<span class="sd">        :param float test_size: The size of the testing split.</span>
+<span class="sd">        :param float val_size: The size of the validation split.</span>
+
+<span class="sd">        :raises ValueError: If at least one of the splits is negative.</span>
+<span class="sd">        :raises ValueError: If the sum of the splits is different</span>
+<span class="sd">            from 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">train_size</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">test_size</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">val_size</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The splits must be positive&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">train_size</span> <span class="o">+</span> <span class="n">test_size</span> <span class="o">+</span> <span class="n">val_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The sum of the splits must be 1&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all the input points coming from all the datasets.</span>
+
+<span class="sd">        :return: The input points for training.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">to_return</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;train_dataset&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">to_return</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">input</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;val_dataset&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">to_return</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span><span class="o">.</span><span class="n">input</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;test_dataset&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">to_return</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_dataset</span><span class="o">.</span><span class="n">input</span>
+        <span class="k">return</span> <span class="n">to_return</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2025, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

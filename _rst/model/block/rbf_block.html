@@ -1,0 +1,957 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Radias Basis Function Block &#8212; pina-mathlab 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_rst/model/block/rbf_block';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Optimizer" href="../../optim/optimizer_interface.html" />
+    <link rel="prev" title="Fourier Feature Embedding" href="fourier_embedding.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.0 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../trainer.html">Trainer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/data_module.html">DataModule</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph/graph.html">Graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph/label_batch.html">LabelBatch</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../graph/graph_builder.html">GraphBuilder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph/radius_graph.html">RadiusGraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graph/knn_graph.html">KNNGraph</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../condition/condition_interface.html">ConditionInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/condition.html">Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/data_condition.html">DataCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/domain_equation_condition.html">DomainEquationCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/input_equation_condition.html">InputEquationCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/input_target_condition.html">InputTargetCondition</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../solver/solver_interface.html">SolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/single_solver_interface.html">SingleSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/multi_solver_interface.html">MultiSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/pinn_interface.html">PINNInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/pinn.html">PINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/gradient_pinn.html">GradientPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/causal_pinn.html">CausalPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/competitive_pinn.html">CompetitivePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/self_adaptive_pinn.html">SelfAdaptivePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/rba_pinn.html">RBAPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/supervised.html">SupervisedSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/reduced_order_model.html">ReducedOrderModelSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/garom.html">GAROM</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../feed_forward.html">FeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multi_feed_forward.html">MultiFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../residual_feed_forward.html">ResidualFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deeponet.html">DeepONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mionet.html">MIONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../kernel_neural_operator.html">KernelNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier_integral_kernel.html">FourierIntegralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fourier_neural_operator.html">FNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../average_neural_operator.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph_neural_operator.html">GraphNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="residual.html">Residual Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enhanced_linear.html">EnhancedLinear Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectral.html">Spectral Convolution Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fourier_block.html">Fourier Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="average_neural_operator_block.html">Averaging Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_rank_block.html">Low Rank Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gno_block.html">Graph Neural Operator Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convolution_interface.html">Continuous Convolution Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convolution.html">Continuous Convolution Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="orthogonal.html">Orthogonal Block</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pod_block.html">Proper Orthogonal Decomposition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pbc_embedding.html">Periodic Boundary Condition Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fourier_embedding.html">Fourier Feature Embedding</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Radial Basis Function Interpolation</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../optim/optimizer_interface.html">Optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/scheduler_interface.html">Scheduler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/torch_optimizer.html">TorchOptimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/torch_scheduler.html">TorchScheduler</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveActivationFunctionInterface.html">Adaptive Function Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveReLU.html">Adaptive ReLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSigmoid.html">Adaptive Sigmoid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveTanh.html">Adaptive Tanh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSiLU.html">Adaptive SiLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveMish.html">Adaptive Mish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveELU.html">Adaptive ELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveCELU.html">Adaptive CELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveGELU.html">Adaptive GELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSoftmin.html">Adaptive Softmin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSoftmax.html">Adaptive Softmax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSIREN.html">Adaptive SIREN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveExp.html">Adaptive Exp</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../equation/equation_interface.html">EquationInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/equation.html">Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/system_equation.html">SystemEquation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/equation_factory.html">Equation Factory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../operator.html">Differential Operators</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../problem/abstract_problem.html">AbstractProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/inverse_problem.html">InverseProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/parametric_problem.html">ParametricProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/spatial_problem.html">SpatialProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/time_dependent_problem.html">TimeDependentProblem</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/advection.html">AdvectionProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/allen_cahn.html">AllenCahnProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/diffusion_reaction.html">DiffusionReactionProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/helmholtz.html">HelmholtzProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/inverse_poisson_2d_square.html">InversePoisson2DSquareProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/poisson_2d_square.html">Poisson2DSquareProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/supervised_problem.html">SupervisedProblem</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../domain/domain.html">Domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/cartesian.html">CartesianDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/ellipsoid.html">EllipsoidDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/simplex.html">SimplexDomain</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../domain/operation_interface.html">OperationInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/union_domain.html">Union</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/intersection_domain.html">Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/difference_domain.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/exclusion_domain.html">Exclusion</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../callback/processing_callback.html">Processing callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/optimizer_callback.html">Optimizer callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/adaptive_refinment_callback.html">Refinment callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/linear_weight_update_callback.html">Weighting callback</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../loss/loss_interface.html">LossInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/lploss.html">LpLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/powerloss.html">PowerLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/weighting_interface.html">WeightingInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/scalar_weighting.html">ScalarWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../_code.html" class="nav-link">Code Documentation</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Radias Basis Function Block</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="radias-basis-function-block">
+<h1>Radias Basis Function Block<a class="headerlink" href="#radias-basis-function-block" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RBFBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'thin_plate_spline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<p>Radial Basis Function (RBF) interpolation layer.</p>
+<p>The user needs to fit the model with the data, before using it to
+interpolate new points. The layer is not trainable.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It reproduces the implementation of <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.interpolate.RBFBlock</span></code>
+and it is inspired from the implementation in <a class="reference external" href="https://github.com/ArmanMaesumi/torchrbf">torchrbf.</a></p>
+</div>
+<p>Initialization of the <a class="reference internal" href="#pina.model.block.rbf_block.RBFBlock" title="pina.model.block.rbf_block.RBFBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">RBFBlock</span></code></a> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of neighbors used for interpolation.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all data are used.</p></li>
+<li><p><strong>smoothing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The moothing parameter for the interpolation.
+If <code class="docutils literal notranslate"><span class="pre">0.0</span></code>, the interpolation is exact and no smoothing is applied.</p></li>
+<li><p><strong>kernel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The radial basis function to use.
+The available kernels are: <code class="docutils literal notranslate"><span class="pre">linear</span></code>, <code class="docutils literal notranslate"><span class="pre">thin_plate_spline</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cubic</span></code>, <code class="docutils literal notranslate"><span class="pre">quintic</span></code>, <code class="docutils literal notranslate"><span class="pre">multiquadric</span></code>, <code class="docutils literal notranslate"><span class="pre">inverse_multiquadric</span></code>,
+<code class="docutils literal notranslate"><span class="pre">inverse_quadratic</span></code>, or <code class="docutils literal notranslate"><span class="pre">gaussian</span></code>.</p></li>
+<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The shape parameter that scales the input to the
+RBF. Default is <code class="docutils literal notranslate"><span class="pre">1</span></code> for kernels in the <code class="docutils literal notranslate"><span class="pre">scale_invariant</span></code>
+dictionary, while it must be specified for other kernels.</p></li>
+<li><p><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The degree of the polynomial. Some kernels require a
+minimum degree of the polynomial to ensure that the RBF is well
+defined. These minimum degrees are specified in the
+<code class="docutils literal notranslate"><span class="pre">min_degree_funcs</span></code> dictionary. If <code class="docutils literal notranslate"><span class="pre">degree</span></code> is less than the
+minimum degree required, a warning is raised and the degree is set
+to the minimum value.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.smoothing">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">smoothing</span></span><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.smoothing" title="Link to this definition">#</a></dt>
+<dd><p>The smoothing parameter for the interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The smoothing parameter.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.kernel">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kernel</span></span><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.kernel" title="Link to this definition">#</a></dt>
+<dd><p>The Radial basis function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The radial basis function.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.epsilon">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">epsilon</span></span><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.epsilon" title="Link to this definition">#</a></dt>
+<dd><p>The shape parameter that scales the input to the RBF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shape parameter.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.degree">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">degree</span></span><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.degree" title="Link to this definition">#</a></dt>
+<dd><p>The degree of the polynomial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The degree of the polynomial.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.fit" title="Link to this definition">#</a></dt>
+<dd><p>Fit the RBF interpolator to the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of data points.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of data values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.13)"><strong>NotImplementedError</strong></a> – If the neighbors are not <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the data is not compatible with the requested
+degree.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.forward" title="Link to this definition">#</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of points to interpolate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the input is not a 2-dimensional tensor.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the second dimension of the input is not the same
+as the second dimension of the data.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The interpolated data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.kernel_vector">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kernel_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock.kernel_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.kernel_vector" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate for all points <code class="docutils literal notranslate"><span class="pre">x</span></code> the radial functions with center <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of points.</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of centers.</p></li>
+<li><p><strong>kernel_func</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Radial basis function to use.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The radial function values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.polynomial_matrix">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">polynomial_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">powers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock.polynomial_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.polynomial_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate monomials of power <code class="docutils literal notranslate"><span class="pre">powers</span></code> at points <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of points.</p></li>
+<li><p><strong>powers</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of powers for each monomial.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The monomial values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.kernel_matrix">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kernel_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock.kernel_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.kernel_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Return the radial function values for all pairs of points in <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of points.</p></li>
+<li><p><strong>kernel_func</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The radial basis function to use.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The radial function values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.monomial_powers">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">monomial_powers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ndim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock.monomial_powers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.monomial_powers" title="Link to this definition">#</a></dt>
+<dd><p>Return the powers for each monomial in a polynomial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ndim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of variables in the polynomial.</p></li>
+<li><p><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The degree of the polynomial.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The powers for each monomial.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.build">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">powers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.build" title="Link to this definition">#</a></dt>
+<dd><p>Build the RBF linear system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of data points.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of data values.</p></li>
+<li><p><strong>smoothing</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of smoothing parameters.</p></li>
+<li><p><strong>kernel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The radial basis function to use.</p></li>
+<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The shape parameter that scales the input to the
+RBF.</p></li>
+<li><p><strong>powers</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of powers for each monomial.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The left-hand side and right-hand side of the linear system,
+and the shift and scale parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>, <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>, <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>, <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.block.rbf_block.RBFBlock.solve">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoothing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">powers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/rbf_block.html#RBFBlock.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.rbf_block.RBFBlock.solve" title="Link to this definition">#</a></dt>
+<dd><p>Build and solve the RBF linear system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of data points.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of data values.</p></li>
+<li><p><strong>smoothing</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of smoothing parameters.</p></li>
+<li><p><strong>kernel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The radial basis function to use.</p></li>
+<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The shape parameter that scaled the input to the
+RBF.</p></li>
+<li><p><strong>powers</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor of powers for each monomial.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the linear system is singular.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The shift and scale parameters, and the coefficients of the
+interpolator.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>[<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>, <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>, <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock"><code class="docutils literal notranslate"><span class="pre">RBFBlock</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.smoothing"><code class="docutils literal notranslate"><span class="pre">RBFBlock.smoothing</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.kernel"><code class="docutils literal notranslate"><span class="pre">RBFBlock.kernel</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.epsilon"><code class="docutils literal notranslate"><span class="pre">RBFBlock.epsilon</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.degree"><code class="docutils literal notranslate"><span class="pre">RBFBlock.degree</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.fit"><code class="docutils literal notranslate"><span class="pre">RBFBlock.fit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.forward"><code class="docutils literal notranslate"><span class="pre">RBFBlock.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.kernel_vector"><code class="docutils literal notranslate"><span class="pre">RBFBlock.kernel_vector()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.polynomial_matrix"><code class="docutils literal notranslate"><span class="pre">RBFBlock.polynomial_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.kernel_matrix"><code class="docutils literal notranslate"><span class="pre">RBFBlock.kernel_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.monomial_powers"><code class="docutils literal notranslate"><span class="pre">RBFBlock.monomial_powers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.build"><code class="docutils literal notranslate"><span class="pre">RBFBlock.build()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.rbf_block.RBFBlock.solve"><code class="docutils literal notranslate"><span class="pre">RBFBlock.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/_rst/model/block/rbf_block.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2025, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

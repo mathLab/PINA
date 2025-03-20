@@ -1,0 +1,874 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DataModule &#8212; pina-mathlab 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_rst/data/data_module';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="LabelTensor" href="../label_tensor.html" />
+    <link rel="prev" title="Dataset" href="dataset.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.0 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../trainer.html">Trainer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">DataModule</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph/graph.html">Graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph/label_batch.html">LabelBatch</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../graph/graph_builder.html">GraphBuilder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph/radius_graph.html">RadiusGraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph/knn_graph.html">KNNGraph</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../condition/condition_interface.html">ConditionInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/condition.html">Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/data_condition.html">DataCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/domain_equation_condition.html">DomainEquationCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/input_equation_condition.html">InputEquationCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/input_target_condition.html">InputTargetCondition</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../solver/solver_interface.html">SolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/single_solver_interface.html">SingleSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/multi_solver_interface.html">MultiSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/pinn_interface.html">PINNInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/pinn.html">PINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/gradient_pinn.html">GradientPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/causal_pinn.html">CausalPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/competitive_pinn.html">CompetitivePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/self_adaptive_pinn.html">SelfAdaptivePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/rba_pinn.html">RBAPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/supervised.html">SupervisedSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/reduced_order_model.html">ReducedOrderModelSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/garom.html">GAROM</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../model/feed_forward.html">FeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/multi_feed_forward.html">MultiFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/residual_feed_forward.html">ResidualFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/deeponet.html">DeepONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/mionet.html">MIONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/kernel_neural_operator.html">KernelNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/fourier_integral_kernel.html">FourierIntegralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/fourier_neural_operator.html">FNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/average_neural_operator.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator.html">GraphNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../model/block/residual.html">Residual Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/enhanced_linear.html">EnhancedLinear Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/spectral.html">Spectral Convolution Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/fourier_block.html">Fourier Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/average_neural_operator_block.html">Averaging Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/low_rank_block.html">Low Rank Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/gno_block.html">Graph Neural Operator Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/convolution_interface.html">Continuous Convolution Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/convolution.html">Continuous Convolution Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/orthogonal.html">Orthogonal Block</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../model/block/pod_block.html">Proper Orthogonal Decomposition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/pbc_embedding.html">Periodic Boundary Condition Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/fourier_embedding.html">Fourier Feature Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/rbf_block.html">Radial Basis Function Interpolation</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../optim/optimizer_interface.html">Optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optim/scheduler_interface.html">Scheduler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optim/torch_optimizer.html">TorchOptimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optim/torch_scheduler.html">TorchScheduler</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveActivationFunctionInterface.html">Adaptive Function Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveReLU.html">Adaptive ReLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSigmoid.html">Adaptive Sigmoid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveTanh.html">Adaptive Tanh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSiLU.html">Adaptive SiLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveMish.html">Adaptive Mish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveELU.html">Adaptive ELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveCELU.html">Adaptive CELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveGELU.html">Adaptive GELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSoftmin.html">Adaptive Softmin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSoftmax.html">Adaptive Softmax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSIREN.html">Adaptive SIREN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveExp.html">Adaptive Exp</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../equation/equation_interface.html">EquationInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../equation/equation.html">Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../equation/system_equation.html">SystemEquation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../equation/equation_factory.html">Equation Factory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operator.html">Differential Operators</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../problem/abstract_problem.html">AbstractProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/inverse_problem.html">InverseProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/parametric_problem.html">ParametricProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/spatial_problem.html">SpatialProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/time_dependent_problem.html">TimeDependentProblem</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/advection.html">AdvectionProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/allen_cahn.html">AllenCahnProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/diffusion_reaction.html">DiffusionReactionProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/helmholtz.html">HelmholtzProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/inverse_poisson_2d_square.html">InversePoisson2DSquareProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/poisson_2d_square.html">Poisson2DSquareProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/supervised_problem.html">SupervisedProblem</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../domain/domain.html">Domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/cartesian.html">CartesianDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/ellipsoid.html">EllipsoidDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/simplex.html">SimplexDomain</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../domain/operation_interface.html">OperationInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/union_domain.html">Union</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/intersection_domain.html">Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/difference_domain.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/exclusion_domain.html">Exclusion</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing_callback.html">Processing callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/adaptive_refinment_callback.html">Refinment callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/linear_weight_update_callback.html">Weighting callback</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../loss/loss_interface.html">LossInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/lploss.html">LpLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/powerloss.html">PowerLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/weighting_interface.html">WeightingInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/scalar_weighting.html">ScalarWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../_code.html" class="nav-link">Code Documentation</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DataModule</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="datamodule">
+<h1>DataModule<a class="headerlink" href="#datamodule" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.data.data_module.Collator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Collator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_conditions_lengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_batching</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#Collator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.Collator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>This callable class is used to collate the data points fetched from the
+dataset. The collation is performed based on the type of dataset used and
+on the batching strategy.</p>
+<p>Initialize the object, setting the collate function based on whether
+automatic batching is enabled or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_conditions_lengths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the maximum
+number  of data points to consider in a single batch for
+each condition.</p></li>
+<li><p><strong>automatic_batching</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether automatic PyTorch batching is
+enabled or not. For more information, see the
+<a class="reference internal" href="#pina.data.data_module.PinaDataModule" title="pina.data.data_module.PinaDataModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaDataModule</span></code></a> class.</p></li>
+<li><p><strong>dataset</strong> (<a class="reference internal" href="dataset.html#pina.data.dataset.PinaDataset" title="pina.data.dataset.PinaDataset"><em>PinaDataset</em></a>) – The dataset where the data is stored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.data.data_module.PinaDataModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PinaDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_batching</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pin_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaDataModule" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.core.LightningDataModule.html#lightning.pytorch.core.LightningDataModule" title="(in PyTorch Lightning v2.5.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightningDataModule</span></code></a></p>
+<p>This class extends <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.core.LightningDataModule.html#lightning.pytorch.core.LightningDataModule" title="(in PyTorch Lightning v2.5.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightningDataModule</span></code></a>,
+allowing proper creation and management of different types of datasets
+defined in PINA.</p>
+<p>Initialize the object and creating datasets based on the input problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>problem</strong> (<a class="reference internal" href="../problem/abstract_problem.html#pina.problem.abstract_problem.AbstractProblem" title="pina.problem.abstract_problem.AbstractProblem"><em>AbstractProblem</em></a>) – The problem containing the data on which
+to create the datasets and dataloaders.</p></li>
+<li><p><strong>train_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of elements in the training split. It
+must be in the range [0, 1].</p></li>
+<li><p><strong>test_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of elements in the test split. It must
+be in the range [0, 1].</p></li>
+<li><p><strong>val_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of elements in the validation split. It
+must be in the range [0, 1].</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The batch size used for training. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+the entire dataset is returned in a single batch.
+Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to shuffle the dataset before splitting.
+Default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>repeat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, in case of batch size larger than the
+number of elements in a specific condition, the elements are
+repeated until the batch size is reached. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the number
+of elements in the batch is the minimum between the batch size and
+the number of elements in the condition. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>automatic_batching</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, automatic PyTorch batching
+is performed, which consists of extracting one element at a time
+from the dataset and collating them into a batch. This is useful
+when the dataset is too large to fit into memory. On the other hand,
+if <code class="docutils literal notranslate"><span class="pre">False</span></code>, the items are retrieved from the dataset all at once
+avoind the overhead of collating them into a batch and reducing the
+<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> calls to the dataset. This is useful when the
+dataset fits into memory. Avoid using automatic batching when
+<code class="docutils literal notranslate"><span class="pre">batch_size</span></code> is large. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>num_workers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of worker threads for data loading.
+Default <code class="docutils literal notranslate"><span class="pre">0</span></code> (serial loading).</p></li>
+<li><p><strong>pin_memory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to use pinned memory for faster data
+transfer to GPU. Default <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If at least one of the splits is negative.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the sum of the splits is different from 1.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For more information on multi-process data loading, see:
+<a class="reference external" href="https://pytorch.org/docs/stable/data.html#multi-process-data-loading">https://pytorch.org/docs/stable/data.html#multi-process-data-loading</a></p>
+<p>For details on memory pinning, see:
+<a class="reference external" href="https://pytorch.org/docs/stable/data.html#memory-pinning">https://pytorch.org/docs/stable/data.html#memory-pinning</a></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.data.data_module.PinaDataModule.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaDataModule.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaDataModule.setup" title="Link to this definition">#</a></dt>
+<dd><p>Create the dataset objects for the given stage.
+If the stage is “fit”, the training and validation datasets are created.
+If the stage is “test”, the testing dataset is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The stage for which to perform the dataset setup.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the stage is neither “fit” nor “test”.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.data.data_module.PinaDataModule.find_max_conditions_lengths">
+<span class="sig-name descname"><span class="pre">find_max_conditions_lengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaDataModule.find_max_conditions_lengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaDataModule.find_max_conditions_lengths" title="Link to this definition">#</a></dt>
+<dd><p>Define the maximum length for each conditions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>split</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The split of the dataset.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The maximum length per condition.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.data.data_module.PinaDataModule.val_dataloader">
+<span class="sig-name descname"><span class="pre">val_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaDataModule.val_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaDataModule.val_dataloader" title="Link to this definition">#</a></dt>
+<dd><p>Create the validation dataloader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The validation dataloader</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.6)">torch.utils.data.DataLoader</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.data.data_module.PinaDataModule.train_dataloader">
+<span class="sig-name descname"><span class="pre">train_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaDataModule.train_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaDataModule.train_dataloader" title="Link to this definition">#</a></dt>
+<dd><p>Create the training dataloader</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The training dataloader</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.6)">torch.utils.data.DataLoader</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.data.data_module.PinaDataModule.test_dataloader">
+<span class="sig-name descname"><span class="pre">test_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaDataModule.test_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaDataModule.test_dataloader" title="Link to this definition">#</a></dt>
+<dd><p>Create the testing dataloader</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The testing dataloader</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.6)">torch.utils.data.DataLoader</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pina.data.data_module.PinaDataModule.input">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input</span></span><a class="headerlink" href="#pina.data.data_module.PinaDataModule.input" title="Link to this definition">#</a></dt>
+<dd><p>Return all the input points coming from all the datasets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The input points for training.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.data.data_module.PinaSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PinaSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaSampler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>This class is used to create the sampler instance based on the shuffle
+parameter and the environment in which the code is running.</p>
+<p>Instantiate and initialize the sampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<a class="reference internal" href="dataset.html#pina.data.dataset.PinaDataset" title="pina.data.dataset.PinaDataset"><em>PinaDataset</em></a>) – The dataset from which to sample.</p></li>
+<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to shuffle the dataset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sampler instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.Sampler" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.Sampler</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.Collator"><code class="docutils literal notranslate"><span class="pre">Collator</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.PinaDataModule"><code class="docutils literal notranslate"><span class="pre">PinaDataModule</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.PinaDataModule.setup"><code class="docutils literal notranslate"><span class="pre">PinaDataModule.setup()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.PinaDataModule.find_max_conditions_lengths"><code class="docutils literal notranslate"><span class="pre">PinaDataModule.find_max_conditions_lengths()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.PinaDataModule.val_dataloader"><code class="docutils literal notranslate"><span class="pre">PinaDataModule.val_dataloader()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.PinaDataModule.train_dataloader"><code class="docutils literal notranslate"><span class="pre">PinaDataModule.train_dataloader()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.PinaDataModule.test_dataloader"><code class="docutils literal notranslate"><span class="pre">PinaDataModule.test_dataloader()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.PinaDataModule.input"><code class="docutils literal notranslate"><span class="pre">PinaDataModule.input</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.data_module.PinaSampler"><code class="docutils literal notranslate"><span class="pre">PinaSampler</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/_rst/data/data_module.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2025, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

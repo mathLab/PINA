@@ -1,0 +1,706 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ScalarWeighting &#8212; pina-mathlab 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_rst/loss/scalar_weighting';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="NeuralTangentKernelWeighting" href="ntk_weighting.html" />
+    <link rel="prev" title="WeightingInterface" href="weighting_interface.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.0 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../trainer.html">Trainer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/data_module.html">DataModule</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../label_tensor.html">LabelTensor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph/graph.html">Graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph/label_batch.html">LabelBatch</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../graph/graph_builder.html">GraphBuilder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph/radius_graph.html">RadiusGraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graph/knn_graph.html">KNNGraph</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../condition/condition_interface.html">ConditionInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/condition.html">Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/data_condition.html">DataCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/domain_equation_condition.html">DomainEquationCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/input_equation_condition.html">InputEquationCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../condition/input_target_condition.html">InputTargetCondition</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../solver/solver_interface.html">SolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/single_solver_interface.html">SingleSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/multi_solver_interface.html">MultiSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/pinn_interface.html">PINNInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/pinn.html">PINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/gradient_pinn.html">GradientPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/causal_pinn.html">CausalPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/competitive_pinn.html">CompetitivePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/self_adaptive_pinn.html">SelfAdaptivePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/physics_informed_solver/rba_pinn.html">RBAPINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/supervised.html">SupervisedSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/reduced_order_model.html">ReducedOrderModelSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solver/garom.html">GAROM</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../model/feed_forward.html">FeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/multi_feed_forward.html">MultiFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/residual_feed_forward.html">ResidualFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/deeponet.html">DeepONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/mionet.html">MIONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/kernel_neural_operator.html">KernelNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/fourier_integral_kernel.html">FourierIntegralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/fourier_neural_operator.html">FNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/average_neural_operator.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator.html">GraphNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../model/block/residual.html">Residual Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/enhanced_linear.html">EnhancedLinear Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/spectral.html">Spectral Convolution Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/fourier_block.html">Fourier Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/average_neural_operator_block.html">Averaging Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/low_rank_block.html">Low Rank Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/gno_block.html">Graph Neural Operator Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/convolution_interface.html">Continuous Convolution Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/convolution.html">Continuous Convolution Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/orthogonal.html">Orthogonal Block</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../model/block/pod_block.html">Proper Orthogonal Decomposition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/pbc_embedding.html">Periodic Boundary Condition Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/fourier_embedding.html">Fourier Feature Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/rbf_block.html">Radial Basis Function Interpolation</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../optim/optimizer_interface.html">Optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optim/scheduler_interface.html">Scheduler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optim/torch_optimizer.html">TorchOptimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optim/torch_scheduler.html">TorchScheduler</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveActivationFunctionInterface.html">Adaptive Function Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveReLU.html">Adaptive ReLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSigmoid.html">Adaptive Sigmoid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveTanh.html">Adaptive Tanh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSiLU.html">Adaptive SiLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveMish.html">Adaptive Mish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveELU.html">Adaptive ELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveCELU.html">Adaptive CELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveGELU.html">Adaptive GELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSoftmin.html">Adaptive Softmin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSoftmax.html">Adaptive Softmax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveSIREN.html">Adaptive SIREN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adaptive_function/AdaptiveExp.html">Adaptive Exp</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../equation/equation_interface.html">EquationInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../equation/equation.html">Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../equation/system_equation.html">SystemEquation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../equation/equation_factory.html">Equation Factory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operator.html">Differential Operators</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../problem/abstract_problem.html">AbstractProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/inverse_problem.html">InverseProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/parametric_problem.html">ParametricProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/spatial_problem.html">SpatialProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/time_dependent_problem.html">TimeDependentProblem</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/advection.html">AdvectionProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/allen_cahn.html">AllenCahnProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/diffusion_reaction.html">DiffusionReactionProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/helmholtz.html">HelmholtzProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/inverse_poisson_2d_square.html">InversePoisson2DSquareProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/poisson_2d_square.html">Poisson2DSquareProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/supervised_problem.html">SupervisedProblem</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../domain/domain.html">Domain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/cartesian.html">CartesianDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/ellipsoid.html">EllipsoidDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/simplex.html">SimplexDomain</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../domain/operation_interface.html">OperationInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/union_domain.html">Union</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/intersection_domain.html">Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/difference_domain.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/exclusion_domain.html">Exclusion</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing_callback.html">Processing callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/adaptive_refinment_callback.html">Refinment callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/linear_weight_update_callback.html">Weighting callback</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="loss_interface.html">LossInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lploss.html">LpLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="powerloss.html">PowerLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weighting_interface.html">WeightingInterface</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">ScalarWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../_code.html" class="nav-link">Code Documentation</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">ScalarWeighting</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-pina.loss.scalar_weighting">
+<span id="scalarweighting"></span><h1>ScalarWeighting<a class="headerlink" href="#module-pina.loss.scalar_weighting" title="Link to this heading">#</a></h1>
+<p>Module for the Scalar Weighting.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.loss.scalar_weighting.ScalarWeighting">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ScalarWeighting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/loss/scalar_weighting.html#ScalarWeighting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.loss.scalar_weighting.ScalarWeighting" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="weighting_interface.html#pina.loss.weighting_interface.WeightingInterface" title="pina.loss.weighting_interface.WeightingInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightingInterface</span></code></a></p>
+<p>Weighting scheme that assigns a scalar weight to each loss term.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.loss.scalar_weighting.ScalarWeighting" title="pina.loss.scalar_weighting.ScalarWeighting"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarWeighting</span></code></a> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>weights</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The weights to be assigned to each loss term.
+If a single scalar value is provided, it is assigned to all loss
+terms. If a dictionary is provided, the keys are the conditions and
+the values are the weights. If a condition is not present in the
+dictionary, the default value is used.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.loss.scalar_weighting.ScalarWeighting.aggregate">
+<span class="sig-name descname"><span class="pre">aggregate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">losses</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/loss/scalar_weighting.html#ScalarWeighting.aggregate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.loss.scalar_weighting.ScalarWeighting.aggregate" title="Link to this definition">#</a></dt>
+<dd><p>Aggregate the losses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>losses</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The dictionary of losses.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The aggregated losses.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.loss.scalar_weighting.ScalarWeighting"><code class="docutils literal notranslate"><span class="pre">ScalarWeighting</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.loss.scalar_weighting.ScalarWeighting.aggregate"><code class="docutils literal notranslate"><span class="pre">ScalarWeighting.aggregate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/_rst/loss/scalar_weighting.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2025, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

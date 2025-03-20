@@ -1,0 +1,771 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pina.operator &#8212; pina-mathlab 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/operator';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.0 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina.operator</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pina.operator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for vectorized differential operators implementation.</span>
+
+<span class="sd">Differential operators are used to define differential problems and are</span>
+<span class="sd">implemented to run efficiently on various accelerators, including CPU, GPU, TPU,</span>
+<span class="sd">and MPS.</span>
+
+<span class="sd">Each differential operator takes the following inputs:</span>
+<span class="sd">- A tensor on which the operator is applied.</span>
+<span class="sd">- A tensor with respect to which the operator is computed.</span>
+<span class="sd">- The names of the output variables for which the operator is evaluated.</span>
+<span class="sd">- The names of the variables with respect to which the operator is computed.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">pina.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+
+
+<div class="viewcode-block" id="grad">
+<a class="viewcode-back" href="../../_rst/operator.html#pina.operator.grad">[docs]</a>
+<span class="k">def</span> <span class="nf">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the gradient of the ``output_`` with respect to the ``input``.</span>
+
+<span class="sd">    This operator supports both vector-valued and scalar-valued functions with</span>
+<span class="sd">    one or multiple input coordinates.</span>
+
+<span class="sd">    :param LabelTensor output_: The output tensor on which the gradient is</span>
+<span class="sd">        computed.</span>
+<span class="sd">    :param LabelTensor input_: The input tensor with respect to which the</span>
+<span class="sd">        gradient is computed.</span>
+<span class="sd">    :param list[str] components: The names of the output variables for which to</span>
+<span class="sd">        compute the gradient. It must be a subset of the output labels.</span>
+<span class="sd">        If ``None``, all output variables are considered. Default is ``None``.</span>
+<span class="sd">    :param list[str] d: The names of the input variables with respect to which</span>
+<span class="sd">        the gradient is computed. It must be a subset of the input labels.</span>
+<span class="sd">        If ``None``, all input variables are considered. Default is ``None``.</span>
+<span class="sd">    :raises TypeError: If the input tensor is not a LabelTensor.</span>
+<span class="sd">    :raises RuntimeError: If the output is a scalar field and the components</span>
+<span class="sd">        are not equal to the output labels.</span>
+<span class="sd">    :raises NotImplementedError: If the output is neither a vector field nor a</span>
+<span class="sd">        scalar field.</span>
+<span class="sd">    :return: The computed gradient tensor.</span>
+<span class="sd">    :rtype: LabelTensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">grad_scalar_output</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the gradient of a scalar-valued ``output_``.</span>
+
+<span class="sd">        :param LabelTensor output_: The output tensor on which the gradient is</span>
+<span class="sd">            computed. It must be a column tensor.</span>
+<span class="sd">        :param LabelTensor input_: The input tensor with respect to which the</span>
+<span class="sd">            gradient is computed.</span>
+<span class="sd">        :param list[str] d: The names of the input variables with respect to</span>
+<span class="sd">            which the gradient is computed. It must be a subset of the input</span>
+<span class="sd">            labels. If ``None``, all input variables are considered.</span>
+<span class="sd">        :raises RuntimeError: If a vectorial function is passed.</span>
+<span class="sd">        :raises RuntimeError: If missing derivative labels.</span>
+<span class="sd">        :return: The computed gradient tensor.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;only scalar function can be differentiated&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">di</span> <span class="ow">in</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span> <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="n">d</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;derivative labels missing from input tensor&quot;</span><span class="p">)</span>
+
+        <span class="n">output_fieldname</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">gradients</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span>
+            <span class="n">output_</span><span class="p">,</span>
+            <span class="n">input_</span><span class="p">,</span>
+            <span class="n">grad_outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
+                <span class="n">output_</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">output_</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">output_</span><span class="o">.</span><span class="n">device</span>
+            <span class="p">),</span>
+            <span class="n">create_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">allow_unused</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">gradients</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">input_</span><span class="o">.</span><span class="n">stored_labels</span>
+        <span class="n">gradients</span> <span class="o">=</span> <span class="n">gradients</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="n">input_</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]]</span>
+        <span class="n">gradients</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;d</span><span class="si">{</span><span class="n">output_fieldname</span><span class="si">}</span><span class="s2">d</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">gradients</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span>
+
+    <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">if</span> <span class="n">components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">components</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">if</span> <span class="n">output_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># scalar output ################################</span>
+
+        <span class="k">if</span> <span class="n">components</span> <span class="o">!=</span> <span class="n">output_</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span>
+        <span class="n">gradients</span> <span class="o">=</span> <span class="n">grad_scalar_output</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="n">output_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">output_</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+    <span class="p">):</span>  <span class="c1"># vector output ##############################</span>
+        <span class="n">tensor_to_cat</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">components</span><span class="p">):</span>
+            <span class="n">c_output</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="n">c</span><span class="p">])</span>
+            <span class="n">tensor_to_cat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grad_scalar_output</span><span class="p">(</span><span class="n">c_output</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+        <span class="n">gradients</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">tensor_to_cat</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">output_</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">return</span> <span class="n">gradients</span></div>
+
+
+
+<div class="viewcode-block" id="div">
+<a class="viewcode-back" href="../../_rst/operator.html#pina.operator.div">[docs]</a>
+<span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the divergence of the ``output_`` with respect to ``input``.</span>
+
+<span class="sd">    This operator supports vector-valued functions with multiple input</span>
+<span class="sd">    coordinates.</span>
+
+<span class="sd">    :param LabelTensor output_: The output tensor on which the divergence is</span>
+<span class="sd">        computed.</span>
+<span class="sd">    :param LabelTensor input_: The input tensor with respect to which the</span>
+<span class="sd">        divergence is computed.</span>
+<span class="sd">    :param list[str] components: The names of the output variables for which to</span>
+<span class="sd">        compute the divergence. It must be a subset of the output labels.</span>
+<span class="sd">        If ``None``, all output variables are considered. Default is ``None``.</span>
+<span class="sd">    :param list[str] d: The names of the input variables with respect to which</span>
+<span class="sd">        the divergence is computed. It must be a subset of the input labels.</span>
+<span class="sd">        If ``None``, all input variables are considered. Default is ``None``.</span>
+<span class="sd">    :raises TypeError: If the input tensor is not a LabelTensor.</span>
+<span class="sd">    :raises ValueError: If the output is a scalar field.</span>
+<span class="sd">    :raises ValueError: If the number of components is not equal to the number</span>
+<span class="sd">        of input variables.</span>
+<span class="sd">    :return: The computed divergence tensor.</span>
+<span class="sd">    :rtype: LabelTensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span>
+
+    <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">if</span> <span class="n">components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">components</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">if</span> <span class="n">output_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;div supported only for vector fields&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+
+    <span class="n">grad_output</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
+    <span class="n">tensors_to_sum</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="p">)):</span>
+        <span class="n">c_fields</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;d</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">d</span><span class="si">{</span><span class="n">d_</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">tensors_to_sum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grad_output</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">c_fields</span><span class="p">))</span>
+        <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">c_fields</span>
+    <span class="n">div_result</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">summation</span><span class="p">(</span><span class="n">tensors_to_sum</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">div_result</span></div>
+
+
+
+<div class="viewcode-block" id="laplacian">
+<a class="viewcode-back" href="../../_rst/operator.html#pina.operator.laplacian">[docs]</a>
+<span class="k">def</span> <span class="nf">laplacian</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the laplacian of the ``output_`` with respect to ``input``.</span>
+
+<span class="sd">    This operator supports both vector-valued and scalar-valued functions with</span>
+<span class="sd">    one or multiple input coordinates.</span>
+
+<span class="sd">    :param LabelTensor output_: The output tensor on which the laplacian is</span>
+<span class="sd">        computed.</span>
+<span class="sd">    :param LabelTensor input_: The input tensor with respect to which the</span>
+<span class="sd">        laplacian is computed.</span>
+<span class="sd">    :param list[str] components: The names of the output variables for which to</span>
+<span class="sd">        compute the laplacian. It must be a subset of the output labels.</span>
+<span class="sd">        If ``None``, all output variables are considered. Default is ``None``.</span>
+<span class="sd">    :param list[str] d: The names of the input variables with respect to which</span>
+<span class="sd">        the laplacian is computed. It must be a subset of the input labels.</span>
+<span class="sd">        If ``None``, all input variables are considered. Default is ``None``.</span>
+<span class="sd">    :param str method: The method used to compute the Laplacian. Default is</span>
+<span class="sd">        ``std``.</span>
+<span class="sd">    :raises NotImplementedError: If ``std=divgrad``.</span>
+<span class="sd">    :return: The computed laplacian tensor.</span>
+<span class="sd">    :rtype: LabelTensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">scalar_laplace</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the laplacian of a scalar-valued ``output_``.</span>
+
+<span class="sd">        :param LabelTensor output_: The output tensor on which the laplacian is</span>
+<span class="sd">            computed. It must be a column tensor.</span>
+<span class="sd">        :param LabelTensor input_: The input tensor with respect to which the</span>
+<span class="sd">            laplacian is computed.</span>
+<span class="sd">        :param list[str] components: The names of the output variables for which</span>
+<span class="sd">            to compute the laplacian. It must be a subset of the output labels.</span>
+<span class="sd">            If ``None``, all output variables are considered.</span>
+<span class="sd">        :param list[str] d: The names of the input variables with respect to</span>
+<span class="sd">            which the laplacian is computed. It must be a subset of the input</span>
+<span class="sd">            labels. If ``None``, all input variables are considered.</span>
+<span class="sd">        :return: The computed laplacian tensor.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">grad_output</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">output_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">output_</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grad_output</span><span class="o">.</span><span class="n">labels</span><span class="p">):</span>
+            <span class="n">gg</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">grad_output</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
+            <span class="n">result</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">super</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">gg</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">if</span> <span class="n">components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">components</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;divgrad&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;divgrad not implemented as method&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">scalar_laplace</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;dd</span><span class="si">{</span><span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+                <span class="n">input_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">output_</span><span class="o">.</span><span class="n">device</span>
+            <span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">components</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[:,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">scalar_laplace</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="n">labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dd</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="advection">
+<a class="viewcode-back" href="../../_rst/operator.html#pina.operator.advection">[docs]</a>
+<span class="k">def</span> <span class="nf">advection</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">velocity_field</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform the advection operation on the ``output_`` with respect to the</span>
+<span class="sd">    ``input``. This operator support vector-valued functions with multiple input</span>
+<span class="sd">    coordinates.</span>
+
+<span class="sd">    :param LabelTensor output_: The output tensor on which the advection is</span>
+<span class="sd">        computed.</span>
+<span class="sd">    :param LabelTensor input_: the input tensor with respect to which advection</span>
+<span class="sd">        is computed.</span>
+<span class="sd">    :param str velocity_field: The name of the output variable used as velocity</span>
+<span class="sd">        field. It must be chosen among the output labels.</span>
+<span class="sd">    :param list[str] components: The names of the output variables for which</span>
+<span class="sd">        to compute the advection. It must be a subset of the output labels.</span>
+<span class="sd">        If ``None``, all output variables are considered. Default is ``None``.</span>
+<span class="sd">    :param list[str] d: The names of the input variables with respect to which</span>
+<span class="sd">        the advection is computed. It must be a subset of the input labels.</span>
+<span class="sd">        If ``None``, all input variables are considered. Default is ``None``.</span>
+<span class="sd">    :return: The computed advection tensor.</span>
+<span class="sd">    :rtype: LabelTensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="k">if</span> <span class="n">components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">components</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">labels</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">components</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+        <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">tmp</span> <span class="o">*=</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">velocity_field</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2025, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

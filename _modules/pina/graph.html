@@ -1,0 +1,955 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pina.graph &#8212; pina-mathlab 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/graph';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.0" />
+    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.0 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_tutorial.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina.graph</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pina.graph</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module to build Graph objects and perform operations on them.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">to_undirected</span>
+<span class="kn">from</span> <span class="nn">.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span><span class="p">,</span> <span class="n">is_function</span>
+
+
+<div class="viewcode-block" id="Graph">
+<a class="viewcode-back" href="../../_rst/graph/graph.html#pina.graph.Graph">[docs]</a>
+<span class="k">class</span> <span class="nc">Graph</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extends :class:`~torch_geometric.data.Data` class to include additional</span>
+<span class="sd">    checks and functionlities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new instance of the :class:`~pina.graph.Graph` class by</span>
+<span class="sd">        checking the consistency of the input data and storing the attributes.</span>
+
+<span class="sd">        :param dict kwargs: Parameters used to initialize the</span>
+<span class="sd">            :class:`~pina.graph.Graph` object.</span>
+<span class="sd">        :return: A new instance of the :class:`~pina.graph.Graph` class.</span>
+<span class="sd">        :rtype: Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create class instance</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+        <span class="c1"># check the consistency of types defined in __init__, the others are not</span>
+        <span class="c1"># checked (as in pyg Data object)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_check_type_consistency</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">instance</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">undirected</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the object by setting the node features, edge index,</span>
+<span class="sd">        edge attributes, and positions. The edge index is preprocessed to make</span>
+<span class="sd">        the graph undirected if required. For more details, see the</span>
+<span class="sd">        :meth:`torch_geometric.data.Data`</span>
+
+<span class="sd">        :param x: Optional tensor of node features ``(N, F)`` where ``F`` is the</span>
+<span class="sd">            number of features per node.</span>
+<span class="sd">        :type x: torch.Tensor, LabelTensor</span>
+<span class="sd">        :param torch.Tensor edge_index: A tensor of shape ``(2, E)``</span>
+<span class="sd">            representing the indices of the graph&#39;s edges.</span>
+<span class="sd">        :param pos: A tensor of shape ``(N, D)`` representing the positions of</span>
+<span class="sd">            ``N`` points in ``D``-dimensional space.</span>
+<span class="sd">        :type pos: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param edge_attr: Optional tensor of edge_featured ``(E, F&#39;)`` where</span>
+<span class="sd">            ``F&#39;`` is the number of edge features</span>
+<span class="sd">        :type edge_attr: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param bool undirected: Whether to make the graph undirected</span>
+<span class="sd">        :param dict kwargs: Additional keyword arguments passed to the</span>
+<span class="sd">            :class:`~torch_geometric.data.Data` class constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># preprocessing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess_edge_index</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">undirected</span><span class="p">)</span>
+
+        <span class="c1"># calling init</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Graph._check_type_consistency">
+<a class="viewcode-back" href="../../_rst/graph/graph.html#pina.graph.Graph._check_type_consistency">[docs]</a>
+    <span class="k">def</span> <span class="nf">_check_type_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check the consistency of the types of the input data.</span>
+
+<span class="sd">        :param dict kwargs: Attributes to be checked for consistency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># default types, specified in cls.__new__, by default they are Nont</span>
+        <span class="c1"># if specified in **kwargs they get override</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">&quot;pos&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_pos_consistency</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;edge_index&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">edge_index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;edge_index&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_edge_index_consistency</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_x_consistency</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;edge_attr&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;edge_attr&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_edge_attr_consistency</span><span class="p">(</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;undirected&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">undirected</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;undirected&quot;</span><span class="p">]</span>
+            <span class="n">check_consistency</span><span class="p">(</span><span class="n">undirected</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Graph._check_pos_consistency">
+<a class="viewcode-back" href="../../_rst/graph/graph.html#pina.graph.Graph._check_pos_consistency">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_pos_consistency</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the position tensor is consistent.</span>
+<span class="sd">        :param torch.Tensor pos: The position tensor.</span>
+<span class="sd">        :raises ValueError: If the position tensor is not consistent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">check_consistency</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pos must be a 2D tensor.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Graph._check_edge_index_consistency">
+<a class="viewcode-back" href="../../_rst/graph/graph.html#pina.graph.Graph._check_edge_index_consistency">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_edge_index_consistency</span><span class="p">(</span><span class="n">edge_index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the edge index is consistent.</span>
+
+<span class="sd">        :param torch.Tensor edge_index: The edge index tensor.</span>
+<span class="sd">        :raises ValueError: If the edge index tensor is not consistent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;edge_index must be a 2D tensor.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;edge_index must have shape [2, num_edges].&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Graph._check_edge_attr_consistency">
+<a class="viewcode-back" href="../../_rst/graph/graph.html#pina.graph.Graph._check_edge_attr_consistency">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_edge_attr_consistency</span><span class="p">(</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the edge attribute tensor is consistent in type and shape</span>
+<span class="sd">        with the edge index.</span>
+
+<span class="sd">        :param edge_attr: The edge attribute tensor.</span>
+<span class="sd">        :type edge_attr: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param torch.Tensor edge_index: The edge index tensor.</span>
+<span class="sd">        :raises ValueError: If the edge attribute tensor is not consistent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">edge_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">check_consistency</span><span class="p">(</span><span class="n">edge_attr</span><span class="p">,</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;edge_attr must be a 2D tensor.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;edge_attr must have shape &quot;</span>
+                    <span class="s2">&quot;[num_edges, num_edge_features], expected &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;num_edges </span><span class="si">{</span><span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">edge_attr</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Graph._check_x_consistency">
+<a class="viewcode-back" href="../../_rst/graph/graph.html#pina.graph.Graph._check_x_consistency">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_x_consistency</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the input tensor x is consistent with the position tensor</span>
+<span class="sd">        `pos`.</span>
+
+<span class="sd">        :param x: The input tensor.</span>
+<span class="sd">        :type x: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param pos: The position tensor.</span>
+<span class="sd">        :type pos: torch.Tensor | LabelTensor</span>
+<span class="sd">        :raises ValueError: If the input tensor is not consistent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">check_consistency</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;x must be a 2D tensor.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inconsistent number of nodes.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Graph._preprocess_edge_index">
+<a class="viewcode-back" href="../../_rst/graph/graph.html#pina.graph.Graph._preprocess_edge_index">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_preprocess_edge_index</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">undirected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preprocess the edge index to make the graph undirected (if required).</span>
+
+<span class="sd">        :param torch.Tensor edge_index: The edge index.</span>
+<span class="sd">        :param bool undirected: Whether the graph is undirected.</span>
+<span class="sd">        :return: The preprocessed edge index.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">undirected</span><span class="p">:</span>
+            <span class="n">edge_index</span> <span class="o">=</span> <span class="n">to_undirected</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">edge_index</span></div>
+
+
+<div class="viewcode-block" id="Graph.extract">
+<a class="viewcode-back" href="../../_rst/graph/graph.html#pina.graph.Graph.extract">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform extraction of labels from the attribute specified by `attr`.</span>
+
+<span class="sd">        :param labels: Labels to extract</span>
+<span class="sd">        :type labels: list[str] | tuple[str] | str | dict</span>
+<span class="sd">        :return: Batch object with extraction performed on x</span>
+<span class="sd">        :rtype: PinaBatch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Extract labels from LabelTensor object</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="c1"># Set the extracted tensor as the new attribute</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">tensor</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GraphBuilder">
+<a class="viewcode-back" href="../../_rst/graph/graph_builder.html#pina.graph.GraphBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">GraphBuilder</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that allows an easy definition of :class:`Graph` instances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">pos</span><span class="p">,</span>
+        <span class="n">edge_index</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">edge_attr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">custom_edge_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the edge attributes and create a new instance of the</span>
+<span class="sd">        :class:`~pina.graph.Graph` class.</span>
+
+<span class="sd">        :param pos: A tensor of shape ``(N, D)`` representing the positions of</span>
+<span class="sd">            ``N`` points in ``D``-dimensional space.</span>
+<span class="sd">        :type pos: torch.Tensor or LabelTensor</span>
+<span class="sd">        :param edge_index: A tensor of shape ``(2, E)`` representing the indices</span>
+<span class="sd">            of the graph&#39;s edges.</span>
+<span class="sd">        :type edge_index: torch.Tensor</span>
+<span class="sd">        :param x: Optional tensor of node features of shape ``(N, F)``, where</span>
+<span class="sd">            ``F`` is the number of features per node.</span>
+<span class="sd">        :type x: torch.Tensor | LabelTensor, optional</span>
+<span class="sd">        :param edge_attr: Optional tensor of edge attributes of shape ``(E, F)``</span>
+<span class="sd">            , where ``F`` is the number of features per edge.</span>
+<span class="sd">        :type edge_attr: torch.Tensor, optional</span>
+<span class="sd">        :param custom_edge_func: A custom function to compute edge attributes.</span>
+<span class="sd">            If provided, overrides ``edge_attr``.</span>
+<span class="sd">        :type custom_edge_func: Callable, optional</span>
+<span class="sd">        :param kwargs: Additional keyword arguments passed to the</span>
+<span class="sd">            :class:`~pina.graph.Graph` class constructor.</span>
+<span class="sd">        :return: A :class:`~pina.graph.Graph` instance constructed using the</span>
+<span class="sd">            provided information.</span>
+<span class="sd">        :rtype: Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">edge_attr</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_create_edge_attr</span><span class="p">(</span>
+            <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">custom_edge_func</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_edge_attr</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Graph</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span>
+            <span class="n">edge_attr</span><span class="o">=</span><span class="n">edge_attr</span><span class="p">,</span>
+            <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="GraphBuilder._create_edge_attr">
+<a class="viewcode-back" href="../../_rst/graph/graph_builder.html#pina.graph.GraphBuilder._create_edge_attr">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_create_edge_attr</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the edge attributes based on the input parameters.</span>
+
+<span class="sd">        :param pos: Positions of the points.</span>
+<span class="sd">        :type pos: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param torch.Tensor edge_index: Edge indices.</span>
+<span class="sd">        :param bool edge_attr: Whether to compute the edge attributes.</span>
+<span class="sd">        :param Callable func: Function to compute the edge attributes.</span>
+<span class="sd">        :raises ValueError: If ``func`` is not a function.</span>
+<span class="sd">        :return: The edge attributes.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">edge_attr</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">edge_attr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_function</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;custom_edge_func must be a function.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="GraphBuilder._build_edge_attr">
+<a class="viewcode-back" href="../../_rst/graph/graph_builder.html#pina.graph.GraphBuilder._build_edge_attr">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_build_edge_attr</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Default function to compute the edge attributes.</span>
+
+<span class="sd">        :param pos: Positions of the points.</span>
+<span class="sd">        :type pos: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param torch.Tensor edge_index: Edge indices.</span>
+<span class="sd">        :return: The edge attributes.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RadiusGraph">
+<a class="viewcode-back" href="../../_rst/graph/radius_graph.html#pina.graph.RadiusGraph">[docs]</a>
+<span class="k">class</span> <span class="nc">RadiusGraph</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extends the :class:`~pina.graph.GraphBuilder` class to compute</span>
+<span class="sd">    ``edge_index`` based on a radius. Each point is connected to all the points</span>
+<span class="sd">    within the radius.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the :class:`~pina.graph.Graph` class by computing the</span>
+<span class="sd">        ``edge_index`` based on the radius provided.</span>
+
+<span class="sd">        :param pos: A tensor of shape ``(N, D)`` representing the positions of</span>
+<span class="sd">            ``N`` points in ``D``-dimensional space.</span>
+<span class="sd">        :type pos: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param float radius: The radius within which points are connected.</span>
+<span class="sd">        :param dict kwargs: The additional keyword arguments to be passed to</span>
+<span class="sd">            :class:`GraphBuilder` and :class:`Graph` classes.</span>
+<span class="sd">        :return: A :class:`~pina.graph.Graph` instance with the computed</span>
+<span class="sd">            ``edge_index``.</span>
+<span class="sd">        :rtype: Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">compute_radius_graph</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RadiusGraph.compute_radius_graph">
+<a class="viewcode-back" href="../../_rst/graph/radius_graph.html#pina.graph.RadiusGraph.compute_radius_graph">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">compute_radius_graph</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the ``edge_index`` based on the radius. Each point is connected</span>
+<span class="sd">        to all the points within the radius.</span>
+
+<span class="sd">        :param points: A tensor of shape ``(N, D)`` representing the positions</span>
+<span class="sd">            of ``N`` points in ``D``-dimensional space.</span>
+<span class="sd">        :type points: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param float radius: The radius within which points are connected.</span>
+<span class="sd">        :return: A tensor of shape ``(2, E)``, with ``E`` number of edges,</span>
+<span class="sd">            representing the edge indices of the graph.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">dist</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">,</span> <span class="n">as_tuple</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">t</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="KNNGraph">
+<a class="viewcode-back" href="../../_rst/graph/knn_graph.html#pina.graph.KNNGraph">[docs]</a>
+<span class="k">class</span> <span class="nc">KNNGraph</span><span class="p">(</span><span class="n">GraphBuilder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extends the :class:`~pina.graph.GraphBuilder` class to compute</span>
+<span class="sd">    ``edge_index`` based on a K-nearest neighbors algorithm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neighbours</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the :class:`~pina.graph.Graph` class by computing the</span>
+<span class="sd">        ``edge_index`` based on the K-nearest neighbors algorithm.</span>
+
+<span class="sd">        :param pos: A tensor of shape ``(N, D)`` representing the positions of</span>
+<span class="sd">            ``N`` points in ``D``-dimensional space.</span>
+<span class="sd">        :type pos: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param int neighbours: The number of nearest neighbors to consider when</span>
+<span class="sd">            building the graph.</span>
+<span class="sd">        :param dict kwargs: The additional keyword arguments to be passed to</span>
+<span class="sd">            :class:`GraphBuilder` and :class:`Graph` classes.</span>
+
+<span class="sd">        :return: A :class:`~pina.graph.Graph` instance with the computed</span>
+<span class="sd">            ``edge_index``.</span>
+<span class="sd">        :rtype: Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">compute_knn_graph</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">neighbours</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KNNGraph.compute_knn_graph">
+<a class="viewcode-back" href="../../_rst/graph/knn_graph.html#pina.graph.KNNGraph.compute_knn_graph">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">compute_knn_graph</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">neighbours</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the ``edge_index`` based on the K-nearest neighbors algorithm.</span>
+
+<span class="sd">        :param points: A tensor of shape ``(N, D)`` representing the positions</span>
+<span class="sd">            of ``N`` points in ``D``-dimensional space.</span>
+<span class="sd">        :type points: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param int neighbours: The number of nearest neighbors to consider when</span>
+<span class="sd">            building the graph.</span>
+<span class="sd">        :return: A tensor of shape ``(2, E)``, with ``E`` number of edges,</span>
+<span class="sd">            representing the edge indices of the graph.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">knn_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">neighbours</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span>
+            <span class="p">:,</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="p">]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">neighbours</span><span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">knn_indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="LabelBatch">
+<a class="viewcode-back" href="../../_rst/graph/label_batch.html#pina.graph.LabelBatch">[docs]</a>
+<span class="k">class</span> <span class="nc">LabelBatch</span><span class="p">(</span><span class="n">Batch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extends the :class:`~torch_geometric.data.Batch` class to include</span>
+<span class="sd">    :class:`~pina.label_tensor.LabelTensor` objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LabelBatch.from_data_list">
+<a class="viewcode-back" href="../../_rst/graph/label_batch.html#pina.graph.LabelBatch.from_data_list">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_data_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a Batch object from a list of :class:`~torch_geometric.data.Data`</span>
+<span class="sd">        or :class:`~pina.graph.Graph` objects.</span>
+
+<span class="sd">        :param data_list: List of :class:`~torch_geometric.data.Data` or</span>
+<span class="sd">            :class:`~pina.graph.Graph` objects.</span>
+<span class="sd">        :type data_list: list[Data] | list[Graph]</span>
+<span class="sd">        :return: A :class:`~torch_geometric.data.Batch` object containing</span>
+<span class="sd">            the input data.</span>
+<span class="sd">        :rtype: :class:`~torch_geometric.data.Batch`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Store the labels of Data/Graph objects (all data have the same labels)</span>
+        <span class="c1"># If the data do not contain labels, labels is an empty dictionary,</span>
+        <span class="c1"># therefore the labels are not stored</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">labels</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Create a Batch object from the list of Data objects</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">from_data_list</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+
+        <span class="c1"># Put the labels back in the Batch object</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">batch</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">batch</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2025, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>
