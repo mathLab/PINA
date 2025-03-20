@@ -195,12 +195,20 @@ class Poisson(SpatialProblem):
         laplacian_u = laplacian(output_, input_, components=['u'], d=['x', 'y'])
         return laplacian_u - force_term
 
+    domains = {
+      'g1': CartesianDomain({'x': [0, 1], 'y':  1}),
+      'g2': CartesianDomain({'x': [0, 1], 'y': 0}),
+      'g3': CartesianDomain({'x':  1, 'y': [0, 1]}),
+      'g4': CartesianDomain({'x': 0, 'y': [0, 1]}),
+      'D': CartesianDomain({'x': [0, 1], 'y': [0, 1]})
+    }
+
     conditions = {
-        'gamma1': Condition(location=CartesianDomain({'x': [0, 1], 'y':  1}), equation=FixedValue(0.)),
-        'gamma2': Condition(location=CartesianDomain({'x': [0, 1], 'y': 0}), equation=FixedValue(0.)),
-        'gamma3': Condition(location=CartesianDomain({'x':  1, 'y': [0, 1]}), equation=FixedValue(0.)),
-        'gamma4': Condition(location=CartesianDomain({'x': 0, 'y': [0, 1]}), equation=FixedValue(0.)),
-        'D': Condition(location=CartesianDomain({'x': [0, 1], 'y': [0, 1]}), equation=Equation(laplace_equation)),
+        'gamma1': Condition(domain='g1', equation=FixedValue(0.)),
+        'gamma2': Condition(domain='g2', equation=FixedValue(0.)),
+        'gamma3': Condition(domain='g3', equation=FixedValue(0.)),
+        'gamma4': Condition(domain='g4', equation=FixedValue(0.)),
+        'D': Condition(domain='D', equation=Equation(laplace_equation)),
     }
 ```
 
@@ -215,7 +223,8 @@ model = FeedForward(
     output_dimensions=len(problem.output_variables),
     input_dimensions=len(problem.input_variables)
 )
-pinn = PINN(problem, model, optimizer_kwargs={'lr':0.006, 'weight_decay':1e-8})
+optimizer = TorchOptimizer(torch.optim.Adam, lr=0.006, weight_decay=1e-8)
+pinn = PINN(problem, model, optimizer=optimizer)
 trainer = Trainer(pinn, max_epochs=1000, accelerator='gpu', enable_model_summary=False, batch_size=8)
 
 # train
