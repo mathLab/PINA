@@ -1,6 +1,7 @@
 name: "Export Tutorials"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "dev"
