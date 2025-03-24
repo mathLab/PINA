@@ -327,7 +327,7 @@ class RadiusGraph(GraphBuilder):
         """
         dist = torch.cdist(points, points, p=2)
         return (
-            torch.nonzero(dist <= radius, as_tuple=False)
+            torch.nonzero((dist <= radius) & (dist > 0), as_tuple=False)
             .t()
             .as_subclass(torch.Tensor)
         )

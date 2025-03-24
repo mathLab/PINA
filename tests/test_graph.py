@@ -84,6 +84,14 @@ def test_build_radius_graph(x, pos):
         assert graph.pos.labels == pos.labels
     else:
         assert isinstance(graph.pos, torch.Tensor)
+        assert (
+            len(
+                torch.nonzero(
+                    graph.edge_index[0] == graph.edge_index[1], as_tuple=True
+                )[0]
+            )
+            == 0
+        )  # Detect self loops
 
 
 @pytest.mark.parametrize(
@@ -186,6 +194,14 @@ def test_build_knn_graph(x, pos):
     else:
         assert isinstance(graph.pos, torch.Tensor)
     assert graph.edge_attr is None
+    assert (
+        len(
+            torch.nonzero(
+                graph.edge_index[0] == graph.edge_index[1], as_tuple=True
+            )[0]
+        )
+        == 0
+    )  # Detect self loops
 
 
 @pytest.mark.parametrize(
