@@ -502,11 +502,13 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         self._pina_optimizers = optimizers
         self._pina_schedulers = schedulers
 
-        # set automatic optimization to True, this is done on purpuse to trigger
-        # an error if the user does not uses manual optimization in the
-        # training step. The following must be override to False and manual
-        # optimization should be used. For more insights on manual optimization
-        # see https://lightning.ai/docs/pytorch/stable/model/manual_optimization.html
+        # set automatic optimization to True.
+        # This is done on purpuse to ensure that an error is triggered whenever
+        # the user does not use manual optimization in the training step.
+        # The following must be overridden to False as manual optimization must
+        # be used for multisolvers.
+        # For more information on manual optimization see:
+        # http://lightning.ai/docs/pytorch/stable/model/manual_optimization.html
         self.automatic_optimization = True
 
     def configure_optimizers(self):
