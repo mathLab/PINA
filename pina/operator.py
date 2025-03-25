@@ -216,22 +216,21 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
     if components is None:
         components = output_.labels
 
+    if not isinstance(components, list):
+        components = [components]
+
     if method == "divgrad":
         raise NotImplementedError("divgrad not implemented as method")
 
     if method == "std":
-        if len(components) == 1:
-            result = scalar_laplace(output_, input_, components, d)
-            labels = [f"dd{components[0]}"]
 
-        else:
-            result = torch.empty(
-                input_.shape[0], len(components), device=output_.device
-            )
-            labels = [None] * len(components)
-            for idx, c in enumerate(components):
-                result[:, idx] = scalar_laplace(output_, input_, c, d).flatten()
-                labels[idx] = f"dd{c}"
+        result = torch.empty(
+            input_.shape[0], len(components), device=output_.device
+        )
+        labels = [None] * len(components)
+        for idx, c in enumerate(components):
+            result[:, idx] = scalar_laplace(output_, input_, [c], d).flatten()
+            labels[idx] = f"dd{c}"
 
         result = result.as_subclass(LabelTensor)
         result.labels = labels
