@@ -293,7 +293,7 @@ class RadiusGraph(GraphBuilder):
     within the radius.
     """
 
-    def __new__(cls, pos, radius, **kwargs):
+    def __new__(cls, pos, radius, loop=False, **kwargs):
         """
         Instantiate the :class:`~pina.graph.Graph` class by computing the
         ``edge_index`` based on the radius provided.
@@ -302,17 +302,18 @@ class RadiusGraph(GraphBuilder):
             ``N`` points in ``D``-dimensional space.
         :type pos: torch.Tensor | LabelTensor
         :param float radius: The radius within which points are connected.
+        :param bool loop: Whether to include self-loops.
         :param dict kwargs: The additional keyword arguments to be passed to
             :class:`GraphBuilder` and :class:`Graph` classes.
         :return: A :class:`~pina.graph.Graph` instance with the computed
             ``edge_index``.
         :rtype: Graph
         """
-        edge_index = cls.compute_radius_graph(pos, radius)
+        edge_index = cls.compute_radius_graph(pos, radius, loop)
         return super().__new__(cls, pos=pos, edge_index=edge_index, **kwargs)
 
     @staticmethod
-    def compute_radius_graph(points, radius):
+    def compute_radius_graph(points, radius, loop):
         """
         Computes the ``edge_index`` based on the radius. Each point is connected
         to all the points within the radius.
@@ -323,9 +324,16 @@ class RadiusGraph(GraphBuilder):
         :param float radius: The radius within which points are connected.
         :return: A tensor of shape ``(2, E)``, with ``E`` number of edges,
             representing the edge indices of the graph.
+        :param bool loop: Whether to include self-loops.
         :rtype: torch.Tensor
         """
         dist = torch.cdist(points, points, p=2)
+        if loop:
+            return (
+                torch.nonzero(dist <= radius, as_tuple=False)
+                .t()
+                .as_subclass(torch.Tensor)
+            )
         return (
             torch.nonzero((dist <= radius) & (dist > 0), as_tuple=False)
             .t()
@@ -339,7 +347,7 @@ class KNNGraph(GraphBuilder):
     ``edge_index`` based on a K-nearest neighbors algorithm.
     """
 
-    def __new__(cls, pos, neighbours, **kwargs):
+    def __new__(cls, pos, neighbours, loop=False, **kwargs):
         """
         Instantiate the :class:`~pina.graph.Graph` class by computing the
         ``edge_index`` based on the K-nearest neighbors algorithm.
@@ -349,6 +357,7 @@ class KNNGraph(GraphBuilder):
         :type pos: torch.Tensor | LabelTensor
         :param int neighbours: The number of nearest neighbors to consider when
             building the graph.
+        :param bool loop: Whether to include self-loops.
         :param dict kwargs: The additional keyword arguments to be passed to
             :class:`GraphBuilder` and :class:`Graph` classes.
 
@@ -357,11 +366,11 @@ class KNNGraph(GraphBuilder):
         :rtype: Graph
         """
 
-        edge_index = cls.compute_knn_graph(pos, neighbours)
+        edge_index = cls.compute_knn_graph(pos, neighbours, loop)
         return super().__new__(cls, pos=pos, edge_index=edge_index, **kwargs)
 
     @staticmethod
-    def compute_knn_graph(points, neighbours):
+    def compute_knn_graph(points, neighbours, loop):
         """
         Computes the ``edge_index`` based on the K-nearest neighbors algorithm.
 
@@ -370,15 +379,19 @@ class KNNGraph(GraphBuilder):
         :type points: torch.Tensor | LabelTensor
         :param int neighbours: The number of nearest neighbors to consider when
             building the graph.
+        :param bool loop: Whether to include self-loops.
         :return: A tensor of shape ``(2, E)``, with ``E`` number of edges,
             representing the edge indices of the graph.
         :rtype: torch.Tensor
         """
 
         dist = torch.cdist(points, points, p=2)
-        knn_indices = torch.topk(dist, k=neighbours + 1, largest=False).indices[
-            :, 1:
-        ]
+        if loop:
+            knn_indices = torch.topk(dist, k=neighbours, largest=False).indices
+        else:
+            knn_indices = torch.topk(
+                dist, k=neighbours + 1, largest=False
+            ).indices[:, 1:]
         row = torch.arange(points.size(0)).repeat_interleave(neighbours)
         col = knn_indices.flatten()
         return torch.stack([row, col], dim=0).as_subclass(torch.Tensor)
