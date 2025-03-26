@@ -164,3 +164,42 @@ def test_laplacian_vector_output2():
 
     assert torch.allclose(lap_f.extract("ddu"), lap_u)
     assert torch.allclose(lap_f.extract("ddv"), lap_v)
+
+
+def test_label_format():
+    # Testing the format of `components` or `d` in case of single str of length
+    # greater than 1; e.g.: "aaa".
+    # This test is conducted only for gradient and laplacian, since div is not
+    # implemented for single components.
+    inp.labels = ["xx", "yy", "zz"]
+    tensor_v = LabelTensor(func_vector(inp), ["aa", "bbb", "c"])
+    comp = tensor_v.labels[0]
+    single_d = inp.labels[0]
+
+    # Single component as string + list of d
+    grad_tensor_v = grad(tensor_v, inp, components=comp, d=None)
+    assert grad_tensor_v.labels == [f"d{comp}d{i}" for i in inp.labels]
+
+    lap_tensor_v = laplacian(tensor_v, inp, components=comp, d=None)
+    assert lap_tensor_v.labels == [f"dd{comp}"]
+
+    # Single component as list + list of d
+    grad_tensor_v = grad(tensor_v, inp, components=[comp], d=None)
+    assert grad_tensor_v.labels == [f"d{comp}d{i}" for i in inp.labels]
+
+    lap_tensor_v = laplacian(tensor_v, inp, components=[comp], d=None)
+    assert lap_tensor_v.labels == [f"dd{comp}"]
+
+    # List of components + single d as string
+    grad_tensor_v = grad(tensor_v, inp, components=None, d=single_d)
+    assert grad_tensor_v.labels == [f"d{i}d{single_d}" for i in tensor_v.labels]
+
+    lap_tensor_v = laplacian(tensor_v, inp, components=None, d=single_d)
+    assert lap_tensor_v.labels == [f"dd{i}" for i in tensor_v.labels]
+
+    # List of components + single d as list
+    grad_tensor_v = grad(tensor_v, inp, components=None, d=[single_d])
+    assert grad_tensor_v.labels == [f"d{i}d{single_d}" for i in tensor_v.labels]
+
+    lap_tensor_v = laplacian(tensor_v, inp, components=None, d=[single_d])
+    assert lap_tensor_v.labels == [f"dd{i}" for i in tensor_v.labels]
