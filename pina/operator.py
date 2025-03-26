@@ -27,12 +27,14 @@ def grad(output_, input_, components=None, d=None):
         computed.
     :param LabelTensor input_: The input tensor with respect to which the
         gradient is computed.
-    :param list[str] components: The names of the output variables for which to
+    :param components: The names of the output variables for which to
         compute the gradient. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
-    :param list[str] d: The names of the input variables with respect to which
+    :type components: str | list[str]
+    :param d: The names of the input variables with respect to which
         the gradient is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
+    :type d: str | list[str]
     :raises TypeError: If the input tensor is not a LabelTensor.
     :raises RuntimeError: If the output is a scalar field and the components
         are not equal to the output labels.
@@ -50,9 +52,10 @@ def grad(output_, input_, components=None, d=None):
             computed. It must be a column tensor.
         :param LabelTensor input_: The input tensor with respect to which the
             gradient is computed.
-        :param list[str] d: The names of the input variables with respect to
+        :param d: The names of the input variables with respect to
             which the gradient is computed. It must be a subset of the input
             labels. If ``None``, all input variables are considered.
+        :type d: str | list[str]
         :raises RuntimeError: If a vectorial function is passed.
         :raises RuntimeError: If missing derivative labels.
         :return: The computed gradient tensor.
@@ -89,6 +92,12 @@ def grad(output_, input_, components=None, d=None):
     if components is None:
         components = output_.labels
 
+    if not isinstance(components, list):
+        components = [components]
+
+    if not isinstance(d, list):
+        d = [d]
+
     if output_.shape[1] == 1:  # scalar output ################################
 
         if components != output_.labels:
@@ -120,12 +129,14 @@ def div(output_, input_, components=None, d=None):
         computed.
     :param LabelTensor input_: The input tensor with respect to which the
         divergence is computed.
-    :param list[str] components: The names of the output variables for which to
+    :param components: The names of the output variables for which to
         compute the divergence. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
-    :param list[str] d: The names of the input variables with respect to which
+    :type components: str | list[str]
+    :param d: The names of the input variables with respect to which
         the divergence is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
+    :type d: str | list[str]
     :raises TypeError: If the input tensor is not a LabelTensor.
     :raises ValueError: If the output is a scalar field.
     :raises ValueError: If the number of components is not equal to the number
@@ -141,6 +152,12 @@ def div(output_, input_, components=None, d=None):
 
     if components is None:
         components = output_.labels
+
+    if not isinstance(components, list):
+        components = [components]
+
+    if not isinstance(d, list):
+        d = [d]
 
     if output_.shape[1] < 2 or len(components) < 2:
         raise ValueError("div supported only for vector fields")
@@ -170,12 +187,14 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
         computed.
     :param LabelTensor input_: The input tensor with respect to which the
         laplacian is computed.
-    :param list[str] components: The names of the output variables for which to
+    :param components: The names of the output variables for which to
         compute the laplacian. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
-    :param list[str] d: The names of the input variables with respect to which
+    :type components: str | list[str]
+    :param d: The names of the input variables with respect to which
         the laplacian is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
+    :type d: str | list[str]
     :param str method: The method used to compute the Laplacian. Default is
         ``std``.
     :raises NotImplementedError: If ``std=divgrad``.
@@ -191,12 +210,14 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
             computed. It must be a column tensor.
         :param LabelTensor input_: The input tensor with respect to which the
             laplacian is computed.
-        :param list[str] components: The names of the output variables for which
+        :param components: The names of the output variables for which
             to compute the laplacian. It must be a subset of the output labels.
             If ``None``, all output variables are considered.
-        :param list[str] d: The names of the input variables with respect to
+        :type components: str | list[str]
+        :param d: The names of the input variables with respect to
             which the laplacian is computed. It must be a subset of the input
             labels. If ``None``, all input variables are considered.
+        :type d: str | list[str]
         :return: The computed laplacian tensor.
         :rtype: LabelTensor
         """
@@ -218,6 +239,9 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
     if not isinstance(components, list):
         components = [components]
+
+    if not isinstance(d, list):
+        d = [d]
 
     if method == "divgrad":
         raise NotImplementedError("divgrad not implemented as method")
@@ -250,12 +274,14 @@ def advection(output_, input_, velocity_field, components=None, d=None):
         is computed.
     :param str velocity_field: The name of the output variable used as velocity
         field. It must be chosen among the output labels.
-    :param list[str] components: The names of the output variables for which
+    :param components: The names of the output variables for which
         to compute the advection. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
-    :param list[str] d: The names of the input variables with respect to which
+    :type components: str | list[str]
+    :param d: The names of the input variables with respect to which
         the advection is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
+    :type d: str | list[str]
     :return: The computed advection tensor.
     :rtype: LabelTensor
     """
@@ -264,6 +290,12 @@ def advection(output_, input_, velocity_field, components=None, d=None):
 
     if components is None:
         components = output_.labels
+
+    if not isinstance(components, list):
+        components = [components]
+
+    if not isinstance(d, list):
+        d = [d]
 
     tmp = (
         grad(output_, input_, components, d)
