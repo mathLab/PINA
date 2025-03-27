@@ -3,6 +3,7 @@
 import torch
 from torch_geometric.data import Data, Batch
 from torch_geometric.utils import to_undirected
+from torch_geometric.utils.loop import remove_self_loops
 from .label_tensor import LabelTensor
 from .utils import check_consistency, is_function
 
@@ -209,6 +210,7 @@ class GraphBuilder:
         x=None,
         edge_attr=False,
         custom_edge_func=None,
+        loop=True,
         **kwargs,
     ):
         """
@@ -224,18 +226,19 @@ class GraphBuilder:
         :param x: Optional tensor of node features of shape ``(N, F)``, where
             ``F`` is the number of features per node.
         :type x: torch.Tensor | LabelTensor, optional
-        :param edge_attr: Optional tensor of edge attributes of shape ``(E, F)``
-            , where ``F`` is the number of features per edge.
-        :type edge_attr: torch.Tensor, optional
+        :param bool edge_attr: Whether to compute the edge attributes.
         :param custom_edge_func: A custom function to compute edge attributes.
             If provided, overrides ``edge_attr``.
         :type custom_edge_func: Callable, optional
+        :param bool loop: Whether to include self-loops.
         :param kwargs: Additional keyword arguments passed to the
             :class:`~pina.graph.Graph` class constructor.
         :return: A :class:`~pina.graph.Graph` instance constructed using the
             provided information.
         :rtype: Graph
         """
+        if not loop:
+            edge_index = remove_self_loops(edge_index)[0]
         edge_attr = cls._create_edge_attr(
             pos, edge_index, edge_attr, custom_edge_func or cls._build_edge_attr
         )
@@ -293,7 +296,7 @@ class RadiusGraph(GraphBuilder):
     within the radius.
     """
 
-    def __new__(cls, pos, radius, loop=False, **kwargs):
+    def __new__(cls, pos, radius, **kwargs):
         """
         Instantiate the :class:`~pina.graph.Graph` class by computing the
         ``edge_index`` based on the radius provided.
@@ -302,18 +305,17 @@ class RadiusGraph(GraphBuilder):
             ``N`` points in ``D``-dimensional space.
         :type pos: torch.Tensor | LabelTensor
         :param float radius: The radius within which points are connected.
-        :param bool loop: Whether to include self-loops.
         :param dict kwargs: The additional keyword arguments to be passed to
             :class:`GraphBuilder` and :class:`Graph` classes.
         :return: A :class:`~pina.graph.Graph` instance with the computed
             ``edge_index``.
         :rtype: Graph
         """
-        edge_index = cls.compute_radius_graph(pos, radius, loop)
+        edge_index = cls.compute_radius_graph(pos, radius)
         return super().__new__(cls, pos=pos, edge_index=edge_index, **kwargs)
 
     @staticmethod
-    def compute_radius_graph(points, radius, loop):
+    def compute_radius_graph(points, radius):
         """
         Computes the ``edge_index`` based on the radius. Each point is connected
         to all the points within the radius.
@@ -324,18 +326,11 @@ class RadiusGraph(GraphBuilder):
         :param float radius: The radius within which points are connected.
         :return: A tensor of shape ``(2, E)``, with ``E`` number of edges,
             representing the edge indices of the graph.
-        :param bool loop: Whether to include self-loops.
         :rtype: torch.Tensor
         """
         dist = torch.cdist(points, points, p=2)
-        if loop:
-            return (
-                torch.nonzero(dist <= radius, as_tuple=False)
-                .t()
-                .as_subclass(torch.Tensor)
-            )
         return (
-            torch.nonzero((dist <= radius) & (dist > 0), as_tuple=False)
+            torch.nonzero(dist <= radius, as_tuple=False)
             .t()
             .as_subclass(torch.Tensor)
         )
@@ -347,7 +342,7 @@ class KNNGraph(GraphBuilder):
     ``edge_index`` based on a K-nearest neighbors algorithm.
     """
 
-    def __new__(cls, pos, neighbours, loop=False, **kwargs):
+    def __new__(cls, pos, neighbours, **kwargs):
         """
         Instantiate the :class:`~pina.graph.Graph` class by computing the
         ``edge_index`` based on the K-nearest neighbors algorithm.
@@ -357,7 +352,6 @@ class KNNGraph(GraphBuilder):
         :type pos: torch.Tensor | LabelTensor
         :param int neighbours: The number of nearest neighbors to consider when
             building the graph.
-        :param bool loop: Whether to include self-loops.
         :param dict kwargs: The additional keyword arguments to be passed to
             :class:`GraphBuilder` and :class:`Graph` classes.
 
@@ -366,11 +360,11 @@ class KNNGraph(GraphBuilder):
         :rtype: Graph
         """
 
-        edge_index = cls.compute_knn_graph(pos, neighbours, loop)
+        edge_index = cls.compute_knn_graph(pos, neighbours)
         return super().__new__(cls, pos=pos, edge_index=edge_index, **kwargs)
 
     @staticmethod
-    def compute_knn_graph(points, neighbours, loop):
+    def compute_knn_graph(points, neighbours):
         """
         Computes the ``edge_index`` based on the K-nearest neighbors algorithm.
 
@@ -379,19 +373,12 @@ class KNNGraph(GraphBuilder):
         :type points: torch.Tensor | LabelTensor
         :param int neighbours: The number of nearest neighbors to consider when
             building the graph.
-        :param bool loop: Whether to include self-loops.
         :return: A tensor of shape ``(2, E)``, with ``E`` number of edges,
             representing the edge indices of the graph.
         :rtype: torch.Tensor
         """
-
         dist = torch.cdist(points, points, p=2)
-        if loop:
-            knn_indices = torch.topk(dist, k=neighbours, largest=False).indices
-        else:
-            knn_indices = torch.topk(
-                dist, k=neighbours + 1, largest=False
-            ).indices[:, 1:]
+        knn_indices = torch.topk(dist, k=neighbours, largest=False).indices
         row = torch.arange(points.size(0)).repeat_interleave(neighbours)
         col = knn_indices.flatten()
         return torch.stack([row, col], dim=0).as_subclass(torch.Tensor)
