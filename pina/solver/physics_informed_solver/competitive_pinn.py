@@ -130,11 +130,15 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         loss = super().training_step(batch)
         self.manual_backward(loss)
         self.optimizer_model.instance.step()
+        self.scheduler_model.instance.step()
+
         # train discriminator
         self.optimizer_discriminator.instance.zero_grad()
         loss = super().training_step(batch)
         self.manual_backward(-loss)
         self.optimizer_discriminator.instance.step()
+        self.scheduler_discriminator.instance.step()
+
         return loss
 
     def loss_phys(self, samples, equation):
