@@ -188,12 +188,14 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         loss = super().training_step(batch)
         self.manual_backward(-loss)
         self.optimizer_weights.instance.step()
+        self.scheduler_weights.instance.step()
 
         # Model optimization
         self.optimizer_model.instance.zero_grad()
         loss = super().training_step(batch)
         self.manual_backward(loss)
         self.optimizer_model.instance.step()
+        self.scheduler_model.instance.step()
 
         return loss
 
