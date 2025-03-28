@@ -450,6 +450,16 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
                 "one."
             )
 
+        if optimizers is None:
+            optimizers = [
+                self.default_torch_optimizer() for _ in range(len(models))
+            ]
+
+        if schedulers is None:
+            schedulers = [
+                self.default_torch_scheduler() for _ in range(len(models))
+            ]
+
         if any(opt is None for opt in optimizers):
             optimizers = [
                 self.default_torch_optimizer() if opt is None else opt
@@ -480,11 +490,26 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
                 f"Got {len(models)} models, and {len(optimizers)}"
                 " optimizers."
             )
+        if len(schedulers) != len(optimizers):
+            raise ValueError(
+                "You must define one scheduler for each optimizer."
+                f"Got {len(schedulers)} schedulers, and {len(optimizers)}"
+                " optimizers."
+            )
 
         # initialize the model
         self._pina_models = torch.nn.ModuleList(models)
         self._pina_optimizers = optimizers
         self._pina_schedulers = schedulers
+
+        # set automatic optimization to True.
+        # This is done on purpuse to ensure that an error is triggered whenever
+        # the user does not use manual optimization in the training step.
+        # The following must be overridden to False as manual optimization must
+        # be used for multisolvers.
+        # For more information on manual optimization see:
+        # http://lightning.ai/docs/pytorch/stable/model/manual_optimization.html
+        self.automatic_optimization = True
 
     def configure_optimizers(self):
         """
