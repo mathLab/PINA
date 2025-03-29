@@ -27,12 +27,12 @@ def grad(output_, input_, components=None, d=None):
         computed.
     :param LabelTensor input_: The input tensor with respect to which the
         gradient is computed.
-    :param components: The names of the output variables for which to
-        compute the gradient. It must be a subset of the output labels.
+    :param components: The names of the output variables for which to compute
+        the gradient. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
     :type components: str | list[str]
-    :param d: The names of the input variables with respect to which
-        the gradient is computed. It must be a subset of the input labels.
+    :param d: The names of the input variables with respect to which the
+        gradient is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
     :type d: str | list[str]
     :raises TypeError: If the input tensor is not a LabelTensor.
@@ -70,9 +70,11 @@ def grad(output_, input_, components=None, d=None):
     if not isinstance(input_, LabelTensor):
         raise TypeError("Input must be a LabelTensor.")
 
+    # If no labels are provided, use all labels
     d = d or input_.labels
     components = components or output_.labels
 
+    # Convert to list if not already
     d = [d] if not isinstance(d, list) else d
     components = (
         [components] if not isinstance(components, list) else components
@@ -113,51 +115,47 @@ def div(output_, input_, components=None, d=None):
         computed.
     :param LabelTensor input_: The input tensor with respect to which the
         divergence is computed.
-    :param components: The names of the output variables for which to
+    :param list[str] components: The names of the output variables for which to
         compute the divergence. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
-    :type components: str | list[str]
-    :param d: The names of the input variables with respect to which
+    :param list[str] d: The names of the input variables with respect to which
         the divergence is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
-    :type d: str | list[str]
     :raises TypeError: If the input tensor is not a LabelTensor.
-    :raises ValueError: If the output is a scalar field.
-    :raises ValueError: If the number of components is not equal to the number
-        of input variables.
+    :raises ValueError: If the output tensor is a scalar field.
+    :raises ValueError: If the length of ``components`` and ``d`` do not match.
     :return: The computed divergence tensor.
     :rtype: LabelTensor
     """
     if not isinstance(input_, LabelTensor):
-        raise TypeError
+        raise TypeError("Input must be a LabelTensor.")
 
-    if d is None:
-        d = input_.labels
+    # If no labels are provided, use all labels
+    d = d or input_.labels
+    components = components or output_.labels
 
-    if components is None:
-        components = output_.labels
+    # Convert to list if not already
+    d = [d] if not isinstance(d, list) else d
+    components = (
+        [components] if not isinstance(components, list) else components
+    )
 
-    if not isinstance(components, list):
-        components = [components]
+    # Raise error for scalar valued output
+    if len(components) < 2:
+        raise ValueError("Divergence is supported only for vector fields")
 
-    if not isinstance(d, list):
-        d = [d]
-
-    if output_.shape[1] < 2 or len(components) < 2:
-        raise ValueError("div supported only for vector fields")
-
+    # Components and d must be of the same length
     if len(components) != len(d):
-        raise ValueError
+        raise ValueError(
+            "Divergence requires components and d to be of the same length."
+        )
 
     grad_output = grad(output_, input_, components, d)
-    labels = [None] * len(components)
-    tensors_to_sum = []
-    for i, (c, d_) in enumerate(zip(components, d)):
-        c_fields = f"d{c}d{d_}"
-        tensors_to_sum.append(grad_output.extract(c_fields))
-        labels[i] = c_fields
-    div_result = LabelTensor.summation(tensors_to_sum)
-    return div_result
+    tensors_to_sum = [
+        grad_output.extract(f"d{c}d{d_}") for c, d_ in zip(components, d)
+    ]
+
+    return LabelTensor.summation(tensors_to_sum)
 
 
 def laplacian(output_, input_, components=None, d=None, method="std"):
