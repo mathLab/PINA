@@ -97,7 +97,10 @@ def grad(output_, input_, components=None, d=None):
 
     # Vector gradient
     grads = torch.cat(
-        [_scalar_grad(output_=output_.extract(c), input_=input_, d=d) for c in components],
+        [
+            _scalar_grad(output_=output_.extract(c), input_=input_, d=d)
+            for c in components
+        ],
         dim=output_.tensor.ndim - 1,
     )
 
@@ -263,34 +266,43 @@ def advection(output_, input_, velocity_field, components=None, d=None):
         is computed.
     :param str velocity_field: The name of the output variable used as velocity
         field. It must be chosen among the output labels.
-    :param components: The names of the output variables for which
-        to compute the advection. It must be a subset of the output labels.
+    :param components: The names of the output variables for which to compute
+        the advection. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
     :type components: str | list[str]
-    :param d: The names of the input variables with respect to which
-        the advection is computed. It must be a subset of the input labels.
+    :param d: The names of the input variables with respect to which the
+        advection is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
     :type d: str | list[str]
     :return: The computed advection tensor.
-    :rtype: LabelTensor
+    :rtype: torch.Tensor
     """
-    if d is None:
-        d = input_.labels
+    # If no labels are provided, use all labels
+    d = d or input_.labels
+    components = components or output_.labels
 
-    if components is None:
-        components = output_.labels
+    # Convert to list if not already
+    d = [d] if not isinstance(d, list) else d
+    components = (
+        [components] if not isinstance(components, list) else components
+    )
 
-    if not isinstance(components, list):
-        components = [components]
+    # Check if velocity field is present in the output labels
+    if velocity_field not in output_.labels:
+        raise RuntimeError(
+            f"Velocity {velocity_field} is not present in the output labels."
+        )
 
-    if not isinstance(d, list):
-        d = [d]
+    # Save the velocity field
+    velocity = output_.extract(velocity_field)
+
+    # Remove the velocity field from the components
+    filter_components = [c for c in components if c != velocity_field]
 
     tmp = (
-        grad(output_=output_, input_=input_, components=components, d=d)
-        .reshape(-1, len(components), len(d))
+        grad(output_=output_, input_=input_, components=filter_components, d=d)
+        .reshape(-1, len(filter_components), len(d))
         .transpose(0, 1)
     )
 
-    tmp *= output_.extract(velocity_field)
-    return tmp.sum(dim=2).T
+    return (tmp * velocity).sum(dim=2).T
