@@ -42,7 +42,7 @@ def grad(output_, input_, components=None, d=None):
     :rtype: LabelTensor
     """
 
-    def _grad_scalar(output_, input_, d):
+    def _scalar_grad(output_, input_, d):
         """
         Compute the gradient of a scalar-valued ``output_``.
 
@@ -57,8 +57,8 @@ def grad(output_, input_, components=None, d=None):
         :rtype: LabelTensor
         """
         grad_out = torch.autograd.grad(
-            output_,
-            input_,
+            outputs=output_,
+            inputs=input_,
             grad_outputs=torch.ones_like(output_),
             create_graph=True,
             retain_graph=True,
@@ -80,22 +80,24 @@ def grad(output_, input_, components=None, d=None):
         [components] if not isinstance(components, list) else components
     )
 
+    # Check if all labels are present in the input tensor
     if not all(di in input_.labels for di in d):
         raise RuntimeError("Derivative labels missing from input tensor.")
 
+    # Check if all labels are present in the output tensor
     if not all(c in output_.labels for c in components):
         raise RuntimeError("Component label missing from output tensor.")
 
     # Scalar gradient
     if output_.shape[1] == 1:
         return LabelTensor(
-            _grad_scalar(output_, input_, d),
+            _scalar_grad(output_=output_, input_=input_, d=d),
             labels=[f"d{output_.labels[0]}d{i}" for i in d],
         )
 
     # Vector gradient
     grads = torch.cat(
-        [_grad_scalar(output_.extract([c]), input_, d) for c in components],
+        [_scalar_grad(output_=output_.extract(c), input_=input_, d=d) for c in components],
         dim=output_.tensor.ndim - 1,
     )
 
@@ -127,6 +129,7 @@ def div(output_, input_, components=None, d=None):
     :return: The computed divergence tensor.
     :rtype: LabelTensor
     """
+    # Check if the input is a LabelTensor
     if not isinstance(input_, LabelTensor):
         raise TypeError("Input must be a LabelTensor.")
 
@@ -150,9 +153,9 @@ def div(output_, input_, components=None, d=None):
             "Divergence requires components and d to be of the same length."
         )
 
-    grad_output = grad(output_, input_, components, d)
+    grad_out = grad(output_=output_, input_=input_, components=components, d=d)
     tensors_to_sum = [
-        grad_output.extract(f"d{c}d{d_}") for c, d_ in zip(components, d)
+        grad_out.extract(f"d{c}d{d_}") for c, d_ in zip(components, d)
     ]
 
     return LabelTensor.summation(tensors_to_sum)
@@ -179,12 +182,13 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
     :type d: str | list[str]
     :param str method: The method used to compute the Laplacian. Default is
         ``std``.
-    :raises NotImplementedError: If ``std=divgrad``.
+    :raises TypeError: If the input tensor is not a LabelTensor.
+    :raises NotImplementedError: Method ``divgrad`` is not implemented.
     :return: The computed laplacian tensor.
     :rtype: LabelTensor
     """
 
-    def scalar_laplace(output_, input_, components, d):
+    def _scalar_laplacian(output_, input_, d):
         """
         Compute the laplacian of a scalar-valued ``output_``.
 
@@ -192,54 +196,57 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
             computed. It must be a column tensor.
         :param LabelTensor input_: The input tensor with respect to which the
             laplacian is computed.
-        :param components: The names of the output variables for which
-            to compute the laplacian. It must be a subset of the output labels.
-            If ``None``, all output variables are considered.
-        :type components: str | list[str]
-        :param d: The names of the input variables with respect to
+        :param list[str] d: The names of the input variables with respect to
             which the laplacian is computed. It must be a subset of the input
             labels. If ``None``, all input variables are considered.
-        :type d: str | list[str]
         :return: The computed laplacian tensor.
         :rtype: LabelTensor
         """
-
-        grad_output = grad(output_, input_, components=components, d=d)
+        first_grad = grad(output_=output_, input_=input_, d=d)
         result = torch.zeros(output_.shape[0], 1, device=output_.device)
 
-        for i, label in enumerate(grad_output.labels):
-            gg = grad(grad_output, input_, d=d, components=[label])
-            result[:, 0] += super(torch.Tensor, gg.T).__getitem__(i)
+        second_grad = grad(output_=first_grad, input_=input_, d=d).T
+        for i in range(second_grad.shape[0]):
+            result[:, 0] += second_grad[i]
 
         return result
 
-    if d is None:
-        d = input_.labels
+    # Check if the input is a LabelTensor
+    if not isinstance(input_, LabelTensor):
+        raise TypeError("Input must be a LabelTensor.")
 
-    if components is None:
-        components = output_.labels
+    # If no labels are provided, use all labels
+    d = d or input_.labels
+    components = components or output_.labels
 
-    if not isinstance(components, list):
-        components = [components]
-
-    if not isinstance(d, list):
-        d = [d]
-
-    if method == "divgrad":
-        raise NotImplementedError("divgrad not implemented as method")
+    # Convert to list if not already
+    d = [d] if not isinstance(d, list) else d
+    components = (
+        [components] if not isinstance(components, list) else components
+    )
 
     if method == "std":
 
+        # Scalar laplacian
+        if output_.shape[1] == 1:
+            return LabelTensor(
+                _scalar_laplacian(output_=output_, input_=input_, d=d),
+                labels=[f"dd{c}" for c in components],
+            )
+
+        # Vector laplacian
         result = torch.empty(
             input_.shape[0], len(components), device=output_.device
         )
-        labels = [None] * len(components)
+        labels = [f"dd{c}" for c in components]
         for idx, c in enumerate(components):
-            result[:, idx] = scalar_laplace(output_, input_, [c], d).flatten()
-            labels[idx] = f"dd{c}"
+            result[:, idx] = _scalar_laplacian(
+                output_=output_.extract(c), input_=input_, d=d
+            ).flatten()
+        result = LabelTensor(result, labels=labels)
 
-        result = result.as_subclass(LabelTensor)
-        result.labels = labels
+    if method == "divgrad":
+        raise NotImplementedError("Method ``divgrad`` is not implemented.")
 
     return result
 
@@ -280,7 +287,7 @@ def advection(output_, input_, velocity_field, components=None, d=None):
         d = [d]
 
     tmp = (
-        grad(output_, input_, components, d)
+        grad(output_=output_, input_=input_, components=components, d=d)
         .reshape(-1, len(components), len(d))
         .transpose(0, 1)
     )
