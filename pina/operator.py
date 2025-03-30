@@ -120,14 +120,15 @@ def div(output_, input_, components=None, d=None):
         computed.
     :param LabelTensor input_: The input tensor with respect to which the
         divergence is computed.
-    :param list[str] components: The names of the output variables for which to
-        compute the divergence. It must be a subset of the output labels.
+    :param components: The names of the output variables for which to compute
+        the divergence. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
-    :param list[str] d: The names of the input variables with respect to which
-        the divergence is computed. It must be a subset of the input labels.
+    :type components: str | list[str]
+    :param d: The names of the input variables with respect to which the
+        divergence is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
+    :type components: str | list[str]
     :raises TypeError: If the input tensor is not a LabelTensor.
-    :raises ValueError: If the output tensor is a scalar field.
     :raises ValueError: If the length of ``components`` and ``d`` do not match.
     :return: The computed divergence tensor.
     :rtype: LabelTensor
@@ -145,10 +146,6 @@ def div(output_, input_, components=None, d=None):
     components = (
         [components] if not isinstance(components, list) else components
     )
-
-    # Raise error for scalar valued output
-    if len(components) < 2:
-        raise ValueError("Divergence is supported only for vector fields")
 
     # Components and d must be of the same length
     if len(components) != len(d):
@@ -183,10 +180,12 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
         the laplacian is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
     :type d: str | list[str]
-    :param str method: The method used to compute the Laplacian. Default is
-        ``std``.
+    :param str method: The method used to compute the Laplacian. Available
+        methods are ``std`` and ``divgrad``. The ``std`` method computes the
+        trace of the Hessian matrix, while the ``divgrad`` method computes the
+        divergence of the gradient. Default is ``std``.
     :raises TypeError: If the input tensor is not a LabelTensor.
-    :raises NotImplementedError: Method ``divgrad`` is not implemented.
+    :raises ValueError: If the passed method is neither ``std`` nor ``divgrad``.
     :return: The computed laplacian tensor.
     :rtype: LabelTensor
     """
@@ -228,30 +227,42 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
         [components] if not isinstance(components, list) else components
     )
 
-    if method == "std":
-
-        # Scalar laplacian
-        if output_.shape[1] == 1:
-            return LabelTensor(
-                _scalar_laplacian(output_=output_, input_=input_, d=d),
-                labels=[f"dd{c}" for c in components],
-            )
-
-        # Vector laplacian
-        result = torch.empty(
-            input_.shape[0], len(components), device=output_.device
+    # Scalar laplacian
+    if output_.shape[1] == 1:
+        return LabelTensor(
+            _scalar_laplacian(output_=output_, input_=input_, d=d),
+            labels=[f"dd{c}" for c in components],
         )
-        labels = [f"dd{c}" for c in components]
+
+    # Initialize the result tensor and its labels
+    labels = [f"dd{c}" for c in components]
+    result = torch.empty(
+        input_.shape[0], len(components), device=output_.device
+    )
+
+    # Vector laplacian
+    if method == "std":
         for idx, c in enumerate(components):
             result[:, idx] = _scalar_laplacian(
                 output_=output_.extract(c), input_=input_, d=d
             ).flatten()
-        result = LabelTensor(result, labels=labels)
 
-    if method == "divgrad":
-        raise NotImplementedError("Method ``divgrad`` is not implemented.")
+    elif method == "divgrad":
+        grads = grad(output_=output_, input_=input_, components=components, d=d)
+        for idx, c in enumerate(components):
+            result[:, idx] = div(
+                output_=grads,
+                input_=input_,
+                components=[f"d{c}d{i}" for i in d],
+                d=d,
+            ).flatten()
 
-    return result
+    else:
+        raise ValueError(
+            "Invalid method. Available methods are ``std`` and ``divgrad``."
+        )
+
+    return LabelTensor(result, labels=labels)
 
 
 def advection(output_, input_, velocity_field, components=None, d=None):
@@ -274,9 +285,15 @@ def advection(output_, input_, velocity_field, components=None, d=None):
         advection is computed. It must be a subset of the input labels.
         If ``None``, all input variables are considered. Default is ``None``.
     :type d: str | list[str]
+    :raises TypeError: If the input tensor is not a LabelTensor.
+    :raises RuntimeError: If the velocity field is not in the output labels.
     :return: The computed advection tensor.
     :rtype: torch.Tensor
     """
+    # Check if the input is a LabelTensor
+    if not isinstance(input_, LabelTensor):
+        raise TypeError("Input must be a LabelTensor.")
+
     # If no labels are provided, use all labels
     d = d or input_.labels
     components = components or output_.labels

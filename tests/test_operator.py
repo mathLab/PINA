@@ -25,7 +25,7 @@ tensor_s = LabelTensor(func_scalar(inp).reshape(-1, 1), labels[0])
 
 
 def test_grad_scalar_output():
-    grad_tensor_s = grad(tensor_s, inp)
+    grad_tensor_s = grad(output_=tensor_s, input_=inp)
     true_val = 2 * inp
     true_val.labels = inp.labels
     assert grad_tensor_s.shape == inp.shape
@@ -34,7 +34,7 @@ def test_grad_scalar_output():
     ]
     assert torch.allclose(grad_tensor_s, true_val)
 
-    grad_tensor_s = grad(tensor_s, inp, d=["x", "y"])
+    grad_tensor_s = grad(output_=tensor_s, input_=inp, d=["x", "y"])
     assert grad_tensor_s.shape == (n, 2)
     assert grad_tensor_s.labels == [
         f"d{tensor_s.labels[0]}d{i}" for i in ["x", "y"]
@@ -43,7 +43,7 @@ def test_grad_scalar_output():
 
 
 def test_grad_vector_output():
-    grad_tensor_v = grad(tensor_v, inp)
+    grad_tensor_v = grad(output_=tensor_v, input_=inp)
     true_val = torch.cat(
         (
             2 * inp.extract(["x"]),
@@ -64,7 +64,7 @@ def test_grad_vector_output():
     ]
     assert torch.allclose(grad_tensor_v, true_val)
 
-    grad_tensor_v = grad(tensor_v, inp, d=["x", "y"])
+    grad_tensor_v = grad(output_=tensor_v, input_=inp, d=["x", "y"])
     true_val = torch.cat(
         (
             2 * inp.extract(["x"]),
@@ -84,42 +84,56 @@ def test_grad_vector_output():
 
 
 def test_div_vector_output():
-    div_tensor_v = div(tensor_v, inp)
+    div_tensor_v = div(output_=tensor_v, input_=inp)
     true_val = 2 * torch.sum(inp, dim=1).reshape(-1, 1)
     assert div_tensor_v.shape == (n, 1)
     assert div_tensor_v.labels == [f"dadx+dbdy+dcdz"]
     assert torch.allclose(div_tensor_v, true_val)
 
-    div_tensor_v = div(tensor_v, inp, components=["a", "b"], d=["x", "y"])
+    div_tensor_v = div(
+        output_=tensor_v, input_=inp, components=["a", "b"], d=["x", "y"]
+    )
     true_val = 2 * torch.sum(inp.extract(["x", "y"]), dim=1).reshape(-1, 1)
     assert div_tensor_v.shape == (inp.shape[0], 1)
     assert div_tensor_v.labels == [f"dadx+dbdy"]
     assert torch.allclose(div_tensor_v, true_val)
 
 
-def test_laplacian_scalar_output():
-    laplace_tensor_s = laplacian(tensor_s, inp)
+@pytest.mark.parametrize("method", ["std", "divgrad"])
+def test_laplacian_scalar_output(method):
+    laplace_tensor_s = laplacian(output_=tensor_s, input_=inp, method=method)
     true_val = 6 * torch.ones_like(laplace_tensor_s)
     assert laplace_tensor_s.shape == tensor_s.shape
     assert laplace_tensor_s.labels == [f"dd{tensor_s.labels[0]}"]
     assert torch.allclose(laplace_tensor_s, true_val)
 
-    laplace_tensor_s = laplacian(tensor_s, inp, components=["a"], d=["x", "y"])
+    laplace_tensor_s = laplacian(
+        output_=tensor_s,
+        input_=inp,
+        components=["a"],
+        d=["x", "y"],
+        method=method,
+    )
     true_val = 4 * torch.ones_like(laplace_tensor_s)
     assert laplace_tensor_s.shape == tensor_s.shape
     assert laplace_tensor_s.labels == [f"dd{tensor_s.labels[0]}"]
     assert torch.allclose(laplace_tensor_s, true_val)
 
 
-def test_laplacian_vector_output():
-    laplace_tensor_v = laplacian(tensor_v, inp)
+@pytest.mark.parametrize("method", ["std", "divgrad"])
+def test_laplacian_vector_output(method):
+    laplace_tensor_v = laplacian(output_=tensor_v, input_=inp, method=method)
     true_val = 2 * torch.ones_like(tensor_v)
     assert laplace_tensor_v.shape == tensor_v.shape
     assert laplace_tensor_v.labels == [f"dd{i}" for i in tensor_v.labels]
     assert torch.allclose(laplace_tensor_v, true_val)
 
     laplace_tensor_v = laplacian(
-        tensor_v, inp, components=["a", "b"], d=["x", "y"]
+        output_=tensor_v,
+        input_=inp,
+        components=["a", "b"],
+        d=["x", "y"],
+        method=method,
     )
     true_val = 2 * torch.ones_like(tensor_v.extract(["a", "b"]))
     assert laplace_tensor_v.shape == tensor_v.extract(["a", "b"]).shape
@@ -127,7 +141,8 @@ def test_laplacian_vector_output():
     assert torch.allclose(laplace_tensor_v, true_val)
 
 
-def test_laplacian_vector_output2():
+@pytest.mark.parametrize("method", ["std", "divgrad"])
+def test_laplacian_vector_output2(method):
     x = torch.linspace(0, 1, 10, requires_grad=True).reshape(-1, 1)
     y = torch.linspace(3, 4, 10, requires_grad=True).reshape(-1, 1)
     input_ = LabelTensor(torch.cat((x, y), dim=1), labels=["x", "y"])
@@ -144,12 +159,18 @@ def test_laplacian_vector_output2():
     # Compute the scalar laplacian of both u and v:
     # Lap(u) = [4, 4, 4, ..., 4]
     # Lap(v) = [0, 0, 0, ..., 0]
-    lap_u = laplacian(f.extract("u"), input_, components=["u"])
-    lap_v = laplacian(f.extract("v"), input_, components=["v"])
+    lap_u = laplacian(
+        output_=f.extract("u"), input_=input_, components=["u"], method=method
+    )
+    lap_v = laplacian(
+        output_=f.extract("v"), input_=input_, components=["v"], method=method
+    )
 
     # Compute the laplacian of f: the two columns should correspond
     # to the laplacians of u and v, respectively...
-    lap_f = laplacian(f, input_, components=["u", "v"])
+    lap_f = laplacian(
+        output_=f, input_=input_, components=["u", "v"], method=method
+    )
 
     assert torch.allclose(lap_f.extract("ddu"), lap_u)
     assert torch.allclose(lap_f.extract("ddv"), lap_v)
@@ -157,7 +178,7 @@ def test_laplacian_vector_output2():
 
 def test_advection():
     # Advection term
-    adv_tensor = advection(tensor_v, inp, velocity_field="c")
+    adv_tensor = advection(output_=tensor_v, input_=inp, velocity_field="c")
 
     # True value
     velocity = tensor_v.extract(["c"])
@@ -167,7 +188,8 @@ def test_advection():
     assert torch.allclose(adv_tensor, true_val)
 
 
-def test_label_format():
+@pytest.mark.parametrize("method", ["std", "divgrad"])
+def test_label_format(method):
     # Testing the format of `components` or `d` in case of single str of length
     # greater than 1; e.g.: "aaa".
     # This test is conducted only for gradient and laplacian, since div is not
@@ -178,29 +200,47 @@ def test_label_format():
     single_d = inp.labels[0]
 
     # Single component as string + list of d
-    grad_tensor_v = grad(tensor_v, inp, components=comp, d=None)
+    grad_tensor_v = grad(output_=tensor_v, input_=inp, components=comp, d=None)
     assert grad_tensor_v.labels == [f"d{comp}d{i}" for i in inp.labels]
 
-    lap_tensor_v = laplacian(tensor_v, inp, components=comp, d=None)
+    lap_tensor_v = laplacian(
+        output_=tensor_v, input_=inp, components=comp, d=None, method=method
+    )
     assert lap_tensor_v.labels == [f"dd{comp}"]
 
     # Single component as list + list of d
-    grad_tensor_v = grad(tensor_v, inp, components=[comp], d=None)
+    grad_tensor_v = grad(
+        output_=tensor_v, input_=inp, components=[comp], d=None
+    )
     assert grad_tensor_v.labels == [f"d{comp}d{i}" for i in inp.labels]
 
-    lap_tensor_v = laplacian(tensor_v, inp, components=[comp], d=None)
+    lap_tensor_v = laplacian(
+        output_=tensor_v, input_=inp, components=[comp], d=None, method=method
+    )
     assert lap_tensor_v.labels == [f"dd{comp}"]
 
     # List of components + single d as string
-    grad_tensor_v = grad(tensor_v, inp, components=None, d=single_d)
+    grad_tensor_v = grad(
+        output_=tensor_v, input_=inp, components=None, d=single_d
+    )
     assert grad_tensor_v.labels == [f"d{i}d{single_d}" for i in tensor_v.labels]
 
-    lap_tensor_v = laplacian(tensor_v, inp, components=None, d=single_d)
+    lap_tensor_v = laplacian(
+        output_=tensor_v, input_=inp, components=None, d=single_d, method=method
+    )
     assert lap_tensor_v.labels == [f"dd{i}" for i in tensor_v.labels]
 
     # List of components + single d as list
-    grad_tensor_v = grad(tensor_v, inp, components=None, d=[single_d])
+    grad_tensor_v = grad(
+        output_=tensor_v, input_=inp, components=None, d=[single_d]
+    )
     assert grad_tensor_v.labels == [f"d{i}d{single_d}" for i in tensor_v.labels]
 
-    lap_tensor_v = laplacian(tensor_v, inp, components=None, d=[single_d])
+    lap_tensor_v = laplacian(
+        output_=tensor_v,
+        input_=inp,
+        components=None,
+        d=[single_d],
+        method=method,
+    )
     assert lap_tensor_v.labels == [f"dd{i}" for i in tensor_v.labels]
