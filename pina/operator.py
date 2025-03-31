@@ -75,10 +75,8 @@ def grad(output_, input_, components=None, d=None):
     components = components or output_.labels
 
     # Convert to list if not already
-    d = [d] if not isinstance(d, list) else d
-    components = (
-        [components] if not isinstance(components, list) else components
-    )
+    d = d if isinstance(d, list) else [d]
+    components = components if isinstance(components, list) else [components]
 
     # Check if all labels are present in the input tensor
     if not all(di in input_.labels for di in d):
@@ -142,10 +140,8 @@ def div(output_, input_, components=None, d=None):
     components = components or output_.labels
 
     # Convert to list if not already
-    d = [d] if not isinstance(d, list) else d
-    components = (
-        [components] if not isinstance(components, list) else components
-    )
+    d = d if isinstance(d, list) else [d]
+    components = components if isinstance(components, list) else [components]
 
     # Components and d must be of the same length
     if len(components) != len(d):
@@ -205,13 +201,8 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
         :rtype: LabelTensor
         """
         first_grad = grad(output_=output_, input_=input_, d=d)
-        result = torch.zeros(output_.shape[0], 1, device=output_.device)
-
-        second_grad = grad(output_=first_grad, input_=input_, d=d).T
-        for i in range(second_grad.shape[0]):
-            result[:, 0] += second_grad[i]
-
-        return result
+        second_grad = grad(output_=first_grad, input_=input_, d=d)
+        return torch.sum(second_grad, dim=1, keepdim=True)
 
     # Check if the input is a LabelTensor
     if not isinstance(input_, LabelTensor):
@@ -222,10 +213,8 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
     components = components or output_.labels
 
     # Convert to list if not already
-    d = [d] if not isinstance(d, list) else d
-    components = (
-        [components] if not isinstance(components, list) else components
-    )
+    d = d if isinstance(d, list) else [d]
+    components = components if isinstance(components, list) else [components]
 
     # Scalar laplacian
     if output_.shape[1] == 1:
@@ -242,20 +231,30 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 
     # Vector laplacian
     if method == "std":
-        for idx, c in enumerate(components):
-            result[:, idx] = _scalar_laplacian(
-                output_=output_.extract(c), input_=input_, d=d
-            ).flatten()
+        result = torch.stack(
+            [
+                _scalar_laplacian(
+                    output_=output_.extract(c), input_=input_, d=d
+                ).flatten()
+                for c in components
+            ],
+            dim=1,
+        )
 
     elif method == "divgrad":
         grads = grad(output_=output_, input_=input_, components=components, d=d)
-        for idx, c in enumerate(components):
-            result[:, idx] = div(
-                output_=grads,
-                input_=input_,
-                components=[f"d{c}d{i}" for i in d],
-                d=d,
-            ).flatten()
+        result = torch.stack(
+            [
+                div(
+                    output_=grads,
+                    input_=input_,
+                    components=[f"d{c}d{i}" for i in d],
+                    d=d,
+                ).flatten()
+                for c in components
+            ],
+            dim=1,
+        )
 
     else:
         raise ValueError(
@@ -299,10 +298,8 @@ def advection(output_, input_, velocity_field, components=None, d=None):
     components = components or output_.labels
 
     # Convert to list if not already
-    d = [d] if not isinstance(d, list) else d
-    components = (
-        [components] if not isinstance(components, list) else components
-    )
+    d = d if isinstance(d, list) else [d]
+    components = components if isinstance(components, list) else [components]
 
     # Check if velocity field is present in the output labels
     if velocity_field not in output_.labels:
