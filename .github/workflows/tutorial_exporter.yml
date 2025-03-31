@@ -11,8 +11,8 @@ on:
 
 jobs:
   # run on push
-  if: ${{ github.event_name != 'workflow_dispatch' }}
-  export_tutorials_workflow_dispatch:
+  export_tutorials_push:
+    if: ${{ github.event_name != 'workflow_dispatch' }}
     permissions: write-all
     runs-on: ubuntu-latest
     env:
@@ -27,8 +27,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        # Dependencies for tutorials
         python3 -m pip install --upgrade pip .[tutorial] black[jupyter]
+    
     - name: Setup FFmpeg
       uses: FedericoCarboni/setup-ffmpeg@v2
 
@@ -49,15 +49,15 @@ jobs:
         for file in ${{ steps.files.outputs.all }}; do
           if [[ $file == *.ipynb ]]; then
             filename=$(basename $file)
-            pyfilename=$(echo ${filename%?????})py
+            pyfilename="${filename%.ipynb}.py"
             timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert $file --to python --output $pyfilename --output-dir=$(dirname $file)
-            htmlfilename=$(echo ${filename%?????} | sed -e 's/-//g')html
-            htmldir="docs/source"/$(echo ${file%??????????????} | sed -e 's/-//g')
+            htmlfilename="${filename%.ipynb}"html
+            htmldir="docs/source"/$(dirname $file)
             timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to html --output $htmlfilename --output-dir=$htmldir
           fi
         done
         set +x
-        
+
     - name: Run formatter
       run: black tutorials/
 
@@ -77,9 +77,10 @@ jobs:
         base: ${{ github.head_ref }}
         commit-message: export tutorials changed in ${{ steps.short-sha.outputs.sha }}
         delete-branch: true
+
   # run on workflow_dispatch
-  if: ${{ github.event_name = 'workflow_dispatch' }}
   export_tutorials_workflow_dispatch:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     permissions: write-all
     runs-on: ubuntu-latest
     env:
@@ -94,18 +95,10 @@ jobs:
 
     - name: Install dependencies
       run: |
-        # Dependencies for tutorials
         python3 -m pip install --upgrade pip .[tutorial] black[jupyter]
 
     - name: Setup FFmpeg
       uses: FedericoCarboni/setup-ffmpeg@v2
-
-    - name: Find all .ipynb files
-      id: files
-      run: |
-        # Use `find` to locate all .ipynb files in the tutorials folder
-        IPYNB_FILES=$(find tutorials -type f -name "*.ipynb")
-        echo "all=$IPYNB_FILES" >> $GITHUB_ENV
 
     - name: Configure git
       run: |
@@ -115,18 +108,17 @@ jobs:
     - name: Export tutorials to .py and .html
       run: |
         set -x
-        for file in ${{ env.all}}; do
-          if [[ $file == *.ipynb ]]; then
-            filename=$(basename $file)
-            pyfilename=$(echo ${filename%?????})py
-            timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert $file --to python --output $pyfilename --output-dir=$(dirname $file)
-            htmlfilename=$(echo ${filename%?????} | sed -e 's/-//g')html
-            htmldir="docs/source"/$(echo ${file%??????????????} | sed -e 's/-//g')
-            timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to html --output $htmlfilename --output-dir=$htmldir
-          fi
+        # Find all .ipynb files in the tutorials directory
+        for file in $(find tutorials -type f -name "*.ipynb"); do
+          filename=$(basename $file)
+          pyfilename="${filename%.ipynb}.py"
+          timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert $file --to python --output $pyfilename --output-dir=$(dirname $file)
+          htmlfilename="${filename%.ipynb}.html"
+          htmldir="docs/source"/$(dirname $file)
+          timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to html --output $htmlfilename --output-dir=$htmldir
         done
         set +x
-        
+
     - name: Run formatter
       run: black tutorials/
 
