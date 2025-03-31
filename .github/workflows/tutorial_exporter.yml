@@ -10,7 +10,9 @@ on:
       - 'tutorials/**/*.ipynb'
 
 jobs:
-  export_tutorials:
+  # run on push
+  if: ${{ github.event_name != 'workflow_dispatch' }}
+  export_tutorials_workflow_dispatch:
     permissions: write-all
     runs-on: ubuntu-latest
     env:
@@ -45,6 +47,75 @@ jobs:
       run: |
         set -x
         for file in ${{ steps.files.outputs.all }}; do
+          if [[ $file == *.ipynb ]]; then
+            filename=$(basename $file)
+            pyfilename=$(echo ${filename%?????})py
+            timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert $file --to python --output $pyfilename --output-dir=$(dirname $file)
+            htmlfilename=$(echo ${filename%?????} | sed -e 's/-//g')html
+            htmldir="docs/source"/$(echo ${file%??????????????} | sed -e 's/-//g')
+            timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to html --output $htmlfilename --output-dir=$htmldir
+          fi
+        done
+        set +x
+        
+    - name: Run formatter
+      run: black tutorials/
+
+    - uses: benjlevesque/short-sha@v2.1
+      id: short-sha
+
+    - name: Remove unwanted files
+      run: |
+        rm -rf build/ tutorials/tutorial4/data/
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5.0.2
+      with:
+        labels: maintenance
+        title: Export tutorial changed in ${{ steps.short-sha.outputs.sha }}
+        branch: export-tutorial-${{ steps.short-sha.outputs.sha }}
+        base: ${{ github.head_ref }}
+        commit-message: export tutorials changed in ${{ steps.short-sha.outputs.sha }}
+        delete-branch: true
+  # run on workflow_dispatch
+  if: ${{ github.event_name = 'workflow_dispatch' }}
+  export_tutorials_workflow_dispatch:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    env:
+      TUTORIAL_TIMEOUT: 1200s
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        # Dependencies for tutorials
+        python3 -m pip install --upgrade pip .[tutorial] black[jupyter]
+
+    - name: Setup FFmpeg
+      uses: FedericoCarboni/setup-ffmpeg@v2
+
+    - name: Find all .ipynb files
+      id: files
+      run: |
+        # Use `find` to locate all .ipynb files in the tutorials folder
+        IPYNB_FILES=$(find tutorials -type f -name "*.ipynb")
+        echo "all=$IPYNB_FILES" >> $GITHUB_ENV
+
+    - name: Configure git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+    - name: Export tutorials to .py and .html
+      run: |
+        set -x
+        for file in ${{ env.all}}; do
           if [[ $file == *.ipynb ]]; then
             filename=$(basename $file)
             pyfilename=$(echo ${filename%?????})py
