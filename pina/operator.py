@@ -66,7 +66,7 @@ def grad(output_, input_, components=None, d=None):
         raise RuntimeError("Component label missing from output tensor.")
 
     # Scalar gradient
-    if output_.shape[1] == 1:
+    if output_.shape[-1] == 1:
         return LabelTensor(
             _scalar_grad(output_=output_, input_=input_, d=d),
             labels=[f"d{output_.labels[0]}d{i}" for i in d],
@@ -135,7 +135,7 @@ def fast_grad(output_, input_, components, d):
     :rtype: LabelTensor
     """
     # Scalar gradient
-    if output_.shape[1] == 1:
+    if output_.shape[-1] == 1:
         return LabelTensor(
             _scalar_grad(output_=output_, input_=input_, d=d),
             labels=[f"d{output_.labels[0]}d{i}" for i in d],
@@ -279,7 +279,7 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
     components = components if isinstance(components, list) else [components]
 
     # Scalar laplacian
-    if output_.shape[1] == 1:
+    if output_.shape[-1] == 1:
         return LabelTensor(
             _scalar_laplacian(output_=output_, input_=input_, d=d),
             labels=[f"dd{c}" for c in components],
@@ -378,7 +378,7 @@ def fast_laplacian(output_, input_, components, d, method="std"):
     :rtype: LabelTensor
     """
     # Scalar laplacian
-    if output_.shape[1] == 1:
+    if output_.shape[-1] == 1:
         return LabelTensor(
             _scalar_laplacian(output_=output_, input_=input_, d=d),
             labels=[f"dd{c}" for c in components],
