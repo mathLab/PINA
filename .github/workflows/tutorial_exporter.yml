@@ -6,12 +6,13 @@ on:
     branches:
       - "dev"
       - "master"
+      - "workflow_tut"
     paths:
       - 'tutorials/**/*.ipynb'
 
 jobs:
   # run on push
-  export_tutorials_push:
+  export_tutorials_on_push:
     if: ${{ github.event_name != 'workflow_dispatch' }}
     permissions: write-all
     runs-on: ubuntu-latest
@@ -19,6 +20,11 @@ jobs:
       TUTORIAL_TIMEOUT: 1200s
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+  
+    - name: files
+      run: echo "all=$(git diff --name-only HEAD^ HEAD | xargs)" >> $GITHUB_OUTPUT
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -32,18 +38,15 @@ jobs:
     - name: Setup FFmpeg
       uses: FedericoCarboni/setup-ffmpeg@v2
 
-    - id: files
-      uses: jitterbit/get-changed-files@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        format: space-delimited
-
     - name: Configure git
       run: |
         git config user.name "github-actions[bot]"
         git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
-    - name: Export tutorials to .py and .html
+    - name: Run formatter
+      run: black tutorials/
+
+    - name: Export modified tutorials to .py and .html
       run: |
         set -x
         for file in ${{ steps.files.outputs.all }}; do
@@ -57,9 +60,6 @@ jobs:
           fi
         done
         set +x
-
-    - name: Run formatter
-      run: black tutorials/
 
     - uses: benjlevesque/short-sha@v2.1
       id: short-sha
@@ -105,7 +105,10 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
-    - name: Export tutorials to .py and .html
+    - name: Run formatter
+      run: black tutorials/
+
+    - name: Export all tutorials to .py and .html
       run: |
         set -x
         # Find all .ipynb files in the tutorials directory
@@ -118,9 +121,6 @@ jobs:
           timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to html --output $htmlfilename --output-dir=$htmldir
         done
         set +x
-
-    - name: Run formatter
-      run: black tutorials/
 
     - uses: benjlevesque/short-sha@v2.1
       id: short-sha
