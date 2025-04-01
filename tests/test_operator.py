@@ -1,246 +1,317 @@
 import torch
 import pytest
-
 from pina import LabelTensor
 from pina.operator import grad, div, laplacian, advection
 
 
-def func_vector(x):
-    return x**2
+class Function(object):
+
+    def __iter__(self):
+        functions = [
+            (
+                getattr(self, f"{name}_input"),
+                getattr(self, f"{name}"),
+                getattr(self, f"{name}_grad"),
+                getattr(self, f"{name}_div"),
+                getattr(self, f"{name}_lap"),
+            )
+            for name in [
+                "scalar_scalar",
+                "scalar_vector",
+                "vector_scalar",
+                "vector_vector",
+            ]
+        ]
+        return iter(functions)
+
+    # Scalar to scalar function
+    @staticmethod
+    def scalar_scalar(x):
+        return x**2
+
+    @staticmethod
+    def scalar_scalar_grad(x):
+        return 2 * x
+
+    @staticmethod
+    def scalar_scalar_div(x):
+        return 2 * x
+
+    @staticmethod
+    def scalar_scalar_lap(x):
+        return 2 * torch.ones_like(x)
+
+    @staticmethod
+    def scalar_scalar_input():
+        input_ = torch.rand((20, 1), requires_grad=True)
+        return LabelTensor(input_, ["x"])
+
+    # Scalar to vector function
+    @staticmethod
+    def scalar_vector(x):
+        u = x**2
+        v = x**3 + x
+        return torch.cat((u, v), dim=-1)
+
+    @staticmethod
+    def scalar_vector_grad(x):
+        u = 2 * x
+        v = 3 * x**2 + 1
+        return torch.cat((u, v), dim=-1)
+
+    @staticmethod
+    def scalar_vector_div(x):
+        return ValueError
+
+    @staticmethod
+    def scalar_vector_lap(x):
+        u = 2 * torch.ones_like(x)
+        v = 6 * x
+        return torch.cat((u, v), dim=-1)
+
+    @staticmethod
+    def scalar_vector_input():
+        input_ = torch.rand((20, 1), requires_grad=True)
+        return LabelTensor(input_, ["x"])
+
+    # Vector to scalar function
+    @staticmethod
+    def vector_scalar(x):
+        return torch.prod(x**2, dim=-1, keepdim=True)
+
+    @staticmethod
+    def vector_scalar_grad(x):
+        return 2 * torch.prod(x**2, dim=-1, keepdim=True) / x
+
+    @staticmethod
+    def vector_scalar_div(x):
+        return ValueError
+
+    @staticmethod
+    def vector_scalar_lap(x):
+        return 2 * torch.sum(
+            torch.prod(x**2, dim=-1, keepdim=True) / x**2,
+            dim=-1,
+            keepdim=True,
+        )
+
+    @staticmethod
+    def vector_scalar_input():
+        input_ = torch.rand((20, 2), requires_grad=True)
+        return LabelTensor(input_, ["x", "yy"])
+
+    # Vector to vector function
+    @staticmethod
+    def vector_vector(x):
+        u = torch.prod(x**2, dim=-1, keepdim=True)
+        v = torch.sum(x**2, dim=-1, keepdim=True)
+        return torch.cat((u, v), dim=-1)
+
+    @staticmethod
+    def vector_vector_grad(x):
+        u = 2 * torch.prod(x**2, dim=-1, keepdim=True) / x
+        v = 2 * x
+        return torch.cat((u, v), dim=-1)
+
+    @staticmethod
+    def vector_vector_div(x):
+        u = 2 * torch.prod(x**2, dim=-1, keepdim=True) / x[..., 0]
+        v = 2 * x[..., 1]
+        return u + v
+
+    @staticmethod
+    def vector_vector_lap(x):
+        u = torch.sum(
+            2 * torch.prod(x**2, dim=-1, keepdim=True) / x**2,
+            dim=-1,
+            keepdim=True,
+        )
+        v = 2 * x.shape[-1] * torch.ones_like(u)
+        return torch.cat((u, v), dim=-1)
+
+    @staticmethod
+    def vector_vector_input():
+        input_ = torch.rand((20, 2), requires_grad=True)
+        return LabelTensor(input_, ["x", "yy"])
 
 
-def func_scalar(x):
-    x_ = x.extract(["x"])
-    y_ = x.extract(["y"])
-    z_ = x.extract(["z"])
-    return x_**2 + y_**2 + z_**2
+@pytest.mark.parametrize(
+    "f",
+    Function(),
+    ids=["scalar_scalar", "scalar_vector", "vector_scalar", "vector_vector"],
+)
+def test_gradient(f):
 
+    # Unpack the function
+    func_input, func, func_grad, _, _ = f
 
-n = 20
-data = torch.rand((n, 3), requires_grad=True)
-inp = LabelTensor(data, ["x", "y", "z"])
-labels = ["a", "b", "c"]
-tensor_v = LabelTensor(func_vector(inp), labels)
-tensor_s = LabelTensor(func_scalar(inp).reshape(-1, 1), labels[0])
+    # Define input and output
+    input_ = func_input()
+    output_ = func(input_)
+    labels = [f"u{i}" for i in range(output_.shape[-1])]
+    output_ = LabelTensor(output_, labels)
 
+    # Compute the true gradient and the pina gradient
+    pina_grad = grad(output_=output_, input_=input_)
+    true_grad = func_grad(input_)
 
-def test_grad_scalar_output():
-    grad_tensor_s = grad(output_=tensor_s, input_=inp)
-    true_val = 2 * inp
-    true_val.labels = inp.labels
-    assert grad_tensor_s.shape == inp.shape
-    assert grad_tensor_s.labels == [
-        f"d{tensor_s.labels[0]}d{i}" for i in inp.labels
+    # Check the shape and labels of the gradient
+    n_components = len(output_.labels) * len(input_.labels)
+    assert pina_grad.shape == (*output_.shape[:-1], n_components)
+    assert pina_grad.labels == [
+        f"d{c}d{i}" for c in output_.labels for i in input_.labels
     ]
-    assert torch.allclose(grad_tensor_s, true_val)
 
-    grad_tensor_s = grad(output_=tensor_s, input_=inp, d=["x", "y"])
-    assert grad_tensor_s.shape == (n, 2)
-    assert grad_tensor_s.labels == [
-        f"d{tensor_s.labels[0]}d{i}" for i in ["x", "y"]
-    ]
-    assert torch.allclose(grad_tensor_s, true_val.extract(["x", "y"]))
+    # Compare the values
+    assert torch.allclose(pina_grad, true_grad)
 
+    # Test if labels are handled correctly
+    grad(output_=output_, input_=input_, components=output_.labels[0])
+    grad(output_=output_, input_=input_, d=input_.labels[0])
 
-def test_grad_vector_output():
-    grad_tensor_v = grad(output_=tensor_v, input_=inp)
-    true_val = torch.cat(
-        (
-            2 * inp.extract(["x"]),
-            torch.zeros_like(inp.extract(["y"])),
-            torch.zeros_like(inp.extract(["z"])),
-            torch.zeros_like(inp.extract(["x"])),
-            2 * inp.extract(["y"]),
-            torch.zeros_like(inp.extract(["z"])),
-            torch.zeros_like(inp.extract(["x"])),
-            torch.zeros_like(inp.extract(["y"])),
-            2 * inp.extract(["z"]),
-        ),
-        dim=1,
-    )
-    assert grad_tensor_v.shape == (n, 9)
-    assert grad_tensor_v.labels == [
-        f"d{j}d{i}" for j in tensor_v.labels for i in inp.labels
-    ]
-    assert torch.allclose(grad_tensor_v, true_val)
+    # Should fail if input not a LabelTensor
+    with pytest.raises(TypeError):
+        grad(output_=output_, input_=input_.tensor)
 
-    grad_tensor_v = grad(output_=tensor_v, input_=inp, d=["x", "y"])
-    true_val = torch.cat(
-        (
-            2 * inp.extract(["x"]),
-            torch.zeros_like(inp.extract(["y"])),
-            torch.zeros_like(inp.extract(["x"])),
-            2 * inp.extract(["y"]),
-            torch.zeros_like(inp.extract(["x"])),
-            torch.zeros_like(inp.extract(["y"])),
-        ),
-        dim=1,
-    )
-    assert grad_tensor_v.shape == (inp.shape[0], 6)
-    assert grad_tensor_v.labels == [
-        f"d{j}d{i}" for j in tensor_v.labels for i in ["x", "y"]
-    ]
-    assert torch.allclose(grad_tensor_v, true_val)
+    # Should fail if output not a LabelTensor
+    with pytest.raises(TypeError):
+        grad(output_=output_.tensor, input_=input_)
+
+    # Should fail for non-existent input labels
+    with pytest.raises(RuntimeError):
+        grad(output_=output_, input_=input_, d=["x", "y"])
+
+    # Should fail for non-existent output labels
+    with pytest.raises(RuntimeError):
+        grad(output_=output_, input_=input_, components=["a", "b", "c"])
 
 
-def test_div_vector_output():
-    div_tensor_v = div(output_=tensor_v, input_=inp)
-    true_val = 2 * torch.sum(inp, dim=1).reshape(-1, 1)
-    assert div_tensor_v.shape == (n, 1)
-    assert div_tensor_v.labels == [f"dadx+dbdy+dcdz"]
-    assert torch.allclose(div_tensor_v, true_val)
+@pytest.mark.parametrize(
+    "f",
+    Function(),
+    ids=["scalar_scalar", "scalar_vector", "vector_scalar", "vector_vector"],
+)
+def test_divergence(f):
 
-    div_tensor_v = div(
-        output_=tensor_v, input_=inp, components=["a", "b"], d=["x", "y"]
-    )
-    true_val = 2 * torch.sum(inp.extract(["x", "y"]), dim=1).reshape(-1, 1)
-    assert div_tensor_v.shape == (inp.shape[0], 1)
-    assert div_tensor_v.labels == [f"dadx+dbdy"]
-    assert torch.allclose(div_tensor_v, true_val)
+    # Unpack the function
+    func_input, func, _, func_div, _ = f
+
+    # Define input and output
+    input_ = func_input()
+    output_ = func(input_)
+    labels = [f"u{i}" for i in range(output_.shape[-1])]
+    output_ = LabelTensor(output_, labels)
+
+    # Scalar to vector or vector to scalar functions
+    if func_div(input_) == ValueError:
+        with pytest.raises(ValueError):
+            div(output_=output_, input_=input_)
+
+    # Scalar to scalar or vector to vector functions
+    else:
+        # Compute the true divergence and the pina divergence
+        pina_div = div(output_=output_, input_=input_)
+        true_div = func_div(input_)
+
+        # Check the shape and labels of the divergence
+        assert pina_div.shape == (*output_.shape[:-1], 1)
+        tmp_labels = [
+            f"d{c}d{d_}" for c, d_ in zip(output_.labels, input_.labels)
+        ]
+        assert pina_div.labels == ["+".join(tmp_labels)]
+
+        # Compare the values
+        assert torch.allclose(pina_div, true_div)
+
+        # Test if labels are handled correctly. Performed in a single call to
+        # avoid components and d having different lengths.
+        div(
+            output_=output_,
+            input_=input_,
+            components=output_.labels[0],
+            d=input_.labels[0],
+        )
+
+        # Should fail if input not a LabelTensor
+        with pytest.raises(TypeError):
+            div(output_=output_, input_=input_.tensor)
+
+        # Should fail if output not a LabelTensor
+        with pytest.raises(TypeError):
+            div(output_=output_.tensor, input_=input_)
+
+        # Should fail for non-existent labels
+        with pytest.raises(RuntimeError):
+            div(output_=output_, input_=input_, d=["x", "y"])
+
+        with pytest.raises(RuntimeError):
+            div(output_=output_, input_=input_, components=["a", "b", "c"])
 
 
-@pytest.mark.parametrize("method", ["std", "divgrad"])
-def test_laplacian_scalar_output(method):
-    laplace_tensor_s = laplacian(output_=tensor_s, input_=inp, method=method)
-    true_val = 6 * torch.ones_like(laplace_tensor_s)
-    assert laplace_tensor_s.shape == tensor_s.shape
-    assert laplace_tensor_s.labels == [f"dd{tensor_s.labels[0]}"]
-    assert torch.allclose(laplace_tensor_s, true_val)
+@pytest.mark.parametrize(
+    "f",
+    Function(),
+    ids=["scalar_scalar", "scalar_vector", "vector_scalar", "vector_vector"],
+)
+def test_laplacian(f):
 
-    laplace_tensor_s = laplacian(
-        output_=tensor_s,
-        input_=inp,
-        components=["a"],
-        d=["x", "y"],
-        method=method,
-    )
-    true_val = 4 * torch.ones_like(laplace_tensor_s)
-    assert laplace_tensor_s.shape == tensor_s.shape
-    assert laplace_tensor_s.labels == [f"dd{tensor_s.labels[0]}"]
-    assert torch.allclose(laplace_tensor_s, true_val)
+    # Unpack the function
+    func_input, func, _, _, func_lap = f
 
+    # Define input and output
+    input_ = func_input()
+    output_ = func(input_)
+    labels = [f"u{i}" for i in range(output_.shape[-1])]
+    output_ = LabelTensor(output_, labels)
 
-@pytest.mark.parametrize("method", ["std", "divgrad"])
-def test_laplacian_vector_output(method):
-    laplace_tensor_v = laplacian(output_=tensor_v, input_=inp, method=method)
-    true_val = 2 * torch.ones_like(tensor_v)
-    assert laplace_tensor_v.shape == tensor_v.shape
-    assert laplace_tensor_v.labels == [f"dd{i}" for i in tensor_v.labels]
-    assert torch.allclose(laplace_tensor_v, true_val)
+    # Compute the true laplacian and the pina laplacian
+    pina_lap = laplacian(output_=output_, input_=input_)
+    true_lap = func_lap(input_)
 
-    laplace_tensor_v = laplacian(
-        output_=tensor_v,
-        input_=inp,
-        components=["a", "b"],
-        d=["x", "y"],
-        method=method,
-    )
-    true_val = 2 * torch.ones_like(tensor_v.extract(["a", "b"]))
-    assert laplace_tensor_v.shape == tensor_v.extract(["a", "b"]).shape
-    assert laplace_tensor_v.labels == [f"dd{i}" for i in ["a", "b"]]
-    assert torch.allclose(laplace_tensor_v, true_val)
+    # Check the shape and labels of the laplacian
+    assert pina_lap.shape == output_.shape
+    assert pina_lap.labels == [f"dd{l}" for l in output_.labels]
 
+    # Compare the values
+    assert torch.allclose(pina_lap, true_lap)
 
-@pytest.mark.parametrize("method", ["std", "divgrad"])
-def test_laplacian_vector_output2(method):
-    x = torch.linspace(0, 1, 10, requires_grad=True).reshape(-1, 1)
-    y = torch.linspace(3, 4, 10, requires_grad=True).reshape(-1, 1)
-    input_ = LabelTensor(torch.cat((x, y), dim=1), labels=["x", "y"])
+    # Test if labels are handled correctly
+    laplacian(output_=output_, input_=input_, components=output_.labels[0])
+    laplacian(output_=output_, input_=input_, d=input_.labels[0])
 
-    # Construct two scalar functions:
-    # u = x**2 + y**2
-    # v = x**2 - y**2
-    u = input_.extract("x") ** 2 + input_.extract("y") ** 2
-    v = input_.extract("x") ** 2 - input_.extract("y") ** 2
+    # Should fail if input not a LabelTensor
+    with pytest.raises(TypeError):
+        laplacian(output_=output_, input_=input_.tensor)
 
-    # Define a vector-valued function, whose components are u and v.
-    f = LabelTensor(torch.cat((u, v), dim=1), labels=["u", "v"])
+    # Should fail if output not a LabelTensor
+    with pytest.raises(TypeError):
+        laplacian(output_=output_.tensor, input_=input_)
 
-    # Compute the scalar laplacian of both u and v:
-    # Lap(u) = [4, 4, 4, ..., 4]
-    # Lap(v) = [0, 0, 0, ..., 0]
-    lap_u = laplacian(
-        output_=f.extract("u"), input_=input_, components=["u"], method=method
-    )
-    lap_v = laplacian(
-        output_=f.extract("v"), input_=input_, components=["v"], method=method
-    )
+    # Should fail for non-existent input labels
+    with pytest.raises(RuntimeError):
+        laplacian(output_=output_, input_=input_, d=["x", "y"])
 
-    # Compute the laplacian of f: the two columns should correspond
-    # to the laplacians of u and v, respectively...
-    lap_f = laplacian(
-        output_=f, input_=input_, components=["u", "v"], method=method
-    )
-
-    assert torch.allclose(lap_f.extract("ddu"), lap_u)
-    assert torch.allclose(lap_f.extract("ddv"), lap_v)
+    # Should fail for non-existent output labels
+    with pytest.raises(RuntimeError):
+        laplacian(output_=output_, input_=input_, components=["a", "b", "c"])
 
 
 def test_advection():
-    # Advection term
-    adv_tensor = advection(output_=tensor_v, input_=inp, velocity_field="c")
 
-    # True value
-    velocity = tensor_v.extract(["c"])
-    true_val = velocity * 2 * inp.extract(["x", "y"])
+    # Define input and output
+    input_ = torch.rand((20, 3), requires_grad=True)
+    input_ = LabelTensor(input_, ["x", "y", "z"])
+    output_ = LabelTensor(input_**2, ["u", "v", "c"])
 
-    assert adv_tensor.shape == (tensor_v.shape[0], tensor_v.shape[1] - 1)
-    assert torch.allclose(adv_tensor, true_val)
+    # Define the velocity field
+    velocity = output_.extract(["c"])
 
-
-@pytest.mark.parametrize("method", ["std", "divgrad"])
-def test_label_format(method):
-    # Testing the format of `components` or `d` in case of single str of length
-    # greater than 1; e.g.: "aaa".
-    # This test is conducted only for gradient and laplacian, since div is not
-    # implemented for single components.
-    inp.labels = ["xx", "yy", "zz"]
-    tensor_v = LabelTensor(func_vector(inp), ["aa", "bbb", "c"])
-    comp = tensor_v.labels[0]
-    single_d = inp.labels[0]
-
-    # Single component as string + list of d
-    grad_tensor_v = grad(output_=tensor_v, input_=inp, components=comp, d=None)
-    assert grad_tensor_v.labels == [f"d{comp}d{i}" for i in inp.labels]
-
-    lap_tensor_v = laplacian(
-        output_=tensor_v, input_=inp, components=comp, d=None, method=method
+    # Compute the true advection and the pina advection
+    pina_advection = advection(
+        output_=output_, input_=input_, velocity_field="c"
     )
-    assert lap_tensor_v.labels == [f"dd{comp}"]
+    true_advection = velocity * 2 * input_.extract(["x", "y"])
 
-    # Single component as list + list of d
-    grad_tensor_v = grad(
-        output_=tensor_v, input_=inp, components=[comp], d=None
-    )
-    assert grad_tensor_v.labels == [f"d{comp}d{i}" for i in inp.labels]
-
-    lap_tensor_v = laplacian(
-        output_=tensor_v, input_=inp, components=[comp], d=None, method=method
-    )
-    assert lap_tensor_v.labels == [f"dd{comp}"]
-
-    # List of components + single d as string
-    grad_tensor_v = grad(
-        output_=tensor_v, input_=inp, components=None, d=single_d
-    )
-    assert grad_tensor_v.labels == [f"d{i}d{single_d}" for i in tensor_v.labels]
-
-    lap_tensor_v = laplacian(
-        output_=tensor_v, input_=inp, components=None, d=single_d, method=method
-    )
-    assert lap_tensor_v.labels == [f"dd{i}" for i in tensor_v.labels]
-
-    # List of components + single d as list
-    grad_tensor_v = grad(
-        output_=tensor_v, input_=inp, components=None, d=[single_d]
-    )
-    assert grad_tensor_v.labels == [f"d{i}d{single_d}" for i in tensor_v.labels]
-
-    lap_tensor_v = laplacian(
-        output_=tensor_v,
-        input_=inp,
-        components=None,
-        d=[single_d],
-        method=method,
-    )
-    assert lap_tensor_v.labels == [f"dd{i}" for i in tensor_v.labels]
+    # Check the shape of the advection
+    assert pina_advection.shape == (*output_.shape[:-1], output_.shape[-1] - 1)
+    assert torch.allclose(pina_advection, true_advection)
