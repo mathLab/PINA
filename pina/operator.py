@@ -295,21 +295,24 @@ def fast_advection(output_, input_, velocity_field, components, d):
     :return: The computed advection tensor.
     :rtype: torch.Tensor
     """
-    # Save the velocity field
-    velocity = output_.extract(velocity_field)
+    # Add a dimension to the velocity field for following operations
+    velocity = output_.extract(velocity_field).unsqueeze(-1)
 
     # Remove the velocity field from the components
     filter_components = [c for c in components if c != velocity_field]
 
-    tmp = (
-        fast_grad(
-            output_=output_, input_=input_, components=filter_components, d=d
-        )
-        .reshape(-1, len(filter_components), len(d))
-        .transpose(0, 1)
+    # Compute the gradient
+    grads = fast_grad(
+        output_=output_, input_=input_, components=filter_components, d=d
     )
 
-    return (tmp * velocity).sum(dim=tmp.tensor.ndim - 1).T
+    # Reshape into [..., len(filter_components), len(d)]
+    tmp = grads.reshape(*output_.shape[:-1], len(filter_components), len(d))
+
+    # Transpose to [..., len(d), len(filter_components)]
+    tmp = tmp.transpose(-1, -2)
+
+    return (tmp * velocity).sum(dim=tmp.tensor.ndim - 2)
 
 
 def grad(output_, input_, components=None, d=None):
