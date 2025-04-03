@@ -16,7 +16,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     """
     Abstract base class for PINA solvers. All specific solvers must inherit
     from this interface. This class extends
-    :class:`~lightning.pytorch.core.LightningModule`, providing additional 
+    :class:`~lightning.pytorch.core.LightningModule`, providing additional
     functionalities for defining and optimizing Deep Learning models.
 
     By inheriting from this base class, solvers gain access to built-in training
