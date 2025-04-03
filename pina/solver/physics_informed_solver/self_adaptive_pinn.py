@@ -158,9 +158,6 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
             loss=loss,
         )
 
-        # Set automatic optimization to False
-        self.automatic_optimization = False
-
         self._vectorial_loss = deepcopy(self.loss)
         self._vectorial_loss.reduction = "none"
 

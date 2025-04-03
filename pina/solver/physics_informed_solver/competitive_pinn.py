@@ -103,9 +103,6 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
             loss=loss,
         )
 
-        # Set automatic optimization to False
-        self.automatic_optimization = False
-
     def forward(self, x):
         """
         Forward pass.
