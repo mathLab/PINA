@@ -13,7 +13,6 @@ jobs:
   # run on push
   export_tutorials_on_push:
     if: ${{ github.event_name == 'push' }}
-  export_tutorials:
     permissions: write-all
     runs-on: ubuntu-latest
     env:
