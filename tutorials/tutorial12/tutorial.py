@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # # Tutorial: The `Equation` Class
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial12/tutorial.ipynb)
 
 # In this tutorial, we will show how to use the `Equation` Class in PINA. Specifically, we will see how use the Class and its inherited classes to enforce residuals minimization in PINNs.
@@ -10,8 +10,8 @@
 # # Example: The Burgers 1D equation
 
 # We will start implementing the viscous Burgers 1D problem Class, described as follows:
-#
-#
+# 
+# 
 # $$
 # \begin{equation}
 # \begin{cases}
@@ -21,10 +21,10 @@
 # \end{cases}
 # \end{equation}
 # $$
-#
+# 
 # where we set $ \nu = \frac{0.01}{\pi}$.
-#
-# In the class that models this problem we will see in action the `Equation` class and one of its inherited classes, the `FixedValue` class.
+# 
+# In the class that models this problem we will see in action the `Equation` class and one of its inherited classes, the `FixedValue` class. 
 
 # In[1]:
 
@@ -99,18 +99,18 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
     }
 
 
-#
-# The `Equation` class takes as input a function (in this case it happens twice, with `initial_condition` and `burger_equation`) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the `Equation` class with such a given input is passed as a parameter in the specified `Condition`.
-#
+# 
+# The `Equation` class takes as input a function (in this case it happens twice, with `initial_condition` and `burger_equation`) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the `Equation` class with such a given input is passed as a parameter in the specified `Condition`. 
+# 
 # The `FixedValue` class takes as input a value of same dimensions of the output functions; this class can be used to enforce a fixed value for a specific condition, e.g. Dirichlet boundary conditions, as it happens for instance in our example.
-#
-# Once the equations are set as above in the problem conditions, the PINN solver will aim to minimize the residuals described in each equation in the training phase.
+# 
+# Once the equations are set as above in the problem conditions, the PINN solver will aim to minimize the residuals described in each equation in the training phase. 
 
 # Available classes of equations include also:
 # - `FixedGradient` and `FixedFlux`: they work analogously to `FixedValue` class, where we can require a constant value to be enforced, respectively, on the gradient of the solution or the divergence of the solution;
 # - `Laplace`: it can be used to enforce the laplacian of the solution to be zero;
 # - `SystemEquation`: we can enforce multiple conditions on the same subdomain through this class, passing a list of residual equations defined in the problem.
-#
+# 
 
 # # Defining a new Equation class
 
@@ -182,7 +182,7 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
 
 # # What's next?
 
-# Congratulations on completing the `Equation` class tutorial of **PINA**! As we have seen, you can build new classes that inherit `Equation` to store more complex equations, as the Burgers 1D equation, only requiring to pass the characteristic coefficients of the problem.
+# Congratulations on completing the `Equation` class tutorial of **PINA**! As we have seen, you can build new classes that inherit `Equation` to store more complex equations, as the Burgers 1D equation, only requiring to pass the characteristic coefficients of the problem. 
 # From now on, you can:
 # - define additional complex equation classes (e.g. `SchrodingerEquation`, `NavierStokeEquation`..)
 # - define more `FixedOperator` (e.g. `FixedCurl`)

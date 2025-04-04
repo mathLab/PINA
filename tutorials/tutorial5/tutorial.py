@@ -2,9 +2,9 @@
 # coding: utf-8
 
 # # Tutorial: Two dimensional Darcy flow using the Fourier Neural Operator
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial5/tutorial.ipynb)
-#
+# 
 
 # In this tutorial we are going to solve the Darcy flow problem in two dimensions, presented in [*Fourier Neural Operator for
 # Parametric Partial Differential Equation*](https://openreview.net/pdf?id=c8P9NQVtmnO). First of all we import the modules needed for the tutorial. Importing `scipy` is needed for input-output operations.
@@ -21,11 +21,9 @@ except:
     IN_COLAB = False
 if IN_COLAB:
     get_ipython().system('pip install "pina-mathlab"')
-    get_ipython().system("pip install scipy")
+    get_ipython().system('pip install scipy')
     # get the data
-    get_ipython().system(
-        "wget https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial5/Data_Darcy.mat"
-    )
+    get_ipython().system('wget https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial5/Data_Darcy.mat')
 
 import torch
 import matplotlib.pyplot as plt
@@ -42,15 +40,15 @@ warnings.filterwarnings("ignore")
 
 
 # ## Data Generation
-#
+# 
 # We will focus on solving a specific PDE, the **Darcy Flow** equation. The Darcy PDE is a second-order elliptic PDE with the following form:
-#
+# 
 # $$
 # -\nabla\cdot(k(x, y)\nabla u(x, y)) = f(x) \quad (x, y) \in D.
 # $$
-#
+# 
 # Specifically, $u$ is the flow pressure, $k$ is the permeability field and $f$ is the forcing function. The Darcy flow can parameterize a variety of systems including flow through porous media, elastic materials and heat conduction. Here you will define the domain as a 2D unit square Dirichlet boundary conditions. The dataset is taken from the authors original reference.
-#
+# 
 
 # In[2]:
 
@@ -93,7 +91,7 @@ problem = SupervisedProblem(
 
 
 # ## Solving the problem with a FeedForward Neural Network
-#
+# 
 # We will first solve the problem using a Feedforward neural network. We will use the `SupervisedSolver` for solving the problem, since we are training using supervised learning.
 
 # In[5]:
@@ -147,7 +145,7 @@ print(f"Final error testing {err:.2f}%")
 
 
 # ## Solving the problem with a Fourier Neural Operator (FNO)
-#
+# 
 # We will now move to solve the problem using a FNO. Since we are learning operator this approach is better suited, as we shall see.
 
 # In[7]:
@@ -207,5 +205,5 @@ print(f"Final error testing {err:.2f}%")
 # As we can see the loss is way lower!
 
 # ## What's next?
-#
+# 
 # We have made a very simple example on how to use the `FNO` for learning neural operator. Currently in **PINA** we implement 1D/2D/3D cases. We suggest to extend the tutorial using more complex problems and train for longer, to see the full potential of neural operators.

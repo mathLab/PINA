@@ -2,17 +2,17 @@
 # coding: utf-8
 
 # # Tutorial: Averaging Neural Operator for solving Kuramoto Sivashinsky equation
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial10/tutorial.ipynb)
-#
+# 
 # In this tutorial we will build a Neural Operator using the
 # `AveragingNeuralOperator` model and the `SupervisedSolver`. At the end of the
 # tutorial you will be able to train a Neural Operator for learning
 # the operator of time dependent PDEs.
-#
-#
+# 
+# 
 # First of all, some useful imports. Note we use `scipy` for i/o operations.
-#
+# 
 
 # In[ ]:
 
@@ -28,12 +28,8 @@ if IN_COLAB:
     get_ipython().system('pip install "pina-mathlab"')
     # get the data
     get_ipython().system('mkdir "data"')
-    get_ipython().system(
-        'wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial10/data/Data_KS.mat" -O "data/Data_KS.mat"'
-    )
-    get_ipython().system(
-        'wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial10/data/Data_KS2.mat" -O "data/Data_KS2.mat"'
-    )
+    get_ipython().system('wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial10/data/Data_KS.mat" -O "data/Data_KS.mat"')
+    get_ipython().system('wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial10/data/Data_KS2.mat" -O "data/Data_KS2.mat"')
 
 import torch
 import matplotlib.pyplot as plt
@@ -49,40 +45,40 @@ warnings.filterwarnings("ignore")
 
 
 # ## Data Generation
-#
+# 
 # We will focus on solving a specific PDE, the **Kuramoto Sivashinsky** (KS) equation.
 # The KS PDE is a fourth-order nonlinear PDE with the following form:
-#
+# 
 # $$
 # \frac{\partial u}{\partial t}(x,t) = -u(x,t)\frac{\partial u}{\partial x}(x,t)- \frac{\partial^{4}u}{\partial x^{4}}(x,t) - \frac{\partial^{2}u}{\partial x^{2}}(x,t).
 # $$
-#
+# 
 # In the above $x\in \Omega=[0, 64]$ represents a spatial location, $t\in\mathbb{T}=[0,50]$ the time and $u(x, t)$ is the value of the function $u:\Omega \times\mathbb{T}\in\mathbb{R}$. We indicate with $\mathbb{U}$ a suitable space for $u$, i.e. we have that the solution $u\in\mathbb{U}$.
-#
-#
+# 
+# 
 # We impose Dirichlet boundary conditions on the derivative of $u$ on the border of the domain $\partial \Omega$
 # $$
 # \frac{\partial u}{\partial x}(x,t)=0 \quad \forall (x,t)\in \partial \Omega\times\mathbb{T}.
 #  $$
-#
-# Initial conditions are sampled from a distribution over truncated Fourier series with random coefficients
+# 
+# Initial conditions are sampled from a distribution over truncated Fourier series with random coefficients 
 # $\{A_k, \ell_k, \phi_k\}_k$ as
 # $$
 #     u(x,0) = \sum_{k=1}^N A_k \sin(2 \pi \ell_k x / L + \phi_k) \ ,
 # $$
-#
-# where $A_k \in [-0.4, -0.3]$, $\ell_k = 2$, $\phi_k  = 2\pi \quad \forall k=1,\dots,N$.
-#
-#
+# 
+# where $A_k \in [-0.4, -0.3]$, $\ell_k = 2$, $\phi_k  = 2\pi \quad \forall k=1,\dots,N$. 
+# 
+# 
 # We have already generated some data for differenti initial conditions, and our objective will
 # be to build a Neural Operator that, given $u(x, t)$ will output $u(x, t+\delta)$, where
 # $\delta$ is a fixed time step. We will come back on the Neural Operator architecture, for now
 # we first need to import the data.
-#
+# 
 # **Note:**
 # *The numerical integration is obtained by using pseudospectral method for spatial derivative discratization and
 # implicit Runge Kutta 5 for temporal dynamics.*
-#
+# 
 
 # In[2]:
 
@@ -110,9 +106,9 @@ print(f" shape solution: {sol_train.shape}")
 
 # The data are saved in the form `B \times N \times D`, where `B` is the batch_size
 # (basically how many initial conditions we sample), `N` the number of points in the mesh
-# (which is the product of the discretization in `x` timese the one in `t`), and
+# (which is the product of the discretization in `x` timese the one in `t`), and 
 # `D` the dimension of the problem (in this case we have three variables `[u, t, x]`).
-#
+# 
 # We are now going to plot some trajectories!
 
 # In[3]:
@@ -178,9 +174,9 @@ plot_trajectory(
 # As we can see, as the time progresses the solution becomes chaotic, which makes
 # it really hard to learn! We will now focus on building a Neural Operator using the
 # `SupervisedSolver` class to tackle the problem.
-#
+# 
 # ## Averaging Neural Operator
-#
+# 
 # We will build a neural operator $\texttt{NO}$ which takes the solution at time $t=0$ for any $x\in\Omega$,
 # the time $(t)$ at which we want to compute the solution, and gives back the solution to the KS equation $u(x, t)$, mathematically:
 # $$
@@ -190,26 +186,26 @@ plot_trajectory(
 # $$
 # \texttt{NO}_\theta[u(t=0)](x, t) \rightarrow  u(x, t).
 # $$
-#
+# 
 # There are many ways on approximating the following operator, e.g. by 2D [FNO](https://mathlab.github.io/PINA/_rst/models/fno.html) (for regular meshes),
 # a [DeepOnet](https://mathlab.github.io/PINA/_rst/models/deeponet.html), [Continuous Convolutional Neural Operator](https://mathlab.github.io/PINA/_rst/layers/convolution.html),
-# [MIONet](https://mathlab.github.io/PINA/_rst/models/mionet.html).
+# [MIONet](https://mathlab.github.io/PINA/_rst/models/mionet.html). 
 # In this tutorial we will use the *Averaging Neural Operator* presented in [*The Nonlocal Neural Operator: Universal Approximation*](https://arxiv.org/abs/2304.13221)
 # which is a [Kernel Neural Operator](https://mathlab.github.io/PINA/_rst/models/base_no.html) with integral kernel:
-#
+# 
 # $$
 # K(v) = \sigma\left(Wv(x) + b + \frac{1}{|\Omega|}\int_\Omega v(y)dy\right)
 # $$
-#
+# 
 # where:
-#
+# 
 # *   $v(x)\in\mathbb{R}^{\rm{emb}}$ is the update for a function $v$ with $\mathbb{R}^{\rm{emb}}$ the embedding (hidden) size
 # *   $\sigma$ is a non-linear activation
 # *   $W\in\mathbb{R}^{\rm{emb}\times\rm{emb}}$ is a tunable matrix.
 # *   $b\in\mathbb{R}^{\rm{emb}}$ is a tunable bias.
-#
+# 
 # If PINA many Kernel Neural Operators are already implemented, and the modular componets of the [Kernel Neural Operator](https://mathlab.github.io/PINA/_rst/models/base_no.html) class permits to create new ones by composing base kernel layers.
-#
+# 
 # **Note:*** We will use the already built class* `AveragingNeuralOperator`, *as constructive excercise try to use the* [KernelNeuralOperator](https://mathlab.github.io/PINA/_rst/models/base_no.html) *class for building a kernel neural operator from scratch. You might employ the different layers that we have in pina, e.g.* [FeedForward](https://mathlab.github.io/PINA/_rst/models/fnn.html), *and* [AveragingNeuralOperator](https://mathlab.github.io/PINA/_rst/layers/avno_layer.html) *layers*.
 
 # In[4]:
@@ -236,9 +232,9 @@ model = AveragingNeuralOperator(
 
 
 # Super easy! Notice that we use the `SIREN` activation function, more on [Implicit Neural Representations with Periodic Activation Functions](https://arxiv.org/abs/2006.09661).
-#
+# 
 # ## Solving the KS problem
-#
+# 
 # We will now focus on solving the KS equation using the `SupervisedSolver` class
 # and the `AveragingNeuralOperator` model. As done in the [FNO tutorial](https://github.com/mathLab/PINA/blob/master/tutorials/tutorial5/tutorial.ipynb) we now create the Neural Operator problem class with `SupervisedProblem`.
 
@@ -308,11 +304,11 @@ with torch.no_grad():
 # As we can see the error is pretty small, which agrees with what we can see from the previous plots.
 
 # ## What's next?
-#
+# 
 # Now you know how to solve a time dependent neural operator problem in **PINA**! There are multiple directions you can go now:
-#
+# 
 # 1. Train the network for longer or with different layer sizes and assert the final accuracy
-#
+# 
 # 2. We left a more challenging dataset [Data_KS2.mat](dat/Data_KS2.mat) where $A_k \in [-0.5, 0.5]$, $\ell_k \in [1, 2, 3]$, $\phi_k \in [0, 2\pi]$ for longer training
-#
+# 
 # 3. Compare the performance between the different neural operators (you can even try to implement your favourite one!)

@@ -2,11 +2,11 @@
 # coding: utf-8
 
 # # Tutorial: Reduced order models (POD-NN and POD-RBF) for parametric problems
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial9/tutorial.ipynb)
 
 # The tutorial aims to show how to employ the **PINA** library in order to apply a reduced order modeling technique [1]. Such methodologies have several similarities with machine learning approaches, since the main goal consists in predicting the solution of differential equations (typically parametric PDEs) in a real-time fashion.
-#
+# 
 # In particular we are going to use the Proper Orthogonal Decomposition with either Radial Basis Function Interpolation (POD-RBF) or Neural Network (POD-NN) [2]. Here we basically perform a dimensional reduction using the POD approach, approximating the parametric solution manifold (at the reduced space) using a regression technique (NN) and comparing it to an RBF interpolation. In this example, we use a simple multilayer perceptron, but the plenty of different architectures can be plugged as well.
 
 # Let's start with the necessary imports.
@@ -25,7 +25,7 @@ except:
 if IN_COLAB:
     get_ipython().system('pip install "pina-mathlab"')
 
-get_ipython().run_line_magic("matplotlib", "inline")
+get_ipython().run_line_magic('matplotlib', 'inline')
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -45,7 +45,7 @@ warnings.filterwarnings("ignore")
 
 # We exploit the [Smithers](https://github.com/mathLab/Smithers) library to collect the parametric snapshots. In particular, we use the `NavierStokesDataset` class that contains a set of parametric solutions of the Navier-Stokes equations in a 2D L-shape domain. The parameter is the inflow velocity.
 # The dataset is composed by 500 snapshots of the velocity (along $x$, $y$, and the magnitude) and pressure fields, and the corresponding parameter values.
-#
+# 
 # To visually check the snapshots, let's plot also the data points and the reference solution: this is the expected output of our model.
 
 # In[83]:
@@ -62,7 +62,7 @@ for ax, p, u in zip(axs, dataset.params[:4], dataset.snapshots["mag(v)"][:4]):
 
 
 # The *snapshots* - aka the numerical solutions computed for several parameters - and the corresponding parameters are the only data we need to train the model, in order to predict the solution for any new test parameter. To properly validate the accuracy, we will split the 500 snapshots into the training dataset (90% of the original data) and the testing one (the reamining 10%) inside the `Trainer`.
-#
+# 
 # It is now time to define the problem!
 
 # In[84]:
@@ -311,5 +311,5 @@ plt.show()
 
 
 # #### References
-# 1. Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order Methods and Applications in Computational Fluid Dynamics, Society for Industrial and Applied Mathematics.
+# 1. Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order Methods and Applications in Computational Fluid Dynamics, Society for Industrial and Applied Mathematics. 
 # 2. Hesthaven, J. S., & Ubbiali, S. (2018). Non-intrusive reduced order modeling of nonlinear problems using neural networks. Journal of Computational Physics, 363, 55-78.

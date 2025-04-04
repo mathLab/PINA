@@ -2,16 +2,16 @@
 # coding: utf-8
 
 # # Tutorial: One dimensional Helmholtz equation using Periodic Boundary Conditions
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial9/tutorial.ipynb)
-#
+# 
 # This tutorial presents how to solve with Physics-Informed Neural Networks (PINNs)
 # a one dimensional Helmholtz equation with periodic boundary conditions (PBC).
 # We will train with standard PINN's training by augmenting the input with
 # periodic expansion as presented in [*An expert’s guide to training
 # physics-informed neural networks*](
 # https://arxiv.org/abs/2308.08468).
-#
+# 
 # First of all, some useful imports.
 
 # In[ ]:
@@ -45,7 +45,7 @@ warnings.filterwarnings("ignore")
 
 
 # ## The problem definition
-#
+# 
 # The one-dimensional Helmholtz problem is mathematically written as:
 # $$
 # \begin{cases}
@@ -56,13 +56,13 @@ warnings.filterwarnings("ignore")
 # In this case we are asking the solution to be $C^{\infty}$ periodic with
 # period $2$, on the infinite domain $x\in(-\infty, \infty)$. Notice that the
 # classical PINN would need infinite conditions to evaluate the PBC loss function,
-# one for each derivative, which is of course infeasible...
+# one for each derivative, which is of course infeasible... 
 # A possible solution, diverging from the original PINN formulation,
 # is to use *coordinates augmentation*. In coordinates augmentation you seek for
 # a coordinates transformation $v$ such that $x\rightarrow v(x)$ such that
 # the periodicity condition $ u^{(m)}(x=0) - u^{(m)}(x=2) = 0 \quad m\in[0, 1, \cdots] $ is
 # satisfied.
-#
+# 
 # For demonstration purposes, the problem specifics are $\lambda=-10\pi^2$,
 # and $f(x)=-6\pi^2\sin(3\pi x)\cos(\pi x)$ which give a solution that can be
 # computed analytically $u(x) = \sin(\pi x)\cos(3\pi x)$.
@@ -104,7 +104,7 @@ problem = Helmholtz()
 problem.discretise_domain(200, "grid", domains=["phys_cond"])
 
 
-# As usual, the Helmholtz problem is written in **PINA** code as a class.
+# As usual, the Helmholtz problem is written in **PINA** code as a class. 
 # The equations are written as `conditions` that should be satisfied in the
 # corresponding domains. The `solution`
 # is the exact solution which will be compared with the predicted one. We used
@@ -121,7 +121,7 @@ problem.discretise_domain(200, "grid", domains=["phys_cond"])
 # arbitrary dimension, see [*A method for representing periodic functions and
 # enforcing exactly periodic boundary conditions with
 # deep neural networks*](https://arxiv.org/pdf/2007.07442).
-#
+# 
 # In our case, we rewrite
 # $v(x) = \left[1, \cos\left(\frac{2\pi}{L} x\right),
 # \sin\left(\frac{2\pi}{L} x\right)\right]$, i.e
@@ -129,10 +129,10 @@ problem.discretise_domain(200, "grid", domains=["phys_cond"])
 # network. The resulting neural network obtained by composing $f$ with $v$ gives
 # the PINN approximate solution, that is
 # $u(x) \approx u_{\theta}(x)=NN_{\theta}(v(x))$.
-#
+# 
 # In **PINA** this translates in using the `PeriodicBoundaryEmbedding` layer for $v$, and any
-# `pina.model` for $NN_{\theta}$. Let's see it in action!
-#
+# `pina.model` for $NN_{\theta}$. Let's see it in action! 
+# 
 
 # In[16]:
 
@@ -151,7 +151,7 @@ model = torch.nn.Sequential(
 # As simple as that! Notice that in higher dimension you can specify different periods
 # for all dimensions using a dictionary, e.g. `periods={'x':2, 'y':3, ...}`
 # would indicate a periodicity of $2$ in $x$, $3$ in $y$, and so on...
-#
+# 
 # We will now solve the problem as usually with the `PINN` and `Trainer` class, then we will look at the losses using the `MetricTracker` callback from `pina.callback`.
 
 # In[17]:
@@ -232,15 +232,15 @@ with torch.no_grad():
 
 
 # It is pretty clear that the network is periodic, with also the error following a periodic pattern. Obviously a longer training and a more expressive neural network could improve the results!
-#
+# 
 # ## What's next?
-#
+# 
 # Congratulations on completing the one dimensional Helmholtz tutorial of **PINA**! There are multiple directions you can go now:
-#
+# 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
-#
+# 
 # 2. Apply the `PeriodicBoundaryEmbedding` layer for a time-dependent problem (see reference in the documentation)
-#
+# 
 # 3. Exploit extrafeature training ?
-#
+# 
 # 4. Many more...

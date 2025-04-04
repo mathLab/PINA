@@ -2,21 +2,21 @@
 # coding: utf-8
 
 # # Tutorial: Physics Informed Neural Networks on PINA
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial1/tutorial.ipynb)
-#
+# 
 
-# In this tutorial, we will demonstrate a typical use case of **PINA** on a toy problem, following the standard API procedure.
-#
+# In this tutorial, we will demonstrate a typical use case of **PINA** on a toy problem, following the standard API procedure. 
+# 
 # <p align="center">
 #     <img src="../../readme/API_color.png" alt="PINA API" width="400"/>
 # </p>
-#
+# 
 # Specifically, the tutorial aims to introduce the following topics:
-#
+# 
 # * Explaining how to build **PINA** Problems,
 # * Showing how to generate data for `PINN` training
-#
+# 
 # These are the two main steps needed **before** starting the modelling optimization (choose model and solver, and train). We will show each step in detail, and at the end, we will solve a simple Ordinary Differential Equation (ODE) problem using the `PINN` solver.
 
 # ## Build a PINA problem
@@ -24,7 +24,7 @@
 # Problem definition in the **PINA** framework is done by building a python `class`, which inherits from one or more problem classes (`SpatialProblem`, `TimeDependentProblem`, `ParametricProblem`, ...) depending on the nature of the problem. Below is an example:
 # ### Simple Ordinary Differential Equation
 # Consider the following:
-#
+# 
 # $$
 # \begin{equation}
 # \begin{cases}
@@ -33,25 +33,25 @@
 # \end{cases}
 # \end{equation}
 # $$
-#
+# 
 # with the analytical solution $u(x) = e^x$. In this case, our ODE depends only on the spatial variable $x\in(0,1)$ , meaning that our `Problem` class is going to be inherited from the `SpatialProblem` class:
-#
+# 
 # ```python
 # from pina.problem import SpatialProblem
 # from pina.domain import CartesianProblem
-#
+# 
 # class SimpleODE(SpatialProblem):
-#
+#     
 #     output_variables = ['u']
 #     spatial_domain = CartesianProblem({'x': [0, 1]})
-#
+# 
 #     # other stuff ...
 # ```
-#
+# 
 # Notice that we define `output_variables` as a list of symbols, indicating the output variables of our equation (in this case only $u$), this is done because in **PINA** the `torch.Tensor`s are labelled, allowing the user maximal flexibility for the manipulation of the tensor. The `spatial_domain` variable indicates where the sample points are going to be sampled in the domain, in this case $x\in[0,1]$.
-#
+# 
 # What if our equation is also time-dependent? In this case, our `class` will inherit from both `SpatialProblem` and `TimeDependentProblem`:
-#
+# 
 
 # In[ ]:
 
@@ -84,7 +84,7 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 
 
 # where we have included the `temporal_domain` variable, indicating the time domain wanted for the solution.
-#
+# 
 # In summary, using **PINA**, we can initialize a problem with a class which inherits from different base classes: `SpatialProblem`, `TimeDependentProblem`, `ParametricProblem`, and so on depending on the type of problem we are considering. Here are some examples (more on the official documentation):
 # * ``SpatialProblem`` $\rightarrow$ a differential equation with spatial variable(s) ``spatial_domain``
 # * ``TimeDependentProblem`` $\rightarrow$ a time-dependent differential equation with temporal variable(s) ``temporal_domain``
@@ -92,7 +92,7 @@ class TimeSpaceODE(SpatialProblem, TimeDependentProblem):
 # * ``AbstractProblem`` $\rightarrow$ any **PINA** problem inherits from here
 
 # ### Write the problem class
-#
+# 
 # Once the `Problem` class is initialized, we need to represent the differential equation in **PINA**. In order to do this, we need to load the **PINA** operators from `pina.operator` module. Again, we'll consider Equation (1) and represent it in **PINA**:
 
 # In[ ]:
@@ -146,14 +146,14 @@ problem = SimpleODE()
 
 
 # After we define the `Problem` class, we need to write different class methods, where each method is a function returning a residual. These functions are the ones minimized during PINN optimization, given the initial conditions. For example, in the domain $[0,1]$, the ODE equation (`ode_equation`) must be satisfied. We represent this by returning the difference between subtracting the variable `u` from its gradient (the residual), which we hope to minimize to 0. This is done for all conditions. Notice that we do not pass directly a `python` function, but an `Equation` object, which is initialized with the `python` function. This is done so that all the computations and internal checks are done inside **PINA**.
-#
+# 
 # Once we have defined the function, we need to tell the neural network where these methods are to be applied. To do so, we use the `Condition` class. In the `Condition` class, we pass the location points and the equation we want minimized on those points (other possibilities are allowed, see the documentation for reference).
-#
+# 
 # Finally, it's possible to define a `solution` function, which can be useful if we want to plot the results and see how the real solution compares to the expected (true) solution. Notice that the `solution` function is a method of the `PINN` class, but it is not mandatory for problem definition.
-#
+# 
 
-# ## Generate data
-#
+# ## Generate data 
+# 
 # Data for training can come in form of direct numerical simulation results, or points in the domains. In case we perform unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in **PINA** is very easy, here we show three examples using the `.discretise_domain` method of the `AbstractProblem` class.
 
 # In[ ]:
@@ -180,7 +180,7 @@ problem.discretise_domain(1, "random", domains=["x0"])
 problem.discretise_domain(20, "lh", domains=["D"])
 
 
-# The points are saved in a python `dict`, and can be accessed by calling the attribute `input_pts` of the problem
+# The points are saved in a python `dict`, and can be accessed by calling the attribute `input_pts` of the problem 
 
 # In[ ]:
 
@@ -252,7 +252,7 @@ trainer.train()
 trainer.logged_metrics
 
 
-# By using `matplotlib` we can also do some qualitative plots of the solution.
+# By using `matplotlib` we can also do some qualitative plots of the solution. 
 
 # In[ ]:
 
@@ -328,13 +328,13 @@ plt.yscale("log")
 
 
 # ## What's next?
-#
+# 
 # Congratulations on completing the introductory tutorial of **PINA**! There are several directions you can go now:
-#
+# 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
-#
+# 
 # 2. Train the network using other types of models (see `pina.model`)
-#
+# 
 # 3. GPU training and speed benchmarking
-#
+# 
 # 4. Many more...

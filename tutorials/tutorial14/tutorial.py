@@ -2,11 +2,11 @@
 # coding: utf-8
 
 # # Tutorial: Predicting Lid-driven cavity problem parameters with POD-RBF
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial14/tutorial.ipynb)
 
-# In this tutorial we will show how to use the **PINA** library to predict the distributions of velocity and pressure the Lid-driven Cavity problem, a benchmark in Computational Fluid Dynamics. The problem consists of a square cavity with a lid on top moving with tangential velocity (by convention to the right), with the addition of no-slip conditions on the walls of the cavity and null static pressure on the lower left angle.
-#
+# In this tutorial we will show how to use the **PINA** library to predict the distributions of velocity and pressure the Lid-driven Cavity problem, a benchmark in Computational Fluid Dynamics. The problem consists of a square cavity with a lid on top moving with tangential velocity (by convention to the right), with the addition of no-slip conditions on the walls of the cavity and null static pressure on the lower left angle. 
+# 
 # Our goal is to predict the distributions of velocity and pressure of the fluid inside the cavity as the Reynolds number of the inlet fluid varies. To do so we're using a Reduced Order Model (ROM) based on Proper Orthogonal Decomposition (POD). The parametric solution manifold is approximated here with Radial Basis Function (RBF) Interpolation, a common mesh-free interpolation method that doesn't require trainers or solvers as the found radial basis functions are used to interpolate new points.
 
 # Let's start with the necessary imports. We're particularly interested in the `PODBlock` and `RBFBlock` classes which will allow us to define the POD-RBF model.
@@ -24,7 +24,7 @@ except:
 if IN_COLAB:
     get_ipython().system('pip install "pina-mathlab"')
 
-get_ipython().run_line_magic("matplotlib", "inline")
+get_ipython().run_line_magic('matplotlib', 'inline')
 
 import matplotlib.pyplot as plt
 import torch
@@ -38,7 +38,7 @@ warnings.filterwarnings("ignore")
 
 
 # In this tutorial we're gonna use the `LidCavity` class from the [Smithers](https://github.com/mathLab/Smithers) library, which contains a set of parametric solutions of the Lid-driven cavity problem in a square domain. The dataset consists of 300 snapshots of the parameter fields, which in this case are the magnitude of velocity and the pressure, and the corresponding parameter values $u$ and $p$. Each snapshot corresponds to a different value of the tangential velocity $\mu$ of the lid, which has been sampled uniformly between 0.01 m/s and 1 m/s.
-#
+# 
 # Let's start by importing the dataset:
 
 # In[2]:
@@ -252,7 +252,7 @@ print(f"  Train: {relative_p_error_train.item():e}")
 print(f"  Test:  {relative_p_error_test.item():e}")
 
 
-# Unfortunately here we obtain a very high relative test error, although this is likely due to the nature of the available data. Looking at the plots we can see that the pressure field is subject to high variations between subsequent snapshots, especially here:
+# Unfortunately here we obtain a very high relative test error, although this is likely due to the nature of the available data. Looking at the plots we can see that the pressure field is subject to high variations between subsequent snapshots, especially here: 
 
 # In[12]:
 
@@ -328,11 +328,11 @@ print(f"  Test:  {new_relative_p_error_test.item():e}")
 
 
 # ## What's next?
-#
+# 
 # Congratulations on completing the **PINA** tutorial on building and using a custom POD class! Now you can try:
-#
+# 
 # 1. Varying the inputs of the model (for a list of the supported RB functions look at the `rbf_layer.py` file in `pina.layers`)
-#
+# 
 # 2. Changing the POD model, for example using Artificial Neural Networks. For a more in depth overview of POD-NN and a comparison with the POD-RBF model already shown, look at [Tutorial: Reduced order model (POD-RBF or POD-NN) for parametric problems](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial9/tutorial.ipynb)
-#
+# 
 # 3. Building your own classes or adapt the one shown to other datasets/problems
