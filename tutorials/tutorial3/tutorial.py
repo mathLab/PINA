@@ -2,11 +2,11 @@
 # coding: utf-8
 
 # # Tutorial: Two dimensional Wave problem with hard constraint
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial3/tutorial.ipynb)
-#
+# 
 # In this tutorial we present how to solve the wave equation using hard constraint PINNs. For doing so we will build a costum `torch` model and pass it to the `PINN` solver.
-#
+# 
 # First of all, some useful imports.
 
 # In[ ]:
@@ -37,10 +37,10 @@ from pina.callback import MetricTracker
 warnings.filterwarnings("ignore")
 
 
-# ## The problem definition
+# ## The problem definition 
 
 # The problem is written in the following form:
-#
+# 
 # \begin{equation}
 # \begin{cases}
 # \Delta u(x,y,t) = \frac{\partial^2}{\partial t^2} u(x,y,t) \quad \text{in } D, \\\\
@@ -48,7 +48,7 @@ warnings.filterwarnings("ignore")
 # u(x, y, t) = 0 \quad \text{on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
 # \end{cases}
 # \end{equation}
-#
+# 
 # where $D$ is a squared domain $[0,1]^2$, and $\Gamma_i$, with $i=1,...,4$, are the boundaries of the square, and the velocity in the standard wave equation is fixed to one.
 
 # Now, the wave problem is written in PINA code as a class, inheriting from `SpatialProblem` and `TimeDependentProblem` since we deal with spatial, and time dependent variables. The equations are written as `conditions` that should be satisfied in the corresponding domains. `solution` is the exact solution which will be compared with the predicted one.
@@ -111,9 +111,9 @@ problem = Wave()
 # ## Hard Constraint Model
 
 # After the problem, a **torch** model is needed to solve the PINN. Usually, many models are already implemented in **PINA**, but the user has the possibility to build his/her own model in `torch`. The hard constraint we impose is on the boundary of the spatial domain. Specifically, our solution is written as:
-#
+# 
 # $$ u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t), $$
-#
+# 
 # where $NN$ is the neural net output. This neural network takes as input the coordinates (in this case $x$, $y$ and $t$) and provides the unknown field $u$. By construction, it is zero on the boundaries. The residuals of the equations are evaluated at several sampling points (which the user can manipulate using the method `discretise_domain`) and the loss minimized by the neural network is the sum of the residuals.
 
 # In[3]:
@@ -240,11 +240,11 @@ plot_solution(solver=pinn, time=1)
 
 
 # The results are not so great, and we can clearly see that as time progresses the solution gets worse.... Can we do better?
-#
+# 
 # A valid option is to impose the initial condition as hard constraint as well. Specifically, our solution is written as:
-#
+# 
 # $$ u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)\cdot t + \cos(\sqrt{2}\pi t)\sin(\pi x)\sin(\pi y), $$
-#
+# 
 # Let us build the network first
 
 # In[8]:
@@ -324,13 +324,13 @@ plot_solution(solver=pinn, time=1)
 # We can see now that the results are way better! This is due to the fact that previously the network was  not learning correctly the initial conditon, leading to a poor solution when time evolved. By imposing the initial condition the network is able to correctly solve the problem.
 
 # ## What's next?
-#
+# 
 # Congratulations on completing the two dimensional Wave tutorial of **PINA**! There are multiple directions you can go now:
-#
+# 
 # 1. Train the network for longer or with different layer sizes and assert the finaly accuracy
-#
+# 
 # 2. Propose new types of hard constraints in time, e.g. $$ u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)(1-\exp(-t)) + \cos(\sqrt{2}\pi t)sin(\pi x)\sin(\pi y), $$
-#
+# 
 # 3. Exploit extrafeature training for model 1 and 2
-#
+# 
 # 4. Many more...

@@ -2,15 +2,15 @@
 # coding: utf-8
 
 # # Tutorial: Building custom geometries with PINA `DomainInterface` class
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial6/tutorial.ipynb)
-#
+# 
 # In this tutorial we will show how to use geometries in PINA. Specifically, the tutorial will include how to create geometries and how to visualize them. The topics covered are:
-#
+# 
 # * Creating CartesianDomains and EllipsoidDomains
 # * Getting the Union and Difference of Geometries
 # * Sampling points in the domain (and visualize them)
-#
+# 
 # We import the relevant modules first.
 
 # In[ ]:
@@ -58,8 +58,8 @@ ellipsoid_border = EllipsoidDomain(
 )
 
 
-# The `{'x': [0, 2], 'y': [0, 2]}` are the bounds of the `CartesianDomain` being created.
-#
+# The `{'x': [0, 2], 'y': [0, 2]}` are the bounds of the `CartesianDomain` being created. 
+# 
 # To visualize these shapes, we need to sample points on them. We will use the `sample` method of the `CartesianDomain` and `EllipsoidDomain` classes. This method takes a `n` argument which is the number of points to sample. It also takes different modes to sample, such as `'random'`.
 
 # In[ ]:
@@ -81,7 +81,7 @@ print(f"Ellipsoid Border Samples: {ellipsoid_border_samples}")
 
 
 # Notice how these are all `LabelTensor` objects. You can read more about these in the [documentation](https://mathlab.github.io/PINA/_rst/label_tensor.html). At a very high level, they are tensors where each element in a tensor has a label that we can access by doing `<tensor_name>.labels`. We can also access the values of the tensor by doing `<tensor_name>.extract(['x'])`.
-#
+# 
 # We are now ready to visualize the samples using matplotlib.
 
 # In[ ]:
@@ -101,7 +101,7 @@ for ax, pts, title in zip(axs, pts_list, title_list):
 # We have now created, sampled, and visualized our first geometries! We can see that the `EllipsoidDomain` with the border has a border around it. We can also see that the `EllipsoidDomain` without the border is just the ellipse. We can also see that the `CartesianDomain` is just a square.
 
 # ### Simplex Domain
-#
+# 
 # Among the built-in shapes, we quickly show here the usage of `SimplexDomain`, which can be used for polygonal domains!
 
 # In[ ]:
@@ -135,7 +135,7 @@ for domain, ax in zip([spatial_domain, spatial_domain2], axs):
 # ## Boolean Operations
 
 # To create complex shapes we can use the boolean operations, for example to merge two default geometries. We need to simply use the `Union` class: it takes a list of geometries and returns the union of them.
-#
+# 
 # Let's create three unions. Firstly, it will be a union of `cartesian` and `ellipsoid_no_border`. Next, it will be a union of `ellipse_no_border` and `ellipse_border`. Lastly, it will be a union of all three geometries.
 
 # In[7]:
@@ -235,7 +235,7 @@ class Heart(DomainInterface):
         pass
 
 
-# Now we have the skeleton for our `Heart` class.  Also the `sample` method is where most of the work is done so let's fill it out.
+# Now we have the skeleton for our `Heart` class.  Also the `sample` method is where most of the work is done so let's fill it out. 
 
 # In[ ]:
 
@@ -289,5 +289,5 @@ plot_scatter(ax, pts_heart, "Heart Domain")
 
 
 # ## What's next?
-#
-# We have made a very simple tutorial on how to build custom geometries and use domain operation to compose base geometries. Now you can play around with different geometries and build your own!
+# 
+# We have made a very simple tutorial on how to build custom geometries and use domain operation to compose base geometries. Now you can play around with different geometries and build your own!  

@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # # Tutorial: Unstructured convolutional autoencoder via continuous convolution
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial4/tutorial.ipynb)
 
 # In this tutorial, we will show how to use the Continuous Convolutional Filter, and how to build common Deep Learning architectures with it. The implementation of the filter follows the original work [*A Continuous Convolutional Trainable Filter for Modelling Unstructured Data*](https://arxiv.org/abs/2210.13416).
@@ -37,15 +37,15 @@ from pina.model import FeedForward  # for building AE and MNIST classification
 warnings.filterwarnings("ignore")
 
 
-# The tutorial is structured as follow:
+# The tutorial is structured as follow: 
 # * [Continuous filter background](#continuous-filter-background): understand how the convolutional filter works and how to use it.
-# * [Building a MNIST Classifier](#building-a-mnist-classifier): show how to build a simple classifier using the MNIST dataset and how to combine a continuous convolutional layer with a feedforward neural network.
+# * [Building a MNIST Classifier](#building-a-mnist-classifier): show how to build a simple classifier using the MNIST dataset and how to combine a continuous convolutional layer with a feedforward neural network. 
 # * [Building a Continuous Convolutional Autoencoder](#building-a-continuous-convolutional-autoencoder): show how to use the continuous filter to work with unstructured data for autoencoding and up-sampling.
 
 # ## Continuous filter background
 
 # As reported by the authors in the original paper: in contrast to discrete convolution, continuous convolution is mathematically defined as:
-#
+# 
 # $$
 #     \mathcal{I}_{\rm{out}}(\mathbf{x}) = \int_{\mathcal{X}}  \mathcal{I}(\mathbf{x} + \mathbf{\tau}) \cdot \mathcal{K}(\mathbf{\tau}) d\mathbf{\tau},
 # $$
@@ -53,7 +53,7 @@ warnings.filterwarnings("ignore")
 # $$
 #     \mathcal{I}_{\rm{out}}(\mathbf{\tilde{x}}_i) = \sum_{{\mathbf{x}_i}\in\mathcal{X}}  \mathcal{I}(\mathbf{x}_i + \mathbf{\tau}) \cdot \mathcal{K}(\mathbf{x}_i),
 # $$
-# where $\mathbf{\tau} \in \mathcal{S}$, with $\mathcal{S}$ the set of available strides, corresponds to the current stride position of the filter, and $\mathbf{\tilde{x}}_i$ points are obtained by taking the centroid of the filter position mapped on the $\Omega$ domain.
+# where $\mathbf{\tau} \in \mathcal{S}$, with $\mathcal{S}$ the set of available strides, corresponds to the current stride position of the filter, and $\mathbf{\tilde{x}}_i$ points are obtained by taking the centroid of the filter position mapped on the $\Omega$ domain. 
 
 # We will now try to pratically see how to work with the filter. From the above definition we see that what is needed is:
 # 1. A domain and a function defined on that domain (the input)
@@ -61,16 +61,16 @@ warnings.filterwarnings("ignore")
 # 3. The filter rectangular domain $\rightarrow$ `filter_dim` variable in `ContinuousConv`
 
 # ### Input function
-#
+# 
 # The input function for the continuous filter is defined as a tensor of shape: $$[B \times N_{in} \times N \times D]$$ where $B$ is the batch_size, $N_{in}$ is the number of input fields, $N$ the number of points in the mesh, $D$ the dimension of the problem. In particular:
 # * $D$ is the number of spatial variables + 1. The last column must contain the field value. For example for 2D problems $D=3$ and the tensor will be something like `[first coordinate, second coordinate, field value]`
-# * $N_{in}$ represents the number of vectorial function presented. For example a vectorial function $f = [f_1, f_2]$ will have $N_{in}=2$
-#
+# * $N_{in}$ represents the number of vectorial function presented. For example a vectorial function $f = [f_1, f_2]$ will have $N_{in}=2$ 
+# 
 # Let's see an example to clear the ideas. We will be verbose to explain in details the input form. We wish to create the function:
 # $$
 # f(x, y) = [\sin(\pi x) \sin(\pi y), -\sin(\pi x) \sin(\pi y)] \quad (x,y)\in[0,1]\times[0,1]
 # $$
-#
+# 
 # using a batch size equal to 1.
 
 # In[2]:
@@ -106,9 +106,9 @@ print(f"Filter input data has shape: {data.shape}")
 
 
 # ### Stride
-#
+# 
 # The stride is passed as a dictionary `stride` which tells the filter where to go. Here is an example for the $[0,1]\times[0,5]$ domain:
-#
+# 
 # ```python
 # # stride definition
 # stride = {"domain": [1, 5],
@@ -122,15 +122,15 @@ print(f"Filter input data has shape: {data.shape}")
 # 2. `start`: start position of the filter, coordinate $(0, 0)$
 # 3. `jump`: the jumps of the centroid of the filter to the next position $(0.1, 0.3)$
 # 4. `direction`: the directions of the jump, with `1 = right`, `0 = no jump`, `-1 = left` with respect to the current position
-#
+# 
 # **Note**
-#
+# 
 # We are planning to release the possibility to directly pass a list of possible strides!
 
 # ### Filter definition
-#
+# 
 # Having defined all the previous blocks, we are now able to construct the continuous filter.
-#
+# 
 # Suppose we would like to get an output with only one field, and let us fix the filter dimension to be $[0.1, 0.1]$.
 
 # In[3]:
@@ -184,8 +184,8 @@ output = cConv(data)
 print(f"Filter output data has shape: {output.shape}")
 
 
-# If we don't want to use the default `FeedForward` neural network, we can pass a specified torch model in the `model` keyword as follow:
-#
+# If we don't want to use the default `FeedForward` neural network, we can pass a specified torch model in the `model` keyword as follow: 
+# 
 
 # In[6]:
 
@@ -218,7 +218,7 @@ cConv = ContinuousConvBlock(
 # Notice that we pass the class and not an already built object!
 
 # ## Building a MNIST Classifier
-#
+# 
 # Let's see how we can build a MNIST classifier using a continuous convolutional filter. We will use the MNIST dataset from PyTorch. In order to keep small training times we use only 6000 samples for training and 1000 samples for testing.
 
 # In[7]:
@@ -374,7 +374,7 @@ print(f"Accuracy of the network on the test images: {(correct / total):.3%}")
 # As we can see we have very good performance for having trained only for 1 epoch! Nevertheless, we are still using structured data... Let's see how we can build an autoencoder for unstructured data now.
 
 # ## Building a Continuous Convolutional Autoencoder
-#
+# 
 # Just as toy problem, we will now build an autoencoder for the following function $f(x,y)=\sin(\pi x)\sin(\pi y)$ on the unit circle domain centered in $(0.5, 0.5)$. We will also see the ability to up-sample (once trained) the results without retraining. Let's first create the input and visualize it, we will use firstly a mesh of $100$ points.
 
 # In[12]:
@@ -488,7 +488,7 @@ class Decoder(torch.nn.Module):
         return torch.sigmoid(self.convolution.transpose(x, grid))
 
 
-# Very good! Notice that in the `Decoder` class in the `forward` pass we have used the `.transpose()` method of the `ContinuousConvolution` class. This method accepts the `weights` for upsampling and the `grid` on where to upsample. Let's now build the autoencoder! We set the hidden dimension in the `hidden_dimension` variable. We apply the sigmoid on the output since the field value is between $[0, 1]$.
+# Very good! Notice that in the `Decoder` class in the `forward` pass we have used the `.transpose()` method of the `ContinuousConvolution` class. This method accepts the `weights` for upsampling and the `grid` on where to upsample. Let's now build the autoencoder! We set the hidden dimension in the `hidden_dimension` variable. We apply the sigmoid on the output since the field value is between $[0, 1]$. 
 
 # In[14]:
 
@@ -580,7 +580,7 @@ print(f"l2 error: {l2_error(input_data[0, 0, :, -1], output[0, 0, :, -1]):.2%}")
 # More or less $4\%$ in $l_2$ error, which is really low considering the fact that we use just **one** convolutional layer and a simple feedforward to decrease the dimension. Let's see now some peculiarity of the filter.
 
 # ### Filter for upsampling
-#
+# 
 # Suppose we have already the hidden representation and we want to upsample on a differen grid with more points. Let's see how to do it:
 
 # In[18]:
@@ -666,11 +666,11 @@ print(
 
 
 # ## What's next?
-#
+# 
 # We have shown the basic usage of a convolutional filter. There are additional extensions possible:
-#
+# 
 # 1. Train using Physics Informed strategies
-#
+# 
 # 2. Use the filter to build an unstructured convolutional autoencoder for reduced order modelling
-#
+# 
 # 3. Many more...

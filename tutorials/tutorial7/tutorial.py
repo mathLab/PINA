@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # # Tutorial: Resolution of an inverse problem
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial7/tutorial.ipynb)
 
 # ### Introduction to the inverse problem
@@ -16,11 +16,11 @@
 # \end{cases}
 # \end{equation}
 # where $\Omega$ is a square domain $[-2, 2] \times [-2, 2]$, and $\partial \Omega=\Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4$ is the union of the boundaries of the domain.
-#
+# 
 # This kind of problem, namely the "inverse problem", has two main goals:
 # - find the solution $u$ that satisfies the Poisson equation;
 # - find the unknown parameters ($\mu_1$, $\mu_2$) that better fit some given data (third equation in the system above).
-#
+# 
 # In order to achieve both goals we will need to define an `InverseProblem` in PINA.
 
 # Let's start with useful imports.
@@ -39,12 +39,8 @@ if IN_COLAB:
     get_ipython().system('pip install "pina-mathlab"')
     # get the data
     get_ipython().system('mkdir "data"')
-    get_ipython().system(
-        'wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pinn_solution_0.5_0.5" -O "data/pinn_solution_0.5_0.5"'
-    )
-    get_ipython().system(
-        'wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pts_0.5_0.5" -O "data/pts_0.5_0.5"'
-    )
+    get_ipython().system('wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pinn_solution_0.5_0.5" -O "data/pinn_solution_0.5_0.5"')
+    get_ipython().system('wget "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pts_0.5_0.5" -O "data/pts_0.5_0.5"')
 
 import matplotlib.pyplot as plt
 import torch
@@ -249,11 +245,11 @@ plt.show()
 
 
 # ## What's next?
-#
+# 
 # We have shown the basic usage PINNs in inverse problem modelling, further extensions include:
-#
+# 
 # 1. Train using different Physics Informed strategies
-#
+# 
 # 2. Try on more complex problems
-#
+# 
 # 3. Many more...
