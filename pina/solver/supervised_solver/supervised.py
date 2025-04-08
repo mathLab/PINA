@@ -68,7 +68,7 @@ class SupervisedSolver(SupervisedSolverInterface, SingleSolverInterface):
             weighting=weighting,
             use_lt=use_lt,
         )
-    
+
     def loss_data(self, input, target):
         """
         Compute the data loss for the Supervised solver by evaluating the loss
@@ -82,4 +82,4 @@ class SupervisedSolver(SupervisedSolverInterface, SingleSolverInterface):
         :return: The supervised loss, averaged over the number of observations.
         :rtype: LabelTensor | torch.Tensor | Graph | Data
         """
-        return self.loss(self.forward(input), target)
+        return self._loss_fn(self.forward(input), target)

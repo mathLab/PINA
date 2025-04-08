@@ -195,7 +195,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :rtype: torch.Tensor
         """
         residuals = self.compute_residual(samples, equation)
-        return self.loss(residuals, torch.zeros_like(residuals))
+        return self._loss_fn(residuals, torch.zeros_like(residuals))
 
     def _clamp_inverse_problem_params(self):
         """

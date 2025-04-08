@@ -134,7 +134,7 @@ class CausalPINN(PINN):
             chunk.labels = labels
             # classical PINN loss
             residual = self.compute_residual(samples=chunk, equation=equation)
-            loss_val = self.loss(
+            loss_val = self._loss_fn(
                 torch.zeros_like(residual, requires_grad=True), residual
             )
             time_loss.append(loss_val)

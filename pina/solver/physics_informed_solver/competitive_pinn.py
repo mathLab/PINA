@@ -156,7 +156,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         residual = residual * discriminator_bets
 
         # Compute competitive residual.
-        loss_val = self.loss(
+        loss_val = self._loss_fn(
             torch.zeros_like(residual, requires_grad=True),
             residual,
         )
@@ -175,7 +175,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :return: The supervised loss, averaged over the number of observations.
         :rtype: LabelTensor
         """
-        return self.loss(self.forward(input), target)
+        return self._loss_fn(self.forward(input), target)
 
     def configure_optimizers(self):
         """

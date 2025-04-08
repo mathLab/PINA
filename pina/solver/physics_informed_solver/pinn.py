@@ -95,7 +95,7 @@ class PINN(PINNInterface, SingleSolverInterface):
         :return: The supervised loss, averaged over the number of observations.
         :rtype: LabelTensor
         """
-        return self.loss(self.forward(input), target)
+        return self._loss_fn(self.forward(input), target)
 
     def loss_phys(self, samples, equation):
         """
@@ -108,7 +108,7 @@ class PINN(PINNInterface, SingleSolverInterface):
         :rtype: LabelTensor
         """
         residuals = self.compute_residual(samples, equation)
-        return self.loss(residuals, torch.zeros_like(residuals))
+        return self._loss_fn(residuals, torch.zeros_like(residuals))
 
     def configure_optimizers(self):
         """

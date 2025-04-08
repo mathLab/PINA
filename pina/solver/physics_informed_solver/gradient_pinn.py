@@ -116,7 +116,7 @@ class GradientPINN(PINN):
         """
         # classical PINN loss
         residual = self.compute_residual(samples=samples, equation=equation)
-        loss_value = self.loss(
+        loss_value = self._loss_fn(
             torch.zeros_like(residual, requires_grad=True), residual
         )
 
@@ -124,7 +124,7 @@ class GradientPINN(PINN):
         loss_value = loss_value.reshape(-1, 1)
         loss_value.labels = ["__loss"]
         loss_grad = grad(loss_value, samples, d=self.problem.spatial_variables)
-        g_loss_phys = self.loss(
+        g_loss_phys = self._loss_fn(
             torch.zeros_like(loss_grad, requires_grad=True), loss_grad
         )
         return loss_value + g_loss_phys

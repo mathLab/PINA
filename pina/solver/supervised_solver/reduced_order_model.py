@@ -181,10 +181,10 @@ class ReducedOrderModelSolver(SupervisedSolverInterface, SingleSolverInterface):
         # encoded representations loss
         encode_repr_inter_net = interpolation_network(input)
         encode_repr_reduction_network = reduction_network.encode(target)
-        loss_encode = self.loss(
+        loss_encode = self._loss_fn(
             encode_repr_inter_net, encode_repr_reduction_network
         )
         # reconstruction loss
         decode = reduction_network.decode(encode_repr_reduction_network)
-        loss_reconstruction = self.loss(decode, target)
+        loss_reconstruction = self._loss_fn(decode, target)
         return loss_encode + loss_reconstruction

@@ -51,7 +51,7 @@ class GAROM(MultiSolverInterface):
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
         :param Optimizer optimizer_discriminator: The optimizer for the
-            discriminator. If ``None``, the :class:`torch.optim.Adam` 
+            discriminator. If ``None``, the :class:`torch.optim.Adam`
             optimizer is used. Default is ``None``.
         :param Scheduler scheduler_generator: The learning rate scheduler for
             the generator.
@@ -88,7 +88,7 @@ class GAROM(MultiSolverInterface):
         check_consistency(
             loss, (LossInterface, _Loss, torch.nn.Module), subclass=False
         )
-        self._loss = loss
+        self._loss_fn = loss
 
         # set automatic optimization for GANs
         self.automatic_optimization = False
@@ -157,10 +157,11 @@ class GAROM(MultiSolverInterface):
         generated_snapshots = self.sample(parameters)
 
         # generator loss
-        r_loss = self._loss(snapshots, generated_snapshots)
+        r_loss = self._loss_fn(snapshots, generated_snapshots)
         d_fake = self.discriminator([generated_snapshots, parameters])
         g_loss = (
-            self._loss(d_fake, generated_snapshots) + self.regularizer * r_loss
+            self._loss_fn(d_fake, generated_snapshots)
+            + self.regularizer * r_loss
         )
 
         # backward step
@@ -189,8 +190,8 @@ class GAROM(MultiSolverInterface):
         d_fake = self.discriminator([generated_snapshots, parameters])
 
         # evaluate loss
-        d_loss_real = self._loss(d_real, snapshots)
-        d_loss_fake = self._loss(d_fake, generated_snapshots.detach())
+        d_loss_real = self._loss_fn(d_real, snapshots)
+        d_loss_fake = self._loss_fn(d_fake, generated_snapshots.detach())
         d_loss = d_loss_real - self.k * d_loss_fake
 
         # backward step
@@ -270,7 +271,7 @@ class GAROM(MultiSolverInterface):
                 points["target"],
             )
             snapshots_gen = self.generator(parameters)
-            condition_loss[condition_name] = self._loss(
+            condition_loss[condition_name] = self._loss_fn(
                 snapshots, snapshots_gen
             )
         loss = self.weighting.aggregate(condition_loss)
@@ -293,7 +294,7 @@ class GAROM(MultiSolverInterface):
                 points["target"],
             )
             snapshots_gen = self.generator(parameters)
-            condition_loss[condition_name] = self._loss(
+            condition_loss[condition_name] = self._loss_fn(
                 snapshots, snapshots_gen
             )
         loss = self.weighting.aggregate(condition_loss)

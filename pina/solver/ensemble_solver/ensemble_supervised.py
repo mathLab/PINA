@@ -115,7 +115,7 @@ class DeepEnsembleSupervisedSolver(
         :rtype: torch.Tensor
         """
         loss = sum(
-            self.loss(self.forward(input, idx), target)
+            self._loss_fn(self.forward(input, idx), target)
             for idx in range(self.num_ensembles)
         )
         return loss / self.num_ensembles

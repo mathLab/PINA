@@ -127,7 +127,7 @@ class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):
         :rtype: torch.Tensor
         """
         loss = sum(
-            self.loss(self.forward(input, idx), target)
+            self._loss_fn(self.forward(input, idx), target)
             for idx in range(self.num_ensembles)
         )
         return loss / self.num_ensembles
@@ -162,5 +162,5 @@ class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):
         loss = 0
         for idx in range(self.num_ensembles):
             residuals = equation.residual(samples, self.forward(samples, idx))
-            loss = loss + self.loss(residuals, torch.zeros_like(residuals))
+            loss = loss + self._loss_fn(residuals, torch.zeros_like(residuals))
         return loss / self.num_ensembles

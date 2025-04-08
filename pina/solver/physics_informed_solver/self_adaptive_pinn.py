@@ -299,7 +299,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :return: The supervised loss, averaged over the number of observations.
         :rtype: LabelTensor
         """
-        return self.loss(self.forward(input), target)
+        return self._loss_fn(self.forward(input), target)
 
     def _vect_to_scalar(self, loss_value):
         """
