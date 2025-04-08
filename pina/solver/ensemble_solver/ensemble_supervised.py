@@ -57,6 +57,7 @@ class DeepEnsembleSupervisedSolver(
         processing systems, 30.
         DOI: `arXiv:1612.01474 <https://arxiv.org/abs/1612.01474>`_.
     """
+
     def __init__(
         self,
         problem,
@@ -102,8 +103,8 @@ class DeepEnsembleSupervisedSolver(
 
     def loss_data(self, input, target):
         """
-        Compute the data loss for the EnsembleSupervisedSolver by evaluating 
-        the loss between the network's output and the true solution for each 
+        Compute the data loss for the EnsembleSupervisedSolver by evaluating
+        the loss between the network's output and the true solution for each
         model. This method should not be overridden, if not intentionally.
 
         :param input: The input to the neural network.

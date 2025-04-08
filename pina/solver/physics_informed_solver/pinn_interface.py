@@ -53,7 +53,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
 
         # assign variables
-        self._loss = loss
+        self._loss_fn = loss
 
         # inverse problem handling
         if isinstance(self.problem, InverseProblem):
@@ -185,7 +185,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         """
         Computes the physics loss for the physics-informed solver based on the
         provided samples and equation. This method should never be overridden
-        by the user, if not intentionally, 
+        by the user, if not intentionally,
         since it is used internally to compute validation loss.
 
 
@@ -215,7 +215,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :return: The loss function used for training.
         :rtype: torch.nn.Module
         """
-        return self._loss
+        return self._loss_fn
 
     @property
     def current_condition_name(self):

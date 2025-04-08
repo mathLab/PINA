@@ -45,6 +45,7 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
         processing systems, 30.
         DOI: `arXiv:1612.01474 <https://arxiv.org/abs/1612.01474>`_.
     """
+
     def __init__(
         self,
         problem,
@@ -99,19 +100,19 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
             return self.models[ensemble_idx].forward(x)
         # otherwise return the stacked output
         return torch.stack(
-                [self.forward(x, idx) for idx in range(self.num_ensembles)],
-                dim=self.ensemble_dim,
-            )
+            [self.forward(x, idx) for idx in range(self.num_ensembles)],
+            dim=self.ensemble_dim,
+        )
 
     def training_step(self, batch):
         """
         Training step for the solver, overridden for manual optimization.
         This method performs a forward pass, calculates the loss, and applies
-        manual backward propagation and optimization steps for each model in 
+        manual backward propagation and optimization steps for each model in
         the ensemble.
 
-        :param list[tuple[str, dict]] batch: A batch of training data. 
-            Each element is a tuple containing a condition name and a 
+        :param list[tuple[str, dict]] batch: A batch of training data.
+            Each element is a tuple containing a condition name and a
             dictionary of points.
         :return: The aggregated loss after the training step.
         :rtype: torch.Tensor

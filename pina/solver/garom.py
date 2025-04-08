@@ -51,8 +51,8 @@ class GAROM(MultiSolverInterface):
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
         :param Optimizer optimizer_discriminator: The optimizer for the
-            discriminator. If ``None``, the :class:`torch.optim.Adam` optimizer is
-            used. Default is ``None``.
+            discriminator. If ``None``, the :class:`torch.optim.Adam` 
+            optimizer is used. Default is ``None``.
         :param Scheduler scheduler_generator: The learning rate scheduler for
             the generator.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`

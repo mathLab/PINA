@@ -1,8 +1,8 @@
 """Module for the Supervised solver interface."""
 
-import torch
-
 from abc import abstractmethod
+
+import torch
 
 from torch.nn.modules.loss import _Loss
 from ..solver import SolverInterface
@@ -16,8 +16,8 @@ class SupervisedSolverInterface(SolverInterface):
     Base class for Supervised solvers. This class implements a Supervised Solver
     , using a user specified ``model`` to solve a specific ``problem``.
 
-    The ``SupervisedSolverInterface`` class can be used to define 
-    Supervised solvers that work with one or multiple optimizers and/or models. 
+    The ``SupervisedSolverInterface`` class can be used to define
+    Supervised solvers that work with one or multiple optimizers and/or models.
     By default, it is compatible with problems defined by
     :class:`~pina.problem.abstract_problem.AbstractProblem`,
     and users can choose the problem type the solver is meant to address.
@@ -45,7 +45,7 @@ class SupervisedSolverInterface(SolverInterface):
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
 
         # assign variables
-        self._loss = loss
+        self._loss_fn = loss
 
     def optimization_cycle(self, batch):
         """
@@ -87,4 +87,4 @@ class SupervisedSolverInterface(SolverInterface):
         :return: The loss function to be minimized.
         :rtype: torch.nn.Module
         """
-        return self._loss
+        return self._loss_fn

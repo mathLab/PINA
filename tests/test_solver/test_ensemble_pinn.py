@@ -27,7 +27,9 @@ problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
 
 # define models
 models = [
-    FeedForward(len(problem.input_variables), len(problem.output_variables), n_layers=1)
+    FeedForward(
+        len(problem.input_variables), len(problem.output_variables), n_layers=1
+    )
     for _ in range(5)
 ]
 
@@ -84,6 +86,7 @@ def test_solver_validation(batch_size, compile):
             [isinstance(model, OptimizedModule) for model in solver.models]
         )
 
+
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_test(batch_size, compile):
@@ -103,6 +106,7 @@ def test_solver_test(batch_size, compile):
         assert all(
             [isinstance(model, OptimizedModule) for model in solver.models]
         )
+
 
 def test_train_load_restore():
     dir = "tests/test_solver/tmp"

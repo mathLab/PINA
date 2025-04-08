@@ -150,7 +150,7 @@ class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):
         Computes the physics loss for the physics-informed solver based on the
         provided samples and equation. This method should never be overridden
         by the user, if not intentionally,
-        since it is used internally to compute validation loss. It overrides the 
+        since it is used internally to compute validation loss. It overrides the
         :obj:`~pina.solver.physics_informed_solver.PINNInterface._residual_loss`
         method.
 

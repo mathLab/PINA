@@ -89,7 +89,9 @@ graph_models = [Models() for i in range(10)]
 
 
 def test_constructor():
-    solver=DeepEnsembleSupervisedSolver(problem=TensorProblem(), models=models)
+    solver = DeepEnsembleSupervisedSolver(
+        problem=TensorProblem(), models=models
+    )
     DeepEnsembleSupervisedSolver(problem=LabelTensorProblem(), models=models)
     assert DeepEnsembleSupervisedSolver.accepted_conditions_types == (
         InputTargetCondition
@@ -118,7 +120,9 @@ def test_solver_train(use_lt, batch_size, compile):
 
     trainer.train()
     if trainer.compile:
-        assert all([isinstance(model, OptimizedModule) for model in solver.models])
+        assert all(
+            [isinstance(model, OptimizedModule) for model in solver.models]
+        )
 
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
