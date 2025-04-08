@@ -83,15 +83,15 @@ class CausalPINN(PINN):
             :class:`~pina.problem.time_dependent_problem.TimeDependentProblem`.
         :param torch.nn.Module model: The neural network model to be used.
         :param Optimizer optimizer: The optimizer to be used.
-            If `None`, the :class:`torch.optim.Adam` optimizer is used.
+            If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
         :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
-            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
-            If `None`, no weighting schema is used. Default is ``None``.
+            If ``None``, no weighting schema is used. Default is ``None``.
         :param torch.nn.Module loss: The loss function to be minimized.
-            If `None`, the :class:`torch.nn.MSELoss` loss is used.
+            If ``None``, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         :param float eps: The exponential decay parameter. Default is ``100``.
         :raises ValueError: If the problem is not a TimeDependentProblem.

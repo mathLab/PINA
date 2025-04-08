@@ -13,11 +13,14 @@ __all__ = [
     "RBAPINN",
     "SupervisedSolver",
     "ReducedOrderModelSolver",
+    "DeepEnsembleSolverInterface",
+    "DeepEnsembleSupervisedSolver",
+    "DeepEnsemblePINN",
     "GAROM",
 ]
 
 from .solver import SolverInterface, SingleSolverInterface, MultiSolverInterface
 from .physics_informed_solver import *
-from .supervised import SupervisedSolver
-from .reduced_order_model import ReducedOrderModelSolver
+from .supervised_solver import *
+from .ensemble_solver import *
 from .garom import GAROM

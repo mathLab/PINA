@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 import pytest
-from pina import Condition, LabelTensor
+from pina import Condition
 from pina.solver import GAROM
 from pina.condition import InputTargetCondition
 from pina.problem import AbstractProblem
