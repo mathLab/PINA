@@ -5,7 +5,7 @@ from torch_geometric.nn import GCNConv
 from pina import Condition, LabelTensor
 from pina.condition import InputTargetCondition
 from pina.problem import AbstractProblem
-from pina.solver import SupervisedSolver
+from pina.solver import DeepEnsembleSupervisedSolver
 from pina.model import FeedForward
 from pina.trainer import Trainer
 from pina.graph import KNNGraph
@@ -59,10 +59,10 @@ class GraphProblemLT(AbstractProblem):
     conditions = {"data": Condition(input=input_, target=output_)}
 
 
-model = FeedForward(2, 1)
+models = [FeedForward(2, 1) for i in range(10)]
 
 
-class Model(torch.nn.Module):
+class Models(torch.nn.Module):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -85,13 +85,18 @@ class Model(torch.nn.Module):
         return y
 
 
-graph_model = Model()
+graph_models = [Models() for i in range(10)]
 
 
 def test_constructor():
-    SupervisedSolver(problem=TensorProblem(), model=model)
-    SupervisedSolver(problem=LabelTensorProblem(), model=model)
-    assert SupervisedSolver.accepted_conditions_types == (InputTargetCondition)
+    solver = DeepEnsembleSupervisedSolver(
+        problem=TensorProblem(), models=models
+    )
+    DeepEnsembleSupervisedSolver(problem=LabelTensorProblem(), models=models)
+    assert DeepEnsembleSupervisedSolver.accepted_conditions_types == (
+        InputTargetCondition
+    )
+    assert solver.num_ensemble == 10
 
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
@@ -99,7 +104,9 @@ def test_constructor():
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_train(use_lt, batch_size, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
-    solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
+    solver = DeepEnsembleSupervisedSolver(
+        problem=problem, models=models, use_lt=use_lt
+    )
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -113,14 +120,18 @@ def test_solver_train(use_lt, batch_size, compile):
 
     trainer.train()
     if trainer.compile:
-        assert isinstance(solver.model, OptimizedModule)
+        assert all(
+            [isinstance(model, OptimizedModule) for model in solver.models]
+        )
 
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_train_graph(batch_size, use_lt):
     problem = GraphProblemLT() if use_lt else GraphProblem()
-    solver = SupervisedSolver(problem=problem, model=graph_model, use_lt=use_lt)
+    solver = DeepEnsembleSupervisedSolver(
+        problem=problem, models=graph_models, use_lt=use_lt
+    )
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -138,7 +149,9 @@ def test_solver_train_graph(batch_size, use_lt):
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_validation(use_lt, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
-    solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
+    solver = DeepEnsembleSupervisedSolver(
+        problem=problem, models=models, use_lt=use_lt
+    )
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -151,14 +164,18 @@ def test_solver_validation(use_lt, compile):
     )
     trainer.train()
     if trainer.compile:
-        assert isinstance(solver.model, OptimizedModule)
+        assert all(
+            [isinstance(model, OptimizedModule) for model in solver.models]
+        )
 
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_validation_graph(batch_size, use_lt):
     problem = GraphProblemLT() if use_lt else GraphProblem()
-    solver = SupervisedSolver(problem=problem, model=graph_model, use_lt=use_lt)
+    solver = DeepEnsembleSupervisedSolver(
+        problem=problem, models=graph_models, use_lt=use_lt
+    )
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -176,7 +193,9 @@ def test_solver_validation_graph(batch_size, use_lt):
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_test(use_lt, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
-    solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
+    solver = DeepEnsembleSupervisedSolver(
+        problem=problem, models=models, use_lt=use_lt
+    )
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -189,14 +208,18 @@ def test_solver_test(use_lt, compile):
     )
     trainer.test()
     if trainer.compile:
-        assert isinstance(solver.model, OptimizedModule)
+        assert all(
+            [isinstance(model, OptimizedModule) for model in solver.models]
+        )
 
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_test_graph(batch_size, use_lt):
     problem = GraphProblemLT() if use_lt else GraphProblem()
-    solver = SupervisedSolver(problem=problem, model=graph_model, use_lt=use_lt)
+    solver = DeepEnsembleSupervisedSolver(
+        problem=problem, models=graph_models, use_lt=use_lt
+    )
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -213,7 +236,7 @@ def test_solver_test_graph(batch_size, use_lt):
 def test_train_load_restore():
     dir = "tests/test_solver/tmp/"
     problem = LabelTensorProblem()
-    solver = SupervisedSolver(problem=problem, model=model)
+    solver = DeepEnsembleSupervisedSolver(problem=problem, models=models)
     trainer = Trainer(
         solver=solver,
         max_epochs=5,
@@ -234,14 +257,13 @@ def test_train_load_restore():
     )
 
     # loading
-    new_solver = SupervisedSolver.load_from_checkpoint(
+    new_solver = DeepEnsembleSupervisedSolver.load_from_checkpoint(
         f"{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt",
         problem=problem,
-        model=model,
+        models=models,
     )
 
     test_pts = LabelTensor(torch.rand(20, 2), problem.input_variables)
-    assert new_solver.forward(test_pts).shape == (20, 1)
     assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
     torch.testing.assert_close(
         new_solver.forward(test_pts), solver.forward(test_pts)

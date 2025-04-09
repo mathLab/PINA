@@ -1,10 +1,11 @@
 """Module for the Reduced Order Model solver"""
 
 import torch
-from .supervised import SupervisedSolver
+from .supervised_solver_interface import SupervisedSolverInterface
+from ..solver import SingleSolverInterface
 
 
-class ReducedOrderModelSolver(SupervisedSolver):
+class ReducedOrderModelSolver(SupervisedSolverInterface, SingleSolverInterface):
     r"""
     Reduced Order Model solver class. This class implements the Reduced Order
     Model solver, using user specified ``reduction_network`` and
@@ -50,6 +51,14 @@ class ReducedOrderModelSolver(SupervisedSolver):
         Journal of Computational Physics 363 (2018): 55-78.
         DOI `10.1016/j.jcp.2018.02.037
         <https://doi.org/10.1016/j.jcp.2018.02.037>`_.
+
+        Pichi, Federico, Beatriz Moya, and Jan S.
+        Hesthaven. 
+        *A graph convolutional autoencoder approach to model order reduction
+        for parametrized PDEs.*
+        Journal of Computational Physics 501 (2024): 112762.
+        DOI `10.1016/j.jcp.2024.112762
+        <https://doi.org/10.1016/j.jcp.2024.112762>`_.
         
     .. note::
         The specified ``reduction_network`` must contain two methods, namely
@@ -63,15 +72,6 @@ class ReducedOrderModelSolver(SupervisedSolver):
         ``reduction_network`` and ``interpolation_network`` are trained
         simultaneously. For reference on this trainig strategy look at the
         following:
-    
-    ..seealso::
-        **Original reference**: Pichi, Federico, Beatriz Moya, and Jan S.
-        Hesthaven. 
-        *A graph convolutional autoencoder approach to model order reduction
-        for parametrized PDEs.*
-        Journal of Computational Physics 501 (2024): 112762.
-        DOI `10.1016/j.jcp.2024.112762
-        <https://doi.org/10.1016/j.jcp.2024.112762>`_.
 
     .. warning::
         This solver works only for data-driven model. Hence in the ``problem``
@@ -102,16 +102,16 @@ class ReducedOrderModelSolver(SupervisedSolver):
             for interpolating the control parameters to latent space obtained by
             the ``reduction_network`` encoding.
         :param torch.nn.Module loss: The loss function to be minimized.
-            If `None`, the :class:`torch.nn.MSELoss` loss is used.
+            If ``None``, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         :param Optimizer optimizer: The optimizer to be used.
-            If `None`, the :class:`torch.optim.Adam` optimizer is used.
+            If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
         :param Scheduler scheduler: Learning rate scheduler.
-            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
-            If `None`, no weighting schema is used. Default is ``None``.
+            If ``None``, no weighting schema is used. Default is ``None``.
         :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
             Default is ``True``.
         """
@@ -153,39 +153,38 @@ class ReducedOrderModelSolver(SupervisedSolver):
         of the ``interpolation_network`` on the input, and maps it to output
         space by calling the decode methode of the ``reduction_network``.
 
-        :param x: Input tensor.
-        :type x: torch.Tensor | LabelTensor
-        :return: Solver solution.
-        :rtype: torch.Tensor | LabelTensor
+        :param x: The input to the neural network.
+        :type x: LabelTensor | torch.Tensor | Graph | Data
+        :return: The solver solution.
+        :rtype: LabelTensor | torch.Tensor | Graph | Data
         """
         reduction_network = self.model["reduction_network"]
         interpolation_network = self.model["interpolation_network"]
         return reduction_network.decode(interpolation_network(x))
 
-    def loss_data(self, input_pts, output_pts):
+    def loss_data(self, input, target):
         """
         Compute the data loss by evaluating the loss between the network's
         output and the true solution. This method should not be overridden, if
         not intentionally.
 
-        :param LabelTensor input_pts: The input points to the neural network.
-        :param LabelTensor output_pts: The true solution to compare with the
-            network's output.
+        :param input: The input to the neural network.
+        :type input: LabelTensor | torch.Tensor | Graph | Data
+        :param target: The target to compare with the network's output.
+        :type target: LabelTensor | torch.Tensor | Graph | Data
         :return: The supervised loss, averaged over the number of observations.
-        :rtype: torch.Tensor
+        :rtype: LabelTensor | torch.Tensor | Graph | Data
         """
         # extract networks
         reduction_network = self.model["reduction_network"]
         interpolation_network = self.model["interpolation_network"]
         # encoded representations loss
-        encode_repr_inter_net = interpolation_network(input_pts)
-        encode_repr_reduction_network = reduction_network.encode(output_pts)
-        loss_encode = self.loss(
+        encode_repr_inter_net = interpolation_network(input)
+        encode_repr_reduction_network = reduction_network.encode(target)
+        loss_encode = self._loss_fn(
             encode_repr_inter_net, encode_repr_reduction_network
         )
         # reconstruction loss
-        loss_reconstruction = self.loss(
-            reduction_network.decode(encode_repr_reduction_network), output_pts
-        )
-
+        decode = reduction_network.decode(encode_repr_reduction_network)
+        loss_reconstruction = self._loss_fn(decode, target)
         return loss_encode + loss_reconstruction
