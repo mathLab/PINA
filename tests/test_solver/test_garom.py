@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 import pytest
-from pina import Condition, LabelTensor
+from pina import Condition
 from pina.solver import GAROM
 from pina.condition import InputTargetCondition
 from pina.problem import AbstractProblem
@@ -15,7 +15,7 @@ class TensorProblem(AbstractProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {
-        "data": Condition(target=torch.randn(50, 2), input=torch.randn(50, 1))
+        "data": Condition(target=torch.randn(10, 2), input=torch.randn(10, 1))
     }
 
 
