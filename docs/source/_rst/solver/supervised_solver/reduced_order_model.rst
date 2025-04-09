@@ -1,6 +1,6 @@
 ReducedOrderModelSolver
 ==========================
-.. currentmodule:: pina.solver.reduced_order_model
+.. currentmodule:: pina.solver.supervised_solver.reduced_order_model
 
 .. autoclass:: ReducedOrderModelSolver
    :members:

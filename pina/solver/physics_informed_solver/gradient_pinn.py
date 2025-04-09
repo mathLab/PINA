@@ -75,15 +75,15 @@ class GradientPINN(PINN):
             gradient of the loss.
         :param torch.nn.Module model: The neural network model to be used.
         :param Optimizer optimizer: The optimizer to be used.
-            If `None`, the :class:`torch.optim.Adam` optimizer is used.
+            If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
         :param Scheduler scheduler: Learning rate scheduler.
-            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`
+            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
-            If `None`, no weighting schema is used. Default is ``None``.
+            If ``None``, no weighting schema is used. Default is ``None``.
         :param torch.nn.Module loss: The loss function to be minimized.
-            If `None`, the :class:`torch.nn.MSELoss` loss is used.
+            If ``None``, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         :raises ValueError: If the problem is not a SpatialProblem.
         """
@@ -116,7 +116,7 @@ class GradientPINN(PINN):
         """
         # classical PINN loss
         residual = self.compute_residual(samples=samples, equation=equation)
-        loss_value = self.loss(
+        loss_value = self._loss_fn(
             torch.zeros_like(residual, requires_grad=True), residual
         )
 
@@ -124,7 +124,7 @@ class GradientPINN(PINN):
         loss_value = loss_value.reshape(-1, 1)
         loss_value.labels = ["__loss"]
         loss_grad = grad(loss_value, samples, d=self.problem.spatial_variables)
-        g_loss_phys = self.loss(
+        g_loss_phys = self._loss_fn(
             torch.zeros_like(loss_grad, requires_grad=True), loss_grad
         )
         return loss_value + g_loss_phys
