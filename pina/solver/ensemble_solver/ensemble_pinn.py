@@ -98,10 +98,11 @@ class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):
             If ``None``, no weighting schema is used. Default is ``None``.
         :param int ensemble_dim: The dimension along which the ensemble
             outputs are stacked. Default is 0.
+        :raises NotImplementedError: If an inverse problem is passed.
         """
         if isinstance(problem, InverseProblem):
             raise NotImplementedError(
-                "DeepEnsemblePINN does not work on inverse problems."
+                "DeepEnsemblePINN can not be used to solve inverse problems."
             )
         super().__init__(
             problem=problem,
@@ -126,11 +127,12 @@ class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):
         :return: The supervised loss, averaged over the number of observations.
         :rtype: torch.Tensor
         """
+        predictions = self.forward(input)
         loss = sum(
-            self._loss_fn(self.forward(input, idx), target)
-            for idx in range(self.num_ensembles)
+            self._loss_fn(predictions[idx], target)
+            for idx in range(self.num_ensemble)
         )
-        return loss / self.num_ensembles
+        return loss / self.num_ensemble
 
     def loss_phys(self, samples, equation):
         """
@@ -160,7 +162,9 @@ class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):
         :rtype: torch.Tensor
         """
         loss = 0
-        for idx in range(self.num_ensembles):
-            residuals = equation.residual(samples, self.forward(samples, idx))
-            loss = loss + self._loss_fn(residuals, torch.zeros_like(residuals))
-        return loss / self.num_ensembles
+        predictions = self.forward(samples)
+        for idx in range(self.num_ensemble):
+            residuals = equation.residual(samples, predictions[idx])
+            target = torch.zeros_like(residuals, requires_grad=True)
+            loss = loss + self._loss_fn(residuals, target)
+        return loss / self.num_ensemble

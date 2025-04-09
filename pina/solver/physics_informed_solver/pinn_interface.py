@@ -142,10 +142,9 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         between the network's output and the true solution. This method should
         be overridden by the derived class.
 
-        :param input: The input to the neural network.
-        :type input: LabelTensor
-        :param target: The target to compare with the network's output.
-        :type target: LabelTensor
+        :param LabelTensor input: The input to the neural network.
+        :param LabelTensor target: The target to compare with the
+            network's output.
         :return: The supervised loss, averaged over the number of observations.
         :rtype: LabelTensor
         """

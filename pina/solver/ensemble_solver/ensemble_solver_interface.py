@@ -61,8 +61,6 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
 
         :param AbstractProblem problem: The problem to be solved.
         :param torch.nn.Module models: The neural network models to be used.
-        :param int ensemble_dim: The dimension along which the ensemble
-            outputs are stacked. Default is 0.
         :param Optimizer optimizer: The optimizer to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
@@ -73,6 +71,8 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
             If ``None``, no weighting schema is used. Default is ``None``.
         :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
             Default is ``True``.
+        :param int ensemble_dim: The dimension along which the ensemble
+            outputs are stacked. Default is 0.
         """
         super().__init__(
             problem, models, optimizers, schedulers, weighting, use_lt
@@ -90,7 +90,8 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
 
         :param LabelTensor x: The input tensor to the models.
         :param int ensemble_idx: Optional index to select a specific
-            model from the ensemble.
+            model from the ensemble. If ``None`` results for all models are
+            stacked in ``ensemble_dim`` dimension. Default is ``None``.
         :return: The output of the selected model or the stacked
             outputs from all models.
         :rtype: LabelTensor
@@ -100,7 +101,7 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
             return self.models[ensemble_idx].forward(x)
         # otherwise return the stacked output
         return torch.stack(
-            [self.forward(x, idx) for idx in range(self.num_ensembles)],
+            [self.forward(x, idx) for idx in range(self.num_ensemble)],
             dim=self.ensemble_dim,
         )
 
@@ -125,8 +126,9 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
         # perform backpropagation
         self.manual_backward(loss)
         # optimize
-        for opt in self.optimizers:
+        for opt, sched in zip(self.optimizers, self.schedulers):
             opt.instance.step()
+            sched.instance.step()
         return loss
 
     @property
@@ -140,7 +142,7 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
         return self._ensemble_dim
 
     @property
-    def num_ensembles(self):
+    def num_ensemble(self):
         """
         The number of models in the ensemble.
 

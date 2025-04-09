@@ -15,7 +15,7 @@ class TensorProblem(AbstractProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {
-        "data": Condition(target=torch.randn(50, 2), input=torch.randn(50, 1))
+        "data": Condition(target=torch.randn(10, 2), input=torch.randn(10, 1))
     }
 
 

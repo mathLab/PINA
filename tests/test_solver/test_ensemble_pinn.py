@@ -19,9 +19,9 @@ problem = Poisson()
 problem.discretise_domain(10)
 
 # add input-output condition to test supervised learning
-input_pts = torch.rand(50, len(problem.input_variables))
+input_pts = torch.rand(10, len(problem.input_variables))
 input_pts = LabelTensor(input_pts, problem.input_variables)
-output_pts = torch.rand(50, len(problem.output_variables))
+output_pts = torch.rand(10, len(problem.output_variables))
 output_pts = LabelTensor(output_pts, problem.output_variables)
 problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
 
@@ -42,7 +42,7 @@ def test_constructor():
         InputEquationCondition,
         DomainEquationCondition,
     )
-    assert solver.num_ensembles == 5
+    assert solver.num_ensemble == 5
 
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])

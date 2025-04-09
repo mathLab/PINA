@@ -11,6 +11,7 @@ __all__ = [
     "CompetitivePINN",
     "SelfAdaptivePINN",
     "RBAPINN",
+    "SupervisedSolverInterface",
     "SupervisedSolver",
     "ReducedOrderModelSolver",
     "DeepEnsembleSolverInterface",
@@ -20,7 +21,23 @@ __all__ = [
 ]
 
 from .solver import SolverInterface, SingleSolverInterface, MultiSolverInterface
-from .physics_informed_solver import *
-from .supervised_solver import *
-from .ensemble_solver import *
+from .physics_informed_solver import (
+    PINNInterface,
+    PINN,
+    GradientPINN,
+    CausalPINN,
+    CompetitivePINN,
+    SelfAdaptivePINN,
+    RBAPINN,
+)
+from .supervised_solver import (
+    SupervisedSolverInterface,
+    SupervisedSolver,
+    ReducedOrderModelSolver,
+)
+from .ensemble_solver import (
+    DeepEnsembleSolverInterface,
+    DeepEnsembleSupervisedSolver,
+    DeepEnsemblePINN,
+)
 from .garom import GAROM

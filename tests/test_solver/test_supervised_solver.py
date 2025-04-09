@@ -30,9 +30,9 @@ class TensorProblem(AbstractProblem):
     }
 
 
-x = torch.rand((100, 20, 5))
-pos = torch.rand((100, 20, 2))
-output_ = torch.rand((100, 20, 1))
+x = torch.rand((15, 20, 5))
+pos = torch.rand((15, 20, 2))
+output_ = torch.rand((15, 20, 1))
 input_ = [
     KNNGraph(x=x_, pos=pos_, neighbours=3, edge_attr=True)
     for x_, pos_ in zip(x, pos)
@@ -44,9 +44,9 @@ class GraphProblem(AbstractProblem):
     conditions = {"data": Condition(input=input_, target=output_)}
 
 
-x = LabelTensor(torch.rand((100, 20, 5)), ["a", "b", "c", "d", "e"])
-pos = LabelTensor(torch.rand((100, 20, 2)), ["x", "y"])
-output_ = LabelTensor(torch.rand((100, 20, 1)), ["u"])
+x = LabelTensor(torch.rand((15, 20, 5)), ["a", "b", "c", "d", "e"])
+pos = LabelTensor(torch.rand((15, 20, 2)), ["x", "y"])
+output_ = LabelTensor(torch.rand((15, 20, 1)), ["u"])
 input_ = [
     KNNGraph(x=x[i], pos=pos[i], neighbours=3, edge_attr=True)
     for i in range(len(x))

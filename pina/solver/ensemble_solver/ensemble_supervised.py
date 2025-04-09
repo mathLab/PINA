@@ -114,8 +114,9 @@ class DeepEnsembleSupervisedSolver(
         :return: The supervised loss, averaged over the number of observations.
         :rtype: torch.Tensor
         """
+        predictions = self.forward(input)
         loss = sum(
-            self._loss_fn(self.forward(input, idx), target)
-            for idx in range(self.num_ensembles)
+            self._loss_fn(predictions[idx], target)
+            for idx in range(self.num_ensemble)
         )
-        return loss / self.num_ensembles
+        return loss / self.num_ensemble

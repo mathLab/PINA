@@ -27,12 +27,12 @@ class DummySpatialProblem(SpatialProblem):
 
 # define problems
 problem = DiffusionReactionProblem()
-problem.discretise_domain(50)
+problem.discretise_domain(10)
 
 # add input-output condition to test supervised learning
-input_pts = torch.rand(50, len(problem.input_variables))
+input_pts = torch.rand(10, len(problem.input_variables))
 input_pts = LabelTensor(input_pts, problem.input_variables)
-output_pts = torch.rand(50, len(problem.output_variables))
+output_pts = torch.rand(10, len(problem.output_variables))
 output_pts = LabelTensor(output_pts, problem.output_variables)
 problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
 
