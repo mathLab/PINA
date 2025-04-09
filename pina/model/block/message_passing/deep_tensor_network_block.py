@@ -2,6 +2,7 @@
 
 import torch
 from torch_geometric.nn import MessagePassing
+from ....utils import check_consistency
 
 
 class DeepTensorNetworkBlock(MessagePassing):
@@ -25,7 +26,7 @@ class DeepTensorNetworkBlock(MessagePassing):
         **Original reference**: Schutt, K., Arbabzadah, F., Chmiela, S. et al.
         *Quantum-Chemical Insights from Deep Tensor Neural Networks*.
         Nature Communications 8, 13890 (2017).
-        DOI: `<https://doi.org/10.1038/ncomms13890>_`
+        DOI: `<https://doi.org/10.1038/ncomms13890>_`.
     """
 
     def __init__(
@@ -38,7 +39,7 @@ class DeepTensorNetworkBlock(MessagePassing):
         flow="source_to_target",
     ):
         """
-        Initialization of the :class:`AVNOBDeepTensorNetworkBlocklock` class.
+        Initialization of the :class:`DeepTensorNetworkBlocklock` class.
 
         :param int node_feature_dim: The dimension of the node features.
         :param int edge_feature_dim: The dimension of the edge features.
@@ -49,12 +50,36 @@ class DeepTensorNetworkBlock(MessagePassing):
             See :class:`torch_geometric.nn.MessagePassing` for more details.
             Default is "add".
         :param int node_dim: The axis along which to propagate. Default is -2.
-        :param str flow: The direction of message passing.
-            See :class:`torch_geometric.nn.MessagePassing` for more details.
-            Default is "source_to_target".
+        :param str flow: The direction of message passing. Available options
+            are "source_to_target" and "target_to_source".
+            The "source_to_target" flow means that messages are sent from
+            the source node to the target node, while the "target_to_source"
+            flow means that messages are sent from the target node to the
+            source node. See :class:`torch_geometric.nn.MessagePassing` for more
+            details. Default is "source_to_target".
+        :raises ValueError: If `node_feature_dim` is not a positive integer.
+        :raises ValueError: If `edge_feature_dim` is not a positive integer.
         """
         super().__init__(aggr=aggr, node_dim=node_dim, flow=flow)
 
+        # Check consistency
+        check_consistency(node_feature_dim, int)
+        check_consistency(edge_feature_dim, int)
+
+        # Check values
+        if node_feature_dim <= 0:
+            raise ValueError(
+                "`node_feature_dim` must be a positive integer,"
+                f" got {node_feature_dim}."
+            )
+
+        if edge_feature_dim <= 0:
+            raise ValueError(
+                "`edge_feature_dim` must be a positive integer,"
+                f" got {edge_feature_dim}."
+            )
+
+        # Initialize parameters
         self.node_feature_dim = node_feature_dim
         self.edge_feature_dim = edge_feature_dim
         self.activation = activation
@@ -82,8 +107,7 @@ class DeepTensorNetworkBlock(MessagePassing):
 
     def forward(self, x, edge_index, edge_attr):
         """
-        Forward pass of the block. It performs a message-passing operation
-        between nodes and edges.
+        Forward pass of the block, triggering the message-passing routine.
 
         :param x: The node features.
         :type x: torch.Tensor | LabelTensor
