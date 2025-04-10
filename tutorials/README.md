@@ -6,15 +6,19 @@ In this folder we collect useful tutorials in order to understand the principles
 
 | Description   | Tutorial |
 |---------------|-----------|
-Introduction to PINA for Physics Informed Neural Networks training|[[.ipynb](tutorial1/tutorial.ipynb),&#160;[.py](tutorial1/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial1/tutorial.html)]|
+Introductory Tutorial: A Beginner’s Guide to PINA|[[.ipynb](tutorial17/tutorial.ipynb),&#160;[.py](tutorial17/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial17/tutorial.html)]|
+How to build a `Problem` in PINA|[[.ipynb](tutorial16/tutorial.ipynb),&#160;[.py](tutorial16/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial16/tutorial.html)]|
+Introduction to Solver classes|[[.ipynb](tutorial18/tutorial.ipynb),&#160;[.py](tutorial18/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial18/tutorial.html)]|
+Introduction to `Trainer` class|[[.ipynb](tutorial11/tutorial.ipynb),&#160;[.py](tutorial11/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial11/tutorial.html)]|
+Data structure for SciML: `Tensor`, `LabelTensor`, `Data` and `Graph` |[[.ipynb](tutorial19/tutorial.ipynb),&#160;[.py](tutorial19/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial19/tutorial.html)]|
+Building geometries with `DomainInterface` class|[[.ipynb](tutorial6/tutorial.ipynb),&#160;[.py](tutorial6/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial6/tutorial.html)]|
 Introduction to PINA `Equation` class|[[.ipynb](tutorial12/tutorial.ipynb),&#160;[.py](tutorial12/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial12/tutorial.html)]|
-PINA and PyTorch Lightning, training tips and visualizations|[[.ipynb](tutorial11/tutorial.ipynb),&#160;[.py](tutorial11/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial11/tutorial.html)]|
-Building custom geometries with PINA `Location` class|[[.ipynb](tutorial6/tutorial.ipynb),&#160;[.py](tutorial6/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial6/tutorial.html)]|
 
 
 ## Physics Informed Neural Networks
 | Description   | Tutorial  |
 |---------------|-----------|
+Introduction to Physics Informed Neural Networks training|[[.ipynb](tutorial1/tutorial.ipynb),&#160;[.py](tutorial1/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial1/tutorial.html)]|
 Two dimensional Poisson problem using Extra Features Learning &nbsp; &nbsp; |[[.ipynb](tutorial2/tutorial.ipynb),&#160;[.py](tutorial2/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial2/tutorial.html)]|
 Two dimensional Wave problem with hard constraint |[[.ipynb](tutorial3/tutorial.ipynb),&#160;[.py](tutorial3/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial3/tutorial.html)]|
 Resolution of a 2D Poisson inverse problem |[[.ipynb](tutorial7/tutorial.ipynb),&#160;[.py](tutorial7/tutorial.py),&#160;[.html](http://mathlab.github.io/PINA/_rst/tutorials/tutorial7/tutorial.html)]|
