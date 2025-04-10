@@ -2,12 +2,8 @@
 
 from abc import ABCMeta, abstractmethod
 import torch
-from torch.nn.modules.loss import _Loss
 
-from ..solver import SolverInterface
-from ...utils import check_consistency
-from ...loss.loss_interface import LossInterface
-from ...problem import InverseProblem
+from ..supervised_solver import SupervisedSolverInterface
 from ...condition import (
     InputTargetCondition,
     InputEquationCondition,
@@ -15,7 +11,7 @@ from ...condition import (
 )
 
 
-class PINNInterface(SolverInterface, metaclass=ABCMeta):
+class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
     """
     Base class for Physics-Informed Neural Network (PINN) solvers, implementing
     the :class:`~pina.solver.solver.SolverInterface` class.
@@ -32,7 +28,7 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         DomainEquationCondition,
     )
 
-    def __init__(self, problem, loss=None, **kwargs):
+    def __init__(self, **kwargs):
         """
         Initialization of the :class:`PINNInterface` class.
 
@@ -41,28 +37,13 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
             If ``None``, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         :param kwargs: Additional keyword arguments to be passed to the
-            :class:`~pina.solver.solver.SolverInterface` class.
+            :class:`~pina.solver.supervised_solver.SupervisedSolverInterface`
+            class.
         """
+        kwargs["use_lt"] = True
+        super().__init__(**kwargs)
 
-        if loss is None:
-            loss = torch.nn.MSELoss()
-
-        super().__init__(problem=problem, use_lt=True, **kwargs)
-
-        # check consistency
-        check_consistency(loss, (LossInterface, _Loss), subclass=False)
-
-        # assign variables
-        self._loss_fn = loss
-
-        # inverse problem handling
-        if isinstance(self.problem, InverseProblem):
-            self._params = self.problem.unknown_parameters
-            self._clamp_params = self._clamp_inverse_problem_params
-        else:
-            self._params = None
-            self._clamp_params = lambda: None
-
+        # current condition name
         self.__metric = None
 
     def optimization_cycle(self, batch, loss_residuals=None):
@@ -103,8 +84,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
                 )
             # append loss
             condition_loss[condition_name] = loss
-        # clamp unknown parameters in InverseProblem (if needed)
-        self._clamp_params()
         return condition_loss
 
     @torch.set_grad_enabled(True)
@@ -134,20 +113,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         :rtype: torch.Tensor
         """
         return super().test_step(batch, loss_residuals=self._residual_loss)
-
-    @abstractmethod
-    def loss_data(self, input, target):
-        """
-        Compute the data loss for the PINN solver by evaluating the loss
-        between the network's output and the true solution. This method should
-        be overridden by the derived class.
-
-        :param LabelTensor input: The input to the neural network.
-        :param LabelTensor target: The target to compare with the
-            network's output.
-        :return: The supervised loss, averaged over the number of observations.
-        :rtype: LabelTensor
-        """
 
     @abstractmethod
     def loss_phys(self, samples, equation):
@@ -195,26 +160,6 @@ class PINNInterface(SolverInterface, metaclass=ABCMeta):
         """
         residuals = self.compute_residual(samples, equation)
         return self._loss_fn(residuals, torch.zeros_like(residuals))
-
-    def _clamp_inverse_problem_params(self):
-        """
-        Clamps the parameters of the inverse problem solver to specified ranges.
-        """
-        for v in self._params:
-            self._params[v].data.clamp_(
-                self.problem.unknown_parameter_domain.range_[v][0],
-                self.problem.unknown_parameter_domain.range_[v][1],
-            )
-
-    @property
-    def loss(self):
-        """
-        The loss used for training.
-
-        :return: The loss function used for training.
-        :rtype: torch.nn.Module
-        """
-        return self._loss_fn
 
     @property
     def current_condition_name(self):
