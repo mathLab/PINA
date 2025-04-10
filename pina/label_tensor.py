@@ -58,7 +58,7 @@ class LabelTensor(torch.Tensor):
             >>> from pina import LabelTensor
             >>> tensor = LabelTensor(
             >>>     torch.rand((2000, 3)),
-            ...     {1: {"name": "space", "dof": ['a', 'b', 'c'])
+            ...     {1: {"name": "space", "dof": ['a', 'b', 'c']}})
             >>> tensor = LabelTensor(
             >>>     torch.rand((2000, 3)),
             ...     ["a", "b", "c"])
