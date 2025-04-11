@@ -519,15 +519,17 @@ class LabelTensor(torch.Tensor):
 
         :raises: ValueError: If the index type is not supported.
         """
-
-        old_dof = old_labels[to_update_dim]["dof"]
+        old_dof = old_labels[dim]["dof"]
         label_name = old_labels[dim]["name"]
         # Handle slicing
         if isinstance(index, slice):
-            to_update_labels[dim] = {"dof": old_dof[index], "name": label_name}
+            to_update_labels[to_update_dim] = {
+                "dof": old_dof[index],
+                "name": label_name,
+            }
         # Handle single integer index
         elif isinstance(index, int):
-            to_update_labels[dim] = {
+            to_update_labels[to_update_dim] = {
                 "dof": [old_dof[index]],
                 "name": label_name,
             }
@@ -536,7 +538,7 @@ class LabelTensor(torch.Tensor):
             # Handle list of bools
             if isinstance(index, torch.Tensor) and index.dtype == torch.bool:
                 index = index.nonzero().squeeze()
-            to_update_labels[dim] = {
+            to_update_labels[to_update_dim] = {
                 "dof": (
                     [old_dof[i] for i in index]
                     if isinstance(old_dof, list)
@@ -589,10 +591,14 @@ class LabelTensor(torch.Tensor):
 
         # Update labels based on the index
         offset = 0
+        removed = 0
         for dim, idx in enumerate(index):
-            if dim in self.stored_labels:
+            if dim in original_labels:
                 if isinstance(idx, int):
-                    selected_tensor = selected_tensor.unsqueeze(dim)
+                    # Compute the working dimension considering the removed
+                    # dimensions due to int index on a non labled dimension
+                    dim_ = dim - removed
+                    selected_tensor = selected_tensor.unsqueeze(dim_)
                 if idx != slice(None):
                     self._update_single_label(
                         original_labels, updated_labels, idx, dim, offset
@@ -605,6 +611,7 @@ class LabelTensor(torch.Tensor):
                         key - 1 if key > dim else key: value
                         for key, value in updated_labels.items()
                     }
+                    removed += 1
                     continue
             offset += 1
 
