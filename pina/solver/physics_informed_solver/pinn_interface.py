@@ -114,6 +114,22 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
         """
         return super().test_step(batch, loss_residuals=self._residual_loss)
 
+    def loss_data(self, input, target):
+        """
+        Compute the data loss for the PINN solver by evaluating the loss
+        between the network's output and the true solution. This method should
+        be overridden by the derived class.
+        :param LabelTensor input: The input to the neural network.
+        :param LabelTensor target: The target to compare with the
+            network's output.
+        :return: The supervised loss, averaged over the number of observations.
+        :rtype: LabelTensor
+        """
+        raise NotImplementedError(
+            "PINN is being used in a supervised learning context, but the "
+            "'loss_data' method has not been implemented. "
+        )
+
     @abstractmethod
     def loss_phys(self, samples, equation):
         """
