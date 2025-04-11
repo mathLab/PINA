@@ -119,11 +119,13 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
         Compute the data loss for the PINN solver by evaluating the loss
         between the network's output and the true solution. This method should
         be overridden by the derived class.
+
         :param LabelTensor input: The input to the neural network.
         :param LabelTensor target: The target to compare with the
             network's output.
         :return: The supervised loss, averaged over the number of observations.
         :rtype: LabelTensor
+        :raises NotImplementedError: If the method is not implemented.
         """
         raise NotImplementedError(
             "PINN is being used in a supervised learning context, but the "
