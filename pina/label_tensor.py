@@ -509,11 +509,11 @@ class LabelTensor(torch.Tensor):
         """
         Update the labels of the tensor based on the index (or list of indices).
 
-        :param dict old_labels: Labels from which retrieve data.
-        :param dict to_update_labels: Labels to update.
         :param index: Index of dof to retain.
         :type index: int | slice | list[int] | tuple[int] | torch.Tensor
-        :param int dim: The dimension to update.
+        :param int dim: Dimension of the indexes in the original tensor.
+        :return: The updated labels for the specified dimension.
+        :rtype: list[int]
 
         :raises: ValueError: If the index type is not supported.
         """
