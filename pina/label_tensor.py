@@ -514,10 +514,8 @@ class LabelTensor(torch.Tensor):
         :param int dim: Dimension of the indexes in the original tensor.
         :return: The updated labels for the specified dimension.
         :rtype: list[int]
-
         :raises: ValueError: If the index type is not supported.
         """
-        print(self._labels)
         old_dof = self._labels[dim]["dof"]
         # Handle slicing
         if isinstance(index, slice):
