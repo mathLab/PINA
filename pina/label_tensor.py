@@ -505,9 +505,7 @@ class LabelTensor(torch.Tensor):
         return LabelTensor.cat(tensors, dim=0)
 
     # This method is used to update labels
-    def _update_single_label(
-        self, old_labels, to_update_labels, index, dim, to_update_dim
-    ):
+    def _update_single_label(self, index, dim):
         """
         Update the labels of the tensor based on the index (or list of indices).
 
@@ -519,38 +517,30 @@ class LabelTensor(torch.Tensor):
 
         :raises: ValueError: If the index type is not supported.
         """
-        old_dof = old_labels[dim]["dof"]
-        label_name = old_labels[dim]["name"]
+        print(self._labels)
+        old_dof = self._labels[dim]["dof"]
         # Handle slicing
         if isinstance(index, slice):
-            to_update_labels[to_update_dim] = {
-                "dof": old_dof[index],
-                "name": label_name,
-            }
+            new_dof = old_dof[index]
         # Handle single integer index
         elif isinstance(index, int):
-            to_update_labels[to_update_dim] = {
-                "dof": [old_dof[index]],
-                "name": label_name,
-            }
+            new_dof = [old_dof[index]]
         # Handle lists or tensors
         elif isinstance(index, (list, torch.Tensor)):
             # Handle list of bools
             if isinstance(index, torch.Tensor) and index.dtype == torch.bool:
                 index = index.nonzero().squeeze()
-            to_update_labels[to_update_dim] = {
-                "dof": (
-                    [old_dof[i] for i in index]
-                    if isinstance(old_dof, list)
-                    else index
-                ),
-                "name": label_name,
-            }
+            new_dof = (
+                [old_dof[i] for i in index]
+                if isinstance(old_dof, list)
+                else index
+            )
         else:
             raise NotImplementedError(
                 f"Unsupported index type: {type(index)}. Expected slice, int, "
                 f"list, or torch.Tensor."
             )
+        return new_dof
 
     def __getitem__(self, index):
         """ "
@@ -600,9 +590,11 @@ class LabelTensor(torch.Tensor):
                     dim_ = dim - removed
                     selected_tensor = selected_tensor.unsqueeze(dim_)
                 if idx != slice(None):
-                    self._update_single_label(
-                        original_labels, updated_labels, idx, dim, offset
-                    )
+                    # Update the labels for the selected dimension
+                    updated_labels[offset] = {
+                        "dof": self._update_single_label(idx, dim),
+                        "name": original_labels[dim]["name"],
+                    }
             else:
                 # Adjust label keys if dimension is reduced (case of integer
                 # index on a non-labeled dimension)
