@@ -56,7 +56,7 @@ except:
     IN_COLAB = False
 
 if IN_COLAB:
-    !pip install "pina-mathlab"
+    !pip install "pina-mathlab[tutorial]"
 
 import torch                        # if used
 import matplotlib.pyplot as plt     # if used
