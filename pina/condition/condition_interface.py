@@ -115,3 +115,9 @@ class ConditionInterface(metaclass=ABCMeta):
                         raise ValueError(
                             "LabelTensor must have the same labels"
                         )
+
+    def __getattribute__(self, name):
+        to_return = super().__getattribute__(name)
+        if isinstance(to_return, (Graph, Data)):
+            to_return = [to_return]
+        return to_return
