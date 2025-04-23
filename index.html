@@ -50,11 +50,11 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Code Documentation" href="_rst/_code.html" />
+    <link rel="next" title="Installation" href="_installation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.0" />
-    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+    <meta name="docbuild:last-update" content="Apr 23, 2025"/>
   </head>
   
   
@@ -135,6 +135,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="_rst/_code.html">
     API
   </a>
@@ -143,21 +150,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -170,15 +170,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -286,6 +286,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="_rst/_code.html">
     API
   </a>
@@ -294,21 +301,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -321,15 +321,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -415,8 +415,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="welcome-to-pinas-documentation">
-<h1>Welcome to PINA’s documentation!<a class="headerlink" href="#welcome-to-pinas-documentation" title="Link to this heading">#</a></h1>
+  <section id="welcome-to-pina-s-documentation">
+<h1>Welcome to PINA’s documentation!<a class="headerlink" href="#welcome-to-pina-s-documentation" title="Link to this heading">#</a></h1>
 <div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
 <div class="sd-row sd-row-cols-6 sd-row-cols-xs-6 sd-row-cols-sm-6 sd-row-cols-md-6 sd-row-cols-lg-6 sd-g-1 sd-g-xs-1 sd-g-sm-1 sd-g-md-1 sd-g-lg-1 docutils">
 <div class="sd-col sd-d-flex-column docutils">
@@ -448,12 +448,18 @@
 <div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
 <div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-3 sd-row-cols-lg-3 docutils">
 <div class="sd-col sd-d-flex-column sd-col-12 sd-col-xs-12 sd-col-sm-12 sd-col-md-8 sd-col-lg-8 docutils">
-<p>Physics Informed Neural network for Advanced modeling (<strong>PINA</strong>) is
-an open-source Python library providing an intuitive interface for
-solving differential equations using PINNs, NOs or both together.</p>
-<p>Based on <a class="reference external" href="https://pytorch.org/">PyTorch</a>, <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/">PyTorchLightning</a>, and <a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/">PyG</a>, <strong>PINA</strong> offers a simple and intuitive way to formalize a specific (differential) problem
-and solve it using neural networks . The approximated solution of a differential equation
-can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly  interface.</p>
+<p><strong>PINA</strong> is an open-source Python library designed to simplify and accelerate
+the development of Scientific Machine Learning (SciML) solutions.
+Built on top of <a class="reference external" href="https://pytorch.org/">PyTorch</a>, <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/">PyTorch Lightning</a>,
+and <a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/">PyTorch Geometric</a>,
+PINA provides an intuitive framework for defining, experimenting with,
+and solving complex problems using Neural Networks,
+Physics-Informed Neural Networks (PINNs), Neural Operators, and more.</p>
+<ul class="simple">
+<li><p><strong>Modular Architecture</strong>: Designed with modularity in mind and relying on powerful yet composable abstractions, PINA allows users to easily plug, replace, or extend components, making experimentation and customization straightforward.</p></li>
+<li><p><strong>Scalable Performance</strong>: With native support for multi-device training, PINA handles large datasets efficiently, offering performance close to hand-crafted implementations with minimal overhead.</p></li>
+<li><p><strong>Highly Flexible</strong>: Whether you’re looking for full automation or granular control, PINA adapts to your workflow. High-level abstractions simplify model definition, while expert users can dive deep to fine-tune every aspect of the training and inference process.</p></li>
+</ul>
 <p>For further information or questions about <strong>PINA</strong> contact us by email.</p>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
@@ -463,13 +469,13 @@ can be implemented using PINA in a few lines of code thanks to the intuitive and
 Contents</div>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="_rst/_code.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_installation.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_team.html">Team &amp; Foundings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_rst/_code.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_cite.html">Cite PINA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_team.html">Team &amp; Foundings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_LICENSE.html">License</a></li>
 </ul>
 </div>
 </div>

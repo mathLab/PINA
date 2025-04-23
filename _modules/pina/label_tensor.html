@@ -51,7 +51,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.0" />
-    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+    <meta name="docbuild:last-update" content="Apr 23, 2025"/>
   </head>
   
   
@@ -132,6 +132,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_rst/_code.html">
     API
   </a>
@@ -140,21 +147,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -167,15 +167,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -283,6 +283,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_rst/_code.html">
     API
   </a>
@@ -291,21 +298,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -318,15 +318,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -502,7 +502,7 @@
 <span class="sd">            &gt;&gt;&gt; from pina import LabelTensor</span>
 <span class="sd">            &gt;&gt;&gt; tensor = LabelTensor(</span>
 <span class="sd">            &gt;&gt;&gt;     torch.rand((2000, 3)),</span>
-<span class="sd">            ...     {1: {&quot;name&quot;: &quot;space&quot;, &quot;dof&quot;: [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])</span>
+<span class="sd">            ...     {1: {&quot;name&quot;: &quot;space&quot;, &quot;dof&quot;: [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]}})</span>
 <span class="sd">            &gt;&gt;&gt; tensor = LabelTensor(</span>
 <span class="sd">            &gt;&gt;&gt;     torch.rand((2000, 3)),</span>
 <span class="sd">            ...     [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])</span>
@@ -981,50 +981,40 @@
     <span class="c1"># This method is used to update labels</span>
 <div class="viewcode-block" id="LabelTensor._update_single_label">
 <a class="viewcode-back" href="../../_rst/label_tensor.html#pina.label_tensor.LabelTensor._update_single_label">[docs]</a>
-    <span class="k">def</span> <span class="nf">_update_single_label</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">old_labels</span><span class="p">,</span> <span class="n">to_update_labels</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">to_update_dim</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_update_single_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the labels of the tensor based on the index (or list of indices).</span>
 
-<span class="sd">        :param dict old_labels: Labels from which retrieve data.</span>
-<span class="sd">        :param dict to_update_labels: Labels to update.</span>
 <span class="sd">        :param index: Index of dof to retain.</span>
 <span class="sd">        :type index: int | slice | list[int] | tuple[int] | torch.Tensor</span>
-<span class="sd">        :param int dim: The dimension to update.</span>
-
+<span class="sd">        :param int dim: Dimension of the indexes in the original tensor.</span>
+<span class="sd">        :return: The updated labels for the specified dimension.</span>
+<span class="sd">        :rtype: list[int]</span>
 <span class="sd">        :raises: ValueError: If the index type is not supported.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">old_dof</span> <span class="o">=</span> <span class="n">old_labels</span><span class="p">[</span><span class="n">to_update_dim</span><span class="p">][</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span>
-        <span class="n">label_name</span> <span class="o">=</span> <span class="n">old_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">old_dof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="s2">&quot;dof&quot;</span><span class="p">]</span>
         <span class="c1"># Handle slicing</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
-            <span class="n">to_update_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="n">old_dof</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">label_name</span><span class="p">}</span>
+            <span class="n">new_dof</span> <span class="o">=</span> <span class="n">old_dof</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="c1"># Handle single integer index</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">to_update_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">old_dof</span><span class="p">[</span><span class="n">index</span><span class="p">]],</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">label_name</span><span class="p">,</span>
-            <span class="p">}</span>
+            <span class="n">new_dof</span> <span class="o">=</span> <span class="p">[</span><span class="n">old_dof</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span>
         <span class="c1"># Handle lists or tensors</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)):</span>
             <span class="c1"># Handle list of bools</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">index</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">:</span>
                 <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-            <span class="n">to_update_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="p">[</span><span class="n">old_dof</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">old_dof</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-                    <span class="k">else</span> <span class="n">index</span>
-                <span class="p">),</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">label_name</span><span class="p">,</span>
-            <span class="p">}</span>
+            <span class="n">new_dof</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">old_dof</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">old_dof</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="k">else</span> <span class="n">index</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Unsupported index type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected slice, int, &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;list, or torch.Tensor.&quot;</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_dof</span></div>
 
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -1066,14 +1056,20 @@
 
         <span class="c1"># Update labels based on the index</span>
         <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">removed</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_labels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">original_labels</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                    <span class="n">selected_tensor</span> <span class="o">=</span> <span class="n">selected_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+                    <span class="c1"># Compute the working dimension considering the removed</span>
+                    <span class="c1"># dimensions due to int index on a non labled dimension</span>
+                    <span class="n">dim_</span> <span class="o">=</span> <span class="n">dim</span> <span class="o">-</span> <span class="n">removed</span>
+                    <span class="n">selected_tensor</span> <span class="o">=</span> <span class="n">selected_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim_</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_update_single_label</span><span class="p">(</span>
-                        <span class="n">original_labels</span><span class="p">,</span> <span class="n">updated_labels</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">offset</span>
-                    <span class="p">)</span>
+                    <span class="c1"># Update the labels for the selected dimension</span>
+                    <span class="n">updated_labels</span><span class="p">[</span><span class="n">offset</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_single_label</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">original_labels</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                    <span class="p">}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Adjust label keys if dimension is reduced (case of integer</span>
                 <span class="c1"># index on a non-labeled dimension)</span>
@@ -1082,6 +1078,7 @@
                         <span class="n">key</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">key</span> <span class="o">&gt;</span> <span class="n">dim</span> <span class="k">else</span> <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
                         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">updated_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                     <span class="p">}</span>
+                    <span class="n">removed</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span>
             <span class="n">offset</span> <span class="o">+=</span> <span class="mi">1</span>
 

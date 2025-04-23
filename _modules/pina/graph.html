@@ -51,7 +51,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.0" />
-    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+    <meta name="docbuild:last-update" content="Apr 23, 2025"/>
   </head>
   
   
@@ -132,6 +132,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_rst/_code.html">
     API
   </a>
@@ -140,21 +147,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -167,15 +167,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -283,6 +283,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_rst/_code.html">
     API
   </a>
@@ -291,21 +298,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -318,15 +318,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -445,6 +445,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">to_undirected</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils.loop</span> <span class="kn">import</span> <span class="n">remove_self_loops</span>
 <span class="kn">from</span> <span class="nn">.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span><span class="p">,</span> <span class="n">is_function</span>
 
@@ -677,6 +678,7 @@
         <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">edge_attr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">custom_edge_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -692,18 +694,19 @@
 <span class="sd">        :param x: Optional tensor of node features of shape ``(N, F)``, where</span>
 <span class="sd">            ``F`` is the number of features per node.</span>
 <span class="sd">        :type x: torch.Tensor | LabelTensor, optional</span>
-<span class="sd">        :param edge_attr: Optional tensor of edge attributes of shape ``(E, F)``</span>
-<span class="sd">            , where ``F`` is the number of features per edge.</span>
-<span class="sd">        :type edge_attr: torch.Tensor, optional</span>
+<span class="sd">        :param bool edge_attr: Whether to compute the edge attributes.</span>
 <span class="sd">        :param custom_edge_func: A custom function to compute edge attributes.</span>
 <span class="sd">            If provided, overrides ``edge_attr``.</span>
 <span class="sd">        :type custom_edge_func: Callable, optional</span>
+<span class="sd">        :param bool loop: Whether to include self-loops.</span>
 <span class="sd">        :param kwargs: Additional keyword arguments passed to the</span>
 <span class="sd">            :class:`~pina.graph.Graph` class constructor.</span>
 <span class="sd">        :return: A :class:`~pina.graph.Graph` instance constructed using the</span>
 <span class="sd">            provided information.</span>
 <span class="sd">        :rtype: Graph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">loop</span><span class="p">:</span>
+            <span class="n">edge_index</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">edge_attr</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_create_edge_attr</span><span class="p">(</span>
             <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">custom_edge_func</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_edge_attr</span>
         <span class="p">)</span>
@@ -859,11 +862,8 @@
 <span class="sd">            representing the edge indices of the graph.</span>
 <span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">knn_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">neighbours</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span>
-            <span class="p">:,</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="p">]</span>
+        <span class="n">knn_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">indices</span>
         <span class="n">row</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">neighbours</span><span class="p">)</span>
         <span class="n">col</span> <span class="o">=</span> <span class="n">knn_indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>

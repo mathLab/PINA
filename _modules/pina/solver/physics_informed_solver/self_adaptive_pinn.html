@@ -51,7 +51,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.0" />
-    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+    <meta name="docbuild:last-update" content="Apr 23, 2025"/>
   </head>
   
   
@@ -132,6 +132,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_rst/_code.html">
     API
   </a>
@@ -140,21 +147,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -167,15 +167,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -283,6 +283,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_rst/_code.html">
     API
   </a>
@@ -291,21 +298,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -318,15 +318,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -564,24 +564,24 @@
 <span class="sd">        :param torch.nn.Module weight_function: The Self-Adaptive mask model.</span>
 <span class="sd">            Default is ``torch.nn.Sigmoid()``.</span>
 <span class="sd">        :param Optimizer optimizer_model: The optimizer of the ``model``.</span>
-<span class="sd">            If `None`, the :class:`torch.optim.Adam` optimizer is used.</span>
+<span class="sd">            If ``None``, the :class:`torch.optim.Adam` optimizer is used.</span>
 <span class="sd">            Default is ``None``.</span>
 <span class="sd">        :param Optimizer optimizer_weights: The optimizer of the</span>
 <span class="sd">            ``weight_function``.</span>
-<span class="sd">            If `None`, the :class:`torch.optim.Adam` optimizer is used.</span>
+<span class="sd">            If ``None``, the :class:`torch.optim.Adam` optimizer is used.</span>
 <span class="sd">            Default is ``None``.</span>
 <span class="sd">        :param Scheduler scheduler_model: Learning rate scheduler for the</span>
 <span class="sd">            ``model``.</span>
-<span class="sd">            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
+<span class="sd">            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
 <span class="sd">            scheduler is used. Default is ``None``.</span>
 <span class="sd">        :param Scheduler scheduler_weights: Learning rate scheduler for the</span>
 <span class="sd">            ``weight_function``.</span>
-<span class="sd">            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
+<span class="sd">            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
 <span class="sd">            scheduler is used. Default is ``None``.</span>
 <span class="sd">        :param WeightingInterface weighting: The weighting schema to be used.</span>
-<span class="sd">            If `None`, no weighting schema is used. Default is ``None``.</span>
+<span class="sd">            If ``None``, no weighting schema is used. Default is ``None``.</span>
 <span class="sd">        :param torch.nn.Module loss: The loss function to be minimized.</span>
-<span class="sd">            If `None`, the :class:`torch.nn.MSELoss` loss is used.</span>
+<span class="sd">            If ``None``, the :class:`torch.nn.MSELoss` loss is used.</span>
 <span class="sd">            Default is `None`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># check consistency weitghs_function</span>
@@ -601,9 +601,6 @@
             <span class="n">weighting</span><span class="o">=</span><span class="n">weighting</span><span class="p">,</span>
             <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="c1"># Set automatic optimization to False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">automatic_optimization</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_vectorial_loss</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vectorial_loss</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
@@ -637,12 +634,14 @@
         <span class="n">loss</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manual_backward</span><span class="p">(</span><span class="o">-</span><span class="n">loss</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_weights</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="c1"># Model optimization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manual_backward</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_model</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">loss</span></div>
 
@@ -675,27 +674,6 @@
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="o">.</span><span class="n">instance</span><span class="p">],</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler_model</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_weights</span><span class="o">.</span><span class="n">instance</span><span class="p">],</span>
         <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="SelfAdaptivePINN.on_train_batch_end">
-<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.on_train_batch_end">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method is called at the end of each training batch and overrides</span>
-<span class="sd">        the PyTorch Lightning implementation to log checkpoints.</span>
-
-<span class="sd">        :param torch.Tensor outputs: The ``model``&#39;s output for the current</span>
-<span class="sd">            batch.</span>
-<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
-<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
-<span class="sd">        :param int batch_idx: The index of the current batch.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># increase by one the counter of optimization to save loggers</span>
-        <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">fit_loop</span><span class="o">.</span><span class="n">epoch_loop</span><span class="o">.</span><span class="n">manual_optimization</span><span class="o">.</span><span class="n">optim_step_progress</span><span class="o">.</span><span class="n">total</span><span class="o">.</span><span class="n">completed</span>
-        <span class="p">)</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_batch_end</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SelfAdaptivePINN.on_train_start">
@@ -768,6 +746,24 @@
             <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">residual</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vect_to_scalar</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">loss_value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SelfAdaptivePINN.loss_data">
+<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.loss_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">loss_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the data loss for the PINN solver by evaluating the loss</span>
+<span class="sd">        between the network&#39;s output and the true solution. This method should</span>
+<span class="sd">        not be overridden, if not intentionally.</span>
+
+<span class="sd">        :param input: The input to the neural network.</span>
+<span class="sd">        :type input: LabelTensor</span>
+<span class="sd">        :param target: The target to compare with the network&#39;s output.</span>
+<span class="sd">        :type target: LabelTensor</span>
+<span class="sd">        :return: The supervised loss, averaged over the number of observations.</span>
+<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">target</span><span class="p">)</span></div>
 
 
     <span class="k">def</span> <span class="nf">_vect_to_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss_value</span><span class="p">):</span>

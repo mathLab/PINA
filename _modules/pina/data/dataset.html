@@ -51,7 +51,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.0" />
-    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+    <meta name="docbuild:last-update" content="Apr 23, 2025"/>
   </head>
   
   
@@ -132,6 +132,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../_rst/_code.html">
     API
   </a>
@@ -140,21 +147,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -167,15 +167,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -283,6 +283,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../_rst/_code.html">
     API
   </a>
@@ -291,21 +298,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -318,15 +318,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -616,9 +616,15 @@
 <span class="sd">        :return: A dictionary containing all the data in the dataset.</span>
 <span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_from_idx_list</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+        <span class="n">to_return_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">condition</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">len_condition</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># Length of the current condition</span>
+            <span class="n">to_return_dict</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrive_data</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">len_condition</span><span class="p">))</span>
+            <span class="p">)</span>  <span class="c1"># Retrieve the data from the current condition</span>
+        <span class="k">return</span> <span class="n">to_return_dict</span></div>
 
 
 <div class="viewcode-block" id="PinaDataset.fetch_from_idx_list">
@@ -767,7 +773,17 @@
                 <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_tensor_batch</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">idx_list</span><span class="p">])</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the input data for the dataset.</span>
+
+<span class="sd">        :return: Dictionary containing the input points.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
 </pre></div>
 

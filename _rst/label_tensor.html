@@ -54,7 +54,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.0" />
-    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+    <meta name="docbuild:last-update" content="Apr 23, 2025"/>
   </head>
   
   
@@ -134,6 +134,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_installation.html">
+    Installing
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="_code.html">
     API
@@ -143,21 +150,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -170,15 +170,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -287,6 +287,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_installation.html">
+    Installing
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="_code.html">
     API
@@ -296,21 +303,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -323,15 +323,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -421,6 +421,8 @@
 <li class="toctree-l1"><a class="reference internal" href="solver/solver_interface.html">SolverInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver/single_solver_interface.html">SingleSolverInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver/multi_solver_interface.html">MultiSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver/supervised_solver/supervised_solver_interface.html">SupervisedSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver/ensemble_solver/ensemble_solver_interface.html">DeepEnsembleSolverInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver/physics_informed_solver/pinn_interface.html">PINNInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver/physics_informed_solver/pinn.html">PINN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver/physics_informed_solver/gradient_pinn.html">GradientPINN</a></li>
@@ -428,8 +430,10 @@
 <li class="toctree-l1"><a class="reference internal" href="solver/physics_informed_solver/competitive_pinn.html">CompetitivePINN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver/physics_informed_solver/self_adaptive_pinn.html">SelfAdaptivePINN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver/physics_informed_solver/rba_pinn.html">RBAPINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solver/supervised.html">SupervisedSolver</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solver/reduced_order_model.html">ReducedOrderModelSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver/ensemble_solver/ensemble_pinn.html">DeepEnsemblePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver/supervised_solver/supervised.html">SupervisedSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver/ensemble_solver/ensemble_supervised.html">DeepEnsembleSupervisedSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solver/supervised_solver/reduced_order_model.html">ReducedOrderModelSolver</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solver/garom.html">GAROM</a></li>
 </ul>
 <ul class="nav bd-sidenav">
@@ -600,8 +604,8 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.label_tensor.LabelTensor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LabelTensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a></p>
-<p>Extension of the <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a> class that includes labels for
+<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></a></p>
+<p>Extension of the <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a> class that includes labels for
 each dimension.</p>
 <p>Initialize the <a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> instance, by
 checking the consistency of the labels and the tensor. Specifically, the
@@ -616,7 +620,7 @@ labels must match the following conditions:</p>
 <dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
-<span class="gp">... </span>    <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span> <span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span> <span class="s2">&quot;dof&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]}})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
 <span class="gp">... </span>    <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">])</span>
@@ -631,7 +635,7 @@ dimension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – The tensor to be casted as a
+<li><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a>) – The tensor to be casted as a
 <a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a>.</p></li>
 <li><p><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Labels to assign to the tensor.</p></li>
 </ul>
@@ -650,7 +654,7 @@ object.</p>
 <dd class="field-odd"><p>Tensor part of the <a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a>.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -813,9 +817,9 @@ by stacking the input tensors.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pina.label_tensor.LabelTensor.requires_grad_">
 <span class="sig-name descname"><span class="pre">requires_grad_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.requires_grad_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.requires_grad_" title="Link to this definition">#</a></dt>
-<dd><p>Override the <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.requires_grad_.html#torch.Tensor.requires_grad_" title="(in PyTorch v2.6)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">requires_grad_()</span></code></a> method to handle
+<dd><p>Override the <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.requires_grad_.html#torch.Tensor.requires_grad_" title="(in PyTorch v2.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">requires_grad_()</span></code></a> method to handle
 the labels in the new tensor.
-For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.requires_grad_.html#torch.Tensor.requires_grad_" title="(in PyTorch v2.6)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">requires_grad_()</span></code></a>.</p>
+For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.requires_grad_.html#torch.Tensor.requires_grad_" title="(in PyTorch v2.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">requires_grad_()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – A boolean value indicating whether the tensor should
@@ -842,7 +846,7 @@ updated <code class="docutils literal notranslate"><span class="pre">requires_gr
 <dd class="field-odd"><p>The data type of the tensor.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.dtype" title="(in PyTorch v2.6)">torch.dtype</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.dtype" title="(in PyTorch v2.7)">torch.dtype</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -851,7 +855,7 @@ updated <code class="docutils literal notranslate"><span class="pre">requires_gr
 <dt class="sig sig-object py" id="pina.label_tensor.LabelTensor.to">
 <span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.to" title="Link to this definition">#</a></dt>
 <dd><p>Performs Tensor dtype and/or device conversion. For more details, see
-<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch.Tensor.to" title="(in PyTorch v2.6)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.to()</span></code></a>.</p>
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch.Tensor.to" title="(in PyTorch v2.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.to()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A new <a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> instance with the
@@ -867,7 +871,7 @@ updated dtype and/or device and retained labels.</p>
 <dt class="sig sig-object py" id="pina.label_tensor.LabelTensor.clone">
 <span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.clone" title="Link to this definition">#</a></dt>
 <dd><p>Clone the <a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a>. For more details, see
-<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.clone.html#torch.Tensor.clone" title="(in PyTorch v2.6)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.clone()</span></code></a>.</p>
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.clone.html#torch.Tensor.clone" title="(in PyTorch v2.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.clone()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A new <a class="reference internal" href="#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> instance with the
@@ -930,16 +934,20 @@ by stacking the input tensors vertically.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pina.label_tensor.LabelTensor._update_single_label">
-<span class="sig-name descname"><span class="pre">_update_single_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_update_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_update_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor._update_single_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor._update_single_label" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">_update_single_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor._update_single_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor._update_single_label" title="Link to this definition">#</a></dt>
 <dd><p>Update the labels of the tensor based on the index (or list of indices).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>old_labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Labels from which retrieve data.</p></li>
-<li><p><strong>to_update_labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Labels to update.</p></li>
-<li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.13)"><em>slice</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a>) – Index of dof to retain.</p></li>
-<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The dimension to update.</p></li>
+<li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.13)"><em>slice</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a>) – Index of dof to retain.</p></li>
+<li><p><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Dimension of the indexes in the original tensor.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated labels for the specified dimension.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p>ValueError: If the index type is not supported.</p>
@@ -970,7 +978,7 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dt class="sig sig-object py" id="pina.label_tensor.LabelTensor.permute">
 <span class="sig-name descname"><span class="pre">permute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">dims</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.permute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.permute" title="Link to this definition">#</a></dt>
 <dd><p>Permutes the dimensions of the tensor and the associated labels
-accordingly. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.permute.html#torch.Tensor.permute" title="(in PyTorch v2.6)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.permute()</span></code></a>.</p>
+accordingly. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.permute.html#torch.Tensor.permute" title="(in PyTorch v2.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.permute()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dims</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – The dimensions to permute the tensor to.</p>
@@ -988,7 +996,7 @@ accordingly. For more details, see <a class="reference external" href="https://p
 <dt class="sig sig-object py" id="pina.label_tensor.LabelTensor.detach">
 <span class="sig-name descname"><span class="pre">detach</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.detach"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.detach" title="Link to this definition">#</a></dt>
 <dd><p>Detaches the tensor from the computation graph and retains the stored
-labels. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.detach.html#torch.Tensor.detach" title="(in PyTorch v2.6)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.detach()</span></code></a>.</p>
+labels. For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.detach.html#torch.Tensor.detach" title="(in PyTorch v2.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.detach()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A new tensor detached from the computation graph.</p>
@@ -1030,7 +1038,7 @@ mismatched labels.</p></li>
 <dt class="sig sig-object py" id="pina.label_tensor.LabelTensor.reshape">
 <span class="sig-name descname"><span class="pre">reshape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/label_tensor.html#LabelTensor.reshape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.label_tensor.LabelTensor.reshape" title="Link to this definition">#</a></dt>
 <dd><p>Override the reshape method to update the labels of the tensor.
-For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.reshape.html#torch.Tensor.reshape" title="(in PyTorch v2.6)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.reshape()</span></code></a>.</p>
+For more details, see <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.Tensor.reshape.html#torch.Tensor.reshape" title="(in PyTorch v2.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch.Tensor.reshape()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The new shape of the tensor.</p>

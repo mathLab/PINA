@@ -51,7 +51,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.0" />
-    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+    <meta name="docbuild:last-update" content="Apr 23, 2025"/>
   </head>
   
   
@@ -132,6 +132,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../_rst/_code.html">
     API
   </a>
@@ -140,21 +147,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -167,15 +167,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -283,6 +283,13 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../_rst/_code.html">
     API
   </a>
@@ -291,21 +298,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -318,15 +318,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -492,18 +492,18 @@
 <span class="sd">            If ``None``, :class:`~pina.loss.power_loss.PowerLoss` with ``p=1``</span>
 <span class="sd">            is used. Default is ``None``.</span>
 <span class="sd">        :param Optimizer optimizer_generator: The optimizer for the generator.</span>
-<span class="sd">            If `None`, the :class:`torch.optim.Adam` optimizer is used.</span>
+<span class="sd">            If ``None``, the :class:`torch.optim.Adam` optimizer is used.</span>
 <span class="sd">            Default is ``None``.</span>
 <span class="sd">        :param Optimizer optimizer_discriminator: The optimizer for the</span>
-<span class="sd">            discriminator. If `None`, the :class:`torch.optim.Adam` optimizer is</span>
-<span class="sd">            used. Default is ``None``.</span>
+<span class="sd">            discriminator. If ``None``, the :class:`torch.optim.Adam`</span>
+<span class="sd">            optimizer is used. Default is ``None``.</span>
 <span class="sd">        :param Scheduler scheduler_generator: The learning rate scheduler for</span>
 <span class="sd">            the generator.</span>
-<span class="sd">            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
+<span class="sd">            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
 <span class="sd">            scheduler is used. Default is ``None``.</span>
 <span class="sd">        :param Scheduler scheduler_discriminator: The learning rate scheduler</span>
 <span class="sd">            for the discriminator.</span>
-<span class="sd">            If `None`, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
+<span class="sd">            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`</span>
 <span class="sd">            scheduler is used. Default is ``None``.</span>
 <span class="sd">        :param float gamma: Ratio of expected loss for generator and</span>
 <span class="sd">            discriminator. Default is ``0.3``.</span>
@@ -532,7 +532,7 @@
         <span class="n">check_consistency</span><span class="p">(</span>
             <span class="n">loss</span><span class="p">,</span> <span class="p">(</span><span class="n">LossInterface</span><span class="p">,</span> <span class="n">_Loss</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">),</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span> <span class="o">=</span> <span class="n">loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span> <span class="o">=</span> <span class="n">loss</span>
 
         <span class="c1"># set automatic optimization for GANs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">automatic_optimization</span> <span class="o">=</span> <span class="kc">False</span>
@@ -601,44 +601,25 @@
 <span class="sd">        :return: The residual loss and the generator loss.</span>
 <span class="sd">        :rtype: tuple[torch.Tensor, torch.Tensor]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_generator</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_generator</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
+        <span class="c1"># Generate a batch of images</span>
         <span class="n">generated_snapshots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
 
         <span class="c1"># generator loss</span>
-        <span class="n">r_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span><span class="p">(</span><span class="n">snapshots</span><span class="p">,</span> <span class="n">generated_snapshots</span><span class="p">)</span>
+        <span class="n">r_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span><span class="n">snapshots</span><span class="p">,</span> <span class="n">generated_snapshots</span><span class="p">)</span>
         <span class="n">d_fake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">([</span><span class="n">generated_snapshots</span><span class="p">,</span> <span class="n">parameters</span><span class="p">])</span>
         <span class="n">g_loss</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span><span class="p">(</span><span class="n">d_fake</span><span class="p">,</span> <span class="n">generated_snapshots</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">regularizer</span> <span class="o">*</span> <span class="n">r_loss</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span><span class="n">d_fake</span><span class="p">,</span> <span class="n">generated_snapshots</span><span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">regularizer</span> <span class="o">*</span> <span class="n">r_loss</span>
         <span class="p">)</span>
 
         <span class="c1"># backward step</span>
         <span class="n">g_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_generator</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_generator</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">r_loss</span><span class="p">,</span> <span class="n">g_loss</span>
-
-<div class="viewcode-block" id="GAROM.on_train_batch_end">
-<a class="viewcode-back" href="../../../_rst/solver/garom.html#pina.solver.garom.GAROM.on_train_batch_end">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method is called at the end of each training batch and overrides</span>
-<span class="sd">        the PyTorch Lightning implementation to log checkpoints.</span>
-
-<span class="sd">        :param torch.Tensor outputs: The ``model``&#39;s output for the current</span>
-<span class="sd">            batch.</span>
-<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
-<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
-<span class="sd">        :param int batch_idx: The index of the current batch.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># increase by one the counter of optimization to save loggers</span>
-        <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">fit_loop</span><span class="o">.</span><span class="n">epoch_loop</span><span class="o">.</span><span class="n">manual_optimization</span><span class="o">.</span><span class="n">optim_step_progress</span><span class="o">.</span><span class="n">total</span><span class="o">.</span><span class="n">completed</span>
-        <span class="p">)</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_batch_end</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">)</span></div>
-
 
     <span class="k">def</span> <span class="nf">_train_discriminator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">snapshots</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -649,8 +630,7 @@
 <span class="sd">        :return: The residual loss and the generator loss.</span>
 <span class="sd">        :rtype: tuple[torch.Tensor, torch.Tensor]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_discriminator</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_discriminator</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
         <span class="c1"># Generate a batch of images</span>
         <span class="n">generated_snapshots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
@@ -660,13 +640,14 @@
         <span class="n">d_fake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">([</span><span class="n">generated_snapshots</span><span class="p">,</span> <span class="n">parameters</span><span class="p">])</span>
 
         <span class="c1"># evaluate loss</span>
-        <span class="n">d_loss_real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span><span class="p">(</span><span class="n">d_real</span><span class="p">,</span> <span class="n">snapshots</span><span class="p">)</span>
-        <span class="n">d_loss_fake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span><span class="p">(</span><span class="n">d_fake</span><span class="p">,</span> <span class="n">generated_snapshots</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="n">d_loss_real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span><span class="n">d_real</span><span class="p">,</span> <span class="n">snapshots</span><span class="p">)</span>
+        <span class="n">d_loss_fake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span><span class="n">d_fake</span><span class="p">,</span> <span class="n">generated_snapshots</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
         <span class="n">d_loss</span> <span class="o">=</span> <span class="n">d_loss_real</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">d_loss_fake</span>
 
         <span class="c1"># backward step</span>
         <span class="n">d_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_discriminator</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_discriminator</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">d_loss_real</span><span class="p">,</span> <span class="n">d_loss_fake</span><span class="p">,</span> <span class="n">d_loss</span>
 
@@ -745,7 +726,7 @@
                 <span class="n">points</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span>
             <span class="p">)</span>
             <span class="n">snapshots_gen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-            <span class="n">condition_loss</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span><span class="p">(</span>
+            <span class="n">condition_loss</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span>
                 <span class="n">snapshots</span><span class="p">,</span> <span class="n">snapshots_gen</span>
             <span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighting</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">condition_loss</span><span class="p">)</span>
@@ -771,7 +752,7 @@
                 <span class="n">points</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span>
             <span class="p">)</span>
             <span class="n">snapshots_gen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-            <span class="n">condition_loss</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss</span><span class="p">(</span>
+            <span class="n">condition_loss</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span>
                 <span class="n">snapshots</span><span class="p">,</span> <span class="n">snapshots_gen</span>
             <span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighting</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">condition_loss</span><span class="p">)</span>
@@ -807,7 +788,7 @@
 <span class="sd">        :return: The optimizer for the generator.</span>
 <span class="sd">        :rtype: Optimizer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">instance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">optimizer_discriminator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -817,7 +798,7 @@
 <span class="sd">        :return: The optimizer for the discriminator.</span>
 <span class="sd">        :rtype: Optimizer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">instance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">scheduler_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -827,7 +808,7 @@
 <span class="sd">        :return: The scheduler for the generator.</span>
 <span class="sd">        :rtype: Scheduler</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">instance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">scheduler_discriminator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -837,7 +818,7 @@
 <span class="sd">        :return: The scheduler for the discriminator.</span>
 <span class="sd">        :rtype: Scheduler</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">instance</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedulers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
 
 </pre></div>
 

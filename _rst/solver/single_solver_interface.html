@@ -54,7 +54,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.2.0" />
-    <meta name="docbuild:last-update" content="Mar 20, 2025"/>
+    <meta name="docbuild:last-update" content="Apr 23, 2025"/>
   </head>
   
   
@@ -134,6 +134,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../_code.html">
     API
@@ -143,21 +150,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -170,15 +170,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -287,6 +287,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../_code.html">
     API
@@ -296,21 +303,14 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_tutorial.html">
-    Tutorial
+    Tutorials
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_team.html">
-    Team & Foundings
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -323,15 +323,15 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_LICENSE.html">
-    License
+  <a class="nav-link nav-internal" href="../../_team.html">
+    Team & Foundings
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
+  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+    License
   </a>
 </li>
 
@@ -421,6 +421,8 @@
 <li class="toctree-l1"><a class="reference internal" href="solver_interface.html">SolverInterface</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">SingleSolverInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_solver_interface.html">MultiSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="supervised_solver/supervised_solver_interface.html">SupervisedSolverInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ensemble_solver/ensemble_solver_interface.html">DeepEnsembleSolverInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="physics_informed_solver/pinn_interface.html">PINNInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="physics_informed_solver/pinn.html">PINN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="physics_informed_solver/gradient_pinn.html">GradientPINN</a></li>
@@ -428,8 +430,10 @@
 <li class="toctree-l1"><a class="reference internal" href="physics_informed_solver/competitive_pinn.html">CompetitivePINN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="physics_informed_solver/self_adaptive_pinn.html">SelfAdaptivePINN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="physics_informed_solver/rba_pinn.html">RBAPINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="supervised.html">SupervisedSolver</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reduced_order_model.html">ReducedOrderModelSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ensemble_solver/ensemble_pinn.html">DeepEnsemblePINN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="supervised_solver/supervised.html">SupervisedSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ensemble_solver/ensemble_supervised.html">DeepEnsembleSupervisedSolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="supervised_solver/reduced_order_model.html">ReducedOrderModelSolver</a></li>
 <li class="toctree-l1"><a class="reference internal" href="garom.html">GAROM</a></li>
 </ul>
 <ul class="nav bd-sidenav">
@@ -601,18 +605,18 @@
 <dt class="sig sig-object py" id="pina.solver.solver.SingleSolverInterface">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SingleSolverInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_lt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/solver/solver.html#SingleSolverInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.solver.solver.SingleSolverInterface" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="solver_interface.html#pina.solver.solver.SolverInterface" title="pina.solver.solver.SolverInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverInterface</span></code></a></p>
-<p>Base class for PINA solvers using a single <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a>.</p>
+<p>Base class for PINA solvers using a single <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a>.</p>
 <p>Initialization of the <a class="reference internal" href="#pina.solver.solver.SingleSolverInterface" title="pina.solver.solver.SingleSolverInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleSolverInterface</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>problem</strong> (<a class="reference internal" href="../problem/abstract_problem.html#pina.problem.abstract_problem.AbstractProblem" title="pina.problem.abstract_problem.AbstractProblem"><em>AbstractProblem</em></a>) – The problem to be solved.</p></li>
-<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)"><em>torch.nn.Module</em></a>) – The neural network model to be used.</p></li>
+<li><p><strong>model</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><em>torch.nn.Module</em></a>) – The neural network model to be used.</p></li>
 <li><p><strong>optimizer</strong> (<a class="reference internal" href="../optim/optimizer_interface.html#pina.optim.optimizer_interface.Optimizer" title="pina.optim.optimizer_interface.Optimizer"><em>Optimizer</em></a>) – The optimizer to be used.
-If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.Adam</span></code></a> optimizer is
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.Adam</span></code></a> optimizer is
 used. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>scheduler</strong> (<a class="reference internal" href="../optim/scheduler_interface.html#pina.optim.scheduler_interface.Scheduler" title="pina.optim.scheduler_interface.Scheduler"><em>Scheduler</em></a>) – The scheduler to be used.
-If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.ConstantLR.html#torch.optim.lr_scheduler.ConstantLR" title="(in PyTorch v2.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler.ConstantLR</span></code></a>
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.ConstantLR.html#torch.optim.lr_scheduler.ConstantLR" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler.ConstantLR</span></code></a>
 scheduler is used. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>weighting</strong> (<a class="reference internal" href="../loss/weighting_interface.html#pina.loss.weighting_interface.WeightingInterface" title="pina.loss.weighting_interface.WeightingInterface"><em>WeightingInterface</em></a>) – The weighting schema to be used.
 If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no weighting schema is used. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
@@ -626,13 +630,13 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dd><p>Forward pass implementation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – Input tensor.</p>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a><em> | </em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em> | </em><em>Data</em>) – Input tensor.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Solver solution.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.6)">torch.Tensor</a> | <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a> | <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a> | <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph">Graph</a> | Data</p>
 </dd>
 </dl>
 </dd></dl>
@@ -660,7 +664,7 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dd class="field-odd"><p>The model used for training.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.6)">torch.nn.Module</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)">torch.nn.Module</a></p>
 </dd>
 </dl>
 </dd></dl>
