@@ -3,7 +3,7 @@ Code Documentation
 Welcome to PINA documentation! Here you can find the modules of the package divided in different sections.
 The high-level structure of the package is depicted in our API.
 
-.. figure:: ../index_files/API_color.png
+.. figure:: ../index_files/PINA_API.png
     :alt: PINA application program interface
     :align: center
     :width: 400
