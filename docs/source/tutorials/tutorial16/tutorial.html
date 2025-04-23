@@ -7511,31 +7511,34 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6f71ca5c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Tutorial:-Introduction-to-PINA-Equation-class">Tutorial: Introduction to PINA <code>Equation</code> class<a class="anchor-link" href="#Tutorial:-Introduction-to-PINA-Equation-class">¶</a></h1><p><a href="https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial12/tutorial.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
-<p>In this tutorial, we will explore how to use the <code>Equation</code> class in <strong>PINA</strong>. We will focus on how to leverage this class, along with its inherited subclasses, to enforce residual minimization in <strong>Physics-Informed Neural Networks (PINNs)</strong>.</p>
-<p>By the end of this guide, you'll understand how to integrate physical laws and constraints directly into your model training, ensuring that the solution adheres to the underlying differential equations.</p>
-<h2 id="Example:-The-Burgers-1D-equation">Example: The Burgers 1D equation<a class="anchor-link" href="#Example:-The-Burgers-1D-equation">¶</a></h2><p>We will start implementing the viscous Burgers 1D problem Class, described as follows:</p>
-<p>$$
-\begin{equation}
-\begin{cases}
-\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} &amp;= \nu \frac{\partial^2 u}{ \partial x^2}, \quad x\in(0,1), \quad t&gt;0\\
-u(x,0) &amp;= -\sin (\pi x), \quad x\in(0,1)\\
-u(x,t) &amp;= 0, \quad x = \pm 1, \quad t&gt;0\\
-\end{cases}
-\end{equation}
-$$</p>
-<p>where we set $ \nu = \frac{0.01}{\pi}$.</p>
-<p>In the class that models this problem we will see in action the <code>Equation</code> class and one of its inherited classes, the <code>FixedValue</code> class.</p>
+<h1 id="Tutorial:-How-to-build-a-Problem-in-PINA">Tutorial: How to build a Problem in PINA<a class="anchor-link" href="#Tutorial:-How-to-build-a-Problem-in-PINA">¶</a></h1><p><a href="https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial16/tutorial.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ef4949c9">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>In this tutorial, we will demonstrate how to build a <strong>Problem</strong> in <strong>PINA</strong> using a toy example. The tutorial will cover the following topics:</p>
+<ul>
+<li><strong>Building a Problem</strong>: Learn how to construct a problem using the built-in PINA classes.</li>
+<li><strong>Generating Data for Physics-Informed Training</strong>: Understand how to generate the necessary data for training.</li>
+<li><strong>Exploring the <code>problem.zoo</code> Module</strong>: Get familiar with the <code>problem.zoo</code> module, which collects pre-built problems for easy use.</li>
+</ul>
+<p>By the end of this tutorial, you'll be able to write <strong>data-driven</strong> or <strong>differential problems</strong> in <strong>PINA</strong> and prepare them for model training!</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=014bbd86">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7553,31 +7556,62 @@ $$</p>
 <span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
     <span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"pina-mathlab[tutorial]"</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="c1"># useful imports</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina</span><span class="w"> </span><span class="kn">import</span> <span class="n">Condition</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpatialProblem</span><span class="p">,</span> <span class="n">TimeDependentProblem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.equation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Equation</span><span class="p">,</span> <span class="n">FixedValue</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.domain</span><span class="w"> </span><span class="kn">import</span> <span class="n">CartesianDomain</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">grad</span><span class="p">,</span> <span class="n">fast_grad</span><span class="p">,</span> <span class="n">laplacian</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=cf9c96e3">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Let's begin by defining the Burgers equation and its initial condition as Python functions. These functions will take the model's <code>input</code> (spatial and temporal coordinates) and <code>output</code> (predicted solution) as arguments. The goal is to compute the residuals for the Burgers equation, which we will minimize during training.</p>
+<h2 id="Build-a-PINA-problem">Build a PINA problem<a class="anchor-link" href="#Build-a-PINA-problem">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=46ba1d43">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>In <strong>PINA</strong>, defining a problem is done by creating a Python <code>class</code> that inherits from one or more problem classes, such as <code>SpatialProblem</code>, <code>TimeDependentProblem</code>, or <code>ParametricProblem</code>, depending on the nature of the problem. We refer to the <code>model</code> as the object that solves the problem, e.g., a <strong>Neural Network</strong>.</p>
+<p>We can have two types of problems:</p>
+<ol>
+<li><em><strong>Data-Driven Problems</strong></em>: The model is trained using data, such as in classification networks or autoencoders.</li>
+<li><strong>&amp;Physics-Driven Problems***: The model is trained using physical laws representing the problem, such as in **PINNs</strong>.
+Let's start by building the first type, the data driven type.</li>
+</ol>
+<h3 id="Data-driven-modelling">Data driven modelling<a class="anchor-link" href="#Data-driven-modelling">¶</a></h3><p>In data-driven modelling, we always have an <strong>input</strong> and a <strong>target</strong>. The model's objective is to reconstruct the target from the input. Examples include:</p>
+<ul>
+<li>Image reconstruction (perturbed image as input, clear image as target)</li>
+<li>Classification (e.g., input: molecule, target: chemical properties)</li>
+</ul>
+<p>To build a data-driven problem in <strong>PINA</strong>, you can inherit from the <code>AbstractProblem</code> class. Below is an example of a regression problem where the input is a scalar value <code>x</code> and the target is a scalar value <code>y</code>.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pina.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractProblem</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SupervisedProblem</span><span class="p">(</span><span class="n">AbstractProblem</span><span class="p">):</span>
+    
+    <span class="n">input_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'x'</span><span class="p">]</span>
+    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'y'</span><span class="p">]</span>
+
+    <span class="c1"># other stuff ...</span>
+</pre></div>
+<p>Observe that we define <code>input_variables</code> and <code>output_variables</code> as lists of symbols. This is because, in PINA, <code>torch.Tensors</code> can be labeled (see <a href="https://mathlab.github.io/PINA/_rst/label_tensor.html"><code>LabelTensor</code></a>), providing maximum flexibility for tensor manipulation. If you prefer to use regular tensors, you can simply set these to <code>None</code>.</p>
+<p>To specify the input and target data, you need to use the <a href="https://mathlab.github.io/PINA/_rst/condition/condition.html"><code>Condition</code></a> interface. A condition defines the constraints (such as physical equations, boundary conditions, etc.) that must be satisfied within the problem. Once the condition is applied, the full problem is outlined below:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=464d4ab2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7585,49 +7619,50 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># define the burger equation</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">burger_equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-    <span class="n">du</span> <span class="o">=</span> <span class="n">fast_grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">"u"</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">])</span>
-    <span class="n">ddu</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">du</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">"dudx"</span><span class="p">])</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">du</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"dudt"</span><span class="p">])</span>
-        <span class="o">+</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">*</span> <span class="n">du</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"dudx"</span><span class="p">])</span>
-        <span class="o">-</span> <span class="p">(</span><span class="mf">0.01</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">ddu</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"ddudxdx"</span><span class="p">])</span>
-    <span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pina</span><span class="w"> </span><span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">LabelTensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractProblem</span>
+
+<span class="c1"># creating some fictitious data</span>
+<span class="n">input_1</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">"x"</span><span class="p">)</span>  <span class="c1"># &lt;== input_variables</span>
+<span class="n">input_2</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">"x"</span><span class="p">)</span>  <span class="c1"># &lt;== input_variables</span>
+<span class="n">target_1</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">"y"</span><span class="p">)</span>  <span class="c1"># &lt;== output_variables</span>
+<span class="n">target_2</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">"y"</span><span class="p">)</span>  <span class="c1"># &lt;== output_variables</span>
 
 
-<span class="c1"># define initial condition</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">initial_condition</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-    <span class="n">u_expected</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">input_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"x"</span><span class="p">]))</span>
-    <span class="k">return</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">-</span> <span class="n">u_expected</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SupervisedProblem</span><span class="p">(</span><span class="n">AbstractProblem</span><span class="p">):</span>
+
+    <span class="n">input_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"x"</span><span class="p">]</span>
+    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"y"</span><span class="p">]</span>
+
+    <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"condition_1"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">input_1</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_1</span><span class="p">),</span>
+        <span class="s2">"condition_2"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">input_2</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_2</span><span class="p">),</span>
+    <span class="p">}</span>
+
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">SupervisedProblem</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d27c1341">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Above we use the <code>grad</code> operator from <code>pina.operator</code> to compute the gradient. In PINA each differential operator takes the following inputs:</p>
+<p>You can define as many conditions as needed, and the model will attempt to minimize all of them simultaneously! You can access the data in various ways:</p>
 <ul>
-<li><code>output_</code>: A tensor on which the operator is applied.</li>
-<li><code>input_</code>: A tensor with respect to which the operator is computed.</li>
-<li><code>components</code>: The names of the output variables for which the operator is evaluated.</li>
-<li><code>d</code>: The names of the variables with respect to which the operator is computed.</li>
+<li><code>problem.conditions['&lt;condition name&gt;'].input</code>, <code>problem.conditions['&lt;condition name&gt;'].output</code> – Access the input and output data for the specified condition <code>&lt;condition name&gt;</code>.</li>
+<li><code>problem.input_pts</code> – Access the input points for all conditions.</li>
 </ul>
-<p>Each differential operator has its <strong>fast</strong> version, which performs no internal checks on input and output tensors. For these methods, the user is always required to specify both <code>components</code> and <code>d</code> as lists of strings.</p>
-<p>Let's define now the problem!</p>
-<blockquote>
-<p><strong>👉 Do you want to learn more on Problems? Check the dedicated <a href="https://mathlab.github.io/PINA/tutorial16/tutorial.html">tutorial</a> to learn how to build a Problem from scratch.</strong></p>
-</blockquote>
+<p>To ensure that the problem is ready, you can check if all domains have been discretized, meaning all conditions have input points available to pass to the model:</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5bd8397e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7635,67 +7670,120 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">TimeDependentProblem</span><span class="p">,</span> <span class="n">SpatialProblem</span><span class="p">):</span>
-
-    <span class="c1"># assign output/ spatial and temporal variables</span>
-    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"u"</span><span class="p">]</span>
-    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="n">temporal_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-    <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-    <span class="p">}</span>
-    <span class="c1"># problem condition statement</span>
-    <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond1"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond2"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"time_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"phys_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">burger_equation</span><span class="p">)</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># check if all domains are discretised</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">are_all_domains_discretised</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>True</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=59d80694">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The <code>Equation</code> class takes as input a function (in this case it happens twice, with <code>initial_condition</code> and <code>burger_equation</code>) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the <code>Equation</code> class with such a given input is passed as a parameter in the specified <code>Condition</code>.</p>
-<p>The <code>FixedValue</code> class takes as input a value of the same dimensions as the output functions. This class can be used to enforce a fixed value for a specific condition, such as Dirichlet boundary conditions, as demonstrated in our example.</p>
-<p>Once the equations are set as above in the problem conditions, the PINN solver will aim to minimize the residuals described in each equation during the training phase.</p>
-<h3 id="Available-classes-of-equations:">Available classes of equations:<a class="anchor-link" href="#Available-classes-of-equations:">¶</a></h3><ul>
-<li><code>FixedGradient</code> and <code>FixedFlux</code>: These work analogously to the <code>FixedValue</code> class, where we can enforce a constant value on the gradient or the divergence of the solution, respectively.</li>
-<li><code>Laplace</code>: This class can be used to enforce that the Laplacian of the solution is zero.</li>
-<li><code>SystemEquation</code>: This class allows you to enforce multiple conditions on the same subdomain by passing a list of residual equations defined in the problem.</li>
+<blockquote>
+<p>👉 <strong>You can use multiple data structures in PINA conditions, including <code>Graph</code> or <code>Data</code> from <code>PyG</code>. To explore the different data structures available in PINA, check out <a href="">this tutorial</a>, and for more information on input-target conditions, visit the conditions factory classes <a href="https://mathlab.github.io/PINA/_rst/condition/input_target_condition.html">here</a></strong>.</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8a819659">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Simple-Ordinary-Differential-Equation">Simple Ordinary Differential Equation<a class="anchor-link" href="#Simple-Ordinary-Differential-Equation">¶</a></h3><p>What if we don't have data but we know the physical laws that define the data? Then physics-informed training is the solution! As an example, consider the following Ordinary Differential Equation (ODE):</p>
+<p>$$
+\begin{equation}
+\begin{cases}
+\frac{d}{dx}u(x) &amp;=  u(x) \quad x\in(0,1)\\
+u(x=0) &amp;= 1 \\
+\end{cases}
+\end{equation}
+$$</p>
+<p>with the analytical solution $u(x) = e^x$. This problem is a spatial problem because the ODE depends only on the spatial variable $x\in(0,1)$. In PINA, differential problems are categorized by their nature, e.g.:</p>
+<ul>
+<li><code>SpatialProblem</code> $\rightarrow$ a differential equation with spatial variable(s)</li>
+<li><code>TimeDependentProblem</code> $\rightarrow$ a time-dependent differential equation with temporal variable(s)</li>
+<li><code>ParametricProblem</code> $\rightarrow$ a parametrized differential equation with parametric variable(s)</li>
+<li><code>InverseProblem</code> $\rightarrow$ this is a more advanced topic, see <a href="https://mathlab.github.io/PINA/tutorial7/tutorial.html">this tutorial</a> for more details.</li>
 </ul>
-<h2 id="Defining-a-new-Equation-class">Defining a new Equation class<a class="anchor-link" href="#Defining-a-new-Equation-class">¶</a></h2><p><code>Equation</code> classes can also be inherited to define a new class. For example, we can define a new class <code>Burgers1D</code> to represent the Burgers equation. During the class call, we can pass the viscosity parameter $\nu$:</p>
-<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
+<p>In our case, the physical ODE inherits from the <code>SpatialProblem</code> class, since only spatial variables define the ODE.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SimpleODE</span><span class="p">(</span><span class="n">SpatialProblem</span><span class="p">):</span>
+    
+    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'u'</span><span class="p">]</span>
+    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">{</span><span class="s1">'x'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">equation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-        <span class="o">...</span>
+    <span class="c1"># other stuff ...</span>
 </pre></div>
-<p>In this case, the <code>Burgers1D</code> class will inherit from the <code>Equation</code> class and compute the residual of the Burgers equation. The viscosity parameter $\nu$ is passed when instantiating the class and used in the residual calculation. Let's see it in more details:</p>
+<p>What if our equation is was also time-dependent, e.g. Partial Differential Equations (PDE)? In this case, our <code>class</code> will inherit from both <code>SpatialProblem</code> and <code>TimeDependentProblem</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">TimeSpaceODE</span><span class="p">(</span><span class="n">SpatialProblem</span><span class="p">,</span> <span class="n">TimeDependentProblem</span><span class="p">):</span>
+
+    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"u"</span><span class="p">]</span>
+    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+    <span class="n">temporal_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+
+    <span class="c1"># other stuff ...</span>
+</pre></div>
+<p>Differently from data-driven problems, differential-problems need to specify the domain type. If you look at our ODE definition, the spatial varibale $x$ is defined in the interval $(0,1)$, and accordingly the <code>spatial_domain</code> is a <code>CartesianDomain</code> with the input variable <code>x</code> in <code>[0,1]</code>. To know more about the Domain class see the <a href="https://mathlab.github.io/PINA/tutorial6/tutorial.html">related tutorial</a>. Different problems require different domain, here below we summarize the relevant ones:</p>
+<table>
+<thead>
+<tr>
+<th>Problem Type</th>
+<th>Required Domain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SpatialProblem</code></td>
+<td><code>spatial_domain</code></td>
+</tr>
+<tr>
+<td><code>TimeDependentProblem</code></td>
+<td><code>temporal_domain</code></td>
+</tr>
+<tr>
+<td><code>ParametricProblem</code></td>
+<td><code>parameter_domain</code></td>
+</tr>
+<tr>
+<td><code>InverseProblem</code></td>
+<td><code>unknown_parameter_domain</code></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=592a4c43">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Nice, the Problem class is initialized! How to represent the differential equation in <strong>PINA</strong>? To do this, we need to load the <strong>PINA</strong> operators from <code>pina.operator</code> module. Again, we'll consider Equation (1) and represent it in <strong>PINA</strong>:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f2608e2e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7703,42 +7791,84 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1DEquation</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pina.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpatialProblem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina.operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">grad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina.domain</span><span class="w"> </span><span class="kn">import</span> <span class="n">CartesianDomain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina.equation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Equation</span><span class="p">,</span> <span class="n">FixedValue</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Burgers1D class. This class can be</span>
-<span class="sd">        used to enforce the solution u to solve the viscous Burgers 1D Equation.</span>
 
-<span class="sd">        :param torch.float32 nu: the viscosity coefficient. Default value is set to 0.</span>
-<span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
+<span class="c1"># defining the ode equation</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ode_equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"t"</span><span class="p">)</span>
-                <span class="o">+</span> <span class="n">output_</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
-                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">*</span> <span class="n">laplacian</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
-            <span class="p">)</span>
+    <span class="c1"># computing the derivative</span>
+    <span class="n">u_x</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">"u"</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">])</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span>
+    <span class="c1"># extracting the u input variable</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span>
+
+    <span class="c1"># calculate the residual and return it</span>
+    <span class="k">return</span> <span class="n">u_x</span> <span class="o">-</span> <span class="n">u</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleODE</span><span class="p">(</span><span class="n">SpatialProblem</span><span class="p">):</span>
+
+    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"u"</span><span class="p">]</span>
+    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+
+    <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"x0"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}),</span>
+        <span class="s2">"D"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
+    <span class="p">}</span>
+
+    <span class="c1"># conditions to hold</span>
+    <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"bound_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">"x0"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)),</span>
+        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">"D"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">ode_equation</span><span class="p">)),</span>
+    <span class="p">}</span>
+
+    <span class="c1"># defining the true solution</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pts</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"x"</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7cf64d01">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Now we can just pass the above class as input for the last condition, setting $\nu= \frac{0.01}{\pi}$:</p>
+<p>As you can see, we implemented the <code>ode_equation</code> function which given the model ouput and input returns the equation residual. These residuals are the ones minimized during PINN optimization (for more on PINN see <a href="https://mathlab.github.io/PINA/_tutorial.html#physics-informed-neural-networks">the related tutorials</a>).</p>
+<p>How are the residuals computed?
+Givem the output we perform differential operation using the <a href="https://mathlab.github.io/PINA/_rst/operator.html">operator modulus</a>. It is pretty intuitive, each differential operator takes the following inputs:</p>
+<ul>
+<li>A tensor on which the operator is applied.</li>
+<li>A tensor with respect to which the operator is computed.</li>
+<li>The names of the output variables for which the operator is evaluated.</li>
+<li>The names of the variables with respect to which the operator is computed.
+We also have a <code>fast</code> version of differential operators, where no checks are performed. This can be used to boost performances, once you know the standard ones are doing their job.</li>
+</ul>
+<p>Notice that we do not pass directly a <code>python</code> function, but an <code>Equation</code> object, which is initialized with the <code>python</code> function. This is done so that all the computations and internal checks are done inside <strong>PINA</strong>, see <a href="https://mathlab.github.io/PINA/tutorial12/tutorial.html">the related tutorials</a> for more.</p>
+<p>Once we have defined the function, we need to tell the neural network where these methods are to be applied. To do so, we use again the <code>Condition</code> class. In the <code>Condition</code> class, we pass the location points and the equation we want minimized on those points.</p>
+<p>Finally, it's possible to define a <code>solution</code> function, which can be useful if we want to plot the results and see how the real solution compares to the expected (true) solution. Notice that the <code>solution</code> function is a method of the <code>Problem</code> class, but it is not mandatory for problem definition.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=78b30f95">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Generate-data-for-Physical-Problems">Generate data for Physical Problems<a class="anchor-link" href="#Generate-data-for-Physical-Problems">¶</a></h2><p>When training physics based models, data can come in form of direct numerical simulation results (tensors, graph), or points in the domains which need to be sampled. In case we perform unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in <strong>PINA</strong> is very easy. But first, let's check if the domains are dicsretized by using the <code>are_all_domains_discretised</code> method.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a561b984">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7746,60 +7876,277 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">TimeDependentProblem</span><span class="p">,</span> <span class="n">SpatialProblem</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">problem</span> <span class="o">=</span> <span class="n">SimpleODE</span><span class="p">()</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">are_all_domains_discretised</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>False</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ff0852f9">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>This is false becase the input points are not available (we need to discretize!). If you call <code>problem.input_points</code> at this stage you will get an error due to point missing in the condition.</p>
+<div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>problem.input_pts
+</pre></div>
+<div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">KeyError</span>                                  <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">32</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span>
 
-    <span class="c1"># define initial condition</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">initial_condition</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-        <span class="n">u_expected</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">input_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"x"</span><span class="p">]))</span>
-        <span class="k">return</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">-</span> <span class="n">u_expected</span>
+<span class="n">File</span> <span class="o">~/</span><span class="n">GitHub</span><span class="o">/</span><span class="n">PINA</span><span class="o">/</span><span class="n">pina</span><span class="o">/</span><span class="n">problem</span><span class="o">/</span><span class="n">abstract_problem</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">78</span><span class="p">,</span> <span class="ow">in</span> <span class="n">AbstractProblem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+     <span class="mi">76</span>         <span class="n">to_return</span><span class="p">[</span><span class="n">cond_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">input</span>
+     <span class="mi">77</span>     <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="s2">"domain"</span><span class="p">):</span>
+<span class="o">---&gt;</span> <span class="mi">78</span>         <span class="n">to_return</span><span class="p">[</span><span class="n">cond_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discretised_domains</span><span class="p">[</span><span class="n">cond</span><span class="o">.</span><span class="n">domain</span><span class="p">]</span>
+     <span class="mi">79</span> <span class="k">return</span> <span class="n">to_return</span>
 
-    <span class="c1"># assign output/ spatial and temporal variables</span>
-    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"u"</span><span class="p">]</span>
-    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="n">temporal_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="ne">KeyError</span><span class="p">:</span> <span class="s1">'x0'</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=db601e90">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>To discretise the problem you can use the <code>discretise_domain</code> method:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=09ce5c3a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># sampling 20 points in [0, 1] through discretization in all locations</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"grid"</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="s2">"all"</span><span class="p">)</span>
 
-    <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-    <span class="p">}</span>
-    <span class="c1"># problem condition statement</span>
-    <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond1"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond2"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"time_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"phys_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Burgers1DEquation</span><span class="p">(</span><span class="n">nu</span><span class="o">=</span><span class="mf">0.01</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
+<span class="c1"># sampling 20 points in (0, 1) through latin hypercube sampling in D, and 1 point in x0</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"latin"</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="p">[</span><span class="s2">"D"</span><span class="p">])</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"random"</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="p">[</span><span class="s2">"x0"</span><span class="p">])</span>
+
+<span class="c1"># sampling 20 points in (0, 1) randomly</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"random"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8fbb679f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="What's-Next?">What's Next?<a class="anchor-link" href="#What's-Next?">¶</a></h2><p>Congratulations on completing the <code>Equation</code> class tutorial of <strong>PINA</strong>! As we've seen, you can build new classes that inherit from <code>Equation</code> to store more complex equations, such as the 1D Burgers equation, by simply passing the characteristic coefficients of the problem.</p>
-<p>From here, you can:</p>
-<ul>
-<li><strong>Define Additional Complex Equation Classes</strong>: Create your own equation classes, such as <code>SchrodingerEquation</code>, <code>NavierStokesEquation</code>, etc.</li>
-<li><strong>Define More <code>FixedOperator</code> Classes</strong>: Implement operators like <code>FixedCurl</code>, <code>FixedDivergence</code>, and others for more advanced simulations.</li>
-<li><strong>Integrate Custom Equations and Operators</strong>: Combine your custom equations and operators into larger systems for more complex simulations.</li>
-<li><strong>and many more!</strong>: Explore for example different residual minimization techniques to improve the performance and accuracy of your models.</li>
-</ul>
-<p>For more resources and tutorials, check out the <a href="https://mathlab.github.io/PINA/">PINA Documentation</a>.</p>
+<p>We are going to use latin hypercube points for sampling. We need to sample in all the conditions domains. In our case we sample in <code>D</code> and <code>x0</code>.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=329962b6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># sampling for training</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"random"</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="p">[</span><span class="s2">"x0"</span><span class="p">])</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s2">"lh"</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="p">[</span><span class="s2">"D"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ca2ac5c2">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>The points are saved in a python <code>dict</code>, and can be accessed by calling the attributes <code>input_pts</code> or <code>discretised_domains</code> of the problem.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=d6ed9aaf">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Input points:"</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Input points labels:"</span><span class="p">,</span> <span class="n">problem</span><span class="o">.</span><span class="n">discretised_domains</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Input points: {'bound_cond': LabelTensor([[0.]]), 'phys_cond': LabelTensor([[0.9545],
+             [0.7729],
+             [0.5458],
+             [0.0035],
+             [0.3591]])}
+Input points labels: {'x0': LabelTensor([[0.]]), 'D': LabelTensor([[0.9545],
+             [0.7729],
+             [0.5458],
+             [0.0035],
+             [0.3591]])}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=669e8534">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>To visualize the sampled points we can use <code>matplotlib.pyplot</code>:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=3802e22a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">location</span><span class="p">]</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">spatial_variables</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">location</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>&lt;matplotlib.legend.Legend at 0x7f7b4e5207f0&gt;</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
+<img alt="No description has been provided for this image" class="" src="data:image/png;base64,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rEQIAgAAViIEAQAAKxGCAACAlQhBAADASoQgAABgJUIQAACwEiEIAABYiRAEAACsRAgCAABWIgQBAAArEYIAAICVCEEAAMBKhCAAAGAlQhAAALASIQgAAFiJEAQAAKxECAIAAFYiBAEAACsRggAAgJUIQQAAwEqEIAAAYCVCEAAAsBIhCAAAWIkQBAAArEQIAgAAViIEAQAAKxGCAACAlQhBAADASoQgAABgJUIQAACwEiEIAABYiRAEAACsRAgCAABWIgQBAAArEYIAAICVCEEAAMBKHgtBP/74o4YOHaqgoCCFhIRo5MiR+vnnn6sdc+LECY0ePVqhoaG6+OKLNWjQIBUWFjrXf/755xoyZIgiIyMVGBio2NhYPfvss546BAAA0Ih5LAQNHTpUX375pdasWaNVq1bpk08+UWpqarVjHnroIb333ntauXKlPv74Y+3fv1+33HKLc312drZat26tV199VV9++aUmT56sSZMm6YUXXvDUYQAAgEbKyxhjanujeXl56ty5szZv3qz4+HhJ0urVq3X99ddr3759atOmzWljioqK1KpVKy1btky33nqrJOmrr75SbGyssrKy1Lt37yr3NXr0aOXl5Wnt2rU1rq+4uFjBwcEqKipSUFDQORwhAACoa7X9+e2RM0FZWVkKCQlxBiBJSkpKkre3tzZu3FjlmOzsbJWVlSkpKcnZFhMTo6ioKGVlZZ1xX0VFRWrRokXtFQ8AAKzg64mNOhwOtW7d2nVHvr5q0aKFHA7HGcf4+fkpJCTEpT0sLOyMYz777DOtWLFC77//frX1lJSUqKSkxPm6uLi4BkcBAAAaM7fOBE2cOFFeXl7VLl999ZWnanWxY8cO3XzzzUpPT9d///d/V9t3xowZCg4Odi6RkZF1UiMAALhwuXUmaPz48RoxYkS1fTp27Kjw8HAdOHDApb28vFw//vijwsPDqxwXHh6u0tJSHT582OVsUGFh4WljcnNzNWDAAKWmpmrKlClnrXvSpElKS0tzvi4uLiYIAQBgObdCUKtWrdSqVauz9ktMTNThw4eVnZ2tuLg4SdLatWtVWVmphISEKsfExcWpSZMmyszM1KBBgyRJ+fn5KigoUGJiorPfl19+qf79+2v48OF68skna1S3v7+//P39a9QXAADYwSPfDpOk6667ToWFhVq4cKHKysp01113KT4+XsuW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"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7bb09c53">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="The-Problem-Zoo-module">The Problem Zoo module<a class="anchor-link" href="#The-Problem-Zoo-module">¶</a></h2><p>In PINA many problems are already implemented for you in the <a href="https://mathlab.github.io/PINA/_rst/_code.html#problems-zoo">Problem Zoo module</a>. For example, the supervised problem at the beginning of the tutorial is implemented in <a href="https://mathlab.github.io/PINA/_rst/problem/zoo/supervised_problem.html"><code>SupervisedProblem</code></a>!</p>
+<p>Let's see now a physics based example, the advection equation</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=c70dfd4b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pina.problem.zoo</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdvectionProblem</span>
+
+<span class="c1"># defining the problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">AdvectionProblem</span><span class="p">()</span>
+
+<span class="c1"># some infos</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"The </span><span class="si">{</span><span class="n">problem</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span><span class="si">}</span><span class="s2"> "</span>
+    <span class="sa">f</span><span class="s2">"conditions with names </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"The problem inherits from "</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="bp">cls</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">problem</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span>
+    <span class="sa">f</span><span class="s2">"and the domains are of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="s1">'t0'</span><span class="p">])</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>The AdvectionProblem has 2 conditions with names ['t0', 'D'] 
+The problem inherits from ['SpatialProblem', 'TimeDependentProblem'] 
+and the domains are of type CartesianDomain
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=33e672da">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="What's-Next?">What's Next?<a class="anchor-link" href="#What's-Next?">¶</a></h2><p>Congratulations on completing the introductory tutorial of <strong>PINA</strong> problems! There are several directions you can explore next:</p>
+<ol>
+<li><p><strong>Create Custom Problems</strong>: Try building your own problems using the PINA framework, experiment with different PDEs, initial/boundary conditions, and data structures.</p>
+</li>
+<li><p><strong>Explore the Problem Zoo</strong>: Dive into the <a href="https://mathlab.github.io/PINA/_rst/_code.html#problems-zoo"><code>problem.zoo</code> module</a> to find a variety of predefined problem setups and use them as a starting point or inspiration for your own.</p>
+</li>
+<li><p><strong>...and many more!</strong>: The possibilities are vast! Consider experimenting with different solver strategies, model architectures, or even implementing your own physical constraints.</p>
+</li>
+</ol>
+<p>For more examples and in-depth guides, be sure to check out the <a href="https://mathlab.github.io/PINA/">PINA Documentation</a>.</p>
 </div>
 </div>
 </div>
