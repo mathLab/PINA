@@ -3,7 +3,34 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>tutorial</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>tutorial</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script><script>
+(function() {
+  function addWidgetsRenderer() {
+    var mimeElement = document.querySelector('script[type="application/vnd.jupyter.widget-view+json"]');
+    var scriptElement = document.createElement('script');
+    
+    var widgetRendererSrc = 'https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js';
+    
+    var widgetState;
+
+    // Fallback for older version:
+    try {
+      widgetState = mimeElement && JSON.parse(mimeElement.innerHTML);
+
+      if (widgetState && (widgetState.version_major < 2 || !widgetState.version_major)) {
+        
+        var widgetRendererSrc = 'https://unpkg.com/@jupyter-js-widgets@*/dist/embed.js';
+        
+      }
+    } catch(e) {}
+
+    scriptElement.src = widgetRendererSrc;
+    document.body.appendChild(scriptElement);
+  }
+
+  document.addEventListener('DOMContentLoaded', addWidgetsRenderer);
+}());
+</script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7511,31 +7538,131 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6f71ca5c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Tutorial:-Introduction-to-PINA-Equation-class">Tutorial: Introduction to PINA <code>Equation</code> class<a class="anchor-link" href="#Tutorial:-Introduction-to-PINA-Equation-class">¶</a></h1><p><a href="https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial12/tutorial.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
-<p>In this tutorial, we will explore how to use the <code>Equation</code> class in <strong>PINA</strong>. We will focus on how to leverage this class, along with its inherited subclasses, to enforce residual minimization in <strong>Physics-Informed Neural Networks (PINNs)</strong>.</p>
-<p>By the end of this guide, you'll understand how to integrate physical laws and constraints directly into your model training, ensuring that the solution adheres to the underlying differential equations.</p>
-<h2 id="Example:-The-Burgers-1D-equation">Example: The Burgers 1D equation<a class="anchor-link" href="#Example:-The-Burgers-1D-equation">¶</a></h2><p>We will start implementing the viscous Burgers 1D problem Class, described as follows:</p>
-<p>$$
-\begin{equation}
-\begin{cases}
-\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} &amp;= \nu \frac{\partial^2 u}{ \partial x^2}, \quad x\in(0,1), \quad t&gt;0\\
-u(x,0) &amp;= -\sin (\pi x), \quad x\in(0,1)\\
-u(x,t) &amp;= 0, \quad x = \pm 1, \quad t&gt;0\\
-\end{cases}
-\end{equation}
-$$</p>
-<p>where we set $ \nu = \frac{0.01}{\pi}$.</p>
-<p>In the class that models this problem we will see in action the <code>Equation</code> class and one of its inherited classes, the <code>FixedValue</code> class.</p>
+<h1 id="Tutorial:-Introduction-to-Solver-classes">Tutorial: Introduction to Solver classes<a class="anchor-link" href="#Tutorial:-Introduction-to-Solver-classes">¶</a></h1><p><a href="https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial18/tutorial.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
+<p>In this tutorial, we will explore the Solver classes in PINA, that are the core components for optimizing models. Solvers are designed to manage and execute the optimization process, providing the flexibility to work with various types of neural networks and loss functions. We will show how to use this class to select and implement different solvers, such as Supervised Learning, Physics-Informed Neural Networks (PINNs), and Generative Learning solvers. By the end of this tutorial, you'll be equipped to easily choose and customize solvers for your own tasks, streamlining the model training process.</p>
+<h2 id="Introduction-to-Solvers">Introduction to Solvers<a class="anchor-link" href="#Introduction-to-Solvers">¶</a></h2><p><a href="https://mathlab.github.io/PINA/_rst/_code.html#solvers"><code>Solvers</code></a> are versatile objects in PINA designed to manage the training and optimization of machine learning models. They handle key components of the learning process, including:</p>
+<ul>
+<li>Loss function minimization</li>
+<li>Model optimization (optimizer, schedulers)</li>
+<li>Validation and testing workflows</li>
+</ul>
+<p>PINA solvers are built on top of the <a href="https://lightning.ai/docs/pytorch/stable/common/lightning_module.html">PyTorch Lightning <code>LightningModule</code></a>, which provides a structured and scalable training framework. This allows solvers to leverage advanced features such as distributed training, early stopping, and logging — all with minimal setup.</p>
+<h2 id="Solvers-Hierarchy:-Single-and-MultiSolver">Solvers Hierarchy: Single and MultiSolver<a class="anchor-link" href="#Solvers-Hierarchy:-Single-and-MultiSolver">¶</a></h2><p>PINA provides two main abstract interfaces for solvers, depending on whether the training involves a single model or multiple models. These interfaces define the base functionality that all specific solver implementations inherit from.</p>
+<h3 id="1.-SingleSolverInterface">1. <a href="https://mathlab.github.io/PINA/_rst/solver/solver_interface.html"><code>SingleSolverInterface</code></a><a class="anchor-link" href="#1.-SingleSolverInterface">¶</a></h3><p>This is the abstract base class for solvers that train <strong>a single model</strong>, such as in standard supervised learning or physics-informed training. All specific solvers (e.g., <code>SupervisedSolver</code>, <code>PINN</code>) inherit from this interface.</p>
+<p><strong>Arguments:</strong></p>
+<ul>
+<li><code>problem</code> – The problem to be solved.</li>
+<li><code>model</code> – The neural network model.</li>
+<li><code>optimizer</code> – Defaults to <code>torch.optim.Adam</code> if not provided.</li>
+<li><code>scheduler</code> – Defaults to <code>torch.optim.lr_scheduler.ConstantLR</code>.</li>
+<li><code>weighting</code> – Optional loss weighting schema., see <a href="https://mathlab.github.io/PINA/_rst/_code.html#losses-and-weightings">here</a>. We weight already for you!</li>
+<li><code>use_lt</code> – Whether to use LabelTensors as input.</li>
+</ul>
+<hr/>
+<h3 id="2.-MultiSolverInterface">2. <a href="https://mathlab.github.io/PINA/_rst/solver/multi_solver_interface.html"><code>MultiSolverInterface</code></a><a class="anchor-link" href="#2.-MultiSolverInterface">¶</a></h3><p>This is the abstract base class for solvers involving <strong>multiple models</strong>, such as in GAN architectures or ensemble training strategies. All multi-model solvers (e.g., <code>DeepEnsemblePINN</code>, <code>GAROM</code>) inherit from this interface.</p>
+<p><strong>Arguments:</strong></p>
+<ul>
+<li><code>problem</code> – The problem to be solved.</li>
+<li><code>models</code> – The model or models used for training.</li>
+<li><code>optimizers</code> – Defaults to <code>torch.optim.Adam</code>.</li>
+<li><code>schedulers</code> – Defaults to <code>torch.optim.lr_scheduler.ConstantLR</code>.</li>
+<li><code>weightings</code> – Optional loss weighting schema, see <a href="https://mathlab.github.io/PINA/_rst/_code.html#losses-and-weightings">here</a>. We weight already for you!</li>
+<li><code>use_lt</code> – Whether to use LabelTensors as input.</li>
+</ul>
+<hr/>
+<p>These base classes define the structure and behavior of solvers in PINA, allowing you to create customized training strategies while leveraging PyTorch Lightning's features under the hood.</p>
+<p>These classes are used to define the backbone, i.e. setting the problem, the model(s), the optimizer(s) and scheduler(s), but miss a key component the <code>optimization_cycle</code> method.</p>
+<h2 id="Optimization-Cycle">Optimization Cycle<a class="anchor-link" href="#Optimization-Cycle">¶</a></h2><p>The <code>optimization_cycle</code> method is the core function responsible for computing losses for <strong>all conditions</strong> in a given training batch. Each condition (e.g. initial condition, boundary condition, PDE residual) contributes its own loss, which is tracked and returned in a dictionary. This method should return a dictionary mapping <strong>condition names</strong> to their respective <strong>scalar loss values</strong>.</p>
+<p>For supervised learning tasks, where each condition consists of an input-target pair, for example, the <code>optimization_cycle</code> may look like this:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">optimization_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The optimization cycle for Supervised solvers.</span>
+<span class="sd">    Computes loss for each condition in the batch.</span>
+<span class="sd">    """</span>
+    <span class="n">condition_loss</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">condition_name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+        <span class="n">condition_loss</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_data</span><span class="p">(</span>
+            <span class="nb">input</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"input"</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"target"</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">condition_loss</span>
+</pre></div>
+<p>In PINA, a <strong>batch</strong> is structured as a list of tuples, where each tuple corresponds to a specific training condition. Each tuple contains:</p>
+<ul>
+<li>The <strong>name of the condition</strong></li>
+<li>A <strong>dictionary of data</strong> associated with that condition</li>
+</ul>
+<p>for example:</p>
+<div class="highlight"><pre><span></span><span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"condition1"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"input"</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="o">...</span><span class="p">}),</span>
+    <span class="p">(</span><span class="s2">"condition2"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"input"</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">"equation"</span><span class="p">:</span> <span class="o">...</span><span class="p">}),</span>
+    <span class="p">(</span><span class="s2">"condition3"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"input"</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="o">...</span><span class="p">}),</span>
+<span class="p">]</span>
+</pre></div>
+<p>Fortunately, you don't need to implement the <code>optimization_cycle</code> yourself in most cases — PINA already provides default implementations tailored to common solver types. These implementations are available through the solver interfaces and cover various training strategies.</p>
+<ol>
+<li><p><a href="https://mathlab.github.io/PINA/_rst/solver/physics_informed_solver/pinn_interface.html"><code>PINNInterface</code></a><br/>
+Implements the optimization cycle for <strong>physics-based solvers</strong> (e.g., PDE residual minimization) as well as other useful methods to compute PDE residuals.<br/>
+➤ <a href="https://mathlab.github.io/PINA/_rst/solver/physics_informed_solver/pinn_interface.html#pina.solver.physics_informed_solver.pinn_interface.PINNInterface.optimization_cycle">View method</a></p>
+</li>
+<li><p><a href="https://mathlab.github.io/PINA/_rst/solver/supervised_solver/supervised_solver_interface.html"><code>SupervisedSolverInterface</code></a><br/>
+Defines the optimization cycle for <strong>supervised learning tasks</strong>, including traditional regression and classification.<br/>
+➤ <a href="https://mathlab.github.io/PINA/_rst/solver/supervised_solver/supervised_solver_interface.html#pina.solver.supervised_solver.supervised_solver_interface.SupervisedSolverInterface.optimization_cycle">View method</a></p>
+</li>
+<li><p><a href="https://mathlab.github.io/PINA/_rst/solver/ensemble_solver/ensemble_solver_interface.html"><code>DeepEnsembleSolverInterface</code></a><br/>
+Provides the optimization logic for <strong>deep ensemble methods</strong>, commonly used for uncertainty quantification or robustness.<br/>
+➤ <a href="https://mathlab.github.io/PINA/_rst/solver/ensemble_solver/ensemble_solver_interface.html#pina.solver.ensemble_solver.ensemble_solver_interface.DeepEnsembleSolverInterface.optimization_cycle">View method</a></p>
+</li>
+</ol>
+<p>These ready-to-use implementations ensure that your solvers are properly structured and compatible with PINA’s training workflow. You can also inherit and override them to fit more specialized needs. They only require, the following arguments:
+<strong>Arguments:</strong></p>
+<ul>
+<li><code>problem</code> – The problem to be solved.</li>
+<li><code>loss</code> - The loss to be minimized</li>
+<li><code>weightings</code> – Optional loss weighting schema.</li>
+<li><code>use_lt</code> – Whether to use LabelTensors as input.</li>
+</ul>
+<h2 id="Structure-a-Solver-with-Multiple-Inheritance:">Structure a Solver with Multiple Inheritance:<a class="anchor-link" href="#Structure-a-Solver-with-Multiple-Inheritance:">¶</a></h2><p>Thanks to PINA’s modular design, creating a custom solver is straightforward using <strong>multiple inheritance</strong>. You can combine different interfaces to define both the <strong>optimization logic</strong> and the <strong>model structure</strong>.</p>
+<ul>
+<li><p><strong><code>PINN</code> Solver</strong></p>
+<ul>
+<li>Inherits from:<ul>
+<li><a href="https://mathlab.github.io/PINA/_rst/solver/physics_informed_solver/pinn_interface.html"><code>PINNInterface</code></a> → physics-based optimization loop</li>
+<li><a href="https://mathlab.github.io/PINA/_rst/solver/solver_interface.html"><code>SingleSolverInterface</code></a> → training a single model</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong><code>SupervisedSolver</code></strong></p>
+<ul>
+<li>Inherits from:<ul>
+<li><a href="https://mathlab.github.io/PINA/_rst/solver/supervised_solver/supervised_solver_interface.html"><code>SupervisedSolverInterface</code></a> → data-driven optimization loop</li>
+<li><a href="https://mathlab.github.io/PINA/_rst/solver/solver_interface.html"><code>SingleSolverInterface</code></a> → training a single model</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong><code>GAROM</code></strong> (a variant of GAN)</p>
+<ul>
+<li>Inherits from:<ul>
+<li><a href="https://mathlab.github.io/PINA/_rst/solver/supervised_solver/supervised_solver_interface.html"><code>SupervisedSolverInterface</code></a> → data-driven optimization loop</li>
+<li><a href="https://mathlab.github.io/PINA/_rst/solver/multi_solver_interface.html"><code>MultiSolverInterface</code></a> → training multiple models (e.g., generator and discriminator)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>This structure promotes <strong>code reuse</strong> and <strong>extensibility</strong>, allowing you to quickly prototype new solver strategies by reusing core training and optimization logic.</p>
+<h2 id="Let's-try-to-build-some-solvers!">Let's try to build some solvers!<a class="anchor-link" href="#Let's-try-to-build-some-solvers!">¶</a></h2><p>We will now start building a simple supervised solver in PINA. Let's first import useful modules!</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=0981f1e9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7553,31 +7680,37 @@ $$</p>
 <span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
     <span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"pina-mathlab[tutorial]"</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="c1"># useful imports</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina</span><span class="w"> </span><span class="kn">import</span> <span class="n">Condition</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpatialProblem</span><span class="p">,</span> <span class="n">TimeDependentProblem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.equation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Equation</span><span class="p">,</span> <span class="n">FixedValue</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.domain</span><span class="w"> </span><span class="kn">import</span> <span class="n">CartesianDomain</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">grad</span><span class="p">,</span> <span class="n">fast_grad</span><span class="p">,</span> <span class="n">laplacian</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina</span><span class="w"> </span><span class="kn">import</span> <span class="n">Trainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina.solver</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleSolverInterface</span><span class="p">,</span> <span class="n">SupervisedSolverInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeedForward</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina.problem.zoo</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupervisedProblem</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7b91de38">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Let's begin by defining the Burgers equation and its initial condition as Python functions. These functions will take the model's <code>input</code> (spatial and temporal coordinates) and <code>output</code> (predicted solution) as arguments. The goal is to compute the residuals for the Burgers equation, which we will minimize during training.</p>
+<p>Since we are using only one model for this task, we will inherit from two base classes:</p>
+<ul>
+<li><code>SingleSolverInterface</code>: This ensures we are working with a single model.</li>
+<li><code>SupervisedSolverInterface</code>: This allows us to use supervised learning strategies for training the model.</li>
+</ul>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=014bbd86">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7585,49 +7718,45 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># define the burger equation</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">burger_equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-    <span class="n">du</span> <span class="o">=</span> <span class="n">fast_grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">"u"</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">])</span>
-    <span class="n">ddu</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">du</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">"dudx"</span><span class="p">])</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">du</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"dudt"</span><span class="p">])</span>
-        <span class="o">+</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">*</span> <span class="n">du</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"dudx"</span><span class="p">])</span>
-        <span class="o">-</span> <span class="p">(</span><span class="mf">0.01</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">ddu</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"ddudxdx"</span><span class="p">])</span>
-    <span class="p">)</span>
-
-
-<span class="c1"># define initial condition</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">initial_condition</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-    <span class="n">u_expected</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">input_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"x"</span><span class="p">]))</span>
-    <span class="k">return</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">-</span> <span class="n">u_expected</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyFirstSolver</span><span class="p">(</span><span class="n">SupervisedSolverInterface</span><span class="p">,</span> <span class="n">SingleSolverInterface</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">loss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">weighting</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_lt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+            <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+            <span class="n">weighting</span><span class="o">=</span><span class="n">weighting</span><span class="p">,</span>
+            <span class="n">use_lt</span><span class="o">=</span><span class="n">use_lt</span><span class="p">,</span>
+        <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b1b1e4c4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Above we use the <code>grad</code> operator from <code>pina.operator</code> to compute the gradient. In PINA each differential operator takes the following inputs:</p>
-<ul>
-<li><code>output_</code>: A tensor on which the operator is applied.</li>
-<li><code>input_</code>: A tensor with respect to which the operator is computed.</li>
-<li><code>components</code>: The names of the output variables for which the operator is evaluated.</li>
-<li><code>d</code>: The names of the variables with respect to which the operator is computed.</li>
-</ul>
-<p>Each differential operator has its <strong>fast</strong> version, which performs no internal checks on input and output tensors. For these methods, the user is always required to specify both <code>components</code> and <code>d</code> as lists of strings.</p>
-<p>Let's define now the problem!</p>
-<blockquote>
-<p><strong>👉 Do you want to learn more on Problems? Check the dedicated <a href="https://mathlab.github.io/PINA/tutorial16/tutorial.html">tutorial</a> to learn how to build a Problem from scratch.</strong></p>
-</blockquote>
+<p>By default, Python follows a specific method resolution order (MRO) when a class inherits from multiple parent classes. This means that the initialization (<code>__init__</code>) method is called based on the order of inheritance.</p>
+<p>Since we inherit from <code>SupervisedSolverInterface</code> first, Python will call the <code>__init__</code> method from <code>SupervisedSolverInterface</code> (initialize <code>problem</code>, <code>loss</code>, <code>weighting</code> and <code>use_lt</code>) before calling the <code>__init__</code> method from <code>SingleSolverInterface</code> (initialize <code>model</code>, <code>optimizer</code>, <code>scheduler</code>). This allows us to customize the initialization process for our custom solver.</p>
+<p>We will learn a very simple problem, try to learn $y=\sin(x)$.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6f25d3a6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7635,67 +7764,45 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">TimeDependentProblem</span><span class="p">,</span> <span class="n">SpatialProblem</span><span class="p">):</span>
-
-    <span class="c1"># assign output/ spatial and temporal variables</span>
-    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"u"</span><span class="p">]</span>
-    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="n">temporal_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-    <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-    <span class="p">}</span>
-    <span class="c1"># problem condition statement</span>
-    <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond1"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond2"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"time_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"phys_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">burger_equation</span><span class="p">)</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># get the data</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="c1"># build the problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">SupervisedProblem</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="c1"># build the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">FeedForward</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9f7551bf">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The <code>Equation</code> class takes as input a function (in this case it happens twice, with <code>initial_condition</code> and <code>burger_equation</code>) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the <code>Equation</code> class with such a given input is passed as a parameter in the specified <code>Condition</code>.</p>
-<p>The <code>FixedValue</code> class takes as input a value of the same dimensions as the output functions. This class can be used to enforce a fixed value for a specific condition, such as Dirichlet boundary conditions, as demonstrated in our example.</p>
-<p>Once the equations are set as above in the problem conditions, the PINN solver will aim to minimize the residuals described in each equation during the training phase.</p>
-<h3 id="Available-classes-of-equations:">Available classes of equations:<a class="anchor-link" href="#Available-classes-of-equations:">¶</a></h3><ul>
-<li><code>FixedGradient</code> and <code>FixedFlux</code>: These work analogously to the <code>FixedValue</code> class, where we can enforce a constant value on the gradient or the divergence of the solution, respectively.</li>
-<li><code>Laplace</code>: This class can be used to enforce that the Laplacian of the solution is zero.</li>
-<li><code>SystemEquation</code>: This class allows you to enforce multiple conditions on the same subdomain by passing a list of residual equations defined in the problem.</li>
-</ul>
-<h2 id="Defining-a-new-Equation-class">Defining a new Equation class<a class="anchor-link" href="#Defining-a-new-Equation-class">¶</a></h2><p><code>Equation</code> classes can also be inherited to define a new class. For example, we can define a new class <code>Burgers1D</code> to represent the Burgers equation. During the class call, we can pass the viscosity parameter $\nu$:</p>
-<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
+<p>If we now try to initialize the solver <code>MyFirstSolver</code> we will get the following error:</p>
+<div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">41</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">MyFirstSolver</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">equation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-        <span class="o">...</span>
+<span class="ne">TypeError</span><span class="p">:</span> <span class="n">Can</span><span class="s1">'t instantiate abstract class MyFirstSolver with abstract method loss_data</span>
 </pre></div>
-<p>In this case, the <code>Burgers1D</code> class will inherit from the <code>Equation</code> class and compute the residual of the Burgers equation. The viscosity parameter $\nu$ is passed when instantiating the class and used in the residual calculation. Let's see it in more details:</p>
+<h3 id="Data-and-Physics-Loss">Data and Physics Loss<a class="anchor-link" href="#Data-and-Physics-Loss">¶</a></h3><p>The error above is because in PINA, all solvers must specify how to compute the loss during training. There are two main types of losses that can be computed, depending on the nature of the problem:</p>
+<ol>
+<li><p><strong><code>loss_data</code></strong>: Computes the <strong>data loss</strong> between the model's output and the true solution. This is typically used in <strong>supervised learning</strong> setups, where we have ground truth data to compare the model's predictions. It expects some <code>input</code> (tensor, graph, ...) and a <code>target</code> (tensor, graph, ...)</p>
+</li>
+<li><p><strong><code>loss_phys</code></strong>: Computes the <strong>physics loss</strong> for <strong>physics-informed solvers</strong> (PINNs). This loss is based on the residuals of the governing equations that model physical systems, enforcing the equations during training. It expects some <code>samples</code> (<code>LabelTensor</code>) and an <code>equation</code> (<code>Equation</code>)</p>
+</li>
+</ol>
+<p>Therefore our implementation becomes:</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=336e8060">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7703,102 +7810,187 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1DEquation</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyFirstSolver</span><span class="p">(</span><span class="n">SupervisedSolverInterface</span><span class="p">,</span> <span class="n">SingleSolverInterface</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">loss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">weighting</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_lt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+            <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+            <span class="n">weighting</span><span class="o">=</span><span class="n">weighting</span><span class="p">,</span>
+            <span class="n">use_lt</span><span class="o">=</span><span class="n">use_lt</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Burgers1D class. This class can be</span>
-<span class="sd">        used to enforce the solution u to solve the viscous Burgers 1D Equation.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loss_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="c1"># self.loss stores the loss passed in the init</span>
+        <span class="n">network_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">network_output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
 
-<span class="sd">        :param torch.float32 nu: the viscosity coefficient. Default value is set to 0.</span>
-<span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"t"</span><span class="p">)</span>
-                <span class="o">+</span> <span class="n">output_</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
-                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">*</span> <span class="n">laplacian</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
-            <span class="p">)</span>
+<span class="c1"># initialize (we use plain tensors!)</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">MyFirstSolver</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">use_lt</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span>
+<span class="c1"># simple training</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">solver</span><span class="p">,</span> <span class="n">max_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">train_size</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">accelerator</span><span class="o">=</span><span class="s2">"cpu"</span>
+<span class="p">)</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">test</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>You are using the plain ModelCheckpoint callback. Consider using LitModelCheckpoint which with seamless uploading to Model registry.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>GPU available: False, used: False
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>TPU available: False, using: 0 TPU cores
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>HPU available: False, using: 0 HPUs
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+  | Name         | Type       | Params | Mode 
+----------------------------------------------------
+0 | _pina_models | ModuleList | 481    | train
+1 | _loss_fn     | MSELoss    | 0      | train
+----------------------------------------------------
+481       Trainable params
+0         Non-trainable params
+481       Total params
+0.002     Total estimated model params size (MB)
+9         Modules in train mode
+0         Modules in eval mode
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jupyter-widgets jp-OutputArea-output" id="8f0dcfc6-d4a4-42ac-b9bd-d327121cbad4" tabindex="0">
+<script type="text/javascript">
+var element = document.getElementById('8f0dcfc6-d4a4-42ac-b9bd-d327121cbad4');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "dddcbfc5534e40438189dde793c16739"}
+</script>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>`Trainer.fit` stopped: `max_epochs=500` reached.
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jupyter-widgets jp-OutputArea-output" id="ac94aa2a-3173-44f5-a367-c81bfd2d0d12" tabindex="0">
+<script type="text/javascript">
+var element = document.getElementById('ac94aa2a-3173-44f5-a367-c81bfd2d0d12');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "6b37f119c79b4ffc9f2791feeff8023e"}
+</script>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+       Test metric             DataLoader 0
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        test_loss           0.00418816227465868
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9d346aac">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Now we can just pass the above class as input for the last condition, setting $\nu= \frac{0.01}{\pi}$:</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">TimeDependentProblem</span><span class="p">,</span> <span class="n">SpatialProblem</span><span class="p">):</span>
-
-    <span class="c1"># define initial condition</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">initial_condition</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-        <span class="n">u_expected</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">input_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"x"</span><span class="p">]))</span>
-        <span class="k">return</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">-</span> <span class="n">u_expected</span>
-
-    <span class="c1"># assign output/ spatial and temporal variables</span>
-    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"u"</span><span class="p">]</span>
-    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="n">temporal_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-    <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-    <span class="p">}</span>
-    <span class="c1"># problem condition statement</span>
-    <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond1"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond2"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"time_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"phys_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Burgers1DEquation</span><span class="p">(</span><span class="n">nu</span><span class="o">=</span><span class="mf">0.01</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="What's-Next?">What's Next?<a class="anchor-link" href="#What's-Next?">¶</a></h2><p>Congratulations on completing the <code>Equation</code> class tutorial of <strong>PINA</strong>! As we've seen, you can build new classes that inherit from <code>Equation</code> to store more complex equations, such as the 1D Burgers equation, by simply passing the characteristic coefficients of the problem.</p>
-<p>From here, you can:</p>
+<h2 id="A-Summary-on-Solvers">A Summary on Solvers<a class="anchor-link" href="#A-Summary-on-Solvers">¶</a></h2><p>Solvers in PINA play a critical role in training and optimizing machine learning models, especially when working with complex problems like physics-informed neural networks (PINNs) or standard supervised learning. Here’s a quick recap of the key concepts we've covered:</p>
+<ol>
+<li><p><strong>Solver Interfaces</strong>:</p>
 <ul>
-<li><strong>Define Additional Complex Equation Classes</strong>: Create your own equation classes, such as <code>SchrodingerEquation</code>, <code>NavierStokesEquation</code>, etc.</li>
-<li><strong>Define More <code>FixedOperator</code> Classes</strong>: Implement operators like <code>FixedCurl</code>, <code>FixedDivergence</code>, and others for more advanced simulations.</li>
-<li><strong>Integrate Custom Equations and Operators</strong>: Combine your custom equations and operators into larger systems for more complex simulations.</li>
-<li><strong>and many more!</strong>: Explore for example different residual minimization techniques to improve the performance and accuracy of your models.</li>
+<li><strong><code>SingleSolverInterface</code></strong>: For solvers using one model (e.g., a standard supervised solver or a single physics-informed model).</li>
+<li><strong><code>MultiSolverInterface</code></strong>: For solvers using multiple models (e.g., Generative Adversarial Networks (GANs)).</li>
 </ul>
+</li>
+<li><p><strong>Loss Functions</strong>:</p>
+<ul>
+<li><strong><code>loss_data</code></strong>: Computes the loss for supervised solvers, typically comparing the model's predictions to the true targets.</li>
+<li><strong><code>loss_phys</code></strong>: Computes the physics loss for PINNs, typically using the residuals of a physical equation to enforce consistency with the physics of the system.</li>
+</ul>
+</li>
+<li><p><strong>Custom Solver Implementation</strong>:</p>
+<ul>
+<li>You can create custom solvers by inheriting from base classes such as <code>SingleSolverInterface</code>. The <strong><code>optimization_cycle</code></strong> method must be implemented to define how to compute the loss for each batch.</li>
+<li><code>SupervisedSolverInterface</code>, <code>PINNInterface</code> already implement the <code>optimization_cycle</code> for you!</li>
+</ul>
+</li>
+</ol>
+<p>By understanding and implementing solvers in PINA, you can build flexible, scalable models that can be optimized both with traditional supervised learning techniques and more specialized, physics-based methods.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=487c1d47">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="What's-Next?">What's Next?<a class="anchor-link" href="#What's-Next?">¶</a></h2><p>Congratulations on completing the tutorial on solver classes! Now that you have a solid foundation, here are a few directions you can explore:</p>
+<ol>
+<li><p><strong>Physics Solvers</strong>: Try to implement your own physics-based solver. Can you do it? This will involve creating a custom loss function that enforces the physics of a given problem insied <code>loss_phys</code>.</p>
+</li>
+<li><p><strong>Multi-Model Solvers</strong>: Take it to the next level by exploring multi-model solvers, such as GANs or ensemble-based solvers. You could implement and train models that combine the strengths of multiple neural networks.</p>
+</li>
+<li><p><strong>...and many more!</strong>: There are countless directions to further explore, try to look at our <code>solver</code> for example!</p>
+</li>
+</ol>
 <p>For more resources and tutorials, check out the <a href="https://mathlab.github.io/PINA/">PINA Documentation</a>.</p>
 </div>
 </div>
@@ -7806,4 +7998,7 @@ $$</p>
 </div>
 </main>
 </body>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"2bce811d3a4d43689d75f345fdaee815": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets\/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "7d4d41abd0fa49468eee5da3af1e3c2f": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "cfed830fbe324e008429a7f28f735e44": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets\/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_2bce811d3a4d43689d75f345fdaee815", "max": 1.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_7d4d41abd0fa49468eee5da3af1e3c2f", "tabbable": null, "tooltip": null, "value": 1.0}}, "2ee6b80f689d42a39c7a9ac45ba99a19": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets\/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "65cfa2741cc94559998a4d108169a786": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "a7be8366839f4ca8a8ef26b06a39d740": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets\/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_2ee6b80f689d42a39c7a9ac45ba99a19", "placeholder": "\u200b", "style": "IPY_MODEL_65cfa2741cc94559998a4d108169a786", "tabbable": null, "tooltip": null, "value": "Epoch\u2007499:\u2007100%"}}, "d8d97857399446bd8fe5bcc7c21d44e0": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets\/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "3512aac57b574c93814f7a8fbec433b3": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "7aeb71fbbc00434297d71b0659aa8bbf": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets\/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_d8d97857399446bd8fe5bcc7c21d44e0", "placeholder": "\u200b", "style": "IPY_MODEL_3512aac57b574c93814f7a8fbec433b3", "tabbable": null, "tooltip": null, "value": "\u20071\/1\u2007[00:00&lt;00:00,\u200793.56it\/s,\u2007v_num=0,\u2007data_loss=0.0055,\u2007train_loss=0.0055]"}}, "b6f345e52f424b5bb1a5d81ed8be7dd8": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets\/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "dddcbfc5534e40438189dde793c16739": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets\/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_a7be8366839f4ca8a8ef26b06a39d740", "IPY_MODEL_cfed830fbe324e008429a7f28f735e44", "IPY_MODEL_7aeb71fbbc00434297d71b0659aa8bbf"], "layout": "IPY_MODEL_b6f345e52f424b5bb1a5d81ed8be7dd8", "tabbable": null, "tooltip": null}}, "0120a48ac5324170853271ebd08805d0": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets\/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e2cfeed2736b44dc9aa0264a87df3fc4": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "4eb3f9a646364cf381b9f5dd20ce3778": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets\/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_0120a48ac5324170853271ebd08805d0", "max": 1.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_e2cfeed2736b44dc9aa0264a87df3fc4", "tabbable": null, "tooltip": null, "value": 1.0}}, "2c0554f8839640ce90c0ba1630dc9160": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets\/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "818284bd8aac42ba843e0b99bc69c1a6": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "d86da2436d364bf9ba23ace4a61f1de3": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets\/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_2c0554f8839640ce90c0ba1630dc9160", "placeholder": "\u200b", "style": "IPY_MODEL_818284bd8aac42ba843e0b99bc69c1a6", "tabbable": null, "tooltip": null, "value": "Testing\u2007DataLoader\u20070:\u2007100%"}}, "9210e83d431f41918d81e164969521d9": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets\/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "98d89fa0b79e447fbba0e588dfaf2b81": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "efc88c88328e49c7820c7b9f11da8d02": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets\/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_9210e83d431f41918d81e164969521d9", "placeholder": "\u200b", "style": "IPY_MODEL_98d89fa0b79e447fbba0e588dfaf2b81", "tabbable": null, "tooltip": null, "value": "\u20071\/1\u2007[00:00&lt;00:00,\u2007179.95it\/s]"}}, "e2ce3f02820c412db6d4370aeaa7c694": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets\/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets\/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets\/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "6b37f119c79b4ffc9f2791feeff8023e": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets\/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets\/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets\/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_d86da2436d364bf9ba23ace4a61f1de3", "IPY_MODEL_4eb3f9a646364cf381b9f5dd20ce3778", "IPY_MODEL_efc88c88328e49c7820c7b9f11da8d02"], "layout": "IPY_MODEL_e2ce3f02820c412db6d4370aeaa7c694", "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}
+</script>
 </html>
