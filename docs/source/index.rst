@@ -1,6 +1,6 @@
 :html_theme.sidebar_secondary.remove:
 
-Welcome to PINA’s documentation!
+Welcome to PINA's documentation!
 =======================================
 
 .. grid:: 6
@@ -41,21 +41,22 @@ Welcome to PINA’s documentation!
   .. grid-item::
     :columns: 12 12 8 8
 
-    Physics Informed Neural network for Advanced modeling (**PINA**) is
-    an open-source Python library providing an intuitive interface for
-    solving differential equations using PINNs, NOs or both together.
+    **PINA** is an open-source Python library designed to simplify and accelerate 
+    the development of Scientific Machine Learning (SciML) solutions.
+    Built on top of `PyTorch <https://pytorch.org/>`_, `PyTorch Lightning <https://lightning.ai/docs/pytorch/stable/>`_, 
+    and `PyTorch Geometric <https://pytorch-geometric.readthedocs.io/en/latest/>`_, 
+    PINA provides an intuitive framework for defining, experimenting with, 
+    and solving complex problems using Neural Networks, 
+    Physics-Informed Neural Networks (PINNs), Neural Operators, and more.
 
-    Based on `PyTorch <https://pytorch.org/>`_, `PyTorchLightning <https://lightning.ai/docs/pytorch/stable/>`_, and `PyG <https://pytorch-geometric.readthedocs.io/en/latest/>`_, **PINA** offers a simple and intuitive way to formalize a specific (differential) problem
-    and solve it using neural networks . The approximated solution of a differential equation
-    can be implemented using PINA in a few lines of code thanks to the intuitive and user-friendly  interface.        
+    - **Modular Architecture**: Designed with modularity in mind and relying on powerful yet composable abstractions, PINA allows users to easily plug, replace, or extend components, making experimentation and customization straightforward.
 
- 
+    - **Scalable Performance**: With native support for multi-device training, PINA handles large datasets efficiently, offering performance close to hand-crafted implementations with minimal overhead.
+
+    - **Highly Flexible**: Whether you're looking for full automation or granular control, PINA adapts to your workflow. High-level abstractions simplify model definition, while expert users can dive deep to fine-tune every aspect of the training and inference process.
 
     For further information or questions about **PINA** contact us by email. 
     
-
-   
-
   .. grid-item-card:: Contents
     :class-title: sd-fs-5
     :class-body: sd-pl-4
@@ -63,13 +64,13 @@ Welcome to PINA’s documentation!
     .. toctree::
       :maxdepth: 1
 
-      API <_rst/_code>
-      Tutorial <_tutorial>
       Installing <_installation>
-      Team & Foundings <_team.rst>
-      Contributing <_contributing>
-      License <_LICENSE.rst>
+      API <_rst/_code>
+      Tutorials <_tutorial>
       Cite PINA <_cite.rst>
+      Contributing <_contributing>
+      Team & Foundings <_team.rst>
+      License <_LICENSE.rst>
 
 
 

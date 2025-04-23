@@ -1,7 +1,7 @@
 Installation
 ============
 
-**PINA** requires requires `numpy`, `matplotlib`, `torch`, `lightning`, `sphinx` (for the documentation) and `pytest` (for local test). The code is tested for Python 3, while compatibility of Python 2 is not guaranteed anymore. It can be installed using `pip` or directly from the source code.
+**PINA** requires requires `torch`, `lightning`, `torch_geometric` and `matplotlib`. 
 
 Installing via PIP
 __________________
@@ -32,3 +32,21 @@ To install the package just type:
 .. code-block:: bash
 
     $ pip install -e .
+
+
+Install with extra packages
+____________________________
+
+To install extra dependencies required to run tests or tutorials directories, please use the following command:
+
+.. code-block:: bash
+
+    $ pip install "pina-mathlab[extras]" 
+
+
+Available extras include:
+
+* `dev` for development purpuses, use this if you want to Contribute.
+* `test` for running test locally.
+* `doc` for building documentation locally.
+* `tutorial` for running tutorials
