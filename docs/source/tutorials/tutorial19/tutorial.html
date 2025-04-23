@@ -7511,31 +7511,23 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6f71ca5c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Tutorial:-Introduction-to-PINA-Equation-class">Tutorial: Introduction to PINA <code>Equation</code> class<a class="anchor-link" href="#Tutorial:-Introduction-to-PINA-Equation-class">¶</a></h1><p><a href="https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial12/tutorial.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
-<p>In this tutorial, we will explore how to use the <code>Equation</code> class in <strong>PINA</strong>. We will focus on how to leverage this class, along with its inherited subclasses, to enforce residual minimization in <strong>Physics-Informed Neural Networks (PINNs)</strong>.</p>
-<p>By the end of this guide, you'll understand how to integrate physical laws and constraints directly into your model training, ensuring that the solution adheres to the underlying differential equations.</p>
-<h2 id="Example:-The-Burgers-1D-equation">Example: The Burgers 1D equation<a class="anchor-link" href="#Example:-The-Burgers-1D-equation">¶</a></h2><p>We will start implementing the viscous Burgers 1D problem Class, described as follows:</p>
-<p>$$
-\begin{equation}
-\begin{cases}
-\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} &amp;= \nu \frac{\partial^2 u}{ \partial x^2}, \quad x\in(0,1), \quad t&gt;0\\
-u(x,0) &amp;= -\sin (\pi x), \quad x\in(0,1)\\
-u(x,t) &amp;= 0, \quad x = \pm 1, \quad t&gt;0\\
-\end{cases}
-\end{equation}
-$$</p>
-<p>where we set $ \nu = \frac{0.01}{\pi}$.</p>
-<p>In the class that models this problem we will see in action the <code>Equation</code> class and one of its inherited classes, the <code>FixedValue</code> class.</p>
+<h1 id="Tutorial:-Data-structure-for-SciML:-Tensor,-LabelTensor,-Data-and-Graph">Tutorial: Data structure for SciML: <code>Tensor</code>, <code>LabelTensor</code>, <code>Data</code> and <code>Graph</code><a class="anchor-link" href="#Tutorial:-Data-structure-for-SciML:-Tensor,-LabelTensor,-Data-and-Graph">¶</a></h1><p><a href="https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial19/tutorial.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
+<p>In this tutorial, we’ll quickly go through the basics of Data Structures for Scientific Machine Learning, convering:</p>
+<ol>
+<li><strong>PyTorch Tensors</strong> / <strong>PINA LabelTensors</strong></li>
+<li><strong>PyTorch Geometric Data</strong> / <strong>PINA Graph</strong></li>
+</ol>
+<p>first let's import the data structures we will use!</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=0981f1e9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7553,31 +7545,31 @@ $$</p>
 <span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
     <span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"pina-mathlab[tutorial]"</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
 
-<span class="c1"># useful imports</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina</span><span class="w"> </span><span class="kn">import</span> <span class="n">Condition</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpatialProblem</span><span class="p">,</span> <span class="n">TimeDependentProblem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.equation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Equation</span><span class="p">,</span> <span class="n">FixedValue</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.domain</span><span class="w"> </span><span class="kn">import</span> <span class="n">CartesianDomain</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pina.operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">grad</span><span class="p">,</span> <span class="n">fast_grad</span><span class="p">,</span> <span class="n">laplacian</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pina</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelTensor</span><span class="p">,</span> <span class="n">Graph</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8afae117">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Let's begin by defining the Burgers equation and its initial condition as Python functions. These functions will take the model's <code>input</code> (spatial and temporal coordinates) and <code>output</code> (predicted solution) as arguments. The goal is to compute the residuals for the Burgers equation, which we will minimize during training.</p>
+<h2 id="PyTorch-Tensors">PyTorch Tensors<a class="anchor-link" href="#PyTorch-Tensors">¶</a></h2><p>A <strong>tensor</strong> is a multi-dimensional matrix used for storing and manipulating data in PyTorch. It's the basic building block for all computations in PyTorch, including deep learning models.</p>
+<p>You can create a tensor in several ways:</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6558c37a">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7585,49 +7577,57 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># define the burger equation</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">burger_equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-    <span class="n">du</span> <span class="o">=</span> <span class="n">fast_grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">"u"</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">])</span>
-    <span class="n">ddu</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">du</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">"dudx"</span><span class="p">])</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">du</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"dudt"</span><span class="p">])</span>
-        <span class="o">+</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">*</span> <span class="n">du</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"dudx"</span><span class="p">])</span>
-        <span class="o">-</span> <span class="p">(</span><span class="mf">0.01</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">ddu</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"ddudxdx"</span><span class="p">])</span>
-    <span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Creating a tensor from a list</span>
+<span class="n">tensor_1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tensor_1</span><span class="p">)</span>
 
+<span class="c1"># Creating a tensor of zeros</span>
+<span class="n">tensor_zeros</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># 2x3 tensor of zeros</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tensor_zeros</span><span class="p">)</span>
 
-<span class="c1"># define initial condition</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">initial_condition</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-    <span class="n">u_expected</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">input_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"x"</span><span class="p">]))</span>
-    <span class="k">return</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">-</span> <span class="n">u_expected</span>
+<span class="c1"># Creating a tensor of ones</span>
+<span class="n">tensor_ones</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># 2x3 tensor of ones</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tensor_ones</span><span class="p">)</span>
+
+<span class="c1"># Creating a random tensor</span>
+<span class="n">tensor_random</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># 2x3 tensor with random values</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tensor_random</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>tensor([1, 2, 3, 4])
+tensor([[0., 0., 0.],
+        [0., 0., 0.]])
+tensor([[1., 1., 1.],
+        [1., 1., 1.]])
+tensor([[-0.1140, -0.9816, -1.1250],
+        [ 1.2169, -2.5511,  0.3167]])
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f015f61d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Above we use the <code>grad</code> operator from <code>pina.operator</code> to compute the gradient. In PINA each differential operator takes the following inputs:</p>
-<ul>
-<li><code>output_</code>: A tensor on which the operator is applied.</li>
-<li><code>input_</code>: A tensor with respect to which the operator is computed.</li>
-<li><code>components</code>: The names of the output variables for which the operator is evaluated.</li>
-<li><code>d</code>: The names of the variables with respect to which the operator is computed.</li>
-</ul>
-<p>Each differential operator has its <strong>fast</strong> version, which performs no internal checks on input and output tensors. For these methods, the user is always required to specify both <code>components</code> and <code>d</code> as lists of strings.</p>
-<p>Let's define now the problem!</p>
-<blockquote>
-<p><strong>👉 Do you want to learn more on Problems? Check the dedicated <a href="https://mathlab.github.io/PINA/tutorial16/tutorial.html">tutorial</a> to learn how to build a Problem from scratch.</strong></p>
-</blockquote>
+<h3 id="Basic-Tensor-Operations">Basic Tensor Operations<a class="anchor-link" href="#Basic-Tensor-Operations">¶</a></h3><p>Tensors support a variety of operations, such as element-wise arithmetic, matrix operations, and more:</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d5369bf3">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7635,67 +7635,31 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">TimeDependentProblem</span><span class="p">,</span> <span class="n">SpatialProblem</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Addition</span>
+<span class="n">sum_tensor</span> <span class="o">=</span> <span class="n">tensor_1</span> <span class="o">+</span> <span class="n">tensor_1</span>
 
-    <span class="c1"># assign output/ spatial and temporal variables</span>
-    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"u"</span><span class="p">]</span>
-    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="n">temporal_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="c1"># Matrix multiplication</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">tensor_zeros</span><span class="p">,</span> <span class="n">tensor_ones</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 
-    <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-    <span class="p">}</span>
-    <span class="c1"># problem condition statement</span>
-    <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond1"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond2"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"time_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"phys_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">burger_equation</span><span class="p">)</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
+<span class="c1"># Element-wise multiplication</span>
+<span class="n">elementwise_prod</span> <span class="o">=</span> <span class="n">tensor_1</span> <span class="o">*</span> <span class="n">tensor_1</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=619364cc">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The <code>Equation</code> class takes as input a function (in this case it happens twice, with <code>initial_condition</code> and <code>burger_equation</code>) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the <code>Equation</code> class with such a given input is passed as a parameter in the specified <code>Condition</code>.</p>
-<p>The <code>FixedValue</code> class takes as input a value of the same dimensions as the output functions. This class can be used to enforce a fixed value for a specific condition, such as Dirichlet boundary conditions, as demonstrated in our example.</p>
-<p>Once the equations are set as above in the problem conditions, the PINN solver will aim to minimize the residuals described in each equation during the training phase.</p>
-<h3 id="Available-classes-of-equations:">Available classes of equations:<a class="anchor-link" href="#Available-classes-of-equations:">¶</a></h3><ul>
-<li><code>FixedGradient</code> and <code>FixedFlux</code>: These work analogously to the <code>FixedValue</code> class, where we can enforce a constant value on the gradient or the divergence of the solution, respectively.</li>
-<li><code>Laplace</code>: This class can be used to enforce that the Laplacian of the solution is zero.</li>
-<li><code>SystemEquation</code>: This class allows you to enforce multiple conditions on the same subdomain by passing a list of residual equations defined in the problem.</li>
-</ul>
-<h2 id="Defining-a-new-Equation-class">Defining a new Equation class<a class="anchor-link" href="#Defining-a-new-Equation-class">¶</a></h2><p><code>Equation</code> classes can also be inherited to define a new class. For example, we can define a new class <code>Burgers1D</code> to represent the Burgers equation. During the class call, we can pass the viscosity parameter $\nu$:</p>
-<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">equation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-        <span class="o">...</span>
-</pre></div>
-<p>In this case, the <code>Burgers1D</code> class will inherit from the <code>Equation</code> class and compute the residual of the Burgers equation. The viscosity parameter $\nu$ is passed when instantiating the class and used in the residual calculation. Let's see it in more details:</p>
+<h3 id="Device-Management">Device Management<a class="anchor-link" href="#Device-Management">¶</a></h3><p>PyTorch allows you to move tensors to different devices (CPU or GPU). For instance:</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6b82839b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7703,42 +7667,39 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1DEquation</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Burgers1D class. This class can be</span>
-<span class="sd">        used to enforce the solution u to solve the viscous Burgers 1D Equation.</span>
-
-<span class="sd">        :param torch.float32 nu: the viscosity coefficient. Default value is set to 0.</span>
-<span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"t"</span><span class="p">)</span>
-                <span class="o">+</span> <span class="n">output_</span> <span class="o">*</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
-                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">*</span> <span class="n">laplacian</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">"x"</span><span class="p">)</span>
-            <span class="p">)</span>
-
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Move tensor to GPU</span>
+<span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+    <span class="n">tensor_gpu</span> <span class="o">=</span> <span class="n">tensor_1</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=75fd37ca">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Now we can just pass the above class as input for the last condition, setting $\nu= \frac{0.01}{\pi}$:</p>
+<p>To know more about PyTorch Tensors, see the dedicated tutorial done by the PyTorch team <a href="https://pytorch.org/tutorials/beginner/introyt/tensors_deeper_tutorial.html">here</a>.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6073dc6d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Label-Tensors">Label Tensors<a class="anchor-link" href="#Label-Tensors">¶</a></h2><p>In scientific machine learning, especially when working with <strong>Physics-Informed Neural Networks (PINNs)</strong>, handling tensors effectively is crucial. Often, we deal with many indices that represent physical quantities such as spatial and temporal coordinates, making it vital to ensure we use the correct indexing.</p>
+<p>For instance, in PINNs, if the wrong index is used to represent the coordinates of a physical domain, it could lead to incorrect calculations of derivatives, integrals, or residuals. This can significantly affect the accuracy and correctness of the model.</p>
+<h3 id="What-are-Label-Tensors?">What are Label Tensors?<a class="anchor-link" href="#What-are-Label-Tensors?">¶</a></h3><p><strong>Label Tensors</strong> are a specialized type of tensor used to keep track of indices that represent specific labels. Similar to torch tensor we can perform operation, but the slicing is simplified by using indeces:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=25e8353e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7746,59 +7707,522 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1D</span><span class="p">(</span><span class="n">TimeDependentProblem</span><span class="p">,</span> <span class="n">SpatialProblem</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># standard torch tensor</span>
+<span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="c1"># define initial condition</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">initial_condition</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
-        <span class="n">u_expected</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">input_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"x"</span><span class="p">]))</span>
-        <span class="k">return</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">"u"</span><span class="p">])</span> <span class="o">-</span> <span class="n">u_expected</span>
-
-    <span class="c1"># assign output/ spatial and temporal variables</span>
-    <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"u"</span><span class="p">]</span>
-    <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-    <span class="n">temporal_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-    <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">"x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"t"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
-    <span class="p">}</span>
-    <span class="c1"># problem condition statement</span>
-    <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"bound_cond1"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond1"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"bound_cond2"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"bound_cond2"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"time_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"time_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">initial_condition</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="s2">"phys_cond"</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">"phys_cond"</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Burgers1DEquation</span><span class="p">(</span><span class="n">nu</span><span class="o">=</span><span class="mf">0.01</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
+<span class="c1"># PINA LabelTensor</span>
+<span class="n">label_tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bb21b45c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="What's-Next?">What's Next?<a class="anchor-link" href="#What's-Next?">¶</a></h2><p>Congratulations on completing the <code>Equation</code> class tutorial of <strong>PINA</strong>! As we've seen, you can build new classes that inherit from <code>Equation</code> to store more complex equations, such as the 1D Burgers equation, by simply passing the characteristic coefficients of the problem.</p>
-<p>From here, you can:</p>
+<p>The label tensor is initialized by passing the tensor, and a set of labels. Specifically, the labels must match the following conditions:</p>
 <ul>
-<li><strong>Define Additional Complex Equation Classes</strong>: Create your own equation classes, such as <code>SchrodingerEquation</code>, <code>NavierStokesEquation</code>, etc.</li>
-<li><strong>Define More <code>FixedOperator</code> Classes</strong>: Implement operators like <code>FixedCurl</code>, <code>FixedDivergence</code>, and others for more advanced simulations.</li>
-<li><strong>Integrate Custom Equations and Operators</strong>: Combine your custom equations and operators into larger systems for more complex simulations.</li>
-<li><strong>and many more!</strong>: Explore for example different residual minimization techniques to improve the performance and accuracy of your models.</li>
+<li>At each dimension, the number of labels must match the size of the dimension.</li>
+<li>At each dimension, the labels must be unique.</li>
 </ul>
+<p>For example:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=0e9dc23e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># full labels</span>
+<span class="n">tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"space"</span><span class="p">,</span> <span class="s2">"dof"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">]}}</span>
+<span class="p">)</span>
+<span class="c1"># if you index the last column you can simply pass a list</span>
+<span class="n">tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=cfe2d8dd">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>You can access last column labels by <code>.labels</code> attribute, or using <code>.full_labels</code> to access all labels</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=235b92d4">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tensor</span><span class="o">.</span><span class="n">labels</span><span class="si">=}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tensor</span><span class="o">.</span><span class="n">full_labels</span><span class="si">=}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>tensor.labels=['a', 'b', 'c']
+tensor.full_labels={0: {'dof': range(0, 2000), 'name': 0}, 1: {'dof': ['a', 'b', 'c'], 'name': 1}}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e8b230ea">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Label-Tensors-slicing">Label Tensors slicing<a class="anchor-link" href="#Label-Tensors-slicing">¶</a></h3><p>One of the powerful features of label tensors is the ability to easily slice and extract specific parts of the tensor based on labels, just like regular PyTorch tensors but with the ease of labels.</p>
+<p>Here’s how slicing works with label tensors. Suppose we have a label tensor that contains both spatial and temporal data, and we want to slice specific parts of this data to focus on certain time intervals or spatial regions.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=45365ea8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create a label tensor containing spatial and temporal coordinates</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>  <span class="c1"># Spatial coordinates</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>  <span class="c1"># Time coordinates</span>
+
+<span class="c1"># Combine x and t into a label tensor (2D tensor)</span>
+<span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Shape: [4, 2]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tensor:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">tensor</span><span class="p">)</span>
+
+<span class="c1"># Build the LabelTensor</span>
+<span class="n">label_tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Torch methods can be used, </span><span class="si">{</span><span class="n">label_tensor</span><span class="o">.</span><span class="n">shape</span><span class="si">=}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"also </span><span class="si">{</span><span class="n">label_tensor</span><span class="o">.</span><span class="n">requires_grad</span><span class="si">=}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'We can slice with labels: </span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">label_tensor</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span><span class="si">=}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Similarly to: </span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">label_tensor</span><span class="p">[:,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="si">=}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Tensor:
+ tensor([[0.0000, 0.0000],
+        [1.0000, 0.5000],
+        [2.0000, 1.0000],
+        [3.0000, 1.5000]])
+Torch methods can be used, label_tensor.shape=torch.Size([4, 2])
+also label_tensor.requires_grad=False 
+
+We can slice with labels: 
+ label_tensor["x"]=LabelTensor([[0.],
+             [1.],
+             [2.],
+             [3.]])
+Similarly to: 
+ label_tensor[:, 0]=LabelTensor([[0.],
+             [1.],
+             [2.],
+             [3.]])
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ea4adc6e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>You can do more complex slicing by using the extract method. For example:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=caec2d14">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">label_tensor</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
+    <span class="n">tensor</span><span class="p">,</span>
+    <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">{</span><span class="s2">"dof"</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"points"</span><span class="p">},</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s2">"dof"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"coords"</span><span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Extract labels: </span><span class="si">{</span><span class="n">label_tensor</span><span class="o">.</span><span class="n">extract</span><span class="p">({</span><span class="s2">"points"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">]})</span><span class="si">=}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Similar to: </span><span class="si">{</span><span class="n">label_tensor</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="p">:]</span><span class="si">=}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Extract labels: label_tensor.extract({"points" : [0, 2]})=LabelTensor([[[0., 0.]],
+             [[2., 1.]]])
+Similar to: label_tensor[slice(0, 4, 2), :]=LabelTensor([[[0., 0.]],
+             [[2., 1.]]])
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=331d6080">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="PyTorch-Geometric-Data">PyTorch Geometric Data<a class="anchor-link" href="#PyTorch-Geometric-Data">¶</a></h2><p>PyTorch Geometric (PyG) extends PyTorch to handle graph-structured data. It provides utilities to represent graphs and perform graph-based learning tasks such as node classification, graph classification, and more.</p>
+<h3 id="Graph-Data-Structure">Graph Data Structure<a class="anchor-link" href="#Graph-Data-Structure">¶</a></h3><p>PyTorch Geometric uses a custom <code>Data</code> object to store graph data. The <code>Data</code> object contains the following attributes:</p>
+<ul>
+<li><p><strong>x</strong>: Node features (tensor of shape <code>[num_nodes, num_features]</code>)</p>
+</li>
+<li><p><strong>edge_index</strong>: Edge indices (tensor of shape <code>[2, num_edges]</code>), representing the graph's connectivity</p>
+</li>
+<li><p><strong>edge_attr</strong>: Edge features (optional, tensor of shape <code>[num_edges, num_edge_features]</code>)</p>
+</li>
+<li><p><strong>y</strong>: Target labels for nodes/graphs (optional)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=9427b274">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Node features: [2 nodes, 3 features]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+<span class="c1"># Edge indices: representing a graph with two edges (node 0 to node 1, node 1 to node 0)</span>
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+
+<span class="c1"># Create a PyG data object</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Data(x=[2, 3], edge_index=[2, 2])
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=fde2dcc7">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Once you have your graph in a Data object, you can easily perform graph-based operations using PyTorch Geometric’s built-in functions:</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=bdebb42e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Accessing node features</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Node features</span>
+
+<span class="c1"># Accessing edge list</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>  <span class="c1"># Edge indices</span>
+
+<span class="c1"># Applying Graph Convolution (Graph Neural Networks - GCN)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCNConv</span>
+
+<span class="c1"># Define a simple GCN layer</span>
+<span class="n">conv</span> <span class="o">=</span> <span class="n">GCNConv</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 3 input features, 2 output features</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">conv</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>  <span class="c1"># Output node features after applying GCN</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>tensor([[1., 2., 3.],
+        [4., 5., 6.]])
+tensor([[0, 1],
+        [1, 0]])
+tensor([[0.4161, 2.6925],
+        [0.4161, 2.6925]], grad_fn=&lt;AddBackward0&gt;)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=287a0d4f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="PINA-Graph">PINA Graph<a class="anchor-link" href="#PINA-Graph">¶</a></h2><p>If you've understood Label Tensors and Data in PINA, then you're well on your way to grasping how <strong>PINA Graph</strong> works. Simply put, a <strong>Graph</strong> in PINA is a <code>Data</code> object with extra methods for handling label tensors. We highly suggest to use <code>Graph</code> instead of <code>Data</code> in PINA, expecially when using label tensors.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=27f5c9ac">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Node features: [2 nodes, 3 features]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+<span class="c1"># Edge indices: representing a graph with two edges (node 0 to node 1, node 1 to node 0)</span>
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+
+<span class="c1"># Create a PINA graph object (similar to PyG)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Accessing node features</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Node features</span>
+
+<span class="c1"># Accessing edge list</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>  <span class="c1"># Edge indices</span>
+
+<span class="c1"># Applying Graph Convolution (Graph Neural Networks - GCN)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCNConv</span>
+
+<span class="c1"># Define a simple GCN layer</span>
+<span class="n">conv</span> <span class="o">=</span> <span class="n">GCNConv</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 3 input features, 2 output features</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">conv</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>  <span class="c1"># Output node features after applying GCN</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Graph(x=[2, 3], edge_index=[2, 2])
+tensor([[1., 2., 3.],
+        [4., 5., 6.]])
+tensor([[0, 1],
+        [1, 0]])
+tensor([[ 2.9844, -2.4237],
+        [ 2.9844, -2.4237]], grad_fn=&lt;AddBackward0&gt;)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6ee7cc14">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>But we can also use labeltensors....</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=3866a8ae">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Node features: [2 nodes, 3 features]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">),</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Edge indices: representing a graph with two edges (node 0 to node 1, node 1 to node 0)</span>
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+
+<span class="c1"># Create a PINA graph object (similar to PyG)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">attr</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"a"</span><span class="p">]))</span>  <span class="c1"># here we extract 1 feature</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Graph(x=[2, 3], edge_index=[2, 2])
+Graph(x=[2, 1], edge_index=[2, 2])
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7a2ef072">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>In PINA Conditions, you always need to pass a list of <code>Graph</code> or <code>Data</code>, see <a href="">here</a> for details. In case you are loading a PyG dataset remember to put it in this format!</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=c8edb68f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QM7b</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">QM7b</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s2">"./tutorial_logs"</span><span class="p">)</span><span class="o">.</span><span class="n">shuffle</span><span class="p">()</span>
+
+<span class="c1"># save the dataset</span>
+<span class="n">input_</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">]</span>
+<span class="n">input_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Downloading https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/qm7b.mat
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Processing...
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Done!
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>Data(edge_index=[2, 196], edge_attr=[196], y=[1, 14], num_nodes=14)</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=487c1d47">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="What's-Next?">What's Next?<a class="anchor-link" href="#What's-Next?">¶</a></h2><p>Congratulations on completing the tutorials on the <strong>PINA Data Structures</strong>! You now have a solid foundation in using the different data structures within PINA, such as <strong>Tensors</strong>, <strong>Label Tensors</strong>, and <strong>Graphs</strong>. Here are some exciting next steps you can take to continue your learning journey:</p>
+<ol>
+<li><p><strong>Deep Dive into Label Tensors</strong>: Check the documentation of <a href="https://mathlab.github.io/PINA/_rst/label_tensor.html"><code>LabelTensor</code></a> to learn more about the available methods.</p>
+</li>
+<li><p><strong>Working with Graphs in PINA</strong>: In PINA we implement many graph structures, e.g. <code>KNNGraph</code>, <code>RadiusGraph</code>, .... see <a href="https://mathlab.github.io/PINA/_rst/_code.html#graphs-structures">here</a> for further details.</p>
+</li>
+<li><p><strong>...and many more!</strong>: Consider exploring <code>LabelTensor</code> for PINNs!</p>
+</li>
+</ol>
 <p>For more resources and tutorials, check out the <a href="https://mathlab.github.io/PINA/">PINA Documentation</a>.</p>
 </div>
 </div>
