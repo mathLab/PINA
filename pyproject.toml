@@ -39,7 +39,7 @@ dev = [
 ]
 tutorial = [
     "jupyter",
-    "smithers @ git+https://github.com/mathLab/smithers.git",
+    "smithers",
     "torchvision",
     "tensorboard",
     "scipy",
