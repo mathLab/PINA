@@ -40,7 +40,7 @@ jobs:
           VERS=$(python utils/mathlab_versioning.py get)
           git config --global user.name 'Monthly Tag bot'
           git config --global user.email 'mtbot@noreply.github.com'
-          git add pina/meta.py
+          git add pyproject.toml
           git commit -m "monthly version $VERS"
           git tag -a "v$VERS" -m "Monthly version $VERS"
           git push origin "v$VERS"
