@@ -1,4 +1,4 @@
-"""Module for the Radial Field Network block."""
+"""Module for the Schnet block."""
 
 import torch
 from ....model import FeedForward
@@ -6,12 +6,12 @@ from torch_geometric.nn import MessagePassing
 from ....utils import check_consistency
 
 
-class RadialFieldNetworkBlock(MessagePassing):
+class SchnetBlock(MessagePassing):
     """
-    Implementation of the Radial Field Network block.
+    Implementation of the Schnet block.
 
     This block is used to perform message-passing between nodes and edges in a
-    graph neural network, following the scheme proposed by Köhler et al. (2020).
+    graph neural network, following the scheme proposed by Schütt et al. (2017).
     It serves as an inner block in a larger graph neural network architecture.
 
     The message between two nodes connected by an edge is computed by applying a
@@ -24,9 +24,9 @@ class RadialFieldNetworkBlock(MessagePassing):
 
     .. seealso::
 
-        **Original reference** Köhler, J., Klein, L., & Noé, F. (2020, November). 
-        Equivariant flows: exact likelihood generative learning for symmetric densities. 
-        In International conference on machine learning (pp. 5361-5370). PMLR.
+        **Original reference** Schütt, K., Kindermans, P. J., Sauceda Felix, H. E., Chmiela, S., Tkatchenko, A., & Müller, K. R. (2017). 
+        Schnet: A continuous-filter convolutional neural network for modeling quantum interactions. 
+        Advances in neural information processing systems, 30.
     """
 
         
@@ -34,8 +34,11 @@ class RadialFieldNetworkBlock(MessagePassing):
     def __init__(
         self,
         node_feature_dim,
+        node_pos_dim,
         hidden_dim,
         radial_hidden_dim=16,
+        n_message_layers=2,
+        n_update_layers=2,
         n_radial_layers=2,
         activation=torch.nn.ReLU,
         aggr="add",
@@ -76,8 +79,10 @@ class RadialFieldNetworkBlock(MessagePassing):
                 f" got {node_feature_dim}."
             )
 
+
         # Initialize parameters
         self.node_feature_dim = node_feature_dim
+        self.node_pos_dim = node_pos_dim
         self.hidden_dim = hidden_dim
         self.activation = activation
 
@@ -89,9 +94,25 @@ class RadialFieldNetworkBlock(MessagePassing):
             n_layers=n_radial_layers,
             func=self.activation,
         )
+        
+        self.update_net = FeedForward(
+            input_dimensions=self.node_pos_dim + self.hidden_dim,
+            output_dimensions=self.hidden_dim,
+            inner_size=self.hidden_dim,
+            n_layers=n_update_layers,
+            func=self.activation,
+        )
+
+        self.message_net = FeedForward(
+            input_dimensions=self.node_feature_dim,
+            output_dimensions=self.node_pos_dim + self.hidden_dim,
+            inner_size=self.hidden_dim,
+            n_layers=n_message_layers,
+            func=self.activation,
+        )
 
 
-    def forward(self, x, edge_index):
+    def forward(self, x, pos, edge_index):
         """
         Forward pass of the block, triggering the message-passing routine.
 
@@ -102,9 +123,9 @@ class RadialFieldNetworkBlock(MessagePassing):
         :return: The updated node features.
         :rtype: torch.Tensor
         """
-        return self.propagate(edge_index=edge_index, x=x)
+        return self.propagate(edge_index=edge_index, x=x, pos=pos)
 
-    def message(self, x_j, x_i):
+    def message(self, x_i, pos_i ,pos_j):
         """
         Compute the message to be passed between nodes and edges.
 
@@ -115,21 +136,19 @@ class RadialFieldNetworkBlock(MessagePassing):
         :type edge_attr: torch.Tensor | LabelTensor
         :return: The message to be passed.
         :rtype: torch.Tensor
-        """
-        r = torch.norm(x_i-x_j)
-        
+        """  
 
-        return self.radial_field(r)*(x_i-x_j)
+        return self.radial_field(torch.norm(pos_i-pos_j))*self.message_net(x_i)
 
 
-    def update(self, message, x):
+    def update(self, message, pos):
         """
         Update the node features with the received messages.
 
         :param torch.Tensor message: The message to be passed.
         :param x: The node features.
         :type x: torch.Tensor | LabelTensor
-        :return: The updated node features.
+        :return: The concatenation of the update position features and the updated node features.
         :rtype: torch.Tensor
         """
-        return x + message
+        return self.update_net(torch.cat((pos, message), dim=-1))
