@@ -105,7 +105,8 @@ class RadialFieldNetworkBlock(MessagePassing):
 
         :param x: The node features.
         :type x: torch.Tensor | LabelTensor
-        :param torch.Tensor edge_index: The edge indices.
+        :param torch.Tensor edge_index: The edge indices. In the original formulation, 
+        the messages are aggregated from all nodes, not only from the neighbours. 
         :return: The updated node features.
         :rtype: torch.Tensor
         """
