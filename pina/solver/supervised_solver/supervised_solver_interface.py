@@ -42,7 +42,7 @@ class SupervisedSolverInterface(SolverInterface):
         super().__init__(**kwargs)
 
         # check consistency
-        check_consistency(loss, (LossInterface, _Loss), subclass=False)
+        check_consistency(loss, (LossInterface, _Loss), subclass=True)
 
         # assign variables
         self._loss_fn = loss
