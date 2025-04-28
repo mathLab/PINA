@@ -163,7 +163,6 @@ class PODBlock(torch.nn.Module):
         self._basis = u.T
         self._singular_values = s
 
-
     def forward(self, X):
         """
         The forward pass of the POD layer.
