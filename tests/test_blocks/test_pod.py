@@ -23,6 +23,8 @@ def test_fit(rank, scale):
     assert pod._basis == None
     assert pod.basis == None
     assert pod._scaler == None
+    assert pod._singular_values == None
+    assert pod.singular_values == None
     assert pod.rank == rank
     assert pod.scale_coefficients == scale
 
@@ -37,6 +39,8 @@ def test_fit(rank, scale, randomized):
     dof = toy_snapshots.shape[1]
     assert pod.basis.shape == (rank, dof)
     assert pod._basis.shape == (n_snap, dof)
+    assert pod.singular_values.shape == (rank,)
+    assert pod._singular_values.shape == (n_snap,)
     if scale is True:
         assert pod._scaler["mean"].shape == (n_snap,)
         assert pod._scaler["std"].shape == (n_snap,)

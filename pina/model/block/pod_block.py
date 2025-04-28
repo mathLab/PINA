@@ -30,6 +30,7 @@ class PODBlock(torch.nn.Module):
         super().__init__()
         self.__scale_coefficients = scale_coefficients
         self._basis = None
+        self._singular_values = None
         self._scaler = None
         self._rank = rank
 
@@ -69,6 +70,19 @@ class PODBlock(torch.nn.Module):
             return None
 
         return self._basis[: self.rank]
+
+    @property
+    def singular_values(self):
+        """
+        The singular values of the POD basis.
+
+        :return: The singular values.
+        :rtype: torch.Tensor
+        """
+        if self._singular_values is None:
+            return None
+
+        return self._singular_values[: self.rank]
 
     @property
     def scaler(self):
@@ -136,15 +150,19 @@ class PODBlock(torch.nn.Module):
                 "This may slow down computations.",
                 ResourceWarning,
             )
-            self._basis = torch.svd(X.T)[0].T
+            u, s, v = torch.svd(X.T)
         else:
             if randomized:
                 warnings.warn(
                     "Considering a randomized algorithm to compute the POD basis"
                 )
-                self._basis = torch.svd_lowrank(X.T, q=X.shape[0])[0].T
+                u, s, v = torch.svd_lowrank(X.T, q=X.shape[0])
+
             else:
-                self._basis = torch.svd(X.T)[0].T
+                u, s, v = torch.svd(X.T)
+        self._basis = u.T
+        self._singular_values = s
+
 
     def forward(self, X):
         """
