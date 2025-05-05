@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Proper Orthogonal Decomposition Block &#8212; pina-mathlab 0.2.1.post2505 documentation</title>
+    <title>Proper Orthogonal Decomposition Block &#8212; pina-mathlab 0.2.1 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=f526429a"></script>
+    <script src="../../../_static/documentation_options.js?v=37f418d5"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="Orthogonal Block" href="orthogonal.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.1.post2505" />
-    <meta name="docbuild:last-update" content="May 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.1" />
+    <meta name="docbuild:last-update" content="May 05, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post2505 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post2505 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1 documentation - Home"/>
   
   
 </a></div>
@@ -656,6 +656,20 @@ modes.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="pina.model.block.pod_block.PODBlock.singular_values">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">singular_values</span></span><a class="headerlink" href="#pina.model.block.pod_block.PODBlock.singular_values" title="Link to this definition">#</a></dt>
+<dd><p>The singular values of the POD basis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The singular values.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="pina.model.block.pod_block.PODBlock.scaler">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scaler</span></span><a class="headerlink" href="#pina.model.block.pod_block.PODBlock.scaler" title="Link to this definition">#</a></dt>
 <dd><p>Return the scaler dictionary, having keys <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">std</span></code>
@@ -787,6 +801,7 @@ to be fitted before being used.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.pod_block.PODBlock"><code class="docutils literal notranslate"><span class="pre">PODBlock</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.pod_block.PODBlock.rank"><code class="docutils literal notranslate"><span class="pre">PODBlock.rank</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.pod_block.PODBlock.basis"><code class="docutils literal notranslate"><span class="pre">PODBlock.basis</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.pod_block.PODBlock.singular_values"><code class="docutils literal notranslate"><span class="pre">PODBlock.singular_values</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.pod_block.PODBlock.scaler"><code class="docutils literal notranslate"><span class="pre">PODBlock.scaler</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.pod_block.PODBlock.scale_coefficients"><code class="docutils literal notranslate"><span class="pre">PODBlock.scale_coefficients</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.pod_block.PODBlock.fit"><code class="docutils literal notranslate"><span class="pre">PODBlock.fit()</span></code></a></li>
