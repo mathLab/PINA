@@ -3,7 +3,7 @@
 
 # # Tutorial: Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics
 # 
-# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial9/tutorial.ipynb)
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial8/tutorial.ipynb)
 
 # The goal of this tutorial is to demonstrate how to use the **PINA** library to apply a reduced-order modeling technique, as outlined in [1]. These methods share several similarities with machine learning approaches, as they focus on predicting the solution to differential equations, often parametric PDEs, in real-time.
 # 

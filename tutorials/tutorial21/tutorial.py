@@ -3,7 +3,7 @@
 
 # # Tutorial: Introductory Tutorial: Supervised Learning with PINA
 # 
-# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial20/tutorial.ipynb)
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial21/tutorial.ipynb)
 # 
 # 
 # > ##### ⚠️ ***Before starting:***

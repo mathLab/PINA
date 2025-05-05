@@ -2,18 +2,18 @@
 # coding: utf-8
 
 # # Tutorial: Introduction to PINA `Equation` class
-# 
+#
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial12/tutorial.ipynb)
-# 
-# 
+#
+#
 # In this tutorial, we will explore how to use the `Equation` class in **PINA**. We will focus on how to leverage this class, along with its inherited subclasses, to enforce residual minimization in **Physics-Informed Neural Networks (PINNs)**.
-# 
+#
 # By the end of this guide, you'll understand how to integrate physical laws and constraints directly into your model training, ensuring that the solution adheres to the underlying differential equations.
-# 
-# 
+#
+#
 # ## Example: The Burgers 1D equation
 # We will start implementing the viscous Burgers 1D problem Class, described as follows:
-# 
+#
 # $$
 # \begin{equation}
 # \begin{cases}
@@ -23,9 +23,9 @@
 # \end{cases}
 # \end{equation}
 # $$
-# 
+#
 # where we set $ \nu = \frac{0.01}{\pi}$.
-# 
+#
 # In the class that models this problem we will see in action the `Equation` class and one of its inherited classes, the `FixedValue` class.
 
 # In[ ]:
@@ -78,11 +78,11 @@ def initial_condition(input_, output_):
 # - `input_`: A tensor with respect to which the operator is computed.
 # - `components`: The names of the output variables for which the operator is evaluated.
 # - `d`: The names of the variables with respect to which the operator is computed.
-# 
+#
 # Each differential operator has its **fast** version, which performs no internal checks on input and output tensors. For these methods, the user is always required to specify both ``components`` and ``d`` as lists of strings.
-# 
+#
 # Let's define now the problem!
-# 
+#
 # > **👉 Do you want to learn more on Problems? Check the dedicated [tutorial](https://mathlab.github.io/PINA/tutorial16/tutorial.html) to learn how to build a Problem from scratch.**
 
 # In[ ]:
@@ -118,25 +118,25 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
     }
 
 
-# The `Equation` class takes as input a function (in this case it happens twice, with `initial_condition` and `burger_equation`) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the `Equation` class with such a given input is passed as a parameter in the specified `Condition`. 
-# 
+# The `Equation` class takes as input a function (in this case it happens twice, with `initial_condition` and `burger_equation`) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the `Equation` class with such a given input is passed as a parameter in the specified `Condition`.
+#
 # The `FixedValue` class takes as input a value of the same dimensions as the output functions. This class can be used to enforce a fixed value for a specific condition, such as Dirichlet boundary conditions, as demonstrated in our example.
-# 
-# Once the equations are set as above in the problem conditions, the PINN solver will aim to minimize the residuals described in each equation during the training phase. 
-# 
+#
+# Once the equations are set as above in the problem conditions, the PINN solver will aim to minimize the residuals described in each equation during the training phase.
+#
 # ### Available classes of equations:
 # - `FixedGradient` and `FixedFlux`: These work analogously to the `FixedValue` class, where we can enforce a constant value on the gradient or the divergence of the solution, respectively.
 # - `Laplace`: This class can be used to enforce that the Laplacian of the solution is zero.
 # - `SystemEquation`: This class allows you to enforce multiple conditions on the same subdomain by passing a list of residual equations defined in the problem.
-# 
+#
 # ## Defining a new Equation class
 # `Equation` classes can also be inherited to define a new class. For example, we can define a new class `Burgers1D` to represent the Burgers equation. During the class call, we can pass the viscosity parameter $\nu$:
-# 
+#
 # ```python
 # class Burgers1D(Equation):
 #     def __init__(self, nu):
 #         self.nu = nu
-# 
+#
 #     def equation(self, input_, output_):
 #         ...
 # ```
@@ -207,14 +207,14 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
 
 
 # ## What's Next?
-# 
+#
 # Congratulations on completing the `Equation` class tutorial of **PINA**! As we've seen, you can build new classes that inherit from `Equation` to store more complex equations, such as the 1D Burgers equation, by simply passing the characteristic coefficients of the problem.
-# 
+#
 # From here, you can:
-# 
+#
 # - **Define Additional Complex Equation Classes**: Create your own equation classes, such as `SchrodingerEquation`, `NavierStokesEquation`, etc.
 # - **Define More `FixedOperator` Classes**: Implement operators like `FixedCurl`, `FixedDivergence`, and others for more advanced simulations.
 # - **Integrate Custom Equations and Operators**: Combine your custom equations and operators into larger systems for more complex simulations.
 # - **and many more!**: Explore for example different residual minimization techniques to improve the performance and accuracy of your models.
-# 
+#
 # For more resources and tutorials, check out the [PINA Documentation](https://mathlab.github.io/PINA/).
