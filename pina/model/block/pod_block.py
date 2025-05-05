@@ -150,16 +150,16 @@ class PODBlock(torch.nn.Module):
                 "This may slow down computations.",
                 ResourceWarning,
             )
-            u, s, v = torch.svd(X.T)
+            u, s, _ = torch.svd(X.T)
         else:
             if randomized:
                 warnings.warn(
                     "Considering a randomized algorithm to compute the POD basis"
                 )
-                u, s, v = torch.svd_lowrank(X.T, q=X.shape[0])
+                u, s, _ = torch.svd_lowrank(X.T, q=X.shape[0])
 
             else:
-                u, s, v = torch.svd(X.T)
+                u, s, _ = torch.svd(X.T)
         self._basis = u.T
         self._singular_values = s
 
