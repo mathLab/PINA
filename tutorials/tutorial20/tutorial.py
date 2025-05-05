@@ -2,15 +2,15 @@
 # coding: utf-8
 
 # # Tutorial: Introductory Tutorial: Supervised Learning with PINA
-# 
+#
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial20/tutorial.ipynb)
-# 
-# 
+#
+#
 # > ##### ⚠️ ***Before starting:***
 # > We assume you are already familiar with the concepts covered in the [Getting started with PINA](https://mathlab.github.io/PINA/_tutorial.html#getting-started-with-pina) tutorials. If not, we strongly recommend reviewing them before exploring this advanced topic.
-# 
+#
 # In this tutorial, we will demonstrate a typical use case of **PINA** for Supervised Learning training. We will cover the basics of training a Supervised Solver with PINA, if you want to go further into PINNs look at our dedicated [tutorials](https://mathlab.github.io/PINA/_tutorial.html#supervised-learning) on the topic.
-# 
+#
 # Let's start by importing the useful modules:
 
 # In[1]:
@@ -42,22 +42,22 @@ from pina.problem.zoo import SupervisedProblem
 
 
 # ## Building a Neural Implicit Field for a Sphere
-# 
+#
 # In this tutorial, we will construct a **Neural Implicit Field** to learn the **Signed Distance Function (SDF)** of a sphere. The problem is relatively simple: we aim to learn a function $d_\theta$, parameterized by a neural network, that captures the signed distance to the surface of a sphere.
-# 
+#
 # The function $d_\theta(\mathbf{x})$$ should satisfy the following properties:
-# 
-# - $d_\theta(\mathbf{x}) = 0$ on the surface of the sphere  
-# - $d_\theta(\mathbf{x}) > 0$ outside the sphere  
-# - $d_\theta(\mathbf{x}) < 0$ inside the sphere  
-# 
+#
+# - $d_\theta(\mathbf{x}) = 0$ on the surface of the sphere
+# - $d_\theta(\mathbf{x}) > 0$ outside the sphere
+# - $d_\theta(\mathbf{x}) < 0$ inside the sphere
+#
 # This setup allows us to implicitly represent the geometry of the sphere through the learned function.
-# 
+#
 # ### Mathematical Description
-# 
+#
 # We define the signed distance function (SDF) for a sphere centered at the origin with radius $r$ as:
 # $d(\mathbf{x}) = \|\mathbf{x}\| - r$, where $\mathbf{x} \in \mathbb{R}^3$ is a point in 3D space.
-# 
+#
 # Our goal is to approximate this function using a neural network: $d_\theta(\mathbf{x}) \approx d(\mathbf{x})$ with a Neural Network. Let's start by generating the data for the problem by:
 # 1. Sample random 3D points within a bounding cube (e.g., $[-1.5, 1.5]^3$).
 # 2. Compute their ground truth signed distances from a sphere of radius $r$ centered at the origin.
@@ -84,7 +84,7 @@ def generate_sdf_data(num_points=1000000, radius=1.0, cube_bound=1.5):
 
 
 # ### Visualizing the Data
-# 
+#
 # To better understand the problem and the nature of the solutions, we can visualize the generated data:
 
 # In[3]:
@@ -113,9 +113,9 @@ plt.show()
 
 
 # ## Creating the Problem
-# 
+#
 # The problem we will define is a basic `SupervisedProblem`, where the inputs are the coordinates and the outputs are the corresponding Signed Distance Function (SDF) values.
-# 
+#
 # > **👉 We have a dedicated [tutorial](https://mathlab.github.io/PINA/tutorial16/tutorial.html) to teach how to build a Problem from scratch — have a look if you're interested!**
 
 # In[4]:
@@ -125,16 +125,16 @@ problem = SupervisedProblem(coords, sdf)
 
 
 # ## Solving the Problem with Supervised Solver
-# 
+#
 # We will use the `SupervisedSolver` to solve the task. A Supervised Solver in PINA aims to find a mapping between an input \( x \) and an output \( y \).
 # Given a PINA `model` $\mathcal{M}$, the following loss function is minimized during training:
-# 
+#
 # $$
 # \mathcal{L}_{\rm{supervised}} = \frac{1}{N}\sum_{i=1}^N \mathcal{l}(y_i, \mathcal{M}(x_i)),
 # $$
-# 
+#
 # where $l$ is a specific loss function, typically the MSE (Mean Squared Error).
-# 
+#
 # ### Specify the Loss Function
 # By default, the loss function applies a forward pass of the `model` on the input and compares it to the target using the `loss` attribute of `SupervisedSolver`. The [`loss_data`](https://mathlab.github.io/PINA/_rst/solver/supervised.html#pina.solver.supervised.SupervisedSolver.loss_data) function computes the loss for supervised solvers, and it can be overridden by the user to match specific needs (e.g., performing pre-process operations on the input, post-process operations on the output, etc.).
 
@@ -162,9 +162,9 @@ _ = trainer.test()
 
 
 # ## Visualizing the Predictions
-# 
+#
 # As we can see, we have achieved a very low MSE, even after training for only one epoch. Now, we will visualize the results in the same way as we did previously:
-# 
+#
 # We will plot the predicted Signed Distance Function (SDF) values alongside the true SDF values to evaluate the model's performance.
 
 # In[6]:
@@ -222,9 +222,9 @@ plt.show()
 
 
 # Nice! We can see that the network is correctly learning the signed distance function! Let's now visualize the rendering of the sphere surface learned by the network.
-# 
+#
 # ### Visualizing the Sphere Surface
-# 
+#
 # To visualize the surface, we will extract the level set where the SDF equals zero and plot the resulting sphere. This will show how well the network has learned the geometry of the object.
 
 # In[7]:
@@ -262,14 +262,14 @@ plt.show()
 
 
 # ## What's Next?
-# 
+#
 # Congratulations on completing the introductiory tutorial on supervised solver! Now that you have a solid foundation, here are a few directions you can explore:
-# 
-# 
+#
+#
 # 1. **Experiment with Training Duration & Network Architecture**: Try different training durations and tweak the network architecture to optimize performance.
-# 
+#
 # 2. **Explore Other Models in `pina.model`**: Check out other models available in `pina.model` or design your own custom PyTorch module to suit your needs.
-# 
+#
 # 3. **... and many more!**: The possibilities are vast! Continue experimenting with advanced configurations, solvers, and other features in PINA.
-# 
+#
 # For more resources and tutorials, check out the [PINA Documentation](https://mathlab.github.io/PINA/).

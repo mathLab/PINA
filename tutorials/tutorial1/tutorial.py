@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial: Introductory Tutorial:  Physics Informed Neural Networks with PINA 
+# # Tutorial: Introductory Tutorial:  Physics Informed Neural Networks with PINA
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial1/tutorial.ipynb)
-# 
+#
 # > ##### ⚠️ ***Before starting:***
 # > We assume you are already familiar with the concepts covered in the [Getting started with PINA](https://mathlab.github.io/PINA/_tutorial.html#getting-started-with-pina) tutorials. If not, we strongly recommend reviewing them before exploring this advanced topic.
-# 
+#
 
 # In this tutorial, we will demonstrate a typical use case of **PINA** for Physics Informed Neural Network (PINN) training. We will cover the basics of training a PINN with PINA, if you want to go further into PINNs look at our dedicated [tutorials](https://mathlab.github.io/PINA/_tutorial.html#physics-informed-neural-networks) on the topic.
-# 
+#
 # Let's start by importing the useful modules:
 
 # In[ ]:
@@ -43,9 +43,9 @@ warnings.filterwarnings("ignore")
 
 
 # ## Build the problem
-# 
+#
 # We will use a simple Ordinary Differential Equation as pedagogical example:
-# 
+#
 # $$
 # \begin{equation}
 # \begin{cases}
@@ -54,9 +54,9 @@ warnings.filterwarnings("ignore")
 # \end{cases}
 # \end{equation}
 # $$
-# 
-# with the analytical solution $u(x) = e^x$. 
-# 
+#
+# with the analytical solution $u(x) = e^x$.
+#
 # The PINA problem is easly written as:
 
 # In[2]:
@@ -100,8 +100,8 @@ problem.discretise_domain(1, "lh", domains=["x0"])
 problem.discretise_domain(20, "lh", domains=["D"])
 
 
-# ## Generate data 
-# 
+# ## Generate data
+#
 # Data for training can come in form of direct numerical simulation results, or points in the domains. In case we perform unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in **PINA** is very easy, here we show three examples using the `.discretise_domain` method of the `AbstractProblem` class.
 
 # In[4]:
@@ -144,18 +144,18 @@ _ = plt.legend()
 # ## Easily solve a Physics Problem with three step pipeline
 
 # Once the problem is defined and the data is generated, we can move on to modeling. This process consists of three key steps:
-# 
+#
 # **Choosing a Model**
 # - Select a neural network architecture. You can use the model we provide in the `pina.model` module (see [here](https://mathlab.github.io/PINA/_rst/_code.html#models) for a full list), or define a custom PyTorch module (more on this [here](https://pytorch.org/docs/stable/notes/modules.html)).
-# 
+#
 # **Choosing a PINN Solver & Defining the Trainer**
 # * Use a Physics Informed solver from `pina.solver` module to solve the problem using the specified model. We have already implemented most State-Of-The-Arte solvers for you, [have a look](https://mathlab.github.io/PINA/_rst/_code.html#solvers) if interested. Today we will use the standard `PINN` solver.
-# 
+#
 # **Training**
 # * Train the model with the [`Trainer`](https://mathlab.github.io/PINA/_rst/trainer.html) class. The Trainer class provides powerful features to enhance model accuracy, optimize training time and memory, and simplify logging and visualization, thanks to PyTorch Lightning's excellent work, see [our dedicated tutorial](https://mathlab.github.io/PINA/tutorial11/tutorial.html) for further details. By default, training metrics (e.g., MSE error) are logged using a lightning logger (CSVLogger). If you prefer manual tracking, use `pina.callback.MetricTracker`.
-# 
+#
 # Let's cover all steps one by one!
-# 
+#
 # First we build the model, in this case a FeedForward neural network, with two layers of size 10 and hyperbolic tangent activation:
 
 # In[7]:
@@ -171,7 +171,7 @@ model = FeedForward(
 
 
 # Then we build the solver. The Physics-Informed Neural Network (`PINN`) solver class needs to be initialised with a `model` and a specific `problem` to be solved. They also take extra arguments, as the optimizer, scheduler, loss type and weighting for the different conditions which are all set to their defualt values.
-# 
+#
 # >##### 💡***Bonus tip:***
 # > All physics solvers in PINA can handle both forward and inverse problems without requiring any changes to the model or solver structure! See [our tutorial](https://mathlab.github.io/PINA/tutorial7/tutorial.html) of inverse problems for more infos.
 
@@ -184,10 +184,10 @@ pinn = PINN(problem, model, TorchOptimizer(torch.optim.RAdam, lr=0.005))
 
 
 # Finally, we train the model using the Trainer API. The trainer offers various options to customize your training, refer to the official documentation for details. Here, we highlight the `MetricTracker` from `pina.callback`, which helps track metrics during training. In order to train just call the `.train()` method.
-# 
+#
 # > ##### ⚠️ ***Important Note:***
 # > In PINA you can log metrics in different ways. The simplest approach is to use the `MetricTraker` class from `pina.callbacks` as we will see today. However, expecially when we need to train multiple times to get an average of the loss across multiple runs, we suggest to use `lightning.pytorch.loggers` (see [here](https://lightning.ai/docs/pytorch/stable/extensions/logging.html) for reference).
-# 
+#
 
 # In[9]:
 
@@ -218,7 +218,7 @@ trainer.train()
 trainer.logged_metrics
 
 
-# By using `matplotlib` we can also do some qualitative plots of the solution. 
+# By using `matplotlib` we can also do some qualitative plots of the solution.
 
 # In[11]:
 
@@ -249,17 +249,17 @@ plt.yscale("log")
 
 
 # ## What's Next?
-# 
+#
 # Congratulations on completing the introductory tutorial on Physics-Informed Training! Now that you have a solid foundation, here are several exciting directions you can explore:
-# 
+#
 # 1. **Experiment with Training Duration & Network Architecture**: Try different training durations and tweak the network architecture to optimize performance.
-# 
+#
 # 2. **Explore Other Models in `pina.model`**: Check out other models available in `pina.model` or design your own custom PyTorch module to suit your needs.
-# 
+#
 # 3. **Run Training on a GPU**: Speed up your training by running on a GPU and compare the performance improvements.
-# 
+#
 # 4. **Test Various Solvers**: Explore and evaluate different solvers to assess their performance on various types of problems.
-# 
+#
 # 5. **... and many more!**: The possibilities are vast! Continue experimenting with advanced configurations, solvers, and other features in PINA.
-# 
+#
 # For more resources and tutorials, check out the [PINA Documentation](https://mathlab.github.io/PINA/).
