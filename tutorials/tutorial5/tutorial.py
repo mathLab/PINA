@@ -2,13 +2,13 @@
 # coding: utf-8
 
 # # Tutorial: Modeling 2D Darcy Flow with the Fourier Neural Operator
-# 
+#
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial5/tutorial.ipynb)
-# 
+#
 # In this tutorial, we are going to solve the **Darcy flow problem** in two dimensions, as presented in the paper [*Fourier Neural Operator for Parametric Partial Differential Equations*](https://openreview.net/pdf?id=c8P9NQVtmnO).
-# 
+#
 # We begin by importing the necessary modules for the tutorial:
-# 
+#
 
 # In[ ]:
 
@@ -22,9 +22,11 @@ except:
     IN_COLAB = False
 if IN_COLAB:
     get_ipython().system('pip install "pina-mathlab[tutorial]"')
-    get_ipython().system('pip install scipy')
+    get_ipython().system("pip install scipy")
     # get the data
-    get_ipython().system('wget https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial5/Data_Darcy.mat')
+    get_ipython().system(
+        "wget https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial5/Data_Darcy.mat"
+    )
 
 import torch
 import matplotlib.pyplot as plt
@@ -40,15 +42,15 @@ warnings.filterwarnings("ignore")
 
 
 # ## Data Generation
-# 
+#
 # We will focus on solving a specific PDE: the **Darcy Flow** equation. This is a second-order elliptic PDE given by:
-# 
+#
 # $$
 # -\nabla\cdot(k(x, y)\nabla u(x, y)) = f(x, y), \quad (x, y) \in D.
 # $$
-# 
+#
 # Here, $u$ represents the flow pressure, $k$ is the permeability field, and $f$ is the forcing function. The Darcy flow equation can be used to model various systems, including flow through porous media, elasticity in materials, and heat conduction.
-# 
+#
 # In this tutorial, the domain $D$ is defined as a 2D unit square with Dirichlet boundary conditions. The dataset used is taken from the authors' original implementation in the referenced paper.
 
 # In[2]:
@@ -92,7 +94,7 @@ problem = SupervisedProblem(
 
 
 # ## Solving the Problem with a Feedforward Neural Network
-# 
+#
 # We begin by solving the Darcy flow problem using a standard Feedforward Neural Network (FNN). Since we are approaching this task with supervised learning, we will use the `SupervisedSolver` provided by **PINA** to train the model.
 
 # In[7]:
@@ -146,7 +148,7 @@ print(f"Final error testing {err:.2f}%")
 
 
 # ## Solving the Problem with a Fourier Neural Operator
-# 
+#
 # We will now solve the Darcy flow problem using a Fourier Neural Operator (FNO). Since we are learning a mapping between functions—i.e., an operator—this approach is more suitable and often yields better performance, as we will see.
 
 # In[10]:
@@ -183,7 +185,7 @@ trainer.train()
 
 
 # We can clearly observe that the final loss is significantly lower when using the FNO. Let's now evaluate its performance on the test set.
-# 
+#
 # Note that the number of trainable parameters in the FNO is considerably higher compared to a `FeedForward` network. Therefore, we recommend using a GPU or TPU to accelerate training, especially when working with large datasets.
 
 # In[11]:
@@ -208,13 +210,13 @@ print(f"Final error testing {err:.2f}%")
 # As we can see, the loss is significantly lower with the Fourier Neural Operator!
 
 # ## What's Next?
-# 
+#
 # Congratulations on completing the tutorial on solving the Darcy flow problem using **PINA**! There are many potential next steps you can explore:
-# 
+#
 # 1. **Train the network longer or with different hyperparameters**: Experiment with different configurations of the neural network. You can try varying the number of layers, activation functions, or learning rates to improve accuracy.
-# 
+#
 # 2. **Solve more complex problems**: The Darcy flow problem is just the beginning! Try solving other complex problems from the field of parametric PDEs. The original paper and **PINA** documentation offer many more examples to explore.
-# 
+#
 # 3. **...and many more!**: There are countless directions to further explore. For instance, you could try to add physics informed learning!
-# 
+#
 # For more resources and tutorials, check out the [PINA Documentation](https://mathlab.github.io/PINA/).
