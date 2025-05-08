@@ -19,27 +19,39 @@ model = FeedForward(
 solver = PINN(problem=poisson_problem, model=model)
 
 
-# def test_r3constructor():
-#     R3Refinement(sample_every=10)
+def test_r3constructor():
+    R3Refinement(sample_every=10)
 
 
 # def test_r3refinment_routine():
 #     # make the trainer
-#     trainer = Trainer(solver=solver,
-#                       callback=[R3Refinement(sample_every=1)],
-#                       accelerator='cpu',
-#                       max_epochs=5)
+#     trainer = Trainer(
+#         solver=solver,
+#         callbacks=[R3Refinement(sample_every=1)],
+#         accelerator="cpu",
+#         max_epochs=5,
+#     )
 #     trainer.train()
 
-# def test_r3refinment_routine():
-#     model = FeedForward(len(poisson_problem.input_variables),
-#                     len(poisson_problem.output_variables))
-#     solver = PINN(problem=poisson_problem, model=model)
-#     trainer = Trainer(solver=solver,
-#                       callback=[R3Refinement(sample_every=1)],
-#                       accelerator='cpu',
-#                       max_epochs=5)
-#     before_n_points = {loc : len(pts) for loc, pts in trainer.solver.problem.input_pts.items()}
-#     trainer.train()
-#     after_n_points = {loc : len(pts) for loc, pts in trainer.solver.problem.input_pts.items()}
-#     assert before_n_points == after_n_points
+
+def test_r3refinment_routine():
+    model = FeedForward(
+        len(poisson_problem.input_variables),
+        len(poisson_problem.output_variables),
+    )
+    solver = PINN(problem=poisson_problem, model=model)
+    trainer = Trainer(
+        solver=solver,
+        callbacks=[R3Refinement(sample_every=1)],
+        accelerator="cpu",
+        max_epochs=5,
+    )
+    before_n_points = {
+        loc: len(pts) for loc, pts in trainer.solver.problem.input_pts.items()
+    }
+    trainer.train()
+    after_n_points = {
+        loc: len(pts)
+        for loc, pts in trainer.data_module.train_dataset.input.items()
+    }
+    assert before_n_points == after_n_points
