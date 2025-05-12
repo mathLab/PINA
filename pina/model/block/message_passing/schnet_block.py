@@ -46,7 +46,7 @@ class SchnetBlock(MessagePassing):
         flow="source_to_target",
     ):
         """
-        Initialization of the :class:`RadialFieldNetworkBlock` class.
+        Initialization of the :class:`SchnetBlock` class.
 
         :param int node_feature_dim: The dimension of the node features.
         :param int edge_feature_dim: The dimension of the edge features.
@@ -129,8 +129,7 @@ class SchnetBlock(MessagePassing):
         """
         Compute the message to be passed between nodes and edges.
 
-        :param x_j: Concatenation of the node position and the
-        node features of the sender nodes.
+        :param x_j: Node features of the sender nodes.
         :type x_j: torch.Tensor | LabelTensor
         :param edge_attr: The edge attributes.
         :type edge_attr: torch.Tensor | LabelTensor
