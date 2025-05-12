@@ -62,7 +62,6 @@ class RadialFieldNetworkBlock(MessagePassing):
             source node. See :class:`torch_geometric.nn.MessagePassing` for more
             details. Default is "source_to_target".
         :raises ValueError: If `node_feature_dim` is not a positive integer.
-        :raises ValueError: If `edge_feature_dim` is not a positive integer.
         """
         super().__init__(aggr=aggr, node_dim=node_dim, flow=flow)
 
@@ -108,8 +107,7 @@ class RadialFieldNetworkBlock(MessagePassing):
         """
         Compute the message to be passed between nodes and edges.
 
-        :param x_j: Concatenation of the node position and the
-        node features of the sender nodes.
+        :param x_j: Node features of the sender nodes.
         :type x_j: torch.Tensor | LabelTensor
         :param edge_attr: The edge attributes.
         :type edge_attr: torch.Tensor | LabelTensor
