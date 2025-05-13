@@ -243,10 +243,10 @@ class PinaTensorDataset(PinaDataset):
         """
         Update the dataset with new data.
         This method is used to update the dataset with new data. It replaces
-        the current data with the new data provided in the conditions_dict
+        the current data with the new data provided in the new_conditions_dict
         parameter.
-        :param dict conditions_dict: Dictionary containing the new data.
-        :type conditions_dict: dict
+        :param dict new_conditions_dict: Dictionary containing the new data.
+        :type new_conditions_dict: dict
         :return: None
         """
         for condition, data in new_conditions_dict.items():
