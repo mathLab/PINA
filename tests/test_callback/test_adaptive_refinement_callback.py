@@ -23,7 +23,7 @@ def test_r3constructor():
     R3Refinement(sample_every=10)
 
 
-def test_r3refinment_routine():
+def test_r3refinement_routine():
     model = FeedForward(
         len(poisson_problem.input_variables),
         len(poisson_problem.output_variables),
