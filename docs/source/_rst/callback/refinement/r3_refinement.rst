@@ -1,7 +1,7 @@
 Refinments callbacks
 =======================
 
-.. currentmodule:: pina.callback.adaptive_refinement_callback
+.. currentmodule:: pina.callback.refinement
 .. autoclass:: R3Refinement
    :members:
    :show-inheritance:

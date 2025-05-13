@@ -238,7 +238,8 @@ Callbacks
 
     Processing callback <callback/processing_callback.rst>
     Optimizer callback <callback/optimizer_callback.rst>
-    Refinment callback <callback/adaptive_refinment_callback.rst>
+    R3 Refinment callback <callback/refinement/r3_refinement.rst>
+    Refinment Interface callback <callback/refinement/refinement_interface.rst>
     Weighting callback <callback/linear_weight_update_callback.rst>
 
 Losses and Weightings
