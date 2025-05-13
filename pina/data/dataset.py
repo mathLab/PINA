@@ -239,7 +239,7 @@ class PinaTensorDataset(PinaDataset):
         """
         return {k: v["input"] for k, v in self.conditions_dict.items()}
 
-    def update_data(self, conditions_dict):
+    def update_data(self, new_conditions_dict):
         """
         Update the dataset with new data.
         This method is used to update the dataset with new data. It replaces
@@ -249,7 +249,11 @@ class PinaTensorDataset(PinaDataset):
         :type conditions_dict: dict
         :return: None
         """
-        self.conditions_dict = conditions_dict
+        for condition, data in new_conditions_dict.items():
+            if condition in self.conditions_dict:
+                self.conditions_dict[condition].update(data)
+            else:
+                self.conditions_dict[condition] = data
 
 
 class PinaGraphDataset(PinaDataset):
