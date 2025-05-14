@@ -7,6 +7,7 @@ from abc import ABCMeta, abstractmethod
 from lightning.pytorch import Callback
 from ...utils import check_consistency
 from ...solver.physics_informed_solver import PINNInterface
+from ...condition import DomainEquationCondition
 
 
 class RefinementInterface(Callback, metaclass=ABCMeta):
@@ -44,7 +45,10 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         """
         # check we have valid conditions names
         if self._condition_to_update is None:
-            self._condition_to_update = list(solver.problem.conditions.keys())
+            self._condition_to_update = [
+                name for name, cond in solver.problem.conditions.items()
+                if hasattr(cond, "domain")
+            ]
 
         for cond in self._condition_to_update:
             if cond not in solver.problem.conditions:

@@ -31,20 +31,28 @@ def test_constructor():
         R3Refinement(sample_every=10, condition_to_update=3)
 
 
-def test_sample():
+@pytest.mark.parametrize(
+    "condition_to_update", [["D", "g1"], ["D", "g1", "g2", "g3", "g4"]]
+)
+def test_sample(condition_to_update):
     trainer = Trainer(
         solver=solver,
-        callbacks=[R3Refinement(sample_every=1)],
+        callbacks=[
+            R3Refinement(
+                sample_every=1, condition_to_update=condition_to_update
+            )
+        ],
         accelerator="cpu",
         max_epochs=5,
     )
     before_n_points = {
-        loc: len(pts) for loc, pts in trainer.solver.problem.input_pts.items()
+        loc: len(trainer.solver.problem.input_pts[loc])
+        for loc in condition_to_update
     }
     trainer.train()
     after_n_points = {
-        loc: len(pts)
-        for loc, pts in trainer.data_module.train_dataset.input.items()
+        loc: len(trainer.data_module.train_dataset.input[loc])
+        for loc in condition_to_update
     }
     assert before_n_points == trainer.callbacks[0].initial_population_size
     assert before_n_points == after_n_points
