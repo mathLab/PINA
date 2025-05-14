@@ -23,13 +23,10 @@ class AbstractProblem(metaclass=ABCMeta):
         Initialization of the :class:`AbstractProblem` class.
         """
         self._discretised_domains = {}
-        # create collector to manage problem data
 
         # create hook conditions <-> problems
         for condition_name in self.conditions:
             self.conditions[condition_name].problem = self
-
-        self._batching_dimension = 0
 
         # Store in domains dict all the domains object directly passed to
         # ConditionInterface. Done for back compatibility with PINA <0.2
@@ -41,24 +38,7 @@ class AbstractProblem(metaclass=ABCMeta):
                     self.domains[cond_name] = cond.domain
                     cond.domain = cond_name
 
-    @property
-    def batching_dimension(self):
-        """
-        Get batching dimension.
-
-        :return: The batching dimension.
-        :rtype: int
-        """
-        return self._batching_dimension
-
-    @batching_dimension.setter
-    def batching_dimension(self, value):
-        """
-        Set the batching dimension.
-
-        :param int value: The batching dimension.
-        """
-        self._batching_dimension = value
+        self.data = None
 
     #  back compatibility 0.1
     @property
@@ -300,3 +280,26 @@ class AbstractProblem(metaclass=ABCMeta):
             self.discretised_domains[k] = LabelTensor.vstack(
                 [self.discretised_domains[k], v]
             )
+
+    def aggregate_data(self):
+        """
+        Aggregate data from the problem's conditions into a single dictionary.
+        """
+        self.data = {}
+        if not self.are_all_domains_discretised:
+            raise RuntimeError(
+                "All domains must be discretised before aggregating data."
+            )
+        for condition_name in self.conditions:
+            condition = self.conditions[condition_name]
+            if hasattr(condition, "domain"):
+                samples = self.discretised_domains[condition.domain]
+
+                self.data[condition_name] = {
+                    "input": samples,
+                    "equation": condition.equation,
+                }
+            else:
+                keys = condition.__slots__
+                values = [getattr(condition, name) for name in keys]
+                self.data[condition_name] = dict(zip(keys, values))
