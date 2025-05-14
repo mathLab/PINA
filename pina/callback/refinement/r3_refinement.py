@@ -33,7 +33,17 @@ class R3Refinement(RefinementInterface):
             <https://doi.org/10.48550/arXiv.2207.02338>`_
 
         :param int sample_every: Frequency for sampling.
-        :raises ValueError: If `sample_every` is not an integer.
+        :param loss: Loss function
+        :type loss: LossInterface | ~torch.nn.modules.loss._Loss
+        :param condition_to_update: The conditions to update during the
+            refinement process. If None, all conditions with a conditions will
+            be updated. Default is None.
+        :type condition_to_update: list(str) | tuple(str) | str
+        :raises ValueError: If the condition_to_update is not a string or
+            iterable of strings.
+        :raises TypeError: If the residual_loss is not a subclass of
+            torch.nn.Module.
+
 
         Example:
             >>> r3_callback = R3Refinement(sample_every=5)
@@ -44,6 +54,15 @@ class R3Refinement(RefinementInterface):
         self.loss_fn = residual_loss(reduction="none")
 
     def sample(self, current_points, condition_name, solver):
+        """
+        Sample new points based on the R3 refinement strategy.
+
+        :param current_points: Current points in the domain.
+        :param condition_name: Name of the condition to update.
+        :param solver: The solver object.
+        :return: New points sampled based on the R3 strategy.
+        :rtype: LabelTensor
+        """
         # Compute residuals for the given condition (average over fields)
         condition = solver.problem.conditions[condition_name]
         target = solver.compute_residual(
