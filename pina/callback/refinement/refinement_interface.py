@@ -3,31 +3,38 @@ RefinementInterface class for handling the refinement of points in a neural
 network training process.
 """
 
-import torch
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 from lightning.pytorch import Callback
-from torch_geometric.data.feature_store import abstractmethod
-from torch_geometric.nn.conv import point_transformer_conv
-from ...condition.domain_equation_condition import DomainEquationCondition
+from ...utils import check_consistency
+from ...solver.physics_informed_solver import PINNInterface
 
 
 class RefinementInterface(Callback, metaclass=ABCMeta):
     """
-    Interface class of Refinement
+    Interface class of Refinement approaches.
     """
 
-    def __init__(self, sample_every):
+    def __init__(self, sample_every, condition_to_update=None):
         """
         Initializes the RefinementInterface.
 
         :param int sample_every: The number of epochs between each refinement.
         """
+        # check consistency of the input
+        check_consistency(sample_every, int)
+        if condition_to_update is not None:
+            if not isinstance(condition_to_update, (list, tuple)):
+                raise ValueError(
+                    "'condition_to_update' must be iter of strings."
+                )
+            check_consistency(condition_to_update, str)
+        # store
         self.sample_every = sample_every
-        self.conditions = None
-        self.dataset = None
-        self.solver = None
+        self._condition_to_update = condition_to_update
+        self._dataset = None
+        self._initial_population_size = None
 
-    def on_train_start(self, trainer, _):
+    def on_train_start(self, trainer, solver):
         """
         Called when the training begins. It initializes the conditions and
         dataset.
@@ -35,22 +42,37 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         :param lightning.pytorch.Trainer trainer: The trainer object.
         :param _: Unused argument.
         """
-        self.problem = trainer.solver.problem
-        self.solver = trainer.solver
-        self.conditions = {}
-        for name, cond in self.problem.conditions.items():
-            if isinstance(cond, DomainEquationCondition):
-                self.conditions[name] = cond
-        self.dataset = trainer.datamodule.train_dataset
+        # check we have valid conditions names
+        if self._condition_to_update is None:
+            self._condition_to_update = list(solver.problem.conditions.keys())
 
-    @property
-    def points(self):
-        """
-        Returns the points of the dataset.
-        """
-        return self.dataset.conditions_dict
+        for cond in self._condition_to_update:
+            if cond not in solver.problem.conditions:
+                raise RuntimeError(
+                    f"Condition '{cond}' not found in "
+                    f"{list(solver.problem.conditions.keys())}."
+                )
+            if not hasattr(solver.problem.conditions[cond], "domain"):
+                raise RuntimeError(
+                    f"Condition '{cond}' does not contain a domain to "
+                    "sample from."
+                )
+        # check solver
+        if not isinstance(solver, PINNInterface):
+            raise RuntimeError(
+                f"Refinment strategies are currently implemented only "
+                "for physics informed based solvers. Please use a Solver "
+                "inheriting from 'PINNInterface'."
+            )
+        # store dataset
+        self._dataset = trainer.datamodule.train_dataset
+        # compute initial population size
+        self._initial_population_size = self._compute_population_size(
+            self._condition_to_update
+        )
+        return super().on_train_epoch_start(trainer, solver)
 
-    def on_train_epoch_end(self, trainer, _):
+    def on_train_epoch_end(self, trainer, solver):
         """
         Performs the refinement at the end of each training epoch (if needed).
 
@@ -58,46 +80,44 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         :param _: Unused argument.
         """
         if trainer.current_epoch % self.sample_every == 0:
-            self.update()
-
-    def update(self):
-        """
-        Performs the refinement of the points.
-        """
-        new_points = {}
-        for name, condition in self.conditions.items():
-            new_points[name] = {"input": self.sample(name, condition)}
-        self.dataset.update_data(new_points)
-
-    def per_point_residual(self, conditions_name=None):
-        """
-        Computes the residuals for a PINN object.
-
-        :return: the total loss, and pointwise loss.
-        :rtype: tuple
-        """
-        # compute residual
-        res_loss = {}
-        tot_loss = []
-        points = self.points
-        if conditions_name is None:
-            conditions_name = list(self.conditions.keys())
-        for name in conditions_name:
-            cond = self.conditions[name]
-            cond_points = points[name]["input"]
-            target = self._compute_residual(cond_points, cond.equation)
-            res_loss[name] = torch.abs(target).as_subclass(torch.Tensor)
-            tot_loss.append(torch.abs(target))
-        return torch.vstack(tot_loss).tensor.mean(), res_loss
-
-    def _compute_residual(self, pts, equation):
-        pts.requires_grad_(True)
-        pts.retain_grad()
-        return equation.residual(pts, self.solver.forward(pts))
+            self._update_points(solver)
+        return super().on_train_epoch_end(trainer, solver)
 
     @abstractmethod
-    def sample(self, condition):
+    def sample(self, current_points, condition_name, solver):
         """
         Samples new points based on the condition.
         """
         pass
+
+    @property
+    def dataset(self):
+        """
+        Returns the dataset for training.
+        """
+        return self._dataset
+
+    @property
+    def initial_population_size(self):
+        """
+        Returns the dataset for training.
+        """
+        return self._initial_population_size
+
+    def _update_points(self, solver):
+        """
+        Performs the refinement of the points.
+        """
+        new_points = {}
+        for name in self._condition_to_update:
+            current_points = self.dataset.conditions_dict[name]["input"]
+            new_points[name] = {
+                "input": self.sample(current_points, name, solver)
+            }
+        self.dataset.update_data(new_points)
+
+    def _compute_population_size(self, conditions):
+        return {
+            cond: len(self.dataset.conditions_dict[cond]["input"])
+            for cond in conditions
+        }
