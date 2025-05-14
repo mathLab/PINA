@@ -334,7 +334,7 @@ class PinaDataModule(LightningDataModule):
         # collector = Collector(problem)
         # collector.store_fixed_data()
         # collector.store_sample_domains()
-        problem.aggregate_data()
+        problem.collect_data()
 
         # Check if the splits are correct
         self._check_slit_sizes(train_size, test_size, val_size)
@@ -363,7 +363,9 @@ class PinaDataModule(LightningDataModule):
             # raises NotImplementedError
             self.val_dataloader = super().val_dataloader
 
-        self.data_splits = self._create_splits(problem.data, splits_dict)
+        self.data_splits = self._create_splits(
+            problem.collected_data, splits_dict
+        )
         self.transfer_batch_to_device = self._transfer_batch_to_device
 
     def setup(self, stage=None):
