@@ -121,7 +121,7 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
     @property
     def initial_population_size(self):
         """
-        Returns the dataset for training.
+        Returns the dataset for training size.
         """
         return self._initial_population_size
 
