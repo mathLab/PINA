@@ -1,3 +1,7 @@
+"""
+Module for Pina Refinement callbacks.
+"""
+
 __all__ = [
     "RefinementInterface",
     "R3Refinement",

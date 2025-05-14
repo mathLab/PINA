@@ -1,7 +1,7 @@
 """Module for the R3Refinement callback."""
 
 import torch
-import torch.nn as nn
+from torch import nn
 from torch.nn.modules.loss import _Loss
 from .refinement_interface import RefinementInterface
 from ...label_tensor import LabelTensor
@@ -66,5 +66,4 @@ class R3Refinement(RefinementInterface):
             retain_pts = len(pts)
             samples = domain.sample(num_old_points - retain_pts, "random")
             return LabelTensor.cat([pts, samples])
-        else:
-            return domain.sample(num_old_points, "random")
+        return domain.sample(num_old_points, "random")

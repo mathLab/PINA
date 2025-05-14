@@ -7,7 +7,6 @@ from abc import ABCMeta, abstractmethod
 from lightning.pytorch import Callback
 from ...utils import check_consistency
 from ...solver.physics_informed_solver import PINNInterface
-from ...condition import DomainEquationCondition
 
 
 class RefinementInterface(Callback, metaclass=ABCMeta):
@@ -46,7 +45,8 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         # check we have valid conditions names
         if self._condition_to_update is None:
             self._condition_to_update = [
-                name for name, cond in solver.problem.conditions.items()
+                name
+                for name, cond in solver.problem.conditions.items()
                 if hasattr(cond, "domain")
             ]
 
@@ -64,7 +64,7 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         # check solver
         if not isinstance(solver, PINNInterface):
             raise RuntimeError(
-                f"Refinment strategies are currently implemented only "
+                "Refinment strategies are currently implemented only "
                 "for physics informed based solvers. Please use a Solver "
                 "inheriting from 'PINNInterface'."
             )
@@ -92,7 +92,6 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         """
         Samples new points based on the condition.
         """
-        pass
 
     @property
     def dataset(self):
