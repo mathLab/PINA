@@ -38,9 +38,33 @@ class AbstractProblem(metaclass=ABCMeta):
                     self.domains[cond_name] = cond.domain
                     cond.domain = cond_name
 
-        self.data = None
+        self._collect_data = {}
+
+    @property
+    def collected_data(self):
+        """
+        Return the collected data from the problem's conditions.
+
+        :return: The collected data.
+        :rtype: dict
+        """
+        if not self._collect_data:
+            raise RuntimeError(
+                "You have to call collect_data() before accessing the data."
+            )
+        return self._collect_data
+
+    @collected_data.setter
+    def collected_data(self, data):
+        """
+        Set the collected data from the problem's conditions.
+
+        :param dict data: The collected data.
+        """
+        self._collect_data = data
 
     #  back compatibility 0.1
+
     @property
     def input_pts(self):
         """
@@ -281,25 +305,31 @@ class AbstractProblem(metaclass=ABCMeta):
                 [self.discretised_domains[k], v]
             )
 
-    def aggregate_data(self):
+    def collect_data(self):
         """
         Aggregate data from the problem's conditions into a single dictionary.
         """
-        self.data = {}
+        data = {}
+        # check if all domains are discretised
         if not self.are_all_domains_discretised:
             raise RuntimeError(
                 "All domains must be discretised before aggregating data."
             )
+        # Iterate over the conditions and collect data
         for condition_name in self.conditions:
             condition = self.conditions[condition_name]
+            # Check if the condition has an domain attribute
             if hasattr(condition, "domain"):
+                # Store the discretisation points
                 samples = self.discretised_domains[condition.domain]
-
-                self.data[condition_name] = {
+                data[condition_name] = {
                     "input": samples,
                     "equation": condition.equation,
                 }
             else:
+                # If the condition does not have a domain attribute, store
+                # the input and target points
                 keys = condition.__slots__
                 values = [getattr(condition, name) for name in keys]
-                self.data[condition_name] = dict(zip(keys, values))
+                data[condition_name] = dict(zip(keys, values))
+        self.collected_data = data

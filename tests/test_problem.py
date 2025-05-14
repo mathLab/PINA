@@ -98,21 +98,23 @@ def test_aggregate_data():
         target=LabelTensor(torch.tensor([[0.0]]), labels=["u"]),
     )
     poisson_problem.discretise_domain(0, "random", domains="all")
-    poisson_problem.aggregate_data()
-    assert isinstance(poisson_problem.data, dict)
+    poisson_problem.collect_data()
+    assert isinstance(poisson_problem.collected_data, dict)
     for name, conditions in poisson_problem.conditions.items():
-        assert name in poisson_problem.data.keys()
+        assert name in poisson_problem.collected_data.keys()
         if isinstance(conditions, InputTargetCondition):
-            assert "input" in poisson_problem.data[name].keys()
-            assert "target" in poisson_problem.data[name].keys()
+            assert "input" in poisson_problem.collected_data[name].keys()
+            assert "target" in poisson_problem.collected_data[name].keys()
         elif isinstance(conditions, DomainEquationCondition):
-            assert "input" in poisson_problem.data[name].keys()
-            assert "target" not in poisson_problem.data[name].keys()
-            assert "equation" in poisson_problem.data[name].keys()
+            assert "input" in poisson_problem.collected_data[name].keys()
+            assert "target" not in poisson_problem.collected_data[name].keys()
+            assert "equation" in poisson_problem.collected_data[name].keys()
 
 
 def test_wrong_aggregate_data():
     poisson_problem = Poisson()
     poisson_problem.discretise_domain(0, "random", domains=["D"])
     with pytest.raises(RuntimeError):
-        poisson_problem.aggregate_data()
+        poisson_problem.collected_data()
+    with pytest.raises(RuntimeError):
+        poisson_problem.collect_data()
