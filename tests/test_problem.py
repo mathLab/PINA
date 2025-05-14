@@ -4,6 +4,11 @@ from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from pina import LabelTensor
 from pina.domain import Union
 from pina.domain import CartesianDomain
+from pina.condition import (
+    Condition,
+    InputTargetCondition,
+    DomainEquationCondition,
+)
 
 
 def test_discretise_domain():
@@ -84,3 +89,30 @@ def test_wrong_custom_sampling_logic(mode):
     }
     with pytest.raises(RuntimeError):
         poisson_problem.discretise_domain(sample_rules=sampling_rules)
+
+
+def test_aggregate_data():
+    poisson_problem = Poisson()
+    poisson_problem.conditions["data"] = Condition(
+        input=LabelTensor(torch.tensor([[0.0, 1.0]]), labels=["x", "y"]),
+        target=LabelTensor(torch.tensor([[0.0]]), labels=["u"]),
+    )
+    poisson_problem.discretise_domain(0, "random", domains="all")
+    poisson_problem.aggregate_data()
+    assert isinstance(poisson_problem.data, dict)
+    for name, conditions in poisson_problem.conditions.items():
+        assert name in poisson_problem.data.keys()
+        if isinstance(conditions, InputTargetCondition):
+            assert "input" in poisson_problem.data[name].keys()
+            assert "target" in poisson_problem.data[name].keys()
+        elif isinstance(conditions, DomainEquationCondition):
+            assert "input" in poisson_problem.data[name].keys()
+            assert "target" not in poisson_problem.data[name].keys()
+            assert "equation" in poisson_problem.data[name].keys()
+
+
+def test_wrong_aggregate_data():
+    poisson_problem = Poisson()
+    poisson_problem.discretise_domain(0, "random", domains=["D"])
+    with pytest.raises(RuntimeError):
+        poisson_problem.aggregate_data()
