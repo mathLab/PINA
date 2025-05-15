@@ -331,9 +331,6 @@ class PinaDataModule(LightningDataModule):
             self.pin_memory = pin_memory
 
         # Collect data
-        # collector = Collector(problem)
-        # collector.store_fixed_data()
-        # collector.store_sample_domains()
         problem.collect_data()
 
         # Check if the splits are correct

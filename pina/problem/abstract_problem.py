@@ -38,33 +38,25 @@ class AbstractProblem(metaclass=ABCMeta):
                     self.domains[cond_name] = cond.domain
                     cond.domain = cond_name
 
-        self._collect_data = {}
+        self._collected_data = {}
 
     @property
     def collected_data(self):
         """
         Return the collected data from the problem's conditions.
 
-        :return: The collected data.
+        :return: The collected data. Keys are condition names, and values are
+            dictionaries containing the input points and the corresponding
+            equations or target points.
         :rtype: dict
         """
-        if not self._collect_data:
+        if not self._collected_data:
             raise RuntimeError(
                 "You have to call collect_data() before accessing the data."
             )
-        return self._collect_data
-
-    @collected_data.setter
-    def collected_data(self, data):
-        """
-        Set the collected data from the problem's conditions.
-
-        :param dict data: The collected data.
-        """
-        self._collect_data = data
+        return self._collected_data
 
     #  back compatibility 0.1
-
     @property
     def input_pts(self):
         """
@@ -75,11 +67,12 @@ class AbstractProblem(metaclass=ABCMeta):
         :rtype: dict
         """
         to_return = {}
-        for cond_name, cond in self.conditions.items():
-            if hasattr(cond, "input"):
-                to_return[cond_name] = cond.input
-            elif hasattr(cond, "domain"):
-                to_return[cond_name] = self._discretised_domains[cond.domain]
+        if self._collected_data is None:
+            raise RuntimeError(
+                "You have to call collect_data() before accessing the data."
+            )
+        for cond_name, data in self._collected_data.items():
+            to_return[cond_name] = data["input"]
         return to_return
 
     @property
@@ -332,4 +325,4 @@ class AbstractProblem(metaclass=ABCMeta):
                 keys = condition.__slots__
                 values = [getattr(condition, name) for name in keys]
                 data[condition_name] = dict(zip(keys, values))
-        self.collected_data = data
+        self._collected_data = data
