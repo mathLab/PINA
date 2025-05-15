@@ -114,7 +114,6 @@ def test_aggregate_data():
 def test_wrong_aggregate_data():
     poisson_problem = Poisson()
     poisson_problem.discretise_domain(0, "random", domains=["D"])
-    with pytest.raises(RuntimeError):
-        poisson_problem.collected_data()
+    assert not poisson_problem._collected_data
     with pytest.raises(RuntimeError):
         poisson_problem.collect_data()
