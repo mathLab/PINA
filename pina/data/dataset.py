@@ -247,7 +247,6 @@ class PinaTensorDataset(PinaDataset):
         parameter.
 
         :param dict new_conditions_dict: Dictionary containing the new data.
-        :type new_conditions_dict: dict
         :return: None
         """
         for condition, data in new_conditions_dict.items():

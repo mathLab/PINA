@@ -59,7 +59,7 @@ class R3Refinement(RefinementInterface):
 
         :param current_points: Current points in the domain.
         :param condition_name: Name of the condition to update.
-        :param solver: The solver object.
+        :param PINNInterface solver: The solver object.
         :return: New points sampled based on the R3 strategy.
         :rtype: LabelTensor
         """

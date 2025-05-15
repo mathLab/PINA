@@ -95,7 +95,9 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         :param ~lightning.pytorch.trainer.trainer.Trainer: The trainer object.
         :param PINNInterface solver: The solver object.
         """
-        if trainer.current_epoch % self.sample_every == 0:
+        if (trainer.current_epoch % self.sample_every == 0) and (
+            trainer.current_epoch != 0
+        ):
             self._update_points(solver)
         return super().on_train_epoch_end(trainer, solver)
 
@@ -106,7 +108,7 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
 
         :param current_points: Current points in the domain.
         :param condition_name: Name of the condition to update.
-        :param solver: The solver object.
+        :param PINNInterface solver: The solver object.
         :return: New points sampled based on the R3 strategy.
         :rtype: LabelTensor
         """
