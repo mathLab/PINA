@@ -23,13 +23,10 @@ class AbstractProblem(metaclass=ABCMeta):
         Initialization of the :class:`AbstractProblem` class.
         """
         self._discretised_domains = {}
-        # create collector to manage problem data
 
         # create hook conditions <-> problems
         for condition_name in self.conditions:
             self.conditions[condition_name].problem = self
-
-        self._batching_dimension = 0
 
         # Store in domains dict all the domains object directly passed to
         # ConditionInterface. Done for back compatibility with PINA <0.2
@@ -41,24 +38,23 @@ class AbstractProblem(metaclass=ABCMeta):
                     self.domains[cond_name] = cond.domain
                     cond.domain = cond_name
 
+        self._collected_data = {}
+
     @property
-    def batching_dimension(self):
+    def collected_data(self):
         """
-        Get batching dimension.
+        Return the collected data from the problem's conditions.
 
-        :return: The batching dimension.
-        :rtype: int
+        :return: The collected data. Keys are condition names, and values are
+            dictionaries containing the input points and the corresponding
+            equations or target points.
+        :rtype: dict
         """
-        return self._batching_dimension
-
-    @batching_dimension.setter
-    def batching_dimension(self, value):
-        """
-        Set the batching dimension.
-
-        :param int value: The batching dimension.
-        """
-        self._batching_dimension = value
+        if not self._collected_data:
+            raise RuntimeError(
+                "You have to call collect_data() before accessing the data."
+            )
+        return self._collected_data
 
     #  back compatibility 0.1
     @property
@@ -71,11 +67,12 @@ class AbstractProblem(metaclass=ABCMeta):
         :rtype: dict
         """
         to_return = {}
-        for cond_name, cond in self.conditions.items():
-            if hasattr(cond, "input"):
-                to_return[cond_name] = cond.input
-            elif hasattr(cond, "domain"):
-                to_return[cond_name] = self._discretised_domains[cond.domain]
+        if self._collected_data is None:
+            raise RuntimeError(
+                "You have to call collect_data() before accessing the data."
+            )
+        for cond_name, data in self._collected_data.items():
+            to_return[cond_name] = data["input"]
         return to_return
 
     @property
@@ -300,3 +297,32 @@ class AbstractProblem(metaclass=ABCMeta):
             self.discretised_domains[k] = LabelTensor.vstack(
                 [self.discretised_domains[k], v]
             )
+
+    def collect_data(self):
+        """
+        Aggregate data from the problem's conditions into a single dictionary.
+        """
+        data = {}
+        # check if all domains are discretised
+        if not self.are_all_domains_discretised:
+            raise RuntimeError(
+                "All domains must be discretised before aggregating data."
+            )
+        # Iterate over the conditions and collect data
+        for condition_name in self.conditions:
+            condition = self.conditions[condition_name]
+            # Check if the condition has an domain attribute
+            if hasattr(condition, "domain"):
+                # Store the discretisation points
+                samples = self.discretised_domains[condition.domain]
+                data[condition_name] = {
+                    "input": samples,
+                    "equation": condition.equation,
+                }
+            else:
+                # If the condition does not have a domain attribute, store
+                # the input and target points
+                keys = condition.__slots__
+                values = [getattr(condition, name) for name in keys]
+                data[condition_name] = dict(zip(keys, values))
+        self._collected_data = data
