@@ -13,8 +13,6 @@ from torch.utils.data.distributed import DistributedSampler
 from ..label_tensor import LabelTensor
 from .dataset import PinaDatasetFactory, PinaTensorDataset
 
-# from ..collector import Collector
-
 
 class DummyDataloader:
 
