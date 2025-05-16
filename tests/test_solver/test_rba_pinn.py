@@ -23,9 +23,10 @@ inverse_problem = InversePoisson()
 inverse_problem.discretise_domain(10)
 
 # reduce the number of data points to speed up testing
-data_condition = inverse_problem.conditions["data"]
-data_condition.input = data_condition.input[:10]
-data_condition.target = data_condition.target[:10]
+if hasattr(inverse_problem.conditions, "data"):
+    data_condition = inverse_problem.conditions["data"]
+    data_condition.input = data_condition.input[:10]
+    data_condition.target = data_condition.target[:10]
 
 # add input-output condition to test supervised learning
 input_pts = torch.rand(10, len(problem.input_variables))
