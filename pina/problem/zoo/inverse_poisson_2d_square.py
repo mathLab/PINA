@@ -1,14 +1,51 @@
 """Formulation of the inverse Poisson problem in a square domain."""
 
+import warnings
 import requests
 import torch
 from io import BytesIO
+from requests.exceptions import RequestException
 from ... import Condition
 from ... import LabelTensor
 from ...operator import laplacian
 from ...domain import CartesianDomain
 from ...equation import Equation, FixedValue
 from ...problem import SpatialProblem, InverseProblem
+from ...utils import custom_warning_format
+
+warnings.formatwarning = custom_warning_format
+warnings.filterwarnings("always", category=ResourceWarning)
+
+
+def _load_tensor_from_url(url, labels):
+    """
+    Downloads a tensor file from a URL and wraps it in a LabelTensor.
+
+    This function fetches a `.pth` file containing tensor data, extracts it,
+    and returns it as a LabelTensor using the specified labels. If the file
+    cannot be retrieved (e.g., no internet connection), a warning is issued
+    and None is returned.
+
+    :param str url: URL to the remote `.pth` tensor file.
+    :param list[str] | tuple[str] labels: Labels for the resulting LabelTensor.
+    :return: A LabelTensor object if successful, otherwise None.
+    :rtype: LabelTensor | None
+    """
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        tensor = torch.load(
+            BytesIO(response.content), weights_only=False
+        ).tensor.detach()
+        return LabelTensor(tensor, labels)
+    except RequestException as e:
+        print(
+            "Could not download data for 'InversePoisson2DSquareProblem' "
+            f"from '{url}'. "
+            f"Reason: {e}. Skipping data loading.",
+            ResourceWarning,
+        )
+        return None
 
 
 def laplace_equation(input_, output_, params_):
@@ -29,28 +66,17 @@ def laplace_equation(input_, output_, params_):
     return delta_u - force_term
 
 
-# URL of the file
-url = "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pts_0.5_0.5"
-# Download the file
-response = requests.get(url)
-response.raise_for_status()
-file_like_object = BytesIO(response.content)
-# Set the data
-input_data = LabelTensor(
-    torch.load(file_like_object, weights_only=False).tensor.detach(),
-    ["x", "y", "mu1", "mu2"],
+# loading data
+input_url = (
+    "https://github.com/mathLab/PINA/raw/refs/heads/master"
+    "/tutorials/tutorial7/data/pts_0.5_0.5"
 )
-
-# URL of the file
-url = "https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pinn_solution_0.5_0.5"
-# Download the file
-response = requests.get(url)
-response.raise_for_status()
-file_like_object = BytesIO(response.content)
-# Set the data
-output_data = LabelTensor(
-    torch.load(file_like_object, weights_only=False).tensor.detach(), ["u"]
+output_url = (
+    "https://github.com/mathLab/PINA/raw/refs/heads/master"
+    "/tutorials/tutorial7/data/pinn_solution_0.5_0.5"
 )
+input_data = _load_tensor_from_url(input_url, ["x", "y", "mu1", "mu2"])
+output_data = _load_tensor_from_url(output_url, ["u"])
 
 
 class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
@@ -58,6 +84,8 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     Implementation of the inverse 2-dimensional Poisson problem in the square
     domain :math:`[0, 1] \times [0, 1]`,
     with unknown parameter domain :math:`[-1, 1] \times [-1, 1]`.
+    The `"data"` condition is added only if the required files are
+    downloaded successfully.
 
     :Example:
         >>> problem = InversePoisson2DSquareProblem()
@@ -83,5 +111,7 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
         "g3": Condition(domain="g3", equation=FixedValue(0.0)),
         "g4": Condition(domain="g4", equation=FixedValue(0.0)),
         "D": Condition(domain="D", equation=Equation(laplace_equation)),
-        "data": Condition(input=input_data, target=output_data),
     }
+
+    if input_data is not None and input_data is not None:
+        conditions["data"] = Condition(input=input_data, target=output_data)
