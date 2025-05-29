@@ -2,7 +2,7 @@
 
 import torch
 from torch_geometric.nn import MessagePassing
-from ....utils import check_consistency
+from ....utils import check_positive_integer
 
 
 class DeepTensorNetworkBlock(MessagePassing):
@@ -10,8 +10,9 @@ class DeepTensorNetworkBlock(MessagePassing):
     Implementation of the Deep Tensor Network block.
 
     This block is used to perform message-passing between nodes and edges in a
-    graph neural network, following the scheme proposed by Schutt et al. (2017).
-    It serves as an inner block in a larger graph neural network architecture.
+    graph neural network, following the scheme proposed by Schutt et al. in
+    2017. It serves as an inner block in a larger graph neural network
+    architecture.
 
     The message between two nodes connected by an edge is computed by applying a
     linear transformation to the sender node features and the edge features,
@@ -24,9 +25,9 @@ class DeepTensorNetworkBlock(MessagePassing):
     .. seealso::
 
         **Original reference**: Schutt, K., Arbabzadah, F., Chmiela, S. et al.
-        *Quantum-Chemical Insights from Deep Tensor Neural Networks*.
+        (2017). *Quantum-Chemical Insights from Deep Tensor Neural Networks*.
         Nature Communications 8, 13890 (2017).
-        DOI: `<https://doi.org/10.1038/ncomms13890>_`.
+        DOI: `<https://doi.org/10.1038/ncomms13890>`_.
     """
 
     def __init__(
@@ -39,7 +40,7 @@ class DeepTensorNetworkBlock(MessagePassing):
         flow="source_to_target",
     ):
         """
-        Initialization of the :class:`DeepTensorNetworkBlocklock` class.
+        Initialization of the :class:`DeepTensorNetworkBlock` class.
 
         :param int node_feature_dim: The dimension of the node features.
         :param int edge_feature_dim: The dimension of the edge features.
@@ -57,51 +58,36 @@ class DeepTensorNetworkBlock(MessagePassing):
             flow means that messages are sent from the target node to the
             source node. See :class:`torch_geometric.nn.MessagePassing` for more
             details. Default is "source_to_target".
-        :raises ValueError: If `node_feature_dim` is not a positive integer.
-        :raises ValueError: If `edge_feature_dim` is not a positive integer.
+        :raises AssertionError: If `node_feature_dim` is not a positive integer.
+        :raises AssertionError: If `edge_feature_dim` is not a positive integer.
         """
         super().__init__(aggr=aggr, node_dim=node_dim, flow=flow)
 
-        # Check consistency
-        check_consistency(node_feature_dim, int)
-        check_consistency(edge_feature_dim, int)
-
         # Check values
-        if node_feature_dim <= 0:
-            raise ValueError(
-                "`node_feature_dim` must be a positive integer,"
-                f" got {node_feature_dim}."
-            )
+        check_positive_integer(node_feature_dim, strict=True)
+        check_positive_integer(edge_feature_dim, strict=True)
 
-        if edge_feature_dim <= 0:
-            raise ValueError(
-                "`edge_feature_dim` must be a positive integer,"
-                f" got {edge_feature_dim}."
-            )
-
-        # Initialize parameters
-        self.node_feature_dim = node_feature_dim
-        self.edge_feature_dim = edge_feature_dim
-        self.activation = activation
+        # Activation function
+        self.activation = activation()
 
         # Layer for processing node features
         self.node_layer = torch.nn.Linear(
-            in_features=self.node_feature_dim,
-            out_features=self.node_feature_dim,
+            in_features=node_feature_dim,
+            out_features=node_feature_dim,
             bias=True,
         )
 
         # Layer for processing edge features
         self.edge_layer = torch.nn.Linear(
-            in_features=self.edge_feature_dim,
-            out_features=self.node_feature_dim,
+            in_features=edge_feature_dim,
+            out_features=node_feature_dim,
             bias=True,
         )
 
         # Layer for computing the message
         self.message_layer = torch.nn.Linear(
-            in_features=self.node_feature_dim,
-            out_features=self.node_feature_dim,
+            in_features=node_feature_dim,
+            out_features=node_feature_dim,
             bias=False,
         )
 

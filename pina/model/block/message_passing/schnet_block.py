@@ -1,9 +1,10 @@
 """Module for the Schnet block."""
 
 import torch
-from ....model import FeedForward
 from torch_geometric.nn import MessagePassing
-from ....utils import check_consistency
+from torch_geometric.utils import remove_self_loops
+from ....utils import check_positive_integer
+from ....model import FeedForward
 
 
 class SchnetBlock(MessagePassing):
@@ -11,36 +12,37 @@ class SchnetBlock(MessagePassing):
     Implementation of the Schnet block.
 
     This block is used to perform message-passing between nodes and edges in a
-    graph neural network, following the scheme proposed by Schütt et al. (2017).
-    It serves as an inner block in a larger graph neural network architecture.
+    graph neural network, following the scheme proposed by Schütt et al. in
+    2017. It serves as an inner block in a larger graph neural network
+    architecture.
 
-    The message between two nodes connected by an edge is computed by applying a
-    linear transformation to the sender node features and the edge features,
-    followed by a non-linear activation function. Messages are then aggregated
-    using an aggregation scheme (e.g., sum, mean, min, max, or product).
+    The message between two nodes connected by an edge is computed as the
+    product of the output of a MLP applied to the norm of the distance of the
+    node positions, and of another MLP applied to the node features. Messages
+    are then aggregated using an aggregation scheme (e.g., sum, mean, min, max,
+    or product).
 
-    The update step is performed by a simple addition of the incoming messages
-    to the node features.
+    The update step is performed by applying another MLP to the concatenation of
+    the incoming messages and the node features.
 
     .. seealso::
 
-        **Original reference** Schütt, K., Kindermans, P. J., Sauceda Felix, H. E., Chmiela, S., Tkatchenko, A., & Müller, K. R. (2017). 
-        Schnet: A continuous-filter convolutional neural network for modeling quantum interactions. 
-        Advances in neural information processing systems, 30.
+        **Original reference** Schütt, K., Kindermans, P. J., Sauceda Felix,
+        H. E., Chmiela, S., Tkatchenko, A., Müller, K. R. (2017).
+        *Schnet: A continuous-filter convolutional neural network for modeling
+        quantum interactions.*
+        Advances in Neural Information Processing Systems, 30.
+        DOI: `<https://doi.org/10.48550/arXiv.1706.08566>`_.
     """
-
-        
 
     def __init__(
         self,
         node_feature_dim,
-        node_pos_dim,
-        hidden_dim,
-        radial_hidden_dim=16,
+        hidden_dim=64,
         n_message_layers=2,
         n_update_layers=2,
         n_radial_layers=2,
-        activation=torch.nn.ReLU,
+        activation=torch.nn.SiLU,
         aggr="add",
         node_dim=-2,
         flow="source_to_target",
@@ -49,9 +51,16 @@ class SchnetBlock(MessagePassing):
         Initialization of the :class:`SchnetBlock` class.
 
         :param int node_feature_dim: The dimension of the node features.
-        :param int edge_feature_dim: The dimension of the edge features.
+        :param int hidden_dim: The dimension of the hidden features.
+            Default is 64.
+        :param int n_message_layers: The number of layers in the message
+            network. Default is 2.
+        :param int n_update_layers: The number of layers in the update network.
+            Default is 2.
+        :param int n_radial_layers: The number of layers in the radial field
+            network. Default is 2.
         :param torch.nn.Module activation: The activation function.
-            Default is :class:`torch.nn.Tanh`.
+            Default is :class:`torch.nn.SiLU`.
         :param str aggr: The aggregation scheme to use for message passing.
             Available options are "add", "mean", "min", "max", "mul".
             See :class:`torch_geometric.nn.MessagePassing` for more details.
@@ -64,53 +73,47 @@ class SchnetBlock(MessagePassing):
             flow means that messages are sent from the target node to the
             source node. See :class:`torch_geometric.nn.MessagePassing` for more
             details. Default is "source_to_target".
-        :raises ValueError: If `node_feature_dim` is not a positive integer.
-        :raises ValueError: If `edge_feature_dim` is not a positive integer.
+        :raises AssertionError: If `node_feature_dim` is not a positive integer.
+        :raises AssertionError: If `hidden_dim` is not a positive integer.
+        :raises AssertionError: If `n_message_layers` is not a positive integer.
+        :raises AssertionError: If `n_update_layers` is not a positive integer.
+        :raises AssertionError: If `n_radial_layers` is not a positive integer.
         """
         super().__init__(aggr=aggr, node_dim=node_dim, flow=flow)
 
-        # Check consistency
-        check_consistency(node_feature_dim, int)
-
         # Check values
-        if node_feature_dim <= 0:
-            raise ValueError(
-                "`node_feature_dim` must be a positive integer,"
-                f" got {node_feature_dim}."
-            )
+        check_positive_integer(node_feature_dim, strict=True)
+        check_positive_integer(hidden_dim, strict=True)
+        check_positive_integer(n_message_layers, strict=True)
+        check_positive_integer(n_update_layers, strict=True)
+        check_positive_integer(n_radial_layers, strict=True)
 
-
-        # Initialize parameters
-        self.node_feature_dim = node_feature_dim
-        self.node_pos_dim = node_pos_dim
-        self.hidden_dim = hidden_dim
-        self.activation = activation
-
-        # Layer for processing node features
-        self.radial_field = FeedForward(
+        # Layer for processing node distances
+        self.radial_net = FeedForward(
             input_dimensions=1,
             output_dimensions=1,
-            inner_size=radial_hidden_dim,
+            inner_size=hidden_dim,
             n_layers=n_radial_layers,
-            func=self.activation,
-        )
-        
-        self.update_net = FeedForward(
-            input_dimensions=self.node_pos_dim + self.hidden_dim,
-            output_dimensions=self.hidden_dim,
-            inner_size=self.hidden_dim,
-            n_layers=n_update_layers,
-            func=self.activation,
+            func=activation,
         )
 
+        # Layer for computing the message
         self.message_net = FeedForward(
-            input_dimensions=self.node_feature_dim,
-            output_dimensions=self.node_pos_dim + self.hidden_dim,
-            inner_size=self.hidden_dim,
+            input_dimensions=node_feature_dim,
+            output_dimensions=node_feature_dim,
+            inner_size=hidden_dim,
             n_layers=n_message_layers,
-            func=self.activation,
+            func=activation,
         )
 
+        # Layer for updating the node features
+        self.update_net = FeedForward(
+            input_dimensions=2 * node_feature_dim,
+            output_dimensions=node_feature_dim,
+            inner_size=hidden_dim,
+            n_layers=n_update_layers,
+            func=activation,
+        )
 
     def forward(self, x, pos, edge_index):
         """
@@ -118,36 +121,38 @@ class SchnetBlock(MessagePassing):
 
         :param x: The node features.
         :type x: torch.Tensor | LabelTensor
-        :param torch.Tensor edge_index: The edge indices. In the original formulation, 
-        the messages are aggregated from all nodes, not only from the neighbours. 
+        :param torch.Tensor edge_index: The edge indices.
         :return: The updated node features.
         :rtype: torch.Tensor
         """
+        edge_index, _ = remove_self_loops(edge_index)
         return self.propagate(edge_index=edge_index, x=x, pos=pos)
 
-    def message(self, x_i, pos_i ,pos_j):
+    def message(self, x_i, pos_i, pos_j):
         """
         Compute the message to be passed between nodes and edges.
 
-        :param x_j: Node features of the sender nodes.
-        :type x_j: torch.Tensor | LabelTensor
-        :param edge_attr: The edge attributes.
-        :type edge_attr: torch.Tensor | LabelTensor
+        :param x_i: Node features of the sender nodes.
+        :type x_i: torch.Tensor | LabelTensor
+        :param pos_i: The node coordinates of the recipient nodes.
+        :type pos_i: torch.Tensor | LabelTensor
+        :param pos_j: The node coordinates of the sender nodes.
+        :type pos_j: torch.Tensor | LabelTensor
         :return: The message to be passed.
         :rtype: torch.Tensor
-        """  
+        """
+        rad = self.radial_net(torch.norm(pos_i - pos_j, dim=-1, keepdim=True))
+        msg = self.message_net(x_i)
+        return rad * msg
 
-        return self.radial_field(torch.norm(pos_i-pos_j))*self.message_net(x_i)
-
-
-    def update(self, message, pos):
+    def update(self, message, x):
         """
         Update the node features with the received messages.
 
         :param torch.Tensor message: The message to be passed.
         :param x: The node features.
         :type x: torch.Tensor | LabelTensor
-        :return: The concatenation of the update position features and the updated node features.
+        :return: The updated node features.
         :rtype: torch.Tensor
         """
-        return self.update_net(torch.cat((pos, message), dim=-1))
+        return self.update_net(torch.cat((x, message), dim=-1))

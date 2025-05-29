@@ -122,6 +122,18 @@ Blocks
     Continuous Convolution Block <model/block/convolution.rst>
     Orthogonal Block <model/block/orthogonal.rst>
 
+Message Passing
+-------------------
+
+.. toctree::
+    :titlesonly:
+
+    Deep Tensor Network Block <model/block/message_passing/deep_tensor_network_block.rst>
+    E(n) Equivariant Network Block <model/block/message_passing/en_equivariant_network_block.rst>
+    Interaction Network Block <model/block/message_passing/interaction_network_block.rst>
+    Radial Field Network Block <model/block/message_passing/radial_field_network_block.rst>
+    Schnet Block <model/block/message_passing/schnet_block.rst>
+
 
 Reduction and Embeddings
 --------------------------
