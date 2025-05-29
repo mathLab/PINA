@@ -296,22 +296,183 @@ def test_laplacian(f):
         laplacian(output_=output_, input_=input_, components=["a", "b", "c"])
 
 
-def test_advection():
+def test_advection_scalar():
 
-    # Define input and output
+    # Define 3-dimensional input
     input_ = torch.rand((20, 3), requires_grad=True)
     input_ = LabelTensor(input_, ["x", "y", "z"])
-    output_ = LabelTensor(input_**2, ["u", "v", "c"])
 
-    # Define the velocity field
-    velocity = output_.extract(["c"])
+    # Define 3-dimensional velocity field and quantity to be advected
+    velocity = torch.rand((20, 3), requires_grad=True)
+    field = torch.sum(input_**2, dim=-1, keepdim=True)
 
-    # Compute the true advection and the pina advection
-    pina_advection = advection(
-        output_=output_, input_=input_, velocity_field="c"
+    # Combine velocity and field into a LabelTensor
+    labels = ["ux", "uy", "uz", "c"]
+    output_ = LabelTensor(torch.cat((velocity, field), dim=1), labels)
+
+    # Compute the pina advection
+    components = ["c"]
+    pina_adv = advection(
+        output_=output_,
+        input_=input_,
+        velocity_field=["ux", "uy", "uz"],
+        components=components,
+        d=["x", "y", "z"],
     )
-    true_advection = velocity * 2 * input_.extract(["x", "y"])
 
-    # Check the shape of the advection
-    assert pina_advection.shape == (*output_.shape[:-1], output_.shape[-1] - 1)
-    assert torch.allclose(pina_advection, true_advection)
+    # Compute the true advection
+    grads = 2 * input_
+    true_adv = torch.sum(grads * velocity, dim=grads.ndim - 1, keepdim=True)
+
+    # Check the shape, labels, and value of the advection
+    assert pina_adv.shape == (*output_.shape[:-1], len(components))
+    assert pina_adv.labels == ["adv_c"]
+    assert torch.allclose(pina_adv, true_adv)
+
+    # Should fail if input not a LabelTensor
+    with pytest.raises(TypeError):
+        advection(
+            output_=output_,
+            input_=input_.tensor,
+            velocity_field=["ux", "uy", "uz"],
+        )
+
+    # Should fail if output not a LabelTensor
+    with pytest.raises(TypeError):
+        advection(
+            output_=output_.tensor,
+            input_=input_,
+            velocity_field=["ux", "uy", "uz"],
+        )
+
+    # Should fail for non-existent input labels
+    with pytest.raises(RuntimeError):
+        advection(
+            output_=output_,
+            input_=input_,
+            d=["x", "a"],
+            velocity_field=["ux", "uy", "uz"],
+        )
+
+    # Should fail for non-existent output labels
+    with pytest.raises(RuntimeError):
+        advection(
+            output_=output_,
+            input_=input_,
+            components=["a", "b", "c"],
+            velocity_field=["ux", "uy", "uz"],
+        )
+
+    # Should fail if velocity_field labels are not present in the output labels
+    with pytest.raises(RuntimeError):
+        advection(
+            output_=output_,
+            input_=input_,
+            velocity_field=["ux", "uy", "nonexistent"],
+            components=["c"],
+        )
+
+    # Should fail if velocity_field dimensionality does not match input tensor
+    with pytest.raises(RuntimeError):
+        advection(
+            output_=output_,
+            input_=input_,
+            velocity_field=["ux", "uy"],
+            components=["c"],
+        )
+
+
+def test_advection_vector():
+
+    # Define 3-dimensional input
+    input_ = torch.rand((20, 3), requires_grad=True)
+    input_ = LabelTensor(input_, ["x", "y", "z"])
+
+    # Define 3-dimensional velocity field
+    velocity = torch.rand((20, 3), requires_grad=True)
+
+    # Define 2-dimensional field to be advected
+    field_1 = torch.sum(input_**2, dim=-1, keepdim=True)
+    field_2 = torch.sum(input_**3, dim=-1, keepdim=True)
+
+    # Combine velocity and field into a LabelTensor
+    labels = ["ux", "uy", "uz", "c1", "c2"]
+    output_ = LabelTensor(
+        torch.cat((velocity, field_1, field_2), dim=1), labels
+    )
+
+    # Compute the pina advection
+    components = ["c1", "c2"]
+    pina_adv = advection(
+        output_=output_,
+        input_=input_,
+        velocity_field=["ux", "uy", "uz"],
+        components=components,
+        d=["x", "y", "z"],
+    )
+
+    # Compute the true gradients of the fields "c1", "c2"
+    grads1 = 2 * input_
+    grads2 = 3 * input_**2
+
+    # Compute the true advection for each field
+    true_adv1 = torch.sum(grads1 * velocity, dim=grads1.ndim - 1, keepdim=True)
+    true_adv2 = torch.sum(grads2 * velocity, dim=grads2.ndim - 1, keepdim=True)
+    true_adv = torch.cat((true_adv1, true_adv2), dim=-1)
+
+    # Check the shape, labels, and value of the advection
+    assert pina_adv.shape == (*output_.shape[:-1], len(components))
+    assert pina_adv.labels == ["adv_c1", "adv_c2"]
+    assert torch.allclose(pina_adv, true_adv)
+
+    # Should fail if input not a LabelTensor
+    with pytest.raises(TypeError):
+        advection(
+            output_=output_,
+            input_=input_.tensor,
+            velocity_field=["ux", "uy", "uz"],
+        )
+
+    # Should fail if output not a LabelTensor
+    with pytest.raises(TypeError):
+        advection(
+            output_=output_.tensor,
+            input_=input_,
+            velocity_field=["ux", "uy", "uz"],
+        )
+
+    # Should fail for non-existent input labels
+    with pytest.raises(RuntimeError):
+        advection(
+            output_=output_,
+            input_=input_,
+            d=["x", "a"],
+            velocity_field=["ux", "uy", "uz"],
+        )
+
+    # Should fail for non-existent output labels
+    with pytest.raises(RuntimeError):
+        advection(
+            output_=output_,
+            input_=input_,
+            components=["a", "b", "c"],
+            velocity_field=["ux", "uy", "uz"],
+        )
+
+    # Should fail if velocity_field labels are not present in the output labels
+    with pytest.raises(RuntimeError):
+        advection(
+            output_=output_,
+            input_=input_,
+            velocity_field=["ux", "uy", "nonexistent"],
+            components=["c"],
+        )
+
+    # Should fail if velocity_field dimensionality does not match input tensor
+    with pytest.raises(RuntimeError):
+        advection(
+            output_=output_,
+            input_=input_,
+            velocity_field=["ux", "uy"],
+            components=["c"],
+        )
