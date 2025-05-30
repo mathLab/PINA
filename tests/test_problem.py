@@ -50,6 +50,24 @@ def test_variables_correct_order_sampling():
     )
 
 
+def test_input_pts():
+    n = 10
+    poisson_problem = Poisson()
+    poisson_problem.discretise_domain(n, "grid")
+    assert sorted(list(poisson_problem.input_pts.keys())) == sorted(
+        list(poisson_problem.conditions.keys())
+    )
+
+
+def test_collected_data():
+    n = 10
+    poisson_problem = Poisson()
+    poisson_problem.discretise_domain(n, "grid")
+    assert sorted(list(poisson_problem.collected_data.keys())) == sorted(
+        list(poisson_problem.conditions.keys())
+    )
+
+
 def test_add_points():
     poisson_problem = Poisson()
     poisson_problem.discretise_domain(0, "random", domains=["D"])
@@ -109,11 +127,3 @@ def test_aggregate_data():
             assert "input" in poisson_problem.collected_data[name].keys()
             assert "target" not in poisson_problem.collected_data[name].keys()
             assert "equation" in poisson_problem.collected_data[name].keys()
-
-
-def test_wrong_aggregate_data():
-    poisson_problem = Poisson()
-    poisson_problem.discretise_domain(0, "random", domains=["D"])
-    assert not poisson_problem._collected_data
-    with pytest.raises(RuntimeError):
-        poisson_problem.collect_data()
