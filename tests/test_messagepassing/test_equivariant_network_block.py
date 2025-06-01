@@ -128,3 +128,38 @@ def test_backward(edge_feature_dim):
     loss.backward()
     assert x.grad.shape == x.shape
     assert pos.grad.shape == pos.shape
+
+
+def test_equivariance():
+
+    # Graph to be fully connected and undirected
+    edge_index = torch.combinations(torch.arange(x.shape[0]), r=2).T
+    edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)
+
+    # Random rotation (det(rotation) should be 1)
+    rotation = torch.linalg.qr(torch.rand(pos.shape[-1], pos.shape[-1])).Q
+    if torch.det(rotation) < 0:
+        rotation[:, 0] *= -1
+
+    # Random translation
+    translation = torch.rand(1, pos.shape[-1])
+
+    model = EnEquivariantNetworkBlock(
+        node_feature_dim=x.shape[1],
+        edge_feature_dim=0,
+        pos_dim=pos.shape[1],
+        hidden_dim=64,
+        n_message_layers=2,
+        n_update_layers=2,
+    ).eval()
+
+    h1, pos1 = model(edge_index=edge_index, x=x, pos=pos)
+    h2, pos2 = model(
+        edge_index=edge_index, x=x, pos=pos @ rotation.T + translation
+    )
+
+    # Transform model output
+    pos1_transformed = (pos1 @ rotation.T) + translation
+
+    assert torch.allclose(pos2, pos1_transformed, atol=1e-5)
+    assert torch.allclose(h1, h2, atol=1e-5)

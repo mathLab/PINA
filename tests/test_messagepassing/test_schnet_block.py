@@ -71,3 +71,25 @@ def test_backward():
     loss = torch.mean(output_)
     loss.backward()
     assert x.grad.shape == x.shape
+
+
+def test_invariance():
+
+    # Graph to be fully connected and undirected
+    edge_index = torch.combinations(torch.arange(x.shape[0]), r=2).T
+    edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)
+
+    # Random rotation (det(rotation) should be 1)
+    rotation = torch.linalg.qr(torch.rand(pos.shape[-1], pos.shape[-1])).Q
+    if torch.det(rotation) < 0:
+        rotation[:, 0] *= -1
+
+    # Random translation
+    translation = torch.rand(1, pos.shape[-1])
+
+    model = SchnetBlock(node_feature_dim=x.shape[1]).eval()
+
+    out1 = model(edge_index=edge_index, x=x, pos=pos)
+    out2 = model(edge_index=edge_index, x=x, pos=pos @ rotation.T + translation)
+
+    assert torch.allclose(out1, out2, atol=1e-5)
