@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dataset &#8212; pina-mathlab 0.2.1.post250505 documentation</title>
+    <title>Dataset &#8212; pina-mathlab 0.2.1.post2506 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=25ea72e8"></script>
+    <script src="../../_static/documentation_options.js?v=c2dec8f0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="Trainer" href="../trainer.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.1.post250505" />
-    <meta name="docbuild:last-update" content="May 05, 2025"/>
+  <meta name="docsearch:version" content="0.2.1.post2506" />
+    <meta name="docbuild:last-update" content="Jun 01, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post250505 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post250505 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
   
   
 </a></div>
@@ -604,9 +604,9 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.data.dataset.PinaDataset">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PinaDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conditions_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conditions_lengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_batching</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/dataset.html#PinaDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.dataset.PinaDataset" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>Abstract class for the PINA dataset which extends the PyTorch
-<a class="reference external" href="https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> class. It defines the common interface
+<a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> class. It defines the common interface
 for <a class="reference internal" href="#pina.data.dataset.PinaTensorDataset" title="pina.data.dataset.PinaTensorDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaTensorDataset</span></code></a> and
 <a class="reference internal" href="#pina.data.dataset.PinaGraphDataset" title="pina.data.dataset.PinaGraphDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaGraphDataset</span></code></a> classes.</p>
 <p>Initialize the instance by storing the conditions dictionary, the
@@ -668,7 +668,7 @@ batching is enabled in
 belonging to the appropriate subclass of
 <a class="reference internal" href="#pina.data.dataset.PinaDataset" title="pina.data.dataset.PinaDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaDataset</span></code></a>. The possible subclasses are:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#pina.data.dataset.PinaTensorDataset" title="pina.data.dataset.PinaTensorDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaTensorDataset</span></code></a>, for handling         <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a> and <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> data.</p></li>
+<li><p><a class="reference internal" href="#pina.data.dataset.PinaTensorDataset" title="pina.data.dataset.PinaTensorDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaTensorDataset</span></code></a>, for handling         <a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a> and <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> data.</p></li>
 <li><p><a class="reference internal" href="#pina.data.dataset.PinaGraphDataset" title="pina.data.dataset.PinaGraphDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaGraphDataset</span></code></a>, for handling         <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> and <a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data" title="(in pytorch_geometric v2.7.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> data.</p></li>
 </ul>
 <p>Instantiate the appropriate subclass of
@@ -755,7 +755,7 @@ objects.</p>
 <dt class="sig sig-object py" id="pina.data.dataset.PinaTensorDataset">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PinaTensorDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conditions_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conditions_lengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_batching</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/dataset.html#PinaTensorDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.dataset.PinaTensorDataset" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pina.data.dataset.PinaDataset" title="pina.data.dataset.PinaDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaDataset</span></code></a></p>
-<p>Dataset class for the PINA dataset with <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a> and
+<p>Dataset class for the PINA dataset with <a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a> and
 <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> data.</p>
 <p>Initialize the instance by storing the conditions dictionary, the
 maximum number of items per conditions to consider, and the automatic

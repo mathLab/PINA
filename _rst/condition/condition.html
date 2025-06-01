@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Conditions &#8212; pina-mathlab 0.2.1.post250505 documentation</title>
+    <title>Conditions &#8212; pina-mathlab 0.2.1.post2506 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=25ea72e8"></script>
+    <script src="../../_static/documentation_options.js?v=c2dec8f0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="ConditionInterface" href="condition_interface.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.1.post250505" />
-    <meta name="docbuild:last-update" content="May 05, 2025"/>
+  <meta name="docsearch:version" content="0.2.1.post2506" />
+    <meta name="docbuild:last-update" content="Jun 01, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post250505 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post250505 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
   
   
 </a></div>
@@ -614,7 +614,7 @@ to formulate the PINA
 <li><p><a class="reference internal" href="input_target_condition.html#pina.condition.input_target_condition.InputTargetCondition" title="pina.condition.input_target_condition.InputTargetCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputTargetCondition</span></code></a>:
 Defined by specifying both the input and the target of the condition. In
 this case, the model is trained to produce the target given the input. The
-input and output   data must be one of the <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>,
+input and output   data must be one of the <a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>,
 <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a>,
 <a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data" title="(in pytorch_geometric v2.7.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a>, or <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>.
 Different implementations exist depending on the type of input and target.
@@ -635,12 +635,12 @@ details, see
 <li><p><a class="reference internal" href="data_condition.html#pina.condition.data_condition.DataCondition" title="pina.condition.data_condition.DataCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataCondition</span></code></a>:
 Defined by specifying only the input. In this case, the model is trained
 with an unsupervised custom loss while using the provided data during
-training. The input data must be one of <a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>,
+training. The input data must be one of <a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a>,
 <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a>,
 <a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data" title="(in pytorch_geometric v2.7.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a>, or <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>.
 Additionally, conditional variables can be provided when the model
 depends on extra parameters. These conditional variables must be either
-<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a> or <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a>.
+<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code></a> or <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a>.
 Different implementations exist depending on the type of input.
 For more details, see
 <a class="reference internal" href="data_condition.html#pina.condition.data_condition.DataCondition" title="pina.condition.data_condition.DataCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataCondition</span></code></a>.</p></li>

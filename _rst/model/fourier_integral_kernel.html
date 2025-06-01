@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>FourierIntegralKernel &#8212; pina-mathlab 0.2.1.post250505 documentation</title>
+    <title>FourierIntegralKernel &#8212; pina-mathlab 0.2.1.post2506 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=25ea72e8"></script>
+    <script src="../../_static/documentation_options.js?v=c2dec8f0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="KernelNeuralOperator" href="kernel_neural_operator.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.1.post250505" />
-    <meta name="docbuild:last-update" content="May 05, 2025"/>
+  <meta name="docsearch:version" content="0.2.1.post2506" />
+    <meta name="docbuild:last-update" content="Jun 01, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post250505 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post250505 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
   
   
 </a></div>
@@ -604,7 +604,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.model.fourier_neural_operator.FourierIntegralKernel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FourierIntegralKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_modes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions=3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding=8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_type='constant'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_size=20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers=2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func=&lt;class</span> <span class="pre">'torch.nn.modules.activation.Tanh'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/fourier_neural_operator.html#FourierIntegralKernel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.fourier_neural_operator.FourierIntegralKernel" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Fourier Integral Kernel model class.</p>
 <p>This class implements the Fourier Integral Kernel network, which
 performs global convolution in the Fourier space.</p>
@@ -628,10 +628,10 @@ DOI: <a class="reference external" href="https://arxiv.org/abs/2010.08895">arXiv
 <li><p><strong>padding_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The padding strategy. Default is <code class="docutils literal notranslate"><span class="pre">constant</span></code>.</p></li>
 <li><p><strong>inner_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The inner size. Default is <code class="docutils literal notranslate"><span class="pre">20</span></code>.</p></li>
 <li><p><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of layers. Default is <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p></li>
-<li><p><strong>func</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><em>torch.nn.Module</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><em>torch.nn.Module</em></a><em>]</em>) – The activation function. If a list is passed, it must have
+<li><p><strong>func</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><em>torch.nn.Module</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><em>torch.nn.Module</em></a><em>]</em>) – The activation function. If a list is passed, it must have
 the same length as <code class="docutils literal notranslate"><span class="pre">n_layers</span></code>. If a single function is passed, it
 is used for all layers, except for the last one.
-Default is <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Tanh.html#torch.nn.Tanh" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Tanh</span></code></a>.</p></li>
+Default is <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Tanh.html#torch.nn.Tanh" title="(in PyTorch v2.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Tanh</span></code></a>.</p></li>
 <li><p><strong>layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – The list of the dimension of inner layers.
 If <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">n_layers</span></code> of dimension <code class="docutils literal notranslate"><span class="pre">inner_size</span></code> are used.
 Otherwise, it overrides the values passed to <code class="docutils literal notranslate"><span class="pre">n_layers</span></code> and
@@ -653,7 +653,7 @@ inconsistent.</p></li>
 <dd><p>Forward pass for the <a class="reference internal" href="#pina.model.fourier_neural_operator.FourierIntegralKernel" title="pina.model.fourier_neural_operator.FourierIntegralKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FourierIntegralKernel</span></code></a> model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The input tensor for performing the computation. Depending
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The input tensor for performing the computation. Depending
 on the <code class="docutils literal notranslate"><span class="pre">dimensions</span></code> in the initialization, it expects a tensor
 with the following shapes:
 * 1D tensors: <code class="docutils literal notranslate"><span class="pre">[batch,</span> <span class="pre">X,</span> <span class="pre">channels]</span></code>
@@ -667,7 +667,7 @@ with the following shapes:
 <dd class="field-odd"><p>The output tensor.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
