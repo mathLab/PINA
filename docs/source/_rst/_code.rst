@@ -132,7 +132,6 @@ Message Passing
     E(n) Equivariant Network Block <model/block/message_passing/en_equivariant_network_block.rst>
     Interaction Network Block <model/block/message_passing/interaction_network_block.rst>
     Radial Field Network Block <model/block/message_passing/radial_field_network_block.rst>
-    Schnet Block <model/block/message_passing/schnet_block.rst>
 
 
 Reduction and Embeddings
