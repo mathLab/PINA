@@ -127,9 +127,8 @@ plt.grid(True)
 # At their core, **Neural Operators** transform an input function $a$ into an output function $u$. The general structure of a Neural Operator consists of three key components:
 # 
 # <p align="center">
-#     <img src="../static/neural_operator.png" alt="Neural Operators" width="800"/>
+#     <img src="http://raw.githubusercontent.com/mathLab/PINA/master/tutorials/static/neural_operator.png" alt="Neural Operators" width="800"/>
 # </p>
-# 
 # 
 # 1. **Encoder**: The encoder maps the input into a specific embedding space.
 # 
