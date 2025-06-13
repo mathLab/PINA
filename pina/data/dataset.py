@@ -239,6 +239,22 @@ class PinaTensorDataset(PinaDataset):
         """
         return {k: v["input"] for k, v in self.conditions_dict.items()}
 
+    def update_data(self, new_conditions_dict):
+        """
+        Update the dataset with new data.
+        This method is used to update the dataset with new data. It replaces
+        the current data with the new data provided in the new_conditions_dict
+        parameter.
+
+        :param dict new_conditions_dict: Dictionary containing the new data.
+        :return: None
+        """
+        for condition, data in new_conditions_dict.items():
+            if condition in self.conditions_dict:
+                self.conditions_dict[condition].update(data)
+            else:
+                self.conditions_dict[condition] = data
+
 
 class PinaGraphDataset(PinaDataset):
     """

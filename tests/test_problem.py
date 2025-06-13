@@ -4,6 +4,11 @@ from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from pina import LabelTensor
 from pina.domain import Union
 from pina.domain import CartesianDomain
+from pina.condition import (
+    Condition,
+    InputTargetCondition,
+    DomainEquationCondition,
+)
 
 
 def test_discretise_domain():
@@ -42,6 +47,24 @@ def test_variables_correct_order_sampling():
     poisson_problem.discretise_domain(n, "grid", domains=["D"])
     assert poisson_problem.discretised_domains["D"].labels == sorted(
         poisson_problem.input_variables
+    )
+
+
+def test_input_pts():
+    n = 10
+    poisson_problem = Poisson()
+    poisson_problem.discretise_domain(n, "grid")
+    assert sorted(list(poisson_problem.input_pts.keys())) == sorted(
+        list(poisson_problem.conditions.keys())
+    )
+
+
+def test_collected_data():
+    n = 10
+    poisson_problem = Poisson()
+    poisson_problem.discretise_domain(n, "grid")
+    assert sorted(list(poisson_problem.collected_data.keys())) == sorted(
+        list(poisson_problem.conditions.keys())
     )
 
 
@@ -84,3 +107,23 @@ def test_wrong_custom_sampling_logic(mode):
     }
     with pytest.raises(RuntimeError):
         poisson_problem.discretise_domain(sample_rules=sampling_rules)
+
+
+def test_aggregate_data():
+    poisson_problem = Poisson()
+    poisson_problem.conditions["data"] = Condition(
+        input=LabelTensor(torch.tensor([[0.0, 1.0]]), labels=["x", "y"]),
+        target=LabelTensor(torch.tensor([[0.0]]), labels=["u"]),
+    )
+    poisson_problem.discretise_domain(0, "random", domains="all")
+    poisson_problem.collect_data()
+    assert isinstance(poisson_problem.collected_data, dict)
+    for name, conditions in poisson_problem.conditions.items():
+        assert name in poisson_problem.collected_data.keys()
+        if isinstance(conditions, InputTargetCondition):
+            assert "input" in poisson_problem.collected_data[name].keys()
+            assert "target" in poisson_problem.collected_data[name].keys()
+        elif isinstance(conditions, DomainEquationCondition):
+            assert "input" in poisson_problem.collected_data[name].keys()
+            assert "target" not in poisson_problem.collected_data[name].keys()
+            assert "equation" in poisson_problem.collected_data[name].keys()

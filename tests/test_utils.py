@@ -1,12 +1,9 @@
 import torch
-
-from pina.utils import merge_tensors
-from pina.label_tensor import LabelTensor
-from pina import LabelTensor
-from pina.domain import EllipsoidDomain, CartesianDomain
-from pina.utils import check_consistency
 import pytest
-from pina.domain import DomainInterface
+
+from pina import LabelTensor
+from pina.utils import merge_tensors, check_consistency, check_positive_integer
+from pina.domain import EllipsoidDomain, CartesianDomain, DomainInterface
 
 
 def test_merge_tensors():
@@ -50,3 +47,24 @@ def test_check_consistency_incorrect():
         check_consistency(torch.Tensor, DomainInterface, subclass=True)
     with pytest.raises(ValueError):
         check_consistency(ellipsoid1, torch.Tensor)
+
+
+@pytest.mark.parametrize("value", [0, 1, 2, 3, 10])
+@pytest.mark.parametrize("strict", [True, False])
+def test_check_positive_integer(value, strict):
+    if value != 0:
+        check_positive_integer(value, strict=strict)
+    else:
+        check_positive_integer(value, strict=False)
+
+    # Should fail if value is negative
+    with pytest.raises(AssertionError):
+        check_positive_integer(-1, strict=strict)
+
+    # Should fail if value is not an integer
+    with pytest.raises(AssertionError):
+        check_positive_integer(1.5, strict=strict)
+
+    # Should fail if value is not a number
+    with pytest.raises(AssertionError):
+        check_positive_integer("string", strict=strict)

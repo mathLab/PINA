@@ -275,44 +275,42 @@ def fast_laplacian(output_, input_, components, d, method="std"):
 def fast_advection(output_, input_, velocity_field, components, d):
     """
     Perform the advection operation on the ``output_`` with respect to the
-    ``input``. This operator support vector-valued functions with multiple input
-    coordinates.
+    ``input``. This operator supports vector-valued functions with multiple
+    input coordinates.
 
     Unlike ``advection``, this function performs no internal checks on input and
     output tensors. The user is required to specify both ``components`` and
     ``d`` as lists of strings. It is designed to enhance computation speed.
 
     :param LabelTensor output_: The output tensor on which the advection is
-        computed.
+        computed. It includes both the velocity and the quantity to be advected.
     :param LabelTensor input_: the input tensor with respect to which advection
         is computed.
-    :param str velocity_field: The name of the output variable used as velocity
-        field. It must be chosen among the output labels.
+    :param list[str] velocity_field: The name of the output variables used as
+        velocity field. It must be chosen among the output labels.
     :param list[str] components: The names of the output variables for which to
         compute the advection. It must be a subset of the output labels.
     :param list[str] d: The names of the input variables with respect to which
         the advection is computed. It must be a subset of the input labels.
     :return: The computed advection tensor.
-    :rtype: torch.Tensor
+    :rtype: LabelTensor
     """
     # Add a dimension to the velocity field for following operations
     velocity = output_.extract(velocity_field).unsqueeze(-1)
 
-    # Remove the velocity field from the components
-    filter_components = [c for c in components if c != velocity_field]
-
     # Compute the gradient
     grads = fast_grad(
-        output_=output_, input_=input_, components=filter_components, d=d
+        output_=output_, input_=input_, components=components, d=d
     )
 
     # Reshape into [..., len(filter_components), len(d)]
-    tmp = grads.reshape(*output_.shape[:-1], len(filter_components), len(d))
+    tmp = grads.reshape(*output_.shape[:-1], len(components), len(d))
 
     # Transpose to [..., len(d), len(filter_components)]
     tmp = tmp.transpose(-1, -2)
 
-    return (tmp * velocity).sum(dim=tmp.tensor.ndim - 2)
+    adv = (tmp * velocity).sum(dim=tmp.tensor.ndim - 2)
+    return LabelTensor(adv, labels=[f"adv_{c}" for c in components])
 
 
 def grad(output_, input_, components=None, d=None):
@@ -425,15 +423,16 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
 def advection(output_, input_, velocity_field, components=None, d=None):
     """
     Perform the advection operation on the ``output_`` with respect to the
-    ``input``. This operator support vector-valued functions with multiple input
-    coordinates.
+    ``input``. This operator supports vector-valued functions with multiple
+    input coordinates.
 
     :param LabelTensor output_: The output tensor on which the advection is
-        computed.
+        computed. It includes both the velocity and the quantity to be advected.
     :param LabelTensor input_: the input tensor with respect to which advection
         is computed.
-    :param str velocity_field: The name of the output variable used as velocity
+    :param velocity_field: The name of the output variables used as velocity
         field. It must be chosen among the output labels.
+    :type velocity_field: str | list[str]
     :param components: The names of the output variables for which to compute
         the advection. It must be a subset of the output labels.
         If ``None``, all output variables are considered. Default is ``None``.
@@ -444,18 +443,29 @@ def advection(output_, input_, velocity_field, components=None, d=None):
     :type d: str | list[str]
     :raises TypeError: If the input tensor is not a LabelTensor.
     :raises TypeError: If the output tensor is not a LabelTensor.
-    :raises RuntimeError: If the velocity field is not in the output labels.
+    :raises RuntimeError: If the velocity field is not a subset of the output
+        labels.
+    :raises RuntimeError: If the dimensionality of the velocity field does not
+        match that of the input tensor.
     :return: The computed advection tensor.
-    :rtype: torch.Tensor
+    :rtype: LabelTensor
     """
     components, d = _check_values(
         output_=output_, input_=input_, components=components, d=d
     )
 
-    # Check if velocity field is present in the output labels
-    if velocity_field not in output_.labels:
+    # Map velocity_field to a list if it is a string
+    if isinstance(velocity_field, str):
+        velocity_field = [velocity_field]
+
+    # Check if all the velocity_field labels are present in the output labels
+    if not all(vi in output_.labels for vi in velocity_field):
+        raise RuntimeError("Velocity labels missing from output tensor.")
+
+    # Check if the velocity has the same dimensionality as the input tensor
+    if len(velocity_field) != len(d):
         raise RuntimeError(
-            f"Velocity {velocity_field} is not present in the output labels."
+            "Velocity dimensionality does not match input dimensionality."
         )
 
     return fast_advection(

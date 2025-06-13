@@ -193,3 +193,22 @@ def chebyshev_roots(n):
     k = torch.arange(n)
     nodes = torch.sort(torch.cos(pi * (k + 0.5) / n))[0]
     return nodes
+
+
+def check_positive_integer(value, strict=True):
+    """
+    Check if the value is a positive integer.
+
+    :param int value: The value to check.
+    :param bool strict: If True, the value must be strictly positive.
+        Default is True.
+    :raises AssertionError: If the value is not a positive integer.
+    """
+    if strict:
+        assert (
+            isinstance(value, int) and value > 0
+        ), f"Expected a strictly positive integer, got {value}."
+    else:
+        assert (
+            isinstance(value, int) and value >= 0
+        ), f"Expected a non-negative integer, got {value}."

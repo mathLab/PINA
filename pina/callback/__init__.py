@@ -2,13 +2,13 @@
 
 __all__ = [
     "SwitchOptimizer",
-    "R3Refinement",
     "MetricTracker",
     "PINAProgressBar",
     "LinearWeightUpdate",
+    "R3Refinement",
 ]
 
 from .optimizer_callback import SwitchOptimizer
-from .adaptive_refinement_callback import R3Refinement
 from .processing_callback import MetricTracker, PINAProgressBar
 from .linear_weight_update_callback import LinearWeightUpdate
+from .refinement import R3Refinement
