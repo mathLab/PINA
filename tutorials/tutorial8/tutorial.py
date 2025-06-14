@@ -2,13 +2,13 @@
 # coding: utf-8
 
 # # Tutorial: Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics
-# 
+#
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial8/tutorial.ipynb)
 
 # The goal of this tutorial is to demonstrate how to use the **PINA** library to apply a reduced-order modeling technique, as outlined in [1]. These methods share several similarities with machine learning approaches, as they focus on predicting the solution to differential equations, often parametric PDEs, in real-time.
-# 
+#
 # In particular, we will utilize **Proper Orthogonal Decomposition** (POD) in combination with two different regression techniques: **Radial Basis Function Interpolation** (POD-RBF) and **Neural Networks**(POD-NN) [2]. This process involves reducing the dimensionality of the parametric solution manifold through POD and then approximating it in the reduced space using a regression model (either a neural network or an RBF interpolation). In this example, we'll use a simple multilayer perceptron (MLP) as the regression model, but various architectures can be easily substituted.
-# 
+#
 # Let's start with the necessary imports.
 
 # In[ ]:
@@ -42,9 +42,9 @@ warnings.filterwarnings("ignore")
 
 
 # We utilize the [Smithers](https://github.com/mathLab/Smithers) library to gather the parametric snapshots. Specifically, we use the `NavierStokesDataset` class, which contains a collection of parametric solutions to the Navier-Stokes equations in a 2D L-shaped domain. The parameter in this case is the inflow velocity.
-# 
+#
 # The dataset comprises 500 snapshots of the velocity fields (along the $x$, $y$ axes, and the magnitude), as well as the pressure fields, along with their corresponding parameter values.
-# 
+#
 # To visually inspect the snapshots, let's also plot the data points alongside the reference solution. This reference solution represents the expected output of our model.
 
 # In[ ]:
@@ -61,7 +61,7 @@ for ax, p, u in zip(axs, dataset.params[:4], dataset.snapshots["mag(v)"][:4]):
 
 
 # The *snapshots*—i.e., the numerical solutions computed for several parameters—and the corresponding parameters are the only data we need to train the model, enabling us to predict the solution for any new test parameter. To properly validate the accuracy, we will split the 500 snapshots into the training dataset (90% of the original data) and the testing dataset (the remaining 10%) inside the `Trainer`.
-# 
+#
 # It is now time to define the problem!
 
 # In[ ]:
@@ -73,7 +73,7 @@ problem = SupervisedProblem(input_=p, output_=u)
 
 
 # We can then build a `POD-NN` model (using an MLP architecture as approximation) and compare it with a `POD-RBF` model (using a Radial Basis Function interpolation as approximation).
-# 
+#
 # ## POD-NN reduced order model
 # Let's build the `PODNN` class
 
@@ -163,7 +163,7 @@ print(f"  Test:  {relative_error_test.item():e}")
 
 
 # ## POD-RBF Reduced Order Model
-# 
+#
 # Next, we define the model we want to use, incorporating the `PODBlock` and `RBFBlock` objects.
 
 # In[ ]:
@@ -210,9 +210,9 @@ print(f"  Test:  {relative_error_test.item():e}")
 
 
 # ## POD-RBF vs POD-NN
-# 
+#
 # We can compare the solutions predicted by the `POD-RBF` and the `POD-NN` models with the original reference solution. By plotting these predicted solutions against the true solution, we can observe how each model performs.
-# 
+#
 # ### Observations:
 # - **POD-RBF**: The solution predicted by the `POD-RBF` model typically offers a smooth approximation for the parametric solution, as RBF interpolation is well-suited for capturing smooth variations.
 # - **POD-NN**: The `POD-NN` model, while more flexible due to the neural network architecture, may show some discrepancies—especially for low velocities or in regions where the training data is sparse. However, with longer training times and adjustments in the network architecture, we can improve the predictions.
@@ -274,21 +274,21 @@ plt.show()
 
 
 # ## What's Next?
-# 
+#
 # Congratulations on completing this tutorial using **PINA** to apply reduced order modeling techniques with **POD-RBF** and **POD-NN**! There are several directions you can explore next:
-# 
+#
 # 1. **Extend to More Complex Problems**: Try using more complex parametric domains or PDEs. For example, you can explore Navier-Stokes equations in 3D or more complex boundary conditions.
-# 
+#
 # 2. **Combine POD with Deep Learning Techniques**: Investigate hybrid methods, such as combining **POD-NN** with convolutional layers or recurrent layers, to handle time-dependent problems or more complex spatial dependencies.
-# 
+#
 # 3. **Evaluate Performance on Larger Datasets**: Work with larger datasets to assess how well these methods scale. You may want to test on datasets from simulations or real-world problems.
-# 
+#
 # 4. **Hybrid Models with Physics Informed Networks (PINN)**: Integrate **POD** models with PINN frameworks to include physics-based regularization in your model and improve predictions for more complex scenarios, such as turbulent fluid flow.
-# 
+#
 # 5. **...and many more!**: The potential applications of reduced order models are vast, ranging from material science simulations to real-time predictions in engineering applications.
-# 
+#
 # For more information and advanced tutorials, refer to the [PINA Documentation](https://mathlab.github.io/PINA/).
-# 
+#
 # ### References
-# 1. Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order Methods and Applications in Computational Fluid Dynamics, Society for Industrial and Applied Mathematics. 
+# 1. Rozza G., Stabile G., Ballarin F. (2022). Advanced Reduced Order Methods and Applications in Computational Fluid Dynamics, Society for Industrial and Applied Mathematics.
 # 2. Hesthaven, J. S., & Ubbiali, S. (2018). Non-intrusive reduced order modeling of nonlinear problems using neural networks. Journal of Computational Physics, 363, 55-78.
