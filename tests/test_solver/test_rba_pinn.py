@@ -42,9 +42,10 @@ model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 @pytest.mark.parametrize("eta", [1, 0.001])
 @pytest.mark.parametrize("gamma", [0.5, 0.9])
 def test_constructor(problem, eta, gamma):
-    with pytest.raises(AssertionError):
-        solver = RBAPINN(model=model, problem=problem, gamma=1.5)
     solver = RBAPINN(model=model, problem=problem, eta=eta, gamma=gamma)
+
+    with pytest.raises(ValueError):
+        solver = RBAPINN(model=model, problem=problem, gamma=1.5)
 
     assert solver.accepted_conditions_types == (
         InputTargetCondition,
@@ -54,30 +55,15 @@ def test_constructor(problem, eta, gamma):
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-def test_wrong_batch(problem):
-    with pytest.raises(NotImplementedError):
-        solver = RBAPINN(model=model, problem=problem)
-        trainer = Trainer(
-            solver=solver,
-            max_epochs=2,
-            accelerator="cpu",
-            batch_size=10,
-            train_size=1.0,
-            val_size=0.0,
-            test_size=0.0,
-        )
-        trainer.train()
-
-
-@pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
-def test_solver_train(problem, compile):
+def test_solver_train(problem, batch_size, compile):
     solver = RBAPINN(model=model, problem=problem)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
         accelerator="cpu",
-        batch_size=None,
+        batch_size=batch_size,
         train_size=1.0,
         val_size=0.0,
         test_size=0.0,
@@ -89,14 +75,15 @@ def test_solver_train(problem, compile):
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
-def test_solver_validation(problem, compile):
+def test_solver_validation(problem, batch_size, compile):
     solver = RBAPINN(model=model, problem=problem)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
         accelerator="cpu",
-        batch_size=None,
+        batch_size=batch_size,
         train_size=0.9,
         val_size=0.1,
         test_size=0.0,
@@ -108,14 +95,15 @@ def test_solver_validation(problem, compile):
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
+@pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
-def test_solver_test(problem, compile):
+def test_solver_test(problem, batch_size, compile):
     solver = RBAPINN(model=model, problem=problem)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
         accelerator="cpu",
-        batch_size=None,
+        batch_size=batch_size,
         train_size=0.7,
         val_size=0.2,
         test_size=0.1,
