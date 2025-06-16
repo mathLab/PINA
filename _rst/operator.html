@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Operators &#8212; pina-mathlab 0.2.1.post2506 documentation</title>
+    <title>Operators &#8212; pina-mathlab 0.2.2 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=c2dec8f0"></script>
+    <script src="../_static/documentation_options.js?v=000c92bf"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="Equation Factory" href="equation/equation_factory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.1.post2506" />
-    <meta name="docbuild:last-update" content="Jun 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.2" />
+    <meta name="docbuild:last-update" content="Jun 16, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
-    <img src="../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
+    <img src="../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2 documentation - Home"/>
+    <img src="../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2 documentation - Home"/>
   
   
 </a></div>
@@ -464,6 +464,12 @@
 <li class="toctree-l1"><a class="reference internal" href="model/block/orthogonal.html">Orthogonal Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="model/block/message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/block/message_passing/en_equivariant_network_block.html">E(n) Equivariant Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/block/message_passing/interaction_network_block.html">Interaction Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/block/message_passing/radial_field_network_block.html">Radial Field Network Block</a></li>
+</ul>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="model/block/pod_block.html">Proper Orthogonal Decomposition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/block/pbc_embedding.html">Periodic Boundary Condition Embedding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/block/fourier_embedding.html">Fourier Feature Embedding</a></li>
@@ -529,7 +535,8 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="callback/processing_callback.html">Processing callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callback/optimizer_callback.html">Optimizer callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="callback/adaptive_refinment_callback.html">Refinment callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callback/linear_weight_update_callback.html">Weighting callback</a></li>
 </ul>
 <ul class="nav bd-sidenav">
@@ -711,8 +718,8 @@ divergence of the gradient. Default is <code class="docutils literal notranslate
 <dt class="sig sig-object py" id="pina.operator.fast_advection">
 <span class="sig-name descname"><span class="pre">fast_advection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operator.html#fast_advection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.operator.fast_advection" title="Link to this definition">#</a></dt>
 <dd><p>Perform the advection operation on the <code class="docutils literal notranslate"><span class="pre">output_</span></code> with respect to the
-<code class="docutils literal notranslate"><span class="pre">input</span></code>. This operator support vector-valued functions with multiple input
-coordinates.</p>
+<code class="docutils literal notranslate"><span class="pre">input</span></code>. This operator supports vector-valued functions with multiple
+input coordinates.</p>
 <p>Unlike <code class="docutils literal notranslate"><span class="pre">advection</span></code>, this function performs no internal checks on input and
 output tensors. The user is required to specify both <code class="docutils literal notranslate"><span class="pre">components</span></code> and
 <code class="docutils literal notranslate"><span class="pre">d</span></code> as lists of strings. It is designed to enhance computation speed.</p>
@@ -720,11 +727,11 @@ output tensors. The user is required to specify both <code class="docutils liter
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The output tensor on which the advection is
-computed.</p></li>
+computed. It includes both the velocity and the quantity to be advected.</p></li>
 <li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which advection
 is computed.</p></li>
-<li><p><strong>velocity_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of the output variable used as velocity
-field. It must be chosen among the output labels.</p></li>
+<li><p><strong>velocity_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The name of the output variables used as
+velocity field. It must be chosen among the output labels.</p></li>
 <li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The names of the output variables for which to
 compute the advection. It must be a subset of the output labels.</p></li>
 <li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The names of the input variables with respect to which
@@ -735,7 +742,7 @@ the advection is computed. It must be a subset of the input labels.</p></li>
 <dd class="field-even"><p>The computed advection tensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -860,16 +867,16 @@ divergence of the gradient. Default is <code class="docutils literal notranslate
 <dt class="sig sig-object py" id="pina.operator.advection">
 <span class="sig-name descname"><span class="pre">advection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/operator.html#advection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.operator.advection" title="Link to this definition">#</a></dt>
 <dd><p>Perform the advection operation on the <code class="docutils literal notranslate"><span class="pre">output_</span></code> with respect to the
-<code class="docutils literal notranslate"><span class="pre">input</span></code>. This operator support vector-valued functions with multiple input
-coordinates.</p>
+<code class="docutils literal notranslate"><span class="pre">input</span></code>. This operator supports vector-valued functions with multiple
+input coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The output tensor on which the advection is
-computed.</p></li>
+computed. It includes both the velocity and the quantity to be advected.</p></li>
 <li><p><strong>input</strong> (<a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – the input tensor with respect to which advection
 is computed.</p></li>
-<li><p><strong>velocity_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of the output variable used as velocity
+<li><p><strong>velocity_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The name of the output variables used as velocity
 field. It must be chosen among the output labels.</p></li>
 <li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The names of the output variables for which to compute
 the advection. It must be a subset of the output labels.
@@ -883,14 +890,17 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If the input tensor is not a LabelTensor.</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If the output tensor is not a LabelTensor.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – If the velocity field is not in the output labels.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – If the velocity field is not a subset of the output
+labels.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – If the dimensionality of the velocity field does not
+match that of the input tensor.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The computed advection tensor.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
+<dd class="field-even"><p><a class="reference internal" href="label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
 </dl>
 </dd></dl>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dataset &#8212; pina-mathlab 0.2.1.post2506 documentation</title>
+    <title>Dataset &#8212; pina-mathlab 0.2.2 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=c2dec8f0"></script>
+    <script src="../../_static/documentation_options.js?v=000c92bf"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="Trainer" href="../trainer.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.1.post2506" />
-    <meta name="docbuild:last-update" content="Jun 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.2" />
+    <meta name="docbuild:last-update" content="Jun 16, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.1.post2506 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2 documentation - Home"/>
   
   
 </a></div>
@@ -464,6 +464,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/block/orthogonal.html">Orthogonal Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/en_equivariant_network_block.html">E(n) Equivariant Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/interaction_network_block.html">Interaction Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/radial_field_network_block.html">Radial Field Network Block</a></li>
+</ul>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/pod_block.html">Proper Orthogonal Decomposition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/pbc_embedding.html">Periodic Boundary Condition Embedding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/fourier_embedding.html">Fourier Feature Embedding</a></li>
@@ -529,7 +535,8 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../callback/processing_callback.html">Processing callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/adaptive_refinment_callback.html">Refinment callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callback/linear_weight_update_callback.html">Weighting callback</a></li>
 </ul>
 <ul class="nav bd-sidenav">
@@ -788,6 +795,23 @@ batching is enabled in
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.data.dataset.PinaTensorDataset.update_data">
+<span class="sig-name descname"><span class="pre">update_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_conditions_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/dataset.html#PinaTensorDataset.update_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.dataset.PinaTensorDataset.update_data" title="Link to this definition">#</a></dt>
+<dd><p>Update the dataset with new data.
+This method is used to update the dataset with new data. It replaces
+the current data with the new data provided in the new_conditions_dict
+parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_conditions_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing the new data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -828,6 +852,7 @@ batching is enabled in
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.dataset.PinaTensorDataset"><code class="docutils literal notranslate"><span class="pre">PinaTensorDataset</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.dataset.PinaTensorDataset.input"><code class="docutils literal notranslate"><span class="pre">PinaTensorDataset.input</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.data.dataset.PinaTensorDataset.update_data"><code class="docutils literal notranslate"><span class="pre">PinaTensorDataset.update_data()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -122,6 +122,17 @@ Blocks
     Continuous Convolution Block <model/block/convolution.rst>
     Orthogonal Block <model/block/orthogonal.rst>
 
+Message Passing
+-------------------
+
+.. toctree::
+    :titlesonly:
+
+    Deep Tensor Network Block <model/block/message_passing/deep_tensor_network_block.rst>
+    E(n) Equivariant Network Block <model/block/message_passing/en_equivariant_network_block.rst>
+    Interaction Network Block <model/block/message_passing/interaction_network_block.rst>
+    Radial Field Network Block <model/block/message_passing/radial_field_network_block.rst>
+
 
 Reduction and Embeddings
 --------------------------
@@ -238,7 +249,8 @@ Callbacks
 
     Processing callback <callback/processing_callback.rst>
     Optimizer callback <callback/optimizer_callback.rst>
-    Refinment callback <callback/adaptive_refinment_callback.rst>
+    R3 Refinment callback <callback/refinement/r3_refinement.rst>
+    Refinment Interface callback <callback/refinement/refinement_interface.rst>
     Weighting callback <callback/linear_weight_update_callback.rst>
 
 Losses and Weightings
