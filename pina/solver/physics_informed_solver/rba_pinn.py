@@ -72,7 +72,6 @@ class RBAPINN(PINN):
         optimizer=None,
         scheduler=None,
         weighting=None,
-        loss=None,
         eta=0.001,
         gamma=0.999,
     ):
@@ -89,9 +88,6 @@ class RBAPINN(PINN):
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If ``None``, no weighting schema is used. Default is ``None``.
-        :param torch.nn.Module loss: The loss function to be minimized.
-            If ``None``, the :class:`torch.nn.MSELoss` loss is used.
-            Default is `None`.
         :param float | int eta: The learning rate for the weights of the
             residuals. Default is ``0.001``.
         :param float gamma: The decay parameter in the update of the weights
@@ -106,7 +102,7 @@ class RBAPINN(PINN):
             optimizer=optimizer,
             scheduler=scheduler,
             weighting=weighting,
-            loss=loss,
+            loss=torch.nn.MSELoss(reduction="none"),
         )
 
         # check consistency
