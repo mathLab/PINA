@@ -129,12 +129,15 @@ class RBAPINN(PINN):
             buffer_tensor = torch.zeros((len(data), 1), device=self.device)
             self.register_buffer(f"weight_{cond}", buffer_tensor)
             self.weights[cond] = getattr(self, f"weight_{cond}")
+<<<<<<< HEAD
 
         # Extract the reduction method from the loss function
         self._reduction = self._loss_fn.reduction
 
         # Set the loss function to return non-aggregated losses
         self._loss_fn = type(self._loss_fn)(reduction="none")
+=======
+>>>>>>> d3976e4 (add buffer and checks on eta)
 
     def training_step(self, batch, batch_idx, **kwargs):
         """
