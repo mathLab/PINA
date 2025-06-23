@@ -47,6 +47,9 @@ def test_constructor(problem, eta, gamma):
     with pytest.raises(ValueError):
         solver = RBAPINN(model=model, problem=problem, gamma=1.5)
 
+    with pytest.raises(ValueError):
+        solver = RBAPINN(model=model, problem=problem, eta=-0.1)
+
     assert solver.accepted_conditions_types == (
         InputTargetCondition,
         InputEquationCondition,

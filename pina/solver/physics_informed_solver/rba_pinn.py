@@ -94,6 +94,7 @@ class RBAPINN(PINN):
             of the residuals. Must be between ``0`` and ``1``.
             Default is ``0.999``.
         :raises: ValueError if `gamma` is not in the range (0, 1).
+        :raises: ValueError if `eta` is not greater than 0.
         """
         super().__init__(
             model=model,
@@ -114,24 +115,20 @@ class RBAPINN(PINN):
                 f"Invalid range: expected 0 < gamma < 1, but got {gamma}"
             )
 
+        # Validate range for eta
+        if eta <= 0:
+            raise ValueError(f"Invalid range: expected eta > 0, but got {eta}")
+
         # Initialize parameters
         self.eta = eta
         self.gamma = gamma
 
         # Initialize the weight of each point to 0
-        self.weights = {
-            cond: torch.zeros((len(data), 1), device=self.device)
-            for cond, data in self.problem.input_pts.items()
-        }
-
-    def on_train_start(self):
-        """
-        Hook method called at the beginning of training.
-        """
-        device = self.trainer.strategy.root_device
-        for cond in self.weights:
-            self.weights[cond] = self.weights[cond].to(device)
-        return super().on_train_start()
+        self.weights = {}
+        for cond, data in self.problem.input_pts.items():
+            buffer_tensor = torch.zeros((len(data), 1), device=self.device)
+            self.register_buffer(f"weight_{cond}", buffer_tensor)
+            self.weights[cond] = getattr(self, f"weight_{cond}")
 
     def training_step(self, batch, batch_idx, **kwargs):
         """
