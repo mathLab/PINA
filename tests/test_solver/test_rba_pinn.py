@@ -60,8 +60,11 @@ def test_constructor(problem, eta, gamma):
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
-def test_solver_train(problem, batch_size, compile):
-    solver = RBAPINN(model=model, problem=problem)
+@pytest.mark.parametrize(
+    "loss", [torch.nn.L1Loss(reduction="sum"), torch.nn.MSELoss()]
+)
+def test_solver_train(problem, batch_size, loss, compile):
+    solver = RBAPINN(model=model, problem=problem, loss=loss)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -80,8 +83,11 @@ def test_solver_train(problem, batch_size, compile):
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
-def test_solver_validation(problem, batch_size, compile):
-    solver = RBAPINN(model=model, problem=problem)
+@pytest.mark.parametrize(
+    "loss", [torch.nn.L1Loss(reduction="sum"), torch.nn.MSELoss()]
+)
+def test_solver_validation(problem, batch_size, loss, compile):
+    solver = RBAPINN(model=model, problem=problem, loss=loss)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -100,8 +106,11 @@ def test_solver_validation(problem, batch_size, compile):
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
-def test_solver_test(problem, batch_size, compile):
-    solver = RBAPINN(model=model, problem=problem)
+@pytest.mark.parametrize(
+    "loss", [torch.nn.L1Loss(reduction="sum"), torch.nn.MSELoss()]
+)
+def test_solver_test(problem, batch_size, loss, compile):
+    solver = RBAPINN(model=model, problem=problem, loss=loss)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
