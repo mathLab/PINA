@@ -72,6 +72,7 @@ class RBAPINN(PINN):
         optimizer=None,
         scheduler=None,
         weighting=None,
+        loss=None,
         eta=0.001,
         gamma=0.999,
     ):
@@ -88,6 +89,9 @@ class RBAPINN(PINN):
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If ``None``, no weighting schema is used. Default is ``None``.
+        :param torch.nn.Module loss: The loss function to be minimized.
+            If ``None``, the :class:`torch.nn.MSELoss` loss is used.
+            Default is `None`.
         :param float | int eta: The learning rate for the weights of the
             residuals. Default is ``0.001``.
         :param float gamma: The decay parameter in the update of the weights
@@ -102,7 +106,7 @@ class RBAPINN(PINN):
             optimizer=optimizer,
             scheduler=scheduler,
             weighting=weighting,
-            loss=torch.nn.MSELoss(reduction="none"),
+            loss=loss,
         )
 
         # check consistency
@@ -129,6 +133,12 @@ class RBAPINN(PINN):
             buffer_tensor = torch.zeros((len(data), 1), device=self.device)
             self.register_buffer(f"weight_{cond}", buffer_tensor)
             self.weights[cond] = getattr(self, f"weight_{cond}")
+
+        # Extract the reduction method from the loss function
+        self._reduction = self._loss_fn.reduction
+
+        # Set the loss function to return non-aggregated losses
+        self._loss_fn = type(self._loss_fn)(reduction="none")
 
     def training_step(self, batch, batch_idx, **kwargs):
         """
@@ -166,7 +176,7 @@ class RBAPINN(PINN):
 
         # Aggregate losses for each condition
         for cond, loss in losses.items():
-            losses[cond] = losses[cond].mean()
+            losses[cond] = self._apply_reduction(loss=losses[cond])
 
         loss = (sum(losses.values()) / len(losses)).as_subclass(torch.Tensor)
         self.store_log("val_loss", loss, self.get_batch_size(batch))
@@ -189,7 +199,7 @@ class RBAPINN(PINN):
 
         # Aggregate losses for each condition
         for cond, loss in losses.items():
-            losses[cond] = losses[cond].mean()
+            losses[cond] = self._apply_reduction(loss=losses[cond])
 
         loss = (sum(losses.values()) / len(losses)).as_subclass(torch.Tensor)
         self.store_log("test_loss", loss, self.get_batch_size(batch))
@@ -228,7 +238,9 @@ class RBAPINN(PINN):
                 device=res.device,
             ) % len(self.problem.input_pts[cond])
 
-            losses[cond] = (res * self.weights[cond][idx]).mean()
+            losses[cond] = self._apply_reduction(
+                loss=(res * self.weights[cond][idx])
+            )
 
             # store log
             self.store_log(
@@ -275,3 +287,26 @@ class RBAPINN(PINN):
             weights = self.weights[cond]
             update = self.gamma * weights[idx] + r_norm
             weights[idx] = update.detach()
+
+    def _apply_reduction(self, loss):
+        """
+        Apply the specified reduction to the loss. The reduction is deferred
+        until the end of the optimization cycle to allow residual-based weights
+        to be applied to each point beforehand.
+
+        :param torch.Tensor loss: The loss tensor to be reduced.
+        :return: The reduced loss tensor.
+        :rtype: torch.Tensor
+        :raises ValueError: If the reduction method is neither "mean" nor "sum".
+        """
+        # Apply the specified reduction method
+        if self._reduction == "mean":
+            return loss.mean()
+        if self._reduction == "sum":
+            return loss.sum()
+
+        # Raise an error if the reduction method is not recognized
+        raise ValueError(
+            f"Unknown reduction: {self._reduction}."
+            " Supported reductions are 'mean' and 'sum'."
+        )
