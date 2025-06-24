@@ -72,6 +72,7 @@ class RBAPINN(PINN):
         optimizer=None,
         scheduler=None,
         weighting=None,
+        loss=None,
         eta=0.001,
         gamma=0.999,
     ):
@@ -88,6 +89,9 @@ class RBAPINN(PINN):
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If ``None``, no weighting schema is used. Default is ``None``.
+        :param torch.nn.Module loss: The loss function to be minimized.
+            If ``None``, the :class:`torch.nn.MSELoss` loss is used.
+            Default is `None`.
         :param float | int eta: The learning rate for the weights of the
             residuals. Default is ``0.001``.
         :param float gamma: The decay parameter in the update of the weights
@@ -102,7 +106,7 @@ class RBAPINN(PINN):
             optimizer=optimizer,
             scheduler=scheduler,
             weighting=weighting,
-            loss=torch.nn.MSELoss(reduction="none"),
+            loss=loss,
         )
 
         # check consistency
@@ -138,6 +142,12 @@ class RBAPINN(PINN):
         self._loss_fn = type(self._loss_fn)(reduction="none")
 =======
 >>>>>>> d3976e4 (add buffer and checks on eta)
+
+        # Extract the reduction method from the loss function
+        self._reduction = self._loss_fn.reduction
+
+        # Set the loss function to return non-aggregated losses
+        self._loss_fn = type(self._loss_fn)(reduction="none")
 
     def training_step(self, batch, batch_idx, **kwargs):
         """
