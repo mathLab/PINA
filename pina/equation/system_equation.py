@@ -8,18 +8,51 @@ from ..utils import check_consistency
 
 class SystemEquation(EquationInterface):
     """
-    Implementation of the System of Equations. Every ``equation`` passed to a
-    :class:`~pina.condition.condition.Condition` object must be either a
-    :class:`~pina.equation.equation.Equation` or a
-    :class:`~pina.equation.system_equation.SystemEquation` instance.
+    Implementation of the System of Equations, to be passed to a
+    :class:`~pina.condition.condition.Condition` object.
+
+    Unlike the :class:`~pina.equation.equation.Equation` class, which represents
+    a single equation, the :class:`SystemEquation` class allows multiple
+    equations to be grouped together into a system. This is particularly useful
+    when dealing with multi-component outputs or coupled physical models, where
+    the residual must be computed collectively across several constraints.
+
+    Each equation in the system must be either:
+    - An instance of :class:`~pina.equation.equation.Equation`;
+    - A callable function.
+
+    The residuals from each equation are computed independently and then
+    aggregated using an optional reduction strategy (e.g., ``mean``, ``sum``).
+    The resulting residual is returned as a single :class:`~pina.LabelTensor`.
+
+    :Example:
+
+    >>> from pina.equation import SystemEquation, FixedValue, FixedGradient
+    >>> from pina import LabelTensor
+    >>> import torch
+    >>> pts = LabelTensor(torch.rand(10, 2), labels=["x", "y"])
+    >>> pts.requires_grad = True
+    >>> output_ = torch.pow(pts, 2)
+    >>> output_.labels = ["u", "v"]
+    >>> system_equation = SystemEquation(
+    ...     [
+    ...         FixedValue(value=1.0, components=["u"]),
+    ...         FixedGradient(value=0.0, components=["v"],d=["y"]),
+    ...     ],
+    ...     reduction="mean",
+    ... )
+    >>> residual = system_equation.residual(pts, output_)
+
     """
 
     def __init__(self, list_equation, reduction=None):
         """
         Initialization of the :class:`SystemEquation` class.
 
-        :param Callable equation: A ``torch`` callable function used to compute
-            the residual of a mathematical equation.
+        :param list_equation: A list containing either callable functions or
+            instances of :class:`~pina.equation.equation.Equation`, used to
+            compute the residuals of mathematical equations.
+        :type list_equation: list[Callable] | list[Equation]
         :param str reduction: The reduction method to aggregate the residuals of
             each equation. Available options are: ``None``, ``mean``, ``sum``,
             ``callable``.
@@ -32,9 +65,10 @@ class SystemEquation(EquationInterface):
         check_consistency([list_equation], list)
 
         # equations definition
-        self.equations = []
-        for _, equation in enumerate(list_equation):
-            self.equations.append(Equation(equation))
+        self.equations = [
+            equation if isinstance(equation, Equation) else Equation(equation)
+            for equation in list_equation
+        ]
 
         # possible reduction
         if reduction == "mean":
@@ -45,7 +79,7 @@ class SystemEquation(EquationInterface):
             self.reduction = reduction
         else:
             raise NotImplementedError(
-                "Only mean and sum reductions implemented."
+                "Only mean and sum reductions are currenly supported."
             )
 
     def residual(self, input_, output_, params_=None):
