@@ -1,6 +1,6 @@
 [project]
 name = "pina-mathlab"
-version = "0.2.2"
+version = "0.2.2.post2507"
 description = "Physic Informed Neural networks for Advance modeling."
 readme = "README.md"
 authors = [
