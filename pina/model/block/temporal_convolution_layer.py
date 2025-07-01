@@ -3,112 +3,121 @@ from torch import nn
 from pina.utils import check_consistency
 
 
-class ParameterizedSpectralConvBlock3D(nn.Module):
-    def __init__(self, upper_left_size, bottom_right_size, n_modes):
-        
+class M_H(nn.Module):
+    def __init__(self, k, n_modes):
         super().__init__()
 
-        # Check type consistency
-        check_consistency(upper_left_size, int)
-        check_consistency(bottom_right_size, int)
-
-
-        # assign variables
         self._modes = n_modes
-        self.upper_left_size = upper_left_size
-        self.bottom_right_size = bottom_right_size
+        self._k = k
 
-
-        # scaling factor
-        #! Why do we need scaling factor?
-        scale_ul = 1.0 / (self.upper_left_size ** 2)
-        scale_br = 1.0 / (self.bottom_right_size ** 2)
-
-
-        self._upper_left_weights = nn.Parameter(
-            scale_ul * torch.rand(
-                self.upper_left_size,
-                self.upper_left_size,
-                self._modes, #! what's up with modes
+        self._weights = nn.Parameter(
+            torch.rand(
+                self._modes,
+                self._k,
+                self._k,
                 dtype=torch.cfloat
             )
         )
-        self._bottom_right_weights = nn.Parameter(
-            scale_br * torch.rand(
-                self.bottom_right_size,
-                self.bottom_right_size,
+
+
+    def forward(self, fh):
+        batch_size = fh.shape[0]
+
+        #todo What is the correct Fourier transform?
+        F_h = torch.fft.fft(fh)
+
+        # largely copied from spectral.py
+        out_ft = torch.zeros(
+            batch_size,
+            fh.size(1) // 2 + 1, # allowed because FFT is Hermitian
+            self._k,
+            dtype = torch.cfloat
+        )
+
+        # (mode, channel, channel), (batch, mode, channel) -> (batch, mode, channel)
+        out = torch.einsum("ijl, bil -> bij", self._weights, F_h[:,:self._modes,...])
+
+        out_ft[:,:self._modes,...] = out
+
+        return torch.fft.ifft(out)
+
+
+     
+class M_Z(nn.Module):
+    def __init__(self, m, n_modes):
+        super().__init__()
+
+        self._modes = n_modes
+        self.m = m
+
+        self._weights = nn.Parameter(
+            torch.rand(
+                self._m,
+                self._m,
                 self._modes,
                 dtype=torch.cfloat
             )
         )
 
-    def _compute_mult(self, input, weights):
-        #! this is not the right matrix mul, understand size of tensors
-        #! that we are working with
-        return torch.einsum("ij, jk -> ik", input, weights)
+    def forward(self, fz):
+        batch_size = fz.shape[0]
+
+        #todo What is the correct Fourier transform?
+        F_z = torch.fft(fz)
+
+        # largely copied from spectral.py
+        out_ft = torch.zeros(
+            batch_size,
+            fz.size(1) // 2 + 1, # allowed because FFT is Hermitian
+            self._k,
+            dtype = torch.cfloat
+        )
+
+        # (mode, channel, channel), (batch, mode, channel, Coords) -> (batch, mode, channel, Coords)
+        out = torch.einsum("isl, bilT -> bisT", self._weights, F_z)
+
+        out_ft[:,:self._modes,...] = out
+
+        return torch.fft.ifft(out)
+
+#? Temporal Convolution Layer $T_{theta}$
+#? $(T_{\theta} f)(t) = f(t) + \sigma\left( (K_{\theta} f)(t) \right)$
+
+class TemporalConvolutionLayer(nn.Module):
+    def __init__(self,
+                 f_h_size,
+                 f_z_size,
+                 n_modes,
+                 equivariant_activation,
+                 other_activation
+    ):
+        
+        super().__init__()
+
+        # Check type consistency
+        check_consistency(f_h_size, int)
+        check_consistency(f_z_size, int)
+
+        # assign variables
+        self._modes = n_modes
+        self.f_h_size = f_h_size
+        self.f_z_size = f_z_size
+
+        self.M_H = M_H(f_h_size, n_modes)
+        self.M_Z = M_Z(f_z_size, n_modes)
+
+        self._equivariant_activation = equivariant_activation
+        self._other_activation = other_activation
+
 
     def forward(self, x):
         # Would like to split the input x into f_h and f_z like the paper
         f_h, f_z = torch.split(x, [self.upper_left_size, self.bottom_right_size])
 
-        # Fourier Transform on both
-        f_h_ft = torch.fft.rfftn(f_h,dim=[-3,-2,-1])
-        f_z_ft = torch.fft.rfftn(f_z, dim=[-3,-2,-1])
+        out_f_h = self.M_H(f_h)
+        out_f_z = self.M_Z(f_z)
 
-        # Learnable Matrix Multiply
-
-        # avoid block matrix issues by separating
-        # block_matrix = torch.block_diag(self._upper_left_weights, self._bottom_right_weights)
-
-        out_f_h = self._compute_mult(f_h_ft, self._upper_left_weights)
-        out_f_z = self._compute_mult(f_z_ft, self._bottom_right_weights)
-
-        # Inverse FFT
-        out_f_h = torch.fft.irfftn(out_f_h, dim=[-3,-2,-1])
-        out_f_z = torch.fft.irfftn(out_f_z, dim=[-3,-2,-1])
-
-        return torch.concat([out_f_h, out_f_z])
-
-
-
+        out_f_h = self._other_activation(out_f_h)
+        out_f_z = self._equivariant_activation(out_f_z)
         
-
-#? Temporal Convolution Layer $T_{theta}$
-#? $(T_{\theta} f)(t) = f(t) + \sigma\left( (K_{\theta} f)(t) \right)$
-
-
-class TemporalConvolutionLayer3D(nn.Module):
-    """
-    The inner block of a Equivariant Graph Neural Operator for 1-dimensional input tensors.
-
-    """
-
-    def __init__(
-        self,
-        upper_left_size,
-        bottom_right_size,
-        n_modes,
-        activation=torch.nn.Tanh,
-    ):
-
-        #! need to recreate spectral_conv to ensure equivariance
-        self._spectral_conv = ParameterizedSpectralConvBlock3D(
-            bottom_right_size=bottom_right_size,
-            upper_left_size=upper_left_size,
-            n_modes=n_modes,
-        )
-        self._activation = activation
-        self._linear = nn.Linear(input_numb_fields, output_numb_fields)
-
-    def forward(self, x):
-        """
-        Forward pass of the block. It performs a #?spectral convolution and a
-        #?linear transformation of the input. Then, it sums the results.
-
-        :param torch.Tensor x: The input tensor for performing the computation.
-        :return: The output tensor.
-        :rtype: torch.Tensor
-        """
-
-        #? Here we have the residual connection as well as everything else
-        return x + self.activation(self._spectral_conv(x) + self._linear(x))
+        return x + torch.concat([out_f_h, out_f_z])
