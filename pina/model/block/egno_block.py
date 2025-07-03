@@ -1,52 +1,36 @@
 import torch
-from torch_geometric.nn import MessagePassing
-from torch_geometric.utils import degree
-from ...utils import check_positive_integer
-from ...model import FeedForward
+import torch.nn as nn
+# used copilot for this, learn what the periods do here
+from .message_passing.en_equivariant_network_block import EnEquivariantNetworkBlock
+from .temporal_convolution_layer import TemporalConvolutionLayer
 
 
-class EquivariantGraphNeuralOperator(MessagePassing):
-    #! What is hidden_dim, what is node_dim=-2
-    def __init__(
-        self,
-        node_feature_dim,
-        edge_feature_dim,
-        pos_dim,
-        hidden_dim=64,
-        n_message_layers=2,
-        n_update_layers=2,
-        activation=torch.nn.SiLU,
-        aggr="add",
-        node_dim=-2,
-        flow="source_to_target",
-    ):
-        super().__init__(aggr=aggr, node_dim=node_dim, flow=flow)
-
-        # Check values
-        check_positive_integer(node_feature_dim, strict=True)
-        check_positive_integer(edge_feature_dim, strict=False)
-        check_positive_integer(pos_dim, strict=True)
-        check_positive_integer(hidden_dim, strict=True)
-        check_positive_integer(n_message_layers, strict=True)
-        check_positive_integer(n_update_layers, strict=True)
-
-        # Layer for computing the message
+class EquivariantGraphNeuralOperatorBlock(nn.Module):
+    def __init__(self, time_discretizations, n_nodes, f_h_size, f_z_size, n_modes, eq_actiation, scalar_feature_activation):
+        super().__init__()
         
+    #! edge_index vs edge_attr?
+    def forward(self, x, pos, edge_index, edge_attr, mean):
+        '''
+        Assuming time discretization has been done in the overall model before running any block.
 
-        # Layer for updating the node features
+        Should be able to gather the data from the graph itself in the overall model file
+
+        Mean for CoM caculation is only calculated once at the beginning
+
+        Potentailly don't need split in temporal_conv_layer if input separate coordinate and feature inputs
+        '''
+        # Cancel center of mass with 1/N\sum_{i=1}^N x_i
+        # Pass into TemporalConvLayer
+        x = TemporalConvolutionLayer(x)
         
+        # Reshape tensor so that EGNN layers will only operate on the node and channel dimension, while treating the temporal dimension indentical to a batch dimension
 
-        # Layer for updating the node positions
-        
+        # Apply EGNN layer
 
-    def forward(self):
-        pass
+        # Return
 
-    def message(self, x_i, x_j, pos_i, pos_j, edge_attr):
-        diff = pos_i - pos_j
 
-    def aggregate(self):
-        pass
 
-    def update(self):
-        pass
+
+
