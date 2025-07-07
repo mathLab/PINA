@@ -63,7 +63,7 @@ def check_consistency(object_, object_instance, subclass=False):
                     f"Please pass a {expected_type_name} class or a "
                     "derived one."
                 )
-            elif not issubclass(obj, object_instance):
+            if not issubclass(obj, object_instance):
                 raise ValueError(
                     f"You passed {obj.__name__} class, but a "
                     f"{expected_type_name} class was expected. "
@@ -77,7 +77,7 @@ def check_consistency(object_, object_instance, subclass=False):
                     f"{expected_type_name} instance was expected. "
                     f"Please pass a {expected_type_name} instance."
                 )
-            elif not isinstance(obj, object_instance):
+            if not isinstance(obj, object_instance):
                 raise ValueError(
                     f"You passed {repr(obj)} "
                     f"(an instance of {type(obj).__name__}), "
