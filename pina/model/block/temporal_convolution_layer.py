@@ -134,4 +134,4 @@ class TemporalConvolutionLayer(nn.Module):
         out_f_h = self._activation_scalar_features(out_f_h)
         out_f_z = self._equivariant_activation_tensor_features(out_f_z)
 
-        return x + out_f_h, x + out_f_z
+        return f_h + out_f_h, f_z + out_f_z
