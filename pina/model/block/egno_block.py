@@ -51,7 +51,7 @@ class EquivariantGraphNeuralOperatorBlock(nn.Module):
         self._n_nodes = n_nodes
         
         #! Need to figure out the correct parameters given the arguments to EGNO BLock
-        # self.egnn_layer = EnEquivariantNetworkBlock()
+        self.egnn_layer = EnEquivariantNetworkBlock(f_h_size, edges?, f_h_size)
 
     def forward(
         self, features, positions, edge_indicies, edge_attributes, mean
@@ -74,7 +74,6 @@ class EquivariantGraphNeuralOperatorBlock(nn.Module):
         # time discretize
         #! Need to make my own version of this
         #! My attempt on local
-
         # Arguments -> [Time_discretizations, embedding_dim]
         time_embds = time_embeddings(self._time_discretizations)
 
@@ -91,31 +90,43 @@ class EquivariantGraphNeuralOperatorBlock(nn.Module):
         # -> [Time_discretizatinos, Nodes, features + embedding_dim]
         features_with_time = torch.cat((features, time_embds), dim=2)
 
-        # flattening for layers
-        flattened = features.view(-1, features_with_time.shape[-1])
+        #? # flattening for layers
+        #? flattened = features.view(-1, features_with_time.shape[-1])
 
 
-        # does repeating and flattening together
-        # add another 3d vec features below in the same way
-        # [Nodes, Coords] -> [Time_discretizations * Nodes, Coords]
-        positions = positions.repeat(self._time_discretizations, 1)
+        #? # does repeating and flattening together
+        #? # add another 3d vec features below in the same way
+        #? # [Nodes, Coords] -> [Time_discretizations * Nodes, Coords]
+        #? positions = positions.repeat(self._time_discretizations, 1)
+
+        # [Nodes, Coords] -> [Time_discretizations, Nodes, Coords]
+        positions = positions.repeat(self._time_discretizations, 1, 1)
 
         # mean used to cancel CoM extended over all time
         # [Time_discretizations, 1]
         #! This is broadcastable by subtracting with postions as shown below:
         #! Is this mean over the entire graph and could it be represented as an integer
+        #! Right now assuming that mean input is [Nodes, Mean]
         # Positions: [Time_discretizations * Nodes, Coords]
         # Mean     : [Time_discretizations, 1]
-        mean = mean.repeat(self._time_discretizations, 1)
+        # mean = mean.repeat(self._time_discretizations, 1)
 
-        #todo Adjust Positions with mean here
+        #! Right now assuming that mean input is [Nodes, Mean]
+        mean = mean.repeat(self._time_discretizations, 1, 1)
 
+        # Adjust Positions with mean here
+        positions = positions - mean
 
-        # Pass into TemporalConvLayer
-        #! Need to ensure tensors are right shape
-        features_temp_conv, positions_temp_conv = self.conv_layer(flattened, positions)
+        # Apply temporal conv layer
+        features_temp_conv, positions_temp_conv = self.conv_layer(features_with_time, positions)
+
+        # Add back in mean
+        positions_temp_conv = positions_temp_conv + mean
 
         # Apply EGNN layer
+        features, positions = self.egnn_layer(features_temp_conv.view(self._time_discretizations * self._n_nodes, -1),
+                        positions_temp_conv.view(self._time_discretizations * self._n_nodes, -1),
+                        edge_indicies,
+                        edge_attributes)
         
-
-        # Return
+        return features, positions
