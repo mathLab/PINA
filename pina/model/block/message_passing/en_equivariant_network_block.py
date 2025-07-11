@@ -40,7 +40,6 @@ class EnEquivariantNetworkBlock(MessagePassing):
         node_feature_dim,
         edge_feature_dim,
         pos_dim,
-        velo_dim=None,
         hidden_dim=64,
         n_message_layers=2,
         n_update_layers=2,
@@ -48,7 +47,6 @@ class EnEquivariantNetworkBlock(MessagePassing):
         aggr="add",
         node_dim=-2,
         flow="source_to_target",
-        has_velo=False
     ):
         """
         Initialization of the :class:`EnEquivariantNetworkBlock` class.
@@ -121,18 +119,7 @@ class EnEquivariantNetworkBlock(MessagePassing):
             func=activation,
         )
 
-        self.has_velo = has_velo
-        if has_velo:
-            self.update_velo_net = FeedForward(
-                input_dimensions=velo_dim,
-                output_dimensions=1,
-                inner_size=hidden_dim,
-                n_layers=n_update_layers,
-                func=activation,
-            )
-
-
-    def forward(self, x, pos, velo=None, edge_index, edge_attr=None):
+    def forward(self, x, pos, edge_index, edge_attr=None):
         """
         Forward pass of the block, triggering the message-passing routine.
 
@@ -146,10 +133,6 @@ class EnEquivariantNetworkBlock(MessagePassing):
         :return: The updated node features and node positions.
         :rtype: tuple(torch.Tensor, torch.Tensor)
         """
-        if self.has_velo:
-            return self.propagate(
-            edge_index=edge_index, x=x, pos=pos, velo=velo, edge_attr=edge_attr
-        )
         return self.propagate(
             edge_index=edge_index, x=x, pos=pos, edge_attr=edge_attr
         )
@@ -241,10 +224,6 @@ class EnEquivariantNetworkBlock(MessagePassing):
 
         # Degree for normalization of position updates
         c = degree(edge_index[1], pos.shape[0]).unsqueeze(-1).clamp(min=1)
-
-        if self.has_velo:
-            velo =
-        else:
-            pos = pos + agg_message / c
+        pos = pos + agg_message / c
 
         return x, pos

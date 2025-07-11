@@ -62,18 +62,19 @@ class FourierBlock1D(nn.Module):
             n_modes=n_modes,
         )
         self._activation = activation()
-        self._linear = nn.Conv1d(input_numb_fields, output_numb_fields, 1)
+        self._linear = nn.Conv1d(input_numb_fields, output_numb_fields, 1) #todo why is the linear a convolution?
 
     def forward(self, x):
         """
-        Forward pass of the block. It performs a spectral convolution and a
+        Forward pass of the block. It performs a spectral convolution and a 
         linear transformation of the input. Then, it sums the results.
 
         :param torch.Tensor x: The input tensor for performing the computation.
         :return: The output tensor.
         :rtype: torch.Tensor
         """
-        return self._activation(self._spectral_conv(x) + self._linear(x))
+        return self._activation(self._spectral_conv(x) + self._linear(x))     #todo why are we summing the results?
+        #todo more residual connection
 
 
 class FourierBlock2D(nn.Module):

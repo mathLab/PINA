@@ -4,7 +4,7 @@ import torch
 from ..utils import check_consistency
 
 
-class KernelNeuralOperator(torch.nn.Module):
+class KernelNeuralOperator(torch.nn.Module): # so this seems like a typical neural operator approach
     r"""
     Base class for Neural Operators with integral kernels.
 

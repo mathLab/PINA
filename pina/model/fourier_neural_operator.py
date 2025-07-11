@@ -114,8 +114,8 @@ class FourierIntegralKernel(torch.nn.Module):
             n_modes = [n_modes] * len(layers)
 
         # 4. Build the FNO network
-        tmp_layers = [input_numb_fields] + layers + [output_numb_fields]
-        self._layers = nn.Sequential(
+        tmp_layers = [input_numb_fields] + layers + [output_numb_fields] #? Creates multiple of the fourier layers and puts it in sequential to run through
+        self._layers = nn.Sequential(  #todo Why choose nn.Sequential here?
             *[
                 fourier_layer(
                     input_numb_fields=tmp_layers[i],

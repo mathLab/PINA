@@ -1,12 +1,13 @@
 """Formulation of the advection problem."""
 
+# had to change the imports so no error
 import torch
-from ... import Condition
-from ...operator import grad
-from ...equation import Equation
-from ...domain import CartesianDomain
-from ...utils import check_consistency
-from ...problem import SpatialProblem, TimeDependentProblem
+from pina import Condition
+from pina.operator import grad
+from pina.equation import Equation
+from pina.domain import CartesianDomain
+from pina.utils import check_consistency
+from pina.problem import SpatialProblem, TimeDependentProblem
 
 
 class AdvectionEquation(Equation):
@@ -108,3 +109,20 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
         sol = torch.sin(pts.extract("x") - self.c * pts.extract("t"))
         sol.labels = self.output_variables
         return sol
+
+problem = AdvectionProblem(c=10.0)
+# DATA
+
+# sampling 20 points in (0, 1) through latin hypercube sampling in D, and 1 point in x0
+problem.discretise_domain(n=20, mode="latin", domains=["D"])
+problem.discretise_domain(n=1, mode="latin", domains=["t0"])
+
+
+
+# MODEL
+
+# SOLVER
+
+# TRAINER
+    
+

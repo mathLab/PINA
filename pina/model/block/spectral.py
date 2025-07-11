@@ -69,6 +69,7 @@ class SpectralConvBlock1D(nn.Module):
 
         :param torch.Tensor x: The input tensor. Expected of size
             [``batch``, ``input_numb_fields``, ``N``].
+                    #! prolly means output
         :return: The input tensor. Expected of size
             [``batch``, ``output_numb_fields``, ``N``].
         :rtype: torch.Tensor
@@ -85,7 +86,7 @@ class SpectralConvBlock1D(nn.Module):
             x.size(-1) // 2 + 1,
             device=x.device,
             dtype=torch.cfloat,
-        )
+        ) #! this is how they limit the number of modes in N
         out_ft[:, :, : self._modes] = self._compute_mult1d(
             x_ft[:, :, : self._modes], self._weights
         )

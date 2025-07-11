@@ -95,7 +95,7 @@ class GNOBlock(MessagePassing):
         :return: The updated node features.
         :rtype: torch.Tensor
         """
-        return aggr_out + self.W(x)
+        return aggr_out + self.W(x)  # residual connection
 
     def forward(self, x, edge_index, edge_attr):
         """
@@ -108,3 +108,7 @@ class GNOBlock(MessagePassing):
         :rtype: torch.Tensor
         """
         return self.func(self.propagate(edge_index, x=x, edge_attr=edge_attr))
+    
+
+    
+    

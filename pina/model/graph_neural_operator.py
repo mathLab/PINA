@@ -6,7 +6,7 @@ from .block.gno_block import GNOBlock
 from .kernel_neural_operator import KernelNeuralOperator
 
 
-class GraphNeuralKernel(torch.nn.Module):
+class GraphNeuralKernel(torch.nn.Module): #? so the kernel is also a neural network
     """
     Graph Neural Operator kernel model class.
 
@@ -26,8 +26,8 @@ class GraphNeuralKernel(torch.nn.Module):
         width,
         edge_features,
         n_layers=2,
-        internal_n_layers=0,
-        internal_layers=None,
+        internal_n_layers=0, #todo difference between internal layers and n_layers?
+        internal_layers=None, 
         inner_size=None,
         internal_func=None,
         external_func=None,
@@ -59,7 +59,7 @@ class GraphNeuralKernel(torch.nn.Module):
         if internal_func is None:
             internal_func = Tanh
 
-        if shared_weights:
+        if shared_weights: #todo explain shared vs unshared here as well
             self.layers = GNOBlock(
                 width=width,
                 edges_features=edge_features,
@@ -88,7 +88,7 @@ class GraphNeuralKernel(torch.nn.Module):
             )
             self._forward_func = self._forward_unshared
 
-    def _forward_unshared(self, x, edge_index, edge_attr):
+    def _forward_unshared(self, x, edge_index, edge_attr): #todo new neural networks each time making the overall more expressive
         """
         Forward pass for the Graph Neural Kernel with unshared weights.
 
@@ -104,7 +104,7 @@ class GraphNeuralKernel(torch.nn.Module):
             x = layer(x, edge_index, edge_attr)
         return x
 
-    def _forward_shared(self, x, edge_index, edge_attr):
+    def _forward_shared(self, x, edge_index, edge_attr): #todo Here we are calling the same layer again and again which will result in the mean idea
         """
         Forward pass for the Graph Neural Kernel with shared weights.
 
@@ -224,6 +224,6 @@ class GraphNeuralOperator(KernelNeuralOperator):
         """
         x, edge_index, edge_attr = x.x, x.edge_index, x.edge_attr
         x = self.lifting_operator(x)
-        x = self.integral_kernels(x, edge_index, edge_attr)
+        x = self.integral_kernels(x, edge_index, edge_attr)  #? has implicit __call__ method from the torch.nn.Module
         x = self.projection_operator(x)
         return x

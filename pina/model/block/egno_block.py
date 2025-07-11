@@ -39,7 +39,6 @@ class EquivariantGraphNeuralOperatorBlock(nn.Module):
     
         # determine f_h size from time embeddding dim and num_scalar features
         f_h_size = num_scalar_features + embedding_dim
-        #! determine f_z size from time?
         f_z_size = num_vec_features
         
         self.conv_layer = TemporalConvolutionLayer(

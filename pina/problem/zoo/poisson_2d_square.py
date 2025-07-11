@@ -1,11 +1,11 @@
 """Formulation of the Poisson problem in a square domain."""
 
 import torch
-from ... import Condition
-from ...operator import laplacian
-from ...problem import SpatialProblem
-from ...domain import CartesianDomain
-from ...equation import Equation, FixedValue
+from pina import Condition
+from pina.operator import laplacian
+from pina.problem import SpatialProblem
+from pina.domain import CartesianDomain
+from pina.equation import Equation, FixedValue
 
 
 def laplace_equation(input_, output_):
