@@ -104,6 +104,7 @@ Models
     LowRankNeuralOperator <model/low_rank_neural_operator.rst>
     GraphNeuralOperator <model/graph_neural_operator.rst>
     GraphNeuralKernel <model/graph_neural_operator_integral_kernel.rst>
+    PirateNet <model/pirate_network.rst>
 
 Blocks
 -------------
@@ -121,6 +122,7 @@ Blocks
     Continuous Convolution Interface <model/block/convolution_interface.rst>
     Continuous Convolution Block <model/block/convolution.rst>
     Orthogonal Block <model/block/orthogonal.rst>
+    PirateNet Block <model/block/pirate_network_block.rst>
 
 Message Passing
 -------------------
