@@ -18,6 +18,7 @@ __all__ = [
     "LowRankBlock",
     "RBFBlock",
     "GNOBlock",
+    "PirateNetBlock",
 ]
 
 from .convolution_2d import ContinuousConvBlock
@@ -35,3 +36,4 @@ from .average_neural_operator_block import AVNOBlock
 from .low_rank_block import LowRankBlock
 from .rbf_block import RBFBlock
 from .gno_block import GNOBlock
+from .pirate_network_block import PirateNetBlock

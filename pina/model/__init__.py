@@ -13,6 +13,7 @@ __all__ = [
     "LowRankNeuralOperator",
     "Spline",
     "GraphNeuralOperator",
+    "PirateNet",
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward
@@ -24,3 +25,4 @@ from .average_neural_operator import AveragingNeuralOperator
 from .low_rank_neural_operator import LowRankNeuralOperator
 from .spline import Spline
 from .graph_neural_operator import GraphNeuralOperator
+from .pirate_network import PirateNet

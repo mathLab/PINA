@@ -1,4 +1,4 @@
-from pina.equation import SystemEquation
+from pina.equation import SystemEquation, FixedValue, FixedGradient
 from pina.operator import grad, laplacian
 from pina import LabelTensor
 import torch
@@ -24,34 +24,78 @@ def foo():
     pass
 
 
-def test_constructor():
-    SystemEquation([eq1, eq2])
-    SystemEquation([eq1, eq2], reduction="sum")
+@pytest.mark.parametrize("reduction", [None, "mean", "sum"])
+def test_constructor(reduction):
+
+    # Constructor with callable functions
+    SystemEquation([eq1, eq2], reduction=reduction)
+
+    # Constructor with Equation instances
+    SystemEquation(
+        [
+            FixedValue(value=0.0, components=["u1"]),
+            FixedGradient(value=0.0, components=["u2"]),
+        ],
+        reduction=reduction,
+    )
+
+    # Constructor with mixed types
+    SystemEquation(
+        [
+            FixedValue(value=0.0, components=["u1"]),
+            eq1,
+        ],
+        reduction=reduction,
+    )
+
+    # Non-standard reduction not implemented
     with pytest.raises(NotImplementedError):
         SystemEquation([eq1, eq2], reduction="foo")
+
+    # Invalid input type
     with pytest.raises(ValueError):
         SystemEquation(foo)
 
 
-def test_residual():
+@pytest.mark.parametrize("reduction", [None, "mean", "sum"])
+def test_residual(reduction):
 
+    # Generate random points and output
     pts = LabelTensor(torch.rand(10, 2), labels=["x", "y"])
     pts.requires_grad = True
     u = torch.pow(pts, 2)
     u.labels = ["u1", "u2"]
 
-    eq_1 = SystemEquation([eq1, eq2], reduction="mean")
-    res = eq_1.residual(pts, u)
-    assert res.shape == torch.Size([10])
+    # System with callable functions
+    system_eq = SystemEquation([eq1, eq2], reduction=reduction)
+    res = system_eq.residual(pts, u)
 
-    eq_1 = SystemEquation([eq1, eq2], reduction="sum")
-    res = eq_1.residual(pts, u)
-    assert res.shape == torch.Size([10])
+    # Checks on the shape of the residual
+    shape = torch.Size([10, 3]) if reduction is None else torch.Size([10])
+    assert res.shape == shape
 
-    eq_1 = SystemEquation([eq1, eq2], reduction=None)
-    res = eq_1.residual(pts, u)
-    assert res.shape == torch.Size([10, 3])
+    # System with Equation instances
+    system_eq = SystemEquation(
+        [
+            FixedValue(value=0.0, components=["u1"]),
+            FixedGradient(value=0.0, components=["u2"]),
+        ],
+        reduction=reduction,
+    )
 
-    eq_1 = SystemEquation([eq1, eq2])
-    res = eq_1.residual(pts, u)
-    assert res.shape == torch.Size([10, 3])
+    # Checks on the shape of the residual
+    shape = torch.Size([10, 3]) if reduction is None else torch.Size([10])
+    assert res.shape == shape
+
+    # System with mixed types
+    system_eq = SystemEquation(
+        [
+            FixedValue(value=0.0, components=["u1"]),
+            eq1,
+        ],
+        reduction=reduction,
+    )
+
+    # Checks on the shape of the residual
+    shape = torch.Size([10, 3]) if reduction is None else torch.Size([10])
+    assert res.shape == shape

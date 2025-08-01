@@ -90,20 +90,21 @@ Do you want to learn more about it? Look at our [Tutorials](https://github.com/m
 ### Solve Data Driven Problems
 Data driven modelling aims to learn a function that given some input data gives an output (e.g. regression, classification, ...). In PINA you can easily do this by:
 ```python
+import torch
 from pina import Trainer
 from pina.model import FeedForward
 from pina.solver import SupervisedSolver
 from pina.problem.zoo import SupervisedProblem
 
 input_tensor  = torch.rand((10, 1))
-output_tensor = input_tensor.pow(3)
+target_tensor = input_tensor.pow(3)
 
 # Step 1. Define problem
 problem = SupervisedProblem(input_tensor, target_tensor)
 # Step 2. Design model (you can use your favourite torch.nn.Module in here)
 model   = FeedForward(input_dimensions=1, output_dimensions=1, layers=[64, 64])
 # Step 3. Define Solver
-solver  = SupervisedSolver(problem, model)
+solver  = SupervisedSolver(problem, model, use_lt=False)
 # Step 4. Train
 trainer = Trainer(solver, max_epochs=1000, accelerator='gpu')
 trainer.train()
@@ -149,6 +150,7 @@ class SimpleODE(SpatialProblem):
 
 # Step 1. Define problem
 problem = SimpleODE()
+problem.discretise_domain(n=100, mode="grid", domains=["D", "x0"])
 # Step 2. Design model (you can use your favourite torch.nn.Module in here)
 model   = FeedForward(input_dimensions=1, output_dimensions=1, layers=[64, 64])
 # Step 3. Define Solver
