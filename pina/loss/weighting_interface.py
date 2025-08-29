@@ -13,7 +13,7 @@ class WeightingInterface(metaclass=ABCMeta):
         """
         Initialization of the :class:`WeightingInterface` class.
         """
-        self.condition_names = None
+        self._solver = None
 
     @abstractmethod
     def aggregate(self, losses):
@@ -22,3 +22,13 @@ class WeightingInterface(metaclass=ABCMeta):
 
         :param dict losses: The dictionary of losses.
         """
+
+    @property
+    def solver(self):
+        """
+        The solver employing this weighting schema.
+
+        :return: The solver.
+        :rtype: :class:`~pina.solver.SolverInterface`
+        """
+        return self._solver

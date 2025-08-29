@@ -37,12 +37,16 @@ class ScalarWeighting(WeightingInterface):
         :type weights: float | int | dict
         """
         super().__init__()
+
+        # Check consistency
         check_consistency([weights], (float, dict, int))
+
+        # Weights initialization
         if isinstance(weights, (float, int)):
             self.default_value_weights = weights
             self.weights = {}
         else:
-            self.default_value_weights = 1
+            self.default_value_weights = 1.0
             self.weights = weights
 
     def aggregate(self, losses):

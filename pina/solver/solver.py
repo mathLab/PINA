@@ -44,7 +44,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
             weighting = _NoWeighting()
         check_consistency(weighting, WeightingInterface)
         self._pina_weighting = weighting
-        weighting.condition_names = list(self._pina_problem.conditions.keys())
+        weighting._solver = self
 
         # check consistency use_lt
         check_consistency(use_lt, bool)
