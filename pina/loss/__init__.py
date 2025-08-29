@@ -7,6 +7,7 @@ __all__ = [
     "WeightingInterface",
     "ScalarWeighting",
     "NeuralTangentKernelWeighting",
+    "SelfAdaptiveWeighting",
 ]
 
 from .loss_interface import LossInterface
@@ -15,3 +16,4 @@ from .lp_loss import LpLoss
 from .weighting_interface import WeightingInterface
 from .scalar_weighting import ScalarWeighting
 from .ntk_weighting import NeuralTangentKernelWeighting
+from .self_adaptive_weighting import SelfAdaptiveWeighting
