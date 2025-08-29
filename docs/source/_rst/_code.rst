@@ -267,3 +267,4 @@ Losses and Weightings
     WeightingInterface <loss/weighting_interface.rst>
     ScalarWeighting <loss/scalar_weighting.rst>
     NeuralTangentKernelWeighting <loss/ntk_weighting.rst>
+    SelfAdaptiveWeighting <loss/self_adaptive_weighting.rst>
