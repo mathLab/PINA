@@ -12,26 +12,28 @@ problem.discretise_domain(10)
 model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 
 
-@pytest.mark.parametrize("k", [10, 100, 1000])
-def test_constructor(k):
-    SelfAdaptiveWeighting(k=k)
+@pytest.mark.parametrize("update_every_n_epochs", [10, 100, 1000])
+def test_constructor(update_every_n_epochs):
+    SelfAdaptiveWeighting(update_every_n_epochs=update_every_n_epochs)
 
-    # Should fail if k is not an integer
+    # Should fail if update_every_n_epochs is not an integer
     with pytest.raises(AssertionError):
-        SelfAdaptiveWeighting(k=1.5)
+        SelfAdaptiveWeighting(update_every_n_epochs=1.5)
 
-    # Should fail if k is not > 0
+    # Should fail if update_every_n_epochs is not > 0
     with pytest.raises(AssertionError):
-        SelfAdaptiveWeighting(k=0)
+        SelfAdaptiveWeighting(update_every_n_epochs=0)
 
-    # Should fail if k is not > 0
+    # Should fail if update_every_n_epochs is not > 0
     with pytest.raises(AssertionError):
-        SelfAdaptiveWeighting(k=-3)
+        SelfAdaptiveWeighting(update_every_n_epochs=-3)
 
 
-@pytest.mark.parametrize("k", [2, 3])
-def test_train_aggregation(k):
-    weighting = SelfAdaptiveWeighting(k=k)
+@pytest.mark.parametrize("update_every_n_epochs", [1, 3])
+def test_train_aggregation(update_every_n_epochs):
+    weighting = SelfAdaptiveWeighting(
+        update_every_n_epochs=update_every_n_epochs
+    )
     solver = PINN(problem=problem, model=model, weighting=weighting)
     trainer = Trainer(solver=solver, max_epochs=5, accelerator="cpu")
     trainer.train()

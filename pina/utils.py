@@ -240,3 +240,31 @@ def check_positive_integer(value, strict=True):
         assert (
             isinstance(value, int) and value >= 0
         ), f"Expected a non-negative integer, got {value}."
+
+
+def in_range(value, range_vals, strict=True):
+    """
+    Check if a value is within a specified range.
+
+    :param int value: The integer value to check.
+    :param list[int] range_vals: A list of two integers representing the range
+        limits. The first element specifies the lower bound, and the second
+        specifies the upper bound.
+    :param bool strict: If True, the value must be strictly positive.
+        Default is True.
+    :return: True if the value satisfies the range condition, False otherwise.
+    :rtype: bool
+    """
+    # Validate inputs
+    check_consistency(value, (float, int))
+    check_consistency(range_vals, (float, int))
+    assert (
+        isinstance(range_vals, list) and len(range_vals) == 2
+    ), "range_vals must be a list of two integers [lower, upper]"
+    lower, upper = range_vals
+
+    # Check the range
+    if strict:
+        return lower < value < upper
+
+    return lower <= value <= upper
