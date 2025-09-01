@@ -2,7 +2,6 @@
 
 import torch
 from .weighting_interface import WeightingInterface
-from ..utils import check_positive_integer
 
 
 class SelfAdaptiveWeighting(WeightingInterface):
@@ -22,59 +21,37 @@ class SelfAdaptiveWeighting(WeightingInterface):
 
     """
 
-    def __init__(self, k=100):
+    def __init__(self, update_every_n_epochs=1):
         """
         Initialization of the :class:`SelfAdaptiveWeighting` class.
 
-        :param int k: The number of epochs after which the weights are updated.
-            Default is 100.
-
-        :raises ValueError: If ``k`` is not a positive integer.
+        :param int update_every_n_epochs: The number of training epochs between
+            weight updates. If set to 1, the weights are updated at every epoch.
+            Default is 1.
         """
-        super().__init__()
+        super().__init__(update_every_n_epochs=update_every_n_epochs)
 
-        # Check consistency
-        check_positive_integer(value=k, strict=True)
-
-        # Initialize parameters
-        self.k = k
-        self.weights = {}
-        self.default_value_weights = 1.0
-
-    def aggregate(self, losses):
+    def weights_update(self, losses):
         """
-        Weight the losses according to the self-adaptive algorithm.
+        Update the weighting scheme based on the given losses.
 
-        :param dict(torch.Tensor) losses: The dictionary of losses.
-        :return: The aggregation of the losses. It should be a scalar Tensor.
-        :rtype: torch.Tensor
+        :param dict losses: The dictionary of losses.
+        :return: The updated weights.
+        :rtype: dict
         """
-        # If weights have not been initialized, set them to 1
-        if not self.weights:
-            self.weights = {
-                condition: self.default_value_weights for condition in losses
-            }
+        # Define a dictionary to store the norms of the gradients
+        losses_norm = {}
 
-        # Update every k epochs
-        if self.solver.trainer.current_epoch % self.k == 0:
+        # Compute the gradient norms for each loss component
+        for condition, loss in losses.items():
+            loss.backward(retain_graph=True)
+            grads = torch.cat(
+                [p.grad.flatten() for p in self.solver.model.parameters()]
+            )
+            losses_norm[condition] = grads.norm()
 
-            # Define a dictionary to store the norms of the gradients
-            losses_norm = {}
-
-            # Compute the gradient norms for each loss component
-            for condition, loss in losses.items():
-                loss.backward(retain_graph=True)
-                grads = torch.cat(
-                    [p.grad.flatten() for p in self.solver.model.parameters()]
-                )
-                losses_norm[condition] = grads.norm()
-
-            # Update the weights
-            self.weights = {
-                condition: sum(losses_norm.values()) / losses_norm[condition]
-                for condition in losses
-            }
-
-        return sum(
-            self.weights[condition] * loss for condition, loss in losses.items()
-        )
+        # Update the weights
+        return {
+            condition: sum(losses_norm.values()) / losses_norm[condition]
+            for condition in losses
+        }
