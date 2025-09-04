@@ -1,5 +1,7 @@
 """Module for the Equation."""
 
+import inspect
+
 from .equation_interface import EquationInterface
 
 
@@ -25,6 +27,9 @@ class Equation(EquationInterface):
                 "Expected a callable function, got "
                 f"{equation}"
             )
+        # compute the signature
+        sig = inspect.signature(equation)
+        self.__len_sig = len(sig.parameters)
         self.__equation = equation
 
     def residual(self, input_, output_, params_=None):
@@ -41,9 +46,14 @@ class Equation(EquationInterface):
             parameters must be initialized to ``None``. Default is ``None``.
         :return: The computed residual of the equation.
         :rtype: LabelTensor
+        :raises RuntimeError: If the underlying equation signature length is not
+            2 (direct problem) or 3 (inverse problem).
         """
-        if params_ is None:
-            result = self.__equation(input_, output_)
-        else:
-            result = self.__equation(input_, output_, params_)
-        return result
+        if self.__len_sig == 2:
+            return self.__equation(input_, output_)
+        if self.__len_sig == 3:
+            return self.__equation(input_, output_, params_)
+        raise RuntimeError(
+            f"Unexpected number of arguments in equation: {self.__len_sig}. "
+            "Expected either 2 (direct problem) or 3 (inverse problem)."
+        )

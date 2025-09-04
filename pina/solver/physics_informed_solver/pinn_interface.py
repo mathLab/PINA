@@ -190,13 +190,9 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
         :return: The residual of the solution of the model.
         :rtype: LabelTensor
         """
-        try:
-            residual = equation.residual(samples, self.forward(samples))
-        except TypeError:
-            # this occurs when the function has three inputs (inverse problem)
-            residual = equation.residual(
-                samples, self.forward(samples), self._params
-            )
+        residual = equation.residual(
+            samples, self.forward(samples), self._params
+        )
         return residual
 
     def _residual_loss(self, samples, equation):
