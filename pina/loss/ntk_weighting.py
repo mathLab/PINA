@@ -61,11 +61,10 @@ class NeuralTangentKernelWeighting(WeightingInterface):
             losses_norm[condition] = grads.norm()
 
         # Update the weights
-        self.weights = {
-            condition: self.alpha * self.weights.get(condition, 1)
+        return {
+            condition: self.alpha * self.last_saved_weights().get(condition, 1)
             + (1 - self.alpha)
             * losses_norm[condition]
             / sum(losses_norm.values())
             for condition in losses
         }
-        return self.weights
