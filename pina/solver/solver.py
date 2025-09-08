@@ -169,7 +169,10 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         compile the model if the :class:`~pina.trainer.Trainer`
         ``compile`` is ``True``.
 
-
+        :param str stage: The current stage of the training process
+            (e.g., ``fit``, ``validate``, ``test``, ``predict``).
+        :return: The result of the parent class ``setup`` method.
+        :rtype: Any
         """
         if stage == "fit" and self.trainer.compile:
             self._setup_compile()
