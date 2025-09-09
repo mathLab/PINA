@@ -8,31 +8,57 @@ from ..equation.equation_interface import EquationInterface
 
 class DomainEquationCondition(ConditionInterface):
     """
-    Condition defined by a domain and an equation. It can be used in Physics
-    Informed problems. Before using this condition, make sure that input data
-    are correctly sampled from the domain.
+    The class :class:`DomainEquationCondition` defines a condition based on a
+    ``domain`` and an ``equation``. This condition is typically used in
+    physics-informed problems, where the model is trained to satisfy a given
+    ``equation`` over a specified ``domain``. The ``domain`` is used to sample
+    points where the ``equation`` residual is evaluated and minimized during
+    training.
+
+    :Example:
+
+    >>> from pina.domain import CartesianDomain
+    >>> from pina.equation import Equation
+    >>> from pina import Condition
+
+    >>> # Equation to be satisfied over the domain: # x^2 + y^2 - 1 = 0
+    >>> def dummy_equation(pts):
+    ...     return pts["x"]**2 + pts["y"]**2 - 1
+
+    >>> domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
+    >>> condition = Condition(domain=domain, equation=Equation(dummy_equation))
     """
 
+    # Available slots
     __slots__ = ["domain", "equation"]
 
     def __init__(self, domain, equation):
         """
-        Initialise the object by storing the domain and equation.
+        Initialization of the :class:`DomainEquationCondition` class.
 
-        :param DomainInterface domain: Domain object containing the domain data.
-        :param EquationInterface equation: Equation object containing the
-            equation data.
+        :param DomainInterface domain: The domain over which the equation is
+            defined.
+        :param EquationInterface equation: The equation to be satisfied over the
+            specified domain.
         """
         super().__init__()
         self.domain = domain
         self.equation = equation
 
     def __setattr__(self, key, value):
+        """
+        Set the attribute value with type checking.
+
+        :param str key: The attribute name.
+        :param any value: The value to set for the attribute.
+        """
         if key == "domain":
             check_consistency(value, (DomainInterface, str))
             DomainEquationCondition.__dict__[key].__set__(self, value)
+
         elif key == "equation":
             check_consistency(value, (EquationInterface))
             DomainEquationCondition.__dict__[key].__set__(self, value)
+
         elif key in ("_problem"):
             super().__setattr__(key, value)
