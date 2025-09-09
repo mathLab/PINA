@@ -253,6 +253,7 @@ Callbacks
     Optimizer callback <callback/optimizer_callback.rst>
     R3 Refinment callback <callback/refinement/r3_refinement.rst>
     Refinment Interface callback <callback/refinement/refinement_interface.rst>
+    Normalizer callback <callback/normalizer.rst>
 
 Losses and Weightings
 ---------------------
