@@ -38,6 +38,6 @@ Supervised Learning
 -------------------
 
 - `Introductory Tutorial: Supervised Learning with PINA  <tutorial20/tutorial.html>`_
-- `Chemical Properties Prediction with Graph Neural Networks <tutorial25/tutorial.html>`_
+- `Chemical Properties Prediction with Graph Neural Networks <tutorial15/tutorial.html>`_
 - `Unstructured Convolutional Autoencoders with Continuous Convolution <tutorial4/tutorial.html>`_
 - `Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics <tutorial8/tutorial.html>`_
