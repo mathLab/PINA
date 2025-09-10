@@ -2,18 +2,18 @@
 # coding: utf-8
 
 # # Tutorial: Chemical Properties Prediction with Graph Neural Networks
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial15/tutorial.ipynb)
-#
-# In this tutorial we will use **Graph Neural Networks** (GNNs) for chemical properties prediction. Chemical properties prediction involves estimating or determining the physical, chemical, or biological characteristics of molecules based on their structure.
-#
+# 
+# In this tutorial we will use **Graph Neural Networks** (GNNs) for chemical properties prediction. Chemical properties prediction involves estimating or determining the physical, chemical, or biological characteristics of molecules based on their structure. 
+# 
 # Molecules can naturally be represented as graphs, where atoms serve as the nodes and chemical bonds as the edges connecting them. This graph-based structure makes GNNs a great fit for predicting chemical properties.
-#
+# 
 # In the tutorial we will use the [QM9 dataset](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.QM9.html#torch_geometric.datasets.QM9) from Pytorch Geometric. The dataset contains small molecules, each consisting of up to 29 atoms, with every atom having a corresponding 3D position. Each atom is also represented by a five-dimensional one-hot encoded vector that indicates the atom type (H, C, N, O, F).
-#
+# 
 # First of all, let's start by importing useful modules!
 
-# In[ ]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -42,7 +42,7 @@ warnings.filterwarnings("ignore")
 # ## Download Data and create the Problem
 
 # We download the dataset and save the molecules as a list of `Data` objects (`input_`), where each element contains one molecule encoded in a graph structure. The corresponding target properties (`target_`) are listed below:
-#
+# 
 # | Target | Property                         | Description                                                                       | Unit                                        |
 # |--------|----------------------------------|-----------------------------------------------------------------------------------|---------------------------------------------|
 # | 0      | $\mu$                            | Dipole moment                                                                     | $D$                                         |
@@ -64,9 +64,9 @@ warnings.filterwarnings("ignore")
 # | 16     | $A$                              | Rotational constant                                                               | $GHz$                                       |
 # | 17     | $B$                              | Rotational constant                                                               | $GHz$                                       |
 # | 18     | $C$                              | Rotational constant                                                               | $GHz$                                       |
-#
+# 
 
-# In[ ]:
+# In[2]:
 
 
 # download the data + shuffling
@@ -74,7 +74,7 @@ dataset = QM9(root="./tutorial_logs").shuffle()
 
 # save the dataset
 input_ = [data for data in dataset]
-target_ = torch.stack([data.y for data in dataset])
+target_ = torch.cat([data.y for data in dataset])
 
 # normalize the target
 mean = target_.mean(dim=0, keepdim=True)
@@ -92,9 +92,9 @@ problem = SupervisedProblem(input_=input_, output_=target_)
 
 
 # ## Build the Model
-#
+# 
 # To predict molecular properties, we will construct a simple Convolutional Graph Neural Network using the [`GCNConv`]() module from PyG. While this tutorial focuses on a straightforward model, more advanced architectures—such as Equivariant Networks—could potentially yield better performance. Please note that this tutorial serves only for demonstration purposes.
-#
+# 
 # **Importantly** notice that in the `forward` pass we pass a data object as input, and unpack inside the graph attributes. This is the only requirement in **PINA** to use graphs and solvers together.
 
 # In[4]:
@@ -118,7 +118,7 @@ class GNN(torch.nn.Module):
 
 
 # ## Train the Model
-#
+# 
 # Now that the problem is created and the model is built, we can train the model using the [`SupervisedSolver`](https://mathlab.github.io/PINA/_rst/solver/supervised.html), which is the solver for standard supervised learning task. We will optimize the Maximum Absolute Error and test on the same metric. In the [`Trainer`](https://mathlab.github.io/PINA/_rst/trainer.html) class we specify the optimization hyperparameters.
 
 # In[5]:
@@ -153,7 +153,7 @@ _ = trainer.test()
 
 
 # We observe that the model achieves an average error of approximately 0.4 MAE across all property predictions. This error is an average, but we can also inspect the error for each individual property prediction.
-#
+# 
 # To do this, we need access to the test dataset, which can be retrieved from the trainer's datamodule. Each datamodule contains both the dataloader and dataset objects. For the dataset, we can use the [`get_all_data()`](https://mathlab.github.io/PINA/_rst/data/dataset.html#pina.data.dataset.PinaDataset.get_all_data) method. This function returns the entire dataset as a dictionary, where the keys represent the Condition names, and the values are dictionaries containing input and target tensors.
 
 # In[7]:
@@ -185,7 +185,7 @@ print(f"Number of prediction properties: {prediction_test.shape[-1]}")
 
 # As you can see we obtain a tensor with 19 prediction properties as output, which is what we are looking for. Now let's compute the error for each property:
 
-# In[ ]:
+# In[9]:
 
 
 properties = [
@@ -301,15 +301,15 @@ plt.show()
 # By looking more into details, we can see that $A$ is not predicted that well, but the small values of the quantity lead to a lower MAE than the other properties. From the plot we can see that the atomatization energies, free energy and enthalpy are the predicted properties with higher correlation with the true chemical properties.
 
 # ## What's Next?
-#
+# 
 # Congratulations on completing the tutorial on chemical properties prediction with **PINA**! Now that you've got the basics, there are several exciting directions to explore:
-#
+# 
 # 1. **Train the network for longer or with different layer sizes**: Experiment with various configurations to see how the network's accuracy improves.
-#
+# 
 # 2. **Use a different network**: For example, Equivariant Graph Neural Networks (EGNNs) have shown great results on molecular tasks by leveraging group symmetries. If you're interested, check out [*E(n) Equivariant Graph Neural Networks*](https://arxiv.org/abs/2102.09844) for more details.
-#
+# 
 # 3. **What if the input is time-dependent?**: For example, predicting force fields in Molecular Dynamics simulations. In PINA, you can predict force fields with ease, as it's still a supervised learning task. If this interests you, have a look at [*Machine Learning Force Fields*](https://pubs.acs.org/doi/10.1021/acs.chemrev.0c01111).
-#
+# 
 # 4. **...and many more!**: The possibilities are vast, including exploring new architectures, working with larger datasets, and applying this framework to more complex systems.
-#
+# 
 # For more resources and tutorials, check out the [PINA Documentation](https://mathlab.github.io/PINA/).
