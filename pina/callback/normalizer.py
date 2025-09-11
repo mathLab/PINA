@@ -41,8 +41,8 @@ class NormalizerDataCallback(Callback):
         :param dict normalizer: Normalization specification. Either
             - a dict with
             {"scale": float | torch.Tensor, "shift": float | torch.Tensor}, or
-            - a dict mapping condition names to such dicts. If ``None`` no
-            normalization is performed. Default ``None``.
+            - a dict mapping condition names to such dicts. If ``None`` shift
+            and scale parameters are inferred during runtime. Default ``None``.
         :param str stage: Stage during which to apply normalization.
             One of {"train", "validate", "test", "all"}.
             Defaults to "all".
@@ -67,7 +67,6 @@ class NormalizerDataCallback(Callback):
                 f"got {stage!r}"
             )
 
-        normalizer = normalizer or {"scale": 1, "shift": 1}
         self.normalizer = self._validate_normalizer(normalizer)
         self.apply_to = apply_to
         self.stage = stage
@@ -98,6 +97,9 @@ class NormalizerDataCallback(Callback):
         :return: A validated normalizer dictionary.
         :rtype: dict
         """
+        if normalizer is None:
+            return None
+
         if self._is_normalizer_dict(normalizer):
             return normalizer
 
@@ -108,8 +110,9 @@ class NormalizerDataCallback(Callback):
 
         raise ValueError(
             "normalizer must be either:\n"
-            f"  - dict with {_REQUIRED_KEYS}\n"
-            f"  - dict of such dicts"
+            f"  - dict with {_REQUIRED_KEYS} as keys\n"
+            f"  - dict of dicts where the outer keys are condition names\n"
+            f"    and the inner dicts have {_REQUIRED_KEYS} as keys\n"
         )
 
     def setup(self, trainer, solver, stage):
@@ -129,35 +132,67 @@ class NormalizerDataCallback(Callback):
         conditions = solver.problem.conditions
 
         # expand single normalizer to all conditions
-        if set(self.normalizer.keys()) == _REQUIRED_KEYS:
-            self.normalizer = {c: self.normalizer for c in conditions}
+        if self.normalizer is not None:
+            if set(self.normalizer.keys()) == _REQUIRED_KEYS:
+                self.normalizer = {c: self.normalizer for c in conditions}
 
-        # check condition keys
-        for cond in self.normalizer:
-            if cond not in conditions:
-                raise RuntimeError(
-                    f"Condition '{cond}' not found in the normalizer dict. "
-                    f"Got {list(self.normalizer)}, expected {list(conditions)}."
-                )
-            if (
-                hasattr(conditions[cond], "equation")
-                and self.apply_to == "target"
-            ):
-                raise RuntimeError(
-                    f"Condition '{cond}' contains an equation object, "
-                    "so there is no available target data to scale."
-                )
+            # check condition keys
+            for cond in self.normalizer:
+                if cond not in conditions:
+                    raise RuntimeError(
+                        f"Condition '{cond}' not found in the normalizer dict. "
+                        f"Got {list(self.normalizer)}, expected {list(conditions)}."
+                    )
+                if (
+                    hasattr(conditions[cond], "equation")
+                    and self.apply_to == "target"
+                ):
+                    raise RuntimeError(
+                        f"Condition '{cond}' contains an equation object, "
+                        "so there is no available target data to scale."
+                    )
 
         # select dataset and normalize
         stage = stage or "fit"
         if stage == "fit" and self.stage in ["train", "all"]:
+            if self.normalizer is None:
+                self.normalizer = {}
+                self._compute_scale_shift(
+                    conditions, trainer.data_module.train_dataset
+                )
             self._scale_data(trainer.data_module.train_dataset)
         if stage == "fit" and self.stage in ["validate", "all"]:
+            if self.normalizer is None:
+                raise RuntimeError(
+                    "Cannot compute scale and shift from test data. "
+                    "Please provide a valid normalizer dict."
+                )
             self._scale_data(trainer.data_module.val_dataset)
         if stage == "test" and self.stage in ["test", "all"]:
+            if self.normalizer is None:
+                raise RuntimeError(
+                    "Cannot compute scale and shift from test data. "
+                    "Please provide a valid normalizer dict."
+                )
             self._scale_data(trainer.data_module.test_dataset)
 
         return super().setup(trainer, solver, stage)
+
+    def _compute_scale_shift(self, conditions, dataset):
+        """
+        Compute scale and shift for each condition from dataset.
+
+        :param list conditions: List of condition names.
+        :param dataset: `~pina.data.dataset.PinaDataset` object.
+        :rtype: dict
+        """
+        for cond in conditions:
+            if cond in dataset.conditions_dict:
+                data = dataset.conditions_dict[cond][self.apply_to]
+                self.normalizer[cond] = {
+                    "shift": data.mean(dim=0),
+                    "scale": data.std(dim=0) + 1e-8,
+                }
 
     @staticmethod
     def scale_fn(value, scale, shift):

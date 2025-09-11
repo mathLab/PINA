@@ -160,6 +160,16 @@ def test_setup(apply_to, solver, stage):
         # trigger setup
         trainer_copy.data_module.setup("fit")
         trainer_copy.data_module.setup("test")
+        if normalizer_spec is None:
+            if stage == "validate":
+                with pytest.raises(RuntimeError):
+                    trainer.train()
+                return
+            if stage == "test":
+                with pytest.raises(RuntimeError):
+                    trainer.test()
+                return
+
         trainer.train()
         trainer.test()
         normalizer_spec = trainer.callbacks[0].normalizer
@@ -185,3 +195,6 @@ def test_setup(apply_to, solver, stage):
     # Test partial normalizer applied to some conditions
     partial_normalizer = {"data1": {"scale": 0.5, "shift": shift}}
     check_normalization(partial_normalizer, check_cond=["data1"])
+
+    none_normalizer = None
+    check_normalization(none_normalizer)
