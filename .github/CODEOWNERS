@@ -1,0 +1,35 @@
+# CODEOWNERS file for PINA
+
+# The default owners for everything in the repo
+# (Pull requests touching any file in "/" will require review from at least one of these)
+*                        @pina-developers
+pina/                    @pina-developers
+readme/                  @pina-developers
+tests/                   @pina-developers
+tutorials/               @pina-developers
+pyproject.toml           @pina-developers @ndem0
+
+# Owners for documentation
+docs/                    @pina-developers @dario-coscia
+
+# Owners for JOSS
+joss/                    @ndem0 @annaivagnes @dario-coscia
+
+# Owners for project-wide config (GitHub workflows, formatting, etc.)
+.github/                 @ndem0 @dario-coscia
+.gitattributes           @ndem0 @dario-coscia
+.gitignore               @ndem0 @dario-coscia
+
+# Security & policy files
+CITATION.cff             @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+CONTRIBUTING.md          @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+LICENSE.rst              @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia 
+SECURITY.md              @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+CODE_OF_CONDUCT.md       @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+MAINTAINERS.md           @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+ANTITRUST.md             @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+CHARTER.md               @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+GOVERNANCE.md            @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+STEERING-COMMITTEE.md    @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+TRADEMARKS.md            @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
+utils                    @FilippoOlivo @GiovanniCanali @ndem0 @dario-coscia
