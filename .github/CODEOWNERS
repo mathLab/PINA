@@ -2,15 +2,15 @@
 
 # The default owners for everything in the repo
 # (Pull requests touching any file in "/" will require review from at least one of these)
-*                        @pina-developers
-pina/                    @pina-developers
-readme/                  @pina-developers
-tests/                   @pina-developers
-tutorials/               @pina-developers
-pyproject.toml           @pina-developers @ndem0
+*                        @mathLab/pina-developers
+pina/                    @mathLab/pina-developers
+readme/                  @mathLab/pina-developers
+tests/                   @mathLab/pina-developers
+tutorials/               @mathLab/pina-developers
+pyproject.toml           @mathLab/pina-developers @ndem0
 
 # Owners for documentation
-docs/                    @pina-developers @dario-coscia
+docs/                    @mathLab/pina-developers @dario-coscia
 
 # Owners for JOSS
 joss/                    @ndem0 @annaivagnes @dario-coscia
