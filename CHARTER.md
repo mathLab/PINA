@@ -4,7 +4,7 @@ This is the organizational charter for the PINA Organization (the "Organization"
 
 ## 1. Mission
 
-The of Organization is to advance open, accessible, and reliable computational tools that bridge mathematics, data, and real-world applications using Machine Learning. We strive to:
+The Organization mission is to advance open, accessible, and reliable computational tools that bridge mathematics, data, and real-world applications using Machine Learning. We strive to:
 
 Empower researchers, educators, and practitioners with robust, transparent, and well-documented frameworks for scientific discovery.
 
@@ -20,7 +20,7 @@ By pursuing these goals, the Organization aims to be a cornerstone resource in c
 **2.1 Purpose**. The Steering Committee will be responsible for all technical oversight, project approval and oversight, policy oversight, and trademark management for the Organization.
 
 **2.2 Composition**. The Steering Committee voting members are listed in the [STEERING-COMMITEE.md](https://github.com/mathLab/PINA/blob/master/STEERING-COMMITTEE.md) file in the repository.
-Voting members may be added or removed by no less than 3/4 affirmative vote of the Steering Committee.
+Voting members may be added or removed by no less than 75% affirmative vote of the Steering Committee.
 The Steering Committee will appoint a Chair responsible for organizing Steering Committee activity.
 
 ## 3. Voting
@@ -63,7 +63,7 @@ In order to be eligible to be a Organization project, a project must:
 
 ## 9. Amendments
 
-Amendments to this charter, the [antitrust policy](https://github.com/mathLab/PINA/blob/master/ANTITRUST.md), the [trademark policy](https://github.com/mathLab/PINA/blob/master/TRADEMARKS.md), or the [code of conduct](https://github.com/mathLab/PINA/blob/master/CODE_OF_CONDUCT.md) may only be made with at least a 3/4 affirmative vote of the Steering Committee.
+Amendments to this charter, the [antitrust policy](https://github.com/mathLab/PINA/blob/master/ANTITRUST.md), the [trademark policy](https://github.com/mathLab/PINA/blob/master/TRADEMARKS.md), or the [code of conduct](https://github.com/mathLab/PINA/blob/master/CODE_OF_CONDUCT.md) may only be made with at least a 75% affirmative vote of the Steering Committee.
 
 ---
 ## Attribution
