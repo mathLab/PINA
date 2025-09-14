@@ -1,0 +1,40 @@
+name: "Testing Tutorials RUn"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 2 1 * *'
+
+jobs:
+  # run on push
+  test_tutorials:
+    runs-on: ubuntu-latest
+    env:
+      TUTORIAL_TIMEOUT: 1200s
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip .[tutorial] black[jupyter]
+
+    - name: Setup FFmpeg
+      uses: FedericoCarboni/setup-ffmpeg@v2
+
+    - name: Run formatter (check only)
+      run: black --check tutorials/
+
+    - name: Execute all tutorials
+      run: |
+        set -euo pipefail
+        for file in $(find tutorials -type f -name "*.ipynb"); do
+          echo "Running tutorial: $file"
+          timeout --signal=SIGKILL $TUTORIAL_TIMEOUT \
+            python -Xfrozen_modules=off -m jupyter nbconvert \
+            --execute --to notebook --inplace $file
+        done

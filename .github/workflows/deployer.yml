@@ -7,6 +7,47 @@ on:
 
 jobs:
 
+  tutorials: #################################################################
+    runs-on: ubuntu-latest
+    env:
+      TUTORIAL_TIMEOUT: 1200s
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip .[tutorial] black[jupyter]
+
+    - name: Setup FFmpeg
+      uses: FedericoCarboni/setup-ffmpeg@v2
+
+    - name: Run formatter
+      run: black tutorials/
+
+    - name: Export tutorials to .html
+      run: |
+        set -x
+        for file in $(find tutorials -type f -name "*.ipynb"); do
+          filename=$(basename $file)
+          htmlfilename="${filename%.ipynb}.html"
+          htmldir="docs/source"/$(dirname $file)
+          mkdir -p $htmldir
+          timeout --signal=SIGKILL $TUTORIAL_TIMEOUT python -Xfrozen_modules=off -m jupyter nbconvert --execute $file --to html --output $htmlfilename --output-dir=$htmldir
+        break
+        done
+        set +x
+
+    - name: Remove unwanted files
+      run: |
+        rm -rf build/ tutorials/tutorial4/data/
+
+    - name: Upload tutorials artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: tutorials
+        path: |
+          docs/source/tutorials/**/*.html
+
   docs: #######################################################################
     runs-on: ubuntu-latest
     steps:
