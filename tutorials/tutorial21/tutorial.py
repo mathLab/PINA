@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial: Introductory Tutorial: Supervised Learning with PINA
+# # Tutorial: Introductory Tutorial: Neural Operator Learning with PINA
 # 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial21/tutorial.ipynb)
 # 

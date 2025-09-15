@@ -13,7 +13,7 @@
 #
 # First of all, let's start by importing useful modules!
 
-# In[ ]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -66,7 +66,7 @@ warnings.filterwarnings("ignore")
 # | 18     | $C$                              | Rotational constant                                                               | $GHz$                                       |
 #
 
-# In[ ]:
+# In[2]:
 
 
 # download the data + shuffling
@@ -74,7 +74,7 @@ dataset = QM9(root="./tutorial_logs").shuffle()
 
 # save the dataset
 input_ = [data for data in dataset]
-target_ = torch.stack([data.y for data in dataset])
+target_ = torch.cat([data.y for data in dataset])
 
 # normalize the target
 mean = target_.mean(dim=0, keepdim=True)
@@ -185,7 +185,7 @@ print(f"Number of prediction properties: {prediction_test.shape[-1]}")
 
 # As you can see we obtain a tensor with 19 prediction properties as output, which is what we are looking for. Now let's compute the error for each property:
 
-# In[ ]:
+# In[9]:
 
 
 properties = [
