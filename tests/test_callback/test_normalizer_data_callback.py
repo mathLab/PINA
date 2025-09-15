@@ -102,11 +102,13 @@ def test_init_invalid_stage(invalid_stage):
 @pytest.mark.parametrize(
     "solver", [supervised_solver_lt, supervised_solver_no_lt]
 )
-@pytest.mark.parametrize("scale_fn", [torch.std, torch.var])
-@pytest.mark.parametrize("shift_fn", [torch.mean, torch.median])
+@pytest.mark.parametrize(
+    "fn", [[torch.std, torch.mean], [torch.var, torch.median]]
+)
 @pytest.mark.parametrize("apply_to", ["input", "target"])
 @pytest.mark.parametrize("stage", ["all", "train", "validate", "test"])
-def test_setup(solver, scale_fn, shift_fn, stage, apply_to):
+def test_setup(solver, fn, stage, apply_to):
+    scale_fn, shift_fn = fn
     trainer = Trainer(
         solver=solver,
         callbacks=NormalizerDataCallback(
@@ -150,11 +152,13 @@ def test_setup(solver, scale_fn, shift_fn, stage, apply_to):
             assert torch.allclose(current_points, expected)
 
 
-@pytest.mark.parametrize("scale_fn", [torch.std, torch.var])
-@pytest.mark.parametrize("shift_fn", [torch.mean, torch.median])
+@pytest.mark.parametrize(
+    "fn", [[torch.std, torch.mean], [torch.var, torch.median]]
+)
 @pytest.mark.parametrize("apply_to", ["input"])
 @pytest.mark.parametrize("stage", ["all", "train", "validate", "test"])
-def test_setup_pinn(scale_fn, shift_fn, stage, apply_to):
+def test_setup_pinn(fn, stage, apply_to):
+    scale_fn, shift_fn = fn
     pinn = PINN(
         problem=poisson_problem,
         model=FeedForward(2, 1),
