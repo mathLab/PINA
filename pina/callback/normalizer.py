@@ -97,7 +97,7 @@ class NormalizerDataCallback(Callback):
             )
         return stage
 
-    def setup(self, trainer, solver, stage):
+    def setup(self, trainer, pl_module, stage):
         """
         Apply normalization during setup.
 
@@ -112,7 +112,7 @@ class NormalizerDataCallback(Callback):
         """
         # extract conditions
         conditions_to_normalize = []
-        for name, cond in solver.problem.conditions.items():
+        for name, cond in pl_module.problem.conditions.items():
             if isinstance(cond, InputTargetCondition):
                 conditions_to_normalize.append(name)
 
@@ -132,7 +132,7 @@ class NormalizerDataCallback(Callback):
             self._scale_data(trainer.datamodule.val_dataset)
         if stage == "test" and self.stage in ["test", "all"]:
             self._scale_data(trainer.datamodule.test_dataset)
-        return super().setup(trainer, solver, stage)
+        return super().setup(trainer, pl_module, stage)
 
     def _compute_scale_shift(self, conditions, dataset):
         """
@@ -179,10 +179,10 @@ class NormalizerDataCallback(Callback):
         :type dataset: object
         """
         new_points = {}
-        for cond in self.normalizer:
+        for cond, norm_params in self.normalizer.items():
             current_points = dataset.conditions_dict[cond][self.apply_to]
-            scale = self.normalizer[cond]["scale"]
-            shift = self.normalizer[cond]["shift"]
+            scale = norm_params["scale"]
+            shift = norm_params["shift"]
             new_points[cond] = {
                 self.apply_to: self._norm_fn(current_points, scale, shift)
             }
