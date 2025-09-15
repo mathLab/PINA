@@ -4,6 +4,7 @@ import torch
 from lightning.pytorch import Callback
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency
+from ..condition import InputTargetCondition
 
 _REQUIRED_KEYS = {"scale", "shift"}
 
@@ -21,28 +22,28 @@ class NormalizerDataCallback(Callback):
 
     :Example:
 
-    >>> NormalizerDataCallback({"scale": 1, "shift": 0})
-    >>> NormalizerDataCallback({
-    ...     "a": {"scale": 2.0, "shift": 1.0},
-    ...     "b": {"scale": 0.5, "shift": 0.0},
-    ... })
+    >>> NormalizerDataCallback()
+    >>> NormalizerDataCallback(
+    ...     "scale": torch.var,
+    ...     "shift": torch.median
+    ... )
 
     """
 
     def __init__(
         self,
-        normalizer=None,
+        scale_fn=torch.std,
+        shift_fn=torch.mean,
         stage="all",
         apply_to="input",
     ):
         """
         Initialize the NormalizerDataCallback.
 
-        :param dict normalizer: Normalization specification. Either
-            - a dict with
-            {"scale": float | torch.Tensor, "shift": float | torch.Tensor}, or
-            - a dict mapping condition names to such dicts. If ``None`` shift
-            and scale parameters are inferred during runtime. Default ``None``.
+        :param dict strategy: Normalization specification. It must be a dict
+            with keys "scale" and "shift", each mapping to a callable that
+            computes the respective value from a tensor. If None, defaults to
+            using mean and std. Defaults is ``None``.
         :param str stage: Stage during which to apply normalization.
             One of {"train", "validate", "test", "all"}.
             Defaults to "all".
@@ -52,68 +53,49 @@ class NormalizerDataCallback(Callback):
         """
         super().__init__()
 
-        # validate apply_to
+        self.apply_to = self._validate_apply_to(apply_to)
+        self.stage = self._validate_stage(stage)
+        if not callable(scale_fn):
+            raise ValueError(f"scale_fn must be callable, got {scale_fn}")
+        self.scale_fn = scale_fn
+        if not callable(shift_fn):
+            raise ValueError(f"shift_fn must be callable, got {shift_fn}")
+        self.shift_fn = shift_fn
+        self.normalizer = {}
+
+    def _validate_apply_to(self, apply_to):
+        """
+        Validate the `apply_to` parameter.
+
+        :param str apply_to: Candidate value for `apply_to`.
+        :raises ValueError: If `apply_to` is not "input" or "target".
+        :return: Validated `apply_to` value.
+        :rtype: str
+        """
         check_consistency(apply_to, str)
         if apply_to not in {"input", "target"}:
             raise ValueError(
-                f"apply_to must be 'input' or 'target', got {apply_to!r}"
+                f"apply_to must be 'input' or 'target', got {apply_to}"
             )
+        return apply_to
 
-        # validate stage (can be None for setup flexibility)
+    def _validate_stage(self, stage):
+        """
+        Validate the `stage` parameter.
+
+        :param str stage: Candidate value for `stage`.
+        :raises ValueError: If `stage` is not one of "train", "validate",
+            "test", or "all".
+        :return: Validated `stage` value.
+        :rtype: str
+        """
         check_consistency(stage, str)
         if stage not in {"train", "validate", "test", "all"}:
             raise ValueError(
-                f"stage must be 'train', 'validate', 'test', or 'all' "
-                f"got {stage!r}"
+                f"stage must be 'train', 'validate', 'test', or 'all', got "
+                f"{stage}"
             )
-
-        self.normalizer = self._validate_normalizer(normalizer)
-        self.apply_to = apply_to
-        self.stage = stage
-
-    def _is_normalizer_dict(self, d):
-        """
-        Check if a dictionary is a valid normalizer specification.
-
-        :param dict d: Dictionary to validate.
-        :return: True if dict has {"scale", "shift"} keys with numeric values.
-        :rtype: bool
-        """
-        return (
-            isinstance(d, dict)
-            and set(d.keys()) == _REQUIRED_KEYS
-            and all(
-                isinstance(d[k], (float, int, torch.Tensor))
-                for k in _REQUIRED_KEYS
-            )
-        )
-
-    def _validate_normalizer(self, normalizer):
-        """
-        Validate a normalizer configuration.
-
-        :param dict normalizer: Candidate normalizer specification.
-        :raises ValueError: If the normalizer format is invalid.
-        :return: A validated normalizer dictionary.
-        :rtype: dict
-        """
-        if normalizer is None:
-            return None
-
-        if self._is_normalizer_dict(normalizer):
-            return normalizer
-
-        if isinstance(normalizer, dict) and all(
-            self._is_normalizer_dict(v) for v in normalizer.values()
-        ):
-            return normalizer
-
-        raise ValueError(
-            "normalizer must be either:\n"
-            f"  - dict with {_REQUIRED_KEYS} as keys\n"
-            f"  - dict of dicts where the outer keys are condition names\n"
-            f"    and the inner dicts have {_REQUIRED_KEYS} as keys\n"
-        )
+        return stage
 
     def setup(self, trainer, solver, stage):
         """
@@ -129,53 +111,27 @@ class NormalizerDataCallback(Callback):
         :rtype: Any
         """
         # extract conditions
-        conditions = solver.problem.conditions
+        conditions_to_normalize = []
+        for name, cond in solver.problem.conditions.items():
+            if isinstance(cond, InputTargetCondition):
+                conditions_to_normalize.append(name)
 
-        # expand single normalizer to all conditions
-        if self.normalizer is not None:
-            if set(self.normalizer.keys()) == _REQUIRED_KEYS:
-                self.normalizer = {c: self.normalizer for c in conditions}
+        if not self.normalizer:
+            if not trainer.datamodule.train_dataset:
+                raise RuntimeError(
+                    "Training dataset is not available. Cannot compute "
+                    "normalization parameters."
+                )
+            self._compute_scale_shift(
+                conditions_to_normalize, trainer.datamodule.train_dataset
+            )
 
-            # check condition keys
-            for cond in self.normalizer:
-                if cond not in conditions:
-                    raise RuntimeError(
-                        f"Condition '{cond}' not found in the normalizer dict. "
-                        f"Got {list(self.normalizer)}, expected {list(conditions)}."
-                    )
-                if (
-                    hasattr(conditions[cond], "equation")
-                    and self.apply_to == "target"
-                ):
-                    raise RuntimeError(
-                        f"Condition '{cond}' contains an equation object, "
-                        "so there is no available target data to scale."
-                    )
-
-        # select dataset and normalize
-        stage = stage or "fit"
         if stage == "fit" and self.stage in ["train", "all"]:
-            if self.normalizer is None:
-                self.normalizer = {}
-                self._compute_scale_shift(
-                    conditions, trainer.data_module.train_dataset
-                )
-            self._scale_data(trainer.data_module.train_dataset)
+            self._scale_data(trainer.datamodule.train_dataset)
         if stage == "fit" and self.stage in ["validate", "all"]:
-            if self.normalizer is None:
-                raise RuntimeError(
-                    "Cannot compute scale and shift from test data. "
-                    "Please provide a valid normalizer dict."
-                )
-            self._scale_data(trainer.data_module.val_dataset)
+            self._scale_data(trainer.datamodule.val_dataset)
         if stage == "test" and self.stage in ["test", "all"]:
-            if self.normalizer is None:
-                raise RuntimeError(
-                    "Cannot compute scale and shift from test data. "
-                    "Please provide a valid normalizer dict."
-                )
-            self._scale_data(trainer.data_module.test_dataset)
-
+            self._scale_data(trainer.datamodule.test_dataset)
         return super().setup(trainer, solver, stage)
 
     def _compute_scale_shift(self, conditions, dataset):
@@ -189,13 +145,15 @@ class NormalizerDataCallback(Callback):
         for cond in conditions:
             if cond in dataset.conditions_dict:
                 data = dataset.conditions_dict[cond][self.apply_to]
+                shift = self.shift_fn(data)
+                scale = self.scale_fn(data)
                 self.normalizer[cond] = {
-                    "shift": data.mean(dim=0),
-                    "scale": data.std(dim=0) + 1e-8,
+                    "shift": shift,
+                    "scale": scale,
                 }
 
     @staticmethod
-    def scale_fn(value, scale, shift):
+    def _norm_fn(value, scale, shift):
         """
         Normalize a tensor with the given scale and shift.
 
@@ -208,9 +166,10 @@ class NormalizerDataCallback(Callback):
         :return: Normalized tensor (value - shift) / scale.
         :rtype: torch.Tensor | LabelTensor
         """
+        scaled_value = (value - shift) / scale
         if isinstance(value, LabelTensor):
-            return LabelTensor((value.tensor - shift) / scale, value.labels)
-        return (value - shift) / scale
+            scaled_value = LabelTensor(scaled_value, value.labels)
+        return scaled_value
 
     def _scale_data(self, dataset):
         """
@@ -225,6 +184,6 @@ class NormalizerDataCallback(Callback):
             scale = self.normalizer[cond]["scale"]
             shift = self.normalizer[cond]["shift"]
             new_points[cond] = {
-                self.apply_to: self.scale_fn(current_points, scale, shift)
+                self.apply_to: self._norm_fn(current_points, scale, shift)
             }
         dataset.update_data(new_points)
