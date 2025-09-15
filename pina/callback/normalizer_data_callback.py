@@ -3,7 +3,7 @@
 import torch
 from lightning.pytorch import Callback
 from ..label_tensor import LabelTensor
-from ..utils import check_consistency
+from ..utils import check_consistency, is_function
 from ..condition import InputTargetCondition
 
 
@@ -53,10 +53,10 @@ class NormalizerDataCallback(Callback):
 
         self.apply_to = self._validate_apply_to(apply_to)
         self.stage = self._validate_stage(stage)
-        if not callable(scale_fn):
+        if not is_function(scale_fn):
             raise ValueError(f"scale_fn must be callable, got {scale_fn}")
         self.scale_fn = scale_fn
-        if not callable(shift_fn):
+        if not is_function(shift_fn):
             raise ValueError(f"shift_fn must be callable, got {shift_fn}")
         self.shift_fn = shift_fn
         self._normalizer = {}
@@ -115,7 +115,7 @@ class NormalizerDataCallback(Callback):
             if isinstance(cond, InputTargetCondition)
         ]
 
-        if not self._normalizer:
+        if not self.normalizer:
             if not trainer.datamodule.train_dataset:
                 raise RuntimeError(
                     "Training dataset is not available. Cannot compute "
@@ -178,7 +178,7 @@ class NormalizerDataCallback(Callback):
         :type dataset: object
         """
         update_dataset_dict = {}
-        for cond, norm_params in self._normalizer.items():
+        for cond, norm_params in self.normalizer.items():
             points = dataset.conditions_dict[cond][self.apply_to]
             scale = norm_params["scale"]
             shift = norm_params["shift"]
