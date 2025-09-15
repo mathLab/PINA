@@ -6,8 +6,6 @@ from ..label_tensor import LabelTensor
 from ..utils import check_consistency
 from ..condition import InputTargetCondition
 
-_REQUIRED_KEYS = {"scale", "shift"}
-
 
 class NormalizerDataCallback(Callback):
     r"""
@@ -61,7 +59,7 @@ class NormalizerDataCallback(Callback):
         if not callable(shift_fn):
             raise ValueError(f"shift_fn must be callable, got {shift_fn}")
         self.shift_fn = shift_fn
-        self.normalizer = {}
+        self._normalizer = {}
 
     def _validate_apply_to(self, apply_to):
         """
@@ -111,12 +109,13 @@ class NormalizerDataCallback(Callback):
         :rtype: Any
         """
         # extract conditions
-        conditions_to_normalize = []
-        for name, cond in pl_module.problem.conditions.items():
-            if isinstance(cond, InputTargetCondition):
-                conditions_to_normalize.append(name)
+        conditions_to_normalize = [
+            name
+            for name, cond in pl_module.problem.conditions.items()
+            if isinstance(cond, InputTargetCondition)
+        ]
 
-        if not self.normalizer:
+        if not self._normalizer:
             if not trainer.datamodule.train_dataset:
                 raise RuntimeError(
                     "Training dataset is not available. Cannot compute "
@@ -127,11 +126,11 @@ class NormalizerDataCallback(Callback):
             )
 
         if stage == "fit" and self.stage in ["train", "all"]:
-            self._scale_data(trainer.datamodule.train_dataset)
+            self.normalize_dataset(trainer.datamodule.train_dataset)
         if stage == "fit" and self.stage in ["validate", "all"]:
-            self._scale_data(trainer.datamodule.val_dataset)
+            self.normalize_dataset(trainer.datamodule.val_dataset)
         if stage == "test" and self.stage in ["test", "all"]:
-            self._scale_data(trainer.datamodule.test_dataset)
+            self.normalize_dataset(trainer.datamodule.test_dataset)
         return super().setup(trainer, pl_module, stage)
 
     def _compute_scale_shift(self, conditions, dataset):
@@ -147,7 +146,7 @@ class NormalizerDataCallback(Callback):
                 data = dataset.conditions_dict[cond][self.apply_to]
                 shift = self.shift_fn(data)
                 scale = self.scale_fn(data)
-                self.normalizer[cond] = {
+                self._normalizer[cond] = {
                     "shift": shift,
                     "scale": scale,
                 }
@@ -171,19 +170,34 @@ class NormalizerDataCallback(Callback):
             scaled_value = LabelTensor(scaled_value, value.labels)
         return scaled_value
 
-    def _scale_data(self, dataset):
+    def normalize_dataset(self, dataset):
         """
         Apply normalization to a dataset in-place.
 
         :param dataset: Dataset object with `conditions_dict` and `update_data`.
         :type dataset: object
         """
-        new_points = {}
-        for cond, norm_params in self.normalizer.items():
-            current_points = dataset.conditions_dict[cond][self.apply_to]
+        update_dataset_dict = {}
+        for cond, norm_params in self._normalizer.items():
+            points = dataset.conditions_dict[cond][self.apply_to]
             scale = norm_params["scale"]
             shift = norm_params["shift"]
-            new_points[cond] = {
-                self.apply_to: self._norm_fn(current_points, scale, shift)
+            normalized_points = self._norm_fn(points, scale, shift)
+            update_dataset_dict[cond] = {
+                self.apply_to: (
+                    LabelTensor(normalized_points, points.labels)
+                    if isinstance(points, LabelTensor)
+                    else normalized_points
+                )
             }
-        dataset.update_data(new_points)
+        dataset.update_data(update_dataset_dict)
+
+    @property
+    def normalizer(self):
+        """
+        Get the computed normalizer parameters.
+
+        :return: Dictionary of normalization parameters.
+        :rtype: dict
+        """
+        return self._normalizer

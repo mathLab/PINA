@@ -53,7 +53,7 @@ supervised_solver_no_lt = SupervisedSolver(
     problem=TensorProblem(), model=FeedForward(2, 1), use_lt=False
 )
 supervised_solver_lt = SupervisedSolver(
-    problem=LabelTensorProblem(), model=FeedForward(2, 1), use_lt=False
+    problem=LabelTensorProblem(), model=FeedForward(2, 1), use_lt=True
 )
 
 poisson_problem = Poisson()
