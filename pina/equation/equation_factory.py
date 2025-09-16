@@ -110,15 +110,16 @@ class FixedFlux(Equation):
         super().__init__(equation)
 
 
-class Laplace(Equation):
+class FixedLaplacian(Equation):
     """
-    Equation to enforce a null laplacian for a specific condition.
+    Equation to enforce a fixed laplacian for a specific condition.
     """
 
-    def __init__(self, components=None, d=None):
+    def __init__(self, value, components=None, d=None):
         """
-        Initialization of the :class:`Laplace` class.
+        Initialization of the :class:`FixedLaplacian` class.
 
+        :param float value: The fixed value to be enforced to the laplacian.
         :param list[str] components: The name of the output variables for which
             the null laplace condition is applied. It should be a subset of the
             output labels. If ``None``, all output variables are considered.
@@ -131,7 +132,7 @@ class Laplace(Equation):
 
         def equation(input_, output_):
             """
-            Definition of the equation to enforce a null laplacian.
+            Definition of the equation to enforce a fixed laplacian.
 
             :param LabelTensor input_: Input points where the equation is
                 evaluated.
@@ -140,6 +141,8 @@ class Laplace(Equation):
             :return: The computed residual of the equation.
             :rtype: LabelTensor
             """
-            return laplacian(output_, input_, components=components, d=d)
+            return (
+                laplacian(output_, input_, components=components, d=d) - value
+            )
 
         super().__init__(equation)

@@ -14,6 +14,6 @@ Equation Factory
    :members:
    :show-inheritance:
 
-.. autoclass:: Laplace
+.. autoclass:: FixedLaplacian
    :members:
    :show-inheritance:

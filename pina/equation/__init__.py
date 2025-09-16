@@ -6,9 +6,14 @@ __all__ = [
     "FixedValue",
     "FixedGradient",
     "FixedFlux",
-    "Laplace",
+    "FixedLaplacian",
 ]
 
 from .equation import Equation
-from .equation_factory import FixedFlux, FixedGradient, Laplace, FixedValue
+from .equation_factory import (
+    FixedFlux,
+    FixedGradient,
+    FixedLaplacian,
+    FixedValue,
+)
 from .system_equation import SystemEquation
