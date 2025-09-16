@@ -8,8 +8,8 @@ from pina.model import FeedForward
 from pina.callback import NormalizerDataCallback
 from pina.problem import AbstractProblem
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
-from pina.condition.input_target_condition import InputTargetCondition
 from pina.solver import PINN
+from pina.graph import RadiusGraph
 
 # for checking normalization
 stage_map = {
@@ -46,6 +46,18 @@ class TensorProblem(AbstractProblem):
     conditions = {
         "data1": Condition(input=input_1, target=target_1),
         "data2": Condition(input=input_2, target=target_2),
+    }
+
+
+input_graph = [RadiusGraph(radius=0.5, pos=torch.rand(10, 2)) for _ in range(5)]
+output_graph = torch.rand(5, 1)
+
+
+class GraphProblem(AbstractProblem):
+    input_variables = ["u_0", "u_1"]
+    output_variables = ["u"]
+    conditions = {
+        "data": Condition(input=input_graph, target=output_graph),
     }
 
 
@@ -208,3 +220,25 @@ def test_setup_pinn(fn, stage, apply_to):
         old_points = old_dataset.conditions_dict[cond][apply_to]
         expected = (old_points - shift) / scale
         assert torch.allclose(current_points, expected)
+
+
+def test_setup_graph_dataset():
+    solver = SupervisedSolver(
+        problem=GraphProblem(), model=FeedForward(2, 1), use_lt=False
+    )
+    trainer = Trainer(
+        solver=solver,
+        callbacks=NormalizerDataCallback(
+            scale_fn=torch.std,
+            shift_fn=torch.mean,
+            stage="all",
+            apply_to="input",
+        ),
+        max_epochs=1,
+        train_size=0.4,
+        val_size=0.3,
+        test_size=0.3,
+        shuffle=False,
+    )
+    with pytest.raises(NotImplementedError):
+        trainer.train()
