@@ -206,7 +206,7 @@ def is_function(f):
     :return: ``True`` if ``f`` is a function, ``False`` otherwise.
     :rtype: bool
     """
-    return isinstance(f, (types.FunctionType, types.LambdaType))
+    return callable(f)
 
 
 def chebyshev_roots(n):
