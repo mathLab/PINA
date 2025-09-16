@@ -5,6 +5,7 @@ from lightning.pytorch import Callback
 from ..label_tensor import LabelTensor
 from ..utils import check_consistency, is_function
 from ..condition import InputTargetCondition
+from ..data.dataset import PinaGraphDataset
 
 
 class NormalizerDataCallback(Callback):
@@ -116,7 +117,17 @@ class NormalizerDataCallback(Callback):
             computing normalization parameters.
         :return: The result of the parent setup.
         :rtype: Any
+
+        :raises NotImplementedError: If the dataset is graph-based.
         """
+
+        # Ensure datsets are not graph-based
+        if isinstance(trainer.datamodule.train_dataset, PinaGraphDataset):
+            raise NotImplementedError(
+                "NormalizerDataCallback is not compatible with "
+                "graph-based datasets."
+            )
+
         # Extract conditions
         conditions_to_normalize = [
             name
