@@ -74,5 +74,14 @@ jobs:
           path: ./cobertura.xml
           threshold: 80.123
           fail: true
-          publish: true
+          publish: false   # here we prevent branch push, see issue #548
           coverage-summary-title: "Code Coverage Summary"
+
+      # post the summary as a PR comment, see issue #548
+      - name: Comment PR with coverage
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: coverage-report
+          message: |
+            ### Code Coverage Report
+            ${{ steps.coverage.outputs.summary }}
