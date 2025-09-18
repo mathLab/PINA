@@ -31,7 +31,8 @@ class PODBlock(torch.nn.Module):
         self.__scale_coefficients = scale_coefficients
         self.register_buffer("_basis", None)
         self._singular_values = None
-        self._scaler = None
+        self.register_buffer("_std", None)
+        self.register_buffer("_mean", None)
         self._rank = rank
 
     @property
@@ -94,12 +95,12 @@ class PODBlock(torch.nn.Module):
         :return: The scaler dictionary.
         :rtype: dict
         """
-        if self._scaler is None:
+        if self._std is None:
             return None
 
         return {
-            "mean": self._scaler["mean"][: self.rank],
-            "std": self._scaler["std"][: self.rank],
+            "mean": self._mean[: self.rank],
+            "std": self._std[: self.rank],
         }
 
     @property
@@ -132,10 +133,8 @@ class PODBlock(torch.nn.Module):
 
         :param torch.Tensor coeffs: The coefficients to be scaled.
         """
-        self._scaler = {
-            "std": torch.std(coeffs, dim=1),
-            "mean": torch.mean(coeffs, dim=1),
-        }
+        self._std = torch.std(coeffs, dim=1)
+        self._mean = torch.mean(coeffs, dim=1)
 
     def _fit_pod(self, X, randomized):
         """
