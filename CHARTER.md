@@ -1,10 +1,10 @@
 # Charter for the PINA Organization
 
-This is the organizational charter for the PINA Organization (the "Organization"). By adding their name to the [Steering Committee.md file](https://github.com/mathLab/PINA/blob/master/STEERING-COMMITTEE.md), Steering Committee members agree as follows.
+This is the organizational charter for the PINA Organization. In this Charter and related documents, “PINA Organization” means the entity designated in this Charter as the governing body of the PINA project. At the time of writing, this is the PINA Steering Committee. If governance changes in the future, references to “PINA Organization” automatically refer to the successor entity named here without rewriting other policies. By adding their name to the [Steering Committee.md file](https://github.com/mathLab/PINA/blob/master/STEERING-COMMITTEE.md), Steering Committee members agree as follows.
 
 ## 1. Mission
 
-The Organization mission is to advance open, accessible, and reliable computational tools that bridge mathematics, data, and real-world applications using Machine Learning. We strive to:
+PINA mission is to advance open, accessible, and reliable computational tools that bridge mathematics, data, and real-world applications using Machine Learning. We strive to:
 
 Empower researchers, educators, and practitioners with robust, transparent, and well-documented frameworks for scientific discovery.
 
@@ -17,7 +17,7 @@ By pursuing these goals, the Organization aims to be a cornerstone resource in c
 
 ## 2. Steering Committee
 
-**2.1 Purpose**. The Steering Committee will be responsible for all technical oversight, project approval and oversight, policy oversight, and trademark management for the Organization.
+**2.1 Purpose**. The Steering Committee will be responsible for all technical oversight, project approval and oversight, policy oversight, and trademark management.
 
 **2.2 Composition**. The Steering Committee voting members are listed in the [STEERING-COMMITEE.md](https://github.com/mathLab/PINA/blob/master/STEERING-COMMITTEE.md) file in the repository.
 Voting members may be added or removed by no less than 75% affirmative vote of the Steering Committee.
@@ -39,19 +39,19 @@ In addition to the method set out in section 2.2, the membership of a Steering C
 
 ## 5. Trademarks
 
-Any names, trademarks, service marks, logos, mascots, or similar indicators of source or origin and the goodwill associated with them arising out of the Organization's activities or Organization projects' activities (the "Marks"), are controlled by the Organization. Steering Committee members may only use the Marks in accordance with the Organization's [trademark policy](https://github.com/mathLab/PINA/blob/master/TRADEMARKS.md). If a Steering Committee member is terminated or removed from the Steering Committee, any rights the Steering Committee member may have in the Marks revert to the Organization.
+Any names, trademarks, service marks, logos, mascots, or similar indicators of source or origin and the goodwill associated with them arising out of the PINA's activities or PINA projects' activities (the "Marks"), are controlled by the PINA Organization. PINA Marks may be only used in accordance with the [trademark policy](https://github.com/mathLab/PINA/blob/master/TRADEMARKS.md).
 
 ## 6. Antitrust Policy
 
-The Steering Committee is bound by the Organization's [antitrust policy](https://github.com/mathLab/PINA/blob/master/ANTITRUST.md).
+The Steering Committee is bound by the [antitrust policy](https://github.com/mathLab/PINA/blob/master/ANTITRUST.md).
 
 ## 7. No Confidentiality
 
-Information disclosed in connection with any of the Organization's activities, including but not limited to meetings, Contributions, and submissions, is not confidential, regardless of any markings or statements to the contrary.
+Information disclosed in connection with any of the PINA's activities, including but not limited to meetings, contributions, and submissions, is not confidential, regardless of any markings or statements to the contrary.
 
 ## 8. Project Criteria
 
-In order to be eligible to be a Organization project, a project must:
+In order to be eligible to be a PINA project, a project must:
 
 * Be approved by the Steering Committee.
 * Agree to follow the guidance and direction of the Steering Committee.
@@ -59,7 +59,7 @@ In order to be eligible to be a Organization project, a project must:
   - For code, a license on the Open Source Initiative's list of [Popular Licenses](https://opensource.org/licenses).
   - For data, a license on the Open Knowledge Foundation's list of [Recommended Conformant Licenses](http://opendefinition.org/licenses/).
   - For specifications, a community developed and maintained specification agreement, such the [Open Web Foundation Agreements](https://www.openwebfoundation.org/the-agreements) or [Community Specification Agreement](https://github.com/CommunitySpecification/1.0).
-* Include and adhere to the Organization's policies, including the [trademark policy](https://github.com/mathLab/PINA/blob/master/TRADEMARKS.md), the [antitrust policy](https://github.com/mathLab/PINA/blob/master/ANTITRUST.md), and the [code of conduct](https://github.com/mathLab/PINA/blob/master/CODE_OF_CONDUCT.md).
+* Include and adhere to the PINA's policies, including the [trademark policy](https://github.com/mathLab/PINA/blob/master/TRADEMARKS.md), the [antitrust policy](https://github.com/mathLab/PINA/blob/master/ANTITRUST.md), and the [code of conduct](https://github.com/mathLab/PINA/blob/master/CODE_OF_CONDUCT.md).
 
 ## 9. Amendments
 
