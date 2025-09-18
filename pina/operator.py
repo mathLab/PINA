@@ -221,6 +221,7 @@ def fast_laplacian(output_, input_, components, d, method="std"):
         divergence of the gradient. Default is ``std``.
     :return: The computed laplacian tensor.
     :rtype: LabelTensor
+    :raises ValueError: If the passed method is neither ``std`` nor ``divgrad``.
     """
     # Scalar laplacian
     if output_.shape[-1] == 1:
@@ -415,8 +416,13 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
     components, d = _check_values(
         output_=output_, input_=input_, components=components, d=d
     )
+
     return fast_laplacian(
-        output_=output_, input_=input_, components=components, d=d
+        output_=output_,
+        input_=input_,
+        components=components,
+        d=d,
+        method=method,
     )
 
 
