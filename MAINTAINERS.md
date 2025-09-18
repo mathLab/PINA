@@ -9,7 +9,7 @@ This document lists the Maintainers of the Project. Maintainers may be added onc
 | ------------     | ------------------------   | ----------------------     |
 | @GiovanniCanali  | giovanni.canali98@yahoo.it |            SISSA           |
 | @dario-coscia    | dariocos99@gmail.com       |            SISSA           |
-| @ndem0           | demo.nicola@gmail.com      |      FAST COMPUTING SRL    |
+| @ndem0           | demo.nicola@gmail.com      | SISSA - FAST COMPUTING SRL |
 | @AleDinve        | gdinvern@sissa.it          |            SISSA           |
 | @annaivagnes     | aivagnes@sissa.it          |            SISSA           |
 | @FilippoOlivo    | filippo@filippoolivo.com   | SISSA - FAST COMPUTING SRL |
