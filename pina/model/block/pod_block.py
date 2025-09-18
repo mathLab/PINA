@@ -29,7 +29,7 @@ class PODBlock(torch.nn.Module):
         """
         super().__init__()
         self.__scale_coefficients = scale_coefficients
-        self._basis = None
+        self.register_buffer("_basis", None)
         self._singular_values = None
         self._scaler = None
         self._rank = rank
