@@ -105,6 +105,7 @@ Models
     GraphNeuralOperator <model/graph_neural_operator.rst>
     GraphNeuralKernel <model/graph_neural_operator_integral_kernel.rst>
     PirateNet <model/pirate_network.rst>
+    EquivariantGraphNeuralOperator <model/equivariant_graph_neural_operator.rst>
 
 Blocks
 -------------
@@ -134,6 +135,7 @@ Message Passing
     E(n) Equivariant Network Block <model/block/message_passing/en_equivariant_network_block.rst>
     Interaction Network Block <model/block/message_passing/interaction_network_block.rst>
     Radial Field Network Block <model/block/message_passing/radial_field_network_block.rst>
+    EquivariantGraphNeuralOperatorBlock <model/block/message_passing/equivariant_graph_neural_operator_block.rst>
 
 
 Reduction and Embeddings
