@@ -6,8 +6,11 @@ from .equation import Equation
 from ..operator import grad, div, laplacian
 from ..utils import check_consistency
 
+# Pylint warning disabled because the classes defined in this module
+# inherit from Equation and are meant to be simple containers for equations.
 
-class FixedValue(Equation):
+
+class FixedValue(Equation):  # pylint: disable=R0903
     """
     Equation to enforce a fixed value. Can be used to enforce Dirichlet Boundary
     conditions.
@@ -24,7 +27,7 @@ class FixedValue(Equation):
             Default is ``None``.
         """
 
-        def equation(input_, output_):
+        def equation(_, output_):
             """
             Definition of the equation to enforce a fixed value.
 
@@ -42,7 +45,7 @@ class FixedValue(Equation):
         super().__init__(equation)
 
 
-class FixedGradient(Equation):
+class FixedGradient(Equation):  # pylint: disable=R0903
     """
     Equation to enforce a fixed gradient for a specific condition.
     """
@@ -78,7 +81,7 @@ class FixedGradient(Equation):
         super().__init__(equation)
 
 
-class FixedFlux(Equation):
+class FixedFlux(Equation):  # pylint: disable=R0903
     """
     Equation to enforce a fixed flux, or divergence, for a specific condition.
     """
@@ -113,7 +116,7 @@ class FixedFlux(Equation):
         super().__init__(equation)
 
 
-class FixedLaplacian(Equation):
+class FixedLaplacian(Equation):  # pylint: disable=R0903
     """
     Equation to enforce a fixed laplacian for a specific condition.
     """
@@ -151,8 +154,8 @@ class FixedLaplacian(Equation):
         super().__init__(equation)
 
 
-class Laplace(FixedLaplacian):
-    """
+class Laplace(FixedLaplacian):  # pylint: disable=R0903
+    r"""
     Equation to enforce a null laplacian for a specific condition.
     The equation is defined as follows:
 
@@ -178,7 +181,7 @@ class Laplace(FixedLaplacian):
         super().__init__(0.0, components=components, d=d)
 
 
-class Advection(Equation):
+class Advection(Equation):  # pylint: disable=R0903
     r"""
     Implementation of the N-dimensional advection equation with constant
     velocity parameter. The equation is defined as follows:
@@ -266,7 +269,7 @@ class Advection(Equation):
         super().__init__(equation)
 
 
-class AllenCahn(Equation):
+class AllenCahn(Equation):  # pylint: disable=R0903
     r"""
     Implementation of the N-dimensional Allen-Cahn equation, defined as follows:
 
@@ -319,7 +322,7 @@ class AllenCahn(Equation):
         super().__init__(equation)
 
 
-class DiffusionReaction(Equation):
+class DiffusionReaction(Equation):  # pylint: disable=R0903
     r"""
     Implementation of the N-dimensional Diffusion-Reaction equation,
     defined as follows:
@@ -374,7 +377,7 @@ class DiffusionReaction(Equation):
         super().__init__(equation)
 
 
-class Helmholtz(Equation):
+class Helmholtz(Equation):  # pylint: disable=R0903
     r"""
     Implementation of the Helmholtz equation, defined as follows:
 
@@ -415,7 +418,7 @@ class Helmholtz(Equation):
         super().__init__(equation)
 
 
-class Poisson(Equation):
+class Poisson(Equation):  # pylint: disable=R0903
     r"""
     Implementation of the Poisson equation, defined as follows:
 
