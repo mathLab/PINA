@@ -6,9 +6,26 @@ __all__ = [
     "FixedValue",
     "FixedGradient",
     "FixedFlux",
+    "FixedLaplacian",
     "Laplace",
+    "Advection",
+    "AllenCahn",
+    "DiffusionReaction",
+    "Helmholtz",
+    "Poisson",
 ]
 
 from .equation import Equation
-from .equation_factory import FixedFlux, FixedGradient, Laplace, FixedValue
+from .equation_factory import (
+    FixedFlux,
+    FixedGradient,
+    FixedLaplacian,
+    FixedValue,
+    Laplace,
+    Advection,
+    AllenCahn,
+    DiffusionReaction,
+    Helmholtz,
+    Poisson,
+)
 from .system_equation import SystemEquation
