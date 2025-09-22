@@ -154,6 +154,12 @@ class FixedLaplacian(Equation):
 class Laplace(FixedLaplacian):
     """
     Equation to enforce a null laplacian for a specific condition.
+    The equation is defined as follows:
+
+    .. math::
+
+        \delta u = 0
+
     """
 
     def __init__(self, components=None, d=None):
