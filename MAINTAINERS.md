@@ -15,7 +15,6 @@ This document lists the Maintainers of the Project. Maintainers may be added onc
 | @FilippoOlivo    | filippo@filippoolivo.com   | SISSA - FAST COMPUTING SRL |
 | @guglielmopadula | gpadula@sissa.it           |            SISSA           |
 | @fpichi          | fpichi@sissa.it            |            SISSA           |
-| @mstrazzu        | maria.strazzullo@polito.it |      Politecnico di Torino |
 
 ---
 ## Attribution
