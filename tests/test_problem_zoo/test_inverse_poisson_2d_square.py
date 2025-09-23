@@ -1,6 +1,6 @@
+import pytest
 from pina.problem.zoo import InversePoisson2DSquareProblem
 from pina.problem import InverseProblem, SpatialProblem
-import pytest
 
 
 @pytest.mark.parametrize("load", [True, False])

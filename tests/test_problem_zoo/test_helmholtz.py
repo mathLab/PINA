@@ -5,6 +5,7 @@ from pina.problem import SpatialProblem
 
 @pytest.mark.parametrize("alpha", [1.5, 3])
 def test_constructor(alpha):
+
     problem = HelmholtzProblem(alpha=alpha)
     problem.discretise_domain(n=10, mode="random", domains="all")
     assert problem.are_all_domains_discretised
@@ -13,4 +14,4 @@ def test_constructor(alpha):
     assert isinstance(problem.conditions, dict)
 
     with pytest.raises(ValueError):
-        HelmholtzProblem(alpha="a")
+        HelmholtzProblem(alpha="invalid")

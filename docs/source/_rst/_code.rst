@@ -253,7 +253,7 @@ Callbacks
     Optimizer callback <callback/optimizer_callback.rst>
     R3 Refinment callback <callback/refinement/r3_refinement.rst>
     Refinment Interface callback <callback/refinement/refinement_interface.rst>
-    Weighting callback <callback/linear_weight_update_callback.rst>
+    Normalizer callback <callback/normalizer_data_callback.rst>
 
 Losses and Weightings
 ---------------------
@@ -267,3 +267,5 @@ Losses and Weightings
     WeightingInterface <loss/weighting_interface.rst>
     ScalarWeighting <loss/scalar_weighting.rst>
     NeuralTangentKernelWeighting <loss/ntk_weighting.rst>
+    SelfAdaptiveWeighting <loss/self_adaptive_weighting.rst>
+    LinearWeighting <loss/linear_weighting.rst>

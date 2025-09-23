@@ -1,29 +1,25 @@
 """Formulation of the Poisson problem in a square domain."""
 
 import torch
-from ... import Condition
-from ...operator import laplacian
+from ...equation import FixedValue, Poisson
 from ...problem import SpatialProblem
 from ...domain import CartesianDomain
-from ...equation import Equation, FixedValue
+from ... import Condition
 
 
-def laplace_equation(input_, output_):
+def forcing_term(input_):
     """
-    Implementation of the laplace equation.
+    Implementation of the forcing term of the Poisson problem.
 
-    :param LabelTensor input_: Input data of the problem.
-    :param LabelTensor output_: Output data of the problem.
-    :return: The residual of the laplace equation.
+    :param LabelTensor input_: The points where the forcing term is evaluated.
+    :return: The forcing term of the Poisson problem.
     :rtype: LabelTensor
     """
-    force_term = (
+    return (
         torch.sin(input_.extract(["x"]) * torch.pi)
         * torch.sin(input_.extract(["y"]) * torch.pi)
         * (2 * torch.pi**2)
     )
-    delta_u = laplacian(output_, input_, components=["u"], d=["x", "y"])
-    return delta_u - force_term
 
 
 class Poisson2DSquareProblem(SpatialProblem):
@@ -51,14 +47,14 @@ class Poisson2DSquareProblem(SpatialProblem):
         "g2": Condition(domain="g2", equation=FixedValue(0.0)),
         "g3": Condition(domain="g3", equation=FixedValue(0.0)),
         "g4": Condition(domain="g4", equation=FixedValue(0.0)),
-        "D": Condition(domain="D", equation=Equation(laplace_equation)),
+        "D": Condition(domain="D", equation=Poisson(forcing_term=forcing_term)),
     }
 
     def solution(self, pts):
         """
         Implementation of the analytical solution of the Poisson problem.
 
-        :param LabelTensor pts: Points where the solution is evaluated.
+        :param LabelTensor pts: The points where the solution is evaluated.
         :return: The analytical solution of the Poisson problem.
         :rtype: LabelTensor
         """

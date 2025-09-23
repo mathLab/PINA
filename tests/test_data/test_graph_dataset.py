@@ -101,7 +101,7 @@ def test_getitem(conditions_dict, max_conditions_lengths):
         [d["input"].x.shape == torch.Size((400, 10)) for d in data.values()]
     )
     assert all(
-        [d["target"].shape == torch.Size((400, 10)) for d in data.values()]
+        [d["target"].shape == torch.Size((20, 20, 10)) for d in data.values()]
     )
     assert all(
         [

@@ -14,7 +14,7 @@
 #
 # By the end of this tutorial, you'll be able to write **data-driven** or **differential problems** in **PINA** and prepare them for model training!
 
-# In[ ]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -40,7 +40,7 @@ warnings.filterwarnings("ignore")
 #
 # We can have two types of problems:
 # 1. ***Data-Driven Problems***: The model is trained using data, such as in classification networks or autoencoders.
-# 2. **&Physics-Driven Problems***: The model is trained using physical laws representing the problem, such as in **PINNs**.
+# 2. ***Physics-Driven Problems***: The model is trained using physical laws representing the problem, such as in **PINNs**.
 # Let's start by building the first type, the data driven type.
 #
 # ### Data driven modelling
@@ -64,7 +64,7 @@ warnings.filterwarnings("ignore")
 #
 # To specify the input and target data, you need to use the [`Condition`](https://mathlab.github.io/PINA/_rst/condition/condition.html) interface. A condition defines the constraints (such as physical equations, boundary conditions, etc.) that must be satisfied within the problem. Once the condition is applied, the full problem is outlined below:
 
-# In[3]:
+# In[2]:
 
 
 from pina import Condition, LabelTensor
@@ -93,12 +93,12 @@ problem = SupervisedProblem()
 
 # You can define as many conditions as needed, and the model will attempt to minimize all of them simultaneously! You can access the data in various ways:
 #
-# - `problem.conditions['<condition name>'].input`, `problem.conditions['<condition name>'].output` – Access the input and output data for the specified condition `<condition name>`.
+# - `problem.conditions['<condition name>'].input`, `problem.conditions['<condition name>'].target` – Access the input and output data for the specified condition `<condition name>`.
 # - `problem.input_pts` – Access the input points for all conditions.
 #
 # To ensure that the problem is ready, you can check if all domains have been discretized, meaning all conditions have input points available to pass to the model:
 
-# In[4]:
+# In[3]:
 
 
 # check if all domains are discretised
@@ -160,7 +160,7 @@ problem.are_all_domains_discretised
 
 # Nice, the Problem class is initialized! How to represent the differential equation in **PINA**? To do this, we need to load the **PINA** operators from `pina.operator` module. Again, we'll consider Equation (1) and represent it in **PINA**:
 
-# In[5]:
+# In[4]:
 
 
 from pina.problem import SpatialProblem
@@ -206,7 +206,7 @@ class SimpleODE(SpatialProblem):
 # As you can see, we implemented the `ode_equation` function which given the model ouput and input returns the equation residual. These residuals are the ones minimized during PINN optimization (for more on PINN see [the related tutorials](https://mathlab.github.io/PINA/_tutorial.html#physics-informed-neural-networks)).
 #
 # How are the residuals computed?
-# Givem the output we perform differential operation using the [operator modulus](https://mathlab.github.io/PINA/_rst/operator.html). It is pretty intuitive, each differential operator takes the following inputs:
+# Given the output we perform differential operation using the [operator modulus](https://mathlab.github.io/PINA/_rst/operator.html). It is pretty intuitive, each differential operator takes the following inputs:
 # - A tensor on which the operator is applied.
 # - A tensor with respect to which the operator is computed.
 # - The names of the output variables for which the operator is evaluated.
@@ -224,7 +224,7 @@ class SimpleODE(SpatialProblem):
 #
 # When training physics based models, data can come in form of direct numerical simulation results (tensors, graph), or points in the domains which need to be sampled. In case we perform unsupervised learning, we just need the collocation points for training, i.e. points where we want to evaluate the neural network. Sampling point in **PINA** is very easy. But first, let's check if the domains are dicsretized by using the `are_all_domains_discretised` method.
 
-# In[16]:
+# In[5]:
 
 
 problem = SimpleODE()
@@ -253,7 +253,7 @@ problem.are_all_domains_discretised
 
 # To discretise the problem you can use the `discretise_domain` method:
 
-# In[25]:
+# In[6]:
 
 
 # sampling 20 points in [0, 1] through discretization in all locations
@@ -269,7 +269,7 @@ problem.discretise_domain(n=20, mode="random")
 
 # We are going to use latin hypercube points for sampling. We need to sample in all the conditions domains. In our case we sample in `D` and `x0`.
 
-# In[26]:
+# In[7]:
 
 
 # sampling for training
@@ -279,7 +279,7 @@ problem.discretise_domain(5, "lh", domains=["D"])
 
 # The points are saved in a python `dict`, and can be accessed by calling the attributes `input_pts` or `discretised_domains` of the problem.
 
-# In[29]:
+# In[8]:
 
 
 print("Input points:", problem.input_pts)
@@ -288,7 +288,7 @@ print("Input points labels:", problem.discretised_domains)
 
 # To visualize the sampled points we can use `matplotlib.pyplot`:
 
-# In[28]:
+# In[9]:
 
 
 for location in problem.input_pts:
@@ -305,7 +305,7 @@ plt.legend()
 #
 # Let's see now a physics based example, the advection equation
 
-# In[30]:
+# In[10]:
 
 
 from pina.problem.zoo import AdvectionProblem
