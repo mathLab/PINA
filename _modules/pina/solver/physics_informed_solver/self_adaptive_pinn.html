@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.solver.physics_informed_solver.self_adaptive_pinn &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>pina.solver.physics_informed_solver.self_adaptive_pinn &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -457,15 +457,20 @@
 <span class="sd">    :class:`SelfAdaptivePINN` solver.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">num_points</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization of the :class:`Weights` class.</span>
 
 <span class="sd">        :param torch.nn.Module func: the mask model.</span>
+<span class="sd">        :param int num_points: the number of input points.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Check consistency</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sa_weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">())</span>
+
+        <span class="c1"># Initialize the weights as a learnable parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sa_weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -584,17 +589,17 @@
 <span class="sd">            If ``None``, the :class:`torch.nn.MSELoss` loss is used.</span>
 <span class="sd">            Default is `None`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># check consistency weitghs_function</span>
+        <span class="c1"># Check consistency</span>
         <span class="n">check_consistency</span><span class="p">(</span><span class="n">weight_function</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
 
-        <span class="c1"># create models for weights</span>
-        <span class="n">weights_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">condition_name</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">:</span>
-            <span class="n">weights_dict</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Weights</span><span class="p">(</span><span class="n">weight_function</span><span class="p">)</span>
-        <span class="n">weights_dict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">(</span><span class="n">weights_dict</span><span class="p">)</span>
+        <span class="c1"># Define a ModuleDict for the weights</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">cond</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">weights</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">Weights</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">weight_function</span><span class="p">,</span> <span class="n">num_points</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">,</span> <span class="n">weights_dict</span><span class="p">],</span>
+            <span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">,</span> <span class="n">weights</span><span class="p">],</span>
             <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
             <span class="n">optimizers</span><span class="o">=</span><span class="p">[</span><span class="n">optimizer_model</span><span class="p">,</span> <span class="n">optimizer_weights</span><span class="p">],</span>
             <span class="n">schedulers</span><span class="o">=</span><span class="p">[</span><span class="n">scheduler_model</span><span class="p">,</span> <span class="n">scheduler_weights</span><span class="p">],</span>
@@ -602,130 +607,101 @@
             <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vectorial_loss</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vectorial_loss</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+        <span class="c1"># Extract the reduction method from the loss function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="o">.</span><span class="n">reduction</span>
 
-<div class="viewcode-block" id="SelfAdaptivePINN.forward">
-<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Forward pass.</span>
-
-<span class="sd">        :param LabelTensor x: Input tensor.</span>
-<span class="sd">        :return: The output of the neural network.</span>
-<span class="sd">        :rtype: LabelTensor</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
-
+        <span class="c1"># Set the loss function to return non-aggregated losses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">)(</span><span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SelfAdaptivePINN.training_step">
 <a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.training_step">[docs]</a>
-    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Solver training step, overridden to perform manual optimization.</span>
+<span class="sd">        Solver training step. It computes the optimization cycle and aggregates</span>
+<span class="sd">        the losses using the ``weighting`` attribute.</span>
 
 <span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
 <span class="sd">            tuple containing a condition name and a dictionary of points.</span>
-<span class="sd">        :return: The aggregated loss.</span>
-<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        :param int batch_idx: The index of the current batch.</span>
+<span class="sd">        :param dict kwargs: Additional keyword arguments passed to</span>
+<span class="sd">            ``optimization_cycle``.</span>
+<span class="sd">        :return: The loss of the training step.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Weights optimization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimization_cycle</span><span class="p">(</span>
+            <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="o">=</span><span class="n">batch_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manual_backward</span><span class="p">(</span><span class="o">-</span><span class="n">loss</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_weights</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="c1"># Model optimization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimization_cycle</span><span class="p">(</span>
+            <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="o">=</span><span class="n">batch_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manual_backward</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_model</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
+        <span class="c1"># Log the loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span><span class="s2">&quot;train_loss&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">loss</span></div>
 
 
-<div class="viewcode-block" id="SelfAdaptivePINN.configure_optimizers">
-<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.configure_optimizers">[docs]</a>
-    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SelfAdaptivePINN.validation_step">
+<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.validation_step">[docs]</a>
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Optimizer configuration.</span>
+<span class="sd">        The validation step for the Self-Adaptive PINN solver. It returns the</span>
+<span class="sd">        average residual computed with the ``loss`` function not aggregated.</span>
 
-<span class="sd">        :return: The optimizers and the schedulers</span>
-<span class="sd">        :rtype: tuple[list[Optimizer], list[Scheduler]]</span>
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :param dict kwargs: Additional keyword arguments passed to</span>
+<span class="sd">            ``optimization_cycle``.</span>
+<span class="sd">        :return: The loss of the validation step.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If the problem is an InverseProblem, add the unknown parameters</span>
-        <span class="c1"># to the parameters to be optimized</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights_dict</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">InverseProblem</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">add_param_group</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">[</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">unknown_variables</span>
-                    <span class="p">]</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_model</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_weights</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="o">.</span><span class="n">instance</span><span class="p">],</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler_model</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_weights</span><span class="o">.</span><span class="n">instance</span><span class="p">],</span>
-        <span class="p">)</span></div>
+        <span class="n">losses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimization_cycle</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Aggregate losses for each condition</span>
+        <span class="k">for</span> <span class="n">cond</span><span class="p">,</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">losses</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_reduction</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="n">losses</span><span class="p">[</span><span class="n">cond</span><span class="p">])</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">losses</span><span class="p">))</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span><span class="s2">&quot;val_loss&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
 
 
-<div class="viewcode-block" id="SelfAdaptivePINN.on_train_start">
-<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.on_train_start">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SelfAdaptivePINN.test_step">
+<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.test_step">[docs]</a>
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method is called at the start of the training process to set the</span>
-<span class="sd">        self-adaptive weights as parameters of the mask model.</span>
+<span class="sd">        The test step for the Self-Adaptive PINN solver. It returns the average</span>
+<span class="sd">        residual computed with the ``loss`` function not aggregated.</span>
 
-<span class="sd">        :raises NotImplementedError: If the batch size is not ``None``.</span>
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :param dict kwargs: Additional keyword arguments passed to</span>
+<span class="sd">            ``optimization_cycle``.</span>
+<span class="sd">        :return: The loss of the test step.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;SelfAdaptivePINN only works with full &quot;</span>
-                <span class="s2">&quot;batch size, set batch_size=None inside &quot;</span>
-                <span class="s2">&quot;the Trainer to use the solver.&quot;</span>
-            <span class="p">)</span>
-        <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">_accelerator_connector</span><span class="o">.</span><span class="n">_accelerator_flag</span>
-        <span class="p">)</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimization_cycle</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="c1"># Initialize the self adaptive weights only for training points</span>
-        <span class="k">for</span> <span class="p">(</span>
-            <span class="n">condition_name</span><span class="p">,</span>
-            <span class="n">tensor</span><span class="p">,</span>
-        <span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">data_module</span><span class="o">.</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weights_dict</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span><span class="o">.</span><span class="n">sa_weights</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_train_start</span><span class="p">()</span></div>
+        <span class="c1"># Aggregate losses for each condition</span>
+        <span class="k">for</span> <span class="n">cond</span><span class="p">,</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">losses</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_reduction</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="n">losses</span><span class="p">[</span><span class="n">cond</span><span class="p">])</span>
 
-
-<div class="viewcode-block" id="SelfAdaptivePINN.on_load_checkpoint">
-<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.on_load_checkpoint">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Override of the Pytorch Lightning ``on_load_checkpoint`` method to</span>
-<span class="sd">        handle checkpoints for Self-Adaptive Weights. This method should not be</span>
-<span class="sd">        overridden, if not intentionally.</span>
-
-<span class="sd">        :param dict checkpoint: Pytorch Lightning checkpoint dict.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># First initialize self-adaptive weights with correct shape,</span>
-        <span class="c1"># then load the values from the checkpoint.</span>
-        <span class="k">for</span> <span class="n">condition_name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">shape</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;state_dict&quot;</span><span class="p">][</span>
-                <span class="sa">f</span><span class="s2">&quot;_pina_models.1.</span><span class="si">{</span><span class="n">condition_name</span><span class="si">}</span><span class="s2">.sa_weights&quot;</span>
-            <span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weights_dict</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span><span class="o">.</span><span class="n">sa_weights</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
-                <span class="n">shape</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_load_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span></div>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">losses</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">losses</span><span class="p">))</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span><span class="s2">&quot;test_loss&quot;</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
 
 
 <div class="viewcode-block" id="SelfAdaptivePINN.loss_phys">
@@ -740,51 +716,148 @@
 <span class="sd">        :return: The computed physics loss.</span>
 <span class="sd">        :rtype: LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_residual</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">equation</span><span class="p">)</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_condition_name</span><span class="p">]</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>
-        <span class="n">loss_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vectorial_loss</span><span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">residual</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vect_to_scalar</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">loss_value</span><span class="p">)</span></div>
+        <span class="n">residuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_residual</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">equation</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">residuals</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="SelfAdaptivePINN.loss_data">
 <a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.loss_data">[docs]</a>
     <span class="k">def</span> <span class="nf">loss_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the data loss for the PINN solver by evaluating the loss</span>
-<span class="sd">        between the network&#39;s output and the true solution. This method should</span>
-<span class="sd">        not be overridden, if not intentionally.</span>
+<span class="sd">        Compute the data loss for the Self-Adaptive PINN solver by evaluating</span>
+<span class="sd">        the loss between the network&#39;s output and the true solution. This method</span>
+<span class="sd">        should not be overridden, if not intentionally.</span>
 
 <span class="sd">        :param input: The input to the neural network.</span>
-<span class="sd">        :type input: LabelTensor</span>
+<span class="sd">        :type input: LabelTensor | torch.Tensor</span>
 <span class="sd">        :param target: The target to compare with the network&#39;s output.</span>
-<span class="sd">        :type target: LabelTensor</span>
+<span class="sd">        :type target: LabelTensor | torch.Tensor</span>
 <span class="sd">        :return: The supervised loss, averaged over the number of observations.</span>
-<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        :rtype: LabelTensor | torch.Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">target</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_vect_to_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss_value</span><span class="p">):</span>
+<div class="viewcode-block" id="SelfAdaptivePINN.forward">
+<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computation of the scalar loss.</span>
+<span class="sd">        Forward pass.</span>
 
-<span class="sd">        :param LabelTensor loss_value: the tensor of pointwise losses.</span>
-<span class="sd">        :raises RuntimeError: If the loss reduction is not ``mean`` or ``sum``.</span>
-<span class="sd">        :return: The computed scalar loss.</span>
-<span class="sd">        :rtype: LabelTensor</span>
+<span class="sd">        :param x: Input tensor.</span>
+<span class="sd">        :type x: torch.Tensor | LabelTensor</span>
+<span class="sd">        :return: The output of the neural network.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss_value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss_value</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Invalid reduction, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">reduction</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="s2">&quot;but expected mean or sum.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SelfAdaptivePINN.configure_optimizers">
+<a class="viewcode-back" href="../../../../_rst/solver/physics_informed_solver/self_adaptive_pinn.html#pina.solver.physics_informed_solver.self_adaptive_pinn.SelfAdaptivePINN.configure_optimizers">[docs]</a>
+    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optimizer configuration.</span>
+
+<span class="sd">        :return: The optimizers and the schedulers</span>
+<span class="sd">        :rtype: tuple[list[Optimizer], list[Scheduler]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Hook the optimizers to the models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+
+        <span class="c1"># Add unknown parameters to optimization list in case of InverseProblem</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">InverseProblem</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">add_param_group</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">unknown_variables</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span>
+
+        <span class="c1"># Hook the schedulers to the optimizers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_model</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_weights</span><span class="o">.</span><span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_model</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_weights</span><span class="o">.</span><span class="n">instance</span><span class="p">],</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler_model</span><span class="o">.</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_weights</span><span class="o">.</span><span class="n">instance</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_optimization_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aggregate the loss for each condition in the batch.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :param int batch_idx: The index of the current batch.</span>
+<span class="sd">        :param dict kwargs: Additional keyword arguments passed to</span>
+<span class="sd">            ``optimization_cycle``.</span>
+<span class="sd">        :return: The losses computed for all conditions in the batch, casted</span>
+<span class="sd">            to a subclass of :class:`torch.Tensor`. It should return a dict</span>
+<span class="sd">            containing the condition name and the associated scalar loss.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute non-aggregated residuals</span>
+        <span class="n">residuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimization_cycle</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+
+        <span class="c1"># Compute losses</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">cond</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">residuals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">weight_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">cond</span><span class="p">]()</span>
+
+            <span class="c1"># Get the correct indices for the weights. Modulus is used according</span>
+            <span class="c1"># to the number of points in the condition, as in the PinaDataset.</span>
+            <span class="n">len_res</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                <span class="n">batch_idx</span> <span class="o">*</span> <span class="n">len_res</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">batch_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">len_res</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">input_pts</span><span class="p">[</span><span class="n">cond</span><span class="p">])</span>
+
+            <span class="c1"># Apply the weights to the residuals</span>
+            <span class="n">losses</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_reduction</span><span class="p">(</span>
+                <span class="n">loss</span><span class="o">=</span><span class="p">(</span><span class="n">res</span> <span class="o">*</span> <span class="n">weight_tensor</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Store log</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">store_log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cond</span><span class="si">}</span><span class="s2">_loss&quot;</span><span class="p">,</span> <span class="n">losses</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Clamp unknown parameters in InverseProblem (if needed)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clamp_params</span><span class="p">()</span>
+
+        <span class="c1"># Aggregate</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weighting</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">loss</span>
+
+    <span class="k">def</span> <span class="nf">_apply_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the specified reduction to the loss. The reduction is deferred</span>
+<span class="sd">        until the end of the optimization cycle to allow self-adaptive weights</span>
+<span class="sd">        to be applied to each point beforehand.</span>
+
+<span class="sd">        :param torch.Tensor loss: The loss tensor to be reduced.</span>
+<span class="sd">        :return: The reduced loss tensor.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        :raises ValueError: If the reduction method is neither &quot;mean&quot; nor &quot;sum&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Apply the specified reduction method</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="c1"># Raise an error if the reduction method is not recognized</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown reduction: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="s2">&quot; Supported reductions are &#39;mean&#39; and &#39;sum&#39;.&quot;</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -797,7 +870,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">weights_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The self-adaptive weights.</span>
 

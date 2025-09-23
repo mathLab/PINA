@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.condition.condition &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>pina.condition.condition &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -442,103 +442,94 @@
   <h1>Source code for pina.condition.condition</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module for the Condition class.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">.data_condition</span> <span class="kn">import</span> <span class="n">DataCondition</span>
 <span class="kn">from</span> <span class="nn">.domain_equation_condition</span> <span class="kn">import</span> <span class="n">DomainEquationCondition</span>
 <span class="kn">from</span> <span class="nn">.input_equation_condition</span> <span class="kn">import</span> <span class="n">InputEquationCondition</span>
 <span class="kn">from</span> <span class="nn">.input_target_condition</span> <span class="kn">import</span> <span class="n">InputTargetCondition</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">custom_warning_format</span>
-
-<span class="c1"># Set the custom format for warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">custom_warning_format</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">warning_function</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">old</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle the deprecation warning.</span>
-
-<span class="sd">    :param new: Object to use instead of the old one.</span>
-<span class="sd">    :type new: str</span>
-<span class="sd">    :param old: Object to deprecate.</span>
-<span class="sd">    :type old: str</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2">&#39; is deprecated and will be removed &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;in future versions. Please use &#39;</span><span class="si">{</span><span class="n">new</span><span class="si">}</span><span class="s2">&#39; instead.&quot;</span><span class="p">,</span>
-        <span class="ne">DeprecationWarning</span><span class="p">,</span>
-    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="Condition">
 <a class="viewcode-back" href="../../../_rst/condition/condition.html#pina.condition.condition.Condition">[docs]</a>
 <span class="k">class</span> <span class="nc">Condition</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents constraints (such as physical equations, boundary conditions,</span>
-<span class="sd">    etc.) that must be satisfied in a given problem. Condition objects are used</span>
-<span class="sd">    to formulate the PINA</span>
-<span class="sd">    :class:`~pina.problem.abstract_problem.AbstractProblem` object.</span>
+<span class="sd">    The :class:`Condition` class is a core component of the PINA framework that</span>
+<span class="sd">    provides a unified interface to define heterogeneous constraints that must</span>
+<span class="sd">    be satisfied by a :class:`~pina.problem.abstract_problem.AbstractProblem`.</span>
 
-<span class="sd">    There are different types of conditions:</span>
+<span class="sd">    It encapsulates all types of constraints - physical, boundary, initial, or</span>
+<span class="sd">    data-driven - that the solver must satisfy during training. The specific</span>
+<span class="sd">    behavior is inferred from the arguments passed to the constructor.</span>
+
+<span class="sd">    Multiple types of conditions can be used within the same problem, allowing</span>
+<span class="sd">    for a high degree of flexibility in defining complex problems.</span>
+
+<span class="sd">    The :class:`Condition` class behavior specializes internally based on the</span>
+<span class="sd">    arguments provided during instantiation. Depending on the specified keyword</span>
+<span class="sd">    arguments, the class automatically selects the appropriate internal</span>
+<span class="sd">    implementation.</span>
+
+
+<span class="sd">    Available `Condition` types:</span>
 
 <span class="sd">    - :class:`~pina.condition.input_target_condition.InputTargetCondition`:</span>
-<span class="sd">      Defined by specifying both the input and the target of the condition. In</span>
-<span class="sd">      this case, the model is trained to produce the target given the input. The</span>
-<span class="sd">      input and output   data must be one of the :class:`torch.Tensor`,</span>
-<span class="sd">      :class:`~pina.label_tensor.LabelTensor`,</span>
-<span class="sd">      :class:`~torch_geometric.data.Data`, or :class:`~pina.graph.Graph`.</span>
-<span class="sd">      Different implementations exist depending on the type of input and target.</span>
-<span class="sd">      For more details, see</span>
-<span class="sd">      :class:`~pina.condition.input_target_condition.InputTargetCondition`.</span>
+<span class="sd">      represents a supervised condition defined by both ``input`` and ``target``</span>
+<span class="sd">      data. The model is trained to reproduce the ``target`` values given the</span>
+<span class="sd">      ``input``. Supported data types include :class:`torch.Tensor`,</span>
+<span class="sd">      :class:`~pina.label_tensor.LabelTensor`, :class:`~pina.graph.Graph`, or</span>
+<span class="sd">      :class:`~torch_geometric.data.Data`.</span>
+<span class="sd">      The class automatically selects the appropriate implementation based on</span>
+<span class="sd">      the types of ``input`` and ``target``.</span>
 
 <span class="sd">    - :class:`~pina.condition.domain_equation_condition.DomainEquationCondition`</span>
-<span class="sd">      : Defined by specifying both the domain and the equation of the condition.</span>
-<span class="sd">      Here, the model is trained to minimize the equation residual by evaluating</span>
-<span class="sd">      it at sampled points within the domain.</span>
+<span class="sd">      : represents a general physics-informed condition defined by a ``domain``</span>
+<span class="sd">      and an ``equation``. The model learns to minimize the equation residual</span>
+<span class="sd">      through evaluations performed at points sampled from the specified domain.</span>
 
 <span class="sd">    - :class:`~pina.condition.input_equation_condition.InputEquationCondition`:</span>
-<span class="sd">      Defined by specifying the input and the equation of the condition. In this</span>
-<span class="sd">      case, the model is trained to minimize the equation residual by evaluating</span>
-<span class="sd">      it at the provided input. The input must be either a</span>
-<span class="sd">      :class:`~pina.label_tensor.LabelTensor` or a :class:`~pina.graph.Graph`.</span>
-<span class="sd">      Different implementations exist depending on the type of input. For more</span>
-<span class="sd">      details, see</span>
-<span class="sd">      :class:`~pina.condition.input_equation_condition.InputEquationCondition`.</span>
+<span class="sd">      represents a general physics-informed condition defined by ``input``</span>
+<span class="sd">      points and an ``equation``. The model learns to minimize the equation</span>
+<span class="sd">      residual through evaluations performed at the provided ``input``.</span>
+<span class="sd">      Supported data types for the ``input`` include</span>
+<span class="sd">      :class:`~pina.label_tensor.LabelTensor` or :class:`~pina.graph.Graph`.</span>
+<span class="sd">      The class automatically selects the appropriate implementation based on</span>
+<span class="sd">      the types of the ``input``.</span>
 
-<span class="sd">    - :class:`~pina.condition.data_condition.DataCondition`:</span>
-<span class="sd">      Defined by specifying only the input. In this case, the model is trained</span>
-<span class="sd">      with an unsupervised custom loss while using the provided data during</span>
-<span class="sd">      training. The input data must be one of :class:`torch.Tensor`,</span>
-<span class="sd">      :class:`~pina.label_tensor.LabelTensor`,</span>
-<span class="sd">      :class:`~torch_geometric.data.Data`, or :class:`~pina.graph.Graph`.</span>
-<span class="sd">      Additionally, conditional variables can be provided when the model</span>
-<span class="sd">      depends on extra parameters. These conditional variables must be either</span>
-<span class="sd">      :class:`torch.Tensor` or :class:`~pina.label_tensor.LabelTensor`.</span>
-<span class="sd">      Different implementations exist depending on the type of input.</span>
-<span class="sd">      For more details, see</span>
-<span class="sd">      :class:`~pina.condition.data_condition.DataCondition`.</span>
+<span class="sd">    - :class:`~pina.condition.data_condition.DataCondition`: represents an</span>
+<span class="sd">      unsupervised, data-driven condition defined by the ``input`` only.</span>
+<span class="sd">      The model is trained using a custom unsupervised loss determined by the</span>
+<span class="sd">      chosen :class:`~pina.solver.solver.SolverInterface`, while leveraging the</span>
+<span class="sd">      provided data during training. Optional ``conditional_variables`` can be</span>
+<span class="sd">      specified when the model depends on additional parameters.</span>
+<span class="sd">      Supported data types include :class:`torch.Tensor`,</span>
+<span class="sd">      :class:`~pina.label_tensor.LabelTensor`, :class:`~pina.graph.Graph`, or</span>
+<span class="sd">      :class:`~torch_geometric.data.Data`.</span>
+<span class="sd">      The class automatically selects the appropriate implementation based on</span>
+<span class="sd">      the type of the ``input``.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        The user should always instantiate :class:`Condition` directly, without</span>
+<span class="sd">        manually creating subclass instances. Please refer to the specific</span>
+<span class="sd">        :class:`Condition` classes for implementation details.</span>
 
 <span class="sd">    :Example:</span>
 
 <span class="sd">    &gt;&gt;&gt; from pina import Condition</span>
-<span class="sd">    &gt;&gt;&gt; condition = Condition(</span>
-<span class="sd">    ...     input=input,</span>
-<span class="sd">    ...     target=target</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; condition = Condition(</span>
-<span class="sd">    ...     domain=location,</span>
-<span class="sd">    ...     equation=equation</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; condition = Condition(</span>
-<span class="sd">    ...     input=input,</span>
-<span class="sd">    ...     equation=equation</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; condition = Condition(</span>
-<span class="sd">    ...     input=data,</span>
-<span class="sd">    ...     conditional_variables=conditional_variables</span>
-<span class="sd">    ... )</span>
 
+<span class="sd">    &gt;&gt;&gt; # Example of InputTargetCondition signature</span>
+<span class="sd">    &gt;&gt;&gt; condition = Condition(input=input, target=target)</span>
+
+<span class="sd">    &gt;&gt;&gt; # Example of DomainEquationCondition signature</span>
+<span class="sd">    &gt;&gt;&gt; condition = Condition(domain=domain, equation=equation)</span>
+
+<span class="sd">    &gt;&gt;&gt; # Example of InputEquationCondition signature</span>
+<span class="sd">    &gt;&gt;&gt; condition = Condition(input=input, equation=equation)</span>
+
+<span class="sd">    &gt;&gt;&gt; # Example of DataCondition signature</span>
+<span class="sd">    &gt;&gt;&gt; condition = Condition(input=data, conditional_variables=cond_vars)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># Combine all possible keyword arguments from the different Condition types</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
         <span class="nb">set</span><span class="p">(</span>
             <span class="n">InputTargetCondition</span><span class="o">.</span><span class="vm">__slots__</span>
@@ -550,48 +541,47 @@
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Instantiate the appropriate Condition object based on the keyword</span>
-<span class="sd">        arguments passed.</span>
+<span class="sd">        Instantiate the appropriate :class:`Condition` object based on the</span>
+<span class="sd">        keyword arguments passed.</span>
 
-<span class="sd">        :raises ValueError: If no keyword arguments are passed.</span>
+<span class="sd">        :param tuple args: The positional arguments (should be empty).</span>
+<span class="sd">        :param dict kwargs: The keyword arguments corresponding to the</span>
+<span class="sd">            parameters of the specific :class:`Condition` type to instantiate.</span>
+<span class="sd">        :raises ValueError: If unexpected positional arguments are provided.</span>
 <span class="sd">        :raises ValueError: If the keyword arguments are invalid.</span>
-<span class="sd">        :return: The appropriate Condition object.</span>
+<span class="sd">        :return: The appropriate :class:`Condition` object.</span>
 <span class="sd">        :rtype: ConditionInterface</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="c1"># Check keyword arguments</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Condition takes only the following keyword &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;arguments: </span><span class="si">{</span><span class="n">Condition</span><span class="o">.</span><span class="vm">__slots__</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
-        <span class="c1"># back-compatibility 0.1</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">if</span> <span class="s2">&quot;location&quot;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;domain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;location&quot;</span><span class="p">)</span>
-            <span class="n">warning_function</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="s2">&quot;domain&quot;</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="s2">&quot;location&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s2">&quot;input_points&quot;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;input_points&quot;</span><span class="p">)</span>
-            <span class="n">warning_function</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="s2">&quot;input_points&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s2">&quot;output_points&quot;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;output_points&quot;</span><span class="p">)</span>
-            <span class="n">warning_function</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">old</span><span class="o">=</span><span class="s2">&quot;output_points&quot;</span><span class="p">)</span>
-
+        <span class="c1"># Class specialization based on keyword arguments</span>
         <span class="n">sorted_keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># Input - Target Condition</span>
         <span class="k">if</span> <span class="n">sorted_keys</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">InputTargetCondition</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">InputTargetCondition</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Input - Equation Condition</span>
         <span class="k">if</span> <span class="n">sorted_keys</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">InputEquationCondition</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">InputEquationCondition</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Domain - Equation Condition</span>
         <span class="k">if</span> <span class="n">sorted_keys</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">DomainEquationCondition</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">DomainEquationCondition</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Data Condition</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">sorted_keys</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">DataCondition</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">)</span>
             <span class="ow">or</span> <span class="n">sorted_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">DataCondition</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">):</span>
             <span class="k">return</span> <span class="n">DataCondition</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+        <span class="c1"># Invalid keyword arguments</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid keyword arguments </span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
 
 </pre></div>

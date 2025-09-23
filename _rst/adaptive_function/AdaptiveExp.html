@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>AdaptiveExp &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>AdaptiveExp &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,8 +54,8 @@
     <link rel="prev" title="AdaptiveSIREN" href="AdaptiveSIREN.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -119,8 +119,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -451,6 +451,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/pirate_network.html">PirateNet</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/residual.html">Residual Block</a></li>
@@ -463,6 +464,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/block/convolution_interface.html">Continuous Convolution Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/convolution.html">Continuous Convolution Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/orthogonal.html">Orthogonal Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/pirate_network_block.html">PirateNet Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
@@ -538,7 +540,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/linear_weight_update_callback.html">Weighting callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/normalizer_data_callback.html">Normalizer callback</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../loss/loss_interface.html">LossInterface</a></li>
@@ -547,6 +549,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../loss/weighting_interface.html">WeightingInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../loss/scalar_weighting.html">ScalarWeighting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/self_adaptive_weighting.html">SelfAdaptiveWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/linear_weighting.html">LinearWeighting</a></li>
 </ul>
 </div>
 </nav></div>
@@ -613,7 +617,7 @@
 <dt class="sig sig-object py" id="pina.adaptive_function.adaptive_function.AdaptiveExp">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AdaptiveExp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/adaptive_function/adaptive_function.html#AdaptiveExp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.adaptive_function.adaptive_function.AdaptiveExp" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="AdaptiveActivationFunctionInterface.html#pina.adaptive_function.adaptive_function_interface.AdaptiveActivationFunctionInterface" title="pina.adaptive_function.adaptive_function_interface.AdaptiveActivationFunctionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdaptiveActivationFunctionInterface</span></code></a></p>
-<p>Adaptive trainable <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.exp.html#torch.exp" title="(in PyTorch v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a> function.</p>
+<p>Adaptive trainable <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.exp.html#torch.exp" title="(in PyTorch v2.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a> function.</p>
 <p>Given the function <span class="math notranslate nohighlight">\(\text{exp}:\mathbb{R}^n\rightarrow\mathbb{R}^n\)</span>,
 the adaptive function
 <span class="math notranslate nohighlight">\(\text{exp}_{\text{adaptive}}:\mathbb{R}^n\rightarrow\mathbb{R}^n\)</span>

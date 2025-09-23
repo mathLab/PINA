@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Trainer &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>Trainer &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="Code Documentation" href="_code.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -450,6 +450,7 @@
 <li class="toctree-l1"><a class="reference internal" href="model/low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/pirate_network.html">PirateNet</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="model/block/residual.html">Residual Block</a></li>
@@ -462,6 +463,7 @@
 <li class="toctree-l1"><a class="reference internal" href="model/block/convolution_interface.html">Continuous Convolution Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/block/convolution.html">Continuous Convolution Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/block/orthogonal.html">Orthogonal Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/block/pirate_network_block.html">PirateNet Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="model/block/message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
@@ -537,7 +539,7 @@
 <li class="toctree-l1"><a class="reference internal" href="callback/optimizer_callback.html">Optimizer callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="callback/linear_weight_update_callback.html">Weighting callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="callback/normalizer_data_callback.html">Normalizer callback</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="loss/loss_interface.html">LossInterface</a></li>
@@ -546,6 +548,8 @@
 <li class="toctree-l1"><a class="reference internal" href="loss/weighting_interface.html">WeightingInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="loss/scalar_weighting.html">ScalarWeighting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loss/self_adaptive_weighting.html">SelfAdaptiveWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loss/linear_weighting.html">LinearWeighting</a></li>
 </ul>
 </div>
 </nav></div>
@@ -612,11 +616,11 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.trainer.Trainer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_batching</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pin_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pina/trainer.html#Trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.trainer.Trainer" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.trainer.trainer.Trainer.html#lightning.pytorch.trainer.trainer.Trainer" title="(in PyTorch Lightning v2.5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.trainer.trainer.Trainer.html#lightning.pytorch.trainer.trainer.Trainer" title="(in PyTorch Lightning v2.5.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></a></p>
 <p>PINA custom Trainer class to extend the standard Lightning functionality.</p>
 <p>This class enables specific features or behaviors required by the PINA
 framework. It modifies the standard
-<a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.trainer.trainer.Trainer.html#lightning.pytorch.trainer.trainer.Trainer" title="(in PyTorch Lightning v2.5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lightning.pytorch.Trainer</span></code></a>
+<a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.trainer.trainer.Trainer.html#lightning.pytorch.trainer.trainer.Trainer" title="(in PyTorch Lightning v2.5.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lightning.pytorch.Trainer</span></code></a>
 class to better support the training process in PINA.</p>
 <p>Initialization of the <a class="reference internal" href="#pina.trainer.Trainer" title="pina.trainer.Trainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></a> class.</p>
 <dl class="field-list simple">

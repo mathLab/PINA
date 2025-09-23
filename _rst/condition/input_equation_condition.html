@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Input Equation Condition &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>Input Equation Condition &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="Domain Equation Condition" href="domain_equation_condition.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -450,6 +450,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/pirate_network.html">PirateNet</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/residual.html">Residual Block</a></li>
@@ -462,6 +463,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/block/convolution_interface.html">Continuous Convolution Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/convolution.html">Continuous Convolution Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/orthogonal.html">Orthogonal Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/pirate_network_block.html">PirateNet Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
@@ -537,7 +539,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/linear_weight_update_callback.html">Weighting callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/normalizer_data_callback.html">Normalizer callback</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../loss/loss_interface.html">LossInterface</a></li>
@@ -546,6 +548,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../loss/weighting_interface.html">WeightingInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../loss/scalar_weighting.html">ScalarWeighting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/self_adaptive_weighting.html">SelfAdaptiveWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/linear_weighting.html">LinearWeighting</a></li>
 </ul>
 </div>
 </nav></div>
@@ -612,29 +616,54 @@
 <dt class="sig sig-object py" id="pina.condition.input_equation_condition.InputEquationCondition">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">InputEquationCondition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/condition/input_equation_condition.html#InputEquationCondition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.condition.input_equation_condition.InputEquationCondition" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="condition_interface.html#pina.condition.condition_interface.ConditionInterface" title="pina.condition.condition_interface.ConditionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionInterface</span></code></a></p>
-<p>Condition defined by input data and an equation. This condition can be
-used in a Physics Informed problems. Based on the type of the input,
-different condition implementations are available:</p>
+<p>The class <a class="reference internal" href="#pina.condition.input_equation_condition.InputEquationCondition" title="pina.condition.input_equation_condition.InputEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputEquationCondition</span></code></a> defines a condition based on
+<code class="docutils literal notranslate"><span class="pre">input</span></code> data and an <code class="docutils literal notranslate"><span class="pre">equation</span></code>. This condition is typically used in
+physics-informed problems, where the model is trained to satisfy a given
+<code class="docutils literal notranslate"><span class="pre">equation</span></code> through the evaluation of the residual performed at the
+provided <code class="docutils literal notranslate"><span class="pre">input</span></code>.</p>
+<p>The class automatically selects the appropriate implementation based on
+the type of the <code class="docutils literal notranslate"><span class="pre">input</span></code> data. Depending on whether the <code class="docutils literal notranslate"><span class="pre">input</span></code> is a
+tensor or graph-based data, one of the following specialized subclasses is
+instantiated:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#pina.condition.input_equation_condition.InputTensorEquationCondition" title="pina.condition.input_equation_condition.InputTensorEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputTensorEquationCondition</span></code></a>: For         <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> input data.</p></li>
-<li><p><a class="reference internal" href="#pina.condition.input_equation_condition.InputGraphEquationCondition" title="pina.condition.input_equation_condition.InputGraphEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputGraphEquationCondition</span></code></a>: For <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a>         input data.</p></li>
+<li><p><a class="reference internal" href="#pina.condition.input_equation_condition.InputTensorEquationCondition" title="pina.condition.input_equation_condition.InputTensorEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputTensorEquationCondition</span></code></a>: For cases where the <code class="docutils literal notranslate"><span class="pre">input</span></code>
+data is a <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> object.</p></li>
+<li><p><a class="reference internal" href="#pina.condition.input_equation_condition.InputGraphEquationCondition" title="pina.condition.input_equation_condition.InputGraphEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputGraphEquationCondition</span></code></a>: For cases where the <code class="docutils literal notranslate"><span class="pre">input</span></code> data
+is a <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> object.</p></li>
 </ul>
-<p>Initialize the object by storing the input data and equation object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">LabelTensor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pina.equation</span> <span class="kn">import</span> <span class="n">Equation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Equation to be satisfied over the input points: # x^2 + y^2 - 1 = 0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">dummy_equation</span><span class="p">(</span><span class="n">pts</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">pts</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">pts</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pts</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">condition</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">pts</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">dummy_equation</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Initialization of the <a class="reference internal" href="#pina.condition.input_equation_condition.InputEquationCondition" title="pina.condition.input_equation_condition.InputEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputEquationCondition</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a><em> | </em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em> |
-</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>]</em>) – Input data for the condition.</p></li>
-<li><p><strong>equation</strong> (<a class="reference internal" href="../equation/equation_interface.html#pina.equation.equation_interface.EquationInterface" title="pina.equation.equation_interface.EquationInterface"><em>EquationInterface</em></a>) – Equation object containing the
-equation function.</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a><em> | </em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>]</em>) – The input data for the condition.</p></li>
+<li><p><strong>equation</strong> (<a class="reference internal" href="../equation/equation_interface.html#pina.equation.equation_interface.EquationInterface" title="pina.equation.equation_interface.EquationInterface"><em>EquationInterface</em></a>) – The equation to be satisfied over the
+specified input points.</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> consists of a list of <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> or
-<a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data" title="(in pytorch_geometric v2.7.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a>, all elements must have the same
-structure (keys and data types)</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> is a list of <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> all elements in
+the list must share the same structure, with matching keys and
+consistent data types.</p>
 </div>
 </dd></dl>
 
@@ -642,24 +671,23 @@ structure (keys and data types)</p>
 <dt class="sig sig-object py" id="pina.condition.input_equation_condition.InputTensorEquationCondition">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">InputTensorEquationCondition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/condition/input_equation_condition.html#InputTensorEquationCondition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.condition.input_equation_condition.InputTensorEquationCondition" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pina.condition.input_equation_condition.InputEquationCondition" title="pina.condition.input_equation_condition.InputEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputEquationCondition</span></code></a></p>
-<p>InputEquationCondition subclass for <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a>
-input data.</p>
-<p>Initialize the object by storing the input data and equation object.</p>
+<p>Specialization of the <a class="reference internal" href="#pina.condition.input_equation_condition.InputEquationCondition" title="pina.condition.input_equation_condition.InputEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputEquationCondition</span></code></a> class for the case
+where <code class="docutils literal notranslate"><span class="pre">input</span></code> is a <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelTensor</span></code></a> object.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.condition.input_equation_condition.InputEquationCondition" title="pina.condition.input_equation_condition.InputEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputEquationCondition</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a><em> | </em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em> |
-</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>]</em>) – Input data for the condition.</p></li>
-<li><p><strong>equation</strong> (<a class="reference internal" href="../equation/equation_interface.html#pina.equation.equation_interface.EquationInterface" title="pina.equation.equation_interface.EquationInterface"><em>EquationInterface</em></a>) – Equation object containing the
-equation function.</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a><em> | </em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>]</em>) – The input data for the condition.</p></li>
+<li><p><strong>equation</strong> (<a class="reference internal" href="../equation/equation_interface.html#pina.equation.equation_interface.EquationInterface" title="pina.equation.equation_interface.EquationInterface"><em>EquationInterface</em></a>) – The equation to be satisfied over the
+specified input points.</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> consists of a list of <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> or
-<a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data" title="(in pytorch_geometric v2.7.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a>, all elements must have the same
-structure (keys and data types)</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> is a list of <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> all elements in
+the list must share the same structure, with matching keys and
+consistent data types.</p>
 </div>
 </dd></dl>
 
@@ -667,23 +695,23 @@ structure (keys and data types)</p>
 <dt class="sig sig-object py" id="pina.condition.input_equation_condition.InputGraphEquationCondition">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">InputGraphEquationCondition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/condition/input_equation_condition.html#InputGraphEquationCondition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.condition.input_equation_condition.InputGraphEquationCondition" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pina.condition.input_equation_condition.InputEquationCondition" title="pina.condition.input_equation_condition.InputEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputEquationCondition</span></code></a></p>
-<p>InputEquationCondition subclass for <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> input data.</p>
-<p>Initialize the object by storing the input data and equation object.</p>
+<p>Specialization of the <a class="reference internal" href="#pina.condition.input_equation_condition.InputEquationCondition" title="pina.condition.input_equation_condition.InputEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputEquationCondition</span></code></a> class for the case
+where <code class="docutils literal notranslate"><span class="pre">input</span></code> is a <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> object.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.condition.input_equation_condition.InputEquationCondition" title="pina.condition.input_equation_condition.InputEquationCondition"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputEquationCondition</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a><em> | </em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em> |
-</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>]</em>) – Input data for the condition.</p></li>
-<li><p><strong>equation</strong> (<a class="reference internal" href="../equation/equation_interface.html#pina.equation.equation_interface.EquationInterface" title="pina.equation.equation_interface.EquationInterface"><em>EquationInterface</em></a>) – Equation object containing the
-equation function.</p></li>
+<li><p><strong>input</strong> (<a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a><em> | </em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><em>Graph</em></a><em>]</em>) – The input data for the condition.</p></li>
+<li><p><strong>equation</strong> (<a class="reference internal" href="../equation/equation_interface.html#pina.equation.equation_interface.EquationInterface" title="pina.equation.equation_interface.EquationInterface"><em>EquationInterface</em></a>) – The equation to be satisfied over the
+specified input points.</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> consists of a list of <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> or
-<a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data" title="(in pytorch_geometric v2.7.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a>, all elements must have the same
-structure (keys and data types)</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> is a list of <a class="reference internal" href="../graph/graph.html#pina.graph.Graph" title="pina.graph.Graph"><code class="xref py py-class docutils literal notranslate"><span class="pre">Graph</span></code></a> all elements in
+the list must share the same structure, with matching keys and
+consistent data types.</p>
 </div>
 </dd></dl>
 

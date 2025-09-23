@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.callback.linear_weight_update_callback &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>pina.loss.self_adaptive_weighting &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -39,19 +39,19 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/callback/linear_weight_update_callback';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/loss/self_adaptive_weighting';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -422,7 +422,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina.callback.linear_weight_update_callback</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina.loss.self_adaptive_weighting</span></li>
   </ul>
 </nav>
 </div>
@@ -439,101 +439,68 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pina.callback.linear_weight_update_callback</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module for the LinearWeightUpdate callback.&quot;&quot;&quot;</span>
+  <h1>Source code for pina.loss.self_adaptive_weighting</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for Self-Adaptive Weighting class.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">lightning.pytorch.callbacks</span> <span class="kn">import</span> <span class="n">Callback</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
-<span class="kn">from</span> <span class="nn">..loss</span> <span class="kn">import</span> <span class="n">ScalarWeighting</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">.weighting_interface</span> <span class="kn">import</span> <span class="n">WeightingInterface</span>
 
 
-<div class="viewcode-block" id="LinearWeightUpdate">
-<a class="viewcode-back" href="../../../_rst/callback/linear_weight_update_callback.html#pina.callback.linear_weight_update_callback.LinearWeightUpdate">[docs]</a>
-<span class="k">class</span> <span class="nc">LinearWeightUpdate</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<div class="viewcode-block" id="SelfAdaptiveWeighting">
+<a class="viewcode-back" href="../../../_rst/loss/self_adaptive_weighting.html#pina.loss.self_adaptive_weighting.SelfAdaptiveWeighting">[docs]</a>
+<span class="k">class</span> <span class="nc">SelfAdaptiveWeighting</span><span class="p">(</span><span class="n">WeightingInterface</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Callback to linearly adjust the weight of a condition from an</span>
-<span class="sd">    initial value to a target value over a specified number of epochs.</span>
+<span class="sd">    A self-adaptive weighting scheme to tackle the imbalance among the loss</span>
+<span class="sd">    components. This formulation equalizes the gradient norms of the losses,</span>
+<span class="sd">    preventing bias toward any particular term during training.</span>
+
+<span class="sd">    .. seealso::</span>
+
+<span class="sd">        **Original reference**:</span>
+<span class="sd">        Wang, S., Sankaran, S., Stinis., P., Perdikaris, P. (2025).</span>
+<span class="sd">        *Simulating Three-dimensional Turbulence with Physics-informed Neural</span>
+<span class="sd">        Networks*.</span>
+<span class="sd">        DOI: `arXiv preprint arXiv:2507.08972.</span>
+<span class="sd">        &lt;https://arxiv.org/abs/2507.08972&gt;`_</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">target_epoch</span><span class="p">,</span> <span class="n">condition_name</span><span class="p">,</span> <span class="n">initial_value</span><span class="p">,</span> <span class="n">target_value</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_every_n_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Callback initialization.</span>
+<span class="sd">        Initialization of the :class:`SelfAdaptiveWeighting` class.</span>
 
-<span class="sd">        :param int target_epoch: The epoch at which the weight of the condition</span>
-<span class="sd">            should reach the target value.</span>
-<span class="sd">        :param str condition_name: The name of the condition whose weight</span>
-<span class="sd">            should be adjusted.</span>
-<span class="sd">        :param float initial_value: The initial value of the weight.</span>
-<span class="sd">        :param float target_value: The target value of the weight.</span>
+<span class="sd">        :param int update_every_n_epochs: The number of training epochs between</span>
+<span class="sd">            weight updates. If set to 1, the weights are updated at every epoch.</span>
+<span class="sd">            Default is 1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_epoch</span> <span class="o">=</span> <span class="n">target_epoch</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">condition_name</span> <span class="o">=</span> <span class="n">condition_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">=</span> <span class="n">initial_value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_value</span> <span class="o">=</span> <span class="n">target_value</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">update_every_n_epochs</span><span class="o">=</span><span class="n">update_every_n_epochs</span><span class="p">)</span>
 
-        <span class="c1"># Check consistency</span>
-        <span class="n">check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_epoch</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="n">subclass</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<div class="viewcode-block" id="LinearWeightUpdate.on_train_start">
-<a class="viewcode-back" href="../../../_rst/callback/linear_weight_update_callback.html#pina.callback.linear_weight_update_callback.LinearWeightUpdate.on_train_start">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
+<div class="viewcode-block" id="SelfAdaptiveWeighting.weights_update">
+<a class="viewcode-back" href="../../../_rst/loss/self_adaptive_weighting.html#pina.loss.self_adaptive_weighting.SelfAdaptiveWeighting.weights_update">[docs]</a>
+    <span class="k">def</span> <span class="nf">weights_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">losses</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the weight of the condition to the specified `initial_value`.</span>
+<span class="sd">        Update the weighting scheme based on the given losses.</span>
 
-<span class="sd">        :param Trainer trainer: A :class:`~pina.trainer.Trainer` instance.</span>
-<span class="sd">        :param SolverInterface pl_module: A</span>
-<span class="sd">            :class:`~pina.solver.solver.SolverInterface` instance.</span>
+<span class="sd">        :param dict losses: The dictionary of losses.</span>
+<span class="sd">        :return: The updated weights.</span>
+<span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Check that the target epoch is valid</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_epoch</span> <span class="o">&lt;=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">max_epochs</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;`target_epoch` must be greater than 0&quot;</span>
-                <span class="s2">&quot; and less than or equal to `max_epochs`.&quot;</span>
+        <span class="c1"># Define a dictionary to store the norms of the gradients</span>
+        <span class="n">losses_norm</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Compute the gradient norms for each loss component</span>
+        <span class="k">for</span> <span class="n">condition</span><span class="p">,</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">grads</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()]</span>
             <span class="p">)</span>
+            <span class="n">losses_norm</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span> <span class="o">=</span> <span class="n">grads</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span>
 
-        <span class="c1"># Check that the condition is a problem condition</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pl_module</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_name</span><span class="si">}</span><span class="s2">` must be a problem condition.&quot;</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Check that the initial value is not equal to the target value</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_value</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;`initial_value` is equal to `target_value`. &quot;</span>
-                <span class="s2">&quot;No effective adjustment will be performed.&quot;</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Check that the weighting schema is ScalarWeighting</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pl_module</span><span class="o">.</span><span class="n">weighting</span><span class="p">,</span> <span class="n">ScalarWeighting</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The weighting schema must be ScalarWeighting.&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Initialize the weight of the condition</span>
-        <span class="n">pl_module</span><span class="o">.</span><span class="n">weighting</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span></div>
-
-
-<div class="viewcode-block" id="LinearWeightUpdate.on_train_epoch_start">
-<a class="viewcode-back" href="../../../_rst/callback/linear_weight_update_callback.html#pina.callback.linear_weight_update_callback.LinearWeightUpdate.on_train_epoch_start">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Adjust at each epoch the weight of the condition.</span>
-
-<span class="sd">        :param Trainer trainer: A :class:`~pina.trainer.Trainer` instance.</span>
-<span class="sd">        :param SolverInterface pl_module: A</span>
-<span class="sd">            :class:`~pina.solver.solver.SolverInterface` instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">trainer</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_epoch</span><span class="p">:</span>
-            <span class="n">pl_module</span><span class="o">.</span><span class="n">weighting</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_name</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">target_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span>
-            <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_epoch</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+        <span class="c1"># Update the weights</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">condition</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses_norm</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="n">losses_norm</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">losses</span>
+        <span class="p">}</span></div>
 </div>
 
 </pre></div>

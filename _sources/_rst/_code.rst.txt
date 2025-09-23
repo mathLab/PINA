@@ -104,6 +104,7 @@ Models
     LowRankNeuralOperator <model/low_rank_neural_operator.rst>
     GraphNeuralOperator <model/graph_neural_operator.rst>
     GraphNeuralKernel <model/graph_neural_operator_integral_kernel.rst>
+    PirateNet <model/pirate_network.rst>
 
 Blocks
 -------------
@@ -121,6 +122,7 @@ Blocks
     Continuous Convolution Interface <model/block/convolution_interface.rst>
     Continuous Convolution Block <model/block/convolution.rst>
     Orthogonal Block <model/block/orthogonal.rst>
+    PirateNet Block <model/block/pirate_network_block.rst>
 
 Message Passing
 -------------------
@@ -251,7 +253,7 @@ Callbacks
     Optimizer callback <callback/optimizer_callback.rst>
     R3 Refinment callback <callback/refinement/r3_refinement.rst>
     Refinment Interface callback <callback/refinement/refinement_interface.rst>
-    Weighting callback <callback/linear_weight_update_callback.rst>
+    Normalizer callback <callback/normalizer_data_callback.rst>
 
 Losses and Weightings
 ---------------------
@@ -265,3 +267,5 @@ Losses and Weightings
     WeightingInterface <loss/weighting_interface.rst>
     ScalarWeighting <loss/scalar_weighting.rst>
     NeuralTangentKernelWeighting <loss/ntk_weighting.rst>
+    SelfAdaptiveWeighting <loss/self_adaptive_weighting.rst>
+    LinearWeighting <loss/linear_weighting.rst>

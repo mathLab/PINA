@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Weighting callbacks &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>PirateNet &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -40,21 +40,21 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_rst/callback/linear_weight_update_callback';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_rst/model/pirate_network';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="LossInterface" href="../loss/loss_interface.html" />
-    <link rel="prev" title="Refinement Interface" href="refinement/refinement_interface.html" />
+    <link rel="next" title="Residual Block" href="block/residual.html" />
+    <link rel="prev" title="GraphNeuralKernel" href="graph_neural_operator_integral_kernel.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -436,44 +436,46 @@
 <li class="toctree-l1"><a class="reference internal" href="../solver/supervised_solver/reduced_order_model.html">ReducedOrderModelSolver</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../solver/garom.html">GAROM</a></li>
 </ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../model/feed_forward.html">FeedForward</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/multi_feed_forward.html">MultiFeedForward</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/residual_feed_forward.html">ResidualFeedForward</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/spline.html">Spline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/deeponet.html">DeepONet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/mionet.html">MIONet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/kernel_neural_operator.html">KernelNeuralOperator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/fourier_integral_kernel.html">FourierIntegralKernel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/fourier_neural_operator.html">FNO</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/average_neural_operator.html">AveragingNeuralOperator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator.html">GraphNeuralOperator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="feed_forward.html">FeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_feed_forward.html">MultiFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="residual_feed_forward.html">ResidualFeedForward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mionet.html">MIONet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel_neural_operator.html">KernelNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fourier_integral_kernel.html">FourierIntegralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fourier_neural_operator.html">FNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="average_neural_operator.html">AveragingNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_neural_operator.html">GraphNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">PirateNet</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../model/block/residual.html">Residual Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/enhanced_linear.html">EnhancedLinear Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/spectral.html">Spectral Convolution Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/fourier_block.html">Fourier Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/average_neural_operator_block.html">Averaging Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/low_rank_block.html">Low Rank Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/gno_block.html">Graph Neural Operator Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/convolution_interface.html">Continuous Convolution Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/convolution.html">Continuous Convolution Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/orthogonal.html">Orthogonal Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/residual.html">Residual Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/enhanced_linear.html">EnhancedLinear Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/spectral.html">Spectral Convolution Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/fourier_block.html">Fourier Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/average_neural_operator_block.html">Averaging Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/low_rank_block.html">Low Rank Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/gno_block.html">Graph Neural Operator Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/convolution_interface.html">Continuous Convolution Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/convolution.html">Continuous Convolution Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/orthogonal.html">Orthogonal Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/pirate_network_block.html">PirateNet Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/en_equivariant_network_block.html">E(n) Equivariant Network Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/interaction_network_block.html">Interaction Network Block</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/radial_field_network_block.html">Radial Field Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/message_passing/en_equivariant_network_block.html">E(n) Equivariant Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/message_passing/interaction_network_block.html">Interaction Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/message_passing/radial_field_network_block.html">Radial Field Network Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../model/block/pod_block.html">Proper Orthogonal Decomposition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/pbc_embedding.html">Periodic Boundary Condition Embedding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/fourier_embedding.html">Fourier Feature Embedding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model/block/rbf_block.html">Radial Basis Function Interpolation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/pod_block.html">Proper Orthogonal Decomposition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/pbc_embedding.html">Periodic Boundary Condition Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/fourier_embedding.html">Fourier Feature Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/rbf_block.html">Radial Basis Function Interpolation</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../optim/optimizer_interface.html">Optimizer</a></li>
@@ -532,12 +534,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../domain/difference_domain.html">Difference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../domain/exclusion_domain.html">Exclusion</a></li>
 </ul>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="processing_callback.html">Processing callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="optimizer_callback.html">Optimizer callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="refinement/r3_refinement.html">R3 Refinment callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Weighting callback</a></li>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing_callback.html">Processing callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/normalizer_data_callback.html">Normalizer callback</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../loss/loss_interface.html">LossInterface</a></li>
@@ -546,6 +548,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../loss/weighting_interface.html">WeightingInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../loss/scalar_weighting.html">ScalarWeighting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/self_adaptive_weighting.html">SelfAdaptiveWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/linear_weighting.html">LinearWeighting</a></li>
 </ul>
 </div>
 </nav></div>
@@ -589,7 +593,7 @@
     
     <li class="breadcrumb-item"><a href="../_code.html" class="nav-link">Code Documentation</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Weighting callbacks</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">PirateNet</span></li>
   </ul>
 </nav>
 </div>
@@ -606,53 +610,75 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="weighting-callbacks">
-<h1>Weighting callbacks<a class="headerlink" href="#weighting-callbacks" title="Link to this heading">#</a></h1>
+  <section id="piratenet">
+<h1>PirateNet<a class="headerlink" href="#piratenet" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pina.callback.linear_weight_update_callback.LinearWeightUpdate">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LinearWeightUpdate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/callback/linear_weight_update_callback.html#LinearWeightUpdate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.callback.linear_weight_update_callback.LinearWeightUpdate" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.Callback.html#lightning.pytorch.callbacks.Callback" title="(in PyTorch Lightning v2.5.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callback</span></code></a></p>
-<p>Callback to linearly adjust the weight of a condition from an
-initial value to a target value over a specified number of epochs.</p>
-<p>Callback initialization.</p>
+<dt class="sig sig-object py" id="pina.model.pirate_network.PirateNet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PirateNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dimension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dimension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers=3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation=&lt;class</span> <span class="pre">'torch.nn.modules.activation.Tanh'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/pirate_network.html#PirateNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.pirate_network.PirateNet" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<p>Implementation of Physics-Informed residual adaptive network (PirateNet).</p>
+<p>The model consists of a Fourier feature embedding layer, multiple PirateNet
+blocks, and a final output layer. Each PirateNet block consist of three
+dense layers with dual gating mechanism and an adaptive residual connection,
+whose contribution is controlled by a trainable parameter <code class="docutils literal notranslate"><span class="pre">alpha</span></code>.</p>
+<p>The PirateNet, augmented with random weight factorization, is designed to
+mitigate spectral bias in deep networks.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><strong>Original reference</strong>:
+Wang, S., Sankaran, S., Stinis., P., Perdikaris, P. (2025).
+<em>Simulating Three-dimensional Turbulence with Physics-informed Neural
+Networks</em>.
+DOI: <a class="reference external" href="https://arxiv.org/abs/2507.08972">arXiv preprint arXiv:2507.08972.</a></p>
+</div>
+<p>Initialization of the <a class="reference internal" href="#pina.model.pirate_network.PirateNet" title="pina.model.pirate_network.PirateNet"><code class="xref py py-class docutils literal notranslate"><span class="pre">PirateNet</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target_epoch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The epoch at which the weight of the condition
-should reach the target value.</p></li>
-<li><p><strong>condition_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of the condition whose weight
-should be adjusted.</p></li>
-<li><p><strong>initial_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The initial value of the weight.</p></li>
-<li><p><strong>target_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The target value of the weight.</p></li>
+<li><p><strong>input_dimension</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of input features.</p></li>
+<li><p><strong>inner_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of hidden units in the dense layers.</p></li>
+<li><p><strong>output_dimension</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of output features.</p></li>
+<li><p><strong>embedding</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><em>torch.nn.Module</em></a>) – The embedding module used to transform
+the input into a higher-dimensional feature space. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a
+default <code class="xref py py-class docutils literal notranslate"><span class="pre">FourierFeatureEmbedding</span></code> with
+scaling factor of 2 is used. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of PirateNet blocks in the model.
+Default is 3.</p></li>
+<li><p><strong>activation</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><em>torch.nn.Module</em></a>) – The activation function to be used in
+the blocks. Default is <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Tanh.html#torch.nn.Tanh" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Tanh</span></code></a>.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="pina.callback.linear_weight_update_callback.LinearWeightUpdate.on_train_start">
-<span class="sig-name descname"><span class="pre">on_train_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pl_module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/callback/linear_weight_update_callback.html#LinearWeightUpdate.on_train_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.callback.linear_weight_update_callback.LinearWeightUpdate.on_train_start" title="Link to this definition">#</a></dt>
-<dd><p>Initialize the weight of the condition to the specified <code class="docutils literal notranslate"><span class="pre">initial_value</span></code>.</p>
+<dt class="sig sig-object py" id="pina.model.pirate_network.PirateNet.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/pirate_network.html#PirateNet.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.pirate_network.PirateNet.forward" title="Link to this definition">#</a></dt>
+<dd><p>Forward pass of the PirateNet model. It applies the Fourier feature
+embedding, computes the shared gating tensors U and V, and passes the
+input through each block in the network. Finally, it applies the output
+layer to produce the final output.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>trainer</strong> (<a class="reference internal" href="../trainer.html#pina.trainer.Trainer" title="pina.trainer.Trainer"><em>Trainer</em></a>) – A <a class="reference internal" href="../trainer.html#pina.trainer.Trainer" title="pina.trainer.Trainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></a> instance.</p></li>
-<li><p><strong>pl_module</strong> (<a class="reference internal" href="../solver/solver_interface.html#pina.solver.solver.SolverInterface" title="pina.solver.solver.SolverInterface"><em>SolverInterface</em></a>) – A
-<a class="reference internal" href="../solver/solver_interface.html#pina.solver.solver.SolverInterface" title="pina.solver.solver.SolverInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverInterface</span></code></a> instance.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>input</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The input tensor for the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output tensor of the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)">torch.Tensor</a> | <a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pina.callback.linear_weight_update_callback.LinearWeightUpdate.on_train_epoch_start">
-<span class="sig-name descname"><span class="pre">on_train_epoch_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pl_module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/callback/linear_weight_update_callback.html#LinearWeightUpdate.on_train_epoch_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.callback.linear_weight_update_callback.LinearWeightUpdate.on_train_epoch_start" title="Link to this definition">#</a></dt>
-<dd><p>Adjust at each epoch the weight of the condition.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pina.model.pirate_network.PirateNet.alpha">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#pina.model.pirate_network.PirateNet.alpha" title="Link to this definition">#</a></dt>
+<dd><p>Return the alpha values of all PirateNetBlock layers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>trainer</strong> (<a class="reference internal" href="../trainer.html#pina.trainer.Trainer" title="pina.trainer.Trainer"><em>Trainer</em></a>) – A <a class="reference internal" href="../trainer.html#pina.trainer.Trainer" title="pina.trainer.Trainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trainer</span></code></a> instance.</p></li>
-<li><p><strong>pl_module</strong> (<a class="reference internal" href="../solver/solver_interface.html#pina.solver.solver.SolverInterface" title="pina.solver.solver.SolverInterface"><em>SolverInterface</em></a>) – A
-<a class="reference internal" href="../solver/solver_interface.html#pina.solver.solver.SolverInterface" title="pina.solver.solver.SolverInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SolverInterface</span></code></a> instance.</p></li>
-</ul>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of alpha values from each block.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -684,9 +710,9 @@ should be adjusted.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.callback.linear_weight_update_callback.LinearWeightUpdate"><code class="docutils literal notranslate"><span class="pre">LinearWeightUpdate</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.callback.linear_weight_update_callback.LinearWeightUpdate.on_train_start"><code class="docutils literal notranslate"><span class="pre">LinearWeightUpdate.on_train_start()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.callback.linear_weight_update_callback.LinearWeightUpdate.on_train_epoch_start"><code class="docutils literal notranslate"><span class="pre">LinearWeightUpdate.on_train_epoch_start()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.pirate_network.PirateNet"><code class="docutils literal notranslate"><span class="pre">PirateNet</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.pirate_network.PirateNet.forward"><code class="docutils literal notranslate"><span class="pre">PirateNet.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.pirate_network.PirateNet.alpha"><code class="docutils literal notranslate"><span class="pre">PirateNet.alpha</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -696,7 +722,7 @@ should be adjusted.</p></li>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/_rst/callback/linear_weight_update_callback.rst.txt"
+      <li><a href="../../_sources/_rst/model/pirate_network.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

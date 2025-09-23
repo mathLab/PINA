@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.model.block.pod_block &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>pina.model.block.pod_block &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -442,8 +442,8 @@
   <h1>Source code for pina.model.block.pod_block</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module for Base Continuous Convolution class.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 
 
 <div class="viewcode-block" id="PODBlock">
@@ -473,9 +473,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__scale_coefficients</span> <span class="o">=</span> <span class="n">scale_coefficients</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_basis</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;_basis&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_singular_values</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scaler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;_std&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;_mean&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">=</span> <span class="n">rank</span>
 
     <span class="nd">@property</span>
@@ -538,12 +539,12 @@
 <span class="sd">        :return: The scaler dictionary.</span>
 <span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scaler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_std</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scaler</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">][:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">],</span>
-            <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scaler</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">][:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">],</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">],</span>
+            <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_std</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">],</span>
         <span class="p">}</span>
 
     <span class="nd">@property</span>
@@ -565,6 +566,10 @@
 <span class="sd">        are scaled after the projection to have zero mean and unit variance.</span>
 
 <span class="sd">        :param torch.Tensor X: The input tensor to be reduced.</span>
+<span class="sd">        :param bool randomized: If ``True``, a randomized algorithm is used to</span>
+<span class="sd">            compute the POD basis. In general, this leads to faster</span>
+<span class="sd">            computations, but the results may be less accurate. Default is</span>
+<span class="sd">            ``True``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fit_pod</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">randomized</span><span class="p">)</span>
 
@@ -579,10 +584,8 @@
 
 <span class="sd">        :param torch.Tensor coeffs: The coefficients to be scaled.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scaler</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># pylint: disable=W0201</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># pylint: disable=W0201</span>
 
     <span class="k">def</span> <span class="nf">_fit_pod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">randomized</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -601,13 +604,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">randomized</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;Considering a randomized algorithm to compute the POD basis&quot;</span>
+                    <span class="s2">&quot;Considering a randomized algorithm to compute the POD &quot;</span>
+                    <span class="s2">&quot;basis&quot;</span>
                 <span class="p">)</span>
                 <span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">svd_lowrank</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_basis</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basis</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># pylint: disable=W0201</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_singular_values</span> <span class="o">=</span> <span class="n">s</span>
 
 <div class="viewcode-block" id="PODBlock.forward">

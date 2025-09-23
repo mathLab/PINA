@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.loss.weighting_interface &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>pina.loss.weighting_interface &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -443,6 +443,10 @@
 <span></span><span class="sd">&quot;&quot;&quot;Module for the Weighting Interface.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">final</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_positive_integer</span><span class="p">,</span> <span class="n">is_function</span>
+
+<span class="n">_AGGREGATE_METHODS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)}</span>
 
 
 <div class="viewcode-block" id="WeightingInterface">
@@ -453,22 +457,111 @@
 <span class="sd">    should inherit from this class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_every_n_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">aggregator</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization of the :class:`WeightingInterface` class.</span>
+
+<span class="sd">        :param int update_every_n_epochs: The number of training epochs between</span>
+<span class="sd">            weight updates. If set to 1, the weights are updated at every epoch.</span>
+<span class="sd">            This parameter is ignored by static weighting schemes. Default is 1.</span>
+<span class="sd">        :param aggregator: The aggregation method. Either:</span>
+<span class="sd">            - &#39;sum&#39; → torch.sum</span>
+<span class="sd">            - &#39;mean&#39; → torch.mean</span>
+<span class="sd">            - callable → custom aggregation function</span>
+<span class="sd">        :type aggregator: str | Callable</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">condition_names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">update_every_n_epochs</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Aggregation</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregator</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">aggregator</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_AGGREGATE_METHODS</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid aggregator &#39;</span><span class="si">{</span><span class="n">aggregator</span><span class="si">}</span><span class="s2">&#39;. Must be one of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">_AGGREGATE_METHODS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">aggregator</span> <span class="o">=</span> <span class="n">_AGGREGATE_METHODS</span><span class="p">[</span><span class="n">aggregator</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_function</span><span class="p">(</span><span class="n">aggregator</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Aggregator must be either a string or a callable, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">aggregator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solver</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_every_n_epochs</span> <span class="o">=</span> <span class="n">update_every_n_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregator_fn</span> <span class="o">=</span> <span class="n">aggregator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_saved_weights</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="WeightingInterface.weights_update">
+<a class="viewcode-back" href="../../../_rst/loss/weighting_interface.html#pina.loss.weighting_interface.WeightingInterface.weights_update">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">weights_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">losses</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the weighting scheme based on the given losses.</span>
+
+<span class="sd">        This method must be implemented by subclasses. Its role is to update the</span>
+<span class="sd">        values of the weights. The updated weights will then be used by</span>
+<span class="sd">        :meth:`aggregate` to compute the final aggregated loss.</span>
+
+<span class="sd">        :param dict losses: The dictionary of losses.</span>
+<span class="sd">        :return: The updated weights.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
 
 <div class="viewcode-block" id="WeightingInterface.aggregate">
 <a class="viewcode-back" href="../../../_rst/loss/weighting_interface.html#pina.loss.weighting_interface.WeightingInterface.aggregate">[docs]</a>
-    <span class="nd">@abstractmethod</span>
+    <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">aggregate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">losses</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Aggregate the losses.</span>
+<span class="sd">        Update the weights (if needed) and aggregate the given losses.</span>
+
+<span class="sd">        This method first checks whether the loss weights need to be updated</span>
+<span class="sd">        based on the current epoch and the ``update_every_n_epochs`` setting.</span>
+<span class="sd">        If an update is required, it calls :meth:`weights_update` to refresh the</span>
+<span class="sd">        weights. Afterwards, it aggregates the (weighted) losses into a single</span>
+<span class="sd">        scalar tensor using the configured aggregator function. This method must</span>
+<span class="sd">        not be overridden.</span>
 
 <span class="sd">        :param dict losses: The dictionary of losses.</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
-</div>
+<span class="sd">        :return: The aggregated loss tensor.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Update weights</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_every_n_epochs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_saved_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights_update</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+
+        <span class="c1"># Aggregate. Using direct indexing instead of .get() ensures that a</span>
+        <span class="c1"># KeyError is raised if the expected condition is missing from the dict.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregator_fn</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_saved_weights</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span> <span class="o">*</span> <span class="n">loss</span>
+            <span class="k">for</span> <span class="n">condition</span><span class="p">,</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WeightingInterface.last_saved_weights">
+<a class="viewcode-back" href="../../../_rst/loss/weighting_interface.html#pina.loss.weighting_interface.WeightingInterface.last_saved_weights">[docs]</a>
+    <span class="k">def</span> <span class="nf">last_saved_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the last saved weights.</span>
+
+<span class="sd">        :return: The last saved weights.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_saved_weights</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">solver</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The solver employing this weighting schema.</span>
+
+<span class="sd">        :return: The solver.</span>
+<span class="sd">        :rtype: :class:`~pina.solver.SolverInterface`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solver</span></div>
 
 </pre></div>
 

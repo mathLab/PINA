@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Continuous Convolution Block &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>Continuous Convolution Block &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,8 +54,8 @@
     <link rel="prev" title="Continuous Convolution Interface" href="convolution_interface.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -119,8 +119,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -451,6 +451,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pirate_network.html">PirateNet</a></li>
 </ul>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="residual.html">Residual Block</a></li>
@@ -463,6 +464,7 @@
 <li class="toctree-l1"><a class="reference internal" href="convolution_interface.html">Continuous Convolution Interface</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Continuous Convolution Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orthogonal.html">Orthogonal Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pirate_network_block.html">PirateNet Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
@@ -538,7 +540,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../callback/optimizer_callback.html">Optimizer callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../callback/linear_weight_update_callback.html">Weighting callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/normalizer_data_callback.html">Normalizer callback</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../loss/loss_interface.html">LossInterface</a></li>
@@ -547,6 +549,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../loss/weighting_interface.html">WeightingInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../loss/scalar_weighting.html">ScalarWeighting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/self_adaptive_weighting.html">SelfAdaptiveWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/linear_weighting.html">LinearWeighting</a></li>
 </ul>
 </div>
 </nav></div>
@@ -644,7 +648,7 @@ DOI <a class="reference external" href="https://doi.org/10.1007/s00466-023-02291
 <li><p><strong>output_numb_field</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of input fields.</p></li>
 <li><p><strong>filter_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>] </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – The shape of the filter.</p></li>
 <li><p><strong>stride</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The stride of the filter.</p></li>
-<li><p><strong>model</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.7)"><em>torch.nn.Module</em></a>) – The neural network for inner
+<li><p><strong>model</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><em>torch.nn.Module</em></a>) – The neural network for inner
 parametrization. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>optimize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, optimization is performed on the
 continuous filter. It should be used only when the training points
@@ -717,13 +721,13 @@ or in <code class="docutils literal notranslate"><span class="pre">transpose</sp
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a>) – The input tensor.</p>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – The input tensor.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The output tensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -735,9 +739,9 @@ or in <code class="docutils literal notranslate"><span class="pre">transpose</sp
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>integrals</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a>) – The weights for the transpose convolution.
+<li><p><strong>integrals</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – The weights for the transpose convolution.
 Expected shape <span class="math notranslate nohighlight">\([B, N_{in}, N]\)</span>.</p></li>
-<li><p><strong>X</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a>) – The input data.
+<li><p><strong>X</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – The input data.
 Expected shape <span class="math notranslate nohighlight">\([B, N_{in}, M,  D]\)</span>.</p></li>
 </ul>
 </dd>
@@ -746,7 +750,7 @@ Expected shape <span class="math notranslate nohighlight">\([B, N_{in}, M,  D]\)
 Expected shape: <span class="math notranslate nohighlight">\([B, N_{out}, M,  D]\)</span>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)">torch.Tensor</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -763,9 +767,9 @@ method is used and <code class="docutils literal notranslate"><span class="pre">
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>integrals</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a>) – The weights for the transpose convolution.
+<li><p><strong>integrals</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – The weights for the transpose convolution.
 Expected shape <span class="math notranslate nohighlight">\([B, N_{in}, N]\)</span>.</p></li>
-<li><p><strong>X</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)"><em>torch.Tensor</em></a>) – The input data.
+<li><p><strong>X</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)"><em>torch.Tensor</em></a>) – The input data.
 Expected shape <span class="math notranslate nohighlight">\([B, N_{in}, M,  D]\)</span>.</p></li>
 </ul>
 </dd>
@@ -774,7 +778,7 @@ Expected shape <span class="math notranslate nohighlight">\([B, N_{in}, M,  D]\)
 Expected shape: <span class="math notranslate nohighlight">\([B, N_{out}, M,  D]\)</span>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.7)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)">torch.Tensor</a></p>
 </dd>
 </dl>
 <div class="admonition note">

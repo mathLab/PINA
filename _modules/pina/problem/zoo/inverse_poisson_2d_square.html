@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.problem.zoo.inverse_poisson_2d_square &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>pina.problem.zoo.inverse_poisson_2d_square &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -442,6 +442,7 @@
   <h1>Source code for pina.problem.zoo.inverse_poisson_2d_square</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Formulation of the inverse Poisson problem in a square domain.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
@@ -451,6 +452,44 @@
 <span class="kn">from</span> <span class="nn">...domain</span> <span class="kn">import</span> <span class="n">CartesianDomain</span>
 <span class="kn">from</span> <span class="nn">...equation</span> <span class="kn">import</span> <span class="n">Equation</span><span class="p">,</span> <span class="n">FixedValue</span>
 <span class="kn">from</span> <span class="nn">...problem</span> <span class="kn">import</span> <span class="n">SpatialProblem</span><span class="p">,</span> <span class="n">InverseProblem</span>
+<span class="kn">from</span> <span class="nn">...utils</span> <span class="kn">import</span> <span class="n">custom_warning_format</span><span class="p">,</span> <span class="n">check_consistency</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">custom_warning_format</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">ResourceWarning</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_load_tensor_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads a tensor file from a URL and wraps it in a LabelTensor.</span>
+
+<span class="sd">    This function fetches a `.pth` file containing tensor data, extracts it,</span>
+<span class="sd">    and returns it as a LabelTensor using the specified labels. If the file</span>
+<span class="sd">    cannot be retrieved (e.g., no internet connection), a warning is issued</span>
+<span class="sd">    and None is returned.</span>
+
+<span class="sd">    :param str url: URL to the remote `.pth` tensor file.</span>
+<span class="sd">    :param list[str] | tuple[str] labels: Labels for the resulting LabelTensor.</span>
+<span class="sd">    :param int timeout: Timeout for the request in seconds.</span>
+<span class="sd">    :return: A LabelTensor object if successful, otherwise None.</span>
+<span class="sd">    :rtype: LabelTensor | None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Try to download the tensor file from the given URL</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+            <span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">),</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+
+    <span class="c1"># If the request fails, issue a warning and return None</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Could not download data for &#39;InversePoisson2DSquareProblem&#39; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;from &#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39;. Reason: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Skipping data loading.&quot;</span><span class="p">,</span>
+            <span class="ne">ResourceWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
 
 <span class="k">def</span> <span class="nf">laplace_equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">,</span> <span class="n">params_</span><span class="p">):</span>
@@ -471,30 +510,6 @@
     <span class="k">return</span> <span class="n">delta_u</span> <span class="o">-</span> <span class="n">force_term</span>
 
 
-<span class="c1"># URL of the file</span>
-<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pts_0.5_0.5&quot;</span>
-<span class="c1"># Download the file</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-<span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-<span class="n">file_like_object</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-<span class="c1"># Set the data</span>
-<span class="n">input_data</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_like_object</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
-    <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;mu1&quot;</span><span class="p">,</span> <span class="s2">&quot;mu2&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-
-<span class="c1"># URL of the file</span>
-<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/mathLab/PINA/raw/refs/heads/master/tutorials/tutorial7/data/pinn_solution_0.5_0.5&quot;</span>
-<span class="c1"># Download the file</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-<span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-<span class="n">file_like_object</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-<span class="c1"># Set the data</span>
-<span class="n">output_data</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_like_object</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span>
-<span class="p">)</span>
-
-
 <div class="viewcode-block" id="InversePoisson2DSquareProblem">
 <a class="viewcode-back" href="../../../../_rst/problem/zoo/inverse_poisson_2d_square.html#pina.problem.zoo.inverse_poisson_2d_square.InversePoisson2DSquareProblem">[docs]</a>
 <span class="k">class</span> <span class="nc">InversePoisson2DSquareProblem</span><span class="p">(</span><span class="n">SpatialProblem</span><span class="p">,</span> <span class="n">InverseProblem</span><span class="p">):</span>
@@ -502,6 +517,8 @@
 <span class="sd">    Implementation of the inverse 2-dimensional Poisson problem in the square</span>
 <span class="sd">    domain :math:`[0, 1] \times [0, 1]`,</span>
 <span class="sd">    with unknown parameter domain :math:`[-1, 1] \times [-1, 1]`.</span>
+<span class="sd">    The `&quot;data&quot;` condition is added only if the required files are</span>
+<span class="sd">    downloaded successfully.</span>
 
 <span class="sd">    :Example:</span>
 <span class="sd">        &gt;&gt;&gt; problem = InversePoisson2DSquareProblem()</span>
@@ -527,8 +544,55 @@
         <span class="s2">&quot;g3&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;g3&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
         <span class="s2">&quot;g4&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;g4&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
         <span class="s2">&quot;D&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">laplace_equation</span><span class="p">)),</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">input_data</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">output_data</span><span class="p">),</span>
-    <span class="p">}</span></div>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data_size</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`InversePoisson2DSquareProblem`.</span>
+
+<span class="sd">        :param bool load: If True, it attempts to load data from remote URLs.</span>
+<span class="sd">            Set to False to skip data loading (e.g., if no internet connection).</span>
+<span class="sd">        :param float data_size: The fraction of the total data to use for the</span>
+<span class="sd">            &quot;data&quot; condition. If set to 1.0, all available data is used.</span>
+<span class="sd">            If set to 0.0, no data is used. Default is 1.0.</span>
+<span class="sd">        :raises ValueError: If `data_size` is not in the range [0.0, 1.0].</span>
+<span class="sd">        :raises ValueError: If `data_size` is not a float.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">load</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">data_size</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">data_size</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;data_size must be in the range [0.0, 1.0], got </span><span class="si">{</span><span class="n">data_size</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Load data if requested</span>
+        <span class="k">if</span> <span class="n">load</span><span class="p">:</span>
+
+            <span class="c1"># Define URLs for input and output data</span>
+            <span class="n">input_url</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;https://github.com/mathLab/PINA/raw/refs/heads/master&quot;</span>
+                <span class="s2">&quot;/tutorials/tutorial7/data/pts_0.5_0.5&quot;</span>
+            <span class="p">)</span>
+            <span class="n">output_url</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;https://github.com/mathLab/PINA/raw/refs/heads/master&quot;</span>
+                <span class="s2">&quot;/tutorials/tutorial7/data/pinn_solution_0.5_0.5&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Define input and output data</span>
+            <span class="n">input_data</span> <span class="o">=</span> <span class="n">_load_tensor_from_url</span><span class="p">(</span>
+                <span class="n">input_url</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;mu1&quot;</span><span class="p">,</span> <span class="s2">&quot;mu2&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">output_data</span> <span class="o">=</span> <span class="n">_load_tensor_from_url</span><span class="p">(</span><span class="n">output_url</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">])</span>
+
+            <span class="c1"># Add the &quot;data&quot; condition</span>
+            <span class="k">if</span> <span class="n">input_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">output_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">n_data</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_size</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span>
+                    <span class="nb">input</span><span class="o">=</span><span class="n">input_data</span><span class="p">[:</span><span class="n">n_data</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">output_data</span><span class="p">[:</span><span class="n">n_data</span><span class="p">]</span>
+                <span class="p">)</span></div>
 
 </pre></div>
 

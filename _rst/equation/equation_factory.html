@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Equation Factory &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>Equation Factory &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -40,12 +40,13 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_rst/equation/equation_factory';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -53,8 +54,8 @@
     <link rel="prev" title="System Equation" href="system_equation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -118,8 +119,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -450,6 +451,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/low_rank_neural_operator.html">LowRankNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/pirate_network.html">PirateNet</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/residual.html">Residual Block</a></li>
@@ -462,6 +464,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/block/convolution_interface.html">Continuous Convolution Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/convolution.html">Continuous Convolution Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/orthogonal.html">Orthogonal Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/pirate_network_block.html">PirateNet Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
@@ -537,7 +540,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/linear_weight_update_callback.html">Weighting callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/normalizer_data_callback.html">Normalizer callback</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../loss/loss_interface.html">LossInterface</a></li>
@@ -546,6 +549,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../loss/weighting_interface.html">WeightingInterface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../loss/scalar_weighting.html">ScalarWeighting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/self_adaptive_weighting.html">SelfAdaptiveWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loss/linear_weighting.html">LinearWeighting</a></li>
 </ul>
 </div>
 </nav></div>
@@ -674,10 +679,36 @@ all the input variables are considered. Default is <code class="docutils literal
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="pina.equation.equation_factory.FixedLaplacian">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FixedLaplacian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/equation/equation_factory.html#FixedLaplacian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.equation.equation_factory.FixedLaplacian" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="equation.html#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equation</span></code></a></p>
+<p>Equation to enforce a fixed laplacian for a specific condition.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.equation.equation_factory.FixedLaplacian" title="pina.equation.equation_factory.FixedLaplacian"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedLaplacian</span></code></a> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The fixed value to be enforced to the laplacian.</p></li>
+<li><p><strong>components</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The name of the output variables for which
+the fixed laplace condition is applied. It should be a subset of the
+output labels. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all output variables are considered.
+Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The name of the input variables on which the
+laplacian is computed. It should be a subset of the input labels.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all the input variables are considered.
+Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="pina.equation.equation_factory.Laplace">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Laplace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/equation/equation_factory.html#Laplace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.equation.equation_factory.Laplace" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="equation.html#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equation</span></code></a></p>
-<p>Equation to enforce a null laplacian for a specific condition.</p>
+<dd><p>Bases: <a class="reference internal" href="#pina.equation.equation_factory.FixedLaplacian" title="pina.equation.equation_factory.FixedLaplacian"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedLaplacian</span></code></a></p>
+<p>Equation to enforce a null laplacian for a specific condition.
+The equation is defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[\delta u = 0\]</div>
 <p>Initialization of the <a class="reference internal" href="#pina.equation.equation_factory.Laplace" title="pina.equation.equation_factory.Laplace"><code class="xref py py-class docutils literal notranslate"><span class="pre">Laplace</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -691,6 +722,107 @@ laplacian is computed. It should be a subset of the input labels.
 If <code class="docutils literal notranslate"><span class="pre">None</span></code>, all the input variables are considered.
 Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.equation.equation_factory.Advection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Advection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/equation/equation_factory.html#Advection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.equation.equation_factory.Advection" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="equation.html#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equation</span></code></a></p>
+<p>Implementation of the N-dimensional advection equation with constant
+velocity parameter. The equation is defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial u}{\partial t} + c \cdot \nabla u = 0\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(c\)</span> is the advection velocity parameter.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.equation.equation_factory.Advection" title="pina.equation.equation_factory.Advection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Advection</span></code></a> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>] </em><em>| </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>]</em>) – The advection velocity. If a scalar is provided, the same
+velocity is applied to all spatial dimensions. If a list is
+provided, it must contain one value per spatial dimension.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">c</span></code> is an empty list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.equation.equation_factory.AllenCahn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AllenCahn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/equation/equation_factory.html#AllenCahn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.equation.equation_factory.AllenCahn" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="equation.html#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equation</span></code></a></p>
+<p>Implementation of the N-dimensional Allen-Cahn equation, defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial u}{\partial t} - \alpha \Delta u + \beta(u^3 - u) = 0\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are parameters of the equation.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.equation.equation_factory.AllenCahn" title="pina.equation.equation_factory.AllenCahn"><code class="xref py py-class docutils literal notranslate"><span class="pre">AllenCahn</span></code></a> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The diffusion coefficient.</p></li>
+<li><p><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The reaction coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.equation.equation_factory.DiffusionReaction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DiffusionReaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcing_term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/equation/equation_factory.html#DiffusionReaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.equation.equation_factory.DiffusionReaction" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="equation.html#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equation</span></code></a></p>
+<p>Implementation of the N-dimensional Diffusion-Reaction equation,
+defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial u}{\partial t} - \alpha \Delta u - f = 0\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(\alpha\)</span> is a parameter of the equation, while <span class="math notranslate nohighlight">\(f\)</span> is the
+reaction term.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.equation.equation_factory.DiffusionReaction" title="pina.equation.equation_factory.DiffusionReaction"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffusionReaction</span></code></a> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The diffusion coefficient.</p></li>
+<li><p><strong>forcing_term</strong> (<em>Callable</em>) – The forcing field function, taking as
+input the points on which evaluation is required.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.equation.equation_factory.Helmholtz">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Helmholtz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcing_term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/equation/equation_factory.html#Helmholtz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.equation.equation_factory.Helmholtz" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="equation.html#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equation</span></code></a></p>
+<p>Implementation of the Helmholtz equation, defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[\Delta u + k u - f = 0\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(k\)</span> is a parameter of the equation, while <span class="math notranslate nohighlight">\(f\)</span> is the
+forcing term.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.equation.equation_factory.Helmholtz" title="pina.equation.equation_factory.Helmholtz"><code class="xref py py-class docutils literal notranslate"><span class="pre">Helmholtz</span></code></a> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The parameter of the equation.</p></li>
+<li><p><strong>forcing_term</strong> (<em>Callable</em>) – The forcing field function, taking as
+input the points on which evaluation is required.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pina.equation.equation_factory.Poisson">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Poisson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forcing_term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/equation/equation_factory.html#Poisson"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.equation.equation_factory.Poisson" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="equation.html#pina.equation.equation.Equation" title="pina.equation.equation.Equation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equation</span></code></a></p>
+<p>Implementation of the Poisson equation, defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[\Delta u - f = 0\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(f\)</span> is the forcing term.</p>
+<p>Initialization of the <a class="reference internal" href="#pina.equation.equation_factory.Poisson" title="pina.equation.equation_factory.Poisson"><code class="xref py py-class docutils literal notranslate"><span class="pre">Poisson</span></code></a> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>forcing_term</strong> (<em>Callable</em>) – The forcing field function, taking as
+input the points on which evaluation is required.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -723,7 +855,13 @@ Default is <code class="docutils literal notranslate"><span class="pre">None</sp
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.FixedValue"><code class="docutils literal notranslate"><span class="pre">FixedValue</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.FixedGradient"><code class="docutils literal notranslate"><span class="pre">FixedGradient</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.FixedFlux"><code class="docutils literal notranslate"><span class="pre">FixedFlux</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.FixedLaplacian"><code class="docutils literal notranslate"><span class="pre">FixedLaplacian</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.Laplace"><code class="docutils literal notranslate"><span class="pre">Laplace</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.Advection"><code class="docutils literal notranslate"><span class="pre">Advection</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.AllenCahn"><code class="docutils literal notranslate"><span class="pre">AllenCahn</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.DiffusionReaction"><code class="docutils literal notranslate"><span class="pre">DiffusionReaction</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.Helmholtz"><code class="docutils literal notranslate"><span class="pre">Helmholtz</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.equation.equation_factory.Poisson"><code class="docutils literal notranslate"><span class="pre">Poisson</span></code></a></li>
 </ul>
   </nav></div>
 

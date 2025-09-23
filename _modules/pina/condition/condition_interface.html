@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.condition.condition_interface &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>pina.condition.condition_interface &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -452,24 +452,25 @@
 <a class="viewcode-back" href="../../../_rst/condition/condition_interface.html#pina.condition.condition_interface.ConditionInterface">[docs]</a>
 <span class="k">class</span> <span class="nc">ConditionInterface</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Abstract class which defines a common interface for all the conditions.</span>
-<span class="sd">    It defined a common interface for all the conditions.</span>
+<span class="sd">    Abstract base class for PINA conditions. All specific conditions must</span>
+<span class="sd">    inherit from this interface.</span>
 
+<span class="sd">    Refer to :class:`pina.condition.condition.Condition` for a thorough</span>
+<span class="sd">    description of all available conditions and how to instantiate them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the ConditionInterface object.</span>
+<span class="sd">        Initialization of the :class:`ConditionInterface` class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_problem</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the problem to which the condition is associated.</span>
+<span class="sd">        Return the problem associated with this condition.</span>
 
-<span class="sd">        :return: Problem to which the condition is associated.</span>
+<span class="sd">        :return: Problem associated with this condition.</span>
 <span class="sd">        :rtype: ~pina.problem.abstract_problem.AbstractProblem</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_problem</span>
@@ -477,31 +478,32 @@
     <span class="nd">@problem</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">problem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the problem to which the condition is associated.</span>
+<span class="sd">        Set the problem associated with this condition.</span>
 
-<span class="sd">        :param pina.problem.abstract_problem.AbstractProblem value: Problem to</span>
-<span class="sd">            which the condition is associated</span>
+<span class="sd">        :param pina.problem.abstract_problem.AbstractProblem value: The problem</span>
+<span class="sd">            to associate with this condition</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_problem</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_check_graph_list_consistency</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check the consistency of the list of Data/Graph objects. It performs</span>
-<span class="sd">        the following checks:</span>
+<span class="sd">        Check the consistency of the list of Data | Graph objects.</span>
+<span class="sd">        The following checks are performed:</span>
 
-<span class="sd">        1. All elements in the list must be of the same type (either Data or</span>
-<span class="sd">        Graph).</span>
-<span class="sd">        2. All elements in the list must have the same keys.</span>
-<span class="sd">        3. The type of each tensor must be consistent across all elements in</span>
-<span class="sd">        the list.</span>
-<span class="sd">        4. If the tensor is a LabelTensor, the labels must be consistent across</span>
-<span class="sd">        all elements in the list.</span>
+<span class="sd">        - All elements in the list must be of the same type (either</span>
+<span class="sd">          :class:`~torch_geometric.data.Data` or :class:`~pina.graph.Graph`).</span>
 
-<span class="sd">        :param data_list: List of Data/Graph objects to check</span>
+<span class="sd">        - All elements in the list must have the same keys.</span>
+
+<span class="sd">        - The data type of each tensor must be consistent across all elements.</span>
+
+<span class="sd">        - If a tensor is a :class:`~pina.label_tensor.LabelTensor`, its labels</span>
+<span class="sd">          must also be consistent across all elements.</span>
+
+<span class="sd">        :param data_list: The list of Data | Graph objects to check.</span>
 <span class="sd">        :type data_list: list[Data] | list[Graph] | tuple[Data] | tuple[Graph]</span>
-
-<span class="sd">        :raises ValueError:  If the input types are invalid.</span>
+<span class="sd">        :raises ValueError: If the input types are invalid.</span>
 <span class="sd">        :raises ValueError: If all elements in the list do not have the same</span>
 <span class="sd">            keys.</span>
 <span class="sd">        :raises ValueError: If the type of each tensor is not consistent across</span>
@@ -509,51 +511,45 @@
 <span class="sd">        :raises ValueError: If the labels of the LabelTensors are not consistent</span>
 <span class="sd">            across all elements in the list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># If the data is a Graph or Data object, return (do not need to check</span>
-        <span class="c1"># anything)</span>
+        <span class="c1"># If the data is a Graph or Data object, perform no checks</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="p">(</span><span class="n">Graph</span><span class="p">,</span> <span class="n">Data</span><span class="p">)):</span>
             <span class="k">return</span>
 
-        <span class="c1"># check all elements in the list are of the same type</span>
+        <span class="c1"># Check all elements in the list are of the same type</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">Graph</span><span class="p">,</span> <span class="n">Data</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Invalid input types. &quot;</span>
-                <span class="s2">&quot;Please provide either Data or Graph objects.&quot;</span>
+                <span class="s2">&quot;Invalid input. Please, provide either Data or Graph objects.&quot;</span>
             <span class="p">)</span>
+
+        <span class="c1"># Store the keys, data types and labels of the first element</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c1"># Store the keys of the first element in the list</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-
-        <span class="c1"># Store the type of each tensor inside first element Data/Graph object</span>
         <span class="n">data_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">tensor</span><span class="o">.</span><span class="vm">__class__</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-
-        <span class="c1"># Store the labels of each LabelTensor inside first element Data/Graph</span>
-        <span class="c1"># object</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">name</span><span class="p">:</span> <span class="n">tensor</span><span class="o">.</span><span class="n">labels</span>
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">)</span>
         <span class="p">}</span>
 
-        <span class="c1"># Iterate over the list of Data/Graph objects</span>
+        <span class="c1"># Iterate over the list of Data | Graph objects</span>
         <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="c1"># Check if the keys of the current element are the same as the first</span>
-            <span class="c1"># element</span>
+
+            <span class="c1"># Check that all elements in the list have the same keys</span>
             <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">!=</span> <span class="n">keys</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;All elements in the list must have the same keys.&quot;</span>
                 <span class="p">)</span>
+
+            <span class="c1"># Iterate over the tensors in the current element</span>
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="c1"># Check if the type of each tensor inside the current element</span>
-                <span class="c1"># is the same as the first element</span>
+                <span class="c1"># Check that the type of each tensor is consistent</span>
                 <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">data_types</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Data </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a </span><span class="si">{</span><span class="n">data_types</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2">, got &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tensor</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
-                <span class="c1"># If the tensor is a LabelTensor, check if the labels are the</span>
-                <span class="c1"># same as the first element</span>
+
+                <span class="c1"># Check that the labels of each LabelTensor are consistent</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">labels</span> <span class="o">!=</span> <span class="n">labels</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -561,6 +557,13 @@
                         <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get an attribute from the object.</span>
+
+<span class="sd">        :param str name: The name of the attribute to get.</span>
+<span class="sd">        :return: The requested attribute.</span>
+<span class="sd">        :rtype: Any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">to_return</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">to_return</span><span class="p">,</span> <span class="p">(</span><span class="n">Graph</span><span class="p">,</span> <span class="n">Data</span><span class="p">)):</span>
             <span class="n">to_return</span> <span class="o">=</span> <span class="p">[</span><span class="n">to_return</span><span class="p">]</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.equation.equation_factory &#8212; pina-mathlab 0.2.2.post2508 documentation</title>
+    <title>pina.equation.equation_factory &#8212; pina-mathlab 0.2.3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=cbe43ea8"></script>
+    <script src="../../../_static/documentation_options.js?v=a47416a6"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.2.post2508" />
-    <meta name="docbuild:last-update" content="Aug 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.3" />
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.2.post2508 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3 documentation - Home"/>
   
   
 </a></div>
@@ -442,13 +442,19 @@
   <h1>Source code for pina.equation.equation_factory</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module for defining various general equations.&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">.equation</span> <span class="kn">import</span> <span class="n">Equation</span>
 <span class="kn">from</span> <span class="nn">..operator</span> <span class="kn">import</span> <span class="n">grad</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">laplacian</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+
+<span class="c1"># Pylint warning disabled because the classes defined in this module</span>
+<span class="c1"># inherit from Equation and are meant to be simple containers for equations.</span>
 
 
 <div class="viewcode-block" id="FixedValue">
 <a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.FixedValue">[docs]</a>
-<span class="k">class</span> <span class="nc">FixedValue</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">FixedValue</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Equation to enforce a fixed value. Can be used to enforce Dirichlet Boundary</span>
 <span class="sd">    conditions.</span>
@@ -465,7 +471,7 @@
 <span class="sd">            Default is ``None``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Definition of the equation to enforce a fixed value.</span>
 
@@ -486,7 +492,7 @@
 
 <div class="viewcode-block" id="FixedGradient">
 <a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.FixedGradient">[docs]</a>
-<span class="k">class</span> <span class="nc">FixedGradient</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">FixedGradient</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Equation to enforce a fixed gradient for a specific condition.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -525,7 +531,7 @@
 
 <div class="viewcode-block" id="FixedFlux">
 <a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.FixedFlux">[docs]</a>
-<span class="k">class</span> <span class="nc">FixedFlux</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">FixedFlux</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Equation to enforce a fixed flux, or divergence, for a specific condition.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -561,11 +567,58 @@
 
 
 
+<div class="viewcode-block" id="FixedLaplacian">
+<a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.FixedLaplacian">[docs]</a>
+<span class="k">class</span> <span class="nc">FixedLaplacian</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Equation to enforce a fixed laplacian for a specific condition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`FixedLaplacian` class.</span>
+
+<span class="sd">        :param float value: The fixed value to be enforced to the laplacian.</span>
+<span class="sd">        :param list[str] components: The name of the output variables for which</span>
+<span class="sd">            the fixed laplace condition is applied. It should be a subset of the</span>
+<span class="sd">            output labels. If ``None``, all output variables are considered.</span>
+<span class="sd">            Default is ``None``.</span>
+<span class="sd">        :param list[str] d: The name of the input variables on which the</span>
+<span class="sd">            laplacian is computed. It should be a subset of the input labels.</span>
+<span class="sd">            If ``None``, all the input variables are considered.</span>
+<span class="sd">            Default is ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Definition of the equation to enforce a fixed laplacian.</span>
+
+<span class="sd">            :param LabelTensor input_: Input points where the equation is</span>
+<span class="sd">                evaluated.</span>
+<span class="sd">            :param LabelTensor output_: Output tensor, eventually produced by a</span>
+<span class="sd">                :class:`torch.nn.Module` instance.</span>
+<span class="sd">            :return: The computed residual of the equation.</span>
+<span class="sd">            :rtype: LabelTensor</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">laplacian</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">)</span> <span class="o">-</span> <span class="n">value</span>
+            <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="Laplace">
 <a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.Laplace">[docs]</a>
-<span class="k">class</span> <span class="nc">Laplace</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">Laplace</span><span class="p">(</span><span class="n">FixedLaplacian</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Equation to enforce a null laplacian for a specific condition.</span>
+<span class="sd">    The equation is defined as follows:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \delta u = 0</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -581,19 +634,293 @@
 <span class="sd">            If ``None``, all the input variables are considered.</span>
 <span class="sd">            Default is ``None``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Advection">
+<a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.Advection">[docs]</a>
+<span class="k">class</span> <span class="nc">Advection</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of the N-dimensional advection equation with constant</span>
+<span class="sd">    velocity parameter. The equation is defined as follows:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \frac{\partial u}{\partial t} + c \cdot \nabla u = 0</span>
+
+<span class="sd">    Here, :math:`c` is the advection velocity parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`Advection` class.</span>
+
+<span class="sd">        :param c: The advection velocity. If a scalar is provided, the same</span>
+<span class="sd">            velocity is applied to all spatial dimensions. If a list is</span>
+<span class="sd">            provided, it must contain one value per spatial dimension.</span>
+<span class="sd">        :type c: float | int | List[float] | List[int]</span>
+<span class="sd">        :raises ValueError: If ``c`` is an empty list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="nb">all</span><span class="p">(</span><span class="n">check_consistency</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">c</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;c&#39; cannot be an empty list.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span>
+
+        <span class="c1"># Store advection velocity parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Definition of the equation to enforce a null laplacian.</span>
+<span class="sd">            Implementation of the advection equation.</span>
 
-<span class="sd">            :param LabelTensor input_: Input points where the equation is</span>
-<span class="sd">                evaluated.</span>
-<span class="sd">            :param LabelTensor output_: Output tensor, eventually produced by a</span>
-<span class="sd">                :class:`torch.nn.Module` instance.</span>
-<span class="sd">            :return: The computed residual of the equation.</span>
+<span class="sd">            :param LabelTensor input_: The input data of the problem.</span>
+<span class="sd">            :param LabelTensor output_: The output data of the problem.</span>
+<span class="sd">            :return: The residual of the advection equation.</span>
+<span class="sd">            :rtype: LabelTensor</span>
+<span class="sd">            :raises ValueError: If the ``input_`` labels do not contain the time</span>
+<span class="sd">                variable &#39;t&#39;.</span>
+<span class="sd">            :raises ValueError: If ``c`` is a list and its length is not</span>
+<span class="sd">                consistent with the number of spatial dimensions.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Store labels</span>
+            <span class="n">input_lbl</span> <span class="o">=</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span>
+            <span class="n">spatial_d</span> <span class="o">=</span> <span class="p">[</span><span class="n">di</span> <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="n">input_lbl</span> <span class="k">if</span> <span class="n">di</span> <span class="o">!=</span> <span class="s2">&quot;t&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Ensure time is passed as input</span>
+            <span class="k">if</span> <span class="s2">&quot;t&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_lbl</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The ``input_`` labels must contain the time &#39;t&#39; variable.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Ensure consistency of c length</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_lbl</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;If &#39;c&#39; is passed as a list, its length must be equal to &quot;</span>
+                    <span class="s2">&quot;the number of spatial dimensions.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Repeat c to ensure consistent shape for advection</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">output_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_lbl</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_lbl</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Add a dimension to c for the following operations</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Compute the time derivative and the spatial gradient</span>
+            <span class="n">time_der</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="s2">&quot;t&quot;</span><span class="p">)</span>
+            <span class="n">grads</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="o">=</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="o">=</span><span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">spatial_d</span><span class="p">)</span>
+
+            <span class="c1"># Reshape and transpose</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">grads</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">output_</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">spatial_d</span><span class="p">))</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="c1"># Compute advection term</span>
+            <span class="n">adv</span> <span class="o">=</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">tmp</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">time_der</span> <span class="o">+</span> <span class="n">adv</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AllenCahn">
+<a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.AllenCahn">[docs]</a>
+<span class="k">class</span> <span class="nc">AllenCahn</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of the N-dimensional Allen-Cahn equation, defined as follows:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \frac{\partial u}{\partial t} - \alpha \Delta u + \beta(u^3 - u) = 0</span>
+
+<span class="sd">    Here, :math:`\alpha` and :math:`\beta` are parameters of the equation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`AllenCahn` class.</span>
+
+<span class="sd">        :param alpha: The diffusion coefficient.</span>
+<span class="sd">        :type alpha: float | int</span>
+<span class="sd">        :param beta: The reaction coefficient.</span>
+<span class="sd">        :type beta: float | int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+
+        <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Implementation of the Allen-Cahn equation.</span>
+
+<span class="sd">            :param LabelTensor input_: The input data of the problem.</span>
+<span class="sd">            :param LabelTensor output_: The output data of the problem.</span>
+<span class="sd">            :return: The residual of the Allen-Cahn equation.</span>
+<span class="sd">            :rtype: LabelTensor</span>
+<span class="sd">            :raises ValueError: If the ``input_`` labels do not contain the time</span>
+<span class="sd">                variable &#39;t&#39;.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Ensure time is passed as input</span>
+            <span class="k">if</span> <span class="s2">&quot;t&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The ``input_`` labels must contain the time &#39;t&#39; variable.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Compute the time derivative and the spatial laplacian</span>
+            <span class="n">u_t</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">])</span>
+            <span class="n">u_xx</span> <span class="o">=</span> <span class="n">laplacian</span><span class="p">(</span>
+                <span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="n">di</span> <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span> <span class="k">if</span> <span class="n">di</span> <span class="o">!=</span> <span class="s2">&quot;t&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">u_t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">u_xx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">output_</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">output_</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DiffusionReaction">
+<a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.DiffusionReaction">[docs]</a>
+<span class="k">class</span> <span class="nc">DiffusionReaction</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of the N-dimensional Diffusion-Reaction equation,</span>
+<span class="sd">    defined as follows:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \frac{\partial u}{\partial t} - \alpha \Delta u - f = 0</span>
+
+<span class="sd">    Here, :math:`\alpha` is a parameter of the equation, while :math:`f` is the</span>
+<span class="sd">    reaction term.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">forcing_term</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`DiffusionReaction` class.</span>
+
+<span class="sd">        :param alpha: The diffusion coefficient.</span>
+<span class="sd">        :type alpha: float | int</span>
+<span class="sd">        :param Callable forcing_term: The forcing field function, taking as</span>
+<span class="sd">            input the points on which evaluation is required.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">forcing_term</span><span class="p">,</span> <span class="p">(</span><span class="n">Callable</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forcing_term</span> <span class="o">=</span> <span class="n">forcing_term</span>
+
+        <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Implementation of the Diffusion-Reaction equation.</span>
+
+<span class="sd">            :param LabelTensor input_: The input data of the problem.</span>
+<span class="sd">            :param LabelTensor output_: The output data of the problem.</span>
+<span class="sd">            :return: The residual of the Diffusion-Reaction equation.</span>
+<span class="sd">            :rtype: LabelTensor</span>
+<span class="sd">            :raises ValueError: If the ``input_`` labels do not contain the time</span>
+<span class="sd">                variable &#39;t&#39;.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Ensure time is passed as input</span>
+            <span class="k">if</span> <span class="s2">&quot;t&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The ``input_`` labels must contain the time &#39;t&#39; variable.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Compute the time derivative and the spatial laplacian</span>
+            <span class="n">u_t</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">])</span>
+            <span class="n">u_xx</span> <span class="o">=</span> <span class="n">laplacian</span><span class="p">(</span>
+                <span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="n">di</span> <span class="k">for</span> <span class="n">di</span> <span class="ow">in</span> <span class="n">input_</span><span class="o">.</span><span class="n">labels</span> <span class="k">if</span> <span class="n">di</span> <span class="o">!=</span> <span class="s2">&quot;t&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">u_t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">u_xx</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">forcing_term</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Helmholtz">
+<a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.Helmholtz">[docs]</a>
+<span class="k">class</span> <span class="nc">Helmholtz</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of the Helmholtz equation, defined as follows:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">            \Delta u + k u - f = 0</span>
+
+<span class="sd">    Here, :math:`k` is a parameter of the equation, while :math:`f` is the</span>
+<span class="sd">    forcing term.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">forcing_term</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`Helmholtz` class.</span>
+
+<span class="sd">        :param k: The parameter of the equation.</span>
+<span class="sd">        :type k: float | int</span>
+<span class="sd">        :param Callable forcing_term: The forcing field function, taking as</span>
+<span class="sd">            input the points on which evaluation is required.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">forcing_term</span><span class="p">,</span> <span class="p">(</span><span class="n">Callable</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forcing_term</span> <span class="o">=</span> <span class="n">forcing_term</span>
+
+        <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Implementation of the Helmholtz equation.</span>
+
+<span class="sd">            :param LabelTensor input_: The input data of the problem.</span>
+<span class="sd">            :param LabelTensor output_: The output data of the problem.</span>
+<span class="sd">            :return: The residual of the Helmholtz equation.</span>
 <span class="sd">            :rtype: LabelTensor</span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="k">return</span> <span class="n">laplacian</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">lap</span> <span class="o">=</span> <span class="n">laplacian</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">lap</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">output_</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">forcing_term</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Poisson">
+<a class="viewcode-back" href="../../../_rst/equation/equation_factory.html#pina.equation.equation_factory.Poisson">[docs]</a>
+<span class="k">class</span> <span class="nc">Poisson</span><span class="p">(</span><span class="n">Equation</span><span class="p">):</span>  <span class="c1"># pylint: disable=R0903</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of the Poisson equation, defined as follows:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">            \Delta u - f = 0</span>
+
+<span class="sd">    Here, :math:`f` is the forcing term.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forcing_term</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`Poisson` class.</span>
+
+<span class="sd">        :param Callable forcing_term: The forcing field function, taking as</span>
+<span class="sd">            input the points on which evaluation is required.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">forcing_term</span><span class="p">,</span> <span class="p">(</span><span class="n">Callable</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forcing_term</span> <span class="o">=</span> <span class="n">forcing_term</span>
+
+        <span class="k">def</span> <span class="nf">equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Implementation of the Poisson equation.</span>
+
+<span class="sd">            :param LabelTensor input_: The input data of the problem.</span>
+<span class="sd">            :param LabelTensor output_: The output data of the problem.</span>
+<span class="sd">            :return: The residual of the Poisson equation.</span>
+<span class="sd">            :rtype: LabelTensor</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">lap</span> <span class="o">=</span> <span class="n">laplacian</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">lap</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">forcing_term</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span></div>
 
