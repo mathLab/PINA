@@ -106,6 +106,7 @@ Models
     GraphNeuralKernel <model/graph_neural_operator_integral_kernel.rst>
     PirateNet <model/pirate_network.rst>
     EquivariantGraphNeuralOperator <model/equivariant_graph_neural_operator.rst>
+    SINDy <model/sindy.rst>
 
 Blocks
 -------------
