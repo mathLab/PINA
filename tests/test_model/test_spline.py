@@ -1,6 +1,5 @@
 import torch
 import pytest
-import numpy as np
 from scipy.interpolate import BSpline
 from pina.model import Spline
 from pina import LabelTensor
@@ -12,7 +11,10 @@ n_ctrl_pts = torch.randint(order, order + 5, (1,)).item()
 n_knots = order + n_ctrl_pts
 
 # Input tensor
-pts = LabelTensor(torch.linspace(0, 1, 100).reshape(-1, 1), ["x"])
+points = [
+    LabelTensor(torch.rand(100, 1), ["x"]),
+    LabelTensor(torch.rand(2, 100, 1), ["x"]),
+]
 
 
 # Function to compare with scipy implementation
@@ -26,15 +28,15 @@ def check_scipy_spline(model, x, output_):
     )
 
     # Compare outputs
-    np.testing.assert_allclose(
-        output_.squeeze().detach().numpy(),
-        scipy_spline(x).flatten(),
+    torch.allclose(
+        output_,
+        torch.tensor(scipy_spline(x), dtype=output_.dtype),
         atol=1e-5,
         rtol=1e-5,
     )
 
 
-# Define all possible combinations of valid arguments for the Spline class
+# Define all possible combinations of valid arguments for Spline class
 valid_args = [
     {
         "order": order,
@@ -144,14 +146,15 @@ def test_constructor(args):
 
 
 @pytest.mark.parametrize("args", valid_args)
-def test_forward(args):
+@pytest.mark.parametrize("pts", points)
+def test_forward(args, pts):
 
     # Define the model
     model = Spline(**args)
 
     # Evaluate the model
     output_ = model(pts)
-    assert output_.shape == (pts.shape[0], 1)
+    assert output_.shape == pts.shape
 
     # Compare with scipy implementation only for interpolant knots (mode: auto)
     if isinstance(args["knots"], dict) and args["knots"]["mode"] == "auto":
@@ -159,7 +162,8 @@ def test_forward(args):
 
 
 @pytest.mark.parametrize("args", valid_args)
-def test_backward(args):
+@pytest.mark.parametrize("pts", points)
+def test_backward(args, pts):
 
     # Define the model
     model = Spline(**args)
