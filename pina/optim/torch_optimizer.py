@@ -3,15 +3,15 @@
 import torch
 
 from ..utils import check_consistency
-from .optimizer_interface import Optimizer
+from .core.optimizer_connector import OptimizerConnector
 
 
-class TorchOptimizer(Optimizer):
+class TorchOptimizer(OptimizerConnector):
     """
     A wrapper class for using PyTorch optimizers.
     """
 
-    def __init__(self, optimizer_class, **kwargs):
+    def __init__(self, optimizer_class, **optimizer_class_kwargs):
         """
         Initialization of the :class:`TorchOptimizer` class.
 
@@ -21,28 +21,7 @@ class TorchOptimizer(Optimizer):
             see more
             `here <https://pytorch.org/docs/stable/optim.html#algorithms>`_.
         """
+        # external checks
         check_consistency(optimizer_class, torch.optim.Optimizer, subclass=True)
-
-        self.optimizer_class = optimizer_class
-        self.kwargs = kwargs
-        self._optimizer_instance = None
-
-    def hook(self, parameters):
-        """
-        Initialize the optimizer instance with the given parameters.
-
-        :param dict parameters: The parameters of the model to be optimized.
-        """
-        self._optimizer_instance = self.optimizer_class(
-            parameters, **self.kwargs
-        )
-
-    @property
-    def instance(self):
-        """
-        Get the optimizer instance.
-
-        :return: The optimizer instance.
-        :rtype: torch.optim.Optimizer
-        """
-        return self._optimizer_instance
+        check_consistency(optimizer_class_kwargs, dict)
+        super().__init__(optimizer_class, **optimizer_class_kwargs)

@@ -4,7 +4,6 @@ import torch
 
 from .pinn_interface import PINNInterface
 from ..solver import SingleSolverInterface
-from ...problem import InverseProblem
 
 
 class PINN(PINNInterface, SingleSolverInterface):
@@ -109,25 +108,3 @@ class PINN(PINNInterface, SingleSolverInterface):
         """
         residuals = self.compute_residual(samples, equation)
         return self._loss_fn(residuals, torch.zeros_like(residuals))
-
-    def configure_optimizers(self):
-        """
-        Optimizer configuration for the PINN solver.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple[list[Optimizer], list[Scheduler]]
-        """
-        # If the problem is an InverseProblem, add the unknown parameters
-        # to the parameters to be optimized.
-        self.optimizer.hook(self.model.parameters())
-        if isinstance(self.problem, InverseProblem):
-            self.optimizer.instance.add_param_group(
-                {
-                    "params": [
-                        self._params[var]
-                        for var in self.problem.unknown_variables
-                    ]
-                }
-            )
-        self.scheduler.hook(self.optimizer)
-        return ([self.optimizer.instance], [self.scheduler.instance])

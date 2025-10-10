@@ -183,22 +183,22 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :rtype: torch.Tensor
         """
         # Weights optimization
-        self.optimizer_weights.instance.zero_grad()
+        self.optimizer_weights.zero_grad()
         loss = self._optimization_cycle(
             batch=batch, batch_idx=batch_idx, **kwargs
         )
         self.manual_backward(-loss)
-        self.optimizer_weights.instance.step()
-        self.scheduler_weights.instance.step()
+        self.optimizer_weights.step()
+        self.scheduler_weights.step()
 
         # Model optimization
-        self.optimizer_model.instance.zero_grad()
+        self.optimizer_model.zero_grad()
         loss = self._optimization_cycle(
             batch=batch, batch_idx=batch_idx, **kwargs
         )
         self.manual_backward(loss)
-        self.optimizer_model.instance.step()
-        self.scheduler_model.instance.step()
+        self.optimizer_model.step()
+        self.scheduler_model.step()
 
         # Log the loss
         self.store_log("train_loss", loss, self.get_batch_size(batch))
@@ -297,13 +297,10 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :return: The optimizers and the schedulers
         :rtype: tuple[list[Optimizer], list[Scheduler]]
         """
-        # Hook the optimizers to the models
-        self.optimizer_model.hook(self.model.parameters())
-        self.optimizer_weights.hook(self.weights.parameters())
-
+        super().configure_optimizers()
         # Add unknown parameters to optimization list in case of InverseProblem
         if isinstance(self.problem, InverseProblem):
-            self.optimizer_model.instance.add_param_group(
+            self.optimizer_model.add_param_group(
                 {
                     "params": [
                         self._params[var]
@@ -311,15 +308,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
                     ]
                 }
             )
-
-        # Hook the schedulers to the optimizers
-        self.scheduler_model.hook(self.optimizer_model)
-        self.scheduler_weights.hook(self.optimizer_weights)
-
-        return (
-            [self.optimizer_model.instance, self.optimizer_weights.instance],
-            [self.scheduler_model.instance, self.scheduler_weights.instance],
-        )
+        return self.optimizers, self.schedulers
 
     def _optimization_cycle(self, batch, batch_idx, **kwargs):
         """

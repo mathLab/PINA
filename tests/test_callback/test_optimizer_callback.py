@@ -57,7 +57,7 @@ def test_switch_optimizer_routine(new_opt, epoch_switch):
     trainer.train()
 
     # Check that the trainer strategy optimizers have been updated
-    assert solver.optimizer.instance.__class__ == new_opt.instance.__class__
+    assert solver.optimizer.__class__ == new_opt.instance.__class__
     assert (
         trainer.strategy.optimizers[0].__class__ == new_opt.instance.__class__
     )
