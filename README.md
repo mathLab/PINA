@@ -88,7 +88,7 @@ Solving a differential problem in **PINA** follows the *four steps pipeline*:
 Do you want to learn more about it? Look at our [Tutorials](https://github.com/mathLab/PINA/tree/master/tutorials#pina-tutorials).
 
 ### Solve Data Driven Problems
-Data driven modelling aims to learn a function that given some input data gives an output (e.g. regression, classification, ...). In PINA you can easily do this by:
+Data-driven modelling aims to learn a function that given some input data gives an output (e.g. regression, classification, ...). In PINA you can easily do this by:
 ```python
 import torch
 from pina import Trainer
