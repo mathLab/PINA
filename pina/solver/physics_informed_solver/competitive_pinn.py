@@ -177,39 +177,6 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         """
         return self._loss_fn(self.forward(input), target)
 
-    def configure_optimizers(self):
-        """
-        Optimizer configuration.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple[list[Optimizer], list[Scheduler]]
-        """
-        # If the problem is an InverseProblem, add the unknown parameters
-        # to the parameters to be optimized
-        self.optimizer_model.hook(self.neural_net.parameters())
-        self.optimizer_discriminator.hook(self.discriminator.parameters())
-        if isinstance(self.problem, InverseProblem):
-            self.optimizer_model.instance.add_param_group(
-                {
-                    "params": [
-                        self._params[var]
-                        for var in self.problem.unknown_variables
-                    ]
-                }
-            )
-        self.scheduler_model.hook(self.optimizer_model)
-        self.scheduler_discriminator.hook(self.optimizer_discriminator)
-        return (
-            [
-                self.optimizer_model.instance,
-                self.optimizer_discriminator.instance,
-            ],
-            [
-                self.scheduler_model.instance,
-                self.scheduler_discriminator.instance,
-            ],
-        )
-
     @property
     def neural_net(self):
         """

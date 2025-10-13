@@ -290,37 +290,6 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         """
         return self.model(x)
 
-    def configure_optimizers(self):
-        """
-        Optimizer configuration.
-
-        :return: The optimizers and the schedulers
-        :rtype: tuple[list[Optimizer], list[Scheduler]]
-        """
-        # Hook the optimizers to the models
-        self.optimizer_model.hook(self.model.parameters())
-        self.optimizer_weights.hook(self.weights.parameters())
-
-        # Add unknown parameters to optimization list in case of InverseProblem
-        if isinstance(self.problem, InverseProblem):
-            self.optimizer_model.instance.add_param_group(
-                {
-                    "params": [
-                        self._params[var]
-                        for var in self.problem.unknown_variables
-                    ]
-                }
-            )
-
-        # Hook the schedulers to the optimizers
-        self.scheduler_model.hook(self.optimizer_model)
-        self.scheduler_weights.hook(self.optimizer_weights)
-
-        return (
-            [self.optimizer_model.instance, self.optimizer_weights.instance],
-            [self.scheduler_model.instance, self.scheduler_weights.instance],
-        )
-
     def _optimization_cycle(self, batch, batch_idx, **kwargs):
         """
         Aggregate the loss for each condition in the batch.

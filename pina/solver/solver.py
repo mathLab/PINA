@@ -1,6 +1,7 @@
 """Solver module."""
 
 from abc import ABCMeta, abstractmethod
+import warnings
 import lightning
 import torch
 
@@ -9,8 +10,10 @@ from ..problem import AbstractProblem, InverseProblem
 from ..optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
 from ..loss import WeightingInterface
 from ..loss.scalar_weighting import _NoWeighting
-from ..utils import check_consistency, labelize_forward
+from ..utils import check_consistency, labelize_forward, custom_warning_format
 
+warnings.formatwarning = custom_warning_format
+warnings.filterwarnings("always", category=UserWarning)
 
 class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     """
@@ -606,7 +609,13 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         ):
             optimizer.hook(model.parameters())
             scheduler.hook(optimizer)
-
+        if isinstance(self.problem, InverseProblem):
+            warnings.warn(
+                "Multisolver does not automatically handle the optimizer "
+                "for InverseProblem. Please overload the "
+                "configure_optimizers method.",
+                UserWarning,
+            )
         return (
             [optimizer.instance for optimizer in self.optimizers],
             [scheduler.instance for scheduler in self.schedulers],
