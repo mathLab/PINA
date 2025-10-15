@@ -95,7 +95,6 @@ Models
     MultiFeedForward <model/multi_feed_forward.rst>
     ResidualFeedForward <model/residual_feed_forward.rst>
     Spline <model/spline.rst>
-    SplineSurface <model/spline_surface.rst>
     DeepONet <model/deeponet.rst>
     MIONet <model/mionet.rst>
     KernelNeuralOperator <model/kernel_neural_operator.rst>
