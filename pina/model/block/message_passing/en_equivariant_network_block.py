@@ -41,7 +41,7 @@ class EnEquivariantNetworkBlock(MessagePassing):
         DOI: `<https://doi.org/10.48550/arXiv.2102.09844>`_.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=R0913, R0917
         self,
         node_feature_dim,
         edge_feature_dim,
@@ -143,7 +143,9 @@ class EnEquivariantNetworkBlock(MessagePassing):
                 func=activation,
             )
 
-    def forward(self, x, pos, edge_index, edge_attr=None, vel=None):
+    def forward(
+        self, x, pos, edge_index, edge_attr=None, vel=None
+    ):  # pylint: disable=R0917
         """
         Forward pass of the block, triggering the message-passing routine.
 
@@ -169,7 +171,9 @@ class EnEquivariantNetworkBlock(MessagePassing):
             edge_index=edge_index, x=x, pos=pos, edge_attr=edge_attr, vel=vel
         )
 
-    def message(self, x_i, x_j, pos_i, pos_j, edge_attr):
+    def message(
+        self, x_i, x_j, pos_i, pos_j, edge_attr
+    ):  # pylint: disable=R0917
         """
         Compute the message to be passed between nodes and edges.
 
@@ -234,7 +238,9 @@ class EnEquivariantNetworkBlock(MessagePassing):
 
         return agg_message, agg_m_ij
 
-    def update(self, aggregated_inputs, x, pos, edge_index, vel):
+    def update(
+        self, aggregated_inputs, x, pos, edge_index, vel
+    ):  # pylint: disable=R0917
         """
         Update node features, positions, and optionally velocities.
 

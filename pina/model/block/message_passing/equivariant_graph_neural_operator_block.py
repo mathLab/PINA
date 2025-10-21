@@ -23,7 +23,7 @@ class EquivariantGraphNeuralOperatorBlock(torch.nn.Module):
         <https://arxiv.org/abs/2401.11037>`_
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=R0913, R0917
         self,
         node_feature_dim,
         edge_feature_dim,
@@ -101,7 +101,9 @@ class EquivariantGraphNeuralOperatorBlock(torch.nn.Module):
             flow=flow,
         )
 
-    def forward(self, x, pos, vel, edge_index, edge_attr=None):
+    def forward(  # pylint: disable=R0917
+        self, x, pos, vel, edge_index, edge_attr=None
+    ):
         """
         Forward pass of the Equivariant Graph Neural Operator block.
 
@@ -182,7 +184,11 @@ class EquivariantGraphNeuralOperatorBlock(torch.nn.Module):
         weights = torch.complex(real[..., :modes], img[..., :modes])
 
         # Convolution in Fourier space
-        fourier = torch.fft.rfftn(x, dim=[0])[:modes]
+        # torch.fft.rfftn and irfftn are callable functions, but pylint
+        # incorrectly flags them as E1102 (not callable).
+        fourier = torch.fft.rfftn(x, dim=[0])[:modes]  # pylint: disable=E1102
         out = torch.einsum(einsum_idx, fourier, weights)
 
-        return torch.fft.irfftn(out, s=x.shape[0], dim=0)
+        return torch.fft.irfftn(  # pylint: disable=E1102
+            out, s=x.shape[0], dim=0
+        )

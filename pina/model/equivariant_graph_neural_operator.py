@@ -5,7 +5,9 @@ from ..utils import check_positive_integer
 from .block.message_passing import EquivariantGraphNeuralOperatorBlock
 
 
-class EquivariantGraphNeuralOperator(torch.nn.Module):
+# Disable pylint warnings for too few public methods (since this is a simple
+# model class in a standard PyTorch style)
+class EquivariantGraphNeuralOperator(torch.nn.Module):  # pylint: disable=R0903
     """
     Equivariant Graph Neural Operator (EGNO) for modeling 3D dynamics.
 
@@ -32,7 +34,9 @@ class EquivariantGraphNeuralOperator(torch.nn.Module):
         <https://arxiv.org/abs/2401.11037>`_
     """
 
-    def __init__(
+    # Disable pylint warnings for too many arguments in init (since this is a
+    # model class with many configurable parameters)
+    def __init__(  # pylint: disable=R0913, R0917, R0914
         self,
         n_egno_layers,
         node_feature_dim,
