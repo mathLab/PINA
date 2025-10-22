@@ -1,8 +1,8 @@
 Exclusion
 ======================
-.. currentmodule:: pina.domain.exclusion_domain
+.. currentmodule:: pina.domain.exclusion
 
-.. automodule:: pina.domain.exclusion_domain
+.. automodule:: pina.domain.exclusion
 
 .. autoclass:: Exclusion
     :members:
