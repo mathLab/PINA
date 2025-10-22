@@ -1,8 +1,8 @@
 SimplexDomain
 ======================
-.. currentmodule:: pina.domain.simplex
+.. currentmodule:: pina.domain.simplex_domain
 
-.. automodule:: pina.domain.simplex
+.. automodule:: pina.domain.simplex_domain
 
 .. autoclass:: SimplexDomain
     :members:

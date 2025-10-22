@@ -1,8 +1,8 @@
 Intersection
 ======================
-.. currentmodule:: pina.domain.intersection_domain
+.. currentmodule:: pina.domain.intersection
 
-.. automodule:: pina.domain.intersection_domain
+.. automodule:: pina.domain.intersection
 
 .. autoclass:: Intersection
     :members:

@@ -1,8 +1,8 @@
 Union
 ======================
-.. currentmodule:: pina.domain.union_domain
+.. currentmodule:: pina.domain.union
 
-.. automodule:: pina.domain.union_domain
+.. automodule:: pina.domain.union
 
 .. autoclass:: Union
     :members:
