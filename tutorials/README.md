@@ -43,6 +43,7 @@ Solving the Kuramoto–Sivashinsky Equation with Averaging Neural Operator |[[.i
 Introductory Tutorial: Supervised Learning with PINA |[[.ipynb](tutorial20/tutorial.ipynb),[.py](tutorial20/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial20/tutorial.html)]|
 Chemical Properties Prediction with Graph Neural Networks |[[.ipynb](tutorial15/tutorial.ipynb),[.py](tutorial15/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial15/tutorial.html)]|
 Reduced Order Model with Graph Neural Networks for Unstructured Domains| [[.ipynb](tutorial22/tutorial.ipynb),[.py](tutorial22/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial22/tutorial.html)]|
+Data-driven System Identification with SINDy| [[.ipynb](tutorial23/tutorial.ipynb),[.py](tutorial23/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial23/tutorial.html)]|
 Unstructured Convolutional Autoencoders with Continuous Convolution |[[.ipynb](tutorial4/tutorial.ipynb),[.py](tutorial4/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial4/tutorial.html)]|
 Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics| [[.ipynb](tutorial8/tutorial.ipynb),[.py](tutorial8/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial8/tutorial.html)]|
 

@@ -1,6 +1,6 @@
 [project]
 name = "pina-mathlab"
-version = "0.2.3"
+version = "0.2.4"
 description = "Physic Informed Neural networks for Advance modeling."
 readme = "README.md"
 authors = [
@@ -19,7 +19,7 @@ dependencies = [
     "torch_geometric",
     "matplotlib",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 doc = [

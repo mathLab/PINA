@@ -95,6 +95,7 @@ Models
     MultiFeedForward <model/multi_feed_forward.rst>
     ResidualFeedForward <model/residual_feed_forward.rst>
     Spline <model/spline.rst>
+    SplineSurface <model/spline_surface.rst>
     DeepONet <model/deeponet.rst>
     MIONet <model/mionet.rst>
     KernelNeuralOperator <model/kernel_neural_operator.rst>
@@ -105,6 +106,8 @@ Models
     GraphNeuralOperator <model/graph_neural_operator.rst>
     GraphNeuralKernel <model/graph_neural_operator_integral_kernel.rst>
     PirateNet <model/pirate_network.rst>
+    EquivariantGraphNeuralOperator <model/equivariant_graph_neural_operator.rst>
+    SINDy <model/sindy.rst>
 
 Blocks
 -------------
@@ -134,6 +137,7 @@ Message Passing
     E(n) Equivariant Network Block <model/block/message_passing/en_equivariant_network_block.rst>
     Interaction Network Block <model/block/message_passing/interaction_network_block.rst>
     Radial Field Network Block <model/block/message_passing/radial_field_network_block.rst>
+    EquivariantGraphNeuralOperatorBlock <model/block/message_passing/equivariant_graph_neural_operator_block.rst>
 
 
 Reduction and Embeddings

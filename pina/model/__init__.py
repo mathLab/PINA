@@ -14,6 +14,8 @@ __all__ = [
     "Spline",
     "GraphNeuralOperator",
     "PirateNet",
+    "EquivariantGraphNeuralOperator",
+    "SINDy",
 ]
 
 from .feed_forward import FeedForward, ResidualFeedForward
@@ -24,5 +26,8 @@ from .kernel_neural_operator import KernelNeuralOperator
 from .average_neural_operator import AveragingNeuralOperator
 from .low_rank_neural_operator import LowRankNeuralOperator
 from .spline import Spline
+from .spline_surface import SplineSurface
 from .graph_neural_operator import GraphNeuralOperator
 from .pirate_network import PirateNet
+from .equivariant_graph_neural_operator import EquivariantGraphNeuralOperator
+from .sindy import SINDy
