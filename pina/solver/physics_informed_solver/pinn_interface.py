@@ -71,10 +71,8 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
         """
         # Override the compilation, compiling only for torch < 2.8, see
         # related issue at https://github.com/mathLab/PINA/issues/621
-        if torch.__version__ < "2.8":
-            self.trainer.compile = True
-        else:
-            self.trainer.compile = False
+        if torch.__version__ >= "2.8":
+            self.trainer._compile = False
             warnings.warn(
                 "Compilation is disabled for torch >= 2.8. "
                 "Forcing compilation may cause runtime errors or instability.",

@@ -3,9 +3,14 @@
 import sys
 import torch
 import lightning
-from .utils import check_consistency
+import warnings
+from .utils import check_consistency, custom_warning_format
 from .data import PinaDataModule
 from .solver import SolverInterface, PINNInterface
+
+# set the warning for compile options
+warnings.formatwarning = custom_warning_format
+warnings.filterwarnings("always", category=UserWarning)
 
 
 class Trainer(lightning.pytorch.Trainer):
@@ -49,7 +54,8 @@ class Trainer(lightning.pytorch.Trainer):
         :param float val_size: The percentage of elements to include in the
             validation dataset. Default is ``0.0``.
         :param bool compile: If ``True``, the model is compiled before training.
-            Default is ``False``. For Windows users, it is always disabled.
+            Default is ``False``. For Windows users, it is always disabled. Not
+            supported for python version greater or equal than 3.14.
         :param bool repeat: Whether to repeat the dataset data in each
             condition during training. For further details, see the
             :class:`~pina.data.data_module.PinaDataModule` class. Default is
@@ -104,8 +110,18 @@ class Trainer(lightning.pytorch.Trainer):
         super().__init__(**kwargs)
 
         # checking compilation and automatic batching
-        if compile is None or sys.platform == "win32":
+        # compile disambled for windows and py>=3.14
+        if (
+            compile is None
+            or sys.platform == "win32"
+            or sys.version_info >= (3, 14)
+        ):
             compile = False
+            warnings.warn(
+                "Compilation is disabled for python  versions >= 3.14. "
+                "Compilation is also disabled for Windows 3.2.",
+                UserWarning,
+            )
 
         repeat = repeat if repeat is not None else False
 
@@ -114,7 +130,7 @@ class Trainer(lightning.pytorch.Trainer):
         )
 
         # set attributes
-        self.compile = compile
+        self._compile = compile
         self.solver = solver
         self.batch_size = batch_size
         self._move_to_device()
@@ -325,3 +341,7 @@ class Trainer(lightning.pytorch.Trainer):
         if batch_size is not None:
             check_consistency(batch_size, int)
         return pin_memory, num_workers, shuffle, batch_size
+
+    @property
+    def compile(self):
+        return self._compile
