@@ -111,18 +111,19 @@ class Trainer(lightning.pytorch.Trainer):
 
         # checking compilation and automatic batching
         # compile disambled for windows and py>=3.14
-        if (
-            compile is None
-            or sys.platform == "win32"
-            or sys.version_info >= (3, 14)
-        ):
-            compile = False
-            raise KeyError
-            warnings.warn(
-                "Compilation is disabled for Python 3.14+. "
-                "Compilation is also disabled for Windows 3.2.",
-                UserWarning,
-            )
+        compile = False
+        # if (
+        #     compile is None
+        #     or sys.platform == "win32"
+        #     or sys.version_info >= (3, 14)
+        # ):
+        #     compile = False
+        #     raise KeyError
+        #     warnings.warn(
+        #         "Compilation is disabled for Python 3.14+. "
+        #         "Compilation is also disabled for Windows 3.2.",
+        #         UserWarning,
+        #     )
 
         repeat = repeat if repeat is not None else False
 
