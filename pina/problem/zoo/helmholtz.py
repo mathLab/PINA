@@ -48,11 +48,10 @@ class HelmholtzProblem(SpatialProblem):
         :type alpha: float | int
         """
         super().__init__()
-
-        self.alpha = alpha
         check_consistency(alpha, (int, float))
+        self.alpha = alpha
 
-        def forcing_term(self, input_):
+        def forcing_term(input_):
             """
             Implementation of the forcing term.
             """

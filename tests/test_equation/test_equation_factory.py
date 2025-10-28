@@ -104,7 +104,7 @@ def test_advection_equation(c):
 
     # Should fail if c is a list and its length != spatial dimension
     with pytest.raises(ValueError):
-        Advection([1, 2, 3])
+        equation = Advection([1, 2, 3])
         residual = equation.residual(pts, u)
 
 
