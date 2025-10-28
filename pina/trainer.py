@@ -117,8 +117,9 @@ class Trainer(lightning.pytorch.Trainer):
             or sys.version_info >= (3, 14)
         ):
             compile = False
+            raise KeyError
             warnings.warn(
-                "Compilation is disabled for python  versions >= 3.14. "
+                "Compilation is disabled for Python 3.14+. "
                 "Compilation is also disabled for Windows 3.2.",
                 UserWarning,
             )
