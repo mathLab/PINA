@@ -174,11 +174,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The result of the parent class ``setup`` method.
         :rtype: Any
         """
-        if stage == "fit" and self.trainer.compile:
-            self._setup_compile()
-        if stage == "test" and (
-            self.trainer.compile and not self._is_compiled()
-        ):
+        if self.trainer.compile and not self._is_compiled():
             self._setup_compile()
         return super().setup(stage)
 
