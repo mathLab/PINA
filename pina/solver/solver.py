@@ -33,7 +33,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
         """
         super().__init__()
-
+        tttt
         # check consistency of the problem
         check_consistency(problem, AbstractProblem)
         self._check_solver_consistency(problem)
