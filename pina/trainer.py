@@ -70,6 +70,7 @@ class Trainer(lightning.pytorch.Trainer):
             Trainer API
             <https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-class-api>`_.
         """
+        ttt
         # check consistency for init types
         self._check_input_consistency(
             solver=solver,
