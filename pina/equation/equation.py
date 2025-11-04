@@ -1,7 +1,6 @@
 """Module for the Equation."""
 
 import inspect
-import torch
 from .equation_interface import EquationInterface
 
 
@@ -61,33 +60,3 @@ class Equation(EquationInterface):
             f"Unexpected number of arguments in equation: {self.__len_sig}. "
             "Expected either 2 (direct problem) or 3 (inverse problem)."
         )
-
-    def to(self, device):
-        """
-        Move all tensor attributes of the Equation to the specified device.
-
-        :param torch.device device: The target device to move the tensors to.
-        :return: The Equation instance moved to the specified device.
-        :rtype: Equation
-        """
-        # Iterate over all attributes of the Equation
-        for key, val in self.__dict__.items():
-
-            # Move tensors in dictionaries to the specified device
-            if isinstance(val, dict):
-                self.__dict__[key] = {
-                    k: v.to(device) if torch.is_tensor(v) else v
-                    for k, v in val.items()
-                }
-
-            # Move tensors in lists to the specified device
-            elif isinstance(val, list):
-                self.__dict__[key] = [
-                    v.to(device) if torch.is_tensor(v) else v for v in val
-                ]
-
-            # Move tensor attributes to the specified device
-            elif torch.is_tensor(val):
-                self.__dict__[key] = val.to(device)
-
-        return self

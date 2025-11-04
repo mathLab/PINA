@@ -101,6 +101,10 @@ class SystemEquation(EquationInterface):
         :return: The aggregated residuals of the system of equations.
         :rtype: LabelTensor
         """
+        # Move the equation to the input_ device
+        self.to(input_.device)
+
+        # Compute the residual for each equation
         residual = torch.hstack(
             [
                 equation.residual(input_, output_, params_)
@@ -108,6 +112,7 @@ class SystemEquation(EquationInterface):
             ]
         )
 
+        # Skip reduction if not specified
         if self.reduction is None:
             return residual
 
