@@ -1,7 +1,6 @@
 """Module for the Equation."""
 
 import inspect
-
 from .equation_interface import EquationInterface
 
 
@@ -49,6 +48,10 @@ class Equation(EquationInterface):
         :raises RuntimeError: If the underlying equation signature length is not
             2 (direct problem) or 3 (inverse problem).
         """
+        # Move the equation to the input_ device
+        self.to(input_.device)
+
+        # Call the underlying equation based on its signature length
         if self.__len_sig == 2:
             return self.__equation(input_, output_)
         if self.__len_sig == 3:

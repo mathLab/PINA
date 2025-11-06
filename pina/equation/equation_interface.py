@@ -1,6 +1,7 @@
 """Module for the Equation Interface."""
 
 from abc import ABCMeta, abstractmethod
+import torch
 
 
 class EquationInterface(metaclass=ABCMeta):
@@ -33,3 +34,33 @@ class EquationInterface(metaclass=ABCMeta):
         :return: The computed residual of the equation.
         :rtype: LabelTensor
         """
+
+    def to(self, device):
+        """
+        Move all tensor attributes to the specified device.
+
+        :param torch.device device: The target device to move the tensors to.
+        :return: The instance moved to the specified device.
+        :rtype: EquationInterface
+        """
+        # Iterate over all attributes of the Equation
+        for key, val in self.__dict__.items():
+
+            # Move tensors in dictionaries to the specified device
+            if isinstance(val, dict):
+                self.__dict__[key] = {
+                    k: v.to(device) if torch.is_tensor(v) else v
+                    for k, v in val.items()
+                }
+
+            # Move tensors in lists to the specified device
+            elif isinstance(val, list):
+                self.__dict__[key] = [
+                    v.to(device) if torch.is_tensor(v) else v for v in val
+                ]
+
+            # Move tensor attributes to the specified device
+            elif torch.is_tensor(val):
+                self.__dict__[key] = val.to(device)
+
+        return self

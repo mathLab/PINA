@@ -7,8 +7,8 @@ SPDX-License-Identifier: Apache-2.0
 <table>
   <tr>
     <td>
-      <a href="https://github.com/mathLab/PINA/raw/master/readme/pina_logo.png">
-        <img src="https://github.com/mathLab/PINA/raw/master/readme/pina_logo.png"
+      <a href="readme/pina_logo.png">
+        <img src="readme/pina_logo.png"
              alt="PINA logo"
              style="width: 220px; aspect-ratio: 1 / 1; object-fit: contain;">
       </a>
