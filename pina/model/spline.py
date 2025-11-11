@@ -139,6 +139,9 @@ class Spline(torch.nn.Module):
         # Precompute boundary interval index
         self._boundary_interval_idx = self._compute_boundary_interval()
 
+        # Precompute denominators used in derivative formulas
+        self._compute_derivative_denominators()
+
     def _compute_boundary_interval(self):
         """
         Precompute the index of the rightmost non-degenerate interval to improve
@@ -163,15 +166,49 @@ class Spline(torch.nn.Module):
         # Otherwise, return the last valid index
         return int(valid[-1])
 
-    def basis(self, x):
+    def _compute_derivative_denominators(self):
+        """
+        Precompute the denominators used in the derivatives for all orders up to
+        the spline order to avoid redundant calculations.
+        """
+        # Precompute for orders 2 to k
+        for i in range(2, self.order + 1):
+
+            # Denominators for the derivative recurrence relations
+            left_den = self.knots[i - 1 : -1] - self.knots[:-i]
+            right_den = self.knots[i:] - self.knots[1 : -i + 1]
+
+            # If consecutive knots are equal, set left and right factors to zero
+            left_fac = torch.where(
+                torch.abs(left_den) > 1e-10,
+                (i - 1) / left_den,
+                torch.zeros_like(left_den),
+            )
+            right_fac = torch.where(
+                torch.abs(right_den) > 1e-10,
+                (i - 1) / right_den,
+                torch.zeros_like(right_den),
+            )
+
+            # Register buffers
+            self.register_buffer(f"_left_factor_order_{i}", left_fac)
+            self.register_buffer(f"_right_factor_order_{i}", right_fac)
+
+    def basis(self, x, collection=False):
         """
         Compute the basis functions for the spline using an iterative approach.
         This is a vectorized implementation based on the Cox-de Boor recursion.
 
         :param torch.Tensor x: The points to be evaluated.
+        :param bool collection: If True, returns a list of basis functions for
+            all orders up to the spline order. Default is False.
+        :raise ValueError: If ``collection`` is not a boolean.
         :return: The basis functions evaluated at x.
-        :rtype: torch.Tensor
+        :rtype: torch.Tensor | list[torch.Tensor]
         """
+        # Check consistency
+        check_consistency(collection, bool)
+
         # Add a final dimension to x
         x = x.unsqueeze(-1)
 
@@ -201,6 +238,10 @@ class Spline(torch.nn.Module):
                     at_rightmost_boundary,
                 ).to(basis.dtype)
 
+        # If returning the whole collection, initialize list
+        if collection:
+            basis_collection = [None, basis]
+
         # Iterative case of recursion
         for i in range(1, self.order):
 
@@ -222,8 +263,10 @@ class Spline(torch.nn.Module):
 
             # Combine terms to get the new basis
             basis = term1 + term2
+            if collection:
+                basis_collection.append(basis)
 
-        return basis
+        return basis_collection if collection else basis
 
     def forward(self, x):
         """
@@ -239,6 +282,72 @@ class Spline(torch.nn.Module):
             self.basis(x.as_subclass(torch.Tensor)).squeeze(-1),
             self.control_points,
         )
+
+    def derivative(self, x, degree):
+        """
+        Compute the ``degree``-th derivative of the spline at given points.
+
+        :param x: The input tensor.
+        :type x: torch.Tensor | LabelTensor
+        :param int degree: The derivative degree to compute.
+        :raise ValueError: If ``degree`` is not an integer.
+        :return: The derivative tensor.
+        :rtype: torch.Tensor
+        """
+        # Check consistency
+        check_positive_integer(degree, strict=False)
+
+        # Compute basis derivative
+        der = self._basis_derivative(x.as_subclass(torch.Tensor), degree=degree)
+
+        return torch.einsum("...bi, i -> ...b", der, self.control_points)
+
+    def _basis_derivative(self, x, degree):
+        """
+        Compute the ``degree``-th derivative of the spline basis functions at
+        given points using an iterative approach.
+
+        :param torch.Tensor x: The points to be evaluated.
+        :param int degree: The derivative degree to compute.
+        :return: The basis functions evaluated at x.
+        :rtype: torch.Tensor
+        """
+        # Compute the whole basis collection
+        basis = self.basis(x, collection=True)
+
+        # Derivatives initialization (with dummy at index 0 for convenience)
+        derivatives = [None] + [basis[o] for o in range(1, self.order + 1)]
+
+        # Iterate over derivative degrees
+        for _ in range(1, degree + 1):
+
+            # Current degree derivatives (with dummy at index 0 for convenience)
+            current_der = [None] * (self.order + 1)
+            current_der[1] = torch.zeros_like(derivatives[1])
+
+            # Iterate over basis orders
+            for o in range(2, self.order + 1):
+
+                # Retrieve precomputed factors
+                left_fac = getattr(self, f"_left_factor_order_{o}")
+                right_fac = getattr(self, f"_right_factor_order_{o}")
+
+                # Slice previous derivatives to align
+                left_part = derivatives[o - 1][..., :-1]
+                right_part = derivatives[o - 1][..., 1:]
+
+                # Broadcast factors over batch dims
+                view_shape = (1,) * (left_part.ndim - 1) + (-1,)
+                left_fac = left_fac.reshape(*view_shape)
+                right_fac = right_fac.reshape(*view_shape)
+
+                # Compute current derivatives
+                current_der[o] = left_fac * left_part - right_fac * right_part
+
+            # Update derivatives for next degree
+            derivatives = current_der
+
+        return derivatives[self.order].squeeze(-1)
 
     @property
     def control_points(self):
@@ -364,3 +473,6 @@ class Spline(torch.nn.Module):
         # Recompute boundary interval when knots change
         if hasattr(self, "_boundary_interval_idx"):
             self._boundary_interval_idx = self._compute_boundary_interval()
+
+        # Recompute derivative denominators when knots change
+        self._compute_derivative_denominators()
