@@ -7,50 +7,9 @@ different types of Datasets defined in PINA.
 import warnings
 from lightning.pytorch import LightningDataModule
 import torch
-from torch_geometric.data import Data
-from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
-from torch.utils.data.distributed import DistributedSampler
 from ..label_tensor import LabelTensor
 from .dataset import PinaDatasetFactory
 from .dataloader import PinaDataLoader
-
-
-class PinaSampler:
-    """
-    This class is used to create the sampler instance based on the shuffle
-    parameter and the environment in which the code is running.
-    """
-
-    def __new__(cls, dataset):
-        """
-        Instantiate and initialize the sampler.
-
-        :param PinaDataset dataset: The dataset from which to sample.
-        :return: The sampler instance.
-        :rtype: :class:`torch.utils.data.Sampler`
-        """
-
-        if (
-            torch.distributed.is_available()
-            and torch.distributed.is_initialized()
-        ):
-            sampler = DistributedSampler(dataset)
-        else:
-            sampler = SequentialSampler(dataset)
-        return sampler
-
-
-def DataloaderCollector():
-
-    def __init__(self, dataloader_list):
-        """
-        Initialize the object.
-        """
-        assert isinstance(dataloader_list, list)
-        assert all(
-            isinstance(dataloader, DataLoader) for dataloader in dataloader_list
-        )
-        self.dataloader_list = dataloader_list
 
 
 class PinaDataModule(LightningDataModule):
@@ -68,7 +27,8 @@ class PinaDataModule(LightningDataModule):
         val_size=0.1,
         batch_size=None,
         shuffle=True,
-        repeat=False,
+        common_batch_size=True,
+        separate_conditions=False,
         automatic_batching=None,
         num_workers=0,
         pin_memory=False,
@@ -89,11 +49,12 @@ class PinaDataModule(LightningDataModule):
             Default is ``None``.
         :param bool shuffle: Whether to shuffle the dataset before splitting.
             Default ``True``.
-        :param bool repeat: If ``True``, in case of batch size larger than the
-            number of elements in a specific condition, the elements are
-            repeated until the batch size is reached. If ``False``, the number
-            of elements in the batch is the minimum between the batch size and
-            the number of elements in the condition. Default is ``False``.
+        :param bool common_batch_size: If ``True``, the same batch size is used
+            for all conditions. If ``False``, each condition can have its own
+            batch size, proportional to the size of the dataset in that
+            condition. Default is ``True``.
+        :param bool separate_conditions: If ``True``, dataloaders for each
+            condition are iterated separately. Default is ``False``.
         :param automatic_batching: If ``True``, automatic PyTorch batching
             is performed, which consists of extracting one element at a time
             from the dataset and collating them into a batch. This is useful
@@ -123,7 +84,8 @@ class PinaDataModule(LightningDataModule):
         # Store fixed attributes
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.repeat = repeat
+        self.common_batch_size = common_batch_size
+        self.separate_conditions = separate_conditions
         self.automatic_batching = automatic_batching
 
         # If batch size is None, num_workers has no effect
@@ -194,23 +156,16 @@ class PinaDataModule(LightningDataModule):
         if stage == "fit" or stage is None:
             self.train_dataset = PinaDatasetFactory(
                 self.data_splits["train"],
-                # max_conditions_lengths=self.find_max_conditions_lengths(
-                #     "train"
-                # ),
                 automatic_batching=self.automatic_batching,
             )
             if "val" in self.data_splits.keys():
                 self.val_dataset = PinaDatasetFactory(
                     self.data_splits["val"],
-                    # max_conditions_lengths=self.find_max_conditions_lengths(
-                    #     "val"
-                    # ),
                     automatic_batching=self.automatic_batching,
                 )
         elif stage == "test":
             self.test_dataset = PinaDatasetFactory(
                 self.data_splits["test"],
-                # max_conditions_lengths=self.find_max_conditions_lengths("test"),
                 automatic_batching=self.automatic_batching,
             )
         else:
@@ -326,29 +281,9 @@ class PinaDataModule(LightningDataModule):
             shuffle=self.shuffle,
             num_workers=self.num_workers,
             collate_fn=None,
-            common_batch_size=True,
+            common_batch_size=self.common_batch_size,
+            separate_conditions=self.separate_conditions,
         )
-
-    def find_max_conditions_lengths(self, split):
-        """
-        Define the maximum length for each conditions.
-
-        :param dict split: The split of the dataset.
-        :return: The maximum length per condition.
-        :rtype: dict
-        """
-
-        max_conditions_lengths = {}
-        for k, v in self.data_splits[split].items():
-            if self.batch_size is None:
-                max_conditions_lengths[k] = len(v["input"])
-            elif self.repeat:
-                max_conditions_lengths[k] = self.batch_size
-            else:
-                max_conditions_lengths[k] = min(
-                    len(v["input"]), self.batch_size
-                )
-        return max_conditions_lengths
 
     def val_dataloader(self):
         """

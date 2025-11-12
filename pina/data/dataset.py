@@ -1,41 +1,20 @@
 """Module for the PINA dataset classes."""
 
+import torch
 from torch.utils.data import Dataset
 from torch_geometric.data import Data
 from ..graph import Graph, LabelBatch
 from ..label_tensor import LabelTensor
-import torch
 
 
 class PinaDatasetFactory:
     """
-    Factory class for the PINA dataset.
-
-    Depending on the data type inside the conditions, it instanciate an object
-    belonging to the appropriate subclass of 
-    :class:`~pina.data.dataset.PinaDataset`. The possible subclasses are:
-
-    - :class:`~pina.data.dataset.PinaTensorDataset`, for handling \
-        :class:`torch.Tensor` and :class:`~pina.label_tensor.LabelTensor` data.
-    - :class:`~pina.data.dataset.PinaGraphDataset`, for handling \
-        :class:`~pina.graph.Graph` and :class:`~torch_geometric.data.Data` data.
+    TODO: Update docstring
     """
 
     def __new__(cls, conditions_dict, **kwargs):
         """
-        Instantiate the appropriate subclass of
-        :class:`~pina.data.dataset.PinaDataset`.
-
-        If a graph is present in the conditions, returns a
-        :class:`~pina.data.dataset.PinaGraphDataset`, otherwise returns a
-        :class:`~pina.data.dataset.PinaTensorDataset`.
-
-        :param dict conditions_dict: Dictionary containing all the conditions
-            to be included in the dataset instance.
-        :return: A subclass of :class:`~pina.data.dataset.PinaDataset`.
-        :rtype: PinaTensorDataset | PinaGraphDataset
-
-        :raises ValueError: If an empty dictionary is provided.
+        TODO: Update docstring
         """
 
         # Check if conditions_dict is empty
@@ -50,28 +29,11 @@ class PinaDatasetFactory:
                 raise ValueError(
                     f"Condition '{name}' data must be a dictionary"
                 )
-
-            # is_graph = cls._is_graph_dataset(conditions_dict)
-            # if is_graph:
-            #     raise NotImplementedError("PinaGraphDataset is not implemented yet.")
-
-            dataset_dict[name] = PinaTensorDataset(data, **kwargs)
+            dataset_dict[name] = PinaDataset(data, **kwargs)
         return dataset_dict
 
-    @staticmethod
-    def _is_graph_dataset(cond_data):
-        """
-        TODO: Docstring
-        """
 
-        # Iterate over the values of the current condition
-        for cond in cond_data.values():
-            if isinstance(cond, (Data, Graph, list, tuple)):
-                return True
-        return False
-
-
-class PinaTensorDataset(Dataset):
+class PinaDataset(Dataset):
     """
     Dataset class for the PINA dataset with :class:`torch.Tensor` and
     :class:`~pina.label_tensor.LabelTensor` data.
@@ -91,9 +53,8 @@ class PinaTensorDataset(Dataset):
         self.automatic_batching = (
             automatic_batching if automatic_batching is not None else True
         )
-        self.stack_fn = (
-            {}
-        )  # LabelTensor.stack if any(isinstance(v, LabelTensor) for v in data_dict.values()) else torch.stack
+        self.stack_fn = {}
+        # Determine stacking functions for each data type (used in collate_fn)
         for k, v in data_dict.items():
             if isinstance(v, LabelTensor):
                 self.stack_fn[k] = LabelTensor.stack
