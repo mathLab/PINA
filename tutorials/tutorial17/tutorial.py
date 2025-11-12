@@ -30,7 +30,7 @@
 # ## The PINA Workflow 
 # 
 # <p align="center">
-#     <img src="http://raw.githubusercontent.com/mathLab/PINA/master/tutorials/static/pina_wokflow.png" alt="PINA Workflow" width="1000"/>
+#     <img src="http://raw.githubusercontent.com/mathLab/PINA/master/tutorials/static/pina_workflow.png" alt="PINA Workflow" width="1000"/>
 # </p>
 # 
 # Solving a differential problem in **PINA** involves four main steps:
