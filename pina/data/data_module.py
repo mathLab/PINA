@@ -255,7 +255,7 @@ class PinaDataModule(LightningDataModule):
                 dataset_dict[key].update({condition_name: data})
         return dataset_dict
 
-    def _create_dataloader(self, split, dataset):
+    def _create_dataloader(self, dataset):
         """ "
         Create the dataloader for the given split.
 
@@ -280,7 +280,6 @@ class PinaDataModule(LightningDataModule):
             batch_size=self.batch_size,
             shuffle=self.shuffle,
             num_workers=self.num_workers,
-            collate_fn=None,
             common_batch_size=self.common_batch_size,
             separate_conditions=self.separate_conditions,
         )
@@ -292,7 +291,7 @@ class PinaDataModule(LightningDataModule):
         :return: The validation dataloader
         :rtype: torch.utils.data.DataLoader
         """
-        return self._create_dataloader("val", self.val_dataset)
+        return self._create_dataloader(self.val_dataset)
 
     def train_dataloader(self):
         """
@@ -301,7 +300,7 @@ class PinaDataModule(LightningDataModule):
         :return: The training dataloader
         :rtype: torch.utils.data.DataLoader
         """
-        return self._create_dataloader("train", self.train_dataset)
+        return self._create_dataloader(self.train_dataset)
 
     def test_dataloader(self):
         """
@@ -310,7 +309,7 @@ class PinaDataModule(LightningDataModule):
         :return: The testing dataloader
         :rtype: torch.utils.data.DataLoader
         """
-        return self._create_dataloader("test", self.test_dataset)
+        return self._create_dataloader(self.test_dataset)
 
     @staticmethod
     def _transfer_batch_to_device_dummy(batch, device, dataloader_idx):

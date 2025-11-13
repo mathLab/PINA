@@ -9,26 +9,38 @@ from ..label_tensor import LabelTensor
 
 class PinaDatasetFactory:
     """
-    TODO: Update docstring
+    Factory class to create PINA datasets based on the provided conditions
+    dictionary.
+    :param dict conditions_dict: A dictionary where keys are condition names
+        and values are dictionaries containing the associated data.
+    :return: A dictionary mapping condition names to their respective
+        :class:`PinaDataset` instances.
     """
 
     def __new__(cls, conditions_dict, **kwargs):
         """
-        TODO: Update docstring
+        Create PINA dataset instances based on the provided conditions
+        dictionary.
+        :param dict conditions_dict: A dictionary where keys are condition names
+            and values are dictionaries containing the associated data.
+        :return: A dictionary mapping condition names to their respective
+            :class:`PinaDataset` instances.
         """
 
         # Check if conditions_dict is empty
         if len(conditions_dict) == 0:
             raise ValueError("No conditions provided")
 
-        dataset_dict = {}
+        dataset_dict = {}  # Dictionary to hold the created datasets
 
         # Check is a Graph is present in the conditions
         for name, data in conditions_dict.items():
+            # Validate that data is a dictionary
             if not isinstance(data, dict):
                 raise ValueError(
                     f"Condition '{name}' data must be a dictionary"
                 )
+            # Create PinaDataset instance for each condition
             dataset_dict[name] = PinaDataset(data, **kwargs)
         return dataset_dict
 
@@ -90,7 +102,7 @@ class PinaDataset(Dataset):
             }
         return idx
 
-    def _getitem_from_list(self, idx_list):
+    def getitem_from_list(self, idx_list):
         """
         Return data from the dataset given a list of indices.
 
@@ -101,7 +113,7 @@ class PinaDataset(Dataset):
 
         to_return = {}
         for field_name, data in self.data.items():
-            if self.stack_fn[field_name] == LabelBatch.from_data_list:
+            if self.stack_fn[field_name] is LabelBatch.from_data_list:
                 to_return[field_name] = self.stack_fn[field_name](
                     [data[i] for i in idx_list]
                 )
