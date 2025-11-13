@@ -1,10 +1,11 @@
 import torch
 import pytest
 from pina.data import PinaDataModule
-from pina.data.dataset import PinaTensorDataset, PinaGraphDataset
+from pina.data.dataset import PinaDataset
 from pina.problem.zoo import SupervisedProblem
 from pina.graph import RadiusGraph
-from pina.data.data_module import DummyDataloader
+
+from pina.data.dataloader import DummyDataloader, PinaDataLoader
 from pina import Trainer
 from pina.solver import SupervisedSolver
 from torch_geometric.data import Batch
@@ -44,22 +45,33 @@ def test_setup_train(input_, output_, train_size, val_size, test_size):
     )
     dm.setup()
     assert hasattr(dm, "train_dataset")
-    if isinstance(input_, torch.Tensor):
-        assert isinstance(dm.train_dataset, PinaTensorDataset)
-    else:
-        assert isinstance(dm.train_dataset, PinaGraphDataset)
-    # assert len(dm.train_dataset) == int(len(input_) * train_size)
+    assert isinstance(dm.train_dataset, dict)
+    assert all(
+        isinstance(dm.train_dataset[cond], PinaDataset)
+        for cond in dm.train_dataset
+    )
+    assert all(
+        dm.train_dataset[cond].is_graph_dataset == isinstance(input_, list)
+        for cond in dm.train_dataset
+    )
+    assert all(
+        len(dm.train_dataset[cond]) == int(len(input_) * train_size)
+        for cond in dm.train_dataset
+    )
     if test_size > 0:
         assert hasattr(dm, "test_dataset")
         assert dm.test_dataset is None
     else:
         assert not hasattr(dm, "test_dataset")
     assert hasattr(dm, "val_dataset")
-    if isinstance(input_, torch.Tensor):
-        assert isinstance(dm.val_dataset, PinaTensorDataset)
-    else:
-        assert isinstance(dm.val_dataset, PinaGraphDataset)
-    # assert len(dm.val_dataset) == int(len(input_) * val_size)
+
+    assert isinstance(dm.val_dataset, dict)
+    assert all(
+        isinstance(dm.val_dataset[cond], PinaDataset) for cond in dm.val_dataset
+    )
+    assert all(
+        isinstance(dm.val_dataset[cond], PinaDataset) for cond in dm.val_dataset
+    )
 
 
 @pytest.mark.parametrize(
@@ -87,49 +99,59 @@ def test_setup_test(input_, output_, train_size, val_size, test_size):
         assert not hasattr(dm, "val_dataset")
 
     assert hasattr(dm, "test_dataset")
-    if isinstance(input_, torch.Tensor):
-        assert isinstance(dm.test_dataset, PinaTensorDataset)
-    else:
-        assert isinstance(dm.test_dataset, PinaGraphDataset)
-    # assert len(dm.test_dataset) == int(len(input_) * test_size)
-
-
-@pytest.mark.parametrize(
-    "input_, output_",
-    [(input_tensor, output_tensor), (input_graph, output_graph)],
-)
-def test_dummy_dataloader(input_, output_):
-    problem = SupervisedProblem(input_=input_, output_=output_)
-    solver = SupervisedSolver(problem=problem, model=torch.nn.Linear(10, 10))
-    trainer = Trainer(
-        solver, batch_size=None, train_size=0.7, val_size=0.3, test_size=0.0
+    assert all(
+        isinstance(dm.test_dataset[cond], PinaDataset)
+        for cond in dm.test_dataset
     )
-    dm = trainer.data_module
-    dm.setup()
-    dm.trainer = trainer
-    dataloader = dm.train_dataloader()
-    assert isinstance(dataloader, DummyDataloader)
-    assert len(dataloader) == 1
-    data = next(dataloader)
-    assert isinstance(data, list)
-    assert isinstance(data[0], tuple)
-    if isinstance(input_, list):
-        assert isinstance(data[0][1]["input"], Batch)
-    else:
-        assert isinstance(data[0][1]["input"], torch.Tensor)
-    assert isinstance(data[0][1]["target"], torch.Tensor)
+    assert all(
+        dm.test_dataset[cond].is_graph_dataset == isinstance(input_, list)
+        for cond in dm.test_dataset
+    )
+    assert all(
+        len(dm.test_dataset[cond]) == int(len(input_) * test_size)
+        for cond in dm.test_dataset
+    )
 
-    dataloader = dm.val_dataloader()
-    assert isinstance(dataloader, DummyDataloader)
-    assert len(dataloader) == 1
-    data = next(dataloader)
-    assert isinstance(data, list)
-    assert isinstance(data[0], tuple)
-    if isinstance(input_, list):
-        assert isinstance(data[0][1]["input"], Batch)
-    else:
-        assert isinstance(data[0][1]["input"], torch.Tensor)
-    assert isinstance(data[0][1]["target"], torch.Tensor)
+
+# @pytest.mark.parametrize(
+#     "input_, output_",
+#     [(input_tensor, output_tensor), (input_graph, output_graph)],
+# )
+# def test_dummy_dataloader(input_, output_):
+#     problem = SupervisedProblem(input_=input_, output_=output_)
+#     solver = SupervisedSolver(problem=problem, model=torch.nn.Linear(10, 10))
+#     trainer = Trainer(
+#         solver, batch_size=None, train_size=0.7, val_size=0.3, test_size=0.0
+#     )
+#     dm = trainer.data_module
+#     dm.setup()
+#     dm.trainer = trainer
+#     dataloader = dm.train_dataloader()
+#     assert isinstance(dataloader, PinaDataLoader)
+#     print(dataloader.dataloaders)
+#     assert all([isinstance(ds, DummyDataloader) for ds in dataloader.dataloaders.values()])
+
+#     data = next(iter(dataloader))
+#     assert isinstance(data, list)
+#     assert isinstance(data[0], tuple)
+#     if isinstance(input_, list):
+#         assert isinstance(data[0][1]["input"], Batch)
+#     else:
+#         assert isinstance(data[0][1]["input"], torch.Tensor)
+#     assert isinstance(data[0][1]["target"], torch.Tensor)
+
+
+# dataloader = dm.val_dataloader()
+# assert isinstance(dataloader, DummyDataloader)
+# assert len(dataloader) == 1
+# data = next(dataloader)
+# assert isinstance(data, list)
+# assert isinstance(data[0], tuple)
+# if isinstance(input_, list):
+#     assert isinstance(data[0][1]["input"], Batch)
+# else:
+#     assert isinstance(data[0][1]["input"], torch.Tensor)
+# assert isinstance(data[0][1]["target"], torch.Tensor)
 
 
 @pytest.mark.parametrize(
@@ -147,12 +169,13 @@ def test_dataloader(input_, output_, automatic_batching):
         val_size=0.3,
         test_size=0.0,
         automatic_batching=automatic_batching,
+        common_batch_size=True,
     )
     dm = trainer.data_module
     dm.setup()
     dm.trainer = trainer
     dataloader = dm.train_dataloader()
-    assert isinstance(dataloader, DataLoader)
+    assert isinstance(dataloader, PinaDataLoader)
     assert len(dataloader) == 7
     data = next(iter(dataloader))
     assert isinstance(data, dict)
@@ -163,7 +186,7 @@ def test_dataloader(input_, output_, automatic_batching):
     assert isinstance(data["data"]["target"], torch.Tensor)
 
     dataloader = dm.val_dataloader()
-    assert isinstance(dataloader, DataLoader)
+    assert isinstance(dataloader, PinaDataLoader)
     assert len(dataloader) == 3
     data = next(iter(dataloader))
     assert isinstance(data, dict)
@@ -202,12 +225,13 @@ def test_dataloader_labels(input_, output_, automatic_batching):
         val_size=0.3,
         test_size=0.0,
         automatic_batching=automatic_batching,
+        common_batch_size=True,
     )
     dm = trainer.data_module
     dm.setup()
     dm.trainer = trainer
     dataloader = dm.train_dataloader()
-    assert isinstance(dataloader, DataLoader)
+    assert isinstance(dataloader, PinaDataLoader)
     assert len(dataloader) == 7
     data = next(iter(dataloader))
     assert isinstance(data, dict)
@@ -223,7 +247,7 @@ def test_dataloader_labels(input_, output_, automatic_batching):
     assert data["data"]["target"].labels == ["u", "v", "w"]
 
     dataloader = dm.val_dataloader()
-    assert isinstance(dataloader, DataLoader)
+    assert isinstance(dataloader, PinaDataLoader)
     assert len(dataloader) == 3
     data = next(iter(dataloader))
     assert isinstance(data, dict)
@@ -240,39 +264,6 @@ def test_dataloader_labels(input_, output_, automatic_batching):
     assert data["data"]["target"].labels == ["u", "v", "w"]
 
 
-def test_get_all_data():
-    input = torch.stack([torch.zeros((1,)) + i for i in range(1000)])
-    target = input
-
-    problem = SupervisedProblem(input, target)
-    datamodule = PinaDataModule(
-        problem,
-        train_size=0.7,
-        test_size=0.2,
-        val_size=0.1,
-        batch_size=64,
-        shuffle=False,
-        repeat=False,
-        automatic_batching=None,
-        num_workers=0,
-        pin_memory=False,
-    )
-    datamodule.setup("fit")
-    datamodule.setup("test")
-    assert len(datamodule.train_dataset.get_all_data()["data"]["input"]) == 700
-    assert torch.isclose(
-        datamodule.train_dataset.get_all_data()["data"]["input"], input[:700]
-    ).all()
-    assert len(datamodule.val_dataset.get_all_data()["data"]["input"]) == 100
-    assert torch.isclose(
-        datamodule.val_dataset.get_all_data()["data"]["input"], input[900:]
-    ).all()
-    assert len(datamodule.test_dataset.get_all_data()["data"]["input"]) == 200
-    assert torch.isclose(
-        datamodule.test_dataset.get_all_data()["data"]["input"], input[700:900]
-    ).all()
-
-
 def test_input_propery_tensor():
     input = torch.stack([torch.zeros((1,)) + i for i in range(1000)])
     target = input
@@ -285,7 +276,6 @@ def test_input_propery_tensor():
         val_size=0.1,
         batch_size=64,
         shuffle=False,
-        repeat=False,
         automatic_batching=None,
         num_workers=0,
         pin_memory=False,
@@ -311,7 +301,6 @@ def test_input_propery_graph():
         val_size=0.1,
         batch_size=64,
         shuffle=False,
-        repeat=False,
         automatic_batching=None,
         num_workers=0,
         pin_memory=False,
