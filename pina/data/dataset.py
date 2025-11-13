@@ -118,7 +118,6 @@ class PinaDataset(Dataset):
                     [data[i] for i in idx_list]
                 )
             else:
-                print(data)
                 to_return[field_name] = data[idx_list]
         return to_return
 
