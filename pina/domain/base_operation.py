@@ -1,4 +1,4 @@
-"""Module for the Base class for all set-operations."""
+"""Module for all set-based operations Base class."""
 
 from copy import deepcopy
 from abc import ABCMeta
