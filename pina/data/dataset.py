@@ -17,16 +17,13 @@ class PinaDatasetFactory:
     """
     Factory class to create PINA datasets based on the provided conditions
     dictionary.
-    :param dict conditions_dict: A dictionary where keys are condition names
-        and values are dictionaries containing the associated data.
-    :return: A dictionary mapping condition names to their respective
-        :class:`PinaDataset` instances.
     """
 
     def __new__(cls, conditions_dict, **kwargs):
         """
         Create PINA dataset instances based on the provided conditions
         dictionary.
+
         :param dict conditions_dict: A dictionary where keys are condition names
             and values are dictionaries containing the associated data.
         :return: A dictionary mapping condition names to their respective
@@ -92,6 +89,7 @@ class PinaDataset(Dataset):
     def __len__(self):
         """
         Return the length of the dataset.
+
         :return: The length of the dataset.
         :rtype: int
         """
@@ -134,6 +132,7 @@ class PinaDataset(Dataset):
     def update_data(self, update_dict):
         """
         Update the dataset's data in-place.
+
         :param dict update_dict: A dictionary where keys are condition names
             and values are dictionaries with updated data for those conditions.
         """
