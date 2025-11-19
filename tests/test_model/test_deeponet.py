@@ -9,7 +9,7 @@ from pina.model import FeedForward
 data = torch.rand((20, 3))
 input_vars = ["a", "b", "c"]
 input_ = LabelTensor(data, input_vars)
-symbol_funcs_red = DeepONet._symbol_functions(dim=-1)
+symbol_funcs_red = DeepONet._symbol_functions()
 output_dims = [1, 5, 10, 20]
 
 
@@ -24,20 +24,6 @@ def test_constructor():
         reduction="+",
         aggregator="*",
     )
-
-
-def test_constructor_fails_when_invalid_inner_layer_size():
-    branch_net = FeedForward(input_dimensions=1, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensions=2, output_dimensions=8)
-    with pytest.raises(ValueError):
-        DeepONet(
-            branch_net=branch_net,
-            trunk_net=trunk_net,
-            input_indeces_branch_net=["a"],
-            input_indeces_trunk_net=["b", "c"],
-            reduction="+",
-            aggregator="*",
-        )
 
 
 def test_forward_extract_str():

@@ -43,3 +43,4 @@ Supervised Learning
 - `Data-driven System Identification with SINDy <tutorial23/tutorial.html>`_
 - `Unstructured Convolutional Autoencoders with Continuous Convolution <tutorial4/tutorial.html>`_
 - `Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics <tutorial8/tutorial.html>`_
+- `Advection Equation with data driven DeepONet <tutorial24/tutorial.html>`_

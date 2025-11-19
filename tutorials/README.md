@@ -46,4 +46,5 @@ Reduced Order Model with Graph Neural Networks for Unstructured Domains| [[.ipyn
 Data-driven System Identification with SINDy| [[.ipynb](tutorial23/tutorial.ipynb),[.py](tutorial23/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial23/tutorial.html)]|
 Unstructured Convolutional Autoencoders with Continuous Convolution |[[.ipynb](tutorial4/tutorial.ipynb),[.py](tutorial4/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial4/tutorial.html)]|
 Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics| [[.ipynb](tutorial8/tutorial.ipynb),[.py](tutorial8/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial8/tutorial.html)]|
+Advection Equation with data driven DeepONet| [[.ipynb](tutorial24/tutorial.ipynb),[.py](tutorial24/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial24/tutorial.html)]|
 
