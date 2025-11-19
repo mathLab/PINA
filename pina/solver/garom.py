@@ -151,7 +151,7 @@ class GAROM(MultiSolverInterface):
         :return: The residual loss and the generator loss.
         :rtype: tuple[torch.Tensor, torch.Tensor]
         """
-        self.optimizer_generator.instance.zero_grad()
+        self.optimizer_generator.zero_grad()
 
         # Generate a batch of images
         generated_snapshots = self.sample(parameters)
@@ -166,8 +166,8 @@ class GAROM(MultiSolverInterface):
 
         # backward step
         g_loss.backward()
-        self.optimizer_generator.instance.step()
-        self.scheduler_generator.instance.step()
+        self.optimizer_generator.step()
+        self.scheduler_generator.step()
 
         return r_loss, g_loss
 
@@ -180,7 +180,7 @@ class GAROM(MultiSolverInterface):
         :return: The residual loss and the generator loss.
         :rtype: tuple[torch.Tensor, torch.Tensor]
         """
-        self.optimizer_discriminator.instance.zero_grad()
+        self.optimizer_discriminator.zero_grad()
 
         # Generate a batch of images
         generated_snapshots = self.sample(parameters)
@@ -196,8 +196,8 @@ class GAROM(MultiSolverInterface):
 
         # backward step
         d_loss.backward()
-        self.optimizer_discriminator.instance.step()
-        self.scheduler_discriminator.instance.step()
+        self.optimizer_discriminator.step()
+        self.scheduler_discriminator.step()
 
         return d_loss_real, d_loss_fake, d_loss
 

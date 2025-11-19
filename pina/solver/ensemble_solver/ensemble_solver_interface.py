@@ -120,15 +120,15 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
         """
         # zero grad for optimizer
         for opt in self.optimizers:
-            opt.instance.zero_grad()
+            opt.zero_grad()
         # perform forward passes and aggregate losses
         loss = super().training_step(batch)
         # perform backpropagation
         self.manual_backward(loss)
         # optimize
         for opt, sched in zip(self.optimizers, self.schedulers):
-            opt.instance.step()
-            sched.instance.step()
+            opt.step()
+            sched.step()
         return loss
 
     @property

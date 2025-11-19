@@ -1,5 +1,7 @@
 """Module for the PINA Torch Optimizer"""
 
+import copy
+
 try:
     from torch.optim.lr_scheduler import LRScheduler  # torch >= 2.0
 except ImportError:
@@ -8,16 +10,15 @@ except ImportError:
     )  # torch < 2.0
 
 from ..utils import check_consistency
-from .optimizer_interface import Optimizer
-from .scheduler_interface import Scheduler
+from .core.scheduler_connector import SchedulerConnector
 
 
-class TorchScheduler(Scheduler):
+class TorchScheduler(SchedulerConnector):
     """
     A wrapper class for using PyTorch schedulers.
     """
 
-    def __init__(self, scheduler_class, **kwargs):
+    def __init__(self, scheduler_class, **scheduler_kwargs):
         """
         Initialization of the :class:`TorchScheduler` class.
 
@@ -28,28 +29,5 @@ class TorchScheduler(Scheduler):
             `here <https://pytorch.org/docs/stable/optim.html#algorithms>_`.
         """
         check_consistency(scheduler_class, LRScheduler, subclass=True)
-
-        self.scheduler_class = scheduler_class
-        self.kwargs = kwargs
-        self._scheduler_instance = None
-
-    def hook(self, optimizer):
-        """
-        Initialize the scheduler instance with the given parameters.
-
-        :param dict parameters: The parameters of the optimizer.
-        """
-        check_consistency(optimizer, Optimizer)
-        self._scheduler_instance = self.scheduler_class(
-            optimizer.instance, **self.kwargs
-        )
-
-    @property
-    def instance(self):
-        """
-        Get the scheduler instance.
-
-        :return: The scheduelr instance.
-        :rtype: torch.optim.LRScheduler
-        """
-        return self._scheduler_instance
+        check_consistency(scheduler_kwargs, dict)
+        super().__init__(scheduler_class, **scheduler_kwargs)

@@ -123,18 +123,18 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :rtype: LabelTensor
         """
         # train model
-        self.optimizer_model.instance.zero_grad()
+        self.optimizer_model.zero_grad()
         loss = super().training_step(batch)
         self.manual_backward(loss)
-        self.optimizer_model.instance.step()
-        self.scheduler_model.instance.step()
+        self.optimizer_model.step()
+        self.scheduler_model.step()
 
         # train discriminator
-        self.optimizer_discriminator.instance.zero_grad()
+        self.optimizer_discriminator.zero_grad()
         loss = super().training_step(batch)
         self.manual_backward(-loss)
-        self.optimizer_discriminator.instance.step()
-        self.scheduler_discriminator.instance.step()
+        self.optimizer_discriminator.step()
+        self.scheduler_discriminator.step()
 
         return loss
 
@@ -184,12 +184,10 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :return: The optimizers and the schedulers
         :rtype: tuple[list[Optimizer], list[Scheduler]]
         """
-        # If the problem is an InverseProblem, add the unknown parameters
-        # to the parameters to be optimized
-        self.optimizer_model.hook(self.neural_net.parameters())
-        self.optimizer_discriminator.hook(self.discriminator.parameters())
+        super().configure_optimizers()
+        # Add unknown parameters to optimization list in case of InverseProblem
         if isinstance(self.problem, InverseProblem):
-            self.optimizer_model.instance.add_param_group(
+            self.optimizer_model.add_param_group(
                 {
                     "params": [
                         self._params[var]
@@ -197,19 +195,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
                     ]
                 }
             )
-        self.scheduler_model.hook(self.optimizer_model)
-        self.scheduler_discriminator.hook(self.optimizer_discriminator)
-        return (
-            [
-                self.optimizer_model.instance,
-                self.optimizer_discriminator.instance,
-            ],
-            [
-                self.scheduler_model.instance,
-                self.scheduler_discriminator.instance,
-            ],
-        )
-
+        return self.optimizers, self.schedulers
     @property
     def neural_net(self):
         """
