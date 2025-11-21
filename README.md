@@ -15,7 +15,7 @@ SPDX-License-Identifier: Apache-2.0
     </td>
     <td>
       <h2 style="margin-left: 20px; font-size: 1.8rem; line-height: 1.2;">
-        Solving Scientific Problems with Machine Learning, Intuitively
+        A Unified Framework for Scientific Machine Learning
       </h2>
     </td>
   </tr>

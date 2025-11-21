@@ -337,6 +337,10 @@ class AbstractProblem(metaclass=ABCMeta):
                 # If the condition does not have a domain attribute, store
                 # the input and target points
                 keys = condition.__slots__
-                values = [getattr(condition, name) for name in keys]
+                values = [
+                    getattr(condition, name)
+                    for name in keys
+                    if getattr(condition, name) is not None
+                ]
                 data[condition_name] = dict(zip(keys, values))
         self._collected_data = data
