@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 import warnings
 from copy import deepcopy
 from ..utils import check_consistency
-from ..domain import DomainInterface, CartesianDomain
+from ..domain import DomainInterface, CartesianDomain, OperationInterface
 from ..condition.domain_equation_condition import DomainEquationCondition
 from ..label_tensor import LabelTensor
 from ..utils import merge_tensors, custom_warning_format
@@ -288,10 +288,13 @@ class AbstractProblem(metaclass=ABCMeta):
                 "the input variables."
             )
         for domain in domains:
-            if not isinstance(self.domains[domain], CartesianDomain):
+            if not isinstance(
+                self.domains[domain], (CartesianDomain, OperationInterface)
+            ):
                 raise RuntimeError(
                     "Custom discretisation can be applied only on Cartesian "
-                    "domains"
+                    "domains and domains resulting from operations between "
+                    "Cartesian domains."
                 )
             discretised_tensor = []
             for var, rules in sample_rules.items():

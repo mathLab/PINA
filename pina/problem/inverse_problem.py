@@ -19,7 +19,7 @@ class InverseProblem(AbstractProblem):
         # storing unknown_parameters for optimization
         self.unknown_parameters = {}
         for var in self.unknown_variables:
-            range_var = self.unknown_parameter_domain.range_[var]
+            range_var = self.unknown_parameter_domain._range[var]
             tensor_var = (
                 torch.rand(1, requires_grad=True) * range_var[1] + range_var[0]
             )

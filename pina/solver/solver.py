@@ -257,8 +257,8 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         for v in self._params:
             self._params[v].data.clamp_(
-                self.problem.unknown_parameter_domain.range_[v][0],
-                self.problem.unknown_parameter_domain.range_[v][1],
+                self.problem.unknown_parameter_domain.range[v][0],
+                self.problem.unknown_parameter_domain.range[v][1],
             )
 
     @staticmethod
