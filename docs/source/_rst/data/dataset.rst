@@ -9,11 +9,3 @@ Dataset
 .. autoclass:: PinaDatasetFactory
     :members:
     :show-inheritance:
-
-.. autoclass:: PinaGraphDataset
-    :members:
-    :show-inheritance:
-
-.. autoclass:: PinaTensorDataset
-    :members:
-    :show-inheritance:

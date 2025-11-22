@@ -133,13 +133,12 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
 
         :param PINNInterface solver: The solver object.
         """
-        new_points = {}
         for name in self._condition_to_update:
-            current_points = self.dataset.conditions_dict[name]["input"]
-            new_points[name] = {
-                "input": self.sample(current_points, name, solver)
-            }
-        self.dataset.update_data(new_points)
+            new_points = {}
+            current_points = self.dataset[name].data["input"]
+            new_points["input"] = self.sample(current_points, name, solver)
+
+            self.dataset[name].update_data(new_points)
 
     def _compute_population_size(self, conditions):
         """
@@ -150,6 +149,5 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         :rtype: dict
         """
         return {
-            cond: len(self.dataset.conditions_dict[cond]["input"])
-            for cond in conditions
+            cond: len(self.dataset[cond].data["input"]) for cond in conditions
         }
