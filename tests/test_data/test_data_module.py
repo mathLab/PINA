@@ -160,7 +160,7 @@ def test_setup_test(input_, output_, train_size, val_size, test_size):
 )
 @pytest.mark.parametrize("automatic_batching", [True, False])
 @pytest.mark.parametrize("batch_size", [None, 10])
-@pytest.mark.parametrize("batching_mode", ["common_batch_size", "propotional"])
+@pytest.mark.parametrize("batching_mode", ["common_batch_size", "proportional"])
 def test_dataloader(
     input_, output_, automatic_batching, batch_size, batching_mode
 ):
