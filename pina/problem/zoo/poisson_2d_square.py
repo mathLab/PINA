@@ -28,6 +28,7 @@ class Poisson2DSquareProblem(SpatialProblem):
     :math:`[0, 1] \times [0, 1]`.
 
     :Example:
+
         >>> problem = Poisson2DSquareProblem()
     """
 

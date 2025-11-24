@@ -14,11 +14,13 @@ class HelmholtzProblem(SpatialProblem):
     :math:`[-1, 1] \times [-1, 1]`.
 
     .. seealso::
+
         **Original reference**: Si, Chenhao, et al. *Complex Physics-Informed
         Neural Network.* arXiv preprint arXiv:2502.04917 (2025).
         DOI: `arXiv:2502.04917 <https://arxiv.org/abs/2502.04917>`_.
 
     :Example:
+
         >>> problem = HelmholtzProblem()
     """
 
@@ -44,7 +46,7 @@ class HelmholtzProblem(SpatialProblem):
         """
         Initialization of the :class:`HelmholtzProblem` class.
 
-        :param alpha: Parameter of the forcing term.
+        :param alpha: Parameter of the forcing term. Default is 3.0.
         :type alpha: float | int
         """
         super().__init__()

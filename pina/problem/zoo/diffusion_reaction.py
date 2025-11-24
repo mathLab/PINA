@@ -34,11 +34,13 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
     :math:`[-\pi, \pi]` and temporal interval :math:`[0, 1]`.
 
     .. seealso::
+
         **Original reference**: Si, Chenhao, et al. *Complex Physics-Informed
         Neural Network.* arXiv preprint arXiv:2502.04917 (2025).
         DOI: `arXiv:2502.04917 <https://arxiv.org/abs/2502.04917>`_.
 
     :Example:
+
         >>> problem = DiffusionReactionProblem()
     """
 
@@ -63,7 +65,7 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
         """
         Initialization of the :class:`DiffusionReactionProblem`.
 
-        :param alpha: The diffusion coefficient.
+        :param alpha: The diffusion coefficient. Default is 1e-4.
         :type alpha: float | int
         """
         super().__init__()
