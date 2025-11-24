@@ -33,7 +33,8 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
         DOI: `arXiv:2308.08468  <https://arxiv.org/abs/2308.08468>`_.
 
     :Example:
-        >>> problem = AdvectionProblem(c=1.0)
+
+        >>> problem = AdvectionProblem()
     """
 
     output_variables = ["u"]
@@ -53,7 +54,7 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
         """
         Initialization of the :class:`AdvectionProblem`.
 
-        :param c: The advection velocity parameter.
+        :param c: The advection velocity parameter. Default is 1.0.
         :type c: float | int
         """
         super().__init__()

@@ -28,6 +28,7 @@ class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
     :math:`[-1, 1]` and temporal interval :math:`[0, 1]`.
 
     .. seealso::
+
         **Original reference**: Sokratis J. Anagnostopoulos, Juan D. Toscano,
         Nikolaos Stergiopulos, and George E. Karniadakis.
         *Residual-based attention and connection to information
@@ -37,6 +38,7 @@ class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
         j.cma.2024.116805 <https://doi.org/10.1016/j.cma.2024.116805>`_.
 
     :Example:
+
         >>> problem = AllenCahnProblem()
     """
 
@@ -57,9 +59,9 @@ class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
         """
         Initialization of the :class:`AllenCahnProblem`.
 
-        :param alpha: The diffusion coefficient.
+        :param alpha: The diffusion coefficient. Default is 1e-4.
         :type alpha: float | int
-        :param beta: The reaction coefficient.
+        :param beta: The reaction coefficient. Default is 5.0.
         :type beta: float | int
         """
         super().__init__()
