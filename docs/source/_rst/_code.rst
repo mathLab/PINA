@@ -215,6 +215,7 @@ Problems Zoo
 .. toctree::
     :titlesonly:
 
+    AcousticWaveProblem <problem/zoo/acoustic_wave.rst>
     AdvectionProblem <problem/zoo/advection.rst>
     AllenCahnProblem <problem/zoo/allen_cahn.rst>
     DiffusionReactionProblem <problem/zoo/diffusion_reaction.rst>
