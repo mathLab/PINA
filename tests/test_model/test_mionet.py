@@ -18,15 +18,6 @@ def test_constructor():
     MIONet(networks=networks, reduction="+", aggregator="*")
 
 
-def test_constructor_fails_when_invalid_inner_layer_size():
-    branch_net1 = FeedForward(input_dimensions=1, output_dimensions=10)
-    branch_net2 = FeedForward(input_dimensions=2, output_dimensions=10)
-    trunk_net = FeedForward(input_dimensions=1, output_dimensions=12)
-    networks = {branch_net1: ["x"], branch_net2: ["x", "y"], trunk_net: ["z"]}
-    with pytest.raises(ValueError):
-        MIONet(networks=networks, reduction="+", aggregator="*")
-
-
 def test_forward_extract_str():
     branch_net1 = FeedForward(input_dimensions=1, output_dimensions=10)
     branch_net2 = FeedForward(input_dimensions=1, output_dimensions=10)

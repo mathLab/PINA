@@ -52,7 +52,8 @@ class MIONet(torch.nn.Module):
         :param reduction: The reduction to be used to reduce the aggregated
             result of the modules in ``networks`` to the desired output
             dimension. Available reductions include: sum: ``+``, product: ``*``,
-            mean: ``mean``, min: ``min``, max: ``max``. Default is ``+``.
+            mean: ``mean``, min: ``min``, max: ``max``, identity: "id".
+            Default is ``+``.
         :type reduction: str or Callable
         :param bool scale: If ``True``, the final output is scaled before being
             returned in the forward pass. Default is ``True``.
@@ -122,18 +123,8 @@ class MIONet(torch.nn.Module):
         check_consistency(scale, bool)
         check_consistency(translation, bool)
 
-        # check trunk branch nets consistency
-        shapes = []
-        for key, value in networks.items():
+        for value in networks.values():
             check_consistency(value, (str, int))
-            check_consistency(key, torch.nn.Module)
-            input_ = torch.rand(10, len(value))
-            shapes.append(key(input_).shape[-1])
-
-        if not all(map(lambda x: x == shapes[0], shapes)):
-            raise ValueError(
-                "The passed networks have not the same output dimension."
-            )
 
         # assign trunk and branch net with their input indeces
         self.models = torch.nn.ModuleList(networks.keys())
@@ -171,6 +162,7 @@ class MIONet(torch.nn.Module):
             "mean": partial(torch.mean, **kwargs),
             "min": lambda x: torch.min(x, **kwargs).values,
             "max": lambda x: torch.max(x, **kwargs).values,
+            "id": lambda x: x,
         }
 
     def _init_aggregator(self, aggregator):
@@ -181,7 +173,7 @@ class MIONet(torch.nn.Module):
         :type aggregator: str or Callable
         :raises ValueError: If the aggregator is not supported.
         """
-        aggregator_funcs = self._symbol_functions(dim=2)
+        aggregator_funcs = self._symbol_functions(dim=-1)
         if aggregator in aggregator_funcs:
             aggregator_func = aggregator_funcs[aggregator]
         elif isinstance(aggregator, nn.Module) or is_function(aggregator):
@@ -264,13 +256,9 @@ class MIONet(torch.nn.Module):
         # reduce
         output_ = self._reduction(aggregated)
         if self._reduction_type in self._symbol_functions(dim=-1):
-            output_ = output_.reshape(-1, 1)
+            output_ = output_.reshape(*output_.shape, 1)
 
-        # scale and translate
-        output_ *= self._scale
-        output_ += self._trasl
-
-        return output_
+        return self._scale * output_ + self._trasl
 
     @property
     def aggregator(self):
