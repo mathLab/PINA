@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Low Rank Neural Operator &#8212; pina-mathlab 0.2.3.post2510 documentation</title>
+    <title>Low Rank Neural Operator &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=06a06f5d"></script>
+    <script src="../../_static/documentation_options.js?v=1f91c228"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,8 +54,8 @@
     <link rel="prev" title="Averaging Neural Operator" href="average_neural_operator.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.3.post2510" />
-    <meta name="docbuild:last-update" content="Oct 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5.post2512" />
+    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
   </head>
   
   
@@ -119,8 +119,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
   
   
 </a></div>
@@ -442,6 +442,7 @@
 <li class="toctree-l1"><a class="reference internal" href="multi_feed_forward.html">MultiFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="residual_feed_forward.html">ResidualFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spline_surface.html">SplineSurface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mionet.html">MIONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kernel_neural_operator.html">KernelNeuralOperator</a></li>
@@ -452,6 +453,8 @@
 <li class="toctree-l1"><a class="reference internal" href="graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pirate_network.html">PirateNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="equivariant_graph_neural_operator.html">EquivariantGraphNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sindy.html">SINDy</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="block/residual.html">Residual Block</a></li>
@@ -471,6 +474,7 @@
 <li class="toctree-l1"><a class="reference internal" href="block/message_passing/en_equivariant_network_block.html">E(n) Equivariant Network Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="block/message_passing/interaction_network_block.html">Interaction Network Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="block/message_passing/radial_field_network_block.html">Radial Field Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/message_passing/equivariant_graph_neural_operator_block.html">EquivariantGraphNeuralOperatorBlock</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="block/pod_block.html">Proper Orthogonal Decomposition</a></li>
@@ -634,36 +638,36 @@ Journal of Machine Learning Research, 24(89), 1-97.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>lifting_net</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><em>torch.nn.Module</em></a>) – The lifting neural network mapping
+<li><p><strong>lifting_net</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.9)"><em>torch.nn.Module</em></a>) – The lifting neural network mapping
 the input to its hidden dimension. It must take as input the input
 field and the coordinates at which the input field is evaluated.</p></li>
-<li><p><strong>projecting_net</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><em>torch.nn.Module</em></a>) – The projection neural network
+<li><p><strong>projecting_net</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.9)"><em>torch.nn.Module</em></a>) – The projection neural network
 mapping the hidden representation to the output function. It must
 take as input the embedding dimension plus the dimension of the
 coordinates.</p></li>
-<li><p><strong>field_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The labels of the fields in the input
+<li><p><strong>field_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – The labels of the fields in the input
 tensor.</p></li>
-<li><p><strong>coordinates_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – The labels of the coordinates in
+<li><p><strong>coordinates_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – The labels of the coordinates in
 the input tensor.</p></li>
-<li><p><strong>n_kernel_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of hidden kernel layers.</p></li>
-<li><p><strong>rank</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The rank of the low rank approximation.</p></li>
-<li><p><strong>inner_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of neurons for each hidden layer in
+<li><p><strong>n_kernel_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of hidden kernel layers.</p></li>
+<li><p><strong>rank</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The rank of the low rank approximation.</p></li>
+<li><p><strong>inner_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of neurons for each hidden layer in
 the basis function neural network. Default is <code class="docutils literal notranslate"><span class="pre">20</span></code>.</p></li>
-<li><p><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of hidden layers in the basis function
+<li><p><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of hidden layers in the basis function
 neural network. Default is <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p></li>
-<li><p><strong>func</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><em>torch.nn.Module</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><em>torch.nn.Module</em></a><em>]</em>) – The activation function. If a list is passed, it must have
+<li><p><strong>func</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.9)"><em>torch.nn.Module</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.9)"><em>torch.nn.Module</em></a><em>]</em>) – The activation function. If a list is passed, it must have
 the same length as <code class="docutils literal notranslate"><span class="pre">n_layers</span></code>. If a single function is passed, it
 is used for all layers, except for the last one.
-Default is <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Tanh.html#torch.nn.Tanh" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Tanh</span></code></a>.</p></li>
-<li><p><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> bias is considered for the basis function
+Default is <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Tanh.html#torch.nn.Tanh" title="(in PyTorch v2.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.Tanh</span></code></a>.</p></li>
+<li><p><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> bias is considered for the basis function
 neural network. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the input dimension does not match with the
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the input dimension does not match with the
 labels of the fields and coordinates.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the input dimension of the projecting network
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the input dimension of the projecting network
 does not match with the hidden dimension of the lifting network.</p></li>
 </ul>
 </dd>
@@ -689,7 +693,7 @@ of <code class="docutils literal notranslate"><span class="pre">len(coordinates_
 <dd class="field-even"><p>The output tensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.8)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>

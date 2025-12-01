@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Refinments callbacks &#8212; pina-mathlab 0.2.3.post2510 documentation</title>
+    <title>Refinments callbacks &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=06a06f5d"></script>
+    <script src="../../../_static/documentation_options.js?v=1f91c228"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="Optimizer callbacks" href="../optimizer_callback.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.3.post2510" />
-    <meta name="docbuild:last-update" content="Oct 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5.post2512" />
+    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
   
   
 </a></div>
@@ -441,6 +441,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../model/multi_feed_forward.html">MultiFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/residual_feed_forward.html">ResidualFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model/spline_surface.html">SplineSurface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/deeponet.html">DeepONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/mionet.html">MIONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/kernel_neural_operator.html">KernelNeuralOperator</a></li>
@@ -451,6 +452,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../model/graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/pirate_network.html">PirateNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model/equivariant_graph_neural_operator.html">EquivariantGraphNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model/sindy.html">SINDy</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../model/block/residual.html">Residual Block</a></li>
@@ -470,6 +473,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../model/block/message_passing/en_equivariant_network_block.html">E(n) Equivariant Network Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/block/message_passing/interaction_network_block.html">Interaction Network Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model/block/message_passing/radial_field_network_block.html">Radial Field Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model/block/message_passing/equivariant_graph_neural_operator_block.html">EquivariantGraphNeuralOperatorBlock</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../model/block/pod_block.html">Proper Orthogonal Decomposition</a></li>
@@ -632,18 +636,18 @@ DOI: <a class="reference external" href="https://doi.org/10.48550/arXiv.2207.023
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sample_every</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Frequency for sampling.</p></li>
+<li><p><strong>sample_every</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Frequency for sampling.</p></li>
 <li><p><strong>loss</strong> (<a class="reference internal" href="../../loss/loss_interface.html#pina.loss.loss_interface.LossInterface" title="pina.loss.loss_interface.LossInterface"><em>LossInterface</em></a><em> | </em><em>_Loss</em>) – Loss function</p></li>
-<li><p><strong>condition_to_update</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>) </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>) </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The conditions to update during the
+<li><p><strong>condition_to_update</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>) </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>) </em><em>| </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The conditions to update during the
 refinement process. If None, all conditions with a conditions will
 be updated. Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the condition_to_update is not a string or
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the condition_to_update is not a string or
 iterable of strings.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If the residual_loss is not a subclass of
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If the residual_loss is not a subclass of
 torch.nn.Module.</p></li>
 </ul>
 </dd>

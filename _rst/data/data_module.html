@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>DataModule &#8212; pina-mathlab 0.2.3.post2510 documentation</title>
+    <title>DataModule &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=06a06f5d"></script>
+    <script src="../../_static/documentation_options.js?v=1f91c228"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="Dataset" href="dataset.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.3.post2510" />
-    <meta name="docbuild:last-update" content="Oct 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5.post2512" />
+    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
   
   
 </a></div>
@@ -441,6 +441,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/multi_feed_forward.html">MultiFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/residual_feed_forward.html">ResidualFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/spline_surface.html">SplineSurface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/deeponet.html">DeepONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/mionet.html">MIONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/kernel_neural_operator.html">KernelNeuralOperator</a></li>
@@ -451,6 +452,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/pirate_network.html">PirateNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/equivariant_graph_neural_operator.html">EquivariantGraphNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/sindy.html">SINDy</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/residual.html">Residual Block</a></li>
@@ -470,6 +473,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/en_equivariant_network_block.html">E(n) Equivariant Network Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/interaction_network_block.html">Interaction Network Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/radial_field_network_block.html">Radial Field Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/block/message_passing/equivariant_graph_neural_operator_block.html">EquivariantGraphNeuralOperatorBlock</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../model/block/pod_block.html">Proper Orthogonal Decomposition</a></li>
@@ -615,7 +619,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.data.data_module.Collator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Collator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_conditions_lengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_batching</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#Collator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.Collator" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>This callable class is used to collate the data points fetched from the
 dataset. The collation is performed based on the type of dataset used and
 on the batching strategy.</p>
@@ -624,10 +628,10 @@ automatic batching is enabled or not.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>max_conditions_lengths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the maximum
+<li><p><strong>max_conditions_lengths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the maximum
 number  of data points to consider in a single batch for
 each condition.</p></li>
-<li><p><strong>automatic_batching</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether automatic PyTorch batching is
+<li><p><strong>automatic_batching</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether automatic PyTorch batching is
 enabled or not. For more information, see the
 <a class="reference internal" href="#pina.data.data_module.PinaDataModule" title="pina.data.data_module.PinaDataModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">PinaDataModule</span></code></a> class.</p></li>
 <li><p><strong>dataset</strong> (<a class="reference internal" href="dataset.html#pina.data.dataset.PinaDataset" title="pina.data.dataset.PinaDataset"><em>PinaDataset</em></a>) – The dataset where the data is stored.</p></li>
@@ -639,8 +643,8 @@ enabled or not. For more information, see the
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.data.data_module.PinaDataModule">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PinaDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">automatic_batching</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pin_memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaDataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaDataModule" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.core.LightningDataModule.html#lightning.pytorch.core.LightningDataModule" title="(in PyTorch Lightning v2.5.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightningDataModule</span></code></a></p>
-<p>This class extends <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.core.LightningDataModule.html#lightning.pytorch.core.LightningDataModule" title="(in PyTorch Lightning v2.5.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightningDataModule</span></code></a>,
+<dd><p>Bases: <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.core.LightningDataModule.html#lightning.pytorch.core.LightningDataModule" title="(in PyTorch Lightning v2.6.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightningDataModule</span></code></a></p>
+<p>This class extends <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.core.LightningDataModule.html#lightning.pytorch.core.LightningDataModule" title="(in PyTorch Lightning v2.6.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightningDataModule</span></code></a>,
 allowing proper creation and management of different types of datasets
 defined in PINA.</p>
 <p>Initialize the object and creating datasets based on the input problem.</p>
@@ -649,18 +653,18 @@ defined in PINA.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>problem</strong> (<a class="reference internal" href="../problem/abstract_problem.html#pina.problem.abstract_problem.AbstractProblem" title="pina.problem.abstract_problem.AbstractProblem"><em>AbstractProblem</em></a>) – The problem containing the data on which
 to create the datasets and dataloaders.</p></li>
-<li><p><strong>train_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of elements in the training split. It
+<li><p><strong>train_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Fraction of elements in the training split. It
 must be in the range [0, 1].</p></li>
-<li><p><strong>test_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of elements in the test split. It must
+<li><p><strong>test_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Fraction of elements in the test split. It must
 be in the range [0, 1].</p></li>
-<li><p><strong>val_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Fraction of elements in the validation split. It
+<li><p><strong>val_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Fraction of elements in the validation split. It
 must be in the range [0, 1].</p></li>
-<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The batch size used for training. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The batch size used for training. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
 the entire dataset is returned in a single batch.
 Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to shuffle the dataset before splitting.
+<li><p><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to shuffle the dataset before splitting.
 Default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>repeat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, in case of batch size larger than the
+<li><p><strong>repeat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, in case of batch size larger than the
 number of elements in a specific condition, the elements are
 repeated until the batch size is reached. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the number
 of elements in the batch is the minimum between the batch size and
@@ -674,16 +678,16 @@ avoind the overhead of collating them into a batch and reducing the
 <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> calls to the dataset. This is useful when the
 dataset fits into memory. Avoid using automatic batching when
 <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> is large. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>num_workers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of worker threads for data loading.
+<li><p><strong>num_workers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of worker threads for data loading.
 Default <code class="docutils literal notranslate"><span class="pre">0</span></code> (serial loading).</p></li>
-<li><p><strong>pin_memory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to use pinned memory for faster data
+<li><p><strong>pin_memory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use pinned memory for faster data
 transfer to GPU. Default <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If at least one of the splits is negative.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the sum of the splits is different from 1.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If at least one of the splits is negative.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the sum of the splits is different from 1.</p></li>
 </ul>
 </dd>
 </dl>
@@ -702,10 +706,10 @@ If the stage is “fit”, the training and validation datasets are created.
 If the stage is “test”, the testing dataset is created.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The stage for which to perform the dataset setup.</p>
+<dd class="field-odd"><p><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The stage for which to perform the dataset setup.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the stage is neither “fit” nor “test”.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the stage is neither “fit” nor “test”.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -716,13 +720,13 @@ If the stage is “test”, the testing dataset is created.</p>
 <dd><p>Define the maximum length for each conditions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>split</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The split of the dataset.</p>
+<dd class="field-odd"><p><strong>split</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – The split of the dataset.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The maximum length per condition.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -736,7 +740,7 @@ If the stage is “test”, the testing dataset is created.</p>
 <dd class="field-odd"><p>The validation dataloader</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.8)">torch.utils.data.DataLoader</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.9)">torch.utils.data.DataLoader</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -750,7 +754,7 @@ If the stage is “test”, the testing dataset is created.</p>
 <dd class="field-odd"><p>The training dataloader</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.8)">torch.utils.data.DataLoader</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.9)">torch.utils.data.DataLoader</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -764,7 +768,7 @@ If the stage is “test”, the testing dataset is created.</p>
 <dd class="field-odd"><p>The testing dataloader</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.8)">torch.utils.data.DataLoader</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader" title="(in PyTorch v2.9)">torch.utils.data.DataLoader</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -778,7 +782,7 @@ If the stage is “test”, the testing dataset is created.</p>
 <dd class="field-odd"><p>The input points for training.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -788,7 +792,7 @@ If the stage is “test”, the testing dataset is created.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.data.data_module.PinaSampler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PinaSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/data/data_module.html#PinaSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.data.data_module.PinaSampler" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>This class is used to create the sampler instance based on the shuffle
 parameter and the environment in which the code is running.</p>
 <p>Instantiate and initialize the sampler.</p>
@@ -800,7 +804,7 @@ parameter and the environment in which the code is running.</p>
 <dd class="field-even"><p>The sampler instance.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.Sampler" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.Sampler</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.Sampler" title="(in PyTorch v2.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.Sampler</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>

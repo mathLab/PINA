@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>MultiFeedForward &#8212; pina-mathlab 0.2.3.post2510 documentation</title>
+    <title>MultiFeedForward &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=06a06f5d"></script>
+    <script src="../../_static/documentation_options.js?v=1f91c228"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,8 +53,8 @@
     <link rel="prev" title="FeedForward" href="feed_forward.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.3.post2510" />
-    <meta name="docbuild:last-update" content="Oct 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5.post2512" />
+    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
   
   
 </a></div>
@@ -441,6 +441,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">MultiFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="residual_feed_forward.html">ResidualFeedForward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spline.html">Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spline_surface.html">SplineSurface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deeponet.html">DeepONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mionet.html">MIONet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kernel_neural_operator.html">KernelNeuralOperator</a></li>
@@ -451,6 +452,8 @@
 <li class="toctree-l1"><a class="reference internal" href="graph_neural_operator.html">GraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph_neural_operator_integral_kernel.html">GraphNeuralKernel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pirate_network.html">PirateNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="equivariant_graph_neural_operator.html">EquivariantGraphNeuralOperator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sindy.html">SINDy</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="block/residual.html">Residual Block</a></li>
@@ -470,6 +473,7 @@
 <li class="toctree-l1"><a class="reference internal" href="block/message_passing/en_equivariant_network_block.html">E(n) Equivariant Network Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="block/message_passing/interaction_network_block.html">Interaction Network Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="block/message_passing/radial_field_network_block.html">Radial Field Network Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block/message_passing/equivariant_graph_neural_operator_block.html">EquivariantGraphNeuralOperatorBlock</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="block/pod_block.html">Proper Orthogonal Decomposition</a></li>
@@ -615,7 +619,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pina.model.multi_feed_forward.MultiFeedForward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultiFeedForward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ffn_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/multi_feed_forward.html#MultiFeedForward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.multi_feed_forward.MultiFeedForward" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>Multi Feed Forward neural network model class.</p>
 <p>This model allows to create a network with multiple Feed Forward neural
 networks combined together. The user is required to define the <code class="docutils literal notranslate"><span class="pre">forward</span></code>
@@ -623,11 +627,11 @@ method to choose how to combine the networks.</p>
 <p>Initialization of the <a class="reference internal" href="#pina.model.multi_feed_forward.MultiFeedForward" title="pina.model.multi_feed_forward.MultiFeedForward"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiFeedForward</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ffn_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – A dictionary containing the Feed Forward neural
+<dd class="field-odd"><p><strong>ffn_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – A dictionary containing the Feed Forward neural
 networks to be combined.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If the input is not a dictionary.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If the input is not a dictionary.</p>
 </dd>
 </dl>
 <dl class="py method">

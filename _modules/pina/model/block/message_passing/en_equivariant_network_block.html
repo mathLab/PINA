@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.model.block.message_passing.en_equivariant_network_block &#8212; pina-mathlab 0.2.3.post2510 documentation</title>
+    <title>pina.model.block.message_passing.en_equivariant_network_block &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../../_static/documentation_options.js?v=06a06f5d"></script>
+    <script src="../../../../../_static/documentation_options.js?v=1f91c228"></script>
     <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.3.post2510" />
-    <meta name="docbuild:last-update" content="Oct 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5.post2512" />
+    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
-    <img src="../../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.3.post2510 documentation - Home"/>
+    <img src="../../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
   
   
 </a></div>
@@ -445,7 +445,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="kn">import</span> <span class="n">MessagePassing</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">degree</span>
-<span class="kn">from</span> <span class="nn">....utils</span> <span class="kn">import</span> <span class="n">check_positive_integer</span>
+<span class="kn">from</span> <span class="nn">....utils</span> <span class="kn">import</span> <span class="n">check_positive_integer</span><span class="p">,</span> <span class="n">check_consistency</span>
 <span class="kn">from</span> <span class="nn">....model</span> <span class="kn">import</span> <span class="n">FeedForward</span>
 
 
@@ -471,6 +471,12 @@
 <span class="sd">    positions are updated by adding the incoming messages divided by the</span>
 <span class="sd">    degree of the recipient node.</span>
 
+<span class="sd">    When velocity features are used, node velocities are passed through a small</span>
+<span class="sd">    MLP to compute updates, which are then combined with the aggregated position</span>
+<span class="sd">    messages. The node positions are updated both by the normalized position</span>
+<span class="sd">    messages and by the updated velocities, ensuring equivariance while</span>
+<span class="sd">    incorporating dynamic information.</span>
+
 <span class="sd">    .. seealso::</span>
 
 <span class="sd">        **Original reference** Satorras, V. G., Hoogeboom, E., Welling, M.</span>
@@ -484,6 +490,7 @@
         <span class="n">node_feature_dim</span><span class="p">,</span>
         <span class="n">edge_feature_dim</span><span class="p">,</span>
         <span class="n">pos_dim</span><span class="p">,</span>
+        <span class="n">use_velocity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">hidden_dim</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
         <span class="n">n_message_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="n">n_update_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
@@ -498,6 +505,8 @@
 <span class="sd">        :param int node_feature_dim: The dimension of the node features.</span>
 <span class="sd">        :param int edge_feature_dim: The dimension of the edge features.</span>
 <span class="sd">        :param int pos_dim: The dimension of the position features.</span>
+<span class="sd">        :param bool use_velocity: Whether to use velocity features in the</span>
+<span class="sd">            message passing. Default is False.</span>
 <span class="sd">        :param int hidden_dim: The dimension of the hidden features.</span>
 <span class="sd">            Default is 64.</span>
 <span class="sd">        :param int n_message_layers: The number of layers in the message</span>
@@ -524,6 +533,7 @@
 <span class="sd">        :raises AssertionError: If `hidden_dim` is not a positive integer.</span>
 <span class="sd">        :raises AssertionError: If `n_message_layers` is not a positive integer.</span>
 <span class="sd">        :raises AssertionError: If `n_update_layers` is not a positive integer.</span>
+<span class="sd">        :raises AssertionError: If `use_velocity` is not a boolean.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">aggr</span><span class="o">=</span><span class="n">aggr</span><span class="p">,</span> <span class="n">node_dim</span><span class="o">=</span><span class="n">node_dim</span><span class="p">,</span> <span class="n">flow</span><span class="o">=</span><span class="n">flow</span><span class="p">)</span>
 
@@ -534,6 +544,10 @@
         <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">n_message_layers</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">n_update_layers</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">use_velocity</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+
+        <span class="c1"># Initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_velocity</span> <span class="o">=</span> <span class="n">use_velocity</span>
 
         <span class="c1"># Layer for computing the message</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_net</span> <span class="o">=</span> <span class="n">FeedForward</span><span class="p">(</span>
@@ -563,9 +577,19 @@
             <span class="n">func</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
         <span class="p">)</span>
 
+        <span class="c1"># If velocity is used, instantiate layer for velocity updates</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_velocity</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_vel_net</span> <span class="o">=</span> <span class="n">FeedForward</span><span class="p">(</span>
+                <span class="n">input_dimensions</span><span class="o">=</span><span class="n">node_feature_dim</span><span class="p">,</span>
+                <span class="n">output_dimensions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">inner_size</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+                <span class="n">n_layers</span><span class="o">=</span><span class="n">n_update_layers</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+            <span class="p">)</span>
+
 <div class="viewcode-block" id="EnEquivariantNetworkBlock.forward">
 <a class="viewcode-back" href="../../../../../_rst/model/block/message_passing/en_equivariant_network_block.html#pina.model.block.message_passing.en_equivariant_network_block.EnEquivariantNetworkBlock.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Forward pass of the block, triggering the message-passing routine.</span>
 
@@ -576,11 +600,19 @@
 <span class="sd">        :param torch.Tensor edge_index: The edge indices.</span>
 <span class="sd">        :param edge_attr: The edge attributes. Default is None.</span>
 <span class="sd">        :type edge_attr: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param vel: The velocity of the nodes. Default is None.</span>
+<span class="sd">        :type vel: torch.Tensor | LabelTensor</span>
 <span class="sd">        :return: The updated node features and node positions.</span>
 <span class="sd">        :rtype: tuple(torch.Tensor, torch.Tensor)</span>
+<span class="sd">        :raises: ValueError: If ``use_velocity`` is True and ``vel`` is None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_velocity</span> <span class="ow">and</span> <span class="n">vel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Velocity features are enabled, but no velocity is passed.&quot;</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span>
-            <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="n">edge_attr</span>
+            <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">vel</span><span class="o">=</span><span class="n">vel</span>
         <span class="p">)</span></div>
 
 
@@ -657,10 +689,9 @@
 
 <div class="viewcode-block" id="EnEquivariantNetworkBlock.update">
 <a class="viewcode-back" href="../../../../../_rst/model/block/message_passing/en_equivariant_network_block.html#pina.model.block.message_passing.en_equivariant_network_block.EnEquivariantNetworkBlock.update">[docs]</a>
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregated_inputs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggregated_inputs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">vel</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the node features and the node coordinates with the received</span>
-<span class="sd">        messages.</span>
+<span class="sd">        Update node features, positions, and optionally velocities.</span>
 
 <span class="sd">        :param tuple(torch.Tensor) aggregated_inputs: The messages to be passed.</span>
 <span class="sd">        :param x: The node features.</span>
@@ -668,20 +699,29 @@
 <span class="sd">        :param pos: The euclidean coordinates of the nodes.</span>
 <span class="sd">        :type pos: torch.Tensor | LabelTensor</span>
 <span class="sd">        :param torch.Tensor edge_index: The edge indices.</span>
+<span class="sd">        :param vel: The velocity of the nodes.</span>
+<span class="sd">        :type vel: torch.Tensor | LabelTensor</span>
 <span class="sd">        :return: The updated node features and node positions.</span>
-<span class="sd">        :rtype: tuple(torch.Tensor, torch.Tensor)</span>
+<span class="sd">        :rtype: tuple(torch.Tensor, torch.Tensor) |</span>
+<span class="sd">            tuple(torch.Tensor, torch.Tensor, torch.Tensor)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># aggregated_inputs is tuple (agg_message, agg_m_ij)</span>
         <span class="n">agg_message</span><span class="p">,</span> <span class="n">agg_m_ij</span> <span class="o">=</span> <span class="n">aggregated_inputs</span>
 
+        <span class="c1"># Degree for normalization of position updates</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># If velocity is used, update it and use it to update positions</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_velocity</span><span class="p">:</span>
+            <span class="n">vel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_vel_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">vel</span>
+
         <span class="c1"># Update node features with aggregated m_ij</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_feat_net</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">agg_m_ij</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
 
-        <span class="c1"># Degree for normalization of position updates</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">agg_message</span> <span class="o">/</span> <span class="n">c</span>
+        <span class="c1"># Update positions with aggregated messages m_ij and velocities</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">agg_message</span> <span class="o">/</span> <span class="n">c</span> <span class="o">+</span> <span class="p">(</span><span class="n">vel</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_velocity</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">vel</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_velocity</span> <span class="k">else</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
