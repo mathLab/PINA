@@ -18,16 +18,16 @@ class Spline(torch.nn.Module):
 
     where:
 
-    - :math:`C_i \in \mathbb{R}` are the control points. These fixed points
-      influence the shape of the curve but are not generally interpolated,
-      except at the boundaries under certain knot multiplicities.
+    - :math:`C \in \mathbb{R}^n` are the learnable control coefficients. Its
+      entries :math:`C_i` influence the shape of the curve but are not generally
+      interpolated, except under certain knot multiplicities.
     - :math:`B_{i,k}(x)` are the B-spline basis functions of order :math:`k`,
       i.e., piecewise polynomials of degree :math:`k-1` with support on the
       interval :math:`[x_i, x_{i+k}]`.
     - :math:`X = \{ x_1, x_2, \dots, x_m \}` is the non-decreasing knot vector.
 
     If the first and last knots are repeated :math:`k` times, then the curve
-    interpolates the first and last control points.
+    interpolates the first and last control coefficients.
 
 
     .. note::
