@@ -163,9 +163,8 @@ def test_solver_test(batch_size, compile):
         )
 
 
-def test_train_load_restore():
-    dir = "tests/test_solver/tmp/"
-    problem = TensorProblem()
+def test_train_load_restore(clean_tmp_dir):
+    dir = clean_tmp_dir
     solver = GAROM(
         problem=TensorProblem(),
         generator=Generator(),
@@ -201,8 +200,3 @@ def test_train_load_restore():
     test_pts = torch.rand(20, 1)
     assert new_solver.forward(test_pts).shape == (20, 2)
     assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
-
-    # rm directories
-    import shutil
-
-    shutil.rmtree("tests/test_solver/tmp")

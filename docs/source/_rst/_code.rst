@@ -82,6 +82,8 @@ Solvers
     DeepEnsembleSupervisedSolver <solver/ensemble_solver/ensemble_supervised>
     ReducedOrderModelSolver <solver/supervised_solver/reduced_order_model.rst>
     GAROM <solver/garom.rst>
+    AutoregressiveSolverInterface <solver/autoregressive_solver/autoregressive_solver_interface.rst>
+    AutoregressiveSolver <solver/autoregressive_solver/autoregressive_solver.rst>
 
 
 Models

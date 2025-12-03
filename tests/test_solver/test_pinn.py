@@ -101,9 +101,8 @@ def test_solver_test(problem, batch_size, compile):
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-def test_train_load_restore(problem):
-    dir = "tests/test_solver/tmp"
-    problem = problem
+def test_train_load_restore(clean_tmp_dir, problem):
+    dir = clean_tmp_dir
     solver = PINN(model=model, problem=problem)
     trainer = Trainer(
         solver=solver,
@@ -116,6 +115,9 @@ def test_train_load_restore(problem):
         default_root_dir=dir,
     )
     trainer.train()
+    import os
+
+    print(os.listdir(f"{dir}/lightning_logs/version_0/checkpoints/"))
 
     # restore
     new_trainer = Trainer(solver=solver, max_epochs=5, accelerator="cpu")
@@ -137,8 +139,3 @@ def test_train_load_restore(problem):
     torch.testing.assert_close(
         new_solver.forward(test_pts), solver.forward(test_pts)
     )
-
-    # rm directories
-    import shutil
-
-    shutil.rmtree("tests/test_solver/tmp")

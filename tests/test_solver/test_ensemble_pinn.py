@@ -107,8 +107,8 @@ def test_solver_test(batch_size, compile):
         )
 
 
-def test_train_load_restore():
-    dir = "tests/test_solver/tmp"
+def test_train_load_restore(clean_tmp_dir):
+    dir = clean_tmp_dir
     solver = DeepEnsemblePINN(models=models, problem=problem)
     trainer = Trainer(
         solver=solver,
@@ -141,8 +141,3 @@ def test_train_load_restore():
     torch.testing.assert_close(
         new_solver.forward(test_pts), solver.forward(test_pts)
     )
-
-    # rm directories
-    import shutil
-
-    shutil.rmtree("tests/test_solver/tmp")
