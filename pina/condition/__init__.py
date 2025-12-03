@@ -15,6 +15,7 @@ __all__ = [
     "DataCondition",
     "GraphDataCondition",
     "TensorDataCondition",
+    "AutoregressiveCondition",
 ]
 
 from .condition_interface import ConditionInterface
@@ -37,3 +38,5 @@ from .data_condition import (
     GraphDataCondition,
     TensorDataCondition,
 )
+
+from .autoregressive_condition import AutoregressiveCondition

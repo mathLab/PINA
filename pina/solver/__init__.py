@@ -18,6 +18,7 @@ __all__ = [
     "DeepEnsembleSupervisedSolver",
     "DeepEnsemblePINN",
     "GAROM",
+    "AutoregressiveSolver",
 ]
 
 from .solver import SolverInterface, SingleSolverInterface, MultiSolverInterface
@@ -41,3 +42,7 @@ from .ensemble_solver import (
     DeepEnsemblePINN,
 )
 from .garom import GAROM
+from .autoregressive_solver import (
+    AutoregressiveSolver,
+    AutoregressiveSolverInterface,
+)
