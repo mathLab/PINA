@@ -235,8 +235,8 @@ def test_solver_test_graph(batch_size, use_lt):
     trainer.test()
 
 
-def test_train_load_restore():
-    dir = "tests/test_solver/tmp/"
+def test_train_load_restore(clean_tmp_dir):
+    dir = clean_tmp_dir
     problem = LabelTensorProblem()
     solver = DeepEnsembleSupervisedSolver(problem=problem, models=models)
     trainer = Trainer(
@@ -270,8 +270,3 @@ def test_train_load_restore():
     torch.testing.assert_close(
         new_solver.forward(test_pts), solver.forward(test_pts)
     )
-
-    # rm directories
-    import shutil
-
-    shutil.rmtree("tests/test_solver/tmp")

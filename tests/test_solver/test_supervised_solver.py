@@ -212,8 +212,27 @@ def test_solver_test_graph(batch_size, use_lt):
     trainer.test()
 
 
-def test_train_load_restore():
-    dir = "tests/test_solver/tmp/"
+import shutil
+from pathlib import Path
+import pytest
+
+
+@pytest.fixture
+def clean_tmp_dir():
+    path = Path("tests/test_solver/tmp/")
+
+    if path.exists():
+        shutil.rmtree(path)
+
+    path.mkdir(parents=True, exist_ok=True)
+    yield path
+
+    if path.exists():
+        shutil.rmtree(path)
+
+
+def test_train_load_restore(clean_tmp_dir):
+    dir = clean_tmp_dir
     problem = LabelTensorProblem()
     solver = SupervisedSolver(problem=problem, model=model)
     trainer = Trainer(
@@ -248,8 +267,3 @@ def test_train_load_restore():
     torch.testing.assert_close(
         new_solver.forward(test_pts), solver.forward(test_pts)
     )
-
-    # rm directories
-    import shutil
-
-    shutil.rmtree("tests/test_solver/tmp")

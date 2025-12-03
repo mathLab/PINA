@@ -27,6 +27,8 @@ __all__ = [
     "DeepEnsembleSupervisedSolver",
     "DeepEnsemblePINN",
     "GAROM",
+    "AutoregressiveSolver",
+    "AutoregressiveSolverInterface",
 ]
 
 from pina._src.solver.solver import (
@@ -64,3 +66,8 @@ from pina._src.solver.ensemble_solver.ensemble_supervised import (
 )
 
 from pina._src.solver.garom import GAROM
+
+from pina._src.solver.autoregressive_solver.autoregressive_solver import (
+    AutoregressiveSolver,
+    AutoregressiveSolverInterface,
+)

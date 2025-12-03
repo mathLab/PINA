@@ -43,21 +43,21 @@ class AbstractProblem(metaclass=ABCMeta):
                     self.domains[cond_name] = cond.domain
                     cond.domain = cond_name
 
-    #  back compatibility 0.1
-    @property
-    def input_pts(self):
-        """
-        Return a dictionary mapping condition names to their corresponding
-        input points. If some domains are not sampled, they will not be returned
-        and the corresponding condition will be empty.
+    # #  back compatibility 0.1
+    # @property
+    # def input_pts(self):
+    #     """
+    #     Return a dictionary mapping condition names to their corresponding
+    #     input points. If some domains are not sampled, they will not be returned
+    #     and the corresponding condition will be empty.
 
-        :return: The input points of the problem.
-        :rtype: dict
-        """
-        to_return = {}
-        for cond_name, data in self.collected_data.items():
-            to_return[cond_name] = data["input"]
-        return to_return
+    #     :return: The input points of the problem.
+    #     :rtype: dict
+    #     """
+    #     to_return = {}
+    #     for cond_name, data in self.collected_data.items():
+    #         to_return[cond_name] = data["input"]
+    #     return to_return
 
     @property
     def discretised_domains(self):

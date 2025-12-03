@@ -119,9 +119,8 @@ def test_solver_test(problem, batch_size, compile):
 
 
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
-def test_train_load_restore(problem):
-    dir = "tests/test_solver/tmp"
-    problem = problem
+def test_train_load_restore(clean_tmp_dir, problem):
+    dir = clean_tmp_dir
     solver = GradientPINN(model=model, problem=problem)
     trainer = Trainer(
         solver=solver,
@@ -157,8 +156,3 @@ def test_train_load_restore(problem):
     torch.testing.assert_close(
         new_solver.forward(test_pts), solver.forward(test_pts)
     )
-
-    # rm directories
-    import shutil
-
-    shutil.rmtree("tests/test_solver/tmp")

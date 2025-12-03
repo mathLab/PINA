@@ -101,7 +101,7 @@ def test_graph_data_create_batch():
     data_manager = _DataManager(graph=graph, target=target)
     item1 = data_manager[0]
     item2 = data_manager[1]
-    batch_data = _GraphDataManager._create_batch([item1, item2])
+    batch_data = _GraphDataManager.create_batch([item1, item2])
     assert hasattr(batch_data, "graph")
     assert hasattr(batch_data, "target")
     batched_graphs = batch_data.graph
@@ -122,7 +122,7 @@ def test_tensor_data_create_batch():
     data_manager = _DataManager(pippo=pippo, pluto=pluto, paperino=paperino)
     item1 = data_manager[0]
     item2 = data_manager[1]
-    batch_data = _TensorDataManager._create_batch([item1, item2])
+    batch_data = _TensorDataManager.create_batch([item1, item2])
     assert hasattr(batch_data, "pippo")
     assert hasattr(batch_data, "pluto")
     assert hasattr(batch_data, "paperino")

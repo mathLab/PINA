@@ -79,13 +79,16 @@ class _Creator:
         """
         batch_sizes = {}
         if self.batching_mode == "common_batch_size":
+
+            if self.batch_size is None:
+                batch_size = max(
+                    dataset.length for dataset in datasets.values()
+                )
+            else:
+                batch_size = self.batch_size
+
             for name in datasets.keys():
-                if self.batch_size is None:
-                    batch_sizes[name] = len(datasets[name])
-                else:
-                    batch_sizes[name] = min(
-                        self.batch_size, len(datasets[name])
-                    )
+                batch_sizes[name] = min(batch_size, len(datasets[name]))
             return batch_sizes
         if self.batching_mode == "proportional":
             return self._compute_proportional_batch_sizes(datasets)
@@ -168,8 +171,12 @@ class _Creator:
         dataloaders = {}
         if self.batching_mode == "common_batch_size":
             max_len = max(len(dataset) for dataset in datasets.values())
+        print(batch_sizes)
         for name, dataset in datasets.items():
-            if self.batching_mode == "common_batch_size":
+            if (
+                self.batching_mode == "common_batch_size"
+                and dataset.length != batch_sizes[name]
+            ):
                 dataset.max_len = max_len
             dataloaders[name] = self.conditions[name].create_dataloader(
                 dataset=dataset,
