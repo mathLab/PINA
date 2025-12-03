@@ -62,7 +62,10 @@ class SwitchOptimizer(Callback):
 
             # Hook the new optimizers to the model parameters
             for idx, optim in enumerate(self._new_optimizers):
-                optim.hook(trainer.solver._pina_models[idx].parameters())
+                optim._register_hooks(
+                    parameters=trainer.solver._pina_models[idx].parameters(),
+                    solver=trainer.solver,
+                )
                 optims.append(optim)
 
             # Update the solver's optimizers

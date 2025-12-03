@@ -6,7 +6,9 @@ import torch
 
 from torch._dynamo import OptimizedModule
 from ..problem import AbstractProblem, InverseProblem
-from ..optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
+from ..optim.core.optimizer_connector import OptimizerConnector as Optimizer
+from ..optim.core.scheduler_connector import SchedulerConnector as Scheduler
+from ..optim import TorchOptimizer, TorchScheduler
 from ..loss import WeightingInterface
 from ..loss.scalar_weighting import _NoWeighting
 from ..utils import check_consistency, labelize_forward
@@ -59,6 +61,10 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
             )
 
         # PINA private attributes (some are overridden by derived classes)
+        #### self._pina_problem    ---> link to AbstractProblem (or derived)
+        #### self._pina_models     ---> link to torch.nn.Module (or derived)
+        #### self._pina_optimizers ---> link to OptimizerConnector (or derived)
+        #### self._pina_schedulers ---> link to SchedulerConnector (or derived)
         self._pina_problem = problem
         self._pina_models = None
         self._pina_optimizers = None
@@ -107,6 +113,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
+        self.current_batch = batch
         loss = self._optimization_cycle(batch=batch, **kwargs)
         self.store_log("train_loss", loss, self.get_batch_size(batch))
         return loss
@@ -124,6 +131,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
+        self.current_batch = batch
         losses = self.optimization_cycle(batch=batch, **kwargs)
         loss = (sum(losses.values()) / len(losses)).as_subclass(torch.Tensor)
         self.store_log("val_loss", loss, self.get_batch_size(batch))
@@ -142,6 +150,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
+        self.current_batch = batch
         losses = self.optimization_cycle(batch=batch, **kwargs)
         loss = (sum(losses.values()) / len(losses)).as_subclass(torch.Tensor)
         self.store_log("test_loss", loss, self.get_batch_size(batch))
@@ -162,6 +171,21 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
             batch_size=batch_size,
             **self.trainer.logging_kwargs,
         )
+
+    def lr_scheduler_step(self, scheduler, metric=None):
+        """
+        The lr scheduler step overriden. This method is overridden in order to
+        ensure :class:`pina.optim.scheduler.Scheduler`
+        objects can be safely used.
+
+        :param Scheduler scheduler: The scheduler instance.
+        :param str metric: The metric to track for the scheduling,
+            defaults to None.
+        """
+        if metric is None:
+            scheduler.step()
+        else:
+            scheduler.step(metric)
 
     def setup(self, stage):
         """
@@ -239,7 +263,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :rtype: dict
         """
         # compute losses
-        losses = self.optimization_cycle(batch)
+        losses = self.optimization_cycle(batch, **kwargs)
         # clamp unknown parameters in InverseProblem (if needed)
         self._clamp_params()
         # store log
@@ -426,9 +450,18 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
         :return: The optimizer and the scheduler
         :rtype: tuple[list[Optimizer], list[Scheduler]]
         """
-        self.optimizer.hook(self.model.parameters())
+        # get connector
+        optimizer_connector = self._pina_optimizers[0]
+        scheduler_connector = self._pina_schedulers[0]
+        # set the hooks
+        optimizer_connector._register_hooks(
+            parameters=self.model.parameters(),
+            solver=self,
+        )
+        scheduler_connector._register_hooks(optimizer=optimizer_connector)
+        # only for inverse problems
         if isinstance(self.problem, InverseProblem):
-            self.optimizer.instance.add_param_group(
+            self.optimizer.add_param_group(
                 {
                     "params": [
                         self._params[var]
@@ -436,8 +469,7 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
                     ]
                 }
             )
-        self.scheduler.hook(self.optimizer)
-        return ([self.optimizer.instance], [self.scheduler.instance])
+        return ([self.optimizer], [self.scheduler])
 
     @property
     def model(self):
@@ -457,7 +489,7 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
         :return: The scheduler used for training.
         :rtype: Scheduler
         """
-        return self._pina_schedulers[0]
+        return self._pina_schedulers[0].instance
 
     @property
     def optimizer(self):
@@ -467,7 +499,7 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
         :return: The optimizer used for training.
         :rtype: Optimizer
         """
-        return self._pina_optimizers[0]
+        return self._pina_optimizers[0].instance
 
 
 class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
@@ -597,15 +629,17 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         :return: The optimizer and the scheduler
         :rtype: tuple[list[Optimizer], list[Scheduler]]
         """
-        for optimizer, scheduler, model in zip(
-            self.optimizers, self.schedulers, self.models
+        for optimizer_connector, scheduler_connector, model in zip(
+            self._pina_optimizers, self._pina_schedulers, self.models
         ):
-            optimizer.hook(model.parameters())
-            scheduler.hook(optimizer)
+            optimizer_connector._register_hooks(
+                parameters=model.parameters(), solver=self
+            )
+            scheduler_connector._register_hooks(optimizer=optimizer_connector)
 
         return (
-            [optimizer.instance for optimizer in self.optimizers],
-            [scheduler.instance for scheduler in self.schedulers],
+            [optimizer for optimizer in self.optimizers],
+            [scheduler for scheduler in self.schedulers],
         )
 
     @property
@@ -626,7 +660,7 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         :return: The optimizers used for training.
         :rtype: list[Optimizer]
         """
-        return self._pina_optimizers
+        return [optimizer.instance for optimizer in self._pina_optimizers]
 
     @property
     def schedulers(self):
@@ -636,4 +670,4 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         :return: The schedulers used for training.
         :rtype: list[Scheduler]
         """
-        return self._pina_schedulers
+        return [scheduler.instance for scheduler in self._pina_schedulers]
