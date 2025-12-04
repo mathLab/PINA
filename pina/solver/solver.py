@@ -325,8 +325,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The default scheduler.
         :rtype: Scheduler
         """
-
-        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
+        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR, factor=1.0)
 
     @property
     def problem(self):
