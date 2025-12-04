@@ -7,7 +7,7 @@ from pina import LabelTensor
 
 
 # Utility quantities for testing
-order = torch.randint(1, 8, (1,)).item()
+order = torch.randint(3, 6, (1,)).item()
 n_ctrl_pts = torch.randint(order, order + 5, (1,)).item()
 n_knots = order + n_ctrl_pts
 

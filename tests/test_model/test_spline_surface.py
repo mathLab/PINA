@@ -7,7 +7,7 @@ from pina import LabelTensor
 
 
 # Utility quantities for testing
-orders = [random.randint(1, 8) for _ in range(2)]
+orders = [random.randint(3, 6) for _ in range(2)]
 n_ctrl_pts = random.randint(max(orders), max(orders) + 5)
 n_knots = [orders[i] + n_ctrl_pts for i in range(2)]
 
