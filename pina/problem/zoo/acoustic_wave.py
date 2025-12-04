@@ -50,19 +50,17 @@ class AcousticWaveProblem(TimeDependentProblem, SpatialProblem):
     temporal_domain = CartesianDomain({"t": [0, 1]})
 
     domains = {
-        "D": CartesianDomain({"x": [0, 1], "t": [0, 1]}),
-        "t0": CartesianDomain({"x": [0, 1], "t": 0.0}),
-        "g1": CartesianDomain({"x": 0.0, "t": [0, 1]}),
-        "g2": CartesianDomain({"x": 1.0, "t": [0, 1]}),
+        "D": spatial_domain.update(temporal_domain),
+        "t0": spatial_domain.update(CartesianDomain({"t": 0})),
+        "boundary": spatial_domain.partial().update(temporal_domain),
     }
 
     conditions = {
-        "g1": Condition(domain="g1", equation=FixedValue(value=0.0)),
-        "g2": Condition(domain="g2", equation=FixedValue(value=0.0)),
+        "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
         "t0": Condition(
             domain="t0",
             equation=SystemEquation(
-                [Equation(initial_condition), FixedGradient(value=0.0, d="t")]
+                [Equation(initial_condition), FixedGradient(0.0, d="t")]
             ),
         ),
     }

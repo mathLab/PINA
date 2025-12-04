@@ -90,19 +90,13 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     unknown_parameter_domain = CartesianDomain({"mu1": [-1, 1], "mu2": [-1, 1]})
 
     domains = {
-        "g1": CartesianDomain({"x": [x_min, x_max], "y": y_max}),
-        "g2": CartesianDomain({"x": [x_min, x_max], "y": y_min}),
-        "g3": CartesianDomain({"x": x_max, "y": [y_min, y_max]}),
-        "g4": CartesianDomain({"x": x_min, "y": [y_min, y_max]}),
-        "D": CartesianDomain({"x": [x_min, x_max], "y": [y_min, y_max]}),
+        "D": spatial_domain,
+        "boundary": spatial_domain.partial(),
     }
 
     conditions = {
-        "g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "g2": Condition(domain="g2", equation=FixedValue(0.0)),
-        "g3": Condition(domain="g3", equation=FixedValue(0.0)),
-        "g4": Condition(domain="g4", equation=FixedValue(0.0)),
         "D": Condition(domain="D", equation=Equation(laplace_equation)),
+        "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
     }
 
     def __init__(self, load=True, data_size=1.0):

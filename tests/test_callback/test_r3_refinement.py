@@ -9,7 +9,7 @@ from pina.callback import R3Refinement
 
 # make the problem
 poisson_problem = Poisson()
-poisson_problem.discretise_domain(10, "grid", domains=["g1", "g2", "g3", "g4"])
+poisson_problem.discretise_domain(10, "grid", domains="boundary")
 poisson_problem.discretise_domain(10, "grid", domains="D")
 model = FeedForward(
     len(poisson_problem.input_variables), len(poisson_problem.output_variables)
@@ -29,9 +29,7 @@ def test_constructor():
         R3Refinement(sample_every=10, condition_to_update=3)
 
 
-@pytest.mark.parametrize(
-    "condition_to_update", [["D", "g1"], ["D", "g1", "g2", "g3", "g4"]]
-)
+@pytest.mark.parametrize("condition_to_update", [["D"], ["boundary", "D"]])
 def test_sample(condition_to_update):
     trainer = Trainer(
         solver=solver,

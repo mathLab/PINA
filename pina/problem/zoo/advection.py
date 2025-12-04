@@ -42,8 +42,8 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
     temporal_domain = CartesianDomain({"t": [0, 1]})
 
     domains = {
-        "D": CartesianDomain({"x": [0, 2 * torch.pi], "t": [0, 1]}),
-        "t0": CartesianDomain({"x": [0, 2 * torch.pi], "t": 0.0}),
+        "D": spatial_domain.update(temporal_domain),
+        "t0": spatial_domain.update(CartesianDomain({"t": 0})),
     }
 
     conditions = {

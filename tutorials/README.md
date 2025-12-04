@@ -14,7 +14,7 @@ How to build a `Problem` in PINA|[[.ipynb](tutorial16/tutorial.ipynb),[.py](tuto
 Introduction to Solver classes|[[.ipynb](tutorial18/tutorial.ipynb),[.py](tutorial18/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial18/tutorial.html)]|
 Introduction to `Trainer` class|[[.ipynb](tutorial11/tutorial.ipynb),[.py](tutorial11/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial11/tutorial.html)]|
 Data structure for SciML: `Tensor`, `LabelTensor`, `Data` and `Graph` |[[.ipynb](tutorial19/tutorial.ipynb),[.py](tutorial19/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial19/tutorial.html)]|
-Building geometries with `DomainInterface` class|[[.ipynb](tutorial6/tutorial.ipynb),[.py](tutorial6/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial6/tutorial.html)]|
+Building domains with PINA's BaseDomain class|[[.ipynb](tutorial6/tutorial.ipynb),[.py](tutorial6/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial6/tutorial.html)]|
 Introduction to PINA `Equation` class|[[.ipynb](tutorial12/tutorial.ipynb),[.py](tutorial12/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial12/tutorial.html)]|
 
 
