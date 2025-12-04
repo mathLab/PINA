@@ -256,6 +256,7 @@ Callbacks
 
     Processing callback <callback/processing_callback.rst>
     Optimizer callback <callback/optimizer_callback.rst>
+    Switch Scheduler <callback/switch_scheduler.rst>
     R3 Refinment callback <callback/refinement/r3_refinement.rst>
     Refinment Interface callback <callback/refinement/refinement_interface.rst>
     Normalizer callback <callback/normalizer_data_callback.rst>
