@@ -49,15 +49,13 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
     temporal_domain = CartesianDomain({"t": [0, 1]})
 
     domains = {
-        "D": CartesianDomain({"x": [-torch.pi, torch.pi], "t": [0, 1]}),
-        "g1": CartesianDomain({"x": -torch.pi, "t": [0, 1]}),
-        "g2": CartesianDomain({"x": torch.pi, "t": [0, 1]}),
-        "t0": CartesianDomain({"x": [-torch.pi, torch.pi], "t": 0.0}),
+        "D": spatial_domain.update(temporal_domain),
+        "boundary": spatial_domain.partial().update(temporal_domain),
+        "t0": spatial_domain.update(CartesianDomain({"t": 0})),
     }
 
     conditions = {
-        "g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "g2": Condition(domain="g2", equation=FixedValue(0.0)),
+        "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
         "t0": Condition(domain="t0", equation=Equation(initial_condition)),
     }
 

@@ -13,16 +13,16 @@ from pina.condition import (
 def test_discretise_domain():
     n = 10
     poisson_problem = Poisson()
-    boundaries = ["g1", "g2", "g3", "g4"]
-    poisson_problem.discretise_domain(n, "grid", domains=boundaries)
-    for b in boundaries:
-        assert poisson_problem.discretised_domains[b].shape[0] == n
-    poisson_problem.discretise_domain(n, "random", domains=boundaries)
-    for b in boundaries:
-        assert poisson_problem.discretised_domains[b].shape[0] == n
+
+    poisson_problem.discretise_domain(n, "grid", domains="boundary")
+    assert poisson_problem.discretised_domains["boundary"].shape[0] == n
+
+    poisson_problem.discretise_domain(n, "random", domains="boundary")
+    assert poisson_problem.discretised_domains["boundary"].shape[0] == n
 
     poisson_problem.discretise_domain(n, "grid", domains=["D"])
     assert poisson_problem.discretised_domains["D"].shape[0] == n**2
+
     poisson_problem.discretise_domain(n, "random", domains=["D"])
     assert poisson_problem.discretised_domains["D"].shape[0] == n
 
@@ -89,10 +89,9 @@ def test_custom_sampling_logic(mode):
         "x": {"n": 100, "mode": mode},
         "y": {"n": 50, "mode": mode},
     }
-    poisson_problem.discretise_domain(sample_rules=sampling_rules)
-    for domain in ["g1", "g2", "g3", "g4"]:
-        assert poisson_problem.discretised_domains[domain].shape[0] == 100 * 50
-        assert poisson_problem.discretised_domains[domain].labels == ["x", "y"]
+    poisson_problem.discretise_domain(sample_rules=sampling_rules, domains="D")
+    assert poisson_problem.discretised_domains["D"].shape[0] == 100 * 50
+    assert poisson_problem.discretised_domains["D"].labels == ["x", "y"]
 
 
 @pytest.mark.parametrize("mode", ["random", "grid"])

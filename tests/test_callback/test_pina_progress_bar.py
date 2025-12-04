@@ -7,10 +7,9 @@ from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 
 # make the problem
 poisson_problem = Poisson()
-boundaries = ["g1", "g2", "g3", "g4"]
 n = 10
 condition_names = list(poisson_problem.conditions.keys())
-poisson_problem.discretise_domain(n, "grid", domains=boundaries)
+poisson_problem.discretise_domain(n, "grid", domains="boundary")
 poisson_problem.discretise_domain(n, "grid", domains="D")
 model = FeedForward(
     len(poisson_problem.input_variables), len(poisson_problem.output_variables)

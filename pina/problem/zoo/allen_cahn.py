@@ -47,8 +47,8 @@ class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
     temporal_domain = CartesianDomain({"t": [0, 1]})
 
     domains = {
-        "D": CartesianDomain({"x": [-1, 1], "t": [0, 1]}),
-        "t0": CartesianDomain({"x": [-1, 1], "t": 0.0}),
+        "D": spatial_domain.update(temporal_domain),
+        "t0": spatial_domain.update(CartesianDomain({"t": 0})),
     }
 
     conditions = {
