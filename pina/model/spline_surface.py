@@ -2,7 +2,8 @@
 
 import torch
 from .spline import Spline
-from ..utils import check_consistency
+from ..label_tensor import LabelTensor
+from ..utils import check_consistency, check_positive_integer
 
 
 class SplineSurface(torch.nn.Module):
@@ -14,14 +15,15 @@ class SplineSurface(torch.nn.Module):
 
     .. math::
 
-        S(x, y) = \sum_{i,j=1}^{n_x, n_y} B_{i,k}(x) B_{j,s}(y) C_{i,j},
-        \quad x \in [x_1, x_m], y \in [y_1, y_l]
+        S(x, y) = \sum_{i=1}^{n_x} \sum_{j=1}^{n_y} B_{i,k}(x) B_{j,s}(y)
+        C_{i,j}, \quad x \in [x_1, x_m], y \in [y_1, y_l]
 
     where:
 
-    - :math:`C_{i,j} \in \mathbb{R}^2` are the control points. These fixed
-      points influence the shape of the surface but are not generally
-      interpolated, except at the boundaries under certain knot multiplicities.
+    - :math:`C \in \mathbb{R}^{n_x \times n_y}` is the matrix of learnable
+      control coefficients. Its entries :math:`C_{i,j}` influence the shape of
+      the surface but are not generally interpolated, except under certain knot
+      multiplicities.
     - :math:`B_{i,k}(x)` and :math:`B_{j,s}(y)` are the B-spline basis functions
       defined over two orthogonal directions, with orders :math:`k` and
       :math:`s`, respectively.
@@ -122,6 +124,71 @@ class SplineSurface(torch.nn.Module):
             self.control_points,
         ).unsqueeze(-1)
 
+    def derivative(self, x, degree_u, degree_v):
+        """
+        Compute the partial derivatives of the spline at the given points.
+
+        :param x: The input tensor.
+        :type x: torch.Tensor | LabelTensor
+        :param int degree_u: The degree of the derivative along the first
+            parameter direction.
+        :param int degree_v: The degree of the derivative along the second
+            parameter direction.
+        :raise ValueError: If ``degree_u`` is not an integer.
+        :raise ValueError: If ``degree_v`` is not an integer.
+        :return: The derivative tensor.
+        :rtype: torch.Tensor
+        """
+        # Check consistency
+        check_positive_integer(degree_u, strict=False)
+        check_positive_integer(degree_v, strict=False)
+
+        # Split input into u and v components
+        if isinstance(x, LabelTensor):
+            u = x[x.labels[0]].as_subclass(torch.Tensor)
+            v = x[x.labels[1]].as_subclass(torch.Tensor)
+        else:
+            u = x[..., 0]
+            v = x[..., 1]
+
+        # Compute basis derivatives
+        der_u = self.spline_u._basis_derivative(u, degree=degree_u)
+        der_v = self.spline_v._basis_derivative(v, degree=degree_v)
+
+        return torch.einsum(
+            "...bi, ...bj, ij -> ...b", der_u, der_v, self.control_points
+        )
+
+    def gradient(self, x):
+        """
+        Convenience method to compute the gradient of the spline surface.
+
+        :param x: The input tensor.
+        :type x: torch.Tensor | LabelTensor
+        :return: The gradient tensor.
+        :rtype: torch.Tensor
+        """
+        # Compute partial derivatives
+        du = self.derivative(x, degree_u=1, degree_v=0)
+        dv = self.derivative(x, degree_u=0, degree_v=1)
+
+        return torch.cat((du, dv), dim=-1)
+
+    def laplacian(self, x):
+        """
+        Convenience method to compute the laplacian of the spline surface.
+
+        :param x: The input tensor.
+        :type x: torch.Tensor | LabelTensor
+        :return: The laplacian tensor.
+        :rtype: torch.Tensor
+        """
+        # Compute second partial derivatives
+        ddu = self.derivative(x, degree_u=2, degree_v=0)
+        ddv = self.derivative(x, degree_u=0, degree_v=2)
+
+        return ddu + ddv
+
     @property
     def knots(self):
         """
@@ -202,8 +269,8 @@ class SplineSurface(torch.nn.Module):
         # Check control points
         if control_points.shape != __valid_shape:
             raise ValueError(
-                "control_points must be of the correct shape. ",
-                f"Expected {__valid_shape}, got {control_points.shape}.",
+                f"control_points must be of the correct shape. "
+                f"Expected {__valid_shape}, got {control_points.shape}."
             )
 
         # Register control points as a learnable parameter

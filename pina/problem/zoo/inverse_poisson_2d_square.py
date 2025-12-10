@@ -26,8 +26,9 @@ def _load_tensor_from_url(url, labels, timeout=10):
     and None is returned.
 
     :param str url: URL to the remote `.pth` tensor file.
-    :param list[str] | tuple[str] labels: Labels for the resulting LabelTensor.
-    :param int timeout: Timeout for the request in seconds.
+    :param labels: Labels for the resulting LabelTensor.
+    :type labels: list[str] | tuple[str]
+    :param int timeout: Timeout for the request in seconds. Default is 10s.
     :return: A LabelTensor object if successful, otherwise None.
     :rtype: LabelTensor | None
     """
@@ -71,12 +72,14 @@ def laplace_equation(input_, output_, params_):
 class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     r"""
     Implementation of the inverse 2-dimensional Poisson problem in the square
-    domain :math:`[0, 1] \times [0, 1]`,
-    with unknown parameter domain :math:`[-1, 1] \times [-1, 1]`.
-    The `"data"` condition is added only if the required files are
-    downloaded successfully.
+    domain :math:`[0, 1] \times [0, 1]`, with unknown parameter domain
+    :math:`[-1, 1] \times [-1, 1]`.
+
+    The `"data"` condition is added only if the required files are downloaded
+    successfully.
 
     :Example:
+
         >>> problem = InversePoisson2DSquareProblem()
     """
 
@@ -108,6 +111,7 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
 
         :param bool load: If True, it attempts to load data from remote URLs.
             Set to False to skip data loading (e.g., if no internet connection).
+            Default is True.
         :param float data_size: The fraction of the total data to use for the
             "data" condition. If set to 1.0, all available data is used.
             If set to 0.0, no data is used. Default is 1.0.

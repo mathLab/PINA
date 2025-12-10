@@ -27,7 +27,7 @@ class NeuralTangentKernelWeighting(WeightingInterface):
         :param int update_every_n_epochs: The number of training epochs between
             weight updates. If set to 1, the weights are updated at every epoch.
             Default is 1.
-        :param float alpha: The alpha parameter.
+        :param float alpha: The alpha parameter. Default is 0.5.
         :raises ValueError: If ``alpha`` is not between 0 and 1 (inclusive).
         """
         super().__init__(update_every_n_epochs=update_every_n_epochs)
@@ -49,22 +49,28 @@ class NeuralTangentKernelWeighting(WeightingInterface):
         :return: The updated weights.
         :rtype: dict
         """
-        # Define a dictionary to store the norms of the gradients
-        losses_norm = {}
+        # Get model parameters and define a dictionary to store the norms
+        params = [p for p in self.solver.model.parameters() if p.requires_grad]
+        norms = {}
 
-        # Compute the gradient norms for each loss component
+        # Iterate over conditions
         for condition, loss in losses.items():
-            loss.backward(retain_graph=True)
-            grads = torch.cat(
-                [p.grad.flatten() for p in self.solver.model.parameters() if p.requires_grad]
-            )
-            losses_norm[condition] = grads.norm()
 
-        # Update the weights
+            # Compute gradients
+            grads = torch.autograd.grad(
+                loss,
+                params,
+                retain_graph=True,
+                allow_unused=True,
+            )
+
+            # Compute norms
+            norms[condition] = torch.cat(
+                [g.flatten() for g in grads if g is not None]
+            ).norm()
+
         return {
             condition: self.alpha * self.last_saved_weights().get(condition, 1)
-            + (1 - self.alpha)
-            * losses_norm[condition]
-            / sum(losses_norm.values())
+            + (1 - self.alpha) * norms[condition] / sum(norms.values())
             for condition in losses
         }
