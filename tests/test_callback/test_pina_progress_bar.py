@@ -1,7 +1,7 @@
 from pina.solver import PINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
-from pina.callback.processing_callback import PINAProgressBar
+from pina.callback import PINAProgressBar
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 
 

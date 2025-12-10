@@ -254,12 +254,13 @@ Callbacks
 .. toctree::
     :titlesonly:
 
-    Processing callback <callback/processing_callback.rst>
-    Optimizer callback <callback/optimizer_callback.rst>
-    Switch Scheduler <callback/switch_scheduler.rst>
-    R3 Refinment callback <callback/refinement/r3_refinement.rst>
-    Refinment Interface callback <callback/refinement/refinement_interface.rst>
-    Normalizer callback <callback/normalizer_data_callback.rst>
+    Switch Optimizer <callback/optim/switch_optimizer.rst>
+    Switch Scheduler <callback/optim/switch_scheduler.rst>
+    Normalizer Data <callback/processing/normalizer_data_callback.rst>
+    PINA Progress Bar <callback/processing/pina_progress_bar.rst>
+    Metric Tracker <callback/processing/metric_tracker.rst>
+    Refinement Interface <callback/refinement/refinement_interface.rst>
+    R3 Refinement <callback/refinement/r3_refinement.rst>
 
 Losses and Weightings
 ---------------------

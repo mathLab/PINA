@@ -1,7 +1,7 @@
-Optimizer callbacks
+Switch Optimizer
 =====================
 
-.. currentmodule:: pina.callback.optimizer_callback
+.. currentmodule:: pina.callback.optim.switch_optimizer
 .. autoclass:: SwitchOptimizer
    :members:
    :show-inheritance:

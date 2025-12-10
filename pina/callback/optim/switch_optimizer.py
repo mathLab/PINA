@@ -1,8 +1,8 @@
 """Module for the SwitchOptimizer callback."""
 
 from lightning.pytorch.callbacks import Callback
-from ..optim import TorchOptimizer
-from ..utils import check_consistency
+from ...optim import TorchOptimizer
+from ...utils import check_consistency
 
 
 class SwitchOptimizer(Callback):

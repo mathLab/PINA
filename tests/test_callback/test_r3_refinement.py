@@ -1,12 +1,10 @@
 import pytest
-
 from torch.nn import MSELoss
-
 from pina.solver import PINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
-from pina.callback.refinement import R3Refinement
+from pina.callback import R3Refinement
 
 
 # make the problem
