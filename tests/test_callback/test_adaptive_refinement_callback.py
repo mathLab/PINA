@@ -51,7 +51,7 @@ def test_sample(condition_to_update):
     }
     trainer.train()
     after_n_points = {
-        loc: len(trainer.data_module.train_dataset.input[loc])
+        loc: len(trainer.data_module.train_dataset[loc].input)
         for loc in condition_to_update
     }
     assert before_n_points == trainer.callbacks[0].initial_population_size

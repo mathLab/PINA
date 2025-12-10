@@ -117,6 +117,10 @@ def test_solver_train(use_lt, batch_size, compile):
         assert isinstance(solver.model, OptimizedModule)
 
 
+if __name__ == "__main__":
+    test_solver_train(use_lt=True, batch_size=20, compile=True)
+
+
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_train_graph(batch_size, use_lt):

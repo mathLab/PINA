@@ -26,6 +26,7 @@ Trainer, Dataset and Datamodule
     Trainer <trainer.rst>
     Dataset <data/dataset.rst>
     DataModule <data/data_module.rst>
+    Dataloader <data/dataloader.rst>
 
 Data Types
 ------------
