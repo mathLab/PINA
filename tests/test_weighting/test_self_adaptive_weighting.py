@@ -1,4 +1,5 @@
 import pytest
+import torch
 from pina import Trainer
 from pina.solver import PINN
 from pina.model import FeedForward
@@ -31,6 +32,29 @@ def test_constructor(update_every_n_epochs):
 
 @pytest.mark.parametrize("update_every_n_epochs", [1, 3])
 def test_train_aggregation(update_every_n_epochs):
+    weighting = SelfAdaptiveWeighting(
+        update_every_n_epochs=update_every_n_epochs
+    )
+    solver = PINN(problem=problem, model=model, weighting=weighting)
+    trainer = Trainer(solver=solver, max_epochs=5, accelerator="cpu")
+    trainer.train()
+
+class Net_biased(torch.nn.Module):
+    def __init__(self, input_dim, output_dim, num_layers=2):
+        super().__init__()
+        self.mlp = FeedForward(
+            input_dimensions=input_dim, 
+            output_dimensions=output_dim, 
+            layers=[10 for _ in range(num_layers)]
+        )
+        self.bias = torch.nn.Parameter(torch.zeros(1))
+
+    def forward(self, x):
+        return self.mlp(x)
+    
+@pytest.mark.parametrize("update_every_n_epochs", [1, 3])
+def test_train_aggregation_freezed_weights(update_every_n_epochs):
+    model = Net_biased(len(problem.input_variables), len(problem.output_variables))
     weighting = SelfAdaptiveWeighting(
         update_every_n_epochs=update_every_n_epochs
     )

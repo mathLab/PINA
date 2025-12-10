@@ -56,7 +56,7 @@ class NeuralTangentKernelWeighting(WeightingInterface):
         for condition, loss in losses.items():
             loss.backward(retain_graph=True)
             grads = torch.cat(
-                [p.grad.flatten() for p in self.solver.model.parameters()]
+                [p.grad.flatten() for p in self.solver.model.parameters() if p.requires_grad]
             )
             losses_norm[condition] = grads.norm()
 
