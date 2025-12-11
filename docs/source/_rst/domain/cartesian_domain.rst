@@ -1,8 +1,8 @@
 CartesianDomain
 ======================
-.. currentmodule:: pina.domain.cartesian
+.. currentmodule:: pina.domain.cartesian_domain
 
-.. automodule:: pina.domain.cartesian
+.. automodule:: pina.domain.cartesian_domain
 
 .. autoclass:: CartesianDomain
     :members:

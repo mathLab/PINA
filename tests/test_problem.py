@@ -2,8 +2,7 @@ import torch
 import pytest
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from pina import LabelTensor
-from pina.domain import Union
-from pina.domain import CartesianDomain
+from pina.domain import Union, CartesianDomain, EllipsoidDomain
 from pina.condition import (
     Condition,
     InputTargetCondition,
@@ -70,16 +69,16 @@ def test_collected_data():
 
 def test_add_points():
     poisson_problem = Poisson()
-    poisson_problem.discretise_domain(0, "random", domains=["D"])
+    poisson_problem.discretise_domain(1, "random", domains=["D"])
     new_pts = LabelTensor(torch.tensor([[0.5, -0.5]]), labels=["x", "y"])
     poisson_problem.add_points({"D": new_pts})
-    assert torch.isclose(
-        poisson_problem.discretised_domains["D"].extract("x"),
-        new_pts.extract("x"),
+    assert torch.allclose(
+        poisson_problem.discretised_domains["D"]["x"][-1],
+        new_pts["x"],
     )
-    assert torch.isclose(
-        poisson_problem.discretised_domains["D"].extract("y"),
-        new_pts.extract("y"),
+    assert torch.allclose(
+        poisson_problem.discretised_domains["D"]["y"][-1],
+        new_pts["y"],
     )
 
 
@@ -106,7 +105,12 @@ def test_wrong_custom_sampling_logic(mode):
         "y": {"n": 50, "mode": mode},
     }
     with pytest.raises(RuntimeError):
+        poisson_problem.domains["new"] = EllipsoidDomain({"x": [0, 1]})
         poisson_problem.discretise_domain(sample_rules=sampling_rules)
+
+    # Necessary cleanup
+    if "new" in poisson_problem.domains:
+        del poisson_problem.domains["new"]
 
 
 def test_aggregate_data():
@@ -115,7 +119,7 @@ def test_aggregate_data():
         input=LabelTensor(torch.tensor([[0.0, 1.0]]), labels=["x", "y"]),
         target=LabelTensor(torch.tensor([[0.0]]), labels=["u"]),
     )
-    poisson_problem.discretise_domain(0, "random", domains="all")
+    poisson_problem.discretise_domain(1, "random", domains="all")
     poisson_problem.collect_data()
     assert isinstance(poisson_problem.collected_data, dict)
     for name, conditions in poisson_problem.conditions.items():

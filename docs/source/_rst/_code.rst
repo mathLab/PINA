@@ -231,10 +231,11 @@ Geometrical Domains
 .. toctree::
     :titlesonly:
 
-    Domain <domain/domain.rst>
-    CartesianDomain <domain/cartesian.rst>
-    EllipsoidDomain <domain/ellipsoid.rst>
-    SimplexDomain <domain/simplex.rst>
+    DomainInterface <domain/domain_interface.rst>
+    BaseDomain <domain/base_domain.rst>
+    CartesianDomain <domain/cartesian_domain.rst>
+    EllipsoidDomain <domain/ellipsoid_domain.rst>
+    SimplexDomain <domain/simplex_domain.rst>
 
 Domain Operations
 ------------------
@@ -243,10 +244,11 @@ Domain Operations
     :titlesonly:
 
     OperationInterface <domain/operation_interface.rst>
-    Union <domain/union_domain.rst>
-    Intersection <domain/intersection_domain.rst>
-    Difference <domain/difference_domain.rst>
-    Exclusion <domain/exclusion_domain.rst>
+    BaseOperation <domain/base_operation.rst>
+    Union <domain/union.rst>
+    Intersection <domain/intersection.rst>
+    Difference <domain/difference.rst>
+    Exclusion <domain/exclusion.rst>
 
 Callbacks
 -----------
