@@ -2,10 +2,10 @@
 
 import torch
 from lightning.pytorch import Callback
-from ..label_tensor import LabelTensor
-from ..utils import check_consistency, is_function
-from ..condition import InputTargetCondition
-from ..data.dataset import PinaGraphDataset
+from ...label_tensor import LabelTensor
+from ...utils import check_consistency, is_function
+from ...condition import InputTargetCondition
+from ...data.dataset import PinaGraphDataset
 
 
 class NormalizerDataCallback(Callback):

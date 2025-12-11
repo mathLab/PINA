@@ -1,7 +1,7 @@
-Normalizer callbacks
+Normalizer Data
 =======================
 
-.. currentmodule:: pina.callback.normalizer_data_callback
+.. currentmodule:: pina.callback.processing.normalizer_data_callback
 .. autoclass:: NormalizerDataCallback
    :members:
    :show-inheritance:

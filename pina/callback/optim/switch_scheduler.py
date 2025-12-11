@@ -1,8 +1,8 @@
 """Module for the SwitchScheduler callback."""
 
 from lightning.pytorch.callbacks import Callback
-from ..optim import TorchScheduler
-from ..utils import check_consistency, check_positive_integer
+from ...optim import TorchScheduler
+from ...utils import check_consistency, check_positive_integer
 
 
 class SwitchScheduler(Callback):

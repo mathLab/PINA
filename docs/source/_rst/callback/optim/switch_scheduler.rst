@@ -1,7 +1,7 @@
 Switch Scheduler
 =====================
 
-.. currentmodule:: pina.callback.switch_scheduler
+.. currentmodule:: pina.callback.optim.switch_scheduler
 .. autoclass:: SwitchScheduler
    :members:
    :show-inheritance:
