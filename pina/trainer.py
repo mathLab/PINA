@@ -330,7 +330,7 @@ class Trainer(lightning.pytorch.Trainer):
         else:
             pin_memory = False
         if num_workers is not None:
-            check_consistency(pin_memory, int)
+            check_consistency(num_workers, int)
         else:
             num_workers = 0
         if shuffle is not None:
