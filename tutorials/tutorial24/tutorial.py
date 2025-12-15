@@ -35,7 +35,6 @@ if IN_COLAB:
 import matplotlib.pyplot as plt
 import torch
 import warnings
-from functools import partial
 
 
 from pina import Trainer, LabelTensor
@@ -142,7 +141,7 @@ for idx, i in enumerate(torch.randint(0, data_0_training.shape[0] - 1, (3,))):
 # 
 # We now define and train the model for the advection problem.
 
-# In[21]:
+# In[4]:
 
 
 problem = SupervisedProblem(
@@ -155,7 +154,7 @@ problem = SupervisedProblem(
 
 # We now proceede to create the trunk and branch networks.
 
-# In[22]:
+# In[5]:
 
 
 # create Trunk model
@@ -187,7 +186,7 @@ class BranchNet(torch.nn.Module):
 # 
 # With both subnetworks defined, we can now instantiate the DeepONet model using the `DeepONet` class from `pina.model`.
 
-# In[15]:
+# In[6]:
 
 
 # initialize truck and branch net
@@ -219,7 +218,7 @@ model = DeepONet(
 # 
 # We train the model using a `SupervisedSolver` with an `MSE` loss. Below, we first define the solver and then the trainer used to run the optimization.
 
-# In[16]:
+# In[7]:
 
 
 # define solver
@@ -234,7 +233,7 @@ trainer.train()
 
 # Let's see the final train and test errors:
 
-# In[23]:
+# In[8]:
 
 
 # the l2 error
@@ -250,7 +249,7 @@ print(f"Testing error: {float(test_err.mean()):.2%}")
 
 # We can see that the testing error is slightly higher than the training one, maybe due to overfitting. We now plot some results trajectories.
 
-# In[24]:
+# In[9]:
 
 
 for i in [1, 2, 3]:
@@ -272,7 +271,7 @@ for i in [1, 2, 3]:
 
 # As we can see, they are barely indistinguishable. To better understand the difference, we now plot the residuals, i.e. the difference of the exact solution and the predicted one. 
 
-# In[25]:
+# In[10]:
 
 
 for i in [1, 2, 3]:

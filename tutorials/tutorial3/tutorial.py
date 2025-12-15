@@ -2,11 +2,11 @@
 # coding: utf-8
 
 # # Tutorial: Applying Hard Constraints in PINNs to solve the Wave Problem
-#
+# 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial3/tutorial.ipynb)
-#
+# 
 # In this tutorial, we will present how to solve the wave equation using **hard constraint Physics-Informed Neural Networks (PINNs)**. To achieve this, we will build a custom `torch` model and pass it to the **PINN solver**.
-#
+# 
 # First of all, some useful imports.
 
 # In[ ]:
@@ -28,19 +28,19 @@ import warnings
 
 from pina import Condition, LabelTensor, Trainer
 from pina.problem import SpatialProblem, TimeDependentProblem
-from pina.operator import laplacian, grad
 from pina.domain import CartesianDomain
 from pina.solver import PINN
 from pina.equation import Equation, FixedValue
 from pina.callback import MetricTracker
+from pina.equation import AcousticWave
 
 warnings.filterwarnings("ignore")
 
 
-# ## The problem definition
-#
+# ## The problem definition 
+# 
 # The problem is described by the following system of partial differential equations (PDEs):
-#
+# 
 # \begin{equation}
 # \begin{cases}
 # \Delta u(x,y,t) = \frac{\partial^2}{\partial t^2} u(x,y,t) \quad \text{in } D, \\\\
@@ -48,9 +48,9 @@ warnings.filterwarnings("ignore")
 # u(x, y, t) = 0 \quad \text{on } \Gamma_1 \cup \Gamma_2 \cup \Gamma_3 \cup \Gamma_4,
 # \end{cases}
 # \end{equation}
-#
+# 
 # Where:
-#
+# 
 # - $D$ is a square domain $[0, 1]^2$.
 # - $\Gamma_i$, where $i = 1, \dots, 4$, are the boundaries of the square where Dirichlet conditions are applied.
 # - The velocity in the standard wave equation is fixed to $1$.
@@ -58,11 +58,7 @@ warnings.filterwarnings("ignore")
 # In[2]:
 
 
-def wave_equation(input_, output_):
-    u_t = grad(output_, input_, components=["u"], d=["t"])
-    u_tt = grad(u_t, input_, components=["dudt"], d=["t"])
-    nabla_u = laplacian(output_, input_, components=["u"], d=["x", "y"])
-    return nabla_u - u_tt
+wave_equation = AcousticWave(c=1.0)
 
 
 def initial_condition(input_, output_):
@@ -77,22 +73,16 @@ class Wave(TimeDependentProblem, SpatialProblem):
     spatial_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
     temporal_domain = CartesianDomain({"t": [0, 1]})
     domains = {
-        "g1": CartesianDomain({"x": 1, "y": [0, 1], "t": [0, 1]}),
-        "g2": CartesianDomain({"x": 0, "y": [0, 1], "t": [0, 1]}),
-        "g3": CartesianDomain({"x": [0, 1], "y": 0, "t": [0, 1]}),
-        "g4": CartesianDomain({"x": [0, 1], "y": 1, "t": [0, 1]}),
-        "initial": CartesianDomain({"x": [0, 1], "y": [0, 1], "t": 0}),
-        "D": CartesianDomain({"x": [0, 1], "y": [0, 1], "t": [0, 1]}),
+        "D": spatial_domain.update(temporal_domain),
+        "initial": spatial_domain.update(CartesianDomain({"t": 0.0})),
+        "boundary": spatial_domain.partial().update(temporal_domain),
     }
     conditions = {
-        "g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "g2": Condition(domain="g2", equation=FixedValue(0.0)),
-        "g3": Condition(domain="g3", equation=FixedValue(0.0)),
-        "g4": Condition(domain="g4", equation=FixedValue(0.0)),
+        "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
         "initial": Condition(
             domain="initial", equation=Equation(initial_condition)
         ),
-        "D": Condition(domain="D", equation=Equation(wave_equation)),
+        "D": Condition(domain="D", equation=wave_equation),
     }
 
     def solution(self, pts):
@@ -111,13 +101,13 @@ problem = Wave()
 
 
 # ## Hard Constraint Model
-#
+# 
 # Once the problem is defined, a **torch** model is needed to solve the PINN. While **PINA** provides several pre-implemented models, users have the option to build their own custom model using **torch**. The hard constraint we impose is on the boundary of the spatial domain. Specifically, the solution is written as:
-#
+# 
 # $$ u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t), $$
-#
+# 
 # where $NN$ represents the neural network output. This neural network takes the spatial coordinates $x$, $y$, and time $t$ as input and provides the unknown field $u$. By construction, the solution is zero at the boundaries.
-#
+# 
 # The residuals of the equations are evaluated at several sampling points (which the user can manipulate using the `discretise_domain` method). The loss function minimized by the neural network is the sum of the residuals.
 
 # In[3]:
@@ -243,13 +233,13 @@ plot_solution(solver=pinn, time=1)
 
 
 # The results are not ideal, and we can clearly see that as time progresses, the solution deteriorates. Can we do better?
-#
+# 
 # One valid approach is to impose the initial condition as a hard constraint as well. Specifically, we modify the solution to:
-#
+# 
 # $$
 # u_{\rm{pinn}} = xy(1-x)(1-y) \cdot NN(x, y, t) \cdot t + \cos(\sqrt{2}\pi t)\sin(\pi x)\sin(\pi y),
 # $$
-#
+# 
 # Now, let us start by building the neural network.
 
 # In[8]:
@@ -329,19 +319,19 @@ plot_solution(solver=pinn, time=1)
 # We can now see that the results are much better! This improvement is due to the fact that, previously, the network was not correctly learning the initial condition, which led to a poor solution as time evolved. By imposing the initial condition as a hard constraint, the network is now able to correctly solve the problem.
 
 # ## What's Next?
-#
+# 
 # Congratulations on completing the two-dimensional Wave tutorial of **PINA**! Now that you’ve got the basics down, there are several directions you can explore:
-#
+# 
 # 1. **Train the Network for Longer**: Train the network for a longer duration or experiment with different layer sizes to assess the final accuracy.
-#
+# 
 # 2. **Propose New Types of Hard Constraints in Time**: Experiment with new time-dependent hard constraints, for example:
-#
+#    
 #    $$
 #    u_{\rm{pinn}} = xy(1-x)(1-y)\cdot NN(x, y, t)(1-\exp(-t)) + \cos(\sqrt{2}\pi t)\sin(\pi x)\sin(\pi y)
 #    $$
-#
+# 
 # 3. **Exploit Extrafeature Training**: Apply extrafeature training techniques to improve models from 1 and 2.
-#
+# 
 # 4. **...and many more!**: The possibilities are endless! Keep experimenting and pushing the boundaries.
-#
+# 
 # For more resources and tutorials, check out the [PINA Documentation](https://mathlab.github.io/PINA/).
