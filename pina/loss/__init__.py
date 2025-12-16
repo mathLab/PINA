@@ -9,10 +9,6 @@ __all__ = [
     "NeuralTangentKernelWeighting",
     "SelfAdaptiveWeighting",
     "LinearWeighting",
-    "TimeWeightingInterface",
-    "ConstantTimeWeighting",
-    "ExponentialTimeWeighting",
-    "LinearTimeWeighting",
 ]
 
 from .loss_interface import LossInterface
@@ -23,9 +19,3 @@ from .scalar_weighting import ScalarWeighting
 from .ntk_weighting import NeuralTangentKernelWeighting
 from .self_adaptive_weighting import SelfAdaptiveWeighting
 from .linear_weighting import LinearWeighting
-from .time_weighting_interface import TimeWeightingInterface
-from .time_weighting import (
-    ConstantTimeWeighting,
-    ExponentialTimeWeighting,
-    LinearTimeWeighting,
-)
