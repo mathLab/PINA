@@ -34,11 +34,13 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
     :math:`[-\pi, \pi]` and temporal interval :math:`[0, 1]`.
 
     .. seealso::
+
         **Original reference**: Si, Chenhao, et al. *Complex Physics-Informed
         Neural Network.* arXiv preprint arXiv:2502.04917 (2025).
         DOI: `arXiv:2502.04917 <https://arxiv.org/abs/2502.04917>`_.
 
     :Example:
+
         >>> problem = DiffusionReactionProblem()
     """
 
@@ -47,15 +49,13 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
     temporal_domain = CartesianDomain({"t": [0, 1]})
 
     domains = {
-        "D": CartesianDomain({"x": [-torch.pi, torch.pi], "t": [0, 1]}),
-        "g1": CartesianDomain({"x": -torch.pi, "t": [0, 1]}),
-        "g2": CartesianDomain({"x": torch.pi, "t": [0, 1]}),
-        "t0": CartesianDomain({"x": [-torch.pi, torch.pi], "t": 0.0}),
+        "D": spatial_domain.update(temporal_domain),
+        "boundary": spatial_domain.partial().update(temporal_domain),
+        "t0": spatial_domain.update(CartesianDomain({"t": 0})),
     }
 
     conditions = {
-        "g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "g2": Condition(domain="g2", equation=FixedValue(0.0)),
+        "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
         "t0": Condition(domain="t0", equation=Equation(initial_condition)),
     }
 
@@ -63,7 +63,7 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
         """
         Initialization of the :class:`DiffusionReactionProblem`.
 
-        :param alpha: The diffusion coefficient.
+        :param alpha: The diffusion coefficient. Default is 1e-4.
         :type alpha: float | int
         """
         super().__init__()

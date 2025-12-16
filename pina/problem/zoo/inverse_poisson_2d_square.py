@@ -26,8 +26,9 @@ def _load_tensor_from_url(url, labels, timeout=10):
     and None is returned.
 
     :param str url: URL to the remote `.pth` tensor file.
-    :param list[str] | tuple[str] labels: Labels for the resulting LabelTensor.
-    :param int timeout: Timeout for the request in seconds.
+    :param labels: Labels for the resulting LabelTensor.
+    :type labels: list[str] | tuple[str]
+    :param int timeout: Timeout for the request in seconds. Default is 10s.
     :return: A LabelTensor object if successful, otherwise None.
     :rtype: LabelTensor | None
     """
@@ -71,12 +72,14 @@ def laplace_equation(input_, output_, params_):
 class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     r"""
     Implementation of the inverse 2-dimensional Poisson problem in the square
-    domain :math:`[0, 1] \times [0, 1]`,
-    with unknown parameter domain :math:`[-1, 1] \times [-1, 1]`.
-    The `"data"` condition is added only if the required files are
-    downloaded successfully.
+    domain :math:`[0, 1] \times [0, 1]`, with unknown parameter domain
+    :math:`[-1, 1] \times [-1, 1]`.
+
+    The `"data"` condition is added only if the required files are downloaded
+    successfully.
 
     :Example:
+
         >>> problem = InversePoisson2DSquareProblem()
     """
 
@@ -87,19 +90,13 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     unknown_parameter_domain = CartesianDomain({"mu1": [-1, 1], "mu2": [-1, 1]})
 
     domains = {
-        "g1": CartesianDomain({"x": [x_min, x_max], "y": y_max}),
-        "g2": CartesianDomain({"x": [x_min, x_max], "y": y_min}),
-        "g3": CartesianDomain({"x": x_max, "y": [y_min, y_max]}),
-        "g4": CartesianDomain({"x": x_min, "y": [y_min, y_max]}),
-        "D": CartesianDomain({"x": [x_min, x_max], "y": [y_min, y_max]}),
+        "D": spatial_domain,
+        "boundary": spatial_domain.partial(),
     }
 
     conditions = {
-        "g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "g2": Condition(domain="g2", equation=FixedValue(0.0)),
-        "g3": Condition(domain="g3", equation=FixedValue(0.0)),
-        "g4": Condition(domain="g4", equation=FixedValue(0.0)),
         "D": Condition(domain="D", equation=Equation(laplace_equation)),
+        "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
     }
 
     def __init__(self, load=True, data_size=1.0):
@@ -108,6 +105,7 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
 
         :param bool load: If True, it attempts to load data from remote URLs.
             Set to False to skip data loading (e.g., if no internet connection).
+            Default is True.
         :param float data_size: The fraction of the total data to use for the
             "data" condition. If set to 1.0, all available data is used.
             If set to 0.0, no data is used. Default is 1.0.

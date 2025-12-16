@@ -2,8 +2,7 @@ import torch
 import pytest
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from pina import LabelTensor
-from pina.domain import Union
-from pina.domain import CartesianDomain
+from pina.domain import Union, CartesianDomain, EllipsoidDomain
 from pina.condition import (
     Condition,
     InputTargetCondition,
@@ -14,16 +13,16 @@ from pina.condition import (
 def test_discretise_domain():
     n = 10
     poisson_problem = Poisson()
-    boundaries = ["g1", "g2", "g3", "g4"]
-    poisson_problem.discretise_domain(n, "grid", domains=boundaries)
-    for b in boundaries:
-        assert poisson_problem.discretised_domains[b].shape[0] == n
-    poisson_problem.discretise_domain(n, "random", domains=boundaries)
-    for b in boundaries:
-        assert poisson_problem.discretised_domains[b].shape[0] == n
+
+    poisson_problem.discretise_domain(n, "grid", domains="boundary")
+    assert poisson_problem.discretised_domains["boundary"].shape[0] == n
+
+    poisson_problem.discretise_domain(n, "random", domains="boundary")
+    assert poisson_problem.discretised_domains["boundary"].shape[0] == n
 
     poisson_problem.discretise_domain(n, "grid", domains=["D"])
     assert poisson_problem.discretised_domains["D"].shape[0] == n**2
+
     poisson_problem.discretise_domain(n, "random", domains=["D"])
     assert poisson_problem.discretised_domains["D"].shape[0] == n
 
@@ -70,16 +69,16 @@ def test_collected_data():
 
 def test_add_points():
     poisson_problem = Poisson()
-    poisson_problem.discretise_domain(0, "random", domains=["D"])
+    poisson_problem.discretise_domain(1, "random", domains=["D"])
     new_pts = LabelTensor(torch.tensor([[0.5, -0.5]]), labels=["x", "y"])
     poisson_problem.add_points({"D": new_pts})
-    assert torch.isclose(
-        poisson_problem.discretised_domains["D"].extract("x"),
-        new_pts.extract("x"),
+    assert torch.allclose(
+        poisson_problem.discretised_domains["D"]["x"][-1],
+        new_pts["x"],
     )
-    assert torch.isclose(
-        poisson_problem.discretised_domains["D"].extract("y"),
-        new_pts.extract("y"),
+    assert torch.allclose(
+        poisson_problem.discretised_domains["D"]["y"][-1],
+        new_pts["y"],
     )
 
 
@@ -90,10 +89,9 @@ def test_custom_sampling_logic(mode):
         "x": {"n": 100, "mode": mode},
         "y": {"n": 50, "mode": mode},
     }
-    poisson_problem.discretise_domain(sample_rules=sampling_rules)
-    for domain in ["g1", "g2", "g3", "g4"]:
-        assert poisson_problem.discretised_domains[domain].shape[0] == 100 * 50
-        assert poisson_problem.discretised_domains[domain].labels == ["x", "y"]
+    poisson_problem.discretise_domain(sample_rules=sampling_rules, domains="D")
+    assert poisson_problem.discretised_domains["D"].shape[0] == 100 * 50
+    assert poisson_problem.discretised_domains["D"].labels == ["x", "y"]
 
 
 @pytest.mark.parametrize("mode", ["random", "grid"])
@@ -106,7 +104,12 @@ def test_wrong_custom_sampling_logic(mode):
         "y": {"n": 50, "mode": mode},
     }
     with pytest.raises(RuntimeError):
+        poisson_problem.domains["new"] = EllipsoidDomain({"x": [0, 1]})
         poisson_problem.discretise_domain(sample_rules=sampling_rules)
+
+    # Necessary cleanup
+    if "new" in poisson_problem.domains:
+        del poisson_problem.domains["new"]
 
 
 def test_aggregate_data():
@@ -115,7 +118,7 @@ def test_aggregate_data():
         input=LabelTensor(torch.tensor([[0.0, 1.0]]), labels=["x", "y"]),
         target=LabelTensor(torch.tensor([[0.0]]), labels=["u"]),
     )
-    poisson_problem.discretise_domain(0, "random", domains="all")
+    poisson_problem.discretise_domain(1, "random", domains="all")
     poisson_problem.collect_data()
     assert isinstance(poisson_problem.collected_data, dict)
     for name, conditions in poisson_problem.conditions.items():

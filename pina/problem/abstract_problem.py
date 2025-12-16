@@ -328,7 +328,9 @@ class AbstractProblem(metaclass=ABCMeta):
                 # Only store the discretisation points if the domain is
                 # in the dictionary
                 if condition.domain in self.discretised_domains:
-                    samples = self.discretised_domains[condition.domain]
+                    samples = self.discretised_domains[condition.domain][
+                        self.input_variables
+                    ]
                     data[condition_name] = {
                         "input": samples,
                         "equation": condition.equation,

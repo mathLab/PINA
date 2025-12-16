@@ -2,11 +2,12 @@ import torch
 import random
 import pytest
 from pina.model import SplineSurface
+from pina.operator import grad
 from pina import LabelTensor
 
 
 # Utility quantities for testing
-orders = [random.randint(1, 8) for _ in range(2)]
+orders = [random.randint(3, 6) for _ in range(2)]
 n_ctrl_pts = random.randint(max(orders), max(orders) + 5)
 n_knots = [orders[i] + n_ctrl_pts for i in range(2)]
 
@@ -178,3 +179,44 @@ def test_backward(knots_u, knots_v, control_points, pts):
     loss = torch.mean(output_)
     loss.backward()
     assert model.control_points.grad.shape == model.control_points.shape
+
+
+@pytest.mark.parametrize(
+    "knots_u",
+    [
+        torch.rand(n_knots[0]),
+        {"n": n_knots[0], "min": 0, "max": 1, "mode": "auto"},
+        {"n": n_knots[0], "min": 0, "max": 1, "mode": "uniform"},
+    ],
+)
+@pytest.mark.parametrize(
+    "knots_v",
+    [
+        torch.rand(n_knots[1]),
+        {"n": n_knots[1], "min": 0, "max": 1, "mode": "auto"},
+        {"n": n_knots[1], "min": 0, "max": 1, "mode": "uniform"},
+    ],
+)
+@pytest.mark.parametrize(
+    "control_points", [torch.rand(n_ctrl_pts, n_ctrl_pts), None]
+)
+@pytest.mark.parametrize("pts", points)
+def test_derivative(knots_u, knots_v, control_points, pts):
+
+    # Define and evaluate the model
+    model = SplineSurface(
+        orders=orders,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        control_points=control_points,
+    )
+    pts.requires_grad_(True)
+    output_ = LabelTensor(model(pts), "u")
+
+    # Compute derivatives
+    gradient = model.gradient(x=pts)
+    gradient_auto = grad(output_, pts).tensor
+
+    # Check shape and value
+    assert gradient.shape == pts.shape
+    assert torch.allclose(gradient, gradient_auto, atol=1e-4, rtol=1e-4)

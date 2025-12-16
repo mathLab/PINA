@@ -78,7 +78,7 @@
 # 
 # This example highlights how PINA can be used for classic regression tasks with probabilistic modeling capabilities. Let's first import useful modules!
 
-# In[ ]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -99,7 +99,7 @@ warnings.filterwarnings("ignore")
 
 from pina import Condition, LabelTensor
 from pina.problem import AbstractProblem
-from pina.domain import CartesianDomain
+from pina.domain import EllipsoidDomain, Difference, CartesianDomain, Union
 
 
 # #### ***Problem & Data***
@@ -113,7 +113,7 @@ from pina.domain import CartesianDomain
 #  
 # but we will see this more in depth in a while!
 
-# In[ ]:
+# In[2]:
 
 
 # (a) Data generation and plot
@@ -150,7 +150,7 @@ problem = BayesianProblem()
 #    - The `Condition` object enforces the **constraints** that the model $\mathcal{M}_{\theta}$ must satisfy, such as boundary or initial conditions.  
 #    - It ensures that the model adheres to the specific requirements of the problem, making constraint handling more intuitive and streamlined.
 
-# In[ ]:
+# In[3]:
 
 
 # EXTRA - on the use of LabelTensor
@@ -242,7 +242,7 @@ trainer.train()
 # 
 # This allows us to understand not only the predicted values but also the confidence in those predictions.
 
-# In[ ]:
+# In[5]:
 
 
 x_test = LabelTensor(torch.linspace(-4, 4, 100).reshape(-1, 1), "x")
@@ -294,10 +294,8 @@ plt.show()
 # > **👉 If you are interested in exploring the `domain` module in more detail, check out [this tutorial](https://mathlab.github.io/PINA/_rst/tutorials/tutorial6/tutorial.html).**
 # 
 
-# In[ ]:
+# In[6]:
 
-
-from pina.domain import EllipsoidDomain, Difference, CartesianDomain, Union
 
 # (a) Building the interior of the hourglass-shaped domain
 cartesian = CartesianDomain({"x": [-3, 3], "y": [-3, 3]})
@@ -305,13 +303,9 @@ ellipsoid_1 = EllipsoidDomain({"x": [-5, -1], "y": [-3, 3]})
 ellipsoid_2 = EllipsoidDomain({"x": [1, 5], "y": [-3, 3]})
 interior = Difference([cartesian, ellipsoid_1, ellipsoid_2])
 
-# (a) Building the boundary of the hourglass-shaped domain
-border_ellipsoid_1 = EllipsoidDomain(
-    {"x": [-5, -1], "y": [-3, 3]}, sample_surface=True
-)
-border_ellipsoid_2 = EllipsoidDomain(
-    {"x": [1, 5], "y": [-3, 3]}, sample_surface=True
-)
+# (b) Building the boundary of the hourglass-shaped domain
+border_ellipsoid_1 = ellipsoid_1.partial()
+border_ellipsoid_2 = ellipsoid_2.partial()
 border_1 = CartesianDomain({"x": [-3, 3], "y": 3})
 border_2 = CartesianDomain({"x": [-3, 3], "y": -3})
 ex_1 = CartesianDomain({"x": [-5, -3], "y": [-3, 3]})
@@ -336,7 +330,7 @@ border_samples = border.sample(n=1000, mode="random")
 # 
 # Nice! Now that we have built the domain, let's try to plot it
 
-# In[ ]:
+# In[7]:
 
 
 plt.figure(figsize=(8, 4))
@@ -367,7 +361,7 @@ plt.show()
 # 
 # This will allow us to define the problem with spatial dependencies and set up the neural network model accordingly.
 
-# In[ ]:
+# In[8]:
 
 
 from pina.problem import SpatialProblem
@@ -410,7 +404,7 @@ poisson_problem = Poisson()
 # 
 # Once the problem class is set, we need to **sample the domain** to obtain the data. PINA will automatically handle this, and if you forget to sample, an error will be raised before training begins 😉.
 
-# In[ ]:
+# In[9]:
 
 
 print("Points are not automatically sampled, you can see this by:")
@@ -431,7 +425,7 @@ print(f"    {poisson_problem.are_all_domains_discretised=}")
 # 
 # In this tutorial, the neural network is composed of 2 hidden layers, each with 120 neurons and tanh activation.
 
-# In[ ]:
+# In[10]:
 
 
 from pina.model import FeedForward
@@ -495,7 +489,7 @@ trainer.train()
 
 # Done! We can plot the solution and its residual
 
-# In[ ]:
+# In[12]:
 
 
 # sample points in the domain. remember to set requires_grad!

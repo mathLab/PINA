@@ -1,12 +1,13 @@
 import torch
 import pytest
 from scipy.interpolate import BSpline
+from pina.operator import grad
 from pina.model import Spline
 from pina import LabelTensor
 
 
 # Utility quantities for testing
-order = torch.randint(1, 8, (1,)).item()
+order = torch.randint(3, 6, (1,)).item()
 n_ctrl_pts = torch.randint(order, order + 5, (1,)).item()
 n_knots = order + n_ctrl_pts
 
@@ -173,3 +174,21 @@ def test_backward(args, pts):
     loss = torch.mean(output_)
     loss.backward()
     assert model.control_points.grad.shape == model.control_points.shape
+
+
+@pytest.mark.parametrize("args", valid_args)
+@pytest.mark.parametrize("pts", points)
+def test_derivative(args, pts):
+
+    # Define and evaluate the model
+    model = Spline(**args)
+    pts.requires_grad_(True)
+    output_ = LabelTensor(model(pts), "u")
+
+    # Compute derivatives
+    first_der = model.derivative(x=pts, degree=1)
+    first_der_auto = grad(output_, pts).tensor
+
+    # Check shape and value
+    assert first_der.shape == pts.shape
+    assert torch.allclose(first_der, first_der_auto, atol=1e-4, rtol=1e-4)

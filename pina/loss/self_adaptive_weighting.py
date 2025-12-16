@@ -39,19 +39,28 @@ class SelfAdaptiveWeighting(WeightingInterface):
         :return: The updated weights.
         :rtype: dict
         """
-        # Define a dictionary to store the norms of the gradients
-        losses_norm = {}
+        # Get model parameters and define a dictionary to store the norms
+        params = [p for p in self.solver.model.parameters() if p.requires_grad]
+        norms = {}
 
-        # Compute the gradient norms for each loss component
+        # Iterate over conditions
         for condition, loss in losses.items():
-            loss.backward(retain_graph=True)
-            grads = torch.cat(
-                [p.grad.flatten() for p in self.solver.model.parameters()]
+
+            # Compute gradients
+            grads = torch.autograd.grad(
+                loss,
+                params,
+                retain_graph=True,
+                allow_unused=True,
             )
-            losses_norm[condition] = grads.norm()
+
+            # Compute norms
+            norms[condition] = torch.cat(
+                [g.flatten() for g in grads if g is not None]
+            ).norm()
 
         # Update the weights
         return {
-            condition: sum(losses_norm.values()) / losses_norm[condition]
+            condition: sum(norms.values()) / norms[condition]
             for condition in losses
         }

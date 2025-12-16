@@ -257,8 +257,8 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         for v in self._params:
             self._params[v].data.clamp_(
-                self.problem.unknown_parameter_domain.range_[v][0],
-                self.problem.unknown_parameter_domain.range_[v][1],
+                self.problem.unknown_parameter_domain.range[v][0],
+                self.problem.unknown_parameter_domain.range[v][1],
             )
 
     @staticmethod
@@ -325,8 +325,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The default scheduler.
         :rtype: Scheduler
         """
-
-        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
+        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR, factor=1.0)
 
     @property
     def problem(self):

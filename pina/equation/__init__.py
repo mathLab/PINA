@@ -13,6 +13,7 @@ __all__ = [
     "DiffusionReaction",
     "Helmholtz",
     "Poisson",
+    "AcousticWave",
 ]
 
 from .equation import Equation
@@ -27,5 +28,6 @@ from .equation_factory import (
     DiffusionReaction,
     Helmholtz,
     Poisson,
+    AcousticWave,
 )
 from .system_equation import SystemEquation

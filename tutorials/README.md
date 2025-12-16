@@ -14,7 +14,7 @@ How to build a `Problem` in PINA|[[.ipynb](tutorial16/tutorial.ipynb),[.py](tuto
 Introduction to Solver classes|[[.ipynb](tutorial18/tutorial.ipynb),[.py](tutorial18/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial18/tutorial.html)]|
 Introduction to `Trainer` class|[[.ipynb](tutorial11/tutorial.ipynb),[.py](tutorial11/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial11/tutorial.html)]|
 Data structure for SciML: `Tensor`, `LabelTensor`, `Data` and `Graph` |[[.ipynb](tutorial19/tutorial.ipynb),[.py](tutorial19/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial19/tutorial.html)]|
-Building geometries with `DomainInterface` class|[[.ipynb](tutorial6/tutorial.ipynb),[.py](tutorial6/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial6/tutorial.html)]|
+Building domains with PINA's BaseDomain class|[[.ipynb](tutorial6/tutorial.ipynb),[.py](tutorial6/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial6/tutorial.html)]|
 Introduction to PINA `Equation` class|[[.ipynb](tutorial12/tutorial.ipynb),[.py](tutorial12/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial12/tutorial.html)]|
 
 
@@ -36,6 +36,8 @@ Learning Bifurcating PDE Solutions with Physics-Informed Deep Ensembles|[[.ipynb
 Introductory Tutorial: Neural Operator Learning with PINA |[[.ipynb](tutorial21/tutorial.ipynb),[.py](tutorial21/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial21/tutorial.html)]|
 Modeling 2D Darcy Flow with the Fourier Neural Operator |[[.ipynb](tutorial5/tutorial.ipynb),[.py](tutorial5/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial5/tutorial.html)]|
 Solving the Kuramoto–Sivashinsky Equation with Averaging Neural Operator |[[.ipynb](tutorial10/tutorial.ipynb),[.py](tutorial10/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial10/tutorial.html)]|
+Advection Equation with data driven DeepONet| [[.ipynb](tutorial24/tutorial.ipynb),[.py](tutorial24/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial24/tutorial.html)]|
+
 
 ## Supervised Learning
 | Description   | Tutorial  |
@@ -46,4 +48,3 @@ Reduced Order Model with Graph Neural Networks for Unstructured Domains| [[.ipyn
 Data-driven System Identification with SINDy| [[.ipynb](tutorial23/tutorial.ipynb),[.py](tutorial23/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial23/tutorial.html)]|
 Unstructured Convolutional Autoencoders with Continuous Convolution |[[.ipynb](tutorial4/tutorial.ipynb),[.py](tutorial4/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial4/tutorial.html)]|
 Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics| [[.ipynb](tutorial8/tutorial.ipynb),[.py](tutorial8/tutorial.py),[.html](http://mathlab.github.io/PINA/tutorial8/tutorial.html)]|
-

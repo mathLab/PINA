@@ -189,7 +189,7 @@ class SimpleODE(SpatialProblem):
 
     domains = {
         "x0": CartesianDomain({"x": 0.0}),
-        "D": CartesianDomain({"x": [0, 1]}),
+        "D": spatial_domain,
     }
 
     # conditions to hold

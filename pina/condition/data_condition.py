@@ -76,8 +76,9 @@ class DataCondition(ConditionInterface):
 
         # If the input is not of the correct type raise an error
         raise ValueError(
-            "Invalid input types. "
-            "Please provide either torch_geometric.data.Data or Graph objects."
+            "Invalid input type. Expected one of the following: "
+            "torch.Tensor, LabelTensor, Graph, Data or "
+            "an iterable of the previous types."
         )
 
     def __init__(self, input, conditional_variables=None):

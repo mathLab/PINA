@@ -215,6 +215,7 @@ Problems Zoo
 .. toctree::
     :titlesonly:
 
+    AcousticWaveProblem <problem/zoo/acoustic_wave.rst>
     AdvectionProblem <problem/zoo/advection.rst>
     AllenCahnProblem <problem/zoo/allen_cahn.rst>
     DiffusionReactionProblem <problem/zoo/diffusion_reaction.rst>
@@ -230,10 +231,11 @@ Geometrical Domains
 .. toctree::
     :titlesonly:
 
-    Domain <domain/domain.rst>
-    CartesianDomain <domain/cartesian.rst>
-    EllipsoidDomain <domain/ellipsoid.rst>
-    SimplexDomain <domain/simplex.rst>
+    DomainInterface <domain/domain_interface.rst>
+    BaseDomain <domain/base_domain.rst>
+    CartesianDomain <domain/cartesian_domain.rst>
+    EllipsoidDomain <domain/ellipsoid_domain.rst>
+    SimplexDomain <domain/simplex_domain.rst>
 
 Domain Operations
 ------------------
@@ -242,10 +244,11 @@ Domain Operations
     :titlesonly:
 
     OperationInterface <domain/operation_interface.rst>
-    Union <domain/union_domain.rst>
-    Intersection <domain/intersection_domain.rst>
-    Difference <domain/difference_domain.rst>
-    Exclusion <domain/exclusion_domain.rst>
+    BaseOperation <domain/base_operation.rst>
+    Union <domain/union.rst>
+    Intersection <domain/intersection.rst>
+    Difference <domain/difference.rst>
+    Exclusion <domain/exclusion.rst>
 
 Callbacks
 -----------
@@ -253,11 +256,13 @@ Callbacks
 .. toctree::
     :titlesonly:
 
-    Processing callback <callback/processing_callback.rst>
-    Optimizer callback <callback/optimizer_callback.rst>
-    R3 Refinment callback <callback/refinement/r3_refinement.rst>
-    Refinment Interface callback <callback/refinement/refinement_interface.rst>
-    Normalizer callback <callback/normalizer_data_callback.rst>
+    Switch Optimizer <callback/optim/switch_optimizer.rst>
+    Switch Scheduler <callback/optim/switch_scheduler.rst>
+    Normalizer Data <callback/processing/normalizer_data_callback.rst>
+    PINA Progress Bar <callback/processing/pina_progress_bar.rst>
+    Metric Tracker <callback/processing/metric_tracker.rst>
+    Refinement Interface <callback/refinement/refinement_interface.rst>
+    R3 Refinement <callback/refinement/r3_refinement.rst>
 
 Losses and Weightings
 ---------------------

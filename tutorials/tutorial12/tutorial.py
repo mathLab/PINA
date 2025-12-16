@@ -28,7 +28,7 @@
 #
 # In the class that models this problem we will see in action the `Equation` class and one of its inherited classes, the `FixedValue` class.
 
-# In[ ]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -56,21 +56,17 @@ from pina.operator import grad, fast_grad, laplacian
 # In[2]:
 
 
-# define the burger equation
-def burger_equation(input_, output_):
-    du = fast_grad(output_, input_, components=["u"], d=["x"])
-    ddu = grad(du, input_, components=["dudx"])
-    return (
-        du.extract(["dudt"])
-        + output_.extract(["u"]) * du.extract(["dudx"])
-        - (0.01 / torch.pi) * ddu.extract(["ddudxdx"])
-    )
+# define the burgers equation
+def burgers_equation(input_, output_):
+    du = grad(output_, input_)
+    ddu = laplacian(output_, input_, components="x")
+    return du["dudt"] + output_["u"] * du["dudx"] - (0.01 / torch.pi) * ddu
 
 
 # define initial condition
 def initial_condition(input_, output_):
-    u_expected = -torch.sin(torch.pi * input_.extract(["x"]))
-    return output_.extract(["u"]) - u_expected
+    u_expected = -torch.sin(torch.pi * input_["x"])
+    return output_["u"] - u_expected
 
 
 # Above we use the `grad` operator from `pina.operator` to compute the gradient. In PINA each differential operator takes the following inputs:
@@ -85,7 +81,7 @@ def initial_condition(input_, output_):
 #
 # > **👉 Do you want to learn more on Problems? Check the dedicated [tutorial](https://mathlab.github.io/PINA/tutorial16/tutorial.html) to learn how to build a Problem from scratch.**
 
-# In[ ]:
+# In[3]:
 
 
 class Burgers1D(TimeDependentProblem, SpatialProblem):
@@ -96,29 +92,23 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
     temporal_domain = CartesianDomain({"t": [0, 1]})
 
     domains = {
-        "bound_cond1": CartesianDomain({"x": -1, "t": [0, 1]}),
-        "bound_cond2": CartesianDomain({"x": 1, "t": [0, 1]}),
-        "time_cond": CartesianDomain({"x": [-1, 1], "t": 0}),
-        "phys_cond": CartesianDomain({"x": [-1, 1], "t": [0, 1]}),
+        "bound_cond": spatial_domain.partial().update(temporal_domain),
+        "time_cond": spatial_domain.update(CartesianDomain({"t": 0.0})),
+        "phys_cond": spatial_domain.update(temporal_domain),
     }
     # problem condition statement
     conditions = {
-        "bound_cond1": Condition(
-            domain="bound_cond1", equation=FixedValue(0.0)
-        ),
-        "bound_cond2": Condition(
-            domain="bound_cond2", equation=FixedValue(0.0)
-        ),
+        "bound_cond": Condition(domain="bound_cond", equation=FixedValue(0.0)),
         "time_cond": Condition(
             domain="time_cond", equation=Equation(initial_condition)
         ),
         "phys_cond": Condition(
-            domain="phys_cond", equation=Equation(burger_equation)
+            domain="phys_cond", equation=Equation(burgers_equation)
         ),
     }
 
 
-# The `Equation` class takes as input a function (in this case it happens twice, with `initial_condition` and `burger_equation`) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the `Equation` class with such a given input is passed as a parameter in the specified `Condition`.
+# The `Equation` class takes as input a function (in this case it happens twice, with `initial_condition` and `burgers_equation`) which computes a residual of an equation, such as a PDE. In a problem class such as the one above, the `Equation` class with such a given input is passed as a parameter in the specified `Condition`.
 #
 # The `FixedValue` class takes as input a value of the same dimensions as the output functions. This class can be used to enforce a fixed value for a specific condition, such as Dirichlet boundary conditions, as demonstrated in our example.
 #
@@ -142,7 +132,7 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
 # ```
 # In this case, the `Burgers1D` class will inherit from the `Equation` class and compute the residual of the Burgers equation. The viscosity parameter $\nu$ is passed when instantiating the class and used in the residual calculation. Let's see it in more details:
 
-# In[3]:
+# In[4]:
 
 
 class Burgers1DEquation(Equation):
@@ -168,7 +158,7 @@ class Burgers1DEquation(Equation):
 
 # Now we can just pass the above class as input for the last condition, setting $\nu= \frac{0.01}{\pi}$:
 
-# In[4]:
+# In[5]:
 
 
 class Burgers1D(TimeDependentProblem, SpatialProblem):
@@ -184,19 +174,13 @@ class Burgers1D(TimeDependentProblem, SpatialProblem):
     temporal_domain = CartesianDomain({"t": [0, 1]})
 
     domains = {
-        "bound_cond1": CartesianDomain({"x": -1, "t": [0, 1]}),
-        "bound_cond2": CartesianDomain({"x": 1, "t": [0, 1]}),
-        "time_cond": CartesianDomain({"x": [-1, 1], "t": 0}),
-        "phys_cond": CartesianDomain({"x": [-1, 1], "t": [0, 1]}),
+        "bound_cond": spatial_domain.partial().update(temporal_domain),
+        "time_cond": spatial_domain.update(CartesianDomain({"t": 0.0})),
+        "phys_cond": spatial_domain.update(temporal_domain),
     }
     # problem condition statement
     conditions = {
-        "bound_cond1": Condition(
-            domain="bound_cond1", equation=FixedValue(0.0)
-        ),
-        "bound_cond2": Condition(
-            domain="bound_cond2", equation=FixedValue(0.0)
-        ),
+        "bound_cond": Condition(domain="bound_cond", equation=FixedValue(0.0)),
         "time_cond": Condition(
             domain="time_cond", equation=Equation(initial_condition)
         ),

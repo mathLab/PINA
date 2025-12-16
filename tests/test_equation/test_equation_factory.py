@@ -8,6 +8,7 @@ from pina.equation import (
     DiffusionReaction,
     Helmholtz,
     Poisson,
+    AcousticWave,
 )
 from pina import LabelTensor
 import torch
@@ -195,3 +196,22 @@ def test_poisson_equation(forcing_term):
     # Residual
     residual = equation.residual(pts, u)
     assert residual.shape == u.shape
+
+
+@pytest.mark.parametrize("c", [1.0, 10, -7.5])
+def test_acoustic_wave_equation(c):
+
+    # Constructor
+    equation = AcousticWave(c=c)
+
+    # Should fail if c is not a float or int
+    with pytest.raises(ValueError):
+        AcousticWave(c="invalid")
+
+    # Residual
+    residual = equation.residual(pts, u)
+    assert residual.shape == u.shape
+
+    # Should fail if the input has no 't' label
+    with pytest.raises(ValueError):
+        residual = equation.residual(pts["x", "y"], u)

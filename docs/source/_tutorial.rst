@@ -33,6 +33,7 @@ Neural Operator Learning
 - `Introductory Tutorial: Neural Operator Learning with PINA <tutorial21/tutorial.html>`_
 - `Modeling 2D Darcy Flow with the Fourier Neural Operator <tutorial5/tutorial.html>`_
 - `Solving the Kuramoto-Sivashinsky Equation with Averaging Neural Operator <tutorial10/tutorial.html>`_
+- `Advection Equation with data driven DeepONet <tutorial24/tutorial.html>`_
 
 Supervised Learning
 -------------------

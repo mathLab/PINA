@@ -14,11 +14,13 @@ class HelmholtzProblem(SpatialProblem):
     :math:`[-1, 1] \times [-1, 1]`.
 
     .. seealso::
+
         **Original reference**: Si, Chenhao, et al. *Complex Physics-Informed
         Neural Network.* arXiv preprint arXiv:2502.04917 (2025).
         DOI: `arXiv:2502.04917 <https://arxiv.org/abs/2502.04917>`_.
 
     :Example:
+
         >>> problem = HelmholtzProblem()
     """
 
@@ -26,25 +28,19 @@ class HelmholtzProblem(SpatialProblem):
     spatial_domain = CartesianDomain({"x": [-1, 1], "y": [-1, 1]})
 
     domains = {
-        "D": CartesianDomain({"x": [-1, 1], "y": [-1, 1]}),
-        "g1": CartesianDomain({"x": [-1, 1], "y": 1.0}),
-        "g2": CartesianDomain({"x": [-1, 1], "y": -1.0}),
-        "g3": CartesianDomain({"x": 1.0, "y": [-1, 1]}),
-        "g4": CartesianDomain({"x": -1.0, "y": [-1, 1]}),
+        "D": spatial_domain,
+        "boundary": spatial_domain.partial(),
     }
 
     conditions = {
-        "g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "g2": Condition(domain="g2", equation=FixedValue(0.0)),
-        "g3": Condition(domain="g3", equation=FixedValue(0.0)),
-        "g4": Condition(domain="g4", equation=FixedValue(0.0)),
+        "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
     }
 
     def __init__(self, alpha=3.0):
         """
         Initialization of the :class:`HelmholtzProblem` class.
 
-        :param alpha: Parameter of the forcing term.
+        :param alpha: Parameter of the forcing term. Default is 3.0.
         :type alpha: float | int
         """
         super().__init__()
