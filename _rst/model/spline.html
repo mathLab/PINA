@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Spline &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
+    <title>Spline &#8212; pina-mathlab 0.2.5 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=1f91c228"></script>
+    <script src="../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,8 +54,8 @@
     <link rel="prev" title="ResidualFeedForward" href="residual_feed_forward.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5.post2512" />
-    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5" />
+    <meta name="docbuild:last-update" content="Dec 16, 2025"/>
   </head>
   
   
@@ -119,8 +119,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5 documentation - Home"/>
   
   
 </a></div>
@@ -518,6 +518,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../problem/time_dependent_problem.html">TimeDependentProblem</a></li>
 </ul>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/acoustic_wave.html">AcousticWaveProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../problem/zoo/advection.html">AdvectionProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../problem/zoo/allen_cahn.html">AllenCahnProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../problem/zoo/diffusion_reaction.html">DiffusionReactionProblem</a></li>
@@ -527,24 +528,28 @@
 <li class="toctree-l1"><a class="reference internal" href="../problem/zoo/supervised_problem.html">SupervisedProblem</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../domain/domain.html">Domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/cartesian.html">CartesianDomain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/ellipsoid.html">EllipsoidDomain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/simplex.html">SimplexDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/domain_interface.html">DomainInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/base_domain.html">BaseDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/cartesian_domain.html">CartesianDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/ellipsoid_domain.html">EllipsoidDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/simplex_domain.html">SimplexDomain</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../domain/operation_interface.html">OperationInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/union_domain.html">Union</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/intersection_domain.html">Intersection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/difference_domain.html">Difference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/exclusion_domain.html">Exclusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/base_operation.html">BaseOperation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/union.html">Union</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/intersection.html">Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/difference.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/exclusion.html">Exclusion</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../callback/processing_callback.html">Processing callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/normalizer_data_callback.html">Normalizer callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/optim/switch_optimizer.html">Switch Optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/optim/switch_scheduler.html">Switch Scheduler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing/normalizer_data_callback.html">Normalizer Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing/pina_progress_bar.html">PINA Progress Bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing/metric_tracker.html">Metric Tracker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinement Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinement</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../loss/loss_interface.html">LossInterface</a></li>
@@ -628,16 +633,16 @@ as a linear combination of B-spline basis functions and control points:</p>
 \[S(x) = \sum_{i=1}^{n} B_{i,k}(x) C_i, \quad x \in [x_1, x_m]\]</div>
 <p>where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(C_i \in \mathbb{R}\)</span> are the control points. These fixed points
-influence the shape of the curve but are not generally interpolated,
-except at the boundaries under certain knot multiplicities.</p></li>
+<li><p><span class="math notranslate nohighlight">\(C \in \mathbb{R}^n\)</span> are the learnable control coefficients. Its
+entries <span class="math notranslate nohighlight">\(C_i\)</span> influence the shape of the curve but are not generally
+interpolated, except under certain knot multiplicities.</p></li>
 <li><p><span class="math notranslate nohighlight">\(B_{i,k}(x)\)</span> are the B-spline basis functions of order <span class="math notranslate nohighlight">\(k\)</span>,
 i.e., piecewise polynomials of degree <span class="math notranslate nohighlight">\(k-1\)</span> with support on the
 interval <span class="math notranslate nohighlight">\([x_i, x_{i+k}]\)</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(X = \{ x_1, x_2, \dots, x_m \}\)</span> is the non-decreasing knot vector.</p></li>
 </ul>
 <p>If the first and last knots are repeated <span class="math notranslate nohighlight">\(k\)</span> times, then the curve
-interpolates the first and last control points.</p>
+interpolates the first and last control coefficients.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The curve is forced to be zero outside the interval defined by the
@@ -706,18 +711,25 @@ order, resulting in a degenerate spline.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pina.model.spline.Spline.basis">
-<span class="sig-name descname"><span class="pre">basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/spline.html#Spline.basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.spline.Spline.basis" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/spline.html#Spline.basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.spline.Spline.basis" title="Link to this definition">#</a></dt>
 <dd><p>Compute the basis functions for the spline using an iterative approach.
 This is a vectorized implementation based on the Cox-de Boor recursion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)"><em>torch.Tensor</em></a>) – The points to be evaluated.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)"><em>torch.Tensor</em></a>) – The points to be evaluated.</p></li>
+<li><p><strong>collection</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, returns a list of basis functions for
+all orders up to the spline order. Default is False.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The basis functions evaluated at x.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">collection</span></code> is not a boolean.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a></p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The basis functions evaluated at x.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -735,6 +747,29 @@ This is a vectorized implementation based on the Cox-de Boor recursion.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.spline.Spline.derivative">
+<span class="sig-name descname"><span class="pre">derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/spline.html#Spline.derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.spline.Spline.derivative" title="Link to this definition">#</a></dt>
+<dd><p>Compute the <code class="docutils literal notranslate"><span class="pre">degree</span></code>-th derivative of the spline at given points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The input tensor.</p></li>
+<li><p><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The derivative degree to compute.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">degree</span></code> is not an integer.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The derivative tensor.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -797,6 +832,7 @@ This is a vectorized implementation based on the Cox-de Boor recursion.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline.Spline"><code class="docutils literal notranslate"><span class="pre">Spline</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline.Spline.basis"><code class="docutils literal notranslate"><span class="pre">Spline.basis()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline.Spline.forward"><code class="docutils literal notranslate"><span class="pre">Spline.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline.Spline.derivative"><code class="docutils literal notranslate"><span class="pre">Spline.derivative()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline.Spline.control_points"><code class="docutils literal notranslate"><span class="pre">Spline.control_points</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline.Spline.knots"><code class="docutils literal notranslate"><span class="pre">Spline.knots</span></code></a></li>
 </ul>

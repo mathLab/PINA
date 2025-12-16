@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.model.spline_surface &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
+    <title>pina.model.spline_surface &#8212; pina-mathlab 0.2.5 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=1f91c228"></script>
+    <script src="../../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5.post2512" />
-    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5" />
+    <meta name="docbuild:last-update" content="Dec 16, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5 documentation - Home"/>
   
   
 </a></div>
@@ -444,7 +444,8 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">.spline</span> <span class="kn">import</span> <span class="n">Spline</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
+<span class="kn">from</span> <span class="nn">..label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span><span class="p">,</span> <span class="n">check_positive_integer</span>
 
 
 <div class="viewcode-block" id="SplineSurface">
@@ -458,14 +459,15 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        S(x, y) = \sum_{i,j=1}^{n_x, n_y} B_{i,k}(x) B_{j,s}(y) C_{i,j},</span>
-<span class="sd">        \quad x \in [x_1, x_m], y \in [y_1, y_l]</span>
+<span class="sd">        S(x, y) = \sum_{i=1}^{n_x} \sum_{j=1}^{n_y} B_{i,k}(x) B_{j,s}(y)</span>
+<span class="sd">        C_{i,j}, \quad x \in [x_1, x_m], y \in [y_1, y_l]</span>
 
 <span class="sd">    where:</span>
 
-<span class="sd">    - :math:`C_{i,j} \in \mathbb{R}^2` are the control points. These fixed</span>
-<span class="sd">      points influence the shape of the surface but are not generally</span>
-<span class="sd">      interpolated, except at the boundaries under certain knot multiplicities.</span>
+<span class="sd">    - :math:`C \in \mathbb{R}^{n_x \times n_y}` is the matrix of learnable</span>
+<span class="sd">      control coefficients. Its entries :math:`C_{i,j}` influence the shape of</span>
+<span class="sd">      the surface but are not generally interpolated, except under certain knot</span>
+<span class="sd">      multiplicities.</span>
 <span class="sd">    - :math:`B_{i,k}(x)` and :math:`B_{j,s}(y)` are the B-spline basis functions</span>
 <span class="sd">      defined over two orthogonal directions, with orders :math:`k` and</span>
 <span class="sd">      :math:`s`, respectively.</span>
@@ -569,6 +571,80 @@
         <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="SplineSurface.derivative">
+<a class="viewcode-back" href="../../../_rst/model/spline_surface.html#pina.model.spline_surface.SplineSurface.derivative">[docs]</a>
+    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">degree_u</span><span class="p">,</span> <span class="n">degree_v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the partial derivatives of the spline at the given points.</span>
+
+<span class="sd">        :param x: The input tensor.</span>
+<span class="sd">        :type x: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param int degree_u: The degree of the derivative along the first</span>
+<span class="sd">            parameter direction.</span>
+<span class="sd">        :param int degree_v: The degree of the derivative along the second</span>
+<span class="sd">            parameter direction.</span>
+<span class="sd">        :raise ValueError: If ``degree_u`` is not an integer.</span>
+<span class="sd">        :raise ValueError: If ``degree_v`` is not an integer.</span>
+<span class="sd">        :return: The derivative tensor.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">degree_u</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">degree_v</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Split input into u and v components</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Compute basis derivatives</span>
+        <span class="n">der_u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline_u</span><span class="o">.</span><span class="n">_basis_derivative</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="n">degree_u</span><span class="p">)</span>
+        <span class="n">der_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline_v</span><span class="o">.</span><span class="n">_basis_derivative</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="n">degree_v</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span>
+            <span class="s2">&quot;...bi, ...bj, ij -&gt; ...b&quot;</span><span class="p">,</span> <span class="n">der_u</span><span class="p">,</span> <span class="n">der_v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_points</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SplineSurface.gradient">
+<a class="viewcode-back" href="../../../_rst/model/spline_surface.html#pina.model.spline_surface.SplineSurface.gradient">[docs]</a>
+    <span class="k">def</span> <span class="nf">gradient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convenience method to compute the gradient of the spline surface.</span>
+
+<span class="sd">        :param x: The input tensor.</span>
+<span class="sd">        :type x: torch.Tensor | LabelTensor</span>
+<span class="sd">        :return: The gradient tensor.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute partial derivatives</span>
+        <span class="n">du</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">degree_u</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">degree_v</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">dv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">degree_u</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">degree_v</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">du</span><span class="p">,</span> <span class="n">dv</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SplineSurface.laplacian">
+<a class="viewcode-back" href="../../../_rst/model/spline_surface.html#pina.model.spline_surface.SplineSurface.laplacian">[docs]</a>
+    <span class="k">def</span> <span class="nf">laplacian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convenience method to compute the laplacian of the spline surface.</span>
+
+<span class="sd">        :param x: The input tensor.</span>
+<span class="sd">        :type x: torch.Tensor | LabelTensor</span>
+<span class="sd">        :return: The laplacian tensor.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute second partial derivatives</span>
+        <span class="n">ddu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">degree_u</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">degree_v</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ddv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">degree_u</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">degree_v</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ddu</span> <span class="o">+</span> <span class="n">ddv</span></div>
+
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">knots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -649,8 +725,8 @@
         <span class="c1"># Check control points</span>
         <span class="k">if</span> <span class="n">control_points</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">__valid_shape</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;control_points must be of the correct shape. &quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">__valid_shape</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">control_points</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;control_points must be of the correct shape. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">__valid_shape</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">control_points</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Register control points as a learnable parameter</span>

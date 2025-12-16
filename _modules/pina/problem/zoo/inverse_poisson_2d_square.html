@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.problem.zoo.inverse_poisson_2d_square &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
+    <title>pina.problem.zoo.inverse_poisson_2d_square &#8212; pina-mathlab 0.2.5 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../_static/documentation_options.js?v=1f91c228"></script>
+    <script src="../../../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5.post2512" />
-    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5" />
+    <meta name="docbuild:last-update" content="Dec 16, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5 documentation - Home"/>
   
   
 </a></div>
@@ -468,8 +468,9 @@
 <span class="sd">    and None is returned.</span>
 
 <span class="sd">    :param str url: URL to the remote `.pth` tensor file.</span>
-<span class="sd">    :param list[str] | tuple[str] labels: Labels for the resulting LabelTensor.</span>
-<span class="sd">    :param int timeout: Timeout for the request in seconds.</span>
+<span class="sd">    :param labels: Labels for the resulting LabelTensor.</span>
+<span class="sd">    :type labels: list[str] | tuple[str]</span>
+<span class="sd">    :param int timeout: Timeout for the request in seconds. Default is 10s.</span>
 <span class="sd">    :return: A LabelTensor object if successful, otherwise None.</span>
 <span class="sd">    :rtype: LabelTensor | None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -515,12 +516,14 @@
 <span class="k">class</span> <span class="nc">InversePoisson2DSquareProblem</span><span class="p">(</span><span class="n">SpatialProblem</span><span class="p">,</span> <span class="n">InverseProblem</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Implementation of the inverse 2-dimensional Poisson problem in the square</span>
-<span class="sd">    domain :math:`[0, 1] \times [0, 1]`,</span>
-<span class="sd">    with unknown parameter domain :math:`[-1, 1] \times [-1, 1]`.</span>
-<span class="sd">    The `&quot;data&quot;` condition is added only if the required files are</span>
-<span class="sd">    downloaded successfully.</span>
+<span class="sd">    domain :math:`[0, 1] \times [0, 1]`, with unknown parameter domain</span>
+<span class="sd">    :math:`[-1, 1] \times [-1, 1]`.</span>
+
+<span class="sd">    The `&quot;data&quot;` condition is added only if the required files are downloaded</span>
+<span class="sd">    successfully.</span>
 
 <span class="sd">    :Example:</span>
+
 <span class="sd">        &gt;&gt;&gt; problem = InversePoisson2DSquareProblem()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -531,19 +534,13 @@
     <span class="n">unknown_parameter_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;mu1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;mu2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
 
     <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;g1&quot;</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y_max</span><span class="p">}),</span>
-        <span class="s2">&quot;g2&quot;</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y_min</span><span class="p">}),</span>
-        <span class="s2">&quot;g3&quot;</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x_max</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">]}),</span>
-        <span class="s2">&quot;g4&quot;</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">x_min</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">]}),</span>
-        <span class="s2">&quot;D&quot;</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">]}),</span>
+        <span class="s2">&quot;D&quot;</span><span class="p">:</span> <span class="n">spatial_domain</span><span class="p">,</span>
+        <span class="s2">&quot;boundary&quot;</span><span class="p">:</span> <span class="n">spatial_domain</span><span class="o">.</span><span class="n">partial</span><span class="p">(),</span>
     <span class="p">}</span>
 
     <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;g1&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;g1&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
-        <span class="s2">&quot;g2&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;g2&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
-        <span class="s2">&quot;g3&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;g3&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
-        <span class="s2">&quot;g4&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;g4&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
         <span class="s2">&quot;D&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">laplace_equation</span><span class="p">)),</span>
+        <span class="s2">&quot;boundary&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;boundary&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
     <span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data_size</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
@@ -552,6 +549,7 @@
 
 <span class="sd">        :param bool load: If True, it attempts to load data from remote URLs.</span>
 <span class="sd">            Set to False to skip data loading (e.g., if no internet connection).</span>
+<span class="sd">            Default is True.</span>
 <span class="sd">        :param float data_size: The fraction of the total data to use for the</span>
 <span class="sd">            &quot;data&quot; condition. If set to 1.0, all available data is used.</span>
 <span class="sd">            If set to 0.0, no data is used. Default is 1.0.</span>

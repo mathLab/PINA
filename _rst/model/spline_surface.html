@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Spline Surface &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
+    <title>Spline Surface &#8212; pina-mathlab 0.2.5 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=1f91c228"></script>
+    <script src="../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,8 +54,8 @@
     <link rel="prev" title="Spline" href="spline.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5.post2512" />
-    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5" />
+    <meta name="docbuild:last-update" content="Dec 16, 2025"/>
   </head>
   
   
@@ -119,8 +119,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5 documentation - Home"/>
   
   
 </a></div>
@@ -518,6 +518,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../problem/time_dependent_problem.html">TimeDependentProblem</a></li>
 </ul>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../problem/zoo/acoustic_wave.html">AcousticWaveProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../problem/zoo/advection.html">AdvectionProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../problem/zoo/allen_cahn.html">AllenCahnProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../problem/zoo/diffusion_reaction.html">DiffusionReactionProblem</a></li>
@@ -527,24 +528,28 @@
 <li class="toctree-l1"><a class="reference internal" href="../problem/zoo/supervised_problem.html">SupervisedProblem</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../domain/domain.html">Domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/cartesian.html">CartesianDomain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/ellipsoid.html">EllipsoidDomain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/simplex.html">SimplexDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/domain_interface.html">DomainInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/base_domain.html">BaseDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/cartesian_domain.html">CartesianDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/ellipsoid_domain.html">EllipsoidDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/simplex_domain.html">SimplexDomain</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../domain/operation_interface.html">OperationInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/union_domain.html">Union</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/intersection_domain.html">Intersection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/difference_domain.html">Difference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain/exclusion_domain.html">Exclusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/base_operation.html">BaseOperation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/union.html">Union</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/intersection.html">Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/difference.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain/exclusion.html">Exclusion</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../callback/processing_callback.html">Processing callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/optimizer_callback.html">Optimizer callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callback/normalizer_data_callback.html">Normalizer callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/optim/switch_optimizer.html">Switch Optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/optim/switch_scheduler.html">Switch Scheduler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing/normalizer_data_callback.html">Normalizer Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing/pina_progress_bar.html">PINA Progress Bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/processing/metric_tracker.html">Metric Tracker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/refinement_interface.html">Refinement Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../callback/refinement/r3_refinement.html">R3 Refinement</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../loss/loss_interface.html">LossInterface</a></li>
@@ -625,13 +630,14 @@
 <p>A bivariate B-spline surface is a parametric surface defined as the tensor
 product of two univariate B-spline curves:</p>
 <div class="math notranslate nohighlight">
-\[S(x, y) = \sum_{i,j=1}^{n_x, n_y} B_{i,k}(x) B_{j,s}(y) C_{i,j},
-\quad x \in [x_1, x_m], y \in [y_1, y_l]\]</div>
+\[S(x, y) = \sum_{i=1}^{n_x} \sum_{j=1}^{n_y} B_{i,k}(x) B_{j,s}(y)
+C_{i,j}, \quad x \in [x_1, x_m], y \in [y_1, y_l]\]</div>
 <p>where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(C_{i,j} \in \mathbb{R}^2\)</span> are the control points. These fixed
-points influence the shape of the surface but are not generally
-interpolated, except at the boundaries under certain knot multiplicities.</p></li>
+<li><p><span class="math notranslate nohighlight">\(C \in \mathbb{R}^{n_x \times n_y}\)</span> is the matrix of learnable
+control coefficients. Its entries <span class="math notranslate nohighlight">\(C_{i,j}\)</span> influence the shape of
+the surface but are not generally interpolated, except under certain knot
+multiplicities.</p></li>
 <li><p><span class="math notranslate nohighlight">\(B_{i,k}(x)\)</span> and <span class="math notranslate nohighlight">\(B_{j,s}(y)\)</span> are the B-spline basis functions
 defined over two orthogonal directions, with orders <span class="math notranslate nohighlight">\(k\)</span> and
 <span class="math notranslate nohighlight">\(s\)</span>, respectively.</p></li>
@@ -684,6 +690,69 @@ are all None.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The output tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.spline_surface.SplineSurface.derivative">
+<span class="sig-name descname"><span class="pre">derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree_u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree_v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/spline_surface.html#SplineSurface.derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.spline_surface.SplineSurface.derivative" title="Link to this definition">#</a></dt>
+<dd><p>Compute the partial derivatives of the spline at the given points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The input tensor.</p></li>
+<li><p><strong>degree_u</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The degree of the derivative along the first
+parameter direction.</p></li>
+<li><p><strong>degree_v</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The degree of the derivative along the second
+parameter direction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">degree_u</span></code> is not an integer.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">degree_v</span></code> is not an integer.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The derivative tensor.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.spline_surface.SplineSurface.gradient">
+<span class="sig-name descname"><span class="pre">gradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/spline_surface.html#SplineSurface.gradient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.spline_surface.SplineSurface.gradient" title="Link to this definition">#</a></dt>
+<dd><p>Convenience method to compute the gradient of the spline surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The input tensor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The gradient tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pina.model.spline_surface.SplineSurface.laplacian">
+<span class="sig-name descname"><span class="pre">laplacian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/model/spline_surface.html#SplineSurface.laplacian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.spline_surface.SplineSurface.laplacian" title="Link to this definition">#</a></dt>
+<dd><p>Convenience method to compute the laplacian of the spline surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)"><em>torch.Tensor</em></a><em> | </em><a class="reference internal" href="../label_tensor.html#pina.label_tensor.LabelTensor" title="pina.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The input tensor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The laplacian tensor.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.9)">torch.Tensor</a></p>
@@ -748,6 +817,9 @@ are all None.</p></li>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline_surface.SplineSurface"><code class="docutils literal notranslate"><span class="pre">SplineSurface</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline_surface.SplineSurface.forward"><code class="docutils literal notranslate"><span class="pre">SplineSurface.forward()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline_surface.SplineSurface.derivative"><code class="docutils literal notranslate"><span class="pre">SplineSurface.derivative()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline_surface.SplineSurface.gradient"><code class="docutils literal notranslate"><span class="pre">SplineSurface.gradient()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline_surface.SplineSurface.laplacian"><code class="docutils literal notranslate"><span class="pre">SplineSurface.laplacian()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline_surface.SplineSurface.knots"><code class="docutils literal notranslate"><span class="pre">SplineSurface.knots</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.spline_surface.SplineSurface.control_points"><code class="docutils literal notranslate"><span class="pre">SplineSurface.control_points</span></code></a></li>
 </ul>

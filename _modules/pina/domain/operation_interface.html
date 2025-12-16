@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.domain.operation_interface &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
+    <title>pina.domain.operation_interface &#8212; pina-mathlab 0.2.5 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=1f91c228"></script>
+    <script src="../../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5.post2512" />
-    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5" />
+    <meta name="docbuild:last-update" content="Dec 16, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5 documentation - Home"/>
   
   
 </a></div>
@@ -444,97 +444,34 @@
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">.domain_interface</span> <span class="kn">import</span> <span class="n">DomainInterface</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">check_consistency</span>
 
 
 <div class="viewcode-block" id="OperationInterface">
 <a class="viewcode-back" href="../../../_rst/domain/operation_interface.html#pina.domain.operation_interface.OperationInterface">[docs]</a>
 <span class="k">class</span> <span class="nc">OperationInterface</span><span class="p">(</span><span class="n">DomainInterface</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Abstract class for set operations defined on geometric domains.</span>
+<span class="sd">    Abstract interface for all set operations defined on geometric domains.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometries</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialization of the :class:`OperationInterface` class.</span>
-
-<span class="sd">        :param list[DomainInterface] geometries: A list of instances of the</span>
-<span class="sd">            :class:`~pina.domain.domain_interface.DomainInterface` class on</span>
-<span class="sd">            which the set operation is performed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># check consistency geometries</span>
-        <span class="n">check_consistency</span><span class="p">(</span><span class="n">geometries</span><span class="p">,</span> <span class="n">DomainInterface</span><span class="p">)</span>
-
-        <span class="c1"># check we are passing always different</span>
-        <span class="c1"># geometries with the same labels.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_dimensions</span><span class="p">(</span><span class="n">geometries</span><span class="p">)</span>
-
-        <span class="c1"># assign geometries</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_geometries</span> <span class="o">=</span> <span class="n">geometries</span>
-
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">sample_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        List of available sampling modes.</span>
-
-<span class="sd">        :return: List of available sampling modes.</span>
-<span class="sd">        :rtype: list[str]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;random&quot;</span><span class="p">]</span>
-
-    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">geometries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The domains on which to perform the set operation.</span>
+<span class="sd">        The list of domains on which to perform the set operation.</span>
 
-<span class="sd">        :return: The domains on which to perform the set operation.</span>
-<span class="sd">        :rtype: list[DomainInterface]</span>
+<span class="sd">        :return: The list of domains on which to perform the set operation.</span>
+<span class="sd">        :rtype: list[BaseDomain]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometries</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        List of variables of the domain.</span>
-
-<span class="sd">        :return: List of variables of the domain.</span>
-<span class="sd">        :rtype: list[str]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">:</span>
-            <span class="n">variables</span> <span class="o">+=</span> <span class="n">geom</span><span class="o">.</span><span class="n">variables</span>
-        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">variables</span><span class="p">)))</span>
-
-<div class="viewcode-block" id="OperationInterface.is_inside">
-<a class="viewcode-back" href="../../../_rst/domain/operation_interface.html#pina.domain.operation_interface.OperationInterface.is_inside">[docs]</a>
+    <span class="nd">@geometries</span><span class="o">.</span><span class="n">setter</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">is_inside</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">check_border</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">geometries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Abstract method to check if a point lies inside the resulting domain</span>
-<span class="sd">        after performing the set operation.</span>
+<span class="sd">        Setter for the ``geometries`` property.</span>
 
-<span class="sd">        :param LabelTensor point: Point to be checked.</span>
-<span class="sd">        :param bool check_border: If ``True``, the border is considered inside</span>
-<span class="sd">            the resulting domain. Default is ``False``.</span>
-<span class="sd">        :return: ``True`` if the point is inside the domain,</span>
-<span class="sd">            ``False`` otherwise.</span>
-<span class="sd">        :rtype: bool</span>
+<span class="sd">        :param values: The geometries to be set.</span>
+<span class="sd">        :type values: list[BaseDomain] | tuple[BaseDomain]</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
-
-
-    <span class="k">def</span> <span class="nf">_check_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometries</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if the dimensions of the geometries are consistent.</span>
-
-<span class="sd">        :param list[DomainInterface] geometries: Domains to be checked.</span>
-<span class="sd">        :raises NotImplementedError: If the dimensions of the geometries are not</span>
-<span class="sd">            consistent.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">geometry</span> <span class="ow">in</span> <span class="n">geometries</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">variables</span> <span class="o">!=</span> <span class="n">geometries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                    <span class="s2">&quot;The geometries need to have same dimensions and labels.&quot;</span>
-                <span class="p">)</span></div>
 
 </pre></div>
 

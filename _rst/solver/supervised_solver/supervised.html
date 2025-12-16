@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>SupervisedSolver &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
+    <title>SupervisedSolver &#8212; pina-mathlab 0.2.5 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=1f91c228"></script>
+    <script src="../../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,8 +54,8 @@
     <link rel="prev" title="DeepEnsemblePINN" href="../ensemble_solver/ensemble_pinn.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5.post2512" />
-    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5" />
+    <meta name="docbuild:last-update" content="Dec 16, 2025"/>
   </head>
   
   
@@ -119,8 +119,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5 documentation - Home"/>
   
   
 </a></div>
@@ -518,6 +518,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../problem/time_dependent_problem.html">TimeDependentProblem</a></li>
 </ul>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/acoustic_wave.html">AcousticWaveProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/advection.html">AdvectionProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/allen_cahn.html">AllenCahnProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/diffusion_reaction.html">DiffusionReactionProblem</a></li>
@@ -527,24 +528,28 @@
 <li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/supervised_problem.html">SupervisedProblem</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../domain/domain.html">Domain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../domain/cartesian.html">CartesianDomain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../domain/ellipsoid.html">EllipsoidDomain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../domain/simplex.html">SimplexDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/domain_interface.html">DomainInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/base_domain.html">BaseDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/cartesian_domain.html">CartesianDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/ellipsoid_domain.html">EllipsoidDomain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/simplex_domain.html">SimplexDomain</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../domain/operation_interface.html">OperationInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../domain/union_domain.html">Union</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../domain/intersection_domain.html">Intersection</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../domain/difference_domain.html">Difference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../domain/exclusion_domain.html">Exclusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/base_operation.html">BaseOperation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/union.html">Union</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/intersection.html">Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/difference.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain/exclusion.html">Exclusion</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../callback/processing_callback.html">Processing callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../callback/optimizer_callback.html">Optimizer callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/r3_refinement.html">R3 Refinment callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/refinement_interface.html">Refinment Interface callback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../callback/normalizer_data_callback.html">Normalizer callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/optim/switch_optimizer.html">Switch Optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/optim/switch_scheduler.html">Switch Scheduler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/normalizer_data_callback.html">Normalizer Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/pina_progress_bar.html">PINA Progress Bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/metric_tracker.html">Metric Tracker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/refinement_interface.html">Refinement Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/r3_refinement.html">R3 Refinement</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../loss/loss_interface.html">LossInterface</a></li>

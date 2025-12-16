@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina.loss.self_adaptive_weighting &#8212; pina-mathlab 0.2.5.post2512 documentation</title>
+    <title>pina.loss.self_adaptive_weighting &#8212; pina-mathlab 0.2.5 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=1f91c228"></script>
+    <script src="../../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -50,8 +50,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5.post2512" />
-    <meta name="docbuild:last-update" content="Dec 01, 2025"/>
+  <meta name="docsearch:version" content="0.2.5" />
+    <meta name="docbuild:last-update" content="Dec 16, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5.post2512 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.5 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.5 documentation - Home"/>
   
   
 </a></div>
@@ -485,20 +485,29 @@
 <span class="sd">        :return: The updated weights.</span>
 <span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Define a dictionary to store the norms of the gradients</span>
-        <span class="n">losses_norm</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Get model parameters and define a dictionary to store the norms</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
+        <span class="n">norms</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="c1"># Compute the gradient norms for each loss component</span>
+        <span class="c1"># Iterate over conditions</span>
         <span class="k">for</span> <span class="n">condition</span><span class="p">,</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">grads</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()]</span>
+
+            <span class="c1"># Compute gradients</span>
+            <span class="n">grads</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span>
+                <span class="n">loss</span><span class="p">,</span>
+                <span class="n">params</span><span class="p">,</span>
+                <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">allow_unused</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">losses_norm</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span> <span class="o">=</span> <span class="n">grads</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span>
+
+            <span class="c1"># Compute norms</span>
+            <span class="n">norms</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grads</span> <span class="k">if</span> <span class="n">g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span>
 
         <span class="c1"># Update the weights</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="n">condition</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">losses_norm</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="n">losses_norm</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span>
+            <span class="n">condition</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">norms</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="n">norms</span><span class="p">[</span><span class="n">condition</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">losses</span>
         <span class="p">}</span></div>
 </div>
