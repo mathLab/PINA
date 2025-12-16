@@ -140,7 +140,7 @@ class HardMLP(torch.nn.Module):
 # ## Train and Inference
 # In this tutorial, the neural network is trained for 1000 epochs with a learning rate of 0.001 (default in `PINN`).
 
-# In[4]:
+# In[ ]:
 
 
 # generate the data
@@ -278,7 +278,7 @@ class HardMLPtime(torch.nn.Module):
 
 # Now let's train with the same configuration as the previous test
 
-# In[9]:
+# In[ ]:
 
 
 # define model

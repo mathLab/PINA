@@ -195,7 +195,7 @@ print(f"Similarly to: \n {label_tensor[:, 0]=}")
 # 
 # The great work done by the PyTorch Lightning team ensures a streamlined training process.
 
-# In[4]:
+# In[ ]:
 
 
 from pina.solver import SupervisedSolver
@@ -465,7 +465,7 @@ model = FeedForward(
 # 
 # > **👉 Want to know more about `Trainer` and how to boost PINA performance, check out [this tutorial](https://mathlab.github.io/PINA/_rst/tutorials/tutorial11/tutorial.html).**
 
-# In[11]:
+# In[ ]:
 
 
 from pina.solver import PINN

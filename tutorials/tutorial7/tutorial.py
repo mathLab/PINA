@@ -207,7 +207,7 @@ class SaveParameters(Callback):
 
 # Then, we define the `PINN` object and train the solver using the `Trainer`
 
-# In[8]:
+# In[ ]:
 
 
 max_epochs = 1500

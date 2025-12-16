@@ -161,7 +161,7 @@ model = torch.nn.Sequential(
 # 
 # We will now solve the problem using the usual `PINN` and `Trainer` classes. After training, we'll examine the losses using the `MetricTracker` callback from `pina.callback`.
 
-# In[4]:
+# In[ ]:
 
 
 solver = PINN(problem=problem, model=model)

@@ -188,7 +188,7 @@ with torch.no_grad():
 # 
 # Once the `DeepEnsemblePINN` solver is defined with all the models, we train them using the `Trainer` class, as with any other solver in **PINA**. We also build a callback to store the value of `u(0.5)` during training iterations.
 
-# In[5]:
+# In[ ]:
 
 
 # define the optimizers, one per model
