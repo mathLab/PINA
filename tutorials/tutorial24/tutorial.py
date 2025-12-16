@@ -218,7 +218,7 @@ model = DeepONet(
 # 
 # We train the model using a `SupervisedSolver` with an `MSE` loss. Below, we first define the solver and then the trainer used to run the optimization.
 
-# In[7]:
+# In[ ]:
 
 
 # define solver

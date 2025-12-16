@@ -2,15 +2,15 @@
 # coding: utf-8
 
 # # Tutorial: Building domains with PINA's `BaseDomain` class
-# 
+#
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial6/tutorial.ipynb)
-# 
+#
 # In this tutorial, we explore how to use and visualize PINA’s built-in geometric domains and how to construct custom ones. We will cover:
 # - Creating domains using `CartesianDomain`, `EllipsoidDomain`, and `SimplexDomain`
 # - Combining domains through set operations
 # - Defining custom domains
 # - Sampling from domains
-# 
+#
 # We begin by importing the necessary modules.
 
 # In[1]:
@@ -313,13 +313,13 @@ plot_scatter(ax, heart_samples, "Heart Domain")
 
 
 # ## What's Next?
-# 
+#
 # In this tutorial, we introduced the construction of custom geometries and the use of domain operations to combine basic shapes. From here, you can experiment with a wide range of possibilities:
-# 
+#
 # 1. **Build More Complex Geometries**: Combine multiple simple shapes using set operations to design sophisticated domains.
-# 
+#
 # 2. **Optimize for Specific Applications**: Tailor domain definitions for tasks such as fluid flow, heat transfer, or structural mechanics.
-# 
+#
 # 3. **...and many more!**: Implement new geometries using DomainInterface and push PINA’s capabilities further.
-# 
+#
 # For more resources and tutorials, check out the [PINA Documentation](https://mathlab.github.io/PINA/).

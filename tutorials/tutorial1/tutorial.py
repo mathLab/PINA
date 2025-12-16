@@ -189,7 +189,7 @@ pinn = PINN(problem, model, TorchOptimizer(torch.optim.RAdam, lr=0.005))
 # > In PINA you can log metrics in different ways. The simplest approach is to use the `MetricTraker` class from `pina.callbacks` as we will see today. However, expecially when we need to train multiple times to get an average of the loss across multiple runs, we suggest to use `lightning.pytorch.loggers` (see [here](https://lightning.ai/docs/pytorch/stable/extensions/logging.html) for reference).
 # 
 
-# In[9]:
+# In[ ]:
 
 
 # create the trainer

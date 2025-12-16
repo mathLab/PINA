@@ -113,7 +113,7 @@ problem.discretise_domain(2, "grid", domains="boundary")
 # Below, we run a simulation using both the `PINN` solver and the self-adaptive `SAPINN` solver, employing a [`FeedForward`](https://mathlab.github.io/PINA/_modules/pina/model/feed_forward.html#FeedForward) model.
 # 
 
-# In[3]:
+# In[ ]:
 
 
 # training with PINN and visualize results
@@ -240,7 +240,7 @@ class MultiscaleFourierNet(torch.nn.Module):
 # We will train the `MultiscaleFourierNet` using the `PINN` solver.  
 # Feel free to experiment with other PINN variants as well, such as `SAPINN`, `GPINN`, `CompetitivePINN`, and others, to see how they perform on this multiscale problem.
 
-# In[7]:
+# In[ ]:
 
 
 multiscale_pinn = PINN(problem=problem, model=MultiscaleFourierNet())
