@@ -3,13 +3,15 @@ This module contains condition classes for supervised learning tasks.
 """
 
 import torch
+from copy import deepcopy
 from torch_geometric.data import Data
 from ..label_tensor import LabelTensor
-from ..graph import Graph
-from .condition_interface import ConditionInterface
+from ..graph import Graph, LabelBatch
+from .condition_base import ConditionBase
+from torch_geometric.data import Batch
 
 
-class InputTargetCondition(ConditionInterface):
+class InputTargetCondition(ConditionBase):
     """
     The :class:`InputTargetCondition` class represents a supervised condition
     defined by both ``input`` and ``target`` data. The model is trained to
@@ -55,7 +57,7 @@ class InputTargetCondition(ConditionInterface):
     """
 
     # Available input and target data types
-    __slots__ = ["input", "target"]
+    __fields__ = ["input", "target"]
     _avail_input_cls = (torch.Tensor, LabelTensor, Data, Graph, list, tuple)
     _avail_output_cls = (torch.Tensor, LabelTensor, Data, Graph, list, tuple)
 
@@ -109,16 +111,6 @@ class InputTargetCondition(ConditionInterface):
             subclass = GraphInputTensorTargetCondition
             return subclass.__new__(subclass, input, target)
 
-        # Graph - Graph
-        if isinstance(input, (Graph, Data, list, tuple)) and isinstance(
-            target, (Graph, Data, list, tuple)
-        ):
-            cls._check_graph_list_consistency(input)
-            cls._check_graph_list_consistency(target)
-            subclass = GraphInputGraphTargetCondition
-            return subclass.__new__(subclass, input, target)
-
-        # If the input and/or target are not of the correct type raise an error
         raise ValueError(
             "Invalid input | target types."
             "Please provide either torch_geometric.data.Data, Graph, "
@@ -143,10 +135,8 @@ class InputTargetCondition(ConditionInterface):
             objects, all elements in the list must share the same structure,
             with matching keys and consistent data types.
         """
-        super().__init__()
         self._check_input_target_len(input, target)
-        self.input = input
-        self.target = target
+        super().__init__(input=input, target=target)
 
     @staticmethod
     def _check_input_target_len(input, target):
@@ -181,6 +171,26 @@ class TensorInputTensorTargetCondition(InputTargetCondition):
     :class:`~pina.label_tensor.LabelTensor` objects.
     """
 
+    @property
+    def input(self):
+        """
+        Return the input data for the condition.
+
+        :return: The input data.
+        :rtype: torch.Tensor | LabelTensor
+        """
+        return self.data["input"]
+
+    @property
+    def target(self):
+        """
+        Return the target data for the condition.
+
+        :return: The target data.
+        :rtype: torch.Tensor | LabelTensor
+        """
+        return self.data["target"]
+
 
 class TensorInputGraphTargetCondition(InputTargetCondition):
     """
@@ -189,6 +199,65 @@ class TensorInputGraphTargetCondition(InputTargetCondition):
     :class:`~pina.label_tensor.LabelTensor` object and ``target`` is either a
     :class:`~pina.graph.Graph` or a :class:`torch_geometric.data.Data` object.
     """
+
+    def _store_data(self, **kwargs):
+        return self._store_graph_data(
+            kwargs["target"], kwargs["input"], key="x"
+        )
+
+    @property
+    def input(self):
+        """
+        Return the input data for the condition.
+
+        :return: The input data.
+        :rtype: list[torch.Tensor] | list[LabelTensor]
+        """
+        targets = []
+        is_lt = isinstance(self.data["data"][0].x, LabelTensor)
+        for graph in self.data["data"]:
+            targets.append(graph.x)
+        return torch.stack(targets) if not is_lt else LabelTensor.stack(targets)
+
+    @property
+    def target(self):
+        """
+        Return the target data for the condition.
+
+        :return: The target data.
+        :rtype: list[Graph] | list[Data]
+        """
+        return self.data["data"]
+
+    def __getitem__(self, idx):
+        if isinstance(idx, list):
+            return self.get_multiple_data(idx)
+        return {"data": self.data["data"][idx]}
+
+    def get_multiple_data(self, indices):
+        data = self.batch_fn([self.data["data"][i] for i in indices])
+        x = data.x
+        del data.x  # Avoid duplication of y on GPU memory
+        return {
+            "input": x,
+            "target": data,
+        }
+
+    @classmethod
+    def automatic_batching_collate_fn(cls, batch):
+        """
+        Collate function to be used in DataLoader.
+
+        :param batch: A list of items from the dataset.
+        :type batch: list
+        :return: A collated batch.
+        :rtype: dict
+        """
+        collated_graphs = super().automatic_batching_collate_fn(batch)
+        x = collated_graphs["data"].x
+        del collated_graphs["data"].x  # Avoid duplication of y on GPU memory
+        to_return = {"input": x, "input": collated_graphs["data"]}
+        return to_return
 
 
 class GraphInputTensorTargetCondition(InputTargetCondition):
@@ -199,10 +268,81 @@ class GraphInputTensorTargetCondition(InputTargetCondition):
     :class:`torch.Tensor` or a :class:`~pina.label_tensor.LabelTensor` object.
     """
 
+    def __init__(self, input, target):
+        """
+        Initialization of the :class:`GraphInputTensorTargetCondition` class.
 
-class GraphInputGraphTargetCondition(InputTargetCondition):
-    """
-    Specialization of the :class:`InputTargetCondition` class for the case where
-    both ``input`` and ``target`` are either :class:`~pina.graph.Graph` or
-    :class:`torch_geometric.data.Data` objects.
-    """
+        :param input: The input data for the condition.
+        :type input: Graph | Data | list[Graph] | list[Data] |
+            tuple[Graph] | tuple[Data]
+        :param target: The target data for the condition.
+        :type target: torch.Tensor | LabelTensor
+        """
+        super().__init__(input=input, target=target)
+        self.batch_fn = (
+            LabelBatch.from_data_list
+            if isinstance(input[0], Graph)
+            else Batch.from_data_list
+        )
+
+    def _store_data(self, **kwargs):
+        return self._store_graph_data(
+            kwargs["input"], kwargs["target"], key="y"
+        )
+
+    @property
+    def input(self):
+        """
+        Return the input data for the condition.
+
+        :return: The input data.
+        :rtype: list[Graph] | list[Data]
+        """
+        return self.data["data"]
+
+    @property
+    def target(self):
+        """
+        Return the target data for the condition.
+
+        :return: The target data.
+        :rtype: list[torch.Tensor] | list[LabelTensor]
+        """
+        targets = []
+        is_lt = isinstance(self.data["data"][0].y, LabelTensor)
+        for graph in self.data["data"]:
+            targets.append(graph.y)
+
+        return torch.stack(targets) if not is_lt else LabelTensor.stack(targets)
+
+    def __getitem__(self, idx):
+        if isinstance(idx, list):
+            return self.get_multiple_data(idx)
+        return {"data": self.data["data"][idx]}
+
+    def get_multiple_data(self, indices):
+        data = self.batch_fn([self.data["data"][i] for i in indices])
+        y = data.y
+        del data.y  # Avoid duplication of y on GPU memory
+        return {
+            "input": data,
+            "target": y,
+        }
+
+    @classmethod
+    def automatic_batching_collate_fn(cls, batch):
+        """
+        Collate function to be used in DataLoader.
+
+        :param batch: A list of items from the dataset.
+        :type batch: list
+        :return: A collated batch.
+        :rtype: dict
+        """
+        collated_graphs = super().automatic_batching_collate_fn(batch)
+        y = collated_graphs["data"].y
+        del collated_graphs["data"].y  # Avoid duplication of y on GPU memory
+        print("y shape:", y.shape)
+        print(y.labels)
+        to_return = {"target": y, "input": collated_graphs["data"]}
+        return to_return
