@@ -171,7 +171,7 @@ flowchart TB
         direction LR
         PROB["<h2>pina.problem</h2> Module for defining problems via base class inheritance"]
         MODEL["<h2>pina.model</h2> Module for built-in PyTorch models full architectures"]
-        SOLVER["<h2>pina.solve</h2>r Module for built-in solvers and abstract interfaces"]
+        SOLVER["<h2>pina.solver</h2> Module for built-in solvers and abstract interfaces"]
         CALLBACK["<h2>pina.callback</h2> Module for built-in callbacks to integrate training pipelines"]
     end
 
