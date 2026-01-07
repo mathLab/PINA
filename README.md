@@ -160,13 +160,69 @@ trainer = Trainer(solver, max_epochs=1000, accelerator='gpu')
 trainer.train()
 ```
 
-## Application Programming Interface
+## PINA Modules Structure
 Here's a quick look at PINA's main module. For a better experience and full details, check out the [documentation](https://mathlab.github.io/PINA/).
 
-<a href="https://github.com/mathLab/PINA/readme/PINA_API.png">
-  <img src="./readme/PINA_API.png" />
-</a>
+```mermaid
+flowchart TB
+    PINA["<h1>pina</h1>The basic module including `Condition`, <tt>LabelTensor</tt>, `Graph` and `Trainer` API"]
 
+    subgraph R1[" "]
+        direction LR
+        PROB["<h2>pina.problem</h2> Module for defining problems via base class inheritance"]
+        MODEL["<h2>pina.model</h2> Module for built-in PyTorch models full architectures"]
+        SOLVER["<h2>pina.solve</h2>r Module for built-in solvers and abstract interfaces"]
+        CALLBACK["<h2>pina.callback</h2> Module for built-in callbacks to integrate training pipelines"]
+    end
+
+    subgraph R2[" "]
+        direction LR
+        DOMAIN["<h2>pina.domain</h2> Module for defining geometries and set operations"]
+        BLOCK["<h2>pina.block</h2> Module for built-in PyTorch models layers only"]
+        OPTIM["<h2>pina.optim</h2> Module for build or import optimizers and schedulers"]
+        DATA["<h2>pina.data</h2> Module for DataModules for data processing"]
+    end
+
+    subgraph R3[" "]
+        direction LR
+        OPERATOR["<h2>pina.operator</h2> Module for differential operators"]
+        ADAPT["<h2>pina.adaptive_function</h2> Module for PyTorch learnable activations"]
+        LOSS["<h2>pina.loss</h2> Module for losses and weighting strategies"]
+        CONDITION["<h2>pina.condition</h2> Module for model training constraints"]
+    end
+
+    PINA --> PROB
+    PINA --> MODEL
+    PINA --> SOLVER
+    PINA --> CALLBACK
+
+    PROB --> DOMAIN
+    MODEL --> BLOCK
+    SOLVER --> OPTIM
+    CALLBACK --> DATA
+
+    DOMAIN --> OPERATOR
+    BLOCK --> ADAPT
+    OPTIM --> LOSS
+    DATA --> CONDITION
+
+```
+### Steps to Follow
+
+```mermaid
+flowchart LR
+    STEP1["<h2>Problem and Data</h2> Define the mathematical problem<br>Identify constraints or import data"]
+    STEP2["<h2>Model Design</h2> Build a PyTorch module Choose or customize a model"]
+    STEP3["<h2>Solver Selection</h2> Use available solvers or define your own strategy"]
+    STEP4["<h2>Training</h2> Optimize the model with PyTorch Lightning"]
+
+    STEP1 e1@--> STEP2
+    STEP2 e2@--> STEP3
+    STEP3 e3@--> STEP4
+    e1@{ animate: true }
+    e2@{ animate: true }
+    e3@{ animate: true }
+```
 ## Contributing and Community
 
 We would love to develop PINA together with our community! Best way to get started is to select any issue from the [`good-first-issue` label](https://github.com/mathLab/PINA/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). If you would like to contribute, please review our [Contributing Guide](CONTRIBUTING.md) for all relevant details.
