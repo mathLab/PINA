@@ -10,7 +10,6 @@ from torch.utils.data import DataLoader
 from .condition_interface import ConditionInterface
 from ..graph import Graph, LabelBatch
 from ..label_tensor import LabelTensor
-from ..data.dummy_dataloader import DummyDataloader
 
 
 class TensorCondition:
@@ -229,48 +228,68 @@ class ConditionBase(ConditionInterface):
                         )
 
     def __len__(self):
+        """
+        Return the number of data points in the condition.
+
+        :return: Number of data points.
+        :rtype: int
+        """
         return len(next(iter(self.data.values())))
 
     def __getitem__(self, idx):
+        """
+        Return the data point(s) at the specified index.
+
+        :param idx: Index(es) of the data point(s) to retrieve.
+        :type idx: int | list[int]
+        :return: Data point(s) at the specified index.
+        """
         return {name: data[idx] for name, data in self.data.items()}
 
     @classmethod
     def automatic_batching_collate_fn(cls, batch):
         """
-        Collate function to be used in DataLoader.
-
+        Collate function for automatic batching to be used in DataLoader.
         :param batch: A list of items from the dataset.
         :type batch: list
         :return: A collated batch.
         :rtype: dict
         """
+        if not batch:
+            return {}
+        keys = batch[0].keys()
+        columns = zip(*[item.values() for item in batch])
 
-        to_return = {key: [] for key in batch[0].keys()}
-        for item in batch:
-            for key, value in item.items():
-                to_return[key].append(value)
-        for key, values in to_return.items():
-            collate_function = cls.collate_fn_dict.get(
-                "label_tensor"
-                if isinstance(values[0], LabelTensor)
-                else (
-                    "label_tensor"
-                    if isinstance(values[0], torch.Tensor)
-                    else "graph" if isinstance(values[0], Graph) else "data"
-                )
-            )
-            to_return[key] = collate_function(values)
+        to_return = {}
+
+        # 2. Process each column
+        for key, values in zip(keys, columns):
+            # Determine type based on the first sample only
+            first_val = values[0]
+
+            if isinstance(first_val, (LabelTensor, torch.Tensor)):
+                lookup_key = "label_tensor"
+            elif isinstance(first_val, Graph):
+                lookup_key = "graph"
+            else:
+                lookup_key = "data"
+
+            # Execute the specific collate function
+            to_return[key] = cls.collate_fn_dict[lookup_key](list(values))
+
         return to_return
 
     @staticmethod
     def collate_fn(batch, condition):
         """
-        Collate function for automatic batching to be used in DataLoader.
+        Collate function for custom batching to be used in DataLoader.
 
         :param batch: A list of items from the dataset.
         :type batch: list
+        :param condition: The condition instance.
+        :type condition: ConditionBase
         :return: A collated batch.
-        :rtype: list
+        :rtype: dict
         """
         data = condition[batch]
         return data
@@ -287,7 +306,7 @@ class ConditionBase(ConditionInterface):
         :rtype: torch.utils.data.DataLoader
         """
         if batch_size == len(dataset):
-            return DummyDataloader(dataset)
+            pass  # will be updated in the near future
         return DataLoader(
             dataset=dataset,
             batch_size=batch_size,

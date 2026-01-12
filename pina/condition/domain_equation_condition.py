@@ -55,6 +55,13 @@ class DomainEquationCondition(ConditionBase):
         self.equation = equation
 
     def __len__(self):
+        """
+        Raise NotImplementedError since the number of points is determined by
+        the domain sampling strategy.
+
+        :raises NotImplementedError: Always raised since the number of points is
+            determined by the domain sampling strategy.
+        """
         raise NotImplementedError(
             "`__len__` method is not implemented for "
             "`DomainEquationCondition` since the number of points is "
@@ -62,7 +69,13 @@ class DomainEquationCondition(ConditionBase):
         )
 
     def __getitem__(self, idx):
-        """ """
+        """
+        Raise NotImplementedError since data retrieval is not applicable.
+
+        :param int idx: Index of the data point(s) to retrieve.
+        :raises NotImplementedError: Always raised since data retrieval is not
+            applicable for this condition.
+        """
         raise NotImplementedError(
             "`__getitem__` method is not implemented for "
             "`DomainEquationCondition`"
@@ -70,9 +83,9 @@ class DomainEquationCondition(ConditionBase):
 
     def store_data(self):
         """
-        Store the data for the condition by sampling points from the domain.
+        Store data for the condition. No data is stored for this condition.
 
-        :return: Sampled points from the domain.
+        :return: An empty dictionary since no data is stored.
         :rtype: dict
         """
         return {}
