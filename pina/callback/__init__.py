@@ -2,13 +2,16 @@
 
 __all__ = [
     "SwitchOptimizer",
-    "MetricTracker",
+    "SwitchScheduler",
+    "NormalizerDataCallback",
     "PINAProgressBar",
-    "LinearWeightUpdate",
+    "MetricTracker",
     "R3Refinement",
 ]
 
-from .optimizer_callback import SwitchOptimizer
-from .processing_callback import MetricTracker, PINAProgressBar
-from .linear_weight_update_callback import LinearWeightUpdate
+from .optim.switch_optimizer import SwitchOptimizer
+from .optim.switch_scheduler import SwitchScheduler
+from .processing.normalizer_data_callback import NormalizerDataCallback
+from .processing.pina_progress_bar import PINAProgressBar
+from .processing.metric_tracker import MetricTracker
 from .refinement import R3Refinement

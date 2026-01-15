@@ -14,7 +14,7 @@
 # 
 # Let's start by importing useful modules!
 
-# In[ ]:
+# In[1]:
 
 
 try:
@@ -63,7 +63,7 @@ solver = SupervisedSolver(problem, model, use_lt=False)
 # Till now we just followed the extact step of the previous tutorials. The `Trainer` object
 # can be initialized by simiply passing the `SupervisedSolver` solver
 
-# In[3]:
+# In[ ]:
 
 
 trainer = Trainer(solver=solver)
@@ -82,7 +82,7 @@ trainer = Trainer(solver=solver)
 # 
 # * `accelerator = {'gpu', 'cpu', 'hpu', 'mps', 'cpu', 'ipu'}` sets the accelerator to a specific one
 
-# In[15]:
+# In[ ]:
 
 
 trainer = Trainer(solver=solver, accelerator="cpu")
@@ -98,7 +98,7 @@ trainer = Trainer(solver=solver, accelerator="cpu")
 # 
 # We will now import `TensorBoardLogger`, do three runs of training, and then visualize the results. Notice we set `enable_model_summary=False` to avoid model summary specifications (e.g. number of parameters); set it to `True` if needed.
 
-# In[17]:
+# In[ ]:
 
 
 from lightning.pytorch.loggers import TensorBoardLogger
@@ -150,7 +150,7 @@ for _ in range(3):
 # 
 # We will try now to implement a naive version of `MetricTraker` to show how callbacks work. Notice that this is a very easy application of callbacks, fortunately in **PINA** we already provide more advanced callbacks in `pina.callbacks`.
 
-# In[18]:
+# In[6]:
 
 
 from lightning.pytorch.callbacks import Callback
@@ -174,7 +174,7 @@ class NaiveMetricTracker(Callback):
 # Let's see the results when applied to the problem. You can define **callbacks** when initializing the `Trainer` by using the `callbacks` argument, which expects a list of callbacks.
 # 
 
-# In[19]:
+# In[ ]:
 
 
 model = FeedForward(
@@ -200,7 +200,7 @@ trainer.train()
 
 # We can easily access the data by calling `trainer.callbacks[0].saved_metrics` (notice the zero representing the first callback in the list given at initialization).
 
-# In[20]:
+# In[8]:
 
 
 trainer.callbacks[0].saved_metrics[:3]  # only the first three epochs
@@ -210,7 +210,7 @@ trainer.callbacks[0].saved_metrics[:3]  # only the first three epochs
 # 
 # We can, for example, try the `EarlyStopping` routine, which automatically stops the training when a specific metric converges (here the `train_loss`). In order to let the training keep going forever, set `max_epochs=-1`.
 
-# In[22]:
+# In[ ]:
 
 
 model = FeedForward(
@@ -251,7 +251,7 @@ trainer.train()
 # We will just demonstrate how to use the first two and see the results compared to standard training.
 # We use the [`Timer`](https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.Timer.html#lightning.pytorch.callbacks.Timer) callback from `pytorch_lightning.callbacks` to track the times. Let's start by training a simple model without any optimization (train for 500 epochs).
 
-# In[23]:
+# In[ ]:
 
 
 from lightning.pytorch.callbacks import Timer
@@ -282,7 +282,7 @@ print(f'Total training time {trainer.callbacks[0].time_elapsed("train"):.5f} s')
 
 # Now we do the same but with `StochasticWeightAveraging` enabled
 
-# In[24]:
+# In[ ]:
 
 
 from lightning.pytorch.callbacks import StochasticWeightAveraging
@@ -315,7 +315,7 @@ print(f'Total training time {trainer.callbacks[0].time_elapsed("train"):.5f} s')
 # 
 # We will now do the same but clippling the gradient to be relatively small.
 
-# In[25]:
+# In[ ]:
 
 
 # setting the seed for reproducibility

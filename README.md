@@ -7,15 +7,15 @@ SPDX-License-Identifier: Apache-2.0
 <table>
   <tr>
     <td>
-      <a href="https://github.com/mathLab/PINA/raw/master/readme/pina_logo.png">
-        <img src="https://github.com/mathLab/PINA/raw/master/readme/pina_logo.png"
+      <a href="readme/pina_logo.png">
+        <img src="readme/pina_logo.png"
              alt="PINA logo"
              style="width: 220px; aspect-ratio: 1 / 1; object-fit: contain;">
       </a>
     </td>
     <td>
       <h2 style="margin-left: 20px; font-size: 1.8rem; line-height: 1.2;">
-        Solving Scientific Problems with Machine Learning, Intuitively
+        A Unified Framework for Scientific Machine Learning
       </h2>
     </td>
   </tr>

@@ -2,22 +2,24 @@
 
 __all__ = [
     "DomainInterface",
+    "BaseDomain",
     "CartesianDomain",
     "EllipsoidDomain",
+    "SimplexDomain",
+    "OperationInterface",
     "Union",
     "Intersection",
-    "Exclusion",
     "Difference",
-    "OperationInterface",
-    "SimplexDomain",
+    "Exclusion",
 ]
 
 from .domain_interface import DomainInterface
-from .cartesian import CartesianDomain
-from .ellipsoid import EllipsoidDomain
-from .exclusion_domain import Exclusion
-from .intersection_domain import Intersection
-from .union_domain import Union
-from .difference_domain import Difference
+from .base_domain import BaseDomain
+from .cartesian_domain import CartesianDomain
+from .ellipsoid_domain import EllipsoidDomain
+from .simplex_domain import SimplexDomain
 from .operation_interface import OperationInterface
-from .simplex import SimplexDomain
+from .union import Union
+from .intersection import Intersection
+from .difference import Difference
+from .exclusion import Exclusion

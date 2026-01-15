@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial: Building geometries with PINA `DomainInterface` class
+# # Tutorial: Building domains with PINA's `BaseDomain` class
 #
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial6/tutorial.ipynb)
 #
-# In this tutorial we will show how to use geometries in PINA. Specifically, the tutorial will include how to create geometries and how to visualize them. The topics covered are:
+# In this tutorial, we explore how to use and visualize PINA’s built-in geometric domains and how to construct custom ones. We will cover:
+# - Creating domains using `CartesianDomain`, `EllipsoidDomain`, and `SimplexDomain`
+# - Combining domains through set operations
+# - Defining custom domains
+# - Sampling from domains
 #
-# * Creating CartesianDomains and EllipsoidDomains
-# * Getting the Union and Difference of Geometries
-# * Sampling points in the domain (and visualize them)
-#
-# We import the relevant modules first.
+# We begin by importing the necessary modules.
 
-# In[ ]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -26,265 +26,300 @@ except:
 if IN_COLAB:
     get_ipython().system('pip install "pina-mathlab[tutorial]"')
 
+from copy import deepcopy
 import torch
 import matplotlib.pyplot as plt
 
 from pina import LabelTensor
 from pina.domain import (
-    EllipsoidDomain,
-    Difference,
     CartesianDomain,
-    Union,
+    EllipsoidDomain,
     SimplexDomain,
-    DomainInterface,
+    Union,
+    BaseDomain,
 )
-
-
-# a simple plotting function
-def plot_scatter(ax, pts, title):
-    ax.title.set_text(title)
-    ax.scatter(pts.extract("x"), pts.extract("y"), color="blue", alpha=0.5)
 
 
 # ## Built-in Geometries
 
-# We will create one cartesian and two ellipsoids. For the sake of simplicity, we show here the 2-dimensional case, but the extension to 3D (and higher) cases is trivial. The geometries allow also the generation of samples belonging to the boundary. So, we will create one ellipsoid with the border and one without.
+# We start with PINA’s built-in geometries. In particular, we define a Cartesian domain, an ellipsoid domain, and a simplex domain, all in two dimensions. Extending these constructions to higher dimensions follows the same principles.
+# The Cartesian domain represents rectangular regions, the ellipsoid domain models circular or elliptical shapes, and the simplex domain corresponds to triangular regions, which can be combined to form general polygonal domains.
 
 # In[2]:
 
 
-cartesian = CartesianDomain({"x": [0, 2], "y": [0, 2]})
-ellipsoid_no_border = EllipsoidDomain({"x": [1, 3], "y": [1, 3]})
-ellipsoid_border = EllipsoidDomain(
-    {"x": [2, 4], "y": [2, 4]}, sample_surface=True
+# Carteisan, Ellipsoid, and Simplex domains
+cartesian = CartesianDomain({"x": [0, 1], "y": [0, 1]})
+ellipsoid = EllipsoidDomain({"x": [-0.5, 0.5], "y": [-0.5, 0.5]})
+simplex = SimplexDomain(
+    [
+        LabelTensor(torch.tensor([[-0.5, 0]]), labels=["x", "y"]),
+        LabelTensor(torch.tensor([[0.5, 0]]), labels=["x", "y"]),
+        LabelTensor(torch.tensor([[-0.5, 1]]), labels=["x", "y"]),
+    ]
 )
 
+# Example of a domain with fixed and variable dimensions
+cartesian_fixed_variable = CartesianDomain({"x": [0, 2], "y": 1})
 
-# The `{'x': [0, 2], 'y': [0, 2]}` are the bounds of the `CartesianDomain` being created.
-#
-# To visualize these shapes, we need to sample points on them. We will use the `sample` method of the `CartesianDomain` and `EllipsoidDomain` classes. This method takes a `n` argument which is the number of points to sample. It also takes different modes to sample, such as `'random'`.
+
+# Both Cartesian and ellipsoid domains are created by passing dictionaries that specify the bounds for each variable. If a lower and upper bound coincide, the variable can be fixed by providing a single numerical value.
+# Since the concept of bounds does not apply to simplices, their initialization requires explicitly providing the vertices. The number of vertices must always be one more than the domain dimension.
+
+# To visualize the shapes, we draw sample points from each domain using the `sample` method, available for all PINA domains. The argument `n` specifies how many points to generate. The optional `mode` argument selects the sampling strategy (e.g. "random"). The optional `variables` argument allows sampling over only a subset of variables; here, we sample all of them.
 
 # In[3]:
 
 
 cartesian_samples = cartesian.sample(n=1000, mode="random")
-ellipsoid_no_border_samples = ellipsoid_no_border.sample(n=1000, mode="random")
-ellipsoid_border_samples = ellipsoid_border.sample(n=1000, mode="random")
+ellipsoid_samples = ellipsoid.sample(n=1000, mode="random")
+simplex_samples = simplex.sample(n=1000, mode="random")
+fixed_variable_samples = cartesian_fixed_variable.sample(n=1000, mode="random")
 
 
-# We can see the samples of each geometry to see what we are working with.
+# We can inspect a few sampled points from each domain to get a better understanding of their structure.
 
 # In[4]:
 
 
-print(f"Cartesian Samples: {cartesian_samples}")
-print(f"Ellipsoid No Border Samples: {ellipsoid_no_border_samples}")
-print(f"Ellipsoid Border Samples: {ellipsoid_border_samples}")
+print(f"Cartesian samples: {cartesian_samples[:4]}\n")
+print(f"Ellipsoid samples: {ellipsoid_samples[:4]}\n")
+print(f"Simplex samples: {simplex_samples[:4]}\n")
+print(f"Fixed variable samples: {fixed_variable_samples[:4]}\n")
 
 
-# We are now ready to visualize the samples using matplotlib.
+# Now we are ready to visualize the sampled points!
 
 # In[5]:
 
 
+# Basic plotting function
+def plot_scatter(ax, pts, title):
+    ax.title.set_text(title)
+    ax.scatter(pts.extract("x"), pts.extract("y"), color="blue", alpha=0.5)
+    ax.set_aspect("equal", adjustable="box")
+
+
 fig, axs = plt.subplots(1, 3, figsize=(16, 4))
-pts_list = [
-    cartesian_samples,
-    ellipsoid_no_border_samples,
-    ellipsoid_border_samples,
-]
-title_list = ["Cartesian Domain", "Ellipsoid Domain", "Ellipsoid Border Domain"]
+pts_list = [cartesian_samples, ellipsoid_samples, simplex_samples]
+title_list = ["Cartesian Domain", "Ellipsoid Domain", "Simplex Domain"]
+
 for ax, pts, title in zip(axs, pts_list, title_list):
     plot_scatter(ax, pts, title)
 
 
-# We have now created, sampled, and visualized our first geometries! We can see that the `EllipsoidDomain` with the border has a border around it. We can also see that the `EllipsoidDomain` without the border is just the ellipse. We can also see that the `CartesianDomain` is just a square.
-
-# ### Simplex Domain
-#
-# Among the built-in shapes, we quickly show here the usage of `SimplexDomain`, which can be used for polygonal domains!
+# Similarly, we can sample and visualize boundary points by using the `partial` method. This method returns a new domain representing only the boundary of the original one, from which we can draw samples in exactly the same way.
 
 # In[6]:
 
 
-import torch
+# Boundary definitions
+cartesian_boundary = cartesian.partial()
+ellipsoid_boundary = ellipsoid.partial()
+simplex_boundary = simplex.partial()
 
-spatial_domain = SimplexDomain(
-    [
-        LabelTensor(torch.tensor([[0, 0]]), labels=["x", "y"]),
-        LabelTensor(torch.tensor([[1, 1]]), labels=["x", "y"]),
-        LabelTensor(torch.tensor([[0, 2]]), labels=["x", "y"]),
-    ]
-)
+# Boundary sampling
+cartesian_bnd_samples = cartesian_boundary.sample(n=500, mode="random")
+ellipsoid_bnd_samples = ellipsoid_boundary.sample(n=500, mode="random")
+simplex_bnd_samples = simplex_boundary.sample(n=500, mode="random")
 
-spatial_domain2 = SimplexDomain(
-    [
-        LabelTensor(torch.tensor([[0.0, -2.0]]), labels=["x", "y"]),
-        LabelTensor(torch.tensor([[-0.5, -0.5]]), labels=["x", "y"]),
-        LabelTensor(torch.tensor([[-2.0, 0.0]]), labels=["x", "y"]),
-    ]
-)
+# Plot
+fig, axs = plt.subplots(1, 3, figsize=(16, 4))
+pts_list = [cartesian_bnd_samples, ellipsoid_bnd_samples, simplex_bnd_samples]
+title_list = ["Cartesian Domain", "Ellipsoid Domain", "Simplex Domain"]
 
-pts = spatial_domain2.sample(100)
-fig, axs = plt.subplots(1, 2, figsize=(16, 6))
-for domain, ax in zip([spatial_domain, spatial_domain2], axs):
-    pts = domain.sample(1000)
-    plot_scatter(ax, pts, "Simplex Domain")
+for ax, pts, title in zip(axs, pts_list, title_list):
+    plot_scatter(ax, pts, title)
 
 
-# ## Boolean Operations
+# Great! We have created our first domains, sampled points from them, and visualized the results.
 
-# To create complex shapes we can use the boolean operations, for example to merge two default geometries. We need to simply use the `Union` class: it takes a list of geometries and returns the union of them.
-#
-# Let's create three unions. Firstly, it will be a union of `cartesian` and `ellipsoid_no_border`. Next, it will be a union of `ellipse_no_border` and `ellipse_border`. Lastly, it will be a union of all three geometries.
+# ## Set Operations
+
+# PINA’s built-in domains are powerful, but by themselves they cannot represent more complex shapes. To build richer geometries, we use set operations. PINA supports `Union`, `Intersection`, `Difference`, and `Exclusion` (symmetric difference) for all domain types.
+# Here, we focus on `Union` for demonstration purposes; the remaining operations behave analogously.
+
+# All set operations in PINA take a list of domains as input. For `Intersection`, `Difference`, and `Exclusion`, the operation is applied between the first two domains in the list. The resulting domain is then combined with the next one, and this process continues iteratively until all domains have been processed.
+
+# Let’s build the union of:
+# 1. `cartesian` and `simplex`
+# 2. `cartesian` and `ellipsoid_boundary`
+# 3. `ellipsoid` and `simplex_boundary`
 
 # In[7]:
 
 
-cart_ellipse_nb_union = Union([cartesian, ellipsoid_no_border])
-cart_ellipse_b_union = Union([cartesian, ellipsoid_border])
-three_domain_union = Union([cartesian, ellipsoid_no_border, ellipsoid_border])
+union_cart_sim = Union([cartesian, simplex])
+union_cart_ell_bnd = Union([cartesian, ellipsoid_boundary])
+union_ell_sim_bnd = Union([ellipsoid, simplex_boundary])
 
 
-# We can of course sample points over the new geometries, by using the `sample` method as before. We highlight that the available sample strategy here is only *random*.
+# And of course, we can sample points from these composite domains as well!
 
 # In[8]:
 
 
-c_e_nb_u_points = cart_ellipse_nb_union.sample(n=2000, mode="random")
-c_e_b_u_points = cart_ellipse_b_union.sample(n=2000, mode="random")
-three_domain_union_points = three_domain_union.sample(n=3000, mode="random")
+cart_sim_samples = union_cart_sim.sample(n=1000, mode="random")
+cart_ell_bnd_samples = union_cart_ell_bnd.sample(n=1000, mode="random")
+ell_sim_bnd_samples = union_ell_sim_bnd.sample(n=1000, mode="random")
 
 
-# We can plot the samples of each of the unions to see what we are working with.
+# We can now plot the samples to visualize each union.
 
 # In[9]:
 
 
 fig, axs = plt.subplots(1, 3, figsize=(16, 4))
-pts_list = [c_e_nb_u_points, c_e_b_u_points, three_domain_union_points]
+pts_list = [cart_sim_samples, cart_ell_bnd_samples, ell_sim_bnd_samples]
 title_list = [
-    "Cartesian with Ellipsoid No Border Union",
-    "Cartesian with Ellipsoid Border Union",
-    "Three Domain Union",
+    "Cartesian and Simplex Union",
+    "Cartesian and Ellipsoid Border Union",
+    "Ellipsoid and Simplex Border Union",
 ]
 for ax, pts, title in zip(axs, pts_list, title_list):
     plot_scatter(ax, pts, title)
 
 
-# Now, we will find the differences of the geometries. We will find the difference of `cartesian` and `ellipsoid_no_border`.
+# ## Creating a Custom Domain
+
+# Next, we explore how to create a custom domain. As an example, we consider a heart-shaped region defined by the inequality:
+# $$(x^2+y^2-1)^3-x^2y^3 \le 0$$
+
+# Custom domains in PINA can be created by inheriting from the `BaseDomain` class, which provides the general structure shared by all domains.
+# We begin by defining the constructor: we specify the available sampling modes ("random", "grid", "chebyshev", "latin" or "lh"). Here, we default to random sampling. We also introduce the parameter `sample_surface`, which determines whether we sample the full heart or only its boundary.
 
 # In[10]:
 
 
-cart_ellipse_nb_difference = Difference([cartesian, ellipsoid_no_border])
-c_e_nb_d_points = cart_ellipse_nb_difference.sample(n=2000, mode="random")
+class Heart(BaseDomain):
+    """
+    Implementation of the Heart Domain.
+    """
 
-fig, ax = plt.subplots(1, 1, figsize=(8, 6))
-plot_scatter(ax, c_e_nb_d_points, "Difference")
+    def __init__(self, sample_surface=False):
+        """
+        Initialization of the Heart Domain.
+        """
+        super().__init__()
+
+        self._sample_modes = "random"
+        self.sample_surface = sample_surface
 
 
-# ## Create Custom DomainInterface
+# Since the `Heart` domain inherits from BaseDomain, we must implement its abstract methods: `is_inside`, `sample`, and `partial`.
 
-# We will take a look on how to create our own geometry. The one we will try to make is a heart defined by the function $$(x^2+y^2-1)^3-x^2y^3 \le 0$$
+# The `is_inside` method checks whether a given point lies inside the domain. It receives the point to test and the boolean `check_border`, which indicates whether points on the boundary should be considered inside.
 
 # In[11]:
 
 
-class Heart(DomainInterface):
-    """Implementation of the Heart Domain."""
+def is_inside(self, point, check_border=False):
+    """
+    Check if a point is inside the Heart domain.
+    """
+    # Extract coordinates
+    x = point["x"]
+    y = point["y"]
 
-    def __init__(self, sample_border=False):
-        super().__init__()
+    # Define the quantity defining the heart shape
+    eqn = (x**2 + y**2 - 1) ** 3 - (x**2) * (y**3)
+
+    # If sampling on the surface, check for equality
+    if self.sample_surface:
+        return torch.allclose(eqn, torch.zeros_like(eqn))
+
+    # Check if point is inside the heart shape
+    return (eqn <= 0) if check_border else (eqn < 0)
 
 
-# Because the `DomainInterface` class we are inheriting from requires both a `sample` method and `is_inside` method, we will create them and just add in "pass" for the moment. We also observe that the methods `sample_modes` and `variables` of the `DomainInterface` class are initialized as `abstractmethod`, so we need to redefine them both in the subclass `Heart` .
+# The `sample` method closely resembles those of PINA’s built-in domains. We specify the number of points `n` and the sampling strategy mode. Note that for illustration we implement a very naive sampling approach, which is inefficient and not suitable for sampling boundary points for the heart domain!
 
 # In[12]:
 
 
-class Heart(DomainInterface):
-    """Implementation of the Heart Domain."""
+def sample(self, n, mode="random"):
+    """
+    Sampling routine for the Heart domain.
+    """
+    # Create a list to store the sampled points
+    samples = []
 
-    def __init__(self, sample_border=False):
-        super().__init__()
+    # Random sampling
+    if mode == "random":
 
-    def is_inside(self):
-        pass
+        # Loop until we have n samples
+        while len(samples) < n:
 
-    def sample(self):
-        pass
+            # Generate random point in bounding box
+            pts = torch.rand(1, 2) * 3.0 - 1.5
+            pts = LabelTensor(pts, labels=["x", "y"])
 
-    @property
-    def sample_modes(self):
-        pass
+            # Check if the point is inside the heart, borders included
+            if self.is_inside(pts, True):
+                samples.append(pts)
 
-    @property
-    def variables(self):
-        pass
+        return LabelTensor.cat(samples, dim=0)
 
 
-# Now we have the skeleton for our `Heart` class.  Also the `sample` method is where most of the work is done so let's fill it out.
+# The `partial` method returns a new instance of the domain class that represents only its boundary. Implementing it is straightforward.
 
 # In[13]:
 
 
-class Heart(DomainInterface):
-    """Implementation of the Heart Domain."""
+def partial(self):
+    """
+    Return the boundary of the Heart domain.
+    """
+    # Copy the current instance and set sampling only on the surface
+    boundary = deepcopy(self)
+    boundary.sample_surface = True
 
-    def __init__(self, sample_border=False):
-        super().__init__()
-
-    def is_inside(self):
-        pass
-
-    def sample(self, n):
-        sampled_points = []
-
-        while len(sampled_points) < n:
-            x = torch.rand(1) * 3.0 - 1.5
-            y = torch.rand(1) * 3.0 - 1.5
-            if ((x**2 + y**2 - 1) ** 3 - (x**2) * (y**3)) <= 0:
-                sampled_points.append([x.item(), y.item()])
-
-        return LabelTensor(torch.tensor(sampled_points), labels=["x", "y"])
-
-    @property
-    def sample_modes(self):
-        pass
-
-    @property
-    def variables(self):
-        pass
+    return boundary
 
 
-# To create the Heart geometry we simply run:
+# We now have all the components needed to complete the `Heart` class.
 
 # In[14]:
 
 
-heart = Heart()
+# Linking the methods to the Heart class
+Heart.is_inside = is_inside
+Heart.sample = sample
+Heart.partial = partial
+
+# Avoid complaints about abstract methods not being implemented
+Heart.__abstractmethods__ = frozenset()
 
 
-# To sample from the Heart geometry we simply run:
+# Let’s generate the heart domain and draw sample points.
 
 # In[15]:
 
 
-pts_heart = heart.sample(1500)
+# Generate the heart domain
+heart = Heart()
+
+# Draw samples from the heart domain
+heart_samples = heart.sample(n=1000, mode="random")
+
+
+# Finally, we visualize the samples.
+
+# In[16]:
+
 
 fig, ax = plt.subplots()
-plot_scatter(ax, pts_heart, "Heart Domain")
+plot_scatter(ax, heart_samples, "Heart Domain")
 
 
 # ## What's Next?
 #
-# We have walked through a simple tutorial on how to build custom geometries and use domain operations to compose base geometries. Now you can experiment with different geometries and create your own!
+# In this tutorial, we introduced the construction of custom geometries and the use of domain operations to combine basic shapes. From here, you can experiment with a wide range of possibilities:
 #
-# 1. **Experiment with Complex Geometries**: Combine multiple basic shapes to create more intricate structures using domain operations.
+# 1. **Build More Complex Geometries**: Combine multiple simple shapes using set operations to design sophisticated domains.
 #
-# 2. **Optimize Geometry for Specific Tasks**: Customize your geometry models for specialized applications such as fluid dynamics, heat transfer, or structural analysis.
+# 2. **Optimize for Specific Applications**: Tailor domain definitions for tasks such as fluid flow, heat transfer, or structural mechanics.
 #
-# 3. **...and many more!**: Explore new geometries and build them with `DomainInterface`!
+# 3. **...and many more!**: Implement new geometries using DomainInterface and push PINA’s capabilities further.
 #
 # For more resources and tutorials, check out the [PINA Documentation](https://mathlab.github.io/PINA/).

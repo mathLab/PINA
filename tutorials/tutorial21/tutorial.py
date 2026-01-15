@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Tutorial: Introductory Tutorial: Supervised Learning with PINA
+# # Tutorial: Introductory Tutorial: Neural Operator Learning with PINA
 # 
 # [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mathLab/PINA/blob/master/tutorials/tutorial21/tutorial.ipynb)
 # 
@@ -241,7 +241,7 @@ model = KernelNeuralOperator(
 # 
 # > **👉 We have a dedicated [tutorial](http://mathlab.github.io/PINA/_rst/tutorials/tutorial18/tutorial.html) for an overview of Solvers in PINA — have a look if you're interested!**
 
-# In[24]:
+# In[ ]:
 
 
 # making the problem

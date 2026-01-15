@@ -5,57 +5,101 @@ from abc import ABCMeta, abstractmethod
 
 class DomainInterface(metaclass=ABCMeta):
     """
-    Abstract base class for geometric domains. All specific domain types should
-    inherit from this class.
+    Abstract interface for all geometric domains.
     """
 
-    available_sampling_modes = ["random", "grid", "lh", "chebyshev", "latin"]
+    @abstractmethod
+    def is_inside(self, point, check_border):
+        """
+        Check if a point is inside the domain.
+
+        :param LabelTensor point: The point to check.
+        :param bool check_border: If ``True``, the boundary is considered inside
+            the domain.
+        :return: Whether the point is inside the domain or not.
+        :rtype: bool
+        """
+
+    @abstractmethod
+    def update(self, domain):
+        """
+        Update the current domain by adding the labels contained in ``domain``.
+        Each new label introduces a new dimension. Only domains of the same type
+        can be used for update.
+
+        :param BaseDomain domain: The domain whose labels are to be merged into
+            the current one.
+        :return: A new domain instance with the merged labels.
+        :rtype: DomainInterface
+        """
+
+    @abstractmethod
+    def sample(self, n, mode, variables):
+        """
+        The sampling routine.
+
+        :param int n: The number of samples to generate.
+        :param str mode: The sampling method.
+        :param list[str] variables: The list of variables to sample.
+        :return: The sampled points.
+        :rtype: LabelTensor
+        """
+
+    @abstractmethod
+    def partial(self):
+        """
+        Return the boundary of the domain as a new domain object.
+
+        :return: The boundary of the domain.
+        :rtype: DomainInterface
+        """
 
     @property
     @abstractmethod
     def sample_modes(self):
         """
-        Abstract method defining sampling methods.
+        The list of available sampling modes.
+
+        :return: The list of available sampling modes.
+        :rtype: list[str]
         """
 
     @property
     @abstractmethod
     def variables(self):
         """
-        Abstract method returning the domain variables.
+        The list of variables of the domain.
+
+        :return: The list of variables of the domain.
+        :rtype: list[str]
         """
 
-    @sample_modes.setter
-    def sample_modes(self, values):
-        """
-        Setter for the sample_modes property.
-
-        :param values: Sampling modes to be set.
-        :type values: str | list[str]
-        :raises TypeError: Invalid sampling mode.
-        """
-        if not isinstance(values, (list, tuple)):
-            values = [values]
-        for value in values:
-            if value not in DomainInterface.available_sampling_modes:
-                raise TypeError(
-                    f"mode {value} not valid. Expected at least "
-                    "one in "
-                    f"{DomainInterface.available_sampling_modes}."
-                )
-
+    @property
     @abstractmethod
-    def sample(self):
+    def domain_dict(self):
         """
-        Abstract method for the sampling routine.
+        The dictionary representing the domain.
+
+        :return: The dictionary representing the domain.
+        :rtype: dict
         """
 
+    @property
     @abstractmethod
-    def is_inside(self, point, check_border=False):
+    def range(self):
         """
-        Abstract method for checking if a point is inside the domain.
+        The range variables of the domain.
 
-        :param LabelTensor point: Point to be checked.
-        :param bool check_border: If ``True``, the border is considered inside
-            the domain. Default is ``False``.
+        :return: The range variables of the domain.
+        :rtype: dict
+        """
+
+    @property
+    @abstractmethod
+    def fixed(self):
+        """
+        The fixed variables of the domain.
+
+        :return: The fixed variables of the domain.
+        :rtype: dict
         """

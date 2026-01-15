@@ -9,7 +9,7 @@
 # 
 # Let’s begin by importing the necessary libraries.
 
-# In[ ]:
+# In[1]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -99,7 +99,7 @@ warnings.filterwarnings("ignore")
 # 
 # > **👉 We have a dedicated [tutorial](https://mathlab.github.io/PINA/tutorial3/tutorial.html) to teach how to impose hard constraints — have a look if you're interested!**
 
-# In[80]:
+# In[2]:
 
 
 # define bratu equation
@@ -121,9 +121,7 @@ def true_solution(x):
 class BratuProblem(TimeDependentProblem):
     output_variables = ["u"]
     temporal_domain = CartesianDomain({"t": [0, 1]})
-    domains = {
-        "interior": CartesianDomain({"t": [0, 1]}),
-    }
+    domains = {"interior": temporal_domain}
     conditions = {
         "interior": Condition(domain="interior", equation=Equation(bratu_eq))
     }
@@ -142,7 +140,7 @@ problem.discretise_domain(n=101, mode="grid", domains="interior")
 # 
 # The final ensemble is simply a **list of PyTorch models**, which we will later pass to the `DeepEnsemblePINN`
 
-# In[81]:
+# In[3]:
 
 
 # define a single model (ensemble member)
@@ -167,7 +165,7 @@ models = [Model(1, 1, inner_size=50, n_layers=2) for _ in range(10)]
 
 # Let's visualize the networks output before strated training
 
-# In[82]:
+# In[4]:
 
 
 # plot solution
@@ -190,7 +188,7 @@ with torch.no_grad():
 # 
 # Once the `DeepEnsemblePINN` solver is defined with all the models, we train them using the `Trainer` class, as with any other solver in **PINA**. We also build a callback to store the value of `u(0.5)` during training iterations.
 
-# In[83]:
+# In[ ]:
 
 
 # define the optimizers, one per model
@@ -230,7 +228,7 @@ trainer.train()
 
 # The training finished, let's first plot how the value of $u(0.5)$ changed during training
 
-# In[84]:
+# In[6]:
 
 
 with torch.no_grad():
@@ -249,7 +247,7 @@ with torch.no_grad():
 # We can also visualize the ensemble predictions to better observe the multiple branches:
 # 
 
-# In[88]:
+# In[7]:
 
 
 # plot solution

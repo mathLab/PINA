@@ -253,7 +253,8 @@ def test_divergence(f):
     Function(),
     ids=["scalar_scalar", "scalar_vector", "vector_scalar", "vector_vector"],
 )
-def test_laplacian(f):
+@pytest.mark.parametrize("method", ["std", "divgrad"])
+def test_laplacian(f, method):
 
     # Unpack the function
     func_input, func, _, _, func_lap = f
@@ -265,7 +266,7 @@ def test_laplacian(f):
     output_ = LabelTensor(output_, labels)
 
     # Compute the true laplacian and the pina laplacian
-    pina_lap = laplacian(output_=output_, input_=input_)
+    pina_lap = laplacian(output_=output_, input_=input_, method=method)
     true_lap = func_lap(input_)
 
     # Check the shape and labels of the laplacian
@@ -276,24 +277,34 @@ def test_laplacian(f):
     assert torch.allclose(pina_lap, true_lap)
 
     # Test if labels are handled correctly
-    laplacian(output_=output_, input_=input_, components=output_.labels[0])
-    laplacian(output_=output_, input_=input_, d=input_.labels[0])
+    laplacian(
+        output_=output_,
+        input_=input_,
+        components=output_.labels[0],
+        method=method,
+    )
+    laplacian(output_=output_, input_=input_, d=input_.labels[0], method=method)
 
     # Should fail if input not a LabelTensor
     with pytest.raises(TypeError):
-        laplacian(output_=output_, input_=input_.tensor)
+        laplacian(output_=output_, input_=input_.tensor, method=method)
 
     # Should fail if output not a LabelTensor
     with pytest.raises(TypeError):
-        laplacian(output_=output_.tensor, input_=input_)
+        laplacian(output_=output_.tensor, input_=input_, method=method)
 
     # Should fail for non-existent input labels
     with pytest.raises(RuntimeError):
-        laplacian(output_=output_, input_=input_, d=["x", "y"])
+        laplacian(output_=output_, input_=input_, d=["x", "y"], method=method)
 
     # Should fail for non-existent output labels
     with pytest.raises(RuntimeError):
-        laplacian(output_=output_, input_=input_, components=["a", "b", "c"])
+        laplacian(
+            output_=output_,
+            input_=input_,
+            components=["a", "b", "c"],
+            method=method,
+        )
 
 
 def test_advection_scalar():

@@ -44,7 +44,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
             weighting = _NoWeighting()
         check_consistency(weighting, WeightingInterface)
         self._pina_weighting = weighting
-        weighting.condition_names = list(self._pina_problem.conditions.keys())
+        weighting._solver = self
 
         # check consistency use_lt
         check_consistency(use_lt, bool)
@@ -169,13 +169,12 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         compile the model if the :class:`~pina.trainer.Trainer`
         ``compile`` is ``True``.
 
-
+        :param str stage: The current stage of the training process
+            (e.g., ``fit``, ``validate``, ``test``, ``predict``).
+        :return: The result of the parent class ``setup`` method.
+        :rtype: Any
         """
-        if stage == "fit" and self.trainer.compile:
-            self._setup_compile()
-        if stage == "test" and (
-            self.trainer.compile and not self._is_compiled()
-        ):
+        if self.trainer.compile and not self._is_compiled():
             self._setup_compile()
         return super().setup(stage)
 
@@ -258,8 +257,8 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         for v in self._params:
             self._params[v].data.clamp_(
-                self.problem.unknown_parameter_domain.range_[v][0],
-                self.problem.unknown_parameter_domain.range_[v][1],
+                self.problem.unknown_parameter_domain.range[v][0],
+                self.problem.unknown_parameter_domain.range[v][1],
             )
 
     @staticmethod
@@ -326,8 +325,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The default scheduler.
         :rtype: Scheduler
         """
-
-        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR)
+        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR, factor=1.0)
 
     @property
     def problem(self):

@@ -2,40 +2,18 @@
 
 import torch
 from ... import Condition
-from ...domain import CartesianDomain
-from ...operator import grad, laplacian
-from ...equation import Equation, FixedValue
+from ...equation import Equation, FixedValue, DiffusionReaction
 from ...problem import SpatialProblem, TimeDependentProblem
-
-
-def diffusion_reaction(input_, output_):
-    """
-    Implementation of the diffusion-reaction equation.
-
-    :param LabelTensor input_: Input data of the problem.
-    :param LabelTensor output_: Output data of the problem.
-    :return: The residual of the diffusion-reaction equation.
-    :rtype: LabelTensor
-    """
-    x = input_.extract("x")
-    t = input_.extract("t")
-    u_t = grad(output_, input_, components=["u"], d=["t"])
-    u_xx = laplacian(output_, input_, components=["u"], d=["x"])
-    r = torch.exp(-t) * (
-        1.5 * torch.sin(2 * x)
-        + (8 / 3) * torch.sin(3 * x)
-        + (15 / 4) * torch.sin(4 * x)
-        + (63 / 8) * torch.sin(8 * x)
-    )
-    return u_t - u_xx - r
+from ...utils import check_consistency
+from ...domain import CartesianDomain
 
 
 def initial_condition(input_, output_):
     """
     Definition of the initial condition of the diffusion-reaction problem.
 
-    :param LabelTensor input_: Input data of the problem.
-    :param LabelTensor output_: Output data of the problem.
+    :param LabelTensor input_: The input data of the problem.
+    :param LabelTensor output_: The output data of the problem.
     :return: The residual of the initial condition.
     :rtype: LabelTensor
     """
@@ -56,11 +34,13 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
     :math:`[-\pi, \pi]` and temporal interval :math:`[0, 1]`.
 
     .. seealso::
+
         **Original reference**: Si, Chenhao, et al. *Complex Physics-Informed
         Neural Network.* arXiv preprint arXiv:2502.04917 (2025).
         DOI: `arXiv:2502.04917 <https://arxiv.org/abs/2502.04917>`_.
 
     :Example:
+
         >>> problem = DiffusionReactionProblem()
     """
 
@@ -69,18 +49,47 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
     temporal_domain = CartesianDomain({"t": [0, 1]})
 
     domains = {
-        "D": CartesianDomain({"x": [-torch.pi, torch.pi], "t": [0, 1]}),
-        "g1": CartesianDomain({"x": -torch.pi, "t": [0, 1]}),
-        "g2": CartesianDomain({"x": torch.pi, "t": [0, 1]}),
-        "t0": CartesianDomain({"x": [-torch.pi, torch.pi], "t": 0.0}),
+        "D": spatial_domain.update(temporal_domain),
+        "boundary": spatial_domain.partial().update(temporal_domain),
+        "t0": spatial_domain.update(CartesianDomain({"t": 0})),
     }
 
     conditions = {
-        "D": Condition(domain="D", equation=Equation(diffusion_reaction)),
-        "g1": Condition(domain="g1", equation=FixedValue(0.0)),
-        "g2": Condition(domain="g2", equation=FixedValue(0.0)),
+        "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
         "t0": Condition(domain="t0", equation=Equation(initial_condition)),
     }
+
+    def __init__(self, alpha=1e-4):
+        """
+        Initialization of the :class:`DiffusionReactionProblem`.
+
+        :param alpha: The diffusion coefficient. Default is 1e-4.
+        :type alpha: float | int
+        """
+        super().__init__()
+        check_consistency(alpha, (float, int))
+        self.alpha = alpha
+
+        def forcing_term(input_):
+            """
+            Implementation of the forcing term.
+            """
+            # Extract spatial and temporal variables
+            spatial_d = [di for di in input_.labels if di != "t"]
+            x = input_.extract(spatial_d)
+            t = input_.extract("t")
+
+            return torch.exp(-t) * (
+                1.5 * torch.sin(2 * x)
+                + (8 / 3) * torch.sin(3 * x)
+                + (15 / 4) * torch.sin(4 * x)
+                + (63 / 8) * torch.sin(8 * x)
+            )
+
+        self.conditions["D"] = Condition(
+            domain="D",
+            equation=DiffusionReaction(self.alpha, forcing_term),
+        )
 
     def solution(self, pts):
         """

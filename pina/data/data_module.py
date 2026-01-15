@@ -521,6 +521,7 @@ class PinaDataModule(LightningDataModule):
                 collate_fn=collate,
                 sampler=sampler,
                 num_workers=self.num_workers,
+                pin_memory=self.pin_memory,
             )
         dataloader = DummyDataloader(dataset)
         dataloader.dataset = self._transfer_batch_to_device(

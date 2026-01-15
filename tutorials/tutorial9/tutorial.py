@@ -11,7 +11,7 @@
 # Let's start with some useful imports:
 # 
 
-# In[1]:
+# In[ ]:
 
 
 ## routine needed to run the notebook on Google Colab
@@ -30,12 +30,11 @@ import warnings
 
 from pina import Condition, Trainer
 from pina.problem import SpatialProblem
-from pina.operator import laplacian
 from pina.model import FeedForward
 from pina.model.block import PeriodicBoundaryEmbedding  # The PBC module
 from pina.solver import PINN
 from pina.domain import CartesianDomain
-from pina.equation import Equation
+from pina.equation import Helmholtz
 from pina.callback import MetricTracker
 
 warnings.filterwarnings("ignore")
@@ -76,17 +75,12 @@ warnings.filterwarnings("ignore")
 # In[2]:
 
 
-def helmholtz_equation(input_, output_):
-    x = input_.extract("x")
-    u_xx = laplacian(output_, input_, components=["u"], d=["x"])
-    f = (
-        -6.0
-        * torch.pi**2
-        * torch.sin(3 * torch.pi * x)
-        * torch.cos(torch.pi * x)
-    )
-    lambda_ = -10.0 * torch.pi**2
-    return u_xx - lambda_ * output_ - f
+def forcing_term(x):
+    pi = torch.pi
+    return -6.0 * pi**2 * torch.sin(3 * pi * x) * torch.cos(pi * x)
+
+
+helmholtz_equation = Helmholtz(k=10 * torch.pi**2, forcing_term=forcing_term)
 
 
 class Helmholtz(SpatialProblem):
@@ -96,7 +90,7 @@ class Helmholtz(SpatialProblem):
     # here we write the problem conditions
     conditions = {
         "phys_cond": Condition(
-            domain=spatial_domain, equation=Equation(helmholtz_equation)
+            domain=spatial_domain, equation=helmholtz_equation
         ),
     }
 
@@ -145,7 +139,7 @@ problem.discretise_domain(200, "grid", domains=["phys_cond"])
 # 
 # 
 
-# In[18]:
+# In[3]:
 
 
 # we encapsulate all modules in a torch.nn.Sequential container
@@ -181,7 +175,7 @@ trainer = Trainer(
 trainer.train()
 
 
-# In[20]:
+# In[5]:
 
 
 # plot loss
@@ -197,7 +191,7 @@ plt.yscale("log")
 
 # We are going to plot the solution now!
 
-# In[21]:
+# In[6]:
 
 
 pts = solver.problem.spatial_domain.sample(256, "grid", variables="x")
@@ -210,7 +204,7 @@ plt.legend()
 
 # Great, they overlap perfectly! This seems a good result, considering the simple neural network used to some this (complex) problem. We will now test the neural network on the domain $[-4, 4]$ without retraining. In principle the periodicity should be present since the $v$ function ensures the periodicity in $(-\infty, \infty)$.
 
-# In[22]:
+# In[7]:
 
 
 # plotting solution

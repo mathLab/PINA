@@ -3,7 +3,7 @@
 import torch
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import degree
-from ....utils import check_positive_integer
+from ....utils import check_positive_integer, check_consistency
 from ....model import FeedForward
 
 
@@ -27,6 +27,12 @@ class EnEquivariantNetworkBlock(MessagePassing):
     positions are updated by adding the incoming messages divided by the
     degree of the recipient node.
 
+    When velocity features are used, node velocities are passed through a small
+    MLP to compute updates, which are then combined with the aggregated position
+    messages. The node positions are updated both by the normalized position
+    messages and by the updated velocities, ensuring equivariance while
+    incorporating dynamic information.
+
     .. seealso::
 
         **Original reference** Satorras, V. G., Hoogeboom, E., Welling, M.
@@ -40,6 +46,7 @@ class EnEquivariantNetworkBlock(MessagePassing):
         node_feature_dim,
         edge_feature_dim,
         pos_dim,
+        use_velocity=False,
         hidden_dim=64,
         n_message_layers=2,
         n_update_layers=2,
@@ -54,6 +61,8 @@ class EnEquivariantNetworkBlock(MessagePassing):
         :param int node_feature_dim: The dimension of the node features.
         :param int edge_feature_dim: The dimension of the edge features.
         :param int pos_dim: The dimension of the position features.
+        :param bool use_velocity: Whether to use velocity features in the
+            message passing. Default is False.
         :param int hidden_dim: The dimension of the hidden features.
             Default is 64.
         :param int n_message_layers: The number of layers in the message
@@ -80,6 +89,7 @@ class EnEquivariantNetworkBlock(MessagePassing):
         :raises AssertionError: If `hidden_dim` is not a positive integer.
         :raises AssertionError: If `n_message_layers` is not a positive integer.
         :raises AssertionError: If `n_update_layers` is not a positive integer.
+        :raises AssertionError: If `use_velocity` is not a boolean.
         """
         super().__init__(aggr=aggr, node_dim=node_dim, flow=flow)
 
@@ -90,6 +100,10 @@ class EnEquivariantNetworkBlock(MessagePassing):
         check_positive_integer(hidden_dim, strict=True)
         check_positive_integer(n_message_layers, strict=True)
         check_positive_integer(n_update_layers, strict=True)
+        check_consistency(use_velocity, bool)
+
+        # Initialization
+        self.use_velocity = use_velocity
 
         # Layer for computing the message
         self.message_net = FeedForward(
@@ -119,7 +133,17 @@ class EnEquivariantNetworkBlock(MessagePassing):
             func=activation,
         )
 
-    def forward(self, x, pos, edge_index, edge_attr=None):
+        # If velocity is used, instantiate layer for velocity updates
+        if self.use_velocity:
+            self.update_vel_net = FeedForward(
+                input_dimensions=node_feature_dim,
+                output_dimensions=1,
+                inner_size=hidden_dim,
+                n_layers=n_update_layers,
+                func=activation,
+            )
+
+    def forward(self, x, pos, edge_index, edge_attr=None, vel=None):
         """
         Forward pass of the block, triggering the message-passing routine.
 
@@ -130,11 +154,19 @@ class EnEquivariantNetworkBlock(MessagePassing):
         :param torch.Tensor edge_index: The edge indices.
         :param edge_attr: The edge attributes. Default is None.
         :type edge_attr: torch.Tensor | LabelTensor
+        :param vel: The velocity of the nodes. Default is None.
+        :type vel: torch.Tensor | LabelTensor
         :return: The updated node features and node positions.
         :rtype: tuple(torch.Tensor, torch.Tensor)
+        :raises: ValueError: If ``use_velocity`` is True and ``vel`` is None.
         """
+        if self.use_velocity and vel is None:
+            raise ValueError(
+                "Velocity features are enabled, but no velocity is passed."
+            )
+
         return self.propagate(
-            edge_index=edge_index, x=x, pos=pos, edge_attr=edge_attr
+            edge_index=edge_index, x=x, pos=pos, edge_attr=edge_attr, vel=vel
         )
 
     def message(self, x_i, x_j, pos_i, pos_j, edge_attr):
@@ -202,10 +234,9 @@ class EnEquivariantNetworkBlock(MessagePassing):
 
         return agg_message, agg_m_ij
 
-    def update(self, aggregated_inputs, x, pos, edge_index):
+    def update(self, aggregated_inputs, x, pos, edge_index, vel):
         """
-        Update the node features and the node coordinates with the received
-        messages.
+        Update node features, positions, and optionally velocities.
 
         :param tuple(torch.Tensor) aggregated_inputs: The messages to be passed.
         :param x: The node features.
@@ -213,17 +244,26 @@ class EnEquivariantNetworkBlock(MessagePassing):
         :param pos: The euclidean coordinates of the nodes.
         :type pos: torch.Tensor | LabelTensor
         :param torch.Tensor edge_index: The edge indices.
+        :param vel: The velocity of the nodes.
+        :type vel: torch.Tensor | LabelTensor
         :return: The updated node features and node positions.
-        :rtype: tuple(torch.Tensor, torch.Tensor)
+        :rtype: tuple(torch.Tensor, torch.Tensor) |
+            tuple(torch.Tensor, torch.Tensor, torch.Tensor)
         """
         # aggregated_inputs is tuple (agg_message, agg_m_ij)
         agg_message, agg_m_ij = aggregated_inputs
 
+        # Degree for normalization of position updates
+        c = degree(edge_index[1], pos.shape[0]).unsqueeze(-1).clamp(min=1)
+
+        # If velocity is used, update it and use it to update positions
+        if self.use_velocity:
+            vel = self.update_vel_net(x) * vel
+
         # Update node features with aggregated m_ij
         x = self.update_feat_net(torch.cat((x, agg_m_ij), dim=-1))
 
-        # Degree for normalization of position updates
-        c = degree(edge_index[1], pos.shape[0]).unsqueeze(-1).clamp(min=1)
-        pos = pos + agg_message / c
+        # Update positions with aggregated messages m_ij and velocities
+        pos = pos + agg_message / c + (vel if self.use_velocity else 0)
 
-        return x, pos
+        return (x, pos, vel) if self.use_velocity else (x, pos)

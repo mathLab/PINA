@@ -33,11 +33,14 @@ Neural Operator Learning
 - `Introductory Tutorial: Neural Operator Learning with PINA <tutorial21/tutorial.html>`_
 - `Modeling 2D Darcy Flow with the Fourier Neural Operator <tutorial5/tutorial.html>`_
 - `Solving the Kuramoto-Sivashinsky Equation with Averaging Neural Operator <tutorial10/tutorial.html>`_
+- `Advection Equation with data driven DeepONet <tutorial24/tutorial.html>`_
 
 Supervised Learning
 -------------------
 
 - `Introductory Tutorial: Supervised Learning with PINA  <tutorial20/tutorial.html>`_
-- `Chemical Properties Prediction with Graph Neural Networks <tutorial25/tutorial.html>`_
+- `Chemical Properties Prediction with Graph Neural Networks <tutorial15/tutorial.html>`_
+- `Reduced Order Model with Graph Neural Networks for Unstructured Domains <tutorial22/tutorial.html>`_
+- `Data-driven System Identification with SINDy <tutorial23/tutorial.html>`_
 - `Unstructured Convolutional Autoencoders with Continuous Convolution <tutorial4/tutorial.html>`_
 - `Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics <tutorial8/tutorial.html>`_
