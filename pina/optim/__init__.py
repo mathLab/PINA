@@ -7,7 +7,7 @@ __all__ = [
     "TorchScheduler",
 ]
 
-from .optimizer_interface import Optimizer
-from .torch_optimizer import TorchOptimizer
-from .scheduler_interface import Scheduler
-from .torch_scheduler import TorchScheduler
+from pina._src.optim.optimizer_interface import Optimizer
+from pina._src.optim.torch_optimizer import TorchOptimizer
+from pina._src.optim.scheduler_interface import Scheduler
+from pina._src.optim.torch_scheduler import TorchScheduler
