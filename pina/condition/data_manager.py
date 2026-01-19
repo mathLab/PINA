@@ -1,20 +1,40 @@
+"""
+Module for managing data in conditions.
+"""
+
+from abc import ABC, abstractmethod
 import torch
-from pina import LabelTensor
-from pina.graph import Graph
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
+from pina import LabelTensor
+from pina.graph import Graph
 from pina.graph import LabelBatch
 from pina.equation.equation_interface import EquationInterface
-from abc import ABC, abstractmethod
 
 
 class _BatchManager:
+    """
+    Class for managing batches of data.
+    """
+
     def __init__(self, **dict):
+        """
+        Store the batch data from the provided dictionary.
+
+        :param dict dict: The dictionary containing the batch data.
+        """
         self.keys = list(dict.keys())
         for k, v in dict.items():
             setattr(self, k, v)
 
     def to(self, device):
+        """
+        Move all data in the batch to the specified device.
+        :param device: The device to move the data to.
+        :type device: torch.device | str
+        :return: The batch manager with data moved to the specified device.
+        :rtype: _BatchManager
+        """
         for k in self.keys:
             val = getattr(self, k)
             setattr(self, k, val.to(device))
@@ -22,74 +42,130 @@ class _BatchManager:
 
 
 class _DataManager(ABC):
-    """Interfaccia base ottimizzata per la gestione dei dati."""
+    """
+    Abstract base class for data managers.
+
+    This class dynamically selects between :class:`_TensorDataManager` and
+    :class:`_GraphDataManager` based on the types of the input data.
+    """
 
     def __new__(cls, **kwargs):
-        # Dispatching Factory
+        """
+        Dynamically instantiate the appropriate subclass based on the types
+        of the input data.
+            - If all values in ``kwargs`` are instances of
+              :class:`torch.Tensor`, :class:`LabelTensor` then
+              :class:`_TensorDataManager` is instantiated.
+            - Otherwise, :class:`_GraphDataManager` is instantiated.
+
+        :param dict kwargs: The keyword arguments containing the data.
+        :return: An instance of :class:`_TensorDataManager` or
+            :class:`_GraphDataManager`.
+        :rtype: _TensorDataManager | _GraphDataManager
+        """
+        # If not called directly, proceed with normal instantiation
         if cls is not _DataManager:
             return super().__new__(cls)
 
-        # Determina se usare il gestore Tensori o Grafi
-        # (Controllo ottimizzato: evita cicli se possibile)
+        # Does the data contain only tensors/LabelTensors/Equations?
         is_tensor_only = all(
             isinstance(v, (torch.Tensor, LabelTensor, EquationInterface))
             for v in kwargs.values()
         )
-
+        # Choose the appropriate subclass, GraphDataManager or TensorDataManager
         subclass = _TensorDataManager if is_tensor_only else _GraphDataManager
         return super().__new__(subclass)
 
+    def __init__(self, **kwargs):
+        """
+        Initialize the data manager with the provided keyword arguments.
+
+        :param dict kwargs: The keyword arguments containing the data.
+        """
+        self.keys = list(kwargs.keys())
+
     @abstractmethod
-    def __len__(self) -> int:
-        pass
+    def __len__(self):
+        """
+        Return the number of samples in the data manager.
+        """
 
     @abstractmethod
     def __getitem__(self, idx):
-        pass
+        """
+        Retrieve a data item or a subset of data items by index.
+        """
 
     def to_dict(self):
+        """
+        Convert the data manager to a dictionary.
+        """
         return {k: getattr(self, k) for k in self.keys}
 
-
-# --- GESTORE TENSORI ---
+    @staticmethod
+    @abstractmethod
+    def create_batch(items):
+        """
+        Create a batch from a list of data manager items.
+        """
 
 
 class _TensorDataManager(_DataManager):
+    """
+    Data manager for tensor data. Handles data stored as `torch.Tensor` or
+    `LabelTensor`.
+    """
+
     def __init__(self, **kwargs):
-        self.keys = list(kwargs.keys())
-        self._data = kwargs  # Memorizzazione in dizionario per accesso O(1)
+        super().__init__(**kwargs)
+        self.data = kwargs
 
-        # # Identifica i tensori una sola volta
-        # self._tensor_keys = [
-        #     k for k, v in kwargs.items()
-        #     if isinstance(v, (torch.Tensor, LabelTensor))
-        # ]
-
-        # Espone le chiavi come attributi (facoltativo, ma mantiene compatibilità)
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def __len__(self) -> int:
-        # Prende la lunghezza dal primo tensore disponibile
-        return self._data[self.keys[0]].shape[0]
+    def __len__(self):
+        """
+        Return the number of samples in the tensor data manager.
+
+        :return: Number of samples.
+        :rtype: int
+        """
+        return self.data[self.keys[0]].shape[0]
 
     def __getitem__(self, idx):
+        """
+        Return a data item or a subset of data items by index.
+
+        :param idx: Index or indices of the data items to retrieve.
+        :type idx: int | slice | list[int] | torch.Tensor
+        :return: A new :class:`_TensorDataManager` instance containing the
+            selected data items.
+        :rtype: _TensorDataManager
+        """
         # Mapping efficiente degli elementi
         new_data = {
-            k: (self._data[k][idx] if k in self.keys else self._data[k])
+            k: (self.data[k][idx] if k in self.keys else self.data[k])
             for k in self.keys
         }
         return _TensorDataManager(**new_data)
 
     @staticmethod
     def _create_batch(items):
+        """
+        Create a batch from a list of :class:`_TensorDataManager` items.
+
+        :param list items: List of :class:`_TensorDataManager` items to batch.
+        :return: A new :class:`_BatchManager` instance containing the batched
+        data.
+        :rtype: _BatchManager
+        """
         if not items:
             return None
         first = items[0]
         batch_data = {}
 
         for k in first.keys:
-            vals = [it._data[k] for it in items]
+            vals = [it.data[k] for it in items]
             sample = vals[0]
 
             if isinstance(sample, (torch.Tensor, LabelTensor)):
@@ -106,9 +182,19 @@ class _TensorDataManager(_DataManager):
 
 
 class _GraphDataManager(_DataManager):
-    def __init__(self, **kwargs):
-        self.keys = list(kwargs.keys())
+    """
+    Data manager for graph data. Handles data stored as :class:`Graph`,
+    :class:`Data`, or lists/tuples of these types. Moreover , it can also manage
+    associated tensors stored as :class:`torch.Tensor` or :class:`LabelTensor`.
+    """
 
+    def __init__(self, **kwargs):
+        """
+        Initialize the graph data manager with the provided keyword arguments.
+
+        :param dict kwargs: The keyword arguments containing the data.
+        """
+        super().__init__(**kwargs)
         self.graph_key = next(
             k
             for k, v in kwargs.items()
@@ -122,34 +208,56 @@ class _GraphDataManager(_DataManager):
             and isinstance(kwargs[k], (torch.Tensor, LabelTensor))
         ]
 
-        # Prepara la lista di grafi internamente
+        # Prepare graphs and assign tensors
         self.data = self._prepare_graphs(kwargs)
 
     def _prepare_graphs(self, kwargs):
-        graphs = kwargs[self.graph_key]
+        """
+        Store tensors in the corresponding graphs.
+
+        :param dict kwargs: The keyword arguments containing the graphs and
+            associated tensors.
+        :return: A list of graphs with tensors assigned.
+        :rtype: list[Graph] | list[Data]
+        """
+        graphs = kwargs.pop(self.graph_key)
         if not isinstance(graphs, (list, tuple)):
             graphs = [graphs]
 
-        # Iniezione attributi nei grafi
-        for k in self.keys:
-            val_source = kwargs[k]
-            # Ottimizzazione: se la lunghezza coincide, distribuiamo i tensori,
-            # altrimenti trattiamo il tensore come costante per tutti.
-            use_idx = (
-                len(val_source) == len(graphs)
-                if hasattr(val_source, "__len__")
-                else False
-            )
-
+        n_graphs = len(graphs)
+        for name, tensor in kwargs.items():
+            # Verify consistency between number of graphs and tensor samples
+            if n_graphs != tensor.shape[0]:
+                raise ValueError(
+                    f"Number of graphs ({n_graphs}) does not match "
+                    f"number of samples for key '{name}' "
+                    f"({kwargs[name].shape[0]})."
+                )
+            # Assign tensors to graphs
             for i, g in enumerate(graphs):
-                setattr(g, k, val_source[i] if use_idx else val_source)
+                setattr(g, name, tensor[i])
+
         return graphs
 
-    def __len__(self) -> int:
+    def __len__(self):
+        """
+        Return the number of graphs in the graph data manager.
+
+        :return: Number of graphs.
+        :rtype: int
+        """
         return len(self.data)
 
     def __getattr__(self, name):
+        """
+        Override attribute access to retrieve tensors or graphs. If the graph
+        key is requested, return the list of graphs. If a tensor key is
+        requested, stack the tensors from all graphs and return the result.
 
+        :param str name: The name of the attribute to retrieve.
+        :return: The requested tensor or graph.
+        :rtype: torch.Tensor | LabelTensor | Graph | list[Graph] | Data |
+        """
         # If the requested attribute is a tensor key, stack the tensors from
         # all graphs
         if name in self.keys:
@@ -169,15 +277,34 @@ class _GraphDataManager(_DataManager):
 
     @classmethod
     def _init_from_graphs_list(cls, graphs, graph_key, keys):
+        """
+        Initialize a :class:`_GraphDataManager` instance from a list of graphs.
+        This is used internally to create subsets of the data manager, without
+        going through the full initialization process.
+
+        :param list graphs: List of graphs to initialize the data manager with.
+        :param str graph_key: Key under which the graphs are stored.
+        :param list keys: List of tensor keys associated with the graphs.
+        :return: A new :class:`_GraphDataManager` instance.
+        :rtype: _GraphDataManager
+        """
         # Create a new instance without calling __init__
         obj = _GraphDataManager.__new__(_GraphDataManager)
         obj.graph_key = graph_key
         obj.keys = keys
-        # obj._tensor_keys = tensor_keys
         obj.data = graphs
         return obj
 
     def __getitem__(self, idx):
+        """
+        Retrieve a graph or a subset of graphs by index.
+
+        :param idx: Index or indices of the graphs to retrieve.
+        :type idx: int | slice | list[int] | torch.Tensor
+        :return: A new :class:`_GraphDataManager` instance containing the
+            selected graphs.
+        :rtype: _GraphDataManager
+        """
         # Manage int and slice directly
         if isinstance(idx, (int, slice)):
             selected = self.data[idx]
@@ -199,7 +326,16 @@ class _GraphDataManager(_DataManager):
             keys=self.keys,
         )
 
+    @staticmethod
     def _create_batch(items):
+        """
+        Create a batch from a list of :class:`_GraphDataManager` items.
+
+        :param list items: List of :class:`_GraphDataManager` items to batch.
+        :return: A new :class:`_BatchManager` instance containing the batched
+        data.
+        :rtype: _BatchManager
+        """
         if not items:
             return None
         first = items[0]
