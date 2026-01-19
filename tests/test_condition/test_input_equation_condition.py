@@ -1,11 +1,10 @@
 import torch
 from pina import Condition
-from pina.condition.input_equation_condition import (
-    InputTensorEquationCondition,
-    InputGraphEquationCondition,
-)
+from pina.condition.input_equation_condition import InputEquationCondition
 from pina.equation import Equation
 from pina import LabelTensor
+from pina.graph import Graph
+from pina.condition.data_manager import _DataManager
 
 
 def _create_pts_and_equation():
@@ -33,7 +32,7 @@ def _create_graph_and_equation():
 def test_init_tensor_equation_condition():
     pts, equation = _create_pts_and_equation()
     condition = Condition(input=pts, equation=equation)
-    assert isinstance(condition, InputTensorEquationCondition)
+    assert isinstance(condition, InputEquationCondition)
     assert condition.input.shape == (100, 2)
     assert condition.equation is equation
 
@@ -41,10 +40,9 @@ def test_init_tensor_equation_condition():
 def test_init_graph_equation_condition():
     graph, equation = _create_graph_and_equation()
     condition = Condition(input=graph, equation=equation)
-    assert isinstance(condition, InputGraphEquationCondition)
-    assert isinstance(condition.input, list)
-    assert len(condition.input) == 1
-    assert condition.input[0].x.shape == (100, 2)
+    assert isinstance(condition, InputEquationCondition)
+    assert isinstance(condition.input, Graph)
+    assert condition.input.x.shape == (100, 2)
     assert condition.equation is equation
 
 
@@ -52,9 +50,9 @@ def test_getitem_tensor_equation_condition():
     pts, equation = _create_pts_and_equation()
     condition = Condition(input=pts, equation=equation)
     item = condition[0]
-    assert isinstance(item, dict)
-    assert "input" in item
-    assert item["input"].shape == (2,)
+    assert isinstance(item, _DataManager)
+    assert hasattr(item, "input")
+    assert item.input.shape == (2,)
 
 
 def test_getitems_tensor_equation_condition():
@@ -62,6 +60,17 @@ def test_getitems_tensor_equation_condition():
     condition = Condition(input=pts, equation=equation)
     idxs = [0, 1, 3]
     item = condition[idxs]
-    assert isinstance(item, dict)
-    assert "input" in item
-    assert item["input"].shape == (3, 2)
+    assert isinstance(item, _DataManager)
+    assert hasattr(item, "input")
+    assert item.input.shape == (3, 2)
+
+
+if __name__ == "__main__":
+    test_init_tensor_equation_condition()
+    print("Passed tensor equation condition init test.")
+    test_init_graph_equation_condition()
+    print("Passed graph equation condition init test.")
+    test_getitem_tensor_equation_condition()
+    print("Passed tensor equation condition getitem test.")
+    test_getitems_tensor_equation_condition()
+    print("Passed tensor equation condition getitems test.")

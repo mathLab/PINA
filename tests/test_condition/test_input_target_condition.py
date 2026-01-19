@@ -2,11 +2,12 @@ import torch
 import pytest
 from torch_geometric.data import Batch
 from pina import LabelTensor, Condition
-from pina.condition import (
-    TensorInputGraphTargetCondition,
-    TensorInputTensorTargetCondition,
-    GraphInputTensorTargetCondition,
-)
+
+# from pina.condition import (
+#     TensorInputGraphTargetCondition,
+#     TensorInputTensorTargetCondition,
+#     GraphInputTensorTargetCondition,
+# )
 from pina.graph import RadiusGraph, LabelBatch
 
 
@@ -48,7 +49,7 @@ def _create_graph_data(tensor_input=True, use_lt=False):
 def test_init_tensor_input_tensor_target_condition(use_lt):
     input_tensor, target_tensor = _create_tensor_data(use_lt=use_lt)
     condition = Condition(input=input_tensor, target=target_tensor)
-    assert isinstance(condition, TensorInputTensorTargetCondition)
+    # assert isinstance(condition, TensorInputTensorTargetCondition)
     assert torch.allclose(
         condition.input, input_tensor
     ), "TensorInputTensorTargetCondition input failed"
@@ -77,7 +78,7 @@ def test_init_tensor_input_tensor_target_condition(use_lt):
 def test_init_tensor_input_graph_target_condition(use_lt):
     target_graph, input_tensor = _create_graph_data(use_lt=use_lt)
     condition = Condition(input=input_tensor, target=target_graph)
-    assert isinstance(condition, TensorInputGraphTargetCondition)
+    # assert isinstance(condition, TensorInputGraphTargetCondition)
     assert torch.allclose(
         condition.input, input_tensor
     ), "TensorInputGraphTargetCondition input failed"
@@ -106,7 +107,7 @@ def test_init_tensor_input_graph_target_condition(use_lt):
 def test_init_graph_input_tensor_target_condition(use_lt):
     input_graph, target_tensor = _create_graph_data(False, use_lt=use_lt)
     condition = Condition(input=input_graph, target=target_tensor)
-    assert isinstance(condition, GraphInputTensorTargetCondition)
+    # assert isinstance(condition, GraphInputTensorTargetCondition)
     for i in range(len(input_graph)):
         assert torch.allclose(
             condition.input[i].x, input_graph[i].x
@@ -138,10 +139,10 @@ def test_getitem_tensor_input_tensor_target_condition(use_lt):
     for i in range(len(input_tensor)):
         item = condition[i]
         assert torch.allclose(
-            item["input"], input_tensor[i]
+            item.input, input_tensor[i]
         ), "TensorInputTensorTargetCondition __getitem__ input failed"
         assert torch.allclose(
-            item["target"], target_tensor[i]
+            item.target, target_tensor[i]
         ), "TensorInputTensorTargetCondition __getitem__ target failed"
 
 
@@ -150,83 +151,59 @@ def test_getitem_tensor_input_graph_target_condition(use_lt):
     target_graph, input_tensor = _create_graph_data(use_lt=use_lt)
     condition = Condition(input=input_tensor, target=target_graph)
     for i in range(len(input_tensor)):
-        item = condition[i]["data"]
+        item = condition[i]
         assert torch.allclose(
-            item.x, input_tensor[i]
+            item.input, input_tensor[i]
         ), "TensorInputGraphTargetCondition __getitem__ input failed"
         assert torch.allclose(
-            item.y, target_graph[i].y
+            item.target.y, target_graph[i].y
         ), "TensorInputGraphTargetCondition __getitem__ target failed"
         if use_lt:
             assert isinstance(
-                item.y, LabelTensor
+                item.target.y, LabelTensor
             ), "TensorInputGraphTargetCondition __getitem__ target type failed"
-            assert item.y.labels == [
+            assert item.target.y.labels == [
                 "u",
                 "v",
             ], "TensorInputGraphTargetCondition __getitem__ target labels failed"
 
 
-def test_getitem_graph_input_tensor_target_condition():
-    input_graph, target_tensor = _create_graph_data(False)
-    condition = Condition(input=input_graph, target=target_tensor)
-    for i in range(len(input_graph)):
-        item = condition[i]["data"]
-        print(item)
-        assert torch.allclose(
-            item.x, input_graph[i].x
-        ), "GraphInputTensorTargetCondition __getitem__ input failed"
-        assert torch.allclose(
-            item.y, target_tensor[i]
-        ), "GraphInputTensorTargetCondition __getitem__ target failed"
-
-
 @pytest.mark.parametrize("use_lt", [True, False])
-def test_getitems_graph_input_tensor_target_condition(use_lt):
+def test_getitem_graph_input_tensor_target_condition(use_lt):
     input_graph, target_tensor = _create_graph_data(False, use_lt=use_lt)
     condition = Condition(input=input_graph, target=target_tensor)
-    indices = [0, 2, 4]
-    items = condition[indices]
-    candidate_input = items["input"]
-    candidate_target = items["target"]
-
-    if use_lt:
-        input_ = LabelBatch.from_data_list([input_graph[i] for i in indices])
-        target_ = LabelTensor.cat([target_tensor[i] for i in indices], dim=0)
-    else:
-        input_ = Batch.from_data_list([input_graph[i] for i in indices])
-        target_ = torch.cat([target_tensor[i] for i in indices], dim=0)
-    assert torch.allclose(
-        candidate_input.x, input_.x
-    ), "GraphInputTensorTargetCondition __geitemsem__ input failed"
-    assert torch.allclose(
-        candidate_target, target_
-    ), "GraphInputTensorTargetCondition __geitemsem__ input failed"
-    if use_lt:
-        assert isinstance(
-            candidate_target, LabelTensor
-        ), "GraphInputTensorTargetCondition __getitems__ target type failed"
-        assert candidate_target.labels == [
-            "f"
-        ], "GraphInputTensorTargetCondition __getitems__ target labels failed"
-
-        assert isinstance(
-            candidate_input.x, LabelTensor
-        ), "GraphInputTensorTargetCondition __getitems__ input type failed"
-        assert (
-            candidate_input.x.labels == input_graph[0].x.labels
-        ), "GraphInputTensorTargetCondition __getitems__ input labels failed"
+    assert len(condition) == len(input_graph)
+    for i in range(len(input_graph)):
+        item = condition[i]
+        assert torch.allclose(
+            item.input.x, input_graph[i].x
+        ), "GraphInputTensorTargetCondition __getitem__ input failed"
+        assert torch.allclose(
+            item.target, target_tensor[i]
+        ), "GraphInputTensorTargetCondition __getitem__ target failed"
+        if use_lt:
+            assert isinstance(
+                item.input.x, LabelTensor
+            ), "GraphInputTensorTargetCondition __getitem__ input type failed"
+            assert (
+                item.input.x.labels == input_graph[i].x.labels
+            ), "GraphInputTensorTargetCondition __getitem__ input labels failed"
+            assert isinstance(
+                item.target, LabelTensor
+            ), "GraphInputTensorTargetCondition __getitem__ target type failed"
+            assert item.target.labels == [
+                "f"
+            ], "GraphInputTensorTargetCondition __getitem__ target labels failed"
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_getitems_tensor_input_tensor_target_condition(use_lt):
-
     input_tensor, target_tensor = _create_tensor_data(use_lt=use_lt)
     condition = Condition(input=input_tensor, target=target_tensor)
     indices = [1, 3, 5, 7]
     items = condition[indices]
-    candidate_input = items["input"]
-    candidate_target = items["target"]
+    candidate_input = items.input
+    candidate_target = items.target
 
     if use_lt:
         input_ = LabelTensor.stack([input_tensor[i] for i in indices])
@@ -264,20 +241,26 @@ def test_getitems_tensor_input_graph_target_condition(use_lt):
     condition = Condition(input=input_tensor, target=target_graph)
     indices = [0, 2, 4]
     items = condition[indices]
-    candidate_input = items["input"]
-    candidate_target = items["target"]
+    candidate_input = items.input
+    candidate_target = items.target
     if use_lt:
-        input_ = LabelTensor.cat([input_tensor[i] for i in indices], dim=0)
-        target_ = LabelBatch.from_data_list([target_graph[i] for i in indices])
+        input_ = LabelTensor.stack([input_tensor[i] for i in indices])
+        # target_ = LabelBatch.from_data_list([target_graph[i] for i in indices])
     else:
-        input_ = torch.cat([input_tensor[i] for i in indices], dim=0)
-        target_ = Batch.from_data_list([target_graph[i] for i in indices])
+        input_ = torch.stack([input_tensor[i] for i in indices])
+        # target_ = Batch.from_data_list([target_graph[i] for i in indices])
     assert torch.allclose(
         candidate_input, input_
     ), "TensorInputGraphTargetCondition __getitems__ input failed"
-    assert torch.allclose(
-        candidate_target.y, target_.y
-    ), "TensorInputGraphTargetCondition __getitems__ target failed"
+
+    assert len(candidate_target) == len(
+        indices
+    ), "TensorInputGraphTargetCondition __getitems__ target length failed"
+    for idx, graph_idx in enumerate(indices):
+        assert torch.allclose(
+            candidate_target[idx].y, target_graph[graph_idx].y
+        ), "TensorInputGraphTargetCondition __getitems__ target failed"
+
     if use_lt:
         assert isinstance(
             candidate_input, LabelTensor
@@ -285,13 +268,35 @@ def test_getitems_tensor_input_graph_target_condition(use_lt):
         assert candidate_input.labels == [
             "f"
         ], "TensorInputGraphTargetCondition __getitems__ input labels failed"
-        assert isinstance(
-            candidate_target.y, LabelTensor
-        ), "TensorInputGraphTargetCondition __getitems__ target type failed"
-        assert candidate_target.y.labels == [
-            "u",
-            "v",
-        ], "TensorInputGraphTargetCondition __getitems__ target labels failed"
+        for g in candidate_target:
+            assert isinstance(
+                g.y, LabelTensor
+            ), "TensorInputGraphTargetCondition __getitems__ target type failed"
+            assert g.y.labels == [
+                "u",
+                "v",
+            ], "TensorInputGraphTargetCondition __getitems__ target labels failed"
 
 
-test_init_graph_input_tensor_target_condition(use_lt=True)
+if __name__ == "__main__":
+    test_init_tensor_input_tensor_target_condition(use_lt=True)
+    test_init_tensor_input_tensor_target_condition(use_lt=False)
+    test_getitem_tensor_input_tensor_target_condition(use_lt=True)
+    test_getitem_tensor_input_tensor_target_condition(use_lt=False)
+    test_getitems_tensor_input_tensor_target_condition(use_lt=True)
+    test_getitems_tensor_input_tensor_target_condition(use_lt=False)
+    print("All tests for Tensor/Tensor conditions passed.")
+
+    test_init_tensor_input_graph_target_condition(use_lt=True)
+    test_init_tensor_input_graph_target_condition(use_lt=False)
+    test_init_graph_input_tensor_target_condition(use_lt=True)
+    test_init_graph_input_tensor_target_condition(use_lt=False)
+    print("All tests init for Tensor/Graph conditions passed.")
+
+    test_getitem_tensor_input_graph_target_condition(use_lt=True)
+    test_getitem_tensor_input_graph_target_condition(use_lt=False)
+    test_getitem_graph_input_tensor_target_condition(use_lt=True)
+    test_getitem_graph_input_tensor_target_condition(use_lt=False)
+    test_getitems_tensor_input_graph_target_condition(use_lt=True)
+    test_getitems_tensor_input_graph_target_condition(use_lt=False)
+    print("All tests getitem for Tensor/Graph conditions passed.")

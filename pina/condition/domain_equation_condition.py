@@ -31,28 +31,30 @@ class DomainEquationCondition(ConditionBase):
     # Available slots
     __fields__ = ["domain", "equation"]
 
-    def __init__(self, domain, equation):
-        """
-        Initialization of the :class:`DomainEquationCondition` class.
+    _avail_domain_cls = DomainInterface
+    _avail_equation_cls = EquationInterface
 
-        :param DomainInterface domain: The domain over which the equation is
-            defined.
-        :param EquationInterface equation: The equation to be satisfied over the
-            specified domain.
+    def __new__(cls, domain, equation):
         """
-        if not isinstance(domain, (DomainInterface, str)):
+        Check the types of ``domain`` and ``equation`` and instantiate an
+        instance of :class:`DomainEquationCondition`.
+
+        :return: An instance of :class:`DomainEquationCondition`.
+        :rtype: pina.condition.domain_equation_condition.DomainEquationCondition
+        :raises ValueError: If ``domain`` is not of type :class:`DomainInterface` or
+            ``equation`` is not of type :class:`
+        """
+        if not isinstance(domain, cls._avail_domain_cls):
             raise ValueError(
-                f"`domain` must be an instance of DomainInterface, "
-                f"got {type(domain)} instead."
+                "The domain must be an instance of DomainInterface."
             )
-        if not isinstance(equation, EquationInterface):
+
+        if not isinstance(equation, cls._avail_equation_cls):
             raise ValueError(
-                f"`equation` must be an instance of EquationInterface, "
-                f"got {type(equation)} instead."
+                "The equation must be an instance of EquationInterface."
             )
-        super().__init__()
-        self.domain = domain
-        self.equation = equation
+
+        return super().__new__(cls)
 
     def __len__(self):
         """
@@ -81,11 +83,12 @@ class DomainEquationCondition(ConditionBase):
             "`DomainEquationCondition`"
         )
 
-    def store_data(self):
+    def store_data(self, **kwargs):
         """
         Store data for the condition. No data is stored for this condition.
 
         :return: An empty dictionary since no data is stored.
         :rtype: dict
         """
-        return {}
+        self.domain = kwargs.get("domain")
+        self.equation = kwargs.get("equation")

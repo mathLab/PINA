@@ -156,77 +156,6 @@ class ConditionBase(ConditionInterface):
         """
         self._problem = value
 
-    @staticmethod
-    def _check_graph_list_consistency(data_list):
-        """
-        Check the consistency of the list of Data | Graph objects.
-        The following checks are performed:
-
-        - All elements in the list must be of the same type (either
-          :class:`~torch_geometric.data.Data` or :class:`~pina.graph.Graph`).
-
-        - All elements in the list must have the same keys.
-
-        - The data type of each tensor must be consistent across all elements.
-
-        - If a tensor is a :class:`~pina.label_tensor.LabelTensor`, its labels
-          must also be consistent across all elements.
-
-        :param data_list: The list of Data | Graph objects to check.
-        :type data_list: list[Data] | list[Graph] | tuple[Data] | tuple[Graph]
-        :raises ValueError: If the input types are invalid.
-        :raises ValueError: If all elements in the list do not have the same
-            keys.
-        :raises ValueError: If the type of each tensor is not consistent across
-            all elements in the list.
-        :raises ValueError: If the labels of the LabelTensors are not consistent
-            across all elements in the list.
-        """
-        # If the data is a Graph or Data object, perform no checks
-        if isinstance(data_list, (Graph, Data)):
-            return
-
-        # Check all elements in the list are of the same type
-        if not all(isinstance(i, (Graph, Data)) for i in data_list):
-            raise ValueError(
-                "Invalid input. Please, provide either Data or Graph objects."
-            )
-
-        # Store the keys, data types and labels of the first element
-        data = data_list[0]
-        keys = sorted(list(data.keys()))
-        data_types = {name: tensor.__class__ for name, tensor in data.items()}
-        labels = {
-            name: tensor.labels
-            for name, tensor in data.items()
-            if isinstance(tensor, LabelTensor)
-        }
-
-        # Iterate over the list of Data | Graph objects
-        for data in data_list[1:]:
-
-            # Check that all elements in the list have the same keys
-            if sorted(list(data.keys())) != keys:
-                raise ValueError(
-                    "All elements in the list must have the same keys."
-                )
-
-            # Iterate over the tensors in the current element
-            for name, tensor in data.items():
-                # Check that the type of each tensor is consistent
-                if tensor.__class__ is not data_types[name]:
-                    raise ValueError(
-                        f"Data {name} must be a {data_types[name]}, got "
-                        f"{tensor.__class__}"
-                    )
-
-                # Check that the labels of each LabelTensor are consistent
-                if isinstance(tensor, LabelTensor):
-                    if tensor.labels != labels[name]:
-                        raise ValueError(
-                            "LabelTensor must have the same labels"
-                        )
-
     def __len__(self):
         """
         Return the number of data points in the condition.
@@ -234,7 +163,7 @@ class ConditionBase(ConditionInterface):
         :return: Number of data points.
         :rtype: int
         """
-        return len(next(iter(self.data.values())))
+        return len(self.data)
 
     def __getitem__(self, idx):
         """
@@ -244,7 +173,7 @@ class ConditionBase(ConditionInterface):
         :type idx: int | list[int]
         :return: Data point(s) at the specified index.
         """
-        return {name: data[idx] for name, data in self.data.items()}
+        return self.data[idx]
 
     @classmethod
     def automatic_batching_collate_fn(cls, batch):
@@ -257,27 +186,8 @@ class ConditionBase(ConditionInterface):
         """
         if not batch:
             return {}
-        keys = batch[0].keys()
-        columns = zip(*[item.values() for item in batch])
-
-        to_return = {}
-
-        # 2. Process each column
-        for key, values in zip(keys, columns):
-            # Determine type based on the first sample only
-            first_val = values[0]
-
-            if isinstance(first_val, (LabelTensor, torch.Tensor)):
-                lookup_key = "label_tensor"
-            elif isinstance(first_val, Graph):
-                lookup_key = "graph"
-            else:
-                lookup_key = "data"
-
-            # Execute the specific collate function
-            to_return[key] = cls.collate_fn_dict[lookup_key](list(values))
-
-        return to_return
+        instance_class = batch[0].__class__
+        return instance_class._create_batch(batch)
 
     @staticmethod
     def collate_fn(batch, condition):
@@ -291,7 +201,9 @@ class ConditionBase(ConditionInterface):
         :return: A collated batch.
         :rtype: dict
         """
-        data = condition[batch]
+        print("Custom collate_fn called")
+        print("batch:", batch)
+        data = condition.data[batch]
         return data
 
     def create_dataloader(
