@@ -3,7 +3,6 @@ from pina.model import LowRankNeuralOperator
 from pina import LabelTensor
 import pytest
 
-
 batch_size = 15
 n_layers = 4
 embedding_dim = 24

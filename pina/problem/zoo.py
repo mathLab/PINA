@@ -17,5 +17,7 @@ from pina._src.problem.zoo.allen_cahn import AllenCahnProblem
 from pina._src.problem.zoo.advection import AdvectionProblem
 from pina._src.problem.zoo.poisson_2d_square import Poisson2DSquareProblem
 from pina._src.problem.zoo.diffusion_reaction import DiffusionReactionProblem
-from pina._src.problem.zoo.inverse_poisson_2d_square import InversePoisson2DSquareProblem
+from pina._src.problem.zoo.inverse_poisson_2d_square import (
+    InversePoisson2DSquareProblem,
+)
 from pina._src.problem.zoo.acoustic_wave import AcousticWaveProblem

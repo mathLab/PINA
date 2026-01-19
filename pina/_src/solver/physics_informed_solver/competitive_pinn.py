@@ -4,7 +4,9 @@ import copy
 import torch
 
 from pina._src.problem.inverse_problem import InverseProblem
-from pina._src.solver.physics_informed_solver.pinn_interface import PINNInterface
+from pina._src.solver.physics_informed_solver.pinn_interface import (
+    PINNInterface,
+)
 from pina._src.solver.solver import MultiSolverInterface
 
 

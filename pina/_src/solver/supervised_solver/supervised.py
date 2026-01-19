@@ -1,6 +1,8 @@
 """Module for the Supervised solver."""
 
-from pina._src.solver.supervised_solver.supervised_solver_interface import SupervisedSolverInterface
+from pina._src.solver.supervised_solver.supervised_solver_interface import (
+    SupervisedSolverInterface,
+)
 from pina._src.solver.solver import SingleSolverInterface
 
 

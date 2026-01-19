@@ -16,7 +16,9 @@ __all__ = [
 
 from pina._src.callback.optim.switch_optimizer import SwitchOptimizer
 from pina._src.callback.optim.switch_scheduler import SwitchScheduler
-from pina._src.callback.processing.normalizer_data_callback import NormalizerDataCallback
+from pina._src.callback.processing.normalizer_data_callback import (
+    NormalizerDataCallback,
+)
 from pina._src.callback.processing.pina_progress_bar import PINAProgressBar
 from pina._src.callback.processing.metric_tracker import MetricTracker
 from pina._src.callback.refinement.r3_refinement import R3Refinement

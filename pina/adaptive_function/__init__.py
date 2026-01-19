@@ -36,4 +36,6 @@ from pina._src.adaptive_function.adaptive_function import (
     AdaptiveSIREN,
     AdaptiveExp,
 )
-from pina._src.adaptive_function.adaptive_function_interface import AdaptiveActivationFunctionInterface
+from pina._src.adaptive_function.adaptive_function_interface import (
+    AdaptiveActivationFunctionInterface,
+)

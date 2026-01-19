@@ -21,11 +21,11 @@ def initial_condition(input_, output_):
     """
     x = input_.extract("x")
     u_0 = (
-            torch.sin(x)
-            + (1 / 2) * torch.sin(2 * x)
-            + (1 / 3) * torch.sin(3 * x)
-            + (1 / 4) * torch.sin(4 * x)
-            + (1 / 8) * torch.sin(8 * x)
+        torch.sin(x)
+        + (1 / 2) * torch.sin(2 * x)
+        + (1 / 3) * torch.sin(3 * x)
+        + (1 / 4) * torch.sin(4 * x)
+        + (1 / 8) * torch.sin(8 * x)
     )
     return output_ - u_0
 
@@ -82,10 +82,10 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
             t = input_.extract("t")
 
             return torch.exp(-t) * (
-                    1.5 * torch.sin(2 * x)
-                    + (8 / 3) * torch.sin(3 * x)
-                    + (15 / 4) * torch.sin(4 * x)
-                    + (63 / 8) * torch.sin(8 * x)
+                1.5 * torch.sin(2 * x)
+                + (8 / 3) * torch.sin(3 * x)
+                + (15 / 4) * torch.sin(4 * x)
+                + (63 / 8) * torch.sin(8 * x)
             )
 
         self.conditions["D"] = Condition(
@@ -105,11 +105,11 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
         t = pts.extract("t")
         x = pts.extract("x")
         sol = torch.exp(-t) * (
-                torch.sin(x)
-                + (1 / 2) * torch.sin(2 * x)
-                + (1 / 3) * torch.sin(3 * x)
-                + (1 / 4) * torch.sin(4 * x)
-                + (1 / 8) * torch.sin(8 * x)
+            torch.sin(x)
+            + (1 / 2) * torch.sin(2 * x)
+            + (1 / 3) * torch.sin(3 * x)
+            + (1 / 4) * torch.sin(4 * x)
+            + (1 / 8) * torch.sin(8 * x)
         )
         sol.labels = self.output_variables
         return sol

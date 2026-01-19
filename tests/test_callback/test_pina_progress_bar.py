@@ -4,7 +4,6 @@ from pina.model import FeedForward
 from pina.callback import PINAProgressBar
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 
-
 # make the problem
 poisson_problem = Poisson()
 n = 10

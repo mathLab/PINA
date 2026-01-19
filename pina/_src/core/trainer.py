@@ -6,8 +6,13 @@ import torch
 import lightning
 from pina._src.core.utils import check_consistency, custom_warning_format
 from pina._src.data.data_module import PinaDataModule
-from pina._src.solver.supervised_solver.supervised_solver_interface import SolverInterface
-from pina._src.solver.physics_informed_solver.pinn_interface import PINNInterface
+from pina._src.solver.supervised_solver.supervised_solver_interface import (
+    SolverInterface,
+)
+from pina._src.solver.physics_informed_solver.pinn_interface import (
+    PINNInterface,
+)
+
 # set the warning for compile options
 warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=UserWarning)

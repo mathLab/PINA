@@ -4,7 +4,6 @@ import pytest
 from pina.model.block import LowRankBlock
 from pina import LabelTensor
 
-
 input_dimensions = 2
 embedding_dimenion = 1
 rank = 4

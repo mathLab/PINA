@@ -2,7 +2,9 @@
 
 import torch
 from pina._src.core.utils import check_positive_integer
-from pina._src.model.block.message_passing.en_equivariant_network_block import EnEquivariantNetworkBlock
+from pina._src.model.block.message_passing.en_equivariant_network_block import (
+    EnEquivariantNetworkBlock,
+)
 
 
 class EquivariantGraphNeuralOperatorBlock(torch.nn.Module):

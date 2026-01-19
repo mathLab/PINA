@@ -16,7 +16,7 @@ __all__ = [
     "PirateNet",
     "EquivariantGraphNeuralOperator",
     "SINDy",
-    "SplineSurface"
+    "SplineSurface",
 ]
 
 from pina._src.model.feed_forward import FeedForward, ResidualFeedForward
@@ -30,5 +30,7 @@ from pina._src.model.spline import Spline
 from pina._src.model.spline_surface import SplineSurface
 from pina._src.model.graph_neural_operator import GraphNeuralOperator
 from pina._src.model.pirate_network import PirateNet
-from pina._src.model.equivariant_graph_neural_operator import EquivariantGraphNeuralOperator
+from pina._src.model.equivariant_graph_neural_operator import (
+    EquivariantGraphNeuralOperator,
+)
 from pina._src.model.sindy import SINDy

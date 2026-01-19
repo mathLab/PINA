@@ -5,11 +5,15 @@ import lightning
 import torch
 
 from torch._dynamo import OptimizedModule
-from ..problem import AbstractProblem, InverseProblem
-from ..optim import Optimizer, Scheduler, TorchOptimizer, TorchScheduler
-from ..loss import WeightingInterface
-from ..loss.scalar_weighting import _NoWeighting
-from ..utils import check_consistency, labelize_forward
+from pina._src.problem.abstract_problem import AbstractProblem
+from pina._src.problem.inverse_problem import InverseProblem
+from pina._src.optim.optimizer_interface import Optimizer
+from pina._src.optim.scheduler_interface import Scheduler
+from pina._src.optim.torch_optimizer import TorchOptimizer
+from pina._src.optim.torch_scheduler import TorchScheduler
+from pina._src.loss.weighting_interface import WeightingInterface
+from pina._src.loss.scalar_weighting import _NoWeighting
+from pina._src.core.utils import check_consistency, labelize_forward
 
 
 class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):

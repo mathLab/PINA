@@ -29,14 +29,24 @@ __all__ = [
     "GAROM",
 ]
 
-from pina._src.solver.solver import SolverInterface, SingleSolverInterface, MultiSolverInterface
+from pina._src.solver.solver import (
+    SolverInterface,
+    SingleSolverInterface,
+    MultiSolverInterface,
+)
 from pina._src.solver.physics_informed_solver.pinn import PINNInterface, PINN
 from pina._src.solver.physics_informed_solver.gradient_pinn import GradientPINN
 from pina._src.solver.physics_informed_solver.causal_pinn import CausalPINN
-from pina._src.solver.physics_informed_solver.competitive_pinn import CompetitivePINN
-from pina._src.solver.physics_informed_solver.self_adaptive_pinn import SelfAdaptivePINN
+from pina._src.solver.physics_informed_solver.competitive_pinn import (
+    CompetitivePINN,
+)
+from pina._src.solver.physics_informed_solver.self_adaptive_pinn import (
+    SelfAdaptivePINN,
+)
 from pina._src.solver.physics_informed_solver.rba_pinn import RBAPINN
-from pina._src.solver.supervised_solver.supervised_solver_interface import SupervisedSolverInterface
+from pina._src.solver.supervised_solver.supervised_solver_interface import (
+    SupervisedSolverInterface,
+)
 
 from pina._src.solver.supervised_solver import (
     SupervisedSolverInterface,

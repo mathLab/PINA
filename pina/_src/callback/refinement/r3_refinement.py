@@ -1,7 +1,9 @@
 """Module for the R3Refinement callback."""
 
 import torch
-from pina._src.callback.refinement.refinement_interface import RefinementInterface
+from pina._src.callback.refinement.refinement_interface import (
+    RefinementInterface,
+)
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import check_consistency
 from pina._src.loss.loss_interface import LossInterface

@@ -1,4 +1,4 @@
-""" Module for vectorized differential operators implementation.
+"""Module for vectorized differential operators implementation.
 
 Differential operators are used to define differential problems and are
 implemented to run efficiently on various accelerators, including CPU, GPU, TPU,

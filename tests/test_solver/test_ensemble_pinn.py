@@ -13,7 +13,6 @@ from pina.condition import (
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from torch._dynamo.eval_frame import OptimizedModule
 
-
 # define problems
 problem = Poisson()
 problem.discretise_domain(10)

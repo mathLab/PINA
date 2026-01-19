@@ -7,7 +7,6 @@ from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import check_consistency
 
 
-
 class SimplexDomain(BaseDomain):
     """
     Implementation of the simplex domain.

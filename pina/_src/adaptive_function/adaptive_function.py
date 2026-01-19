@@ -2,7 +2,9 @@
 
 import torch
 from pina._src.core.utils import check_consistency
-from pina._src.adaptive_function.adaptive_function_interface import AdaptiveActivationFunctionInterface
+from pina._src.adaptive_function.adaptive_function_interface import (
+    AdaptiveActivationFunctionInterface,
+)
 
 
 class AdaptiveReLU(AdaptiveActivationFunctionInterface):

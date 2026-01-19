@@ -8,7 +8,9 @@ from pina._src.core.utils import custom_warning_format
 from pina._src.solver.supervised_solver import SupervisedSolverInterface
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.condition.input_equation_condition import InputEquationCondition
-from pina._src.condition.domain_equation_condition import DomainEquationCondition
+from pina._src.condition.domain_equation_condition import (
+    DomainEquationCondition,
+)
 
 # set the warning for torch >= 2.8 compile
 warnings.formatwarning = custom_warning_format

@@ -6,15 +6,16 @@ both high-level general operators and optimized 'fast' variants for improved
 computational efficiency during training.
 """
 
-from pina._src.core.operator import (grad,
-                                     fast_grad,
-                                     fast_div,
-                                     fast_laplacian,
-                                     fast_advection,
-                                     div,
-                                     laplacian,
-                                     advection
-                                     )
+from pina._src.core.operator import (
+    grad,
+    fast_grad,
+    fast_div,
+    fast_laplacian,
+    fast_advection,
+    div,
+    laplacian,
+    advection,
+)
 
 __all__ = [
     "grad",
@@ -24,5 +25,5 @@ __all__ = [
     "fast_advection",
     "div",
     "laplacian",
-    "advection"
+    "advection",
 ]

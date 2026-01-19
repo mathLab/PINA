@@ -7,6 +7,7 @@ from pina._src.equation.equation_factory import FixedValue, Poisson
 from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.domain.cartesian_domain import CartesianDomain
 
+
 def forcing_term(input_):
     """
     Implementation of the forcing term of the Poisson problem.

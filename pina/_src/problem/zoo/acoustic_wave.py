@@ -8,9 +8,12 @@ from pina._src.core.utils import check_consistency
 from pina._src.domain.cartesian_domain import CartesianDomain
 from pina._src.equation.equation import Equation
 from pina._src.equation.system_equation import SystemEquation
-from pina._src.equation.equation_factory import (FixedValue,
-                                                 FixedGradient,
-                                                 AcousticWave)
+from pina._src.equation.equation_factory import (
+    FixedValue,
+    FixedGradient,
+    AcousticWave,
+)
+
 
 def initial_condition(input_, output_):
     """

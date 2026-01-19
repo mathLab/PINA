@@ -6,7 +6,6 @@ from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import check_consistency
 
 
-
 class Intersection(BaseOperation):
     r"""
     Implementation of the intersection operation defined on a list of domains.

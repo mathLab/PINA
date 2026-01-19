@@ -25,7 +25,9 @@ __all__ = [
 
 from pina._src.condition.condition_interface import ConditionInterface
 from pina._src.condition.condition import Condition
-from pina._src.condition.domain_equation_condition import DomainEquationCondition
+from pina._src.condition.domain_equation_condition import (
+    DomainEquationCondition,
+)
 from pina._src.condition.input_target_condition import (
     InputTargetCondition,
     TensorInputTensorTargetCondition,

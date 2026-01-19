@@ -7,7 +7,6 @@ from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import check_consistency
 
 
-
 class EllipsoidDomain(BaseDomain):
     """
     Implementation of the ellipsoid domain.

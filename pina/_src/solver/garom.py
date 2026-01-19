@@ -2,10 +2,11 @@
 
 import torch
 from torch.nn.modules.loss import _Loss
-from .solver import MultiSolverInterface
-from ..condition import InputTargetCondition
-from ..utils import check_consistency
-from ..loss import LossInterface, PowerLoss
+from pina._src.solver.solver import MultiSolverInterface
+from pina._src.condition.input_target_condition import InputTargetCondition
+from pina._src.core.utils import check_consistency
+from pina._src.loss.loss_interface import LossInterface
+from pina._src.loss.power_loss import PowerLoss
 
 
 class GAROM(MultiSolverInterface):

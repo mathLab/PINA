@@ -1,7 +1,11 @@
 """Module for the DeepEnsemble supervised solver."""
 
-from pina._src.solver.ensemble_solver.ensemble_solver_interface import DeepEnsembleSolverInterface
-from pina._src.solver.supervised_solver.supervised_solver_interface import SupervisedSolverInterface
+from pina._src.solver.ensemble_solver.ensemble_solver_interface import (
+    DeepEnsembleSolverInterface,
+)
+from pina._src.solver.supervised_solver.supervised_solver_interface import (
+    SupervisedSolverInterface,
+)
 
 
 class DeepEnsembleSupervisedSolver(

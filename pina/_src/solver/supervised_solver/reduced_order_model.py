@@ -1,7 +1,9 @@
 """Module for the Reduced Order Model solver"""
 
 import torch
-from pina._src.solver.supervised_solver.supervised_solver_interface import SupervisedSolverInterface
+from pina._src.solver.supervised_solver.supervised_solver_interface import (
+    SupervisedSolverInterface,
+)
 from pina._src.solver.solver import SingleSolverInterface
 
 

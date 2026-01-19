@@ -34,10 +34,17 @@ from pina._src.model.block.spectral import (
     SpectralConvBlock2D,
     SpectralConvBlock3D,
 )
-from pina._src.model.block.fourier_block import FourierBlock1D, FourierBlock2D, FourierBlock3D
+from pina._src.model.block.fourier_block import (
+    FourierBlock1D,
+    FourierBlock2D,
+    FourierBlock3D,
+)
 from pina._src.model.block.pod_block import PODBlock
 from pina._src.model.block.orthogonal import OrthogonalBlock
-from pina._src.model.block.embedding import PeriodicBoundaryEmbedding, FourierFeatureEmbedding
+from pina._src.model.block.embedding import (
+    PeriodicBoundaryEmbedding,
+    FourierFeatureEmbedding,
+)
 from pina._src.model.block.average_neural_operator_block import AVNOBlock
 from pina._src.model.block.low_rank_block import LowRankBlock
 from pina._src.model.block.rbf_block import RBFBlock
