@@ -132,6 +132,18 @@ def test_init_graph_input_tensor_target_condition(use_lt):
         ], "GraphInputTensorTargetCondition target labels failed"
 
 
+def test_wrong_init():
+    input_tensor, target_tensor = _create_tensor_data()
+    with pytest.raises(ValueError):
+        Condition(input="invalid_input", target=target_tensor)
+    with pytest.raises(ValueError):
+        Condition(input=input_tensor, target="invalid_target")
+    with pytest.raises(ValueError):
+        Condition(input=[input_tensor], target=target_tensor)
+    with pytest.raises(ValueError):
+        Condition(input=input_tensor, target=[target_tensor])
+
+
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_getitem_tensor_input_tensor_target_condition(use_lt):
     input_tensor, target_tensor = _create_tensor_data(use_lt=use_lt)

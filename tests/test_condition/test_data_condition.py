@@ -93,6 +93,22 @@ def test_init_graph_data_condition(use_lt, conditional_variables):
             assert graph.pos.labels == ["x", "y"]
 
 
+def test_wrong_init_data_condition():
+    input_tensor, cond_vars = _create_tensor_data()
+    # Wrong input type
+    with pytest.raises(ValueError):
+        Condition(input="invalid_input", conditional_variables=cond_vars)
+    # Wrong conditional_variables type
+    with pytest.raises(ValueError):
+        Condition(input=input_tensor, conditional_variables="invalid_cond_vars")
+    # Wrong input type (list with wrong elements)
+    with pytest.raises(ValueError):
+        Condition(input=[input_tensor], conditional_variables=cond_vars)
+    # Wrong conditional_variables type (list)
+    with pytest.raises(ValueError):
+        Condition(input=input_tensor, conditional_variables=[cond_vars])
+
+
 @pytest.mark.parametrize("use_lt", [False, True])
 @pytest.mark.parametrize("conditional_variables", [False, True])
 def test_getitem_tensor_data_condition(use_lt, conditional_variables):

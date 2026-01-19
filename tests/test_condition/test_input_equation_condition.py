@@ -1,4 +1,5 @@
 import torch
+import pytest
 from pina import Condition
 from pina.condition.input_equation_condition import InputEquationCondition
 from pina.equation import Equation
@@ -44,6 +45,19 @@ def test_init_graph_equation_condition():
     assert isinstance(condition.input, Graph)
     assert condition.input.x.shape == (100, 2)
     assert condition.equation is equation
+
+
+def test_wrong_init_equation_condition():
+    pts, equation = _create_pts_and_equation()
+    # Wrong input type
+    with pytest.raises(ValueError):
+        Condition(input=torch.randn(10, 2), equation=equation)
+    # Wrong equation type
+    with pytest.raises(ValueError):
+        Condition(input=pts, equation="not_an_equation")
+    # Wrong input type (list with wrong elements)
+    with pytest.raises(ValueError):
+        Condition(input=[torch.randn(10, 2)], equation=equation)
 
 
 def test_getitem_tensor_equation_condition():
