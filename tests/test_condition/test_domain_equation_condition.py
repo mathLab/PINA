@@ -27,12 +27,3 @@ def test_getitem_not_implemented():
     cond = Condition(domain=example_domain, equation=FixedValue(0.0))
     with pytest.raises(NotImplementedError):
         cond[0]
-
-
-if __name__ == "__main__":
-    test_init_domain_equation()
-    print("Passed domain equation condition init test.")
-    test_len_not_implemented()
-    print("Passed domain equation condition len test.")
-    test_getitem_not_implemented()
-    print("Passed domain equation condition getitem test.")

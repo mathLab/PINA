@@ -63,14 +63,3 @@ def test_getitems_tensor_equation_condition():
     assert isinstance(item, _DataManager)
     assert hasattr(item, "input")
     assert item.input.shape == (3, 2)
-
-
-if __name__ == "__main__":
-    test_init_tensor_equation_condition()
-    print("Passed tensor equation condition init test.")
-    test_init_graph_equation_condition()
-    print("Passed graph equation condition init test.")
-    test_getitem_tensor_equation_condition()
-    print("Passed tensor equation condition getitem test.")
-    test_getitems_tensor_equation_condition()
-    print("Passed tensor equation condition getitems test.")

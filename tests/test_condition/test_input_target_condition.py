@@ -276,27 +276,3 @@ def test_getitems_tensor_input_graph_target_condition(use_lt):
                 "u",
                 "v",
             ], "TensorInputGraphTargetCondition __getitems__ target labels failed"
-
-
-if __name__ == "__main__":
-    test_init_tensor_input_tensor_target_condition(use_lt=True)
-    test_init_tensor_input_tensor_target_condition(use_lt=False)
-    test_getitem_tensor_input_tensor_target_condition(use_lt=True)
-    test_getitem_tensor_input_tensor_target_condition(use_lt=False)
-    test_getitems_tensor_input_tensor_target_condition(use_lt=True)
-    test_getitems_tensor_input_tensor_target_condition(use_lt=False)
-    print("All tests for Tensor/Tensor conditions passed.")
-
-    test_init_tensor_input_graph_target_condition(use_lt=True)
-    test_init_tensor_input_graph_target_condition(use_lt=False)
-    test_init_graph_input_tensor_target_condition(use_lt=True)
-    test_init_graph_input_tensor_target_condition(use_lt=False)
-    print("All tests init for Tensor/Graph conditions passed.")
-
-    test_getitem_tensor_input_graph_target_condition(use_lt=True)
-    test_getitem_tensor_input_graph_target_condition(use_lt=False)
-    test_getitem_graph_input_tensor_target_condition(use_lt=True)
-    test_getitem_graph_input_tensor_target_condition(use_lt=False)
-    test_getitems_tensor_input_graph_target_condition(use_lt=True)
-    test_getitems_tensor_input_graph_target_condition(use_lt=False)
-    print("All tests getitem for Tensor/Graph conditions passed.")

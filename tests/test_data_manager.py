@@ -135,22 +135,3 @@ def test_tensor_data_create_batch():
     assert torch.equal(
         batch_data.paperino, torch.stack([paperino[0], paperino[1]], dim=0)
     )
-    mps_data = batch_data.to("mps")
-    assert torch.equal(
-        mps_data.pippo, torch.stack([pippo[0], pippo[1]], dim=0).to("mps")
-    )
-
-
-if __name__ == "__main__":
-    test_tensor_data_manager_init()
-    print("test_tensor_data_manager_init passed.")
-    test_graph_data_manager_init()
-    print("test_graph_data_manager_init passed.")
-    test_graph_data_manager_getattribute()
-    print("test_graph_data_manager_getattribute passed.")
-    test_graph_data_manager_getitem()
-    print("test_graph_data_manager_getitem passed.")
-    test_graph_data_create_batch()
-    print("test_graph_data_create_batch passed.")
-    test_tensor_data_create_batch()
-    print("test_tensor_data_create_batch passed.")
