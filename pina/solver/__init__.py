@@ -55,7 +55,6 @@ from pina._src.solver.supervised_solver.supervised import SupervisedSolver
 from pina._src.solver.supervised_solver.reduced_order_model import (
     ReducedOrderModelSolver,
 )
-
 from pina._src.solver.ensemble_solver.ensemble_solver_interface import (
     DeepEnsembleSolverInterface,
 )
