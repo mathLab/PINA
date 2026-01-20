@@ -22,7 +22,3 @@ from pina._src.solver.solver import SolverInterface, MultiSolverInterface
 from pina._src.core.trainer import Trainer
 from pina._src.condition.condition import Condition
 from pina._src.data.data_module import PinaDataModule
-
-# suppress errors
-import torch._dynamo
-torch._dynamo.config.suppress_errors = True

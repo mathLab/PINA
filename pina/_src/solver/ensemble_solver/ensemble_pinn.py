@@ -5,8 +5,10 @@ import torch
 from pina._src.solver.ensemble_solver.ensemble_solver_interface import (
     DeepEnsembleSolverInterface,
 )
-from pina._src.solver.physics_informed_solver import PINNInterface
-from pina._src.problem import InverseProblem
+from pina._src.solver.physics_informed_solver.pinn_interface import (
+    PINNInterface,
+)
+from pina._src.problem.inverse_problem import InverseProblem
 
 
 class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):

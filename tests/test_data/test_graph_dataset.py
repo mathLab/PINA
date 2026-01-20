@@ -1,6 +1,6 @@
 import torch
 import pytest
-from pina.data.dataset import PinaDatasetFactory, PinaGraphDataset
+from pina.data import PinaDatasetFactory, PinaGraphDataset
 from pina.graph import KNNGraph
 from torch_geometric.data import Data
 

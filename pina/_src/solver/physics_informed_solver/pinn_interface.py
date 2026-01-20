@@ -5,7 +5,9 @@ import warnings
 import torch
 
 from pina._src.core.utils import custom_warning_format
-from pina._src.solver.supervised_solver import SupervisedSolverInterface
+from pina._src.solver.supervised_solver.supervised_solver_interface import (
+    SupervisedSolverInterface,
+)
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.domain_equation_condition import (

@@ -1,8 +1,9 @@
 """Module for the PirateNet model class."""
 
 import torch
-from .block import FourierFeatureEmbedding, PirateNetBlock
-from ..utils import check_consistency, check_positive_integer
+from pina._src.model.block.embedding import FourierFeatureEmbedding
+from pina._src.model.block.pirate_network_block import PirateNetBlock
+from pina._src.core.utils import check_consistency, check_positive_integer
 
 
 class PirateNet(torch.nn.Module):

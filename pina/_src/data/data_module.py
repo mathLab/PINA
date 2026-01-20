@@ -8,7 +8,7 @@ import warnings
 from lightning.pytorch import LightningDataModule
 import torch
 from torch_geometric.data import Data
-from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
+from torch.utils.data import DataLoader, SequentialSampler
 from torch.utils.data.distributed import DistributedSampler
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.data.dataset import PinaDatasetFactory, PinaTensorDataset

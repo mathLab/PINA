@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 import torch
-from .feed_forward import FeedForward
+from pina._src.model.feed_forward import FeedForward
 
 
 class MultiFeedForward(torch.nn.Module, ABC):

@@ -3,11 +3,14 @@
 from abc import ABCMeta, abstractmethod
 import warnings
 from copy import deepcopy
-from ..utils import check_consistency
-from ..domain import DomainInterface, CartesianDomain
-from ..condition.domain_equation_condition import DomainEquationCondition
-from ..label_tensor import LabelTensor
-from ..utils import merge_tensors, custom_warning_format
+from pina._src.core.utils import check_consistency
+from pina._src.domain.domain_interface import DomainInterface
+from pina._src.domain.cartesian_domain import CartesianDomain
+from pina._src.condition.domain_equation_condition import (
+    DomainEquationCondition,
+)
+from pina._src.core.label_tensor import LabelTensor
+from pina._src.core.utils import merge_tensors, custom_warning_format
 
 
 class AbstractProblem(metaclass=ABCMeta):
