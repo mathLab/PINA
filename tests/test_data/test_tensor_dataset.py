@@ -1,6 +1,6 @@
 import torch
 import pytest
-from pina.data.dataset import PinaDatasetFactory, PinaTensorDataset
+from pina.data import PinaDatasetFactory, PinaTensorDataset
 
 input_tensor = torch.rand((100, 10))
 output_tensor = torch.rand((100, 2))

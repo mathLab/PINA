@@ -53,9 +53,12 @@ from pina._src.solver.supervised_solver import (
     SupervisedSolver,
     ReducedOrderModelSolver,
 )
-from pina._src.solver.ensemble_solver import (
+from pina._src.solver.ensemble_solver.ensemble_solver_interface import (
     DeepEnsembleSolverInterface,
-    DeepEnsembleSupervisedSolver,
-    DeepEnsemblePINN,
 )
+from pina._src.solver.ensemble_solver.ensemble_pinn import DeepEnsemblePINN
+from pina._src.solver.ensemble_solver.ensemble_supervised import (
+    DeepEnsembleSupervisedSolver,
+)
+
 from pina._src.solver.garom import GAROM

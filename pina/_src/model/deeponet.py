@@ -3,7 +3,7 @@
 from functools import partial
 import torch
 from torch import nn
-from ..utils import check_consistency, is_function
+from pina._src.core.utils import check_consistency, is_function
 
 
 class MIONet(torch.nn.Module):

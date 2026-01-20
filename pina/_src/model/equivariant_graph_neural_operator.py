@@ -1,8 +1,10 @@
 """Module for the Equivariant Graph Neural Operator model."""
 
 import torch
-from ..utils import check_positive_integer
-from .block.message_passing import EquivariantGraphNeuralOperatorBlock
+from pina._src.core.utils import check_positive_integer
+from pina._src.model.block.message_passing.equivariant_graph_neural_operator_block import (
+    EquivariantGraphNeuralOperatorBlock,
+)
 
 
 class EquivariantGraphNeuralOperator(torch.nn.Module):

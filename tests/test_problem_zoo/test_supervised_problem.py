@@ -1,7 +1,7 @@
 import torch
 from pina.problem import AbstractProblem
 from pina.condition import InputTargetCondition
-from pina.problem.zoo.supervised_problem import SupervisedProblem
+from pina.problem.zoo import SupervisedProblem
 from pina.graph import RadiusGraph
 
 

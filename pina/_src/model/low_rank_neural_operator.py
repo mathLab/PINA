@@ -3,10 +3,10 @@
 import torch
 from torch import nn
 
-from ..utils import check_consistency
+from pina._src.core.utils import check_consistency
 
-from .kernel_neural_operator import KernelNeuralOperator
-from .block.low_rank_block import LowRankBlock
+from pina._src.model.kernel_neural_operator import KernelNeuralOperator
+from pina._src.model.block.low_rank_block import LowRankBlock
 
 
 class LowRankNeuralOperator(KernelNeuralOperator):

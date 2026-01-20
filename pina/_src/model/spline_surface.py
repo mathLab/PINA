@@ -2,8 +2,8 @@
 
 import torch
 from .spline import Spline
-from ..label_tensor import LabelTensor
-from ..utils import check_consistency, check_positive_integer
+from pina._src.core.label_tensor import LabelTensor
+from pina._src.core.utils import check_consistency, check_positive_integer
 
 
 class SplineSurface(torch.nn.Module):

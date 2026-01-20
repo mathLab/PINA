@@ -2,8 +2,8 @@
 
 import torch
 from torch import nn
-from ..utils import check_consistency
-from .block.residual import EnhancedLinear
+from pina._src.core.utils import check_consistency
+from pina._src.model.block.residual import EnhancedLinear
 
 
 class FeedForward(torch.nn.Module):

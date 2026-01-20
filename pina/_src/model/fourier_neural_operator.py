@@ -3,10 +3,14 @@
 import warnings
 import torch
 from torch import nn
-from ..label_tensor import LabelTensor
-from ..utils import check_consistency
-from .block.fourier_block import FourierBlock1D, FourierBlock2D, FourierBlock3D
-from .kernel_neural_operator import KernelNeuralOperator
+from pina._src.core.label_tensor import LabelTensor
+from pina._src.core.utils import check_consistency
+from pina._src.model.block.fourier_block import (
+    FourierBlock1D,
+    FourierBlock2D,
+    FourierBlock3D,
+)
+from pina._src.model.kernel_neural_operator import KernelNeuralOperator
 
 
 class FourierIntegralKernel(torch.nn.Module):

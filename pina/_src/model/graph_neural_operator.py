@@ -2,8 +2,8 @@
 
 import torch
 from torch.nn import Tanh
-from .block.gno_block import GNOBlock
-from .kernel_neural_operator import KernelNeuralOperator
+from pina._src.model.block.gno_block import GNOBlock
+from pina._src.model.kernel_neural_operator import KernelNeuralOperator
 
 
 class GraphNeuralKernel(torch.nn.Module):

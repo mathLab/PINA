@@ -2,7 +2,7 @@
 
 from pina._src.condition.condition_interface import ConditionInterface
 from pina._src.core.utils import check_consistency
-from pina._src.domain import DomainInterface
+from pina._src.domain.domain_interface import DomainInterface
 from pina._src.equation.equation_interface import EquationInterface
 
 
