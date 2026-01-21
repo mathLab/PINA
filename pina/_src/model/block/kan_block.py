@@ -2,14 +2,21 @@
 import torch
 import numpy as np
 
-from pina.model.spline import Spline
+from pina._src.model.spline import Spline
+from pina._src.model.vectorized_spline import VectorizedSpline
 
 
-class KAN_layer(torch.nn.Module):
+class KANBlock(torch.nn.Module):
     """define a KAN layer using splines"""
-    def __init__(self, k: int, input_dimensions: int, output_dimensions: int, inner_nodes: int, num=3, grid_eps=0.1, grid_range=[-1, 1], grid_extension=True, noise_scale=0.1, base_function=torch.nn.SiLU(), scale_base_mu=0.0, scale_base_sigma=1.0, scale_sp=1.0, sparse_init=True, sp_trainable=True, sb_trainable=True) -> None:
+    def __init__(self, k, input_dimensions, output_dimensions, inner_nodes,
+    num=3, grid_eps=0.1, grid_range=[-1, 1], grid_extension=True,
+    noise_scale=0.1, base_function=torch.nn.SiLU(), scale_base_mu=0.0,
+    scale_base_sigma=1.0, scale_sp=1.0, sparse_init=True, sp_trainable=True,
+    sb_trainable=True):
         """
         Initialize the KAN layer.
+
+        num è il numero di intervalli nella griglia iniziale (esclusi gli eventuali nodi di estensione)
         """
         super().__init__()
         self.k = k
@@ -20,6 +27,8 @@ class KAN_layer(torch.nn.Module):
         self.grid_eps = grid_eps
         self.grid_range = grid_range
         self.grid_extension = grid_extension
+        self.vec = True 
+        # self.vec = False
         
         if sparse_init:
             self.mask = torch.nn.Parameter(self.sparse_mask(input_dimensions, output_dimensions)).requires_grad_(False)
@@ -27,6 +36,7 @@ class KAN_layer(torch.nn.Module):
             self.mask = torch.nn.Parameter(torch.ones(input_dimensions, output_dimensions)).requires_grad_(False)        
         
         grid = torch.linspace(grid_range[0], grid_range[1], steps=self.num + 1)[None,:].expand(self.input_dimensions, self.num+1)
+        knots = torch.linspace(grid_range[0], grid_range[1], steps=self.num + 1)
         
         if grid_extension:
             h = (grid[:, [-1]] - grid[:, [0]]) / (grid.shape[1] - 1)
@@ -34,17 +44,53 @@ class KAN_layer(torch.nn.Module):
                 grid = torch.cat([grid[:, [0]] - h, grid], dim=1)
                 grid = torch.cat([grid, grid[:, [-1]] + h], dim=1)
         
-        n_coef = grid.shape[1] - (self.k + 1)
+        n_control_points = len(knots) - (self.k )
         
-        control_points = torch.nn.Parameter(
-            torch.randn(self.input_dimensions, self.output_dimensions, n_coef) * noise_scale
-        )
+        # control_points = torch.nn.Parameter(
+        #     torch.randn(self.input_dimensions, self.output_dimensions, n_control_points) * noise_scale
+        # )
+        # print(control_points.shape)
+        if self.vec:
+            control_points = torch.randn(self.input_dimensions * self.output_dimensions, n_control_points)
+            print('control points', control_points.shape)
+            control_points = torch.stack([
+                torch.randn(n_control_points)
+                for _ in range(self.input_dimensions * self.output_dimensions)
+            ])
+            print('control points', control_points.shape)
+            self.spline_q = VectorizedSpline(
+                order=self.k,
+                knots=knots,
+                control_points=control_points
+            )
 
-        self.spline = Spline(order=self.k+1, knots=grid, control_points=control_points, grid_extension=grid_extension)
+        else:
+            spline_q = []
+            for q in range(self.output_dimensions):
+                spline_p = []
+                for p in range(self.input_dimensions):
+                    spline_ = Spline(
+                        order=self.k,
+                        knots=knots,
+                        control_points=torch.randn(n_control_points)
+                    )
+                    spline_p.append(spline_)
+                spline_p = torch.nn.ModuleList(spline_p)
+                spline_q.append(spline_p)
+            self.spline_q = torch.nn.ModuleList(spline_q)
 
-        self.scale_base = torch.nn.Parameter(scale_base_mu * 1 / np.sqrt(input_dimensions) + \
-                         scale_base_sigma * (torch.rand(input_dimensions, output_dimensions)*2-1) * 1/np.sqrt(input_dimensions), requires_grad=sb_trainable)
-        self.scale_spline = torch.nn.Parameter(torch.ones(input_dimensions, output_dimensions) * scale_sp * 1 / np.sqrt(input_dimensions) * self.mask, requires_grad=sp_trainable)
+                 
+        # control_points = torch.nn.Parameter(
+        #     torch.randn(n_control_points, self.output_dimensions) * noise_scale)
+        # print(control_points)
+        # print('uuu')
+
+        # self.spline = Spline(
+        #     order=self.k, knots=knots, control_points=control_points)
+
+        # self.scale_base = torch.nn.Parameter(scale_base_mu * 1 / np.sqrt(input_dimensions) + \
+        #                  scale_base_sigma * (torch.rand(input_dimensions, output_dimensions)*2-1) * 1/np.sqrt(input_dimensions), requires_grad=sb_trainable)
+        # self.scale_spline = torch.nn.Parameter(torch.ones(input_dimensions, output_dimensions) * scale_sp * 1 / np.sqrt(input_dimensions) * self.mask, requires_grad=sp_trainable)
         self.base_function = base_function
 
     @staticmethod
@@ -75,20 +121,26 @@ class KAN_layer(torch.nn.Module):
             x_tensor = x.tensor
         else:
             x_tensor = x
-        
-        base = self.base_function(x_tensor)  # (batch, input_dimensions)
-        
-        basis = self.spline.basis(x_tensor, self.spline.k, self.spline.knots)
-        spline_out_per_input = torch.einsum("bil,iol->bio", basis, self.spline.control_points)
 
-        base_term = self.scale_base[None, :, :] * base[:, :, None]
-        spline_term = self.scale_spline[None, :, :] * spline_out_per_input
-        combined = base_term + spline_term
-        combined = self.mask[None,:,:] * combined
         
-        output = torch.sum(combined, dim=1)  # (batch, output_dimensions)
-        
-        return output
+        if self.vec:
+            y = self.spline_q.forward(x_tensor)  # (batch, output_dimensions, input_dimensions)
+            y = y.reshape(y.shape[0], y.shape[1], self.output_dimensions, self.input_dimensions)
+            base_out = self.base_function(x_tensor)  # (batch, input_dimensions)
+            y = y + base_out[:, :, None, None]
+            y = y.sum(dim=3).sum(dim=1)  # sum over input dimensions
+        else:
+            y = []
+            for q in range(self.output_dimensions):
+                y_q = []
+                for p in range(self.input_dimensions):
+                    spline_out = self.spline_q[q][p].forward(x_tensor[:, p])  # (batch, input_dimensions, output_dimensions)
+                    base_out = self.base_function(x_tensor[:, p])  # (batch, input_dimensions)
+                    y_q.append(spline_out + base_out)
+                y.append(torch.stack(y_q, dim=1).sum(dim=1))
+            y = torch.stack(y, dim=1)
+            
+        return y
 
     def update_grid_from_samples(self, x: torch.Tensor, mode: str = 'sample'):
         """

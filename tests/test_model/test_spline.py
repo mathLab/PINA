@@ -191,3 +191,42 @@ def test_derivative(args, pts):
     # Check shape and value
     assert first_der.shape == pts.shape
     assert torch.allclose(first_der, first_der_auto, atol=1e-4, rtol=1e-4)
+
+
+#@pytest.mark.parametrize("args", valid_args) # TODO
+def test_vectorized():
+
+    N = 7
+    cps = []
+    splines = []
+    for i in range(N):
+        cp = torch.rand(n_ctrl_pts)
+        cps.append(cp)
+        spline = Spline(
+            order=order,
+            control_points=cp
+        )
+        splines.append(spline)
+
+    from pina.model import VectorizedSpline
+    unique_cps = torch.stack(cps, dim=0)
+    print(unique_cps.shape)
+    print(cps[0].shape)
+    # Vectorized control points
+    vectorized_spline = VectorizedSpline(
+        order=order,
+        knots=splines[0].knots,
+        control_points=torch.stack(cps, dim=0)
+    )
+
+    x = torch.rand(100, 1)
+
+    result_single = torch.stack([
+        splines[i](x) for i in range(N)
+    ])
+    print(result_single.shape)
+    result_single = result_single.permute(1, 2, 0)
+    out_vectorized = vectorized_spline(x)
+    print(out_vectorized.shape)
+    print(result_single.shape)
+    assert torch.allclose(out_vectorized, result_single, atol=1e-5, rtol=1e-5)

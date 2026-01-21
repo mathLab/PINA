@@ -25,6 +25,7 @@ __all__ = [
     "RBFBlock",
     "GNOBlock",
     "PirateNetBlock",
+    "KANBlock",
 ]
 
 from pina._src.model.block.convolution_2d import ContinuousConvBlock
@@ -50,3 +51,4 @@ from pina._src.model.block.low_rank_block import LowRankBlock
 from pina._src.model.block.rbf_block import RBFBlock
 from pina._src.model.block.gno_block import GNOBlock
 from pina._src.model.block.pirate_network_block import PirateNetBlock
+from pina._src.model.block.kan_block import KANBlock

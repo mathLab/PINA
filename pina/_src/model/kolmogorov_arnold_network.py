@@ -3,15 +3,20 @@ import torch
 import torch.nn as nn
 from typing import List
 
-try:
-    from .kan_layer import KAN_layer
-except ImportError:
-    from kan_layer import KAN_layer
+from pina._src.model.block.kan_block import KANBlock
 
-class KAN_Network(torch.nn.Module):
+class KolmogorovArnoldNetwork(torch.nn.Module):
     """
-    Kolmogorov Arnold Network - A neural network using KAN layers instead of traditional MLP layers.
-    Each layer uses learnable univariate functions (B-splines + base functions) on edges.
+    Kolmogorov Arnold Network, a neural network using KAN layers instead of
+    traditional MLP layers. Each layer uses learnable univariate functions
+    (B-splines + base functions) on edges.
+
+    .. references::
+
+        Liu, Z., Wang, Y., Vaidya, S., Ruehle, F., Halverson, J., Soljačić, M.,
+        ... & Tegmark, M. (2024). Kan: Kolmogorov-arnold networks. arXiv
+        preprint arXiv:2404.19756.
+
     """
     
     def __init__(
@@ -35,19 +40,25 @@ class KAN_Network(torch.nn.Module):
     ):
         """
         Initialize the KAN network.
-        
-        Args:
-            layer_sizes: List of integers defining the size of each layer [input_dim, hidden1, hidden2, ..., output_dim]
-            k: Order of the B-spline
-            num: Number of grid points for B-splines
-            grid_eps: Epsilon for grid spacing
-            grid_range: Range for the grid [min, max]
-            grid_extension: Whether to extend the grid
-            noise_scale: Scale for initialization noise
-            base_function: Base activation function (e.g., SiLU)
-            scale_base_mu: Mean for base function scaling
-            scale_base_sigma: Std for base function scaling
-            scale_sp: Scale for spline functions
+
+        :param iterable layer_sizes: List of layer sizes including input and
+            output dimensions.
+        :param int k: Order of the B-spline.
+        :param int num: Number of grid points for B-splines.
+        :param float grid_eps: Epsilon for grid spacing.
+        :param list grid_range: Range for the grid [min, max].
+        :param bool grid_extension: Whether to extend the grid.
+        :param float noise_scale: Scale for initialization noise.
+        :param base_function: Base activation function (e.g., SiLU).
+        :param float scale_base_mu: Mean for base function scaling.
+        :param float scale_base_sigma: Std for base function scaling.
+        :param float scale_sp: Scale for spline functions.
+        :param int inner_nodes: Number of inner nodes for KAN layers.
+        :param bool sparse_init: Whether to use sparse initialization.
+        :param bool sp_trainable: Whether spline parameters are trainable.
+        :param bool sb_trainable: Whether base function parameters are
+            trainable.
+        :param bool save_act: Whether to save activations after each layer.
         """
         super().__init__()
         
@@ -62,7 +73,7 @@ class KAN_Network(torch.nn.Module):
         self.kan_layers = nn.ModuleList()
         
         for i in range(self.num_layers):
-            layer = KAN_layer(
+            layer = KANBlock(
                 k=k,
                 input_dimensions=layer_sizes[i],
                 output_dimensions=layer_sizes[i+1],
@@ -97,6 +108,7 @@ class KAN_Network(torch.nn.Module):
 
         for i, layer in enumerate(self.kan_layers):
             current = layer(current)
+            # current = torch.nn.functional.sigmoid(current)
             
             if self.save_act:
                 self.acts.append(current.detach())

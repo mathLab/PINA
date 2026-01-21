@@ -277,11 +277,8 @@ class Spline(torch.nn.Module):
         :return: The output tensor.
         :rtype: torch.Tensor
         """
-        return torch.einsum(
-            "...bi, i -> ...b",
-            self.basis(x.as_subclass(torch.Tensor)).squeeze(-1),
-            self.control_points,
-        )
+        basis = self.basis(x.as_subclass(torch.Tensor))
+        return basis @ self.control_points
 
     def derivative(self, x, degree):
         """
