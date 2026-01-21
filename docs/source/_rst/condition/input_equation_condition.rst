@@ -2,14 +2,14 @@ Input Equation Condition
 ===========================
 .. currentmodule:: pina.condition.input_equation_condition
 
-.. autoclass:: InputEquationCondition
+.. autoclass:: pina._src.condition.input_equation_condition.InputEquationCondition
     :members:
     :show-inheritance:
 
-.. autoclass:: InputTensorEquationCondition
+.. autoclass:: pina._src.condition.input_equation_condition.InputTensorEquationCondition
     :members:
     :show-inheritance:
 
-.. autoclass:: InputGraphEquationCondition
+.. autoclass:: pina._src.condition.input_equation_condition.InputGraphEquationCondition
     :members:
     :show-inheritance:

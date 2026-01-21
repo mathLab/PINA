@@ -1,9 +1,11 @@
 LinearWeighting
 =============================
-.. currentmodule:: pina.loss.linear_weighting
 
-.. automodule:: pina.loss.linear_weighting
+.. currentmodule:: pina.loss
 
-.. autoclass:: LinearWeighting
+.. automodule:: pina._src.loss.linear_weighting
+    :no-members:
+
+.. autoclass:: pina._src.loss.linear_weighting.LinearWeighting
    :members:
    :show-inheritance:

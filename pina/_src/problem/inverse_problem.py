@@ -2,7 +2,7 @@
 
 from abc import abstractmethod
 import torch
-from .abstract_problem import AbstractProblem
+from pina._src.problem.abstract_problem import AbstractProblem
 
 
 class InverseProblem(AbstractProblem):

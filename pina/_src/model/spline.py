@@ -2,7 +2,7 @@
 
 import warnings
 import torch
-from ..utils import check_positive_integer, check_consistency
+from pina._src.core.utils import check_consistency, check_positive_integer
 
 
 class Spline(torch.nn.Module):

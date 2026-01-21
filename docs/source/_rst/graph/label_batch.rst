@@ -3,7 +3,7 @@ LabelBatch
 .. currentmodule:: pina.graph
 
 
-.. autoclass:: LabelBatch
+.. autoclass:: pina._src.core.graph.LabelBatch
    :members:
    :private-members:
    :show-inheritance:

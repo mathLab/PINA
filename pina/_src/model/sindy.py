@@ -2,7 +2,7 @@
 
 from typing import Callable
 import torch
-from ..utils import check_consistency, check_positive_integer
+from pina._src.core.utils import check_consistency, check_positive_integer
 
 
 class SINDy(torch.nn.Module):

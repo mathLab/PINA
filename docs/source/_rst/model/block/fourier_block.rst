@@ -3,14 +3,14 @@ Fourier Neural Operator Block
 .. currentmodule:: pina.model.block.fourier_block
 
 
-.. autoclass:: FourierBlock1D
+.. autoclass:: pina._src.model.block.fourier_block.FourierBlock1D
     :members:
     :show-inheritance:
 
-.. autoclass:: FourierBlock2D
+.. autoclass:: pina._src.model.block.fourier_block.FourierBlock2D
     :members:
     :show-inheritance:
 
-.. autoclass:: FourierBlock3D
+.. autoclass:: pina._src.model.block.fourier_block.FourierBlock3D
     :members:
     :show-inheritance:

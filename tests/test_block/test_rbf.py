@@ -2,7 +2,7 @@ import torch
 import pytest
 import math
 
-from pina.model.block.rbf_block import RBFBlock
+from pina.model.block import RBFBlock
 
 x = torch.linspace(-1, 1, 100)
 toy_params = torch.linspace(0, 1, 10).unsqueeze(1)

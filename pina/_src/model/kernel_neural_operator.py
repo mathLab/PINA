@@ -1,7 +1,7 @@
 """Module for the Kernel Neural Operator model class."""
 
 import torch
-from ..utils import check_consistency
+from pina._src.core.utils import check_consistency
 
 
 class KernelNeuralOperator(torch.nn.Module):

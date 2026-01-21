@@ -2,18 +2,18 @@ Dataset
 ======================
 .. currentmodule:: pina.data.dataset
 
-.. autoclass:: PinaDataset
+.. autoclass:: pina._src.data.dataset.PinaDataset
     :members:
     :show-inheritance:
 
-.. autoclass:: PinaDatasetFactory
+.. autoclass:: pina._src.data.dataset.PinaDatasetFactory
     :members:
     :show-inheritance:
 
-.. autoclass:: PinaGraphDataset
+.. autoclass:: pina._src.data.dataset.PinaGraphDataset
     :members:
     :show-inheritance:
 
-.. autoclass:: PinaTensorDataset
+.. autoclass:: pina._src.data.dataset.PinaTensorDataset
     :members:
     :show-inheritance:

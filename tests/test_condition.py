@@ -18,7 +18,7 @@ from pina.condition import (
     GraphDataCondition,
 )
 from pina.domain import CartesianDomain
-from pina.equation.equation_factory import FixedValue
+from pina.equation import FixedValue
 from pina.graph import RadiusGraph
 
 example_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})

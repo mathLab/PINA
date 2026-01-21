@@ -2,9 +2,9 @@
 
 import torch
 from torch import nn
-from .block.average_neural_operator_block import AVNOBlock
-from .kernel_neural_operator import KernelNeuralOperator
-from ..utils import check_consistency
+from pina._src.model.block.average_neural_operator_block import AVNOBlock
+from pina._src.model.kernel_neural_operator import KernelNeuralOperator
+from pina._src.core.utils import check_consistency
 
 
 class AveragingNeuralOperator(KernelNeuralOperator):
