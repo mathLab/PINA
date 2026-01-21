@@ -2,6 +2,6 @@ DeepONet
 ===========
 .. currentmodule:: pina.model.deeponet
 
-.. autoclass:: DeepONet
+.. autoclass:: pina._src.model.deeponet.DeepONet
    :members:
    :show-inheritance:

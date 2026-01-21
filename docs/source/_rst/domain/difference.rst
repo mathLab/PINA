@@ -2,8 +2,8 @@ Difference
 ======================
 .. currentmodule:: pina.domain.difference
 
-.. automodule:: pina.domain.difference
+.. automodule:: pina._src.domain.difference
 
-.. autoclass:: Difference
+.. autoclass:: pina._src.domain.difference.Difference
     :members:
     :show-inheritance:

@@ -2,7 +2,7 @@ SingleSolverInterface
 ======================
 .. currentmodule:: pina.solver.solver
 
-.. autoclass:: SingleSolverInterface
+.. autoclass:: pina._src.solver.solver.SingleSolverInterface
     :show-inheritance:
     :members:
     

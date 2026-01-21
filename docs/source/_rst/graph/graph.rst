@@ -3,7 +3,7 @@ Graph
 .. currentmodule:: pina.graph
 
 
-.. autoclass:: Graph
+.. autoclass:: pina._src.core.graph.Graph
    :members:
    :private-members:
    :show-inheritance:

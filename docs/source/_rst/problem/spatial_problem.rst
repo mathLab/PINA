@@ -2,8 +2,8 @@ SpatialProblem
 ==============
 .. currentmodule:: pina.problem.spatial_problem
 
-.. automodule:: pina.problem.spatial_problem
+.. automodule:: pina._src.problem.spatial_problem
 
-.. autoclass:: SpatialProblem
+.. autoclass:: pina._src.problem.spatial_problem.SpatialProblem
     :members:
     :show-inheritance:

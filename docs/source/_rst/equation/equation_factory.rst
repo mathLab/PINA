@@ -2,42 +2,42 @@ Equation Factory
 ==================
 
 .. currentmodule:: pina.equation.equation_factory
-.. autoclass:: FixedValue
+.. autoclass:: pina._src.equation.equation_factory.FixedValue
    :members:
    :show-inheritance:
 
-.. autoclass:: FixedGradient
+.. autoclass::  pina._src.equation.equation_factory.FixedGradient
    :members:
    :show-inheritance:
 
-.. autoclass:: FixedFlux
+.. autoclass:: pina._src.equation.equation_factory.FixedFlux
    :members:
    :show-inheritance:
 
-.. autoclass:: FixedLaplacian
+.. autoclass:: pina._src.equation.equation_factory.FixedLaplacian
    :members:
    :show-inheritance:
 
-.. autoclass:: Laplace
+.. autoclass:: pina._src.equation.equation_factory.Laplace
    :members:
    :show-inheritance:
 
-.. autoclass:: Advection
+.. autoclass:: pina._src.equation.equation_factory.Advection
    :members:
    :show-inheritance:
 
-.. autoclass:: AllenCahn
+.. autoclass:: pina._src.equation.equation_factory.AllenCahn
    :members:
    :show-inheritance:
 
-.. autoclass:: DiffusionReaction
+.. autoclass:: pina._src.equation.equation_factory.DiffusionReaction
    :members:
    :show-inheritance:
 
-.. autoclass:: Helmholtz
+.. autoclass:: pina._src.equation.equation_factory.Helmholtz
    :members:
    :show-inheritance:
 
-.. autoclass:: Poisson
+.. autoclass:: pina._src.equation.equation_factory.Poisson
    :members:
    :show-inheritance:

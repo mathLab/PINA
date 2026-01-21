@@ -2,6 +2,6 @@ MIONet
 ===========
 .. currentmodule:: pina.model.deeponet
 
-.. autoclass:: MIONet
+.. autoclass:: pina._src.model.deeponet.MIONet
    :members:
    :show-inheritance:

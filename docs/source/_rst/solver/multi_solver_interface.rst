@@ -2,7 +2,7 @@ MultiSolverInterface
 ======================
 .. currentmodule:: pina.solver.solver
 
-.. autoclass:: MultiSolverInterface
+.. autoclass:: pina._src.solver.solver.MultiSolverInterface
     :show-inheritance:
     :members:
     

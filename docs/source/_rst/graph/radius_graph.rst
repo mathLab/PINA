@@ -3,7 +3,7 @@ RadiusGraph
 .. currentmodule:: pina.graph
 
 
-.. autoclass:: RadiusGraph
+.. autoclass:: pina._src.core.graph.RadiusGraph
    :members:
    :private-members:
    :show-inheritance:

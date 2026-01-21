@@ -2,6 +2,6 @@ SINDy
 =======================
 .. currentmodule:: pina.model.sindy
 
-.. autoclass:: SINDy
+.. autoclass:: pina._src.model.sindy.SINDy
    :members:
    :show-inheritance:

@@ -2,6 +2,6 @@ Spline
 ========
 .. currentmodule:: pina.model.spline
 
-.. autoclass:: Spline
+.. autoclass:: pina._src.model.spline.Spline
     :members:
     :show-inheritance:

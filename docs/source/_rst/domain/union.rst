@@ -2,8 +2,8 @@ Union
 ======================
 .. currentmodule:: pina.domain.union
 
-.. automodule:: pina.domain.union
+.. automodule:: pina._src.domain.union
 
-.. autoclass:: Union
+.. autoclass:: pina._src.domain.union.Union
     :members:
     :show-inheritance:

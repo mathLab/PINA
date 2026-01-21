@@ -2,6 +2,6 @@ FNO
 ===========
 .. currentmodule:: pina.model.fourier_neural_operator
 
-.. autoclass:: FNO
+.. autoclass:: pina._src.model.fourier_neural_operator.FNO
    :members:
    :show-inheritance:

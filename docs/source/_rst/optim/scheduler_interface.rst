@@ -2,6 +2,6 @@ Scheduler
 =============
 .. currentmodule:: pina.optim.scheduler_interface
 
-.. autoclass:: Scheduler
+.. autoclass:: pina._src.optim.scheduler_interface.Scheduler
    :members:
    :show-inheritance:
