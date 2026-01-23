@@ -7,38 +7,9 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 from pina import LabelTensor
-from pina.graph import Graph
-from pina.graph import LabelBatch
-from pina.equation.equation_interface import EquationInterface
-
-
-class _BatchManager:
-    """
-    Class for managing batches of data.
-    """
-
-    def __init__(self, **dict):
-        """
-        Store the batch data from the provided dictionary.
-
-        :param dict dict: The dictionary containing the batch data.
-        """
-        self.keys = list(dict.keys())
-        for k, v in dict.items():
-            setattr(self, k, v)
-
-    def to(self, device):
-        """
-        Move all data in the batch to the specified device.
-        :param device: The device to move the data to.
-        :type device: torch.device | str
-        :return: The batch manager with data moved to the specified device.
-        :rtype: _BatchManager
-        """
-        for k in self.keys:
-            val = getattr(self, k)
-            setattr(self, k, val.to(device))
-        return self
+from ..graph import Graph, LabelBatch
+from ..equation.equation_interface import EquationInterface
+from .batch_manager import _BatchManager
 
 
 class _DataManager(ABC):
@@ -101,13 +72,6 @@ class _DataManager(ABC):
         Convert the data manager to a dictionary.
         """
         return {k: getattr(self, k) for k in self.keys}
-
-    @staticmethod
-    @abstractmethod
-    def create_batch(items):
-        """
-        Create a batch from a list of data manager items.
-        """
 
 
 class _TensorDataManager(_DataManager):
