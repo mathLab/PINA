@@ -1,12 +1,11 @@
 """Module for the DomainEquationCondition class."""
 
-from pina._src.condition.condition_interface import ConditionInterface
-from pina._src.core.utils import check_consistency
+from pina._src.condition.condition_base import ConditionBase
 from pina._src.domain.domain_interface import DomainInterface
 from pina._src.equation.equation_interface import EquationInterface
 
 
-class DomainEquationCondition(ConditionInterface):
+class DomainEquationCondition(ConditionBase):
     """
     The class :class:`DomainEquationCondition` defines a condition based on a
     ``domain`` and an ``equation``. This condition is typically used in
@@ -30,35 +29,67 @@ class DomainEquationCondition(ConditionInterface):
     """
 
     # Available slots
-    __slots__ = ["domain", "equation"]
+    __fields__ = ["domain", "equation"]
 
-    def __init__(self, domain, equation):
+    _avail_domain_cls = DomainInterface
+    _avail_equation_cls = EquationInterface
+
+    def __new__(cls, domain, equation):
         """
-        Initialization of the :class:`DomainEquationCondition` class.
+        Check the types of ``domain`` and ``equation`` and instantiate an
+        instance of :class:`DomainEquationCondition`.
 
-        :param DomainInterface domain: The domain over which the equation is
-            defined.
-        :param EquationInterface equation: The equation to be satisfied over the
-            specified domain.
+        :return: An instance of :class:`DomainEquationCondition`.
+        :rtype: pina.condition.domain_equation_condition.DomainEquationCondition
+        :raises ValueError: If ``domain`` is not of type
+        :class:`DomainInterface` or
+            ``equation`` is not of type :class:`
         """
-        super().__init__()
-        self.domain = domain
-        self.equation = equation
+        if not isinstance(domain, cls._avail_domain_cls):
+            raise ValueError(
+                "The domain must be an instance of DomainInterface."
+            )
 
-    def __setattr__(self, key, value):
+        if not isinstance(equation, cls._avail_equation_cls):
+            raise ValueError(
+                "The equation must be an instance of EquationInterface."
+            )
+
+        return super().__new__(cls)
+
+    def __len__(self):
         """
-        Set the attribute value with type checking.
+        Raise NotImplementedError since the number of points is determined by
+        the domain sampling strategy.
 
-        :param str key: The attribute name.
-        :param any value: The value to set for the attribute.
+        :raises NotImplementedError: Always raised since the number of points is
+            determined by the domain sampling strategy.
         """
-        if key == "domain":
-            check_consistency(value, (DomainInterface, str))
-            DomainEquationCondition.__dict__[key].__set__(self, value)
+        raise NotImplementedError(
+            "`__len__` method is not implemented for "
+            "`DomainEquationCondition` since the number of points is "
+            "determined by the domain sampling strategy."
+        )
 
-        elif key == "equation":
-            check_consistency(value, (EquationInterface))
-            DomainEquationCondition.__dict__[key].__set__(self, value)
+    def __getitem__(self, idx):
+        """
+        Raise NotImplementedError since data retrieval is not applicable.
 
-        elif key in ("_problem"):
-            super().__setattr__(key, value)
+        :param int idx: Index of the data point(s) to retrieve.
+        :raises NotImplementedError: Always raised since data retrieval is not
+            applicable for this condition.
+        """
+        raise NotImplementedError(
+            "`__getitem__` method is not implemented for "
+            "`DomainEquationCondition`"
+        )
+
+    def store_data(self, **kwargs):
+        """
+        Store data for the condition. No data is stored for this condition.
+
+        :return: An empty dictionary since no data is stored.
+        :rtype: dict
+        """
+        setattr(self, "domain", kwargs.get("domain"))
+        setattr(self, "equation", kwargs.get("equation"))
