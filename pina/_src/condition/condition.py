@@ -88,12 +88,12 @@ class Condition:
     """
 
     # Combine all possible keyword arguments from the different Condition types
-    __slots__ = list(
+    available_kwargs = list(
         set(
-            InputTargetCondition.__slots__
-            + InputEquationCondition.__slots__
-            + DomainEquationCondition.__slots__
-            + DataCondition.__slots__
+            InputTargetCondition.__fields__
+            + InputEquationCondition.__fields__
+            + DomainEquationCondition.__fields__
+            + DataCondition.__fields__
         )
     )
 
@@ -114,28 +114,28 @@ class Condition:
         if len(args) != 0:
             raise ValueError(
                 "Condition takes only the following keyword "
-                f"arguments: {Condition.__slots__}."
+                f"arguments: {Condition.available_kwargs}."
             )
 
         # Class specialization based on keyword arguments
         sorted_keys = sorted(kwargs.keys())
 
         # Input - Target Condition
-        if sorted_keys == sorted(InputTargetCondition.__slots__):
+        if sorted_keys == sorted(InputTargetCondition.__fields__):
             return InputTargetCondition(**kwargs)
 
         # Input - Equation Condition
-        if sorted_keys == sorted(InputEquationCondition.__slots__):
+        if sorted_keys == sorted(InputEquationCondition.__fields__):
             return InputEquationCondition(**kwargs)
 
         # Domain - Equation Condition
-        if sorted_keys == sorted(DomainEquationCondition.__slots__):
+        if sorted_keys == sorted(DomainEquationCondition.__fields__):
             return DomainEquationCondition(**kwargs)
 
         # Data Condition
         if (
-            sorted_keys == sorted(DataCondition.__slots__)
-            or sorted_keys[0] == DataCondition.__slots__[0]
+            sorted_keys == sorted(DataCondition.__fields__)
+            or sorted_keys[0] == DataCondition.__fields__[0]
         ):
             return DataCondition(**kwargs)
 

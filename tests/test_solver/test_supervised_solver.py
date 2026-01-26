@@ -83,7 +83,8 @@ class Model(torch.nn.Module):
             y = self.conv(y, edge_index)
             y = self.activation(y)
             y = self.output(y)
-        return to_dense_batch(y, batch.batch)[0]
+            return y
+        # return to_dense_batch(y, batch.batch)[0]
 
 
 graph_model = Model()

@@ -1,30 +1,19 @@
 """Module for the InputEquationCondition class and its subclasses."""
 
-from pina._src.condition.condition_interface import ConditionInterface
+from pina._src.condition.condition_base import ConditionBase
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.graph import Graph
-from pina._src.core.utils import check_consistency
 from pina._src.equation.equation_interface import EquationInterface
+from pina._src.condition.data_manager import _DataManager
 
 
-class InputEquationCondition(ConditionInterface):
+class InputEquationCondition(ConditionBase):
     """
     The class :class:`InputEquationCondition` defines a condition based on
     ``input`` data and an ``equation``. This condition is typically used in
     physics-informed problems, where the model is trained to satisfy a given
     ``equation`` through the evaluation of the residual performed at the
     provided ``input``.
-
-    The class automatically selects the appropriate implementation based on
-    the type of the ``input`` data. Depending on whether the ``input`` is a
-    tensor or graph-based data, one of the following specialized subclasses is
-    instantiated:
-
-    - :class:`InputTensorEquationCondition`: For cases where the ``input``
-      data is a :class:`~pina.label_tensor.LabelTensor` object.
-
-    - :class:`InputGraphEquationCondition`: For cases where the ``input`` data
-      is a :class:`~pina.graph.Graph` object.
 
     :Example:
 
@@ -41,14 +30,14 @@ class InputEquationCondition(ConditionInterface):
     """
 
     # Available input data types
-    __slots__ = ["input", "equation"]
-    _avail_input_cls = (LabelTensor, Graph, list, tuple)
+    __fields__ = ["input", "equation"]
+    _avail_input_cls = (LabelTensor, Graph)
     _avail_equation_cls = EquationInterface
 
     def __new__(cls, input, equation):
         """
-        Instantiate the appropriate subclass of :class:`InputEquationCondition`
-        based on the type of ``input`` data.
+        Check the types of ``input`` and ``equation`` and instantiate a class
+        of :class:`InputEquationCondition` accordingly.
 
         :param input: The input data for the condition.
         :type input: LabelTensor | Graph |  list[Graph] | tuple[Graph]
@@ -62,96 +51,59 @@ class InputEquationCondition(ConditionInterface):
         :raises ValueError: If input is not of type :class:`~pina.graph.Graph`
             or :class:`~pina.label_tensor.LabelTensor`.
         """
-        if cls != InputEquationCondition:
-            return super().__new__(cls)
 
-        # If the input is a Graph object
-        if isinstance(input, (Graph, list, tuple)):
-            subclass = InputGraphEquationCondition
-            cls._check_graph_list_consistency(input)
-            subclass._check_label_tensor(input)
-            return subclass.__new__(subclass, input, equation)
+        # CHeck input type
+        if not isinstance(input, cls._avail_input_cls):
+            raise ValueError(
+                "The input data object must be a LabelTensor or a Graph object."
+            )
 
-        # If the input is a LabelTensor
-        if isinstance(input, LabelTensor):
-            subclass = InputTensorEquationCondition
-            return subclass.__new__(subclass, input, equation)
+        # Check equation type
+        if not isinstance(equation, cls._avail_equation_cls):
+            raise ValueError(
+                "The equation must be an instance of EquationInterface."
+            )
 
-        # If the input is not a LabelTensor or a Graph object raise an error
-        raise ValueError(
-            "The input data object must be a LabelTensor or a Graph object."
-        )
+        return super().__new__(cls)
 
-    def __init__(self, input, equation):
+    def store_data(self, **kwargs):
         """
-        Initialization of the :class:`InputEquationCondition` class.
-
-        :param input: The input data for the condition.
-        :type input: LabelTensor | Graph | list[Graph] | tuple[Graph]
-        :param EquationInterface equation: The equation to be satisfied over the
-            specified input points.
-
-        .. note::
-
-            If ``input`` is a list of :class:`~pina.graph.Graph` all elements in
-            the list must share the same structure, with matching keys and
-            consistent data types.
+        Store the input data in a :class:`_DataManager` object.
+        :param dict kwargs: The keyword arguments containing the input data.
         """
-        super().__init__()
-        self.input = input
-        self.equation = equation
+        setattr(self, "equation", kwargs.pop("equation"))
+        return _DataManager(**kwargs)
 
-    def __setattr__(self, key, value):
+    @property
+    def input(self):
         """
-        Set the attribute value with type checking.
+        Return the input data for the condition.
 
-        :param str key: The attribute name.
-        :param any value: The value to set for the attribute.
+        :return: The input data.
+        :rtype: LabelTensor | Graph | list[Graph] | tuple[Graph]
         """
-        if key == "input":
-            check_consistency(value, self._avail_input_cls)
-            InputEquationCondition.__dict__[key].__set__(self, value)
+        return self.data.input
 
-        elif key == "equation":
-            check_consistency(value, self._avail_equation_cls)
-            InputEquationCondition.__dict__[key].__set__(self, value)
-
-        elif key in ("_problem"):
-            super().__setattr__(key, value)
-
-
-class InputTensorEquationCondition(InputEquationCondition):
-    """
-    Specialization of the :class:`InputEquationCondition` class for the case
-    where ``input`` is a :class:`~pina.label_tensor.LabelTensor` object.
-    """
-
-
-class InputGraphEquationCondition(InputEquationCondition):
-    """
-    Specialization of the :class:`InputEquationCondition` class for the case
-    where ``input`` is a :class:`~pina.graph.Graph` object.
-    """
-
-    @staticmethod
-    def _check_label_tensor(input):
+    @property
+    def equation(self):
         """
-        Check if at least one :class:`~pina.label_tensor.LabelTensor` is present
-        in the ``input`` object.
+        Return the equation associated with this condition.
 
-        :param input: The input data.
-        :type input: torch.Tensor | Graph | list[Graph] | tuple[Graph]
-        :raises ValueError: If the input data object does not contain at least
-            one LabelTensor.
+        :return: Equation associated with this condition.
+        :rtype: EquationInterface
         """
+        return self._equation
 
-        # Store the first element: it is sufficient to check this since all
-        # elements must have the same type and structure (already checked).
-        data = input[0] if isinstance(input, (list, tuple)) else input
+    @equation.setter
+    def equation(self, value):
+        """
+        Set the equation associated with this condition.
 
-        # Check if the input data contains at least one LabelTensor
-        for v in data.values():
-            if isinstance(v, LabelTensor):
-                return
-
-        raise ValueError("The input must contain at least one LabelTensor.")
+        :param EquationInterface value: The equation to associate with this
+            condition
+        """
+        if not isinstance(value, EquationInterface):
+            raise TypeError(
+                "The equation must be an instance of EquationInterface."
+            )
+        self._equation = value
