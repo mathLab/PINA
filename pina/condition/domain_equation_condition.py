@@ -41,7 +41,8 @@ class DomainEquationCondition(ConditionBase):
 
         :return: An instance of :class:`DomainEquationCondition`.
         :rtype: pina.condition.domain_equation_condition.DomainEquationCondition
-        :raises ValueError: If ``domain`` is not of type :class:`DomainInterface` or
+        :raises ValueError: If ``domain`` is not of type
+        :class:`DomainInterface` or
             ``equation`` is not of type :class:`
         """
         if not isinstance(domain, cls._avail_domain_cls):
@@ -90,5 +91,5 @@ class DomainEquationCondition(ConditionBase):
         :return: An empty dictionary since no data is stored.
         :rtype: dict
         """
-        self.domain = kwargs.get("domain")
-        self.equation = kwargs.get("equation")
+        setattr(self, "domain", kwargs.get("domain"))
+        setattr(self, "equation", kwargs.get("equation"))

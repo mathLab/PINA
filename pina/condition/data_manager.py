@@ -2,7 +2,6 @@
 Module for managing data in conditions.
 """
 
-from abc import ABC, abstractmethod
 import torch
 from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
@@ -12,7 +11,7 @@ from ..equation.equation_interface import EquationInterface
 from .batch_manager import _BatchManager
 
 
-class _DataManager(ABC):
+class _DataManager:
     """
     Abstract base class for data managers.
 
@@ -55,24 +54,6 @@ class _DataManager(ABC):
         """
         self.keys = list(kwargs.keys())
 
-    @abstractmethod
-    def __len__(self):
-        """
-        Return the number of samples in the data manager.
-        """
-
-    @abstractmethod
-    def __getitem__(self, idx):
-        """
-        Retrieve a data item or a subset of data items by index.
-        """
-
-    def to_dict(self):
-        """
-        Convert the data manager to a dictionary.
-        """
-        return {k: getattr(self, k) for k in self.keys}
-
 
 class _TensorDataManager(_DataManager):
     """
@@ -114,7 +95,7 @@ class _TensorDataManager(_DataManager):
         return _TensorDataManager(**new_data)
 
     @staticmethod
-    def _create_batch(items):
+    def create_batch(items):
         """
         Create a batch from a list of :class:`_TensorDataManager` items.
 
@@ -126,7 +107,7 @@ class _TensorDataManager(_DataManager):
         if not items:
             return None
         first = items[0]
-        batch_data = {}
+        batch_data = _BatchManager()
 
         for k in first.keys:
             vals = [it.data[k] for it in items]
@@ -141,8 +122,20 @@ class _TensorDataManager(_DataManager):
                 batch_data[k] = batch_fn(vals, dim=0)
             else:
                 batch_data[k] = sample
+        return batch_data
 
-        return _BatchManager(**batch_data)
+    def to_batch(self):
+        """
+        Create a batch from the current tensor data manager.
+
+        :return: A new :class:`_BatchManager` instance containing the batched
+        data.
+        :rtype: _BatchManager
+        """
+        batch_data = _BatchManager()
+        for k in self.keys:
+            batch_data[k] = self.data[k]
+        return batch_data
 
 
 class _GraphDataManager(_DataManager):
@@ -237,7 +230,7 @@ class _GraphDataManager(_DataManager):
         if name == self.graph_key:
             return self.data if len(self.data) > 1 else self.data[0]
 
-        super().__getattribute__(name)
+        return super().__getattribute__(name)
 
     @classmethod
     def _init_from_graphs_list(cls, graphs, graph_key, keys):
@@ -290,33 +283,66 @@ class _GraphDataManager(_DataManager):
             keys=self.keys,
         )
 
-    @staticmethod
-    def _create_batch(items):
+    def to_batch(self):
         """
-        Create a batch from a list of :class:`_GraphDataManager` items.
+        Create a batch from the current graph data manager.
 
-        :param list items: List of :class:`_GraphDataManager` items to batch.
         :return: A new :class:`_BatchManager` instance containing the batched
         data.
         :rtype: _BatchManager
         """
-        if not items:
-            return None
-        first = items[0]
         batching_fn = (
             LabelBatch.from_data_list
-            if isinstance(first.data[0], Graph)
+            if isinstance(self.data[0], Graph)
             else Batch.from_data_list
         )
 
-        graphs_to_batch = [item.data[0] for item in items]
-        batch_graph = batching_fn(graphs_to_batch)
-
-        batch_data = {first.graph_key: batch_graph}
-
-        for k in first.keys:
-            if k == first.graph_key:
+        batched_graph = batching_fn(self.data)
+        batch_data = _BatchManager()
+        for k in self.keys:
+            if k == self.graph_key:
                 continue
-            batch_data[k] = getattr(batch_graph, k)
-            delattr(batch_graph, k)
-        return _BatchManager(**batch_data)
+            batch_data[k] = getattr(batched_graph, k)
+            delattr(batched_graph, k)
+        batch_data[self.graph_key] = batched_graph
+        return batch_data
+
+    @staticmethod
+    def create_batch(items):
+        """
+        Optimized batch creation.
+        """
+        if not items:
+            return None
+
+        first = items[0]
+        graph_key = first.graph_key
+        # Determine batching function once
+        is_labeled = isinstance(first.data[0], Graph)
+        batching_fn = (
+            LabelBatch.from_data_list if is_labeled else Batch.from_data_list
+        )
+
+        # Efficient list comprehension for extraction
+        # If to_batch() is called on self, self.data might be a list already.
+        # If _create_batch is called on multiple managers, we grab the first
+        # graph from each.
+        graphs_to_batch = [item.data[0] for item in items]
+        batched_graph = batching_fn(graphs_to_batch)
+
+        batch_data = _BatchManager()
+
+        # Use a set for O(1) lookups if keys is large
+        keys_to_transfer = set(first.keys)
+        if graph_key in keys_to_transfer:
+            keys_to_transfer.remove(graph_key)
+
+        for k in keys_to_transfer:
+            # Check if attribute exists once to avoid AttributeError overhead
+            val = getattr(batched_graph, k, None)
+            if val is not None:
+                batch_data[k] = val
+                delattr(batched_graph, k)
+
+        batch_data[graph_key] = batched_graph
+        return batch_data

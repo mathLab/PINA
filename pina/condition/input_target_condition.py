@@ -59,7 +59,7 @@ class InputTargetCondition(ConditionBase):
                 "torch.Tensor, LabelTensor, Graph, Data or "
                 "list/tuple of Graph/Data objects."
             )
-        elif isinstance(input, (list, tuple)):
+        if isinstance(input, (list, tuple)):
             for item in input:
                 if not isinstance(item, (Graph, Data)):
                     raise ValueError(
@@ -73,7 +73,7 @@ class InputTargetCondition(ConditionBase):
                 "torch.Tensor, LabelTensor, Graph, Data or "
                 "list/tuple of Graph/Data objects."
             )
-        elif isinstance(target, (list, tuple)):
+        if isinstance(target, (list, tuple)):
             for item in target:
                 if not isinstance(item, (Graph, Data)):
                     raise ValueError(

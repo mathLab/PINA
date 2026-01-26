@@ -2,115 +2,13 @@
 Base class for conditions.
 """
 
-from copy import deepcopy
 from functools import partial
 import torch
-from torch_geometric.data import Data, Batch
+from torch_geometric.data import Batch
 from torch.utils.data import DataLoader
 from .condition_interface import ConditionInterface
-from ..graph import Graph, LabelBatch
+from ..graph import LabelBatch
 from ..label_tensor import LabelTensor
-
-
-class TensorCondition:
-    """
-    Base class for tensor conditions.
-    """
-
-    def store_data(self, **kwargs):
-        """
-        Store data for standard tensor condition
-
-        :param kwargs: Keyword arguments representing the data to be stored.
-        :return: A dictionary containing the stored data.
-        :rtype: dict
-        """
-        data = {}
-        for key, value in kwargs.items():
-            data[key] = value
-        return data
-
-
-class GraphCondition:
-    """
-    Base class for graph conditions.
-    """
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        example = kwargs.get(self.graph_field)[0]
-        self.batch_fn = (
-            LabelBatch.from_data_list
-            if isinstance(example, Graph)
-            else Batch.from_data_list
-        )
-
-    def store_data(self, **kwargs):
-        """
-        Store data for graph condition
-
-        :param graphs: List of graphs to store data in.
-        :type graphs: list[Graph] | list[Data]
-        :param tensors: List of tensors to store in the graphs.
-        :type tensors: list[torch.Tensor] | list[LabelTensor]
-        :param key: Key under which to store the tensors in the graphs.
-        :type key: str
-        :return: A dictionary containing the stored data.
-        :rtype: dict
-        """
-        data = []
-        graphs = kwargs.get(self.graph_field)
-        for i, graph in enumerate(graphs):
-            new_graph = deepcopy(graph)
-            for key in self.tensor_fields:
-                tensor = kwargs[key][i]
-                mapping_key = self.keys_map.get(key)
-                setattr(new_graph, mapping_key, tensor)
-            data.append(new_graph)
-        return {"data": data}
-
-    def __getitem__(self, idx):
-        if isinstance(idx, list):
-            return self.get_multiple_data(idx)
-        return {"data": self.data["data"][idx]}
-
-    def get_multiple_data(self, indices):
-        """
-        Get multiple data items based on the provided indices.
-
-        :param List[int] indices: List of indices to retrieve.
-        :return: Dictionary containing 'input' and 'target' data.
-        :rtype: dict
-        """
-        to_return_dict = {}
-        data = self.batch_fn([self.data["data"][i] for i in indices])
-        to_return_dict[self.graph_field] = data
-        for key in self.tensor_fields:
-            mapping_key = self.keys_map.get(key)
-            y = getattr(data, mapping_key)
-            delattr(data, mapping_key)  # Avoid duplication of y on GPU memory
-            to_return_dict[key] = y
-        return to_return_dict
-
-    @classmethod
-    def automatic_batching_collate_fn(cls, batch):
-        """
-        Collate function to be used in DataLoader.
-
-        :param batch: A list of items from the dataset.
-        :type batch: list
-        :return: A collated batch.
-        :rtype: dict
-        """
-        collated_graphs = super().automatic_batching_collate_fn(batch)["data"]
-        to_return_dict = {}
-        for key in cls.tensor_fields:
-            mapping_key = cls.keys_map.get(key)
-            tensor = getattr(collated_graphs, mapping_key)
-            to_return_dict[key] = tensor
-            delattr(collated_graphs, mapping_key)
-        to_return_dict[cls.graph_field] = collated_graphs
-        return to_return_dict
 
 
 class ConditionBase(ConditionInterface):
@@ -187,7 +85,7 @@ class ConditionBase(ConditionInterface):
         if not batch:
             return {}
         instance_class = batch[0].__class__
-        return instance_class._create_batch(batch)
+        return instance_class.create_batch(batch)
 
     @staticmethod
     def collate_fn(batch, condition):
@@ -201,9 +99,7 @@ class ConditionBase(ConditionInterface):
         :return: A collated batch.
         :rtype: dict
         """
-        print("Custom collate_fn called")
-        print("batch:", batch)
-        data = condition.data[batch]
+        data = condition.data[batch].to_batch()
         return data
 
     def create_dataloader(

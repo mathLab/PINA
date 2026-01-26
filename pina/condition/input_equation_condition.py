@@ -71,7 +71,7 @@ class InputEquationCondition(ConditionBase):
         Store the input data in a :class:`_DataManager` object.
         :param dict kwargs: The keyword arguments containing the input data.
         """
-        self.__setattr__("_equation", kwargs.pop("equation"))
+        setattr(self, "equation", kwargs.pop("equation"))
         return _DataManager(**kwargs)
 
     @property
