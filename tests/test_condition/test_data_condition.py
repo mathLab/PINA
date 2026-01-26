@@ -3,8 +3,7 @@ import torch
 from pina import Condition, LabelTensor
 from pina.condition import DataCondition
 from pina.graph import RadiusGraph
-from torch_geometric.data import Data, Batch
-from pina.graph import Graph, LabelBatch
+from torch_geometric.data import Data
 from pina.condition.data_manager import _DataManager
 
 

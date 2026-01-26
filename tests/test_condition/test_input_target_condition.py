@@ -1,14 +1,8 @@
 import torch
 import pytest
-from torch_geometric.data import Batch
 from pina import LabelTensor, Condition
-
-# from pina.condition import (
-#     TensorInputGraphTargetCondition,
-#     TensorInputTensorTargetCondition,
-#     GraphInputTensorTargetCondition,
-# )
-from pina.graph import RadiusGraph, LabelBatch
+from pina.graph import RadiusGraph
+from pina.condition.batch_manager import _BatchManager
 
 
 def _create_tensor_data(use_lt=False):
@@ -288,3 +282,49 @@ def test_getitems_tensor_input_graph_target_condition(use_lt):
                 "u",
                 "v",
             ], "TensorInputGraphTargetCondition __getitems__ target labels failed"
+
+
+def test_create_batch_tensor():
+    input_tensor, target_tensor = _create_tensor_data()
+    condition = Condition(input=input_tensor, target=target_tensor)
+    idx = [0, 2, 4, 6]
+    data_to_collate = [condition.data[i] for i in idx]
+    batch = condition.automatic_batching_collate_fn(data_to_collate)
+    assert isinstance(batch, _BatchManager)
+    assert hasattr(batch, "input")
+    assert hasattr(batch, "target")
+    expected_input = torch.stack([input_tensor[i] for i in idx])
+    expected_target = torch.stack([target_tensor[i] for i in idx])
+    assert torch.allclose(batch.input, expected_input)
+    assert torch.allclose(batch.target, expected_target)
+
+    batch = condition.collate_fn(idx, condition)
+    # assert isinstance(batch, _BatchManager)
+    assert hasattr(batch, "input")
+    assert hasattr(batch, "target")
+    expected_input = torch.stack([input_tensor[i] for i in idx])
+    expected_target = torch.stack([target_tensor[i] for i in idx])
+    assert torch.allclose(batch.input, expected_input)
+    assert torch.allclose(batch.target, expected_target)
+
+
+def test_create_batch_graph():
+    input_graph, target_tensor = _create_graph_data(False)
+    condition = Condition(input=input_graph, target=target_tensor)
+    idx = [1, 3, 5]
+    data_to_collate = [condition.data[i] for i in idx]
+    batch = condition.automatic_batching_collate_fn(data_to_collate)
+    assert isinstance(batch, _BatchManager)
+    assert hasattr(batch, "input")
+    assert hasattr(batch, "target")
+    expected_target = torch.cat([target_tensor[i] for i in idx])
+    print(expected_target.shape, batch.target.shape)
+    assert torch.allclose(batch.target, expected_target)
+    assert batch.input.num_graphs == len(idx)
+
+    batch = condition.collate_fn(idx, condition)
+    assert isinstance(batch, _BatchManager)
+    assert hasattr(batch, "input")
+    assert hasattr(batch, "target")
+    assert torch.allclose(batch.target, expected_target)
+    assert batch.input.num_graphs == len(idx)
