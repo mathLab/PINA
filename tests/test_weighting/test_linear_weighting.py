@@ -6,7 +6,6 @@ from pina.model import FeedForward
 from pina.loss import LinearWeighting
 from pina.problem.zoo import Poisson2DSquareProblem
 
-
 # Initialize problem and model
 problem = Poisson2DSquareProblem()
 problem.discretise_domain(10)

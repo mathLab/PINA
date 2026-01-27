@@ -6,7 +6,6 @@ from pina.model import FeedForward
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from pina.callback import R3Refinement
 
-
 # make the problem
 poisson_problem = Poisson()
 poisson_problem.discretise_domain(10, "grid", domains="boundary")

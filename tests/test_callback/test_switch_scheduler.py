@@ -8,7 +8,6 @@ from pina.optim import TorchScheduler
 from pina.callback import SwitchScheduler
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 
-
 # Define the problem
 problem = Poisson()
 problem.discretise_domain(10)

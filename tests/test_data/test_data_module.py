@@ -1,10 +1,10 @@
 import torch
 import pytest
 from pina.data import PinaDataModule
-from pina.data.dataset import PinaTensorDataset, PinaGraphDataset
+from pina.data import PinaTensorDataset, PinaGraphDataset
 from pina.problem.zoo import SupervisedProblem
 from pina.graph import RadiusGraph
-from pina.data.data_module import DummyDataloader
+from pina.data import DummyDataloader
 from pina import Trainer
 from pina.solver import SupervisedSolver
 from torch_geometric.data import Batch

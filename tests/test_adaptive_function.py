@@ -16,7 +16,6 @@ from pina.adaptive_function import (
     AdaptiveExp,
 )
 
-
 adaptive_function = (
     AdaptiveReLU,
     AdaptiveSigmoid,

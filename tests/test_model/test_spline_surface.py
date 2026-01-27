@@ -5,7 +5,6 @@ from pina.model import SplineSurface
 from pina.operator import grad
 from pina import LabelTensor
 
-
 # Utility quantities for testing
 orders = [random.randint(3, 6) for _ in range(2)]
 n_ctrl_pts = random.randint(max(orders), max(orders) + 5)

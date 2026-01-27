@@ -1,4 +1,10 @@
-"""Module to define equations and systems of equations."""
+"""Mathematical equations and physical laws.
+
+This module provides a framework for defining differential equations,
+boundary conditions, and complex systems of equations. It includes
+pre-defined physical models such as Poisson, Laplace, and Wave equations,
+along with factories for common derivative-based constraints.
+"""
 
 __all__ = [
     "SystemEquation",
@@ -16,8 +22,8 @@ __all__ = [
     "AcousticWave",
 ]
 
-from .equation import Equation
-from .equation_factory import (
+from pina._src.equation.equation import Equation
+from pina._src.equation.equation_factory import (
     FixedFlux,
     FixedGradient,
     FixedLaplacian,
@@ -30,4 +36,4 @@ from .equation_factory import (
     Poisson,
     AcousticWave,
 )
-from .system_equation import SystemEquation
+from pina._src.equation.system_equation import SystemEquation

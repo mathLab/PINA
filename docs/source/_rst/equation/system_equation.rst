@@ -2,6 +2,6 @@ System Equation
 =================
 
 .. currentmodule:: pina.equation.system_equation
-.. autoclass:: SystemEquation
+.. autoclass::  pina._src.equation.system_equation.SystemEquation
    :members:
    :show-inheritance:

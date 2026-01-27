@@ -2,6 +2,6 @@ ConditionInterface
 ======================
 .. currentmodule:: pina.condition.condition_interface
 
-.. autoclass:: ConditionInterface
+.. autoclass::  pina._src.condition.condition_interface.ConditionInterface
     :members:
     :show-inheritance:

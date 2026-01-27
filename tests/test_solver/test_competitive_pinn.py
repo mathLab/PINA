@@ -16,7 +16,6 @@ from pina.condition import (
 )
 from torch._dynamo.eval_frame import OptimizedModule
 
-
 # define problems
 problem = Poisson()
 problem.discretise_domain(10)

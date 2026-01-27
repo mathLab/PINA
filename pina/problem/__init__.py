@@ -8,8 +8,8 @@ __all__ = [
     "InverseProblem",
 ]
 
-from .abstract_problem import AbstractProblem
-from .spatial_problem import SpatialProblem
-from .time_dependent_problem import TimeDependentProblem
-from .parametric_problem import ParametricProblem
-from .inverse_problem import InverseProblem
+from pina._src.problem.abstract_problem import AbstractProblem
+from pina._src.problem.spatial_problem import SpatialProblem
+from pina._src.problem.time_dependent_problem import TimeDependentProblem
+from pina._src.problem.parametric_problem import ParametricProblem
+from pina._src.problem.inverse_problem import InverseProblem

@@ -3,7 +3,7 @@ AdaptiveExp
 
 .. currentmodule:: pina.adaptive_function.adaptive_function
 
-.. autoclass:: AdaptiveExp
+.. autoclass:: pina._src.adaptive_function.adaptive_function.AdaptiveExp
     :members:
     :show-inheritance:
     :inherited-members: AdaptiveActivationFunctionInterface
