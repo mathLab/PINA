@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from pina._src.condition.condition_interface import ConditionInterface
 from pina._src.core.graph import LabelBatch
 from pina._src.core.label_tensor import LabelTensor
+from pina._src.data.dummy_dataloader import DummyDataloader
 
 
 class ConditionBase(ConditionInterface):
@@ -33,6 +34,7 @@ class ConditionBase(ConditionInterface):
         """
         super().__init__()
         self.data = self.store_data(**kwargs)
+        self.has_custom_dataloader_fn = False
 
     @property
     def problem(self):
@@ -85,7 +87,8 @@ class ConditionBase(ConditionInterface):
         if not batch:
             return {}
         instance_class = batch[0].__class__
-        return instance_class.create_batch(batch)
+        batch = instance_class.create_batch(batch)
+        return batch
 
     @staticmethod
     def collate_fn(batch, condition):
@@ -103,7 +106,11 @@ class ConditionBase(ConditionInterface):
         return data
 
     def create_dataloader(
-        self, dataset, batch_size, shuffle, automatic_batching
+        self,
+        dataset,
+        batch_size,
+        automatic_batching,
+        **kwargs,
     ):
         """
         Create a DataLoader for the condition.
@@ -114,14 +121,28 @@ class ConditionBase(ConditionInterface):
         :rtype: torch.utils.data.DataLoader
         """
         if batch_size == len(dataset):
-            pass  # will be updated in the near future
+            return DummyDataloader(dataset)
         return DataLoader(
             dataset=dataset,
-            batch_size=batch_size,
-            shuffle=shuffle,
             collate_fn=(
                 partial(self.collate_fn, condition=self)
                 if not automatic_batching
                 else self.automatic_batching_collate_fn
             ),
+            batch_size=batch_size,
+            **kwargs,
         )
+
+    def switch_dataloader_fn(self, create_dataloader_fn):
+        """
+        Decorator to switch the dataloader function for a condition.
+
+        :param create_dataloader_fn: The new dataloader function to use.
+        :type create_dataloader_fn: function
+        :return: The decorated function with the new dataloader function.
+        :rtype: function
+        """
+        # Replace the create_dataloader method of the ConditionBase class with
+        # the new function
+        self.has_custom_dataloader_fn = True
+        self.create_dataloader = create_dataloader_fn

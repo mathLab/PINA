@@ -36,7 +36,7 @@ class Trainer(lightning.pytorch.Trainer):
         test_size=0.0,
         val_size=0.0,
         compile=None,
-        repeat=None,
+        batching_mode="common_batch_size",
         automatic_batching=None,
         num_workers=None,
         pin_memory=None,
@@ -61,9 +61,9 @@ class Trainer(lightning.pytorch.Trainer):
         :param bool compile: If ``True``, the model is compiled before training.
             Default is ``False``. For Windows users, it is always disabled. Not
             supported for python version greater or equal than 3.14.
-        :param bool repeat: Whether to repeat the dataset data in each
-            condition during training. For further details, see the
-            :class:`~pina.data.data_module.PinaDataModule` class. Default is
+        :param str batching_mode: The batching mode to use. Options are
+            ``"common_batch_size"``, ``"proportional"``, and
+            ``"separate_conditions"``. Default is ``"common_batch_size"``.
             ``False``.
         :param bool automatic_batching: If ``True``, automatic PyTorch batching
             is performed, otherwise the items are retrieved from the dataset
@@ -87,7 +87,7 @@ class Trainer(lightning.pytorch.Trainer):
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            repeat=repeat,
+            batching_mode=batching_mode,
             automatic_batching=automatic_batching,
             compile=compile,
         )
@@ -127,11 +127,30 @@ class Trainer(lightning.pytorch.Trainer):
                 UserWarning,
             )
 
-        repeat = repeat if repeat is not None else False
-
         automatic_batching = (
             automatic_batching if automatic_batching is not None else False
         )
+
+        if batch_size is None and batching_mode != "common_batch_size":
+            warnings.warn(
+                "Batching mode is set to "
+                f"{batching_mode} but batch_size is None. "
+                "Batching mode will be set to common_batch_size.",
+                UserWarning,
+            )
+            batching_mode = "common_batch_size"
+
+        if (
+            batch_size is not None
+            and batch_size <= len(solver.problem.conditions)
+            and batching_mode == "proportional"
+        ):
+            warnings.warn(
+                "Batching mode is set to proportional but batch_size is 1. "
+                "Batching mode will be set to common_batch_size.",
+                UserWarning,
+            )
+            batching_mode = "common_batch_size"
 
         # set attributes
         self.compile = compile
@@ -139,12 +158,13 @@ class Trainer(lightning.pytorch.Trainer):
         self.batch_size = batch_size
         self._move_to_device()
         self.data_module = None
+
         self._create_datamodule(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
             batch_size=batch_size,
-            repeat=repeat,
+            batching_mode=batching_mode,
             automatic_batching=automatic_batching,
             pin_memory=pin_memory,
             num_workers=num_workers,
@@ -182,7 +202,7 @@ class Trainer(lightning.pytorch.Trainer):
         test_size,
         val_size,
         batch_size,
-        repeat,
+        batching_mode,
         automatic_batching,
         pin_memory,
         num_workers,
@@ -201,8 +221,9 @@ class Trainer(lightning.pytorch.Trainer):
         :param float val_size: The percentage of elements to include in the
             validation dataset.
         :param int batch_size: The number of samples per batch to load.
-        :param bool repeat: Whether to repeat the dataset data in each
-            condition during training.
+        :param str batching_mode: The batching mode to use. Options are
+            ``"common_batch_size"``, ``"proportional"``, and
+            ``"separate_conditions"``.
         :param bool automatic_batching: Whether to perform automatic batching
             with PyTorch.
         :param bool pin_memory: Whether to use pinned memory for faster data
@@ -232,7 +253,7 @@ class Trainer(lightning.pytorch.Trainer):
             test_size=test_size,
             val_size=val_size,
             batch_size=batch_size,
-            repeat=repeat,
+            batching_mode=batching_mode,
             automatic_batching=automatic_batching,
             num_workers=num_workers,
             pin_memory=pin_memory,
@@ -284,7 +305,7 @@ class Trainer(lightning.pytorch.Trainer):
         train_size,
         test_size,
         val_size,
-        repeat,
+        batching_mode,
         automatic_batching,
         compile,
     ):
@@ -298,8 +319,9 @@ class Trainer(lightning.pytorch.Trainer):
             test dataset.
         :param float val_size: The percentage of elements to include in the
             validation dataset.
-        :param bool repeat: Whether to repeat the dataset data in each
-            condition during training.
+        :param str batching_mode: The batching mode to use. Options are
+            ``"common_batch_size"``, ``"proportional"``, and
+            ``"separate_conditions"``.
         :param bool automatic_batching: Whether to perform automatic batching
             with PyTorch.
         :param bool compile: If ``True``, the model is compiled before training.
@@ -309,8 +331,7 @@ class Trainer(lightning.pytorch.Trainer):
         check_consistency(train_size, float)
         check_consistency(test_size, float)
         check_consistency(val_size, float)
-        if repeat is not None:
-            check_consistency(repeat, bool)
+        check_consistency(batching_mode, str)
         if automatic_batching is not None:
             check_consistency(automatic_batching, bool)
         if compile is not None:
