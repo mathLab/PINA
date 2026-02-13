@@ -11,6 +11,7 @@ from pina._src.condition.domain_equation_condition import (
 )
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import merge_tensors, custom_warning_format
+from pina._src.condition.condition import Condition
 
 
 class AbstractProblem(metaclass=ABCMeta):
@@ -41,43 +42,6 @@ class AbstractProblem(metaclass=ABCMeta):
                 if isinstance(cond.domain, DomainInterface):
                     self.domains[cond_name] = cond.domain
                     cond.domain = cond_name
-
-        self._collected_data = {}
-
-    @property
-    def collected_data(self):
-        """
-        Return the collected data from the problem's conditions. If some domains
-        are not sampled, they will not be returned by collected data.
-
-        :return: The collected data. Keys are condition names, and values are
-            dictionaries containing the input points and the corresponding
-            equations or target points.
-        :rtype: dict
-        """
-        # collect data so far
-        self.collect_data()
-        # raise warning if some sample data are missing
-        if not self.are_all_domains_discretised:
-            warnings.formatwarning = custom_warning_format
-            warnings.filterwarnings("always", category=RuntimeWarning)
-            warning_message = "\n".join(
-                [
-                    f"""{" " * 13} ---> Domain {key} {
-                    "sampled" if key in self.discretised_domains 
-                    else
-                    "not sampled"}"""
-                    for key in self.domains
-                ]
-            )
-            warnings.warn(
-                "Some of the domains are still not sampled. Consider calling "
-                "problem.discretise_domain function for all domains before "
-                "accessing the collected data:\n"
-                f"{warning_message}",
-                RuntimeWarning,
-            )
-        return self._collected_data
 
     #  back compatibility 0.1
     @property
@@ -318,34 +282,36 @@ class AbstractProblem(metaclass=ABCMeta):
                 [self.discretised_domains[k], v]
             )
 
-    def collect_data(self):
+    def move_discretisation_into_conditions(self):
         """
-        Aggregate data from the problem's conditions into a single dictionary.
+        Move the discretised domains into their corresponding conditions.
         """
-        data = {}
-        # Iterate over the conditions and collect data
-        for condition_name in self.conditions:
-            condition = self.conditions[condition_name]
-            # Check if the condition has an domain attribute
-            if hasattr(condition, "domain"):
-                # Only store the discretisation points if the domain is
-                # in the dictionary
-                if condition.domain in self.discretised_domains:
-                    samples = self.discretised_domains[condition.domain][
-                        self.input_variables
-                    ]
-                    data[condition_name] = {
-                        "input": samples,
-                        "equation": condition.equation,
-                    }
-            else:
-                # If the condition does not have a domain attribute, store
-                # the input and target points
-                keys = condition.__slots__
-                values = [
-                    getattr(condition, name)
-                    for name in keys
-                    if getattr(condition, name) is not None
+        if not self.are_all_domains_discretised:
+            warnings.formatwarning = custom_warning_format
+            warnings.filterwarnings("always", category=RuntimeWarning)
+            warning_message = "\n".join(
+                [
+                    f"""{" " * 13} ---> Domain {key} {
+                    "sampled" if key in self.discretised_domains 
+                    else
+                    "not sampled"}"""
+                    for key in self.domains
                 ]
-                data[condition_name] = dict(zip(keys, values))
-        self._collected_data = data
+            )
+            warnings.warn(
+                "Some of the domains are still not sampled. Consider calling "
+                "problem.discretise_domain function for all domains before "
+                "accessing the collected data:\n"
+                f"{warning_message}",
+                RuntimeWarning,
+            )
+
+        for name, cond in self.conditions.items():
+            if hasattr(cond, "domain"):
+                domain = cond.domain
+                self.conditions[name] = Condition(
+                    input=self.discretised_domains[cond.domain],
+                    equation=cond.equation,
+                )
+                self.conditions[name].domain = domain
+                self.conditions[name].problem = self
