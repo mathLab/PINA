@@ -11,6 +11,7 @@ from pina._src.condition.domain_equation_condition import (
 )
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import merge_tensors, custom_warning_format
+from pina._src.condition.condition import Condition
 
 
 class AbstractProblem(metaclass=ABCMeta):
@@ -318,34 +319,49 @@ class AbstractProblem(metaclass=ABCMeta):
                 [self.discretised_domains[k], v]
             )
 
-    def collect_data(self):
+    def move_discretisation_into_conditions(self):
         """
-        Aggregate data from the problem's conditions into a single dictionary.
+        Move the discretised domains into their corresponding conditions.
         """
-        data = {}
-        # Iterate over the conditions and collect data
-        for condition_name in self.conditions:
-            condition = self.conditions[condition_name]
-            # Check if the condition has an domain attribute
-            if hasattr(condition, "domain"):
-                # Only store the discretisation points if the domain is
-                # in the dictionary
-                if condition.domain in self.discretised_domains:
-                    samples = self.discretised_domains[condition.domain][
-                        self.input_variables
-                    ]
-                    data[condition_name] = {
-                        "input": samples,
-                        "equation": condition.equation,
-                    }
-            else:
-                # If the condition does not have a domain attribute, store
-                # the input and target points
-                keys = condition.__slots__
-                values = [
-                    getattr(condition, name)
-                    for name in keys
-                    if getattr(condition, name) is not None
-                ]
-                data[condition_name] = dict(zip(keys, values))
-        self._collected_data = data
+
+        for name, cond in self.conditions.items():
+            if hasattr(cond, "domain"):
+                domain = cond.domain
+                self.conditions[name] = Condition(
+                    input=self.discretised_domains[cond.domain],
+                    equation=cond.equation,
+                )
+                self.conditions[name].domain = domain
+                self.conditions[name].problem = self
+
+    # def collect_data(self):
+    #     """
+    #     Aggregate data from the problem's conditions into a single dictionary.
+    #     """
+    #     data = {}
+    #     # Iterate over the conditions and collect data
+    #     for condition_name in self.conditions:
+    #         condition = self.conditions[condition_name]
+    #         # Check if the condition has an domain attribute
+    #         if hasattr(condition, "domain"):
+    #             # Only store the discretisation points if the domain is
+    #             # in the dictionary
+    #             if condition.domain in self.discretised_domains:
+    #                 samples = self.discretised_domains[condition.domain][
+    #                     self.input_variables
+    #                 ]
+    #                 data[condition_name] = {
+    #                     "input": samples,
+    #                     "equation": condition.equation,
+    #                 }
+    #         else:
+    #             # If the condition does not have a domain attribute, store
+    #             # the input and target points
+    #             keys = condition.__slots__
+    #             values = [
+    #                 getattr(condition, name)
+    #                 for name in keys
+    #                 if getattr(condition, name) is not None
+    #             ]
+    #             data[condition_name] = dict(zip(keys, values))
+    #     self._collected_data = data
