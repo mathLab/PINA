@@ -119,7 +119,7 @@ class _TensorDataManager(_DataManager):
                     if isinstance(sample, LabelTensor)
                     else torch.stack
                 )
-                batch_data[k] = batch_fn(vals, dim=0)
+                batch_data[k] = batch_fn(vals)
             else:
                 batch_data[k] = sample
         return batch_data
