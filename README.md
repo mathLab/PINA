@@ -121,6 +121,8 @@ SPDX-License-Identifier: Apache-2.0
   </li>
 </ul>
 
+<img src="pina2 (1).gif">
+
 <hr/>
 
 <h2>📦 Installation</h2>
