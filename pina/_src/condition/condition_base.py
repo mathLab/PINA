@@ -34,6 +34,7 @@ class ConditionBase(ConditionInterface):
         """
         super().__init__()
         self.data = self.store_data(**kwargs)
+        self.has_custom_dataloader_fn = False
 
     @property
     def problem(self):
@@ -131,3 +132,17 @@ class ConditionBase(ConditionInterface):
             batch_size=batch_size,
             **kwargs,
         )
+
+    def switch_dataloader_fn(self, create_dataloader_fn):
+        """
+        Decorator to switch the dataloader function for a condition.
+
+        :param create_dataloader_fn: The new dataloader function to use.
+        :type create_dataloader_fn: function
+        :return: The decorated function with the new dataloader function.
+        :rtype: function
+        """
+        # Replace the create_dataloader method of the ConditionBase class with 
+        # the new function
+        self.has_custom_dataloader_fn = True
+        self.create_dataloader = create_dataloader_fn
