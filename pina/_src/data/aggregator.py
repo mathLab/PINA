@@ -32,6 +32,8 @@ class _Aggregator:
         :return: The length of the aggregated dataloader.
         :rtype: int
         """
+        if self.batching_mode == "separate_conditions":
+            return sum(len(dl) for dl in self.dataloaders.values())
         return max(len(dl) for dl in self.dataloaders.values())
 
     def __iter__(self):
@@ -42,10 +44,11 @@ class _Aggregator:
         :rtype: iterator
         """
         if self.batching_mode == "separate_conditions":
-            for name, dl in self.dataloaders.items():
-                for batch in dl:
-                    yield {name: batch}
-            return
+            # TODO: implement separate_conditions batching mode
+            raise NotImplementedError(
+                "Batching mode 'separate_conditions' is not implemented yet."
+            )
+
         iterators = {name: iter(dl) for name, dl in self.dataloaders.items()}
         for _ in range(len(self)):
             batch = {}

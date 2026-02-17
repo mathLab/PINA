@@ -7,12 +7,9 @@ different types of Datasets defined in PINA.
 import warnings
 from lightning.pytorch import LightningDataModule
 import torch
-from torch_geometric.data import Data
-from torch.utils.data import DataLoader, SequentialSampler
-from torch.utils.data.distributed import DistributedSampler
-from pina._src.core.label_tensor import LabelTensor
-from pina._src.data.dataset import PinaDatasetFactory, PinaTensorDataset
+from torch_geometric.data import Batch
 from pina._src.data.creator import _Creator
+from pina._src.core.graph import LabelBatch, Graph
 from pina._src.data.aggregator import _Aggregator
 
 
@@ -131,6 +128,7 @@ class PinaDataModule(LightningDataModule):
         self.shuffle = shuffle
         self.batching_mode = batching_mode
         self.automatic_batching = automatic_batching
+        self.batching_mode = batching_mode
 
         # If batch size is None, num_workers has no effect
         if batch_size is None and num_workers != 0:
@@ -244,7 +242,6 @@ class PinaDataModule(LightningDataModule):
         :raises ValueError: If the stage is neither "fit" nor "test".
         """
         if stage == "fit" or stage is None:
-            print("Sono qui")
             self.train_datasets = {
                 name: _ConditionSubset(
                     condition,
@@ -254,7 +251,7 @@ class PinaDataModule(LightningDataModule):
                 for name, condition in self.problem.conditions.items()
                 if len(self.split_idxs[name]["train"]) > 0
             }
-            print(self.train_datasets)
+
             self.val_datasets = {
                 name: _ConditionSubset(
                     condition,
@@ -265,6 +262,7 @@ class PinaDataModule(LightningDataModule):
                 if len(self.split_idxs[name]["val"]) > 0
             }
             return
+
         if stage == "test" or stage is None:
             self.test_datasets = {
                 name: _ConditionSubset(
@@ -281,22 +279,20 @@ class PinaDataModule(LightningDataModule):
             )
 
     def train_dataloader(self):
-        print(self.train_datasets)
         return _Aggregator(
             self.creator(self.train_datasets),
-            batching_mode="separate_conditions",
+            batching_mode=self.batching_mode,
         )
 
     def val_dataloader(self):
-        print(self.val_datasets)
         return _Aggregator(
-            self.creator(self.val_datasets), batching_mode="separate_conditions"
+            self.creator(self.val_datasets), batching_mode=self.batching_mode
         )
 
     def test_dataloader(self):
         return _Aggregator(
             self.creator(self.test_datasets),
-            batching_mode="separate_conditions",
+            batching_mode=self.batching_mode,
         )
 
     @staticmethod
