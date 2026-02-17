@@ -5,7 +5,17 @@ SPDX-License-Identifier: Apache-2.0
 -->
 
 <div align="center">
-
+  <p>
+  <img src="https://img.shields.io/badge/documentation-brightgreen?style=for-the-badge">
+  <img src="https://img.shields.io/badge/tutorial-brightgreen?style=for-the-badge">
+  <img src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge">
+  <img src="https://img.shields.io/badge/JOSS-10.21105/JOSS.05352-blue?logo=open-access&style=for-the-badge"
+           alt="JOSS"/>
+  <img src="https://img.shields.io/github/license/mathLab/PINA?style=for-the-badge"
+           alt="License"/>
+  <img src="https://img.shields.io/pypi/dm/pina-mathlab?label=downloads&logo=pypi&style=plastic"
+           alt="PyPI downloads"/>
+  </p>
   <a href="https://github.com/mathLab/PINA">
     <img src="https://raw.githubusercontent.com/mathLab/PINA/master/readme/pina_logo.png"
          alt="PINA logo"
@@ -19,7 +29,9 @@ SPDX-License-Identifier: Apache-2.0
   <p style="margin-top: 10px; font-size: 1.1rem;">
     <b>A Unified Framework for Scientific Machine Learning</b>
   </p>
+  
 
+           
   <p style="max-width: 800px; font-size: 1rem; line-height: 1.5;">
     <b>PINA</b> is an open-source Python library designed to simplify and accelerate the development of
     <b>Scientific Machine Learning</b> (SciML) solutions, including <b>PINNs</b>, Neural Operators,
@@ -54,6 +66,14 @@ SPDX-License-Identifier: Apache-2.0
 
 
 </div>
+
+  <P>
+  Built on top of
+  <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white">
+  <img src="https://img.shields.io/badge/lightning-792ee5?style=for-the-badge&logo=lightning&logoColor=white">
+  <img src="https://img.shields.io/badge/pyg-1f87e6?style=for-the-badge&logo=pyg&logoColor=white">
+  </P>
+
 
 <hr/>
 
