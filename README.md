@@ -125,7 +125,8 @@ SPDX-License-Identifier: Apache-2.0
 
 <hr/>
 
-<h2>📦 Installation</h2>
+<details>
+<summary><h2 style="padding: 110px; margin-bottom: 250px;">📦 Installation </h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge"></summary>
 
 <h3>Install a stable release</h3>
 
@@ -139,7 +140,7 @@ git checkout master
 pip install .
 </code></pre>
 
-<h3>Install with extra dependencies</h3>
+<summary>Install with extra dependencies</summary>
 
 <p>
 To install additional packages required for development, tests, docs, or tutorials:
@@ -157,8 +158,11 @@ To install additional packages required for development, tests, docs, or tutoria
 </ul>
 
 <hr/>
+</details>
 
-<h2>🚀 Quick Tour</h2>
+
+<details>
+<summary><h2>📦 PINA for Dummies </h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge"></summary>
 
 <p>
 Solving a differential problem in <b>PINA</b> follows a clean four-step pipeline:
@@ -190,6 +194,7 @@ Want to dive deeper? Check out the official
 </p>
 
 <hr/>
+</details>
 
 <h2>🧠 Data-Driven Modeling Example</h2>
 
