@@ -96,7 +96,7 @@ PINA provides an intuitive framework for defining, experimenting with, and solvi
 <summary>
   <h2>Installation</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge">
+  <img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?style=for-the-badge&logo=pypi&logoColor=white">
 </summary>
 
 <h3>Install a stable release</h3>
@@ -136,7 +136,7 @@ To install additional packages required for development, tests, docs, or tutoria
 <summary>
   <h2>PINA for Dummies </h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img align="center" src="https://img.shields.io/badge/documentation-brightgreen?style=for-the-badge">
+  <img align="center" src="https://img.shields.io/badge/documentation-fa9900?style=for-the-badge&logo=readthedocs&labelColor=555">
 </summary>
 
 <p>
@@ -190,7 +190,7 @@ Want to dive deeper? Check out the official
 <summary>
   <h2>PINA by Examples</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img align="center" src="https://img.shields.io/badge/tutorial-brightgreen?style=for-the-badge">
+  <img align="center" src="https://img.shields.io/badge/tutorial-fa9900?style=for-the-badge">
 </summary>
 
 <details>
