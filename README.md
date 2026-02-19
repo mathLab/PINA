@@ -17,15 +17,12 @@ SPDX-License-Identifier: Apache-2.0
 
   </p>
   <a href="https://github.com/mathLab/PINA">
-    <img src="https://raw.githubusercontent.com/mathLab/PINA/master/readme/pina_logo.png"
-         alt="PINA logo"
-         width="220"
+    <img src="https://raw.githubusercontent.com/mathLab/PINA/readme/readme/pina.svg"
+         alt="PINA"
+         width="60%"
          style="max-width: 220px; height: auto;" />
   </a>
 
-  <h1 style="margin-top: 15px; margin-bottom: 0;">
-    PINA
-  </h1>
   <p style="margin-top: 10px; font-size: 1.1rem;">
     <b>A Unified Framework for Scientific Machine Learning</b>
   </p>
