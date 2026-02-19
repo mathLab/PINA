@@ -6,15 +6,15 @@ SPDX-License-Identifier: Apache-2.0
 
 <div align="center">
   <p>
-  <img src="https://img.shields.io/badge/documentation-brightgreen?style=for-the-badge">
-  <img src="https://img.shields.io/badge/tutorial-brightgreen?style=for-the-badge">
-  <img src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge">
-  <img src="https://img.shields.io/badge/JOSS-10.21105/JOSS.05352-blue?logo=open-access&style=for-the-badge"
-           alt="JOSS"/>
-  <img src="https://img.shields.io/github/license/mathLab/PINA?style=for-the-badge"
-           alt="License"/>
-  <img src="https://img.shields.io/pypi/dm/pina-mathlab?label=downloads&logo=pypi&style=plastic"
+  <img src="https://img.shields.io/badge/PyTorch%20ecosystem-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white&labelColor=555">
+  <img src="https://img.shields.io/pypi/dm/pina-mathlab?label=downloads&logo=pypi&style=for-the-badge"
            alt="PyPI downloads"/>
+  <img src="https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FmathLab%2FPINA%2Frefs%2Fheads%2F0.3%2Fpyproject.toml&style=for-the-badge&logo=python&logoColor=white"><br>
+  <img src="https://img.shields.io/github/v/release/mathlab/pina?sort=date&display_name=release&style=for-the-badge">
+  <img src="https://img.shields.io/github/check-runs/mathlab/pina/master?style=for-the-badge&logo=githubactions&logoColor=white&label=master">
+  <img src="https://img.shields.io/github/check-runs/mathlab/pina/dev?style=for-the-badge&logo=githubactions&logoColor=white&label=dev">
+
+
   </p>
   <a href="https://github.com/mathLab/PINA">
     <img src="https://raw.githubusercontent.com/mathLab/PINA/master/readme/pina_logo.png"
@@ -46,38 +46,11 @@ SPDX-License-Identifier: Apache-2.0
   <img src="https://img.shields.io/badge/lightning-792ee5?style=for-the-badge&logo=lightning&logoColor=white">
   <img src="https://img.shields.io/badge/pyg-1f87e6?style=for-the-badge&logo=pyg&logoColor=white">
   </P>
-
-  <P>
-  <h4 style="margin-top: 15px; margin-bottom: 0;">  ────────────── &nbsp; &nbsp; For New User &nbsp; &nbsp; ────────────── </h4>
-  <img src="https://img.shields.io/badge/documentation-brightgreen?style=for-the-badge">
-  <img src="https://img.shields.io/badge/tutorial-brightgreen?style=for-the-badge">
-  </P>
-
-  <P>
-  <h4 style="margin-top: 15px; margin-bottom: 0;">  ────────────── &nbsp; &nbsp; For New User &nbsp; &nbsp; ────────────── </h4>
-  <img src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge">
-  <img src="https://img.shields.io/badge/JOSS-10.21105/JOSS.05352-blue?logo=open-access&style=for-the-badge"
-           alt="JOSS"/>
-  <img src="https://img.shields.io/github/license/mathLab/PINA?style=for-the-badge"
-           alt="License"/>
-  <img src="https://img.shields.io/pypi/dm/pina-mathlab?label=downloads&logo=pypi&style=for-the-badge"
-           alt="PyPI downloads"/>
-  </P>
-
-
 </div>
-
-  <P>
-  Built on top of
-  <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white">
-  <img src="https://img.shields.io/badge/lightning-792ee5?style=for-the-badge&logo=lightning&logoColor=white">
-  <img src="https://img.shields.io/badge/pyg-1f87e6?style=for-the-badge&logo=pyg&logoColor=white">
-  </P>
-
-
 <hr/>
 
-<h2>🗞️ News & Announcements</h2>
+
+<h2>News & Announcements</h2>
 
 <div style="border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin: 12px 0;">
   <ul style="margin: 0; padding-left: 18px; line-height: 1.55;">
@@ -104,29 +77,30 @@ SPDX-License-Identifier: Apache-2.0
 
 <hr/>
 
-<h2>✨ Key Features</h2>
+<h2>What's PINA</h2>
 
-<ul>
-  <li>
-    <b>Modular Architecture</b>:
-    plug, replace, and extend components easily with composable abstractions.
-  </li>
-  <li>
-    <b>Scalable Performance</b>:
-    native multi-device support for efficient large-scale training.
-  </li>
-  <li>
-    <b>Highly Flexible</b>:
-    use high-level APIs for speed or dive into full customization when needed.
-  </li>
-</ul>
+PINA provides an intuitive framework for defining, experimenting with, and solving complex problems using Neural Networks, Physics-Informed Neural Networks (PINNs), Neural Operators, and more.
+
+- **Modular Architecture**: Designed with modularity in mind and relying on powerful yet composable abstractions, PINA allows users to easily plug, replace, or extend components, making experimentation and customization straightforward.
+
+- **Scalable Performance**: With native support for multi-device training, PINA handles large datasets efficiently, offering performance close to hand-crafted implementations with minimal overhead.
+
+- **Highly Flexible**: Whether you're looking for full automation or granular control, PINA adapts to your workflow. High-level abstractions simplify model definition, while expert users can dive deep to fine-tune every aspect of the training and inference process.
+
+
 
 <img src="pina2 (1).gif">
+
+
 
 <hr/>
 
 <details>
-<summary><h2 style="padding: 110px; margin-bottom: 250px;">📦 Installation </h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge"></summary>
+<summary>
+  <h2>Installation</h2>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge">
+</summary>
 
 <h3>Install a stable release</h3>
 
@@ -162,7 +136,11 @@ To install additional packages required for development, tests, docs, or tutoria
 
 
 <details>
-<summary><h2>📦 PINA for Dummies </h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?label=version&logo=pypi&style=for-the-badge"></summary>
+<summary>
+  <h2>PINA for Dummies </h2>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img align="center" src="https://img.shields.io/badge/documentation-brightgreen?style=for-the-badge">
+</summary>
 
 <p>
 Solving a differential problem in <b>PINA</b> follows a clean four-step pipeline:
@@ -188,6 +166,21 @@ Solving a differential problem in <b>PINA</b> follows a clean four-step pipeline
   </li>
 </ol>
 
+```mermaid
+flowchart LR
+    STEP1["<h2>Problem and Data</h2> Define the mathematical problem<br>Identify constraints or import data"]
+    STEP2["<h2>Model Design</h2> Build a PyTorch module Choose or customize a model"]
+    STEP3["<h2>Solver Selection</h2> Use available solvers or define your own strategy"]
+    STEP4["<h2>Training</h2> Optimize the model with PyTorch Lightning"]
+
+    STEP1 e1@--> STEP2
+    STEP2 e2@--> STEP3
+    STEP3 e3@--> STEP4
+    e1@{ animate: true }
+    e2@{ animate: true }
+    e3@{ animate: true }
+```
+
 <p>
 Want to dive deeper? Check out the official
 <a href="https://github.com/mathLab/PINA/tree/master/tutorials#pina-tutorials"><b>Tutorials</b></a>.
@@ -196,9 +189,18 @@ Want to dive deeper? Check out the official
 <hr/>
 </details>
 
-<h2>🧠 Data-Driven Modeling Example</h2>
+<details>
+<summary>
+  <h2>PINA by Examples</h2>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img align="center" src="https://img.shields.io/badge/tutorial-brightgreen?style=for-the-badge">
+</summary>
 
-<pre><code class="language-python">import torch
+<details>
+<summary><h3>Data-Driven Modeling Example</h3></summary>
+
+```python  
+import torch
 from pina import Trainer
 from pina.model import FeedForward
 from pina.solver import SupervisedSolver
@@ -219,11 +221,14 @@ solver = SupervisedSolver(problem, model, use_lt=False)
 # Step 4. Train
 trainer = Trainer(solver, max_epochs=1000, accelerator="gpu")
 trainer.train()
-</code></pre>
-
+```
 <hr/>
 
-<h2>🧩 Physics-Informed Example</h2>
+</details>
+
+<details>
+  
+<summary><h3>Physics-Informed Example</h3></summary>
 
 <p>
 Consider the following differential problem:
@@ -238,7 +243,8 @@ Consider the following differential problem:
 In PINA, this can be implemented as:
 </p>
 
-<pre><code class="language-python">from pina import Trainer, Condition
+```python
+from pina import Trainer, Condition
 from pina.problem import SpatialProblem
 from pina.operator import grad
 from pina.solver import PINN
@@ -276,21 +282,80 @@ solver = PINN(problem, model)
 # Step 4. Train
 trainer = Trainer(solver, max_epochs=1000, accelerator="gpu")
 trainer.train()
-</code></pre>
-
+```
 <hr/>
+</details>
+</details>
 
-<h2>📚 API Overview</h2>
+<details>
+<summary>
+  <h2>Contributing & Community</h2>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img align="center" src="https://img.shields.io/github/contributors/mathlab/pina?style=for-the-badge">
+</summary>
+<p>
+We would love to develop PINA together with the community.
+A great place to start is the list of
+<a href="https://github.com/mathLab/PINA/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22">
+  <b>good-first-issue</b>
+</a>
+issues.
+</p>
 
 <p>
-Here is a high-level overview of PINA’s main modules. For full details, refer to the
-<a href="https://mathlab.github.io/PINA/"><b>documentation</b></a>.
+If you would like to contribute, please read the
+<a href="CONTRIBUTING.md"><b>Contributing Guide</b></a>.
 </p>
 
 <p align="center">
-## PINA Modules Structure
-Here's a quick look at PINA's main module. For a better experience and full details, check out the [documentation](https://mathlab.github.io/PINA/).
+  <a href="https://github.com/mathLab/PINA/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=mathLab/PINA"
+         alt="Contributors"
+         style="max-width: 100%; height: auto;" />
+  </a>
+</p>
 
+<p align="center">
+  Made with <a href="https://contrib.rocks/">contrib.rocks</a>.
+</p>
+
+<hr/>
+</details>
+
+<details>
+<summary>
+  <h2>Citation</h2>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img align="center" src="https://img.shields.io/badge/JOSS-10.21105/JOSS.05352-blue?logo=open-access&style=for-the-badge&logoColor=white">
+</summary>
+<p>
+If <b>PINA</b> has been significant in your research and you would like to acknowledge it, please cite:
+</p>
+
+<pre><code>Coscia, D., Ivagnes, A., Demo, N., & Rozza, G. (2023).
+Physics-Informed Neural networks for Advanced modeling.
+Journal of Open Source Software, 8(87), 5352.</code></pre>
+
+<p>Or in BibTeX format:</p>
+
+<pre><code>@article{coscia2023physics,
+  title={Physics-Informed Neural networks for Advanced modeling},
+  author={Coscia, Dario and Ivagnes, Anna and Demo, Nicola and Rozza, Gianluigi},
+  journal={Journal of Open Source Software},
+  volume={8},
+  number={87},
+  pages={5352},
+  year={2023}
+}</code></pre>
+</details>
+
+
+<h2>API(NA)</h2>
+
+
+Here is a high-level overview of PINA’s main modules. For full details, refer to the
+<a href="https://mathlab.github.io/PINA/"><b>documentation</b></a>.
+  
 ```mermaid
 flowchart TB
     PINA["<h1>pina</h1>The basic module including `Condition`, <tt>LabelTensor</tt>, `Graph` and `Trainer` API"]
@@ -333,76 +398,4 @@ flowchart TB
     BLOCK --> ADAPT
     OPTIM --> LOSS
     DATA --> CONDITION
-
 ```
-### Steps to Follow
-
-```mermaid
-flowchart LR
-    STEP1["<h2>Problem and Data</h2> Define the mathematical problem<br>Identify constraints or import data"]
-    STEP2["<h2>Model Design</h2> Build a PyTorch module Choose or customize a model"]
-    STEP3["<h2>Solver Selection</h2> Use available solvers or define your own strategy"]
-    STEP4["<h2>Training</h2> Optimize the model with PyTorch Lightning"]
-
-    STEP1 e1@--> STEP2
-    STEP2 e2@--> STEP3
-    STEP3 e3@--> STEP4
-    e1@{ animate: true }
-    e2@{ animate: true }
-    e3@{ animate: true }
-```
-</p>
-
-<hr/>
-
-<h2>🤝 Contributing & Community</h2>
-
-<p>
-We would love to develop PINA together with the community.
-A great place to start is the list of
-<a href="https://github.com/mathLab/PINA/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22">
-  <b>good-first-issue</b>
-</a>
-issues.
-</p>
-
-<p>
-If you would like to contribute, please read the
-<a href="CONTRIBUTING.md"><b>Contributing Guide</b></a>.
-</p>
-
-<p align="center">
-  <a href="https://github.com/mathLab/PINA/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=mathLab/PINA"
-         alt="Contributors"
-         style="max-width: 100%; height: auto;" />
-  </a>
-</p>
-
-<p align="center">
-  Made with <a href="https://contrib.rocks/">contrib.rocks</a>.
-</p>
-
-<hr/>
-
-<h2>📌 Citation</h2>
-
-<p>
-If <b>PINA</b> has been significant in your research and you would like to acknowledge it, please cite:
-</p>
-
-<pre><code>Coscia, D., Ivagnes, A., Demo, N., & Rozza, G. (2023).
-Physics-Informed Neural networks for Advanced modeling.
-Journal of Open Source Software, 8(87), 5352.</code></pre>
-
-<p>Or in BibTeX format:</p>
-
-<pre><code>@article{coscia2023physics,
-  title={Physics-Informed Neural networks for Advanced modeling},
-  author={Coscia, Dario and Ivagnes, Anna and Demo, Nicola and Rozza, Gianluigi},
-  journal={Journal of Open Source Software},
-  volume={8},
-  number={87},
-  pages={5352},
-  year={2023}
-}</code></pre>
