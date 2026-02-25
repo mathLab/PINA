@@ -105,11 +105,12 @@ class SystemEquation(EquationInterface):
         self.to(input_.device)
 
         # Compute the residual for each equation
-        residual = torch.hstack(
+        residual = torch.cat(
             [
                 equation.residual(input_, output_, params_)
                 for equation in self.equations
-            ]
+            ],
+            dim=-1,
         )
 
         # Skip reduction if not specified
