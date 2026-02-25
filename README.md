@@ -96,7 +96,9 @@ PINA provides an intuitive framework for defining, experimenting with, and solvi
 <summary>
   <h2>Installation</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://pypi.org/project/pina-mathlab/">
   <img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?style=for-the-badge&logo=pypi&logoColor=white">
+  </a>
 </summary>
 
 <h3>Install a stable release</h3>
@@ -134,9 +136,11 @@ To install additional packages required for development, tests, docs, or tutoria
 
 <details>
 <summary>
-  <h2>PINA for Dummies </h2>
+  <h2>Getting started with PINA</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img align="center" src="https://img.shields.io/badge/documentation-fa9900?style=for-the-badge&logo=readthedocs&labelColor=555">
+  <a href="https://mathlab.github.io/PINA/">
+    <img align="center" src="https://img.shields.io/badge/documentation-fa9900?style=for-the-badge&logo=readthedocs&labelColor=555">
+  </a>
 </summary>
 
 <p>
@@ -323,7 +327,9 @@ If you would like to contribute, please read the
 <summary>
   <h2>Citation</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img align="center" src="https://img.shields.io/badge/JOSS-10.21105/JOSS.05352-blue?logo=open-access&style=for-the-badge&logoColor=white">
+  <a href="https://doi.org/10.21105/joss.05352">
+    <img align="center" src="https://img.shields.io/badge/JOSS-10.21105/JOSS.05352-blue?logo=open-access&style=for-the-badge&logoColor=white">
+  </a>
 </summary>
 <p>
 If <b>PINA</b> has been significant in your research and you would like to acknowledge it, please cite:
