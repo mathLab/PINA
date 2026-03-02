@@ -131,12 +131,30 @@ class Trainer(lightning.pytorch.Trainer):
             automatic_batching if automatic_batching is not None else False
         )
 
+        if batch_size is None and batching_mode != "common_batch_size":
+            warnings.warn(
+                "Batching mode is set to "
+                f"{batching_mode} but batch_size is None. "
+                "Batching mode will be set to common_batch_size.",
+                UserWarning,
+            )
+            batching_mode = "common_batch_size"
+
+        if batch_size == 1 and batching_mode == "proportional":
+            warnings.warn(
+                "Batching mode is set to proportional but batch_size is 1. "
+                "Batching mode will be set to common_batch_size.",
+                UserWarning,
+            )
+            batching_mode = "common_batch_size"
+
         # set attributes
         self.compile = compile
         self.solver = solver
         self.batch_size = batch_size
         self._move_to_device()
         self.data_module = None
+
         self._create_datamodule(
             train_size=train_size,
             test_size=test_size,

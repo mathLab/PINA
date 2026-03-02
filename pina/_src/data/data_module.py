@@ -72,7 +72,7 @@ class PinaDataModule(LightningDataModule):
         val_size=0.1,
         batch_size=None,
         shuffle=True,
-        batching_mode="separate_conditions",
+        batching_mode="common_batch_size",
         automatic_batching=None,
         num_workers=0,
         pin_memory=False,
@@ -95,7 +95,7 @@ class PinaDataModule(LightningDataModule):
             Default ``True``.
         :param str batching_mode: The batching mode to use. Options are
             ``"common_batch_size"``, ``"proportional"``, and
-            ``"separate_conditions"``. Default is ``"separate_conditions"``.
+            ``"separate_conditions"``. Default is ``"common_batch_size"``.
         :param automatic_batching: If ``True``, automatic PyTorch batching
             is performed, which consists of extracting one element at a time
             from the dataset and collating them into a batch. This is useful
@@ -241,7 +241,7 @@ class PinaDataModule(LightningDataModule):
 
         :raises ValueError: If the stage is neither "fit" nor "test".
         """
-        if stage == "fit" or stage is None:
+        if stage in ("fit", None):
             self.train_datasets = {
                 name: _ConditionSubset(
                     condition,
@@ -261,9 +261,8 @@ class PinaDataModule(LightningDataModule):
                 for name, condition in self.problem.conditions.items()
                 if len(self.split_idxs[name]["val"]) > 0
             }
-            return
 
-        if stage == "test" or stage is None:
+        if stage in ("test", None):
             self.test_datasets = {
                 name: _ConditionSubset(
                     condition,
@@ -273,7 +272,7 @@ class PinaDataModule(LightningDataModule):
                 for name, condition in self.problem.conditions.items()
                 if len(self.split_idxs[name]["test"]) > 0
             }
-        else:
+        if stage not in ("fit", "test", None):
             raise ValueError(
                 f"Invalid stage {stage}. Stage must be either 'fit' or 'test'."
             )
