@@ -140,7 +140,11 @@ class Trainer(lightning.pytorch.Trainer):
             )
             batching_mode = "common_batch_size"
 
-        if batch_size == 1 and batching_mode == "proportional":
+        if (
+            batch_size is not None
+            and batch_size <= len(solver.problem.conditions)
+            and batching_mode == "proportional"
+        ):
             warnings.warn(
                 "Batching mode is set to proportional but batch_size is 1. "
                 "Batching mode will be set to common_batch_size.",

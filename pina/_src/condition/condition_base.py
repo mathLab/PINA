@@ -142,7 +142,7 @@ class ConditionBase(ConditionInterface):
         :return: The decorated function with the new dataloader function.
         :rtype: function
         """
-        # Replace the create_dataloader method of the ConditionBase class with 
+        # Replace the create_dataloader method of the ConditionBase class with
         # the new function
         self.has_custom_dataloader_fn = True
         self.create_dataloader = create_dataloader_fn
