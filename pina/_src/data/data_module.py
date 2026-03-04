@@ -24,9 +24,11 @@ class _ConditionSubset:
         self.condition = condition
         self.indices = indices
         self.automatic_batching = automatic_batching
+        self.length = len(self.indices)
+        self.max_len = self.length
 
     def __len__(self):
-        return len(self.indices)
+        return self.max_len
 
     def __getitem__(self, idx):
         """
@@ -36,6 +38,8 @@ class _ConditionSubset:
         :return: The data corresponding to the given index.
         :rtype: dict
         """
+        if idx >= self.length:
+            idx = idx % self.length
         idx = self.indices[idx]
         if not self.automatic_batching:
             return idx

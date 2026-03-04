@@ -166,7 +166,11 @@ class _Creator:
         # Compute batch sizes per condition based on batching_mode
         batch_sizes = self._compute_batch_sizes(datasets)
         dataloaders = {}
+        if self.batching_mode == "common_batch_size":
+            max_len = max(len(dataset) for dataset in datasets.values())
         for name, dataset in datasets.items():
+            if self.batching_mode == "common_batch_size":
+                dataset.max_len = max_len
             dataloaders[name] = self.conditions[name].create_dataloader(
                 dataset=dataset,
                 batch_size=batch_sizes[name],
