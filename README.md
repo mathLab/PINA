@@ -6,9 +6,13 @@ SPDX-License-Identifier: Apache-2.0
 
 <div align="center">
   <p>
-  <img src="https://img.shields.io/badge/PyTorch%20ecosystem-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white&labelColor=555">
-  <img src="https://img.shields.io/pypi/dm/pina-mathlab?label=downloads&logo=pypi&style=for-the-badge"
-           alt="PyPI downloads"/>
+  <a href="https://landscape.pytorch.org/?group=pytorch-ecosystem">
+    <img src="https://img.shields.io/badge/PyTorch%20ecosystem-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white&labelColor=555">
+  </a>
+  <a href="https://pypi.org/project/pina-mathlab/">
+    <img src="https://img.shields.io/pypi/dm/pina-mathlab?label=downloads&logo=pypi&style=for-the-badge"
+         alt="PyPI downloads"/>
+  </a>
   <img src="https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FmathLab%2FPINA%2Frefs%2Fheads%2F0.3%2Fpyproject.toml&style=for-the-badge&logo=python&logoColor=white"><br>
   <img src="https://img.shields.io/github/v/release/mathlab/pina?sort=date&display_name=release&style=for-the-badge">
   <img src="https://img.shields.io/github/check-runs/mathlab/pina/master?style=for-the-badge&logo=githubactions&logoColor=white&label=master">
@@ -38,10 +42,15 @@ SPDX-License-Identifier: Apache-2.0
   <P>
   <h4 style="margin-top: 15px; margin-bottom: 0;">  Built on top of </h4>
 
-    
-  <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white">
-  <img src="https://img.shields.io/badge/lightning-792ee5?style=for-the-badge&logo=lightning&logoColor=white">
-  <img src="https://img.shields.io/badge/pyg-1f87e6?style=for-the-badge&logo=pyg&logoColor=white">
+  <a href="https://pytorch.org/"> 
+    <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white">
+  </a>
+  <a href="https://lightning.ai/docs/pytorch/stable/">
+    <img src="https://img.shields.io/badge/lightning-792ee5?style=for-the-badge&logo=lightning&logoColor=white">
+  </a>
+  <a href="https://pytorch-geometric.readthedocs.io/">
+    <img src="https://img.shields.io/badge/pyg-1f87e6?style=for-the-badge&logo=pyg&logoColor=white">
+  </a>
   </P>
 </div>
 <hr/>
@@ -86,7 +95,9 @@ PINA provides an intuitive framework for defining, experimenting with, and solvi
 
 
 
-<img src="pina2 (1).gif">
+<img src="https://raw.githubusercontent.com/mathLab/PINA/readme/readme/applications.gif"
+     alt="PINA pipeline"
+     style="max-width: 100%; height: auto; margin-top: 20px;" />
 
 
 
@@ -97,7 +108,7 @@ PINA provides an intuitive framework for defining, experimenting with, and solvi
   <h2>Installation</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://pypi.org/project/pina-mathlab/">
-  <img align="center" src="https://img.shields.io/pypi/v/pina-mathlab?style=for-the-badge&logo=pypi&logoColor=white">
+  <img align="center" height="20" src="https://img.shields.io/pypi/v/pina-mathlab?style=for-the-badge&logo=pypi&logoColor=white">
   </a>
 </summary>
 
@@ -139,7 +150,11 @@ To install additional packages required for development, tests, docs, or tutoria
   <h2>Getting started with PINA</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://mathlab.github.io/PINA/">
-    <img align="center" src="https://img.shields.io/badge/documentation-fa9900?style=for-the-badge&logo=readthedocs&labelColor=555">
+    <img align="center" height="20" src="https://img.shields.io/badge/documentation-fa9900?style=for-the-badge&logo=readthedocs&labelColor=555">
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="API_scheme.md">
+    <img align="center" height="20" src="https://img.shields.io/badge/API%20Scheme-fa9900?style=for-the-badge">
   </a>
 </summary>
 
@@ -194,7 +209,9 @@ Want to dive deeper? Check out the official
 <summary>
   <h2>PINA by Examples</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img align="center" src="https://img.shields.io/badge/tutorial-fa9900?style=for-the-badge">
+  <a href="https://github.com/mathLab/PINA/blob/master/tutorials/README.md">
+  <img align="center" height="20" src="https://img.shields.io/badge/tutorial-fa9900?style=for-the-badge&logo=jupyter&logoColor=white&labelColor=555">
+  </a>
 </summary>
 
 <details>
@@ -235,11 +252,12 @@ trainer.train()
 Consider the following differential problem:
 </p>
 
-<p align="center">
-  <img src="https://latex.codecogs.com/svg.image?\Large\begin{cases}\frac{d}{dx}u(x)=u(x)\quad&x\in(0,1)\\u(0)=1\end{cases}"
-       alt="ODE equation" />
-</p>
-
+$$
+\begin{cases}
+\frac{d}{dx}u(x) &=  u(x) \quad x \in(0,1)\\
+u(x=0) &= 1
+\end{cases}
+$$
 <p>
 In PINA, this can be implemented as:
 </p>
@@ -292,7 +310,7 @@ trainer.train()
 <summary>
   <h2>Contributing & Community</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img align="center" src="https://img.shields.io/github/contributors/mathlab/pina?style=for-the-badge">
+  <img align="center" height="20" src="https://img.shields.io/github/contributors/mathlab/pina?style=for-the-badge">
 </summary>
 <p>
 We would love to develop PINA together with the community.
@@ -328,7 +346,7 @@ If you would like to contribute, please read the
   <h2>Citation</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://doi.org/10.21105/joss.05352">
-    <img align="center" src="https://img.shields.io/badge/JOSS-10.21105/JOSS.05352-blue?logo=open-access&style=for-the-badge&logoColor=white">
+    <img align="center" height="20" src="https://img.shields.io/badge/JOSS-10.21105/JOSS.05352-blue?logo=open-access&style=for-the-badge&logoColor=white">
   </a>
 </summary>
 <p>
@@ -351,54 +369,3 @@ Journal of Open Source Software, 8(87), 5352.</code></pre>
   year={2023}
 }</code></pre>
 </details>
-
-
-<h2>API(NA)</h2>
-
-
-Here is a high-level overview of PINA’s main modules. For full details, refer to the
-<a href="https://mathlab.github.io/PINA/"><b>documentation</b></a>.
-  
-```mermaid
-flowchart TB
-    PINA["<h1>pina</h1>The basic module including `Condition`, <tt>LabelTensor</tt>, `Graph` and `Trainer` API"]
-
-    subgraph R1[" "]
-        direction LR
-        PROB["<h2>pina.problem</h2> Module for defining problems via base class inheritance"]
-        MODEL["<h2>pina.model</h2> Module for built-in PyTorch models full architectures"]
-        SOLVER["<h2>pina.solver</h2> Module for built-in solvers and abstract interfaces"]
-        CALLBACK["<h2>pina.callback</h2> Module for built-in callbacks to integrate training pipelines"]
-    end
-
-    subgraph R2[" "]
-        direction LR
-        DOMAIN["<h2>pina.domain</h2> Module for defining geometries and set operations"]
-        BLOCK["<h2>pina.block</h2> Module for built-in PyTorch models layers only"]
-        OPTIM["<h2>pina.optim</h2> Module for build or import optimizers and schedulers"]
-        DATA["<h2>pina.data</h2> Module for DataModules for data processing"]
-    end
-
-    subgraph R3[" "]
-        direction LR
-        OPERATOR["<h2>pina.operator</h2> Module for differential operators"]
-        ADAPT["<h2>pina.adaptive_function</h2> Module for PyTorch learnable activations"]
-        LOSS["<h2>pina.loss</h2> Module for losses and weighting strategies"]
-        CONDITION["<h2>pina.condition</h2> Module for model training constraints"]
-    end
-
-    PINA --> PROB
-    PINA --> MODEL
-    PINA --> SOLVER
-    PINA --> CALLBACK
-
-    PROB --> DOMAIN
-    MODEL --> BLOCK
-    SOLVER --> OPTIM
-    CALLBACK --> DATA
-
-    DOMAIN --> OPERATOR
-    BLOCK --> ADAPT
-    OPTIM --> LOSS
-    DATA --> CONDITION
-```
