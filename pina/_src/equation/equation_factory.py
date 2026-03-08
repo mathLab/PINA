@@ -382,7 +382,7 @@ class Helmholtz(Equation):  # pylint: disable=R0903
 
             \Delta u + k u - f = 0
 
-    Here, :math:`k` is a parameter of the equation, while :math:`f` is the
+    Here, :math:`k` is the squared wavenumber, while :math:`f` is the
     forcing term.
     """
 
@@ -390,7 +390,7 @@ class Helmholtz(Equation):  # pylint: disable=R0903
         """
         Initialization of the :class:`Helmholtz` class.
 
-        :param k: The parameter of the equation.
+        :param k: The squared wavenumber.
         :type k: float | int
         :param Callable forcing_term: The forcing field function, taking as
             input the points on which evaluation is required.

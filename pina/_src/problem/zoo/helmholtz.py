@@ -37,30 +37,38 @@ class HelmholtzProblem(SpatialProblem):
         "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
     }
 
-    def __init__(self, alpha=3.0):
+    def __init__(self, k=1.0, alpha_x=1, alpha_y=4):
         """
         Initialization of the :class:`HelmholtzProblem` class.
 
-        :param alpha: Parameter of the forcing term. Default is 3.0.
-        :type alpha: float | int
+        :param k: The squared wavenumber. Default is 1.0.
+        :type k: float | int
+        :param int alpha_x: The frequency in the x-direction. Default is 1.
+        :param int alpha_y: The frequency in the y-direction. Default is 4.
         """
         super().__init__()
-        check_consistency(alpha, (int, float))
-        self.alpha = alpha
+        check_consistency(k, (int, float))
+        check_consistency(alpha_x, int)
+        check_consistency(alpha_y, int)
+        self.k = k
+        self.alpha_x = alpha_x
+        self.alpha_y = alpha_y
 
         def forcing_term(input_):
             """
             Implementation of the forcing term.
             """
+            x, y, pi = input_["x"], input_["y"], torch.pi
+            factor = (self.alpha_x**2 + self.alpha_y**2) * pi**2
             return (
-                (1 - 2 * (self.alpha * torch.pi) ** 2)
-                * torch.sin(self.alpha * torch.pi * input_.extract("x"))
-                * torch.sin(self.alpha * torch.pi * input_.extract("y"))
+                (self.k - factor)
+                * torch.sin(self.alpha_x * pi * x)
+                * torch.sin(self.alpha_y * pi * y)
             )
 
         self.conditions["D"] = Condition(
             domain="D",
-            equation=Helmholtz(self.alpha, forcing_term),
+            equation=Helmholtz(self.k, forcing_term),
         )
 
     def solution(self, pts):
@@ -68,11 +76,12 @@ class HelmholtzProblem(SpatialProblem):
         Implementation of the analytical solution of the Helmholtz problem.
 
         :param LabelTensor pts: Points where the solution is evaluated.
-        :return: The analytical solution of the Poisson problem.
+        :return: The analytical solution of the Helmholtz problem.
         :rtype: LabelTensor
         """
-        sol = torch.sin(self.alpha * torch.pi * pts.extract("x")) * torch.sin(
-            self.alpha * torch.pi * pts.extract("y")
+        x, y, pi = pts["x"], pts["y"], torch.pi
+        sol = torch.sin(self.alpha_x * pi * x) * torch.sin(
+            self.alpha_y * pi * y
         )
         sol.labels = self.output_variables
         return sol
