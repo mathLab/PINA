@@ -104,3 +104,21 @@ class InputTargetCondition(BaseCondition):
             list[Data] | tuple[Graph] | tuple[Data]
         """
         return self.data.target
+
+    def evaluate(self, batch, solver, loss):
+        """
+        Evaluate the supervised condition on the given batch using the solver.
+
+        This method computes the element-wise loss associated with the
+        condition using the input and target stored in the provided batch.
+
+        :param batch: The batch containing ``input`` and ``target`` entries.
+        :type batch: dict | _DataManager
+        :param solver: The solver containing the model.
+        :type solver: ~pina.solver.solver.SolverInterface
+        :param loss: The non-aggregating loss function to apply.
+        :type loss: torch.nn.Module
+        :return: The non-aggregated loss tensor.
+        :rtype: LabelTensor | torch.Tensor | Graph | Data
+        """
+        return loss(solver.forward(batch["input"]), batch["target"])
