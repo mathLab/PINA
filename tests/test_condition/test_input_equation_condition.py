@@ -121,6 +121,17 @@ def test_create_batch(case):
     data_to_collate = [condition.data[i] for i in idx]
     batch_auto = condition.automatic_batching_collate_fn(data_to_collate)
     batch_collate = condition.collate_fn(idx, condition)
+    pts = LabelTensor(torch.randn(10, 2), labels=["x", "y"])
+    condition = Condition(input=pts, equation=Equation(equation_func))
+    solver = DummySolver()
+    batch = {"input": pts}
+    loss = torch.nn.MSELoss(reduction="none")
+
+    residual = condition.evaluate(batch, solver, loss)
+    expected = loss(
+        pts.extract(["y"]) - solver._params["shift"],
+        torch.zeros_like(pts.extract(["y"]) - solver._params["shift"]),
+    )
 
     # Check that the automatic batch has been properly created
     assert isinstance(batch_auto, (_BatchManager))

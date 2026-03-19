@@ -14,6 +14,12 @@ from pina.data.manager import (
 def _create_tensor_data(use_lt):
 
     # If LabelTensor is used, create tensors with labels
+class DummySolver:
+    def forward(self, samples):
+        return 2 * samples
+
+
+def _create_tensor_data(use_lt=False):
     if use_lt:
         input_tensor = LabelTensor(torch.rand((10, 3)), ["x", "y", "z"])
         target_tensor = LabelTensor(torch.rand((10, 2)), ["a", "b"])
@@ -70,6 +76,20 @@ def _assert_graph_type(graph_list, use_lt, is_input):
     for graph in graph_list:
         value = graph.x if is_input else graph.y
         _assert_tensor_type(value, use_lt)
+
+
+def test_evaluate_tensor_input_target_condition():
+    input_tensor = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+    target_tensor = torch.tensor([[1.5, 3.5], [5.5, 7.5]])
+    condition = Condition(input=input_tensor, target=target_tensor)
+    solver = DummySolver()
+    loss_fn = torch.nn.MSELoss(reduction="none")
+
+    batch = {"input": condition.input, "target": condition.target}
+    loss = condition.evaluate(batch, solver, loss_fn)
+    expected = loss_fn(solver.forward(input_tensor), target_tensor)
+
+    torch.testing.assert_close(loss, expected)
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
