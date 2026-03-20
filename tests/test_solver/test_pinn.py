@@ -14,7 +14,6 @@ from pina.problem.zoo import (
     Poisson2DSquareProblem as Poisson,
     InversePoisson2DSquareProblem as InversePoisson,
 )
-from torch._dynamo.eval_frame import OptimizedModule
 
 # define problems
 problem = Poisson()

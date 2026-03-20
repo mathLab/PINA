@@ -92,18 +92,12 @@ class SingleModelSimpleSolver(SingleSolverInterface):
             condition = self.problem.conditions[condition_name]
             condition_data = dict(data)
 
-            if hasattr(condition_data.get("input"), "requires_grad_"):
-                condition_data["input"] = condition_data[
-                    "input"
-                ].requires_grad_()
-
             condition_loss_tensor = condition.evaluate(
                 condition_data, self, self._loss_fn
             )
             condition_losses[condition_name] = self._apply_reduction(
                 condition_loss_tensor
             )
-
         return condition_losses
 
     def _apply_reduction(self, value):

@@ -99,8 +99,8 @@ class Trainer(lightning.pytorch.Trainer):
 
         # inference mode set to false when validating/testing PINNs otherwise
         # gradient is not tracked and optimization_cycle fails
-        if isinstance(solver, PINNInterface):
-            kwargs["inference_mode"] = False
+        #if isinstance(solver, PINNInterface):
+        kwargs["inference_mode"] = False
 
         # Logging depends on the batch size, when batch_size is None then
         # log_every_n_steps should be zero
