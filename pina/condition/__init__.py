@@ -14,6 +14,7 @@ __all__ = [
     "InputTargetCondition",
     "InputEquationCondition",
     "DataCondition",
+    "TimeSeriesCondition",
 ]
 
 from pina._src.condition.condition_interface import ConditionInterface
@@ -25,3 +26,4 @@ from pina._src.condition.domain_equation_condition import (
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.data_condition import DataCondition
+from pina._src.condition.time_series_condition import TimeSeriesCondition

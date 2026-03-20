@@ -44,9 +44,8 @@ class EquationConditionBase(ConditionBase):
             >>> # residuals is a non-reduced tensor of shape (n_samples, ...)
         """
         samples = batch["input"].requires_grad_(True)
-        print("samples", samples)
         residual = self.equation.residual(
             samples, solver.forward(samples), solver._params
         )
         # assert False
-        return residual**2
+        return residual
