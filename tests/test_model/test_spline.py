@@ -2,7 +2,7 @@ import torch
 import pytest
 from scipy.interpolate import BSpline
 from pina.operator import grad
-from pina.model import Spline
+from pina.model import Spline, VectorizedSpline
 from pina import LabelTensor
 
 # Utility quantities for testing
@@ -193,30 +193,23 @@ def test_derivative(args, pts):
     assert torch.allclose(first_der, first_der_auto, atol=1e-4, rtol=1e-4)
 
 
-#@pytest.mark.parametrize("args", valid_args) # TODO
-def test_vectorized():
+@pytest.mark.parametrize("args", valid_args)
+@pytest.mark.parametrize("N", [1, 4, 7])
+def test_vectorized(args, N):
 
-    N = 7
     cps = []
     splines = []
-    for i in range(N):
-        cp = torch.rand(n_ctrl_pts)
-        cps.append(cp)
-        spline = Spline(
-            order=order,
-            control_points=cp
-        )
-        splines.append(spline)
 
-    from pina.model import VectorizedSpline
+    for i in range(N):
+        spline = Spline(**args)
+        splines.append(spline)
+        cps.append(spline.control_points)
+
     unique_cps = torch.stack(cps, dim=0)
-    print(unique_cps.shape)
-    print(cps[0].shape)
-    # Vectorized control points
     vectorized_spline = VectorizedSpline(
-        order=order,
+        order=args["order"],
         knots=splines[0].knots,
-        control_points=torch.stack(cps, dim=0)
+        control_points=unique_cps
     )
 
     x = torch.rand(100, 1)
@@ -224,9 +217,6 @@ def test_vectorized():
     result_single = torch.stack([
         splines[i](x) for i in range(N)
     ])
-    print(result_single.shape)
     result_single = result_single.permute(1, 2, 0)
     out_vectorized = vectorized_spline(x)
-    print(out_vectorized.shape)
-    print(result_single.shape)
     assert torch.allclose(out_vectorized, result_single, atol=1e-5, rtol=1e-5)

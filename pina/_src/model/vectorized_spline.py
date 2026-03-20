@@ -3,6 +3,7 @@
 import torch
 import torch.nn as nn
 
+
 class VectorizedSpline(nn.Module):
     """
     Vectorized univariate B-spline model (shared knots, many splines).
@@ -21,7 +22,12 @@ class VectorizedSpline(nn.Module):
       - if control_points is (S, O, n_ctrl):  shape (..., S, O)
     """
 
-    def __init__(self, order: int, knots: torch.Tensor, control_points: torch.Tensor | None = None):
+    def __init__(
+        self,
+        order: int,
+        knots: torch.Tensor,
+        control_points: torch.Tensor | None = None,
+    ):
         super().__init__()
         if not isinstance(order, int) or order <= 0:
             raise ValueError("order must be a positive integer.")
@@ -38,10 +44,14 @@ class VectorizedSpline(nn.Module):
 
         n_ctrl = knots_sorted.numel() - order
         if n_ctrl <= 0:
-            raise ValueError(f"Need #knots > order. Got #knots={knots_sorted.numel()} order={order}.")
+            raise ValueError(
+                f"Need #knots > order. Got #knots={knots_sorted.numel()} order={order}."
+            )
 
         # boundary interval idx for rightmost inclusion
-        self._boundary_interval_idx = self._compute_boundary_interval_idx(knots_sorted)
+        self._boundary_interval_idx = self._compute_boundary_interval_idx(
+            knots_sorted
+        )
 
         # # control points init
         # if control_points is None:
@@ -90,13 +100,17 @@ class VectorizedSpline(nn.Module):
         knots = self.knots.view(*([1] * x.ndim), -1)
 
         # order-1 base: indicator on intervals [t_i, t_{i+1})
-        basis = ((x_exp >= knots[..., :-1]) & (x_exp < knots[..., 1:])).to(x_exp.dtype)  # (..., m-1)
+        basis = ((x_exp >= knots[..., :-1]) & (x_exp < knots[..., 1:])).to(
+            x_exp.dtype
+        )  # (..., m-1)
 
         # include rightmost boundary in the last non-degenerate interval
         j = self._boundary_interval_idx
         knot_left = knots[..., j]
         knot_right = knots[..., j + 1]
-        at_right = (x >= knot_left.squeeze(-1)) & torch.isclose(x, knot_right.squeeze(-1), rtol=1e-8, atol=1e-10)
+        at_right = (x >= knot_left.squeeze(-1)) & torch.isclose(
+            x, knot_right.squeeze(-1), rtol=1e-8, atol=1e-10
+        )
         if torch.any(at_right):
             basis_j = basis[..., j].bool() | at_right
             basis[..., j] = basis_j.to(basis.dtype)
@@ -104,14 +118,20 @@ class VectorizedSpline(nn.Module):
         # Cox-de Boor recursion up to order k
         # after i-th iteration, basis has length (m-1 - i)
         for i in range(1, self.order):
-            denom1 = knots[..., i:-1] - knots[..., :-(i + 1)]
-            denom2 = knots[..., i + 1:] - knots[..., 1:-i]
+            denom1 = knots[..., i:-1] - knots[..., : -(i + 1)]
+            denom2 = knots[..., i + 1 :] - knots[..., 1:-i]
 
-            denom1 = torch.where(denom1.abs() < 1e-8, torch.ones_like(denom1), denom1)
-            denom2 = torch.where(denom2.abs() < 1e-8, torch.ones_like(denom2), denom2)
+            denom1 = torch.where(
+                denom1.abs() < 1e-8, torch.ones_like(denom1), denom1
+            )
+            denom2 = torch.where(
+                denom2.abs() < 1e-8, torch.ones_like(denom2), denom2
+            )
 
-            term1 = ((x_exp - knots[..., :-(i + 1)]) / denom1) * basis[..., :-1]
-            term2 = ((knots[..., i + 1:] - x_exp) / denom2) * basis[..., 1:]
+            term1 = ((x_exp - knots[..., : -(i + 1)]) / denom1) * basis[
+                ..., :-1
+            ]
+            term2 = ((knots[..., i + 1 :] - x_exp) / denom2) * basis[..., 1:]
             basis = term1 + term2
 
         # final basis length is n_ctrl = m - order
@@ -143,9 +163,9 @@ class VectorizedSpline(nn.Module):
             return out
 
     def forward_basis(self, basis):
-        """ 
+        """
         Evaluate spline(s) given precomputed basis.
-        
+
         """
         cp = self.control_points
         if cp.ndim == 2:
