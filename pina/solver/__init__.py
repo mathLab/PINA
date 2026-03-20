@@ -40,7 +40,7 @@ from pina._src.solver.solver import (
 from pina._src.solver.single_model_simple_solver import (
     SingleModelSimpleSolver,
 )
-from pina._src.solver.physics_informed_solver.pinn import PINNInterface, PINN
+from pina._src.solver.pinn import PINNInterface, PINN
 from pina._src.solver.physics_informed_solver.gradient_pinn import GradientPINN
 from pina._src.solver.physics_informed_solver.causal_pinn import CausalPINN
 from pina._src.solver.physics_informed_solver.competitive_pinn import (
@@ -57,7 +57,7 @@ from pina._src.solver.supervised_solver.supervised_solver_interface import (
 from pina._src.solver.supervised_solver.supervised_solver_interface import (
     SupervisedSolverInterface,
 )
-from pina._src.solver.supervised_solver.supervised import SupervisedSolver
+from pina._src.solver.supervised import SupervisedSolver
 from pina._src.solver.supervised_solver.reduced_order_model import (
     ReducedOrderModelSolver,
 )

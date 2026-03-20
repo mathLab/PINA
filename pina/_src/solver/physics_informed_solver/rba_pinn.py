@@ -2,7 +2,7 @@
 
 import torch
 
-from pina._src.solver.physics_informed_solver.pinn import PINN
+from pina._src.solver.pinn import PINN
 from pina._src.core.utils import check_consistency
 
 
