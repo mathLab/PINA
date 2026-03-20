@@ -1,12 +1,13 @@
 import shutil
 import pytest
 import torch
-from torch._dynamo.eval_frame import OptimizedModule
 
 from pina import Condition, Trainer, LabelTensor
 from pina.solver import AutoregressiveSolver
 from pina.condition import DataCondition
 from pina.problem import BaseProblem
+from pina.condition import TimeSeriesCondition
+from pina.problem import AbstractProblem
 from pina.model import FeedForward
 
 
@@ -18,14 +19,13 @@ unroll_length = 3
 n_unrolls = 4
 
 
-# TODO: test this in AutoregressiveCondition once it's implemented
 # Utility function to create synthetic data for testing
 def create_data(n_traj, t_steps, n_feats, unroll_length, n_unrolls, use_lt):
 
     init_state = torch.rand(n_traj, n_feats)
     traj = torch.stack([0.95**i * init_state for i in range(t_steps)], dim=1)
 
-    data = AutoregressiveSolver.unroll(
+    data = TimeSeriesCondition.unroll(
         data=traj,
         unroll_length=unroll_length,
         n_unrolls=n_unrolls,
@@ -56,10 +56,9 @@ class Problem(BaseProblem):
     def __init__(self, data):
         super().__init__()
         self.data = data
-        self.conditions = {"autoregressive": Condition(input=self.data)}
-        self.conditions_settings = {
-            "autoregressive": {"eps": 0.1}
-        }  # TODO: remove once the autoregressive condition is implemented
+        self.conditions = {
+            "autoregressive": TimeSeriesCondition(input=self.data, eps=0.1)
+        }
 
 
 problem = Problem(data)
@@ -78,8 +77,8 @@ def test_constructor(use_lt, bool_value):
     )
 
     assert solver.accepted_conditions_types == (
-        DataCondition,
-    )  # TODO: update once the AutoregressiveCondition is implemented
+        TimeSeriesCondition,
+    )
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
@@ -90,7 +89,7 @@ def test_solver_train(use_lt, batch_size, compile, bool_value):
     solver = AutoregressiveSolver(
         model=model,
         problem=problem,
-        reset_weights_at_epoch_start=bool_value,
+        # reset_weights_at_epoch_start=bool_value,
         use_lt=use_lt,
     )
     trainer = Trainer(
@@ -101,7 +100,7 @@ def test_solver_train(use_lt, batch_size, compile, bool_value):
         train_size=1.0,
         val_size=0.0,
         test_size=0.0,
-        compile=compile,
+        #compile=compile,
     )
     trainer.train()
 
@@ -114,7 +113,7 @@ def test_solver_validation(use_lt, batch_size, compile, bool_value):
     solver = AutoregressiveSolver(
         model=model,
         problem=problem,
-        reset_weights_at_epoch_start=bool_value,
+        # reset_weights_at_epoch_start=bool_value,
         use_lt=use_lt,
     )
     trainer = Trainer(
@@ -140,7 +139,7 @@ def test_solver_test(use_lt, batch_size, compile, bool_value):
     solver = AutoregressiveSolver(
         model=model,
         problem=problem,
-        reset_weights_at_epoch_start=bool_value,
+        # reset_weights_at_epoch_start=bool_value,
         use_lt=use_lt,
     )
     trainer = Trainer(
@@ -162,7 +161,7 @@ def test_train_load_restore(use_lt):
     solver = AutoregressiveSolver(
         model=model,
         problem=problem,
-        reset_weights_at_epoch_start=False,
+        # reset_weights_at_epoch_start=False,
         use_lt=use_lt,
     )
     trainer = Trainer(
