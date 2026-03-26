@@ -217,6 +217,9 @@ def test_vectorized(args, N):
     result_single = torch.stack([
         splines[i](x) for i in range(N)
     ])
-    result_single = result_single.permute(1, 2, 0)
+    result_single = result_single.permute(1, 2, 0)  # shape (100, N)
     out_vectorized = vectorized_spline(x)
+    print("result single shape:", result_single.shape)
+    print("out vectorized shape:", out_vectorized.shape)
+    assert out_vectorized.shape == (100, 1, N)
     assert torch.allclose(out_vectorized, result_single, atol=1e-5, rtol=1e-5)

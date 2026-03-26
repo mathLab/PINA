@@ -24,9 +24,10 @@ class VectorizedSpline(nn.Module):
 
     def __init__(
         self,
-        order: int,
-        knots: torch.Tensor,
-        control_points: torch.Tensor | None = None,
+        order,
+        knots,
+        control_points=None,
+        aggregate_output=None,
     ):
         super().__init__()
         if not isinstance(order, int) or order <= 0:
@@ -68,6 +69,7 @@ class VectorizedSpline(nn.Module):
         #             f"Last dim of control_points must be n_ctrl={n_ctrl}. Got {control_points.shape[-1]}."
         #         )
         self.control_points = nn.Parameter(control_points, requires_grad=True)
+        self.aggregate_output = aggregate_output
 
     @staticmethod
     def _compute_boundary_interval_idx(knots: torch.Tensor) -> int:
@@ -90,7 +92,8 @@ class VectorizedSpline(nn.Module):
             x = torch.as_tensor(x)
 
         # ensure float dtype consistent
-        x = x.to(dtype=self.knots.dtype, device=self.knots.device)
+        # x = x.to(dtype=self.knots.dtype, device=self.knots.device)
+        x = x.to(dtype=self.knots.dtype, device=self.knots.device).as_subclass(torch.Tensor)
 
         # make x shape (..., 1) for broadcasting
         x_exp = x.unsqueeze(-1)  # (..., 1)
@@ -147,11 +150,14 @@ class VectorizedSpline(nn.Module):
         B = self.basis(x)  # (..., n_ctrl)
 
         cp = self.control_points
+        # print("vectorized forward, cp:", cp)
         if cp.ndim == 2:
             # (S, n_ctrl)
             # want (..., S) = (..., n_ctrl) @ (n_ctrl, S)
+            # print('B shape:', B.shape, 'cp shape:', cp.shape)
+            #out = (B @ cp.transpose(0, 1)).squeeze(-1)
             out = B @ cp.transpose(0, 1)
-            return out
+            # out = B @ cp[0]
         else:
             # (S, O, n_ctrl)
             # Compute for each S: (..., n_ctrl) @ (n_ctrl, O) -> (..., O), then stack over S
@@ -160,7 +166,14 @@ class VectorizedSpline(nn.Module):
             # out = torch.einsum("...n, son -> ...so", B, cp)
             out = torch.einsum("bsc,sco->bso", B, cp)
 
-            return out
+        if self.aggregate_output == "mean":
+            out = out.mean(dim=-1)  # aggregate over O dimension if present
+        elif self.aggregate_output == "sum":
+            out = out.sum(dim=-1)
+
+        # print("vectorized forward, out:", out.shape)
+        
+        return out
 
     def forward_basis(self, basis):
         """
