@@ -171,7 +171,7 @@ class _Creator:
         dataloaders = {}
         if self.batching_mode == "common_batch_size":
             max_len = max(len(dataset) for dataset in datasets.values())
-        print(batch_sizes)
+
         for name, dataset in datasets.items():
             if (
                 self.batching_mode == "common_batch_size"
