@@ -14,6 +14,7 @@ __all__ = [
     "SingleSolverInterface",
     "MultiSolverInterface",
     "SingleModelSimpleSolver",
+    "MultiModelSimpleSolver",
     "PINNInterface",
     "PINN",
     "GradientPINN",
@@ -38,6 +39,9 @@ from pina._src.solver.solver import (
 )
 from pina._src.solver.single_model_simple_solver import (
     SingleModelSimpleSolver,
+)
+from pina._src.solver.multi_model_simple_solver import (
+    MultiModelSimpleSolver,
 )
 from pina._src.solver.pinn import PINNInterface, PINN
 from pina._src.solver.physics_informed_solver.gradient_pinn import GradientPINN
