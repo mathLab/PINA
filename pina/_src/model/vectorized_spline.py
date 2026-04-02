@@ -93,7 +93,9 @@ class VectorizedSpline(nn.Module):
 
         # ensure float dtype consistent
         # x = x.to(dtype=self.knots.dtype, device=self.knots.device)
-        x = x.to(dtype=self.knots.dtype, device=self.knots.device).as_subclass(torch.Tensor)
+        x = x.as_subclass(torch.Tensor).to(
+            dtype=self.knots.dtype, device=self.knots.device
+        )
 
         # make x shape (..., 1) for broadcasting
         x_exp = x.unsqueeze(-1)  # (..., 1)
@@ -155,7 +157,7 @@ class VectorizedSpline(nn.Module):
             # (S, n_ctrl)
             # want (..., S) = (..., n_ctrl) @ (n_ctrl, S)
             # print('B shape:', B.shape, 'cp shape:', cp.shape)
-            #out = (B @ cp.transpose(0, 1)).squeeze(-1)
+            # out = (B @ cp.transpose(0, 1)).squeeze(-1)
             out = B @ cp.transpose(0, 1)
             # out = B @ cp[0]
         else:
@@ -164,7 +166,7 @@ class VectorizedSpline(nn.Module):
             # vectorized using einsum (yes, this one is actually appropriate)
             # (..., n) * (S, O, n) -> (..., S, O)
             # out = torch.einsum("...n, son -> ...so", B, cp)
-            out = torch.einsum("bsc,sco->bso", B, cp)
+            out = torch.einsum("bsc,soc->bso", B, cp)
 
         if self.aggregate_output == "mean":
             out = out.mean(dim=-1)  # aggregate over O dimension if present
@@ -172,26 +174,5 @@ class VectorizedSpline(nn.Module):
             out = out.sum(dim=-1)
 
         # print("vectorized forward, out:", out.shape)
-        
+
         return out
-
-    def forward_basis(self, basis):
-        """
-        Evaluate spline(s) given precomputed basis.
-
-        """
-        cp = self.control_points
-        if cp.ndim == 2:
-            # (S, n_ctrl)
-            # want (..., S) = (..., n_ctrl) @ (n_ctrl, S)
-            out = basis @ cp.transpose(0, 1)
-            return out
-        else:
-            # (S, O, n_ctrl)
-            # Compute for each S: (..., n_ctrl) @ (n_ctrl, O) -> (..., O), then stack over S
-            # vectorized using einsum (yes, this one is actually appropriate)
-            # (..., n) * (S, O, n) -> (..., S, O)
-            # out = torch.einsum("...n, son -> ...so", B, cp)
-            out = torch.einsum("bsc,sco->bso", basis, cp)
-
-            return out
