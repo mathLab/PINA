@@ -1,131 +1,304 @@
-"""Vectorized univariate B-spline model."""
+"""Vectorized univariate B-spline model with per-spline knots."""
 
+import warnings
 import torch
-import torch.nn as nn
+from pina._src.core.utils import check_consistency, check_positive_integer
 
 
-class VectorizedSpline(nn.Module):
-    """
-    Vectorized univariate B-spline model (shared knots, many splines).
+class VectorizedSpline(torch.nn.Module):
+    r"""
+    The vectorized B-spline model class.
 
-    Notation:
-      - knots: shape (m,)
-      - order: k (degree = k-1)
-      - n_ctrl = m - k
-      - control_points:
-          * (S, n_ctrl)            -> S splines, scalar output each
-          * (S, O, n_ctrl)         -> S splines, O outputs each (like multiple channels)
-    Input:
-      - x: shape (...,) or (..., B)
-    Output:
-      - if control_points is (S, n_ctrl):      shape (..., S)
-      - if control_points is (S, O, n_ctrl):  shape (..., S, O)
+    A :class:`VectorizedSpline` represents a vector spline, i.e., a collection
+    of independent univariate B-splines evaluated in parallel. Each univariate
+    spline has its own knot vector and its own control points, and acts on one
+    input feature.
+
+    Given ``s`` univariate splines, the vector spline maps an input
+    :math:`x = (x^{(1)}, \dots, x^{(s)}) \in \mathbb{R}^s` to an output obtained
+    by evaluating each univariate spline on its corresponding scalar input
+    :math:`x^{(j)}`.
+
+    For the :math:`j`-th univariate spline of order :math:`k`, the output is
+    defined as
+
+    .. math::
+
+        S^{(j)}(x^{(j)}) = \sum_{i=1}^{n_j} B_{i,k}^{(j)}(x^{(j)}) C_i^{(j)},
+
+    where:
+
+    - :math:`C^{(j)}` are the control points of the :math:`j`-th univariate
+      spline. In the scalar-output case, :math:`C^{(j)} \in \mathbb{R}^{n_j}`.
+      More generally, each univariate spline may have output dimension
+      :math:`o`, so :math:`C^{(j)} \in \mathbb{R}^{o \times n_j}`.
+    - :math:`B_{i,k}^{(j)}(x)` are the B-spline basis functions of order
+      :math:`k`, i.e., piecewise polynomials of degree :math:`k-1`, associated
+      with the knot vector of the :math:`j`-th univariate spline.
+    - :math:`X^{(j)} = \{x_1^{(j)}, x_2^{(j)}, \dots, x_{m_j}^{(j)}\}` is the
+      non-decreasing knot vector of the :math:`j`-th univariate spline.
+
+    If the first and last knots of a given univariate spline are repeated
+    :math:`k` times, then that univariate spline interpolates its first and last
+    control points.
+
+    The full vector spline evaluates all univariate splines in parallel. If each
+    univariate spline has output dimension :math:`o`, then before optional
+    aggregation the output has shape ``[batch, s, o]``.
+
+    .. note::
+
+        Each univariate spline is forced to be zero outside the interval defined
+        by the first and last knots of its own knot vector.
+
+    .. note::
+
+        This class does not represent a single multivariate spline
+        :math:`\mathbb{R}^s \to \mathbb{R}^o` with a genuinely multivariate
+        basis. Instead, it represents a vector spline built from ``s``
+        independent univariate splines, one for each input feature.
+
+    :Example:
+
+    >>> from pina.model import VectorizedSpline
+    >>> import torch
+
+    >>> knt1 = torch.tensor([
+    ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0, 2.0],
+    ...     [0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0],
+    ... ])
+    >>> spline1 = VectorizedSpline(order=3, knots=knt1, control_points=None)
+
+    >>> knt2 = {"n": 7, "min": 0.0, "max": 2.0, "mode": "auto", "n_splines": 2}
+    >>> spline2 = VectorizedSpline(order=3, knots=knt2, control_points=None)
+
+    >>> knt3 = torch.tensor([
+    ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0, 2.0],
+    ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0, 2.0],
+    ... ])
+    >>> ctrl3 = torch.tensor([
+    ...     [0.0, 1.0, 3.0, 2.0],
+    ...     [1.0, 0.0, 2.0, 1.0],
+    ... ])
+    >>> spline3 = VectorizedSpline(order=3, knots=knt3, control_points=ctrl3)
     """
 
     def __init__(
         self,
-        order,
-        knots,
+        order=4,
+        knots=None,
         control_points=None,
         aggregate_output=None,
     ):
+        """
+        Initialization of the :class:`VectorizedSpline` class.
+
+        :param int order: The order of each univariate spline. The corresponding
+            basis functions are polynomials of degree ``order - 1``.
+            Default is 4.
+        :param knots: The knots of the spline. If a tensor is provided, it must
+            have shape ``[s, n]``, where ``s`` is the number of univariate
+            splines and ``n`` is the number of knots per univariate spline. If a
+            dictionary is provided, it must contain the keys ``"n"``, ``"min"``,
+            ``"max"``, ``"mode"``, and ``"n_splines"``. Here, ``"n"`` specifies
+            the number of knots for each univariate spline, ``"min"`` and
+            ``"max"`` define the interval, ``"mode"`` selects the sampling
+            strategy, and ``"n_splines"`` specifies the number of univariate
+            splines. The supported modes are ``"uniform"``, where the knots are
+            evenly spaced over :math:`[min, max]`, and ``"auto"``, where knots
+            are constructed to ensure that each univariate spline interpolates
+            the first and last control points. In this case, the number of knots
+            is adjusted if :math:`n < 2 * order`. If None is given, knots are
+            initialized automatically over :math:`[0, 1]` ensuring interpolation
+            of the first and last control points. Default is None.
+        :type knots: torch.Tensor | dict
+        :param torch.Tensor control_points: The control points tensor. The
+            tensor must be either of shape ``[s, o, c]`` or ``[s, c]``, where
+            each univariate spline has ``c`` control points and output dimension
+            ``o``. In the latter case, the control points are expanded to shape
+            ``[s, 1, c]``. If None, control points are initialized to learnable
+            parameters with zero initial value. Default is None.
+        :param str aggregate_output: If None, the output of each univariate
+            spline is returned separately, resulting in an output of shape
+            ``[batch, s, o]``, where ``s`` is the number of univariate splines
+            and ``o`` is the output dimension of each univariate spline. If set
+            to ``"mean"`` or ``"sum"``, the output is aggregated accordingly
+            across the last dimension, resulting in an output of shape
+            ``[batch, s]``. Default is None.
+        :raises AssertionError: If ``order`` is not a positive integer.
+        :raises ValueError: If ``knots`` is neither a torch.Tensor nor a
+            dictionary, when provided.
+        :raises ValueError: If ``control_points`` is not a torch.Tensor,
+            when provided.
+        :raises ValueError: If both ``knots`` and ``control_points`` are None.
+        :raises ValueError: If ``knots`` is not two-dimensional.
+        :raises ValueError: If ``control_points``, after expansion when
+            two-dimensional, is not three-dimensional.
+        :raises ValueError: If, for each univariate spline, the number of
+            ``knots`` is not equal to the sum of ``order`` and the number of
+            ``control_points.``
+        :raises UserWarning: If, for each univariate spline, the number of
+            ``control_points`` is lower than the ``order``, resulting in a
+            degenerate spline.
+        :raises ValueError: If the number of univariate splines in ``knots`` and
+            ``control_points`` do not match.
+        """
+
         super().__init__()
-        if not isinstance(order, int) or order <= 0:
-            raise ValueError("order must be a positive integer.")
-        if not isinstance(knots, torch.Tensor):
-            raise ValueError("knots must be a torch.Tensor.")
-        if knots.ndim != 1:
-            raise ValueError("knots must be 1D.")
 
+        # Check consistency
+        check_positive_integer(value=order, strict=True)
+        check_consistency(knots, (type(None), torch.Tensor, dict))
+        check_consistency(control_points, (type(None), torch.Tensor))
+
+        # Raise error if neither knots nor control points are provided
+        if knots is None and control_points is None:
+            raise ValueError("knots and control_points cannot both be None.")
+
+        # Initialize knots if not provided
+        if knots is None and control_points is not None:
+            knots = {
+                "n": control_points.shape[-1] + order,
+                "min": 0,
+                "max": 1,
+                "n_splines": control_points.shape[0],
+                "mode": "auto",
+            }
+
+        # Initialization - knots and control points managed by their setters
         self.order = order
-
-        # store sorted knots as buffer
-        knots_sorted = knots.sort().values
-        self.register_buffer("knots", knots_sorted)
-
-        n_ctrl = knots_sorted.numel() - order
-        if n_ctrl <= 0:
-            raise ValueError(
-                f"Need #knots > order. Got #knots={knots_sorted.numel()} order={order}."
-            )
-
-        # boundary interval idx for rightmost inclusion
-        self._boundary_interval_idx = self._compute_boundary_interval_idx(
-            knots_sorted
-        )
-
-        # # control points init
-        # if control_points is None:
-        #     # default: one spline
-        #     cp = torch.zeros(1, n_ctrl, dtype=knots_sorted.dtype, device=knots_sorted.device)
-        #     self.control_points = nn.Parameter(cp, requires_grad=True)
-        # else:
-        #     if not isinstance(control_points, torch.Tensor):
-        #         raise ValueError("control_points must be a torch.Tensor or None.")
-        #     if control_points.ndim not in (2, 3):
-        #         raise ValueError("control_points must have shape (S, n_ctrl) or (S, O, n_ctrl).")
-        #     if control_points.shape[-1] != n_ctrl:
-        #         raise ValueError(
-        #             f"Last dim of control_points must be n_ctrl={n_ctrl}. Got {control_points.shape[-1]}."
-        #         )
-        self.control_points = nn.Parameter(control_points, requires_grad=True)
+        self.knots = knots
+        self.control_points = control_points
         self.aggregate_output = aggregate_output
 
-    @staticmethod
-    def _compute_boundary_interval_idx(knots: torch.Tensor) -> int:
-        if knots.numel() < 2:
-            return 0
-        diffs = knots[1:] - knots[:-1]
-        valid = torch.nonzero(diffs > 0, as_tuple=False)
-        if valid.numel() == 0:
-            return 0
-        return int(valid[-1])
+        # Check dimensionality of knots
+        if self.knots.ndim != 2:
+            raise ValueError("knots must be two-dimensional.")
 
-    def basis(self, x: torch.Tensor) -> torch.Tensor:
+        # Check dimensionality of control points
+        if self.control_points.ndim != 3:
+            raise ValueError("control_points must be three-dimensional.")
+
+        # Raise error if #knots != order + #control_points
+        if self.knots.shape[-1] != self.order + self.control_points.shape[-1]:
+            raise ValueError(
+                f" The number of knots per spline must be equal to order + the"
+                f" number of control points. Got {self.knots.shape[-1]} knots"
+                f" per spline, {self.control_points.shape[-1]} control points,"
+                f" and {self.order} order."
+            )
+
+        # Raise warning if spline is degenerate
+        if self.control_points.shape[-1] < self.order:
+            warnings.warn(
+                "The number of control points per spline is smaller than the"
+                " spline order. This creates a degenerate spline with limited"
+                " flexibility.",
+                UserWarning,
+            )
+
+        # Raise error if knots and control points have different # of splines
+        if self.knots.shape[0] != self.control_points.shape[0]:
+            raise ValueError(
+                f"The number of splines must be the same for knots and"
+                f" control points. Got {self.knots.shape[0]} splines for knots"
+                f" and {self.control_points.shape[0]} splines for control"
+                f" points."
+            )
+
+        # Precompute boundary interval index
+        self._boundary_interval_idx = self._compute_boundary_interval()
+
+    def _compute_boundary_interval(self):
         """
-        Compute B-spline basis functions of order self.order at x.
+        Precompute the index of the rightmost non-degenerate interval to improve
+        performance, eliminating the need to perform a search loop in the basis
+        function on each call.
 
-        Returns:
-          basis: shape (..., n_ctrl)
+        :return: The index of the rightmost non-degenerate interval for each
+            univariate spline.
+        :rtype: torch.Tensor
         """
-        if not isinstance(x, torch.Tensor):
-            x = torch.as_tensor(x)
+        # Compute the differences between consecutive knots for each spline
+        diffs = self._knots[:, 1:] - self._knots[:, :-1]
+        valid = diffs > 0
 
-        # ensure float dtype consistent
-        # x = x.to(dtype=self.knots.dtype, device=self.knots.device)
-        x = x.as_subclass(torch.Tensor).to(
-            dtype=self.knots.dtype, device=self.knots.device
+        # Initialize idx tensor to store the last valid interval for each spline
+        idx = torch.zeros(
+            self._knots.shape[0], dtype=torch.long, device=self._knots.device
         )
 
-        # make x shape (..., 1) for broadcasting
-        x_exp = x.unsqueeze(-1)  # (..., 1)
+        # For each spline, find the last idx where interval is non-degenerate
+        for s in range(self._knots.shape[0]):
+            valid_s = torch.nonzero(valid[s], as_tuple=False)
+            idx[s] = valid_s[-1, 0] if valid_s.numel() > 0 else 0
 
-        # knots as (1, ..., 1, m) via unsqueeze to broadcast
-        # (m,) -> (1,)*x.ndim + (m,)
-        knots = self.knots.view(*([1] * x.ndim), -1)
+        return idx
 
-        # order-1 base: indicator on intervals [t_i, t_{i+1})
-        basis = ((x_exp >= knots[..., :-1]) & (x_exp < knots[..., 1:])).to(
-            x_exp.dtype
-        )  # (..., m-1)
+    def basis(self, x):
+        """
+        Evaluate the B-spline basis functions for each univariate spline.
 
-        # include rightmost boundary in the last non-degenerate interval
-        j = self._boundary_interval_idx
-        knot_left = knots[..., j]
-        knot_right = knots[..., j + 1]
-        at_right = (x >= knot_left.squeeze(-1)) & torch.isclose(
-            x, knot_right.squeeze(-1), rtol=1e-8, atol=1e-10
+        This method applies the Cox-de Boor recursion in vectorized form across
+        all univariate splines of the vector spline.
+
+        :param torch.Tensor x: The points to be evaluated.
+        :raises ValueError: If ``x`` is not two-dimensional.
+        :raises ValueError: If the number of input features does not match
+            the number of univariate splines.
+        :return: The basis functions evaluated at x.
+        :rtype: torch.Tensor
+        """
+        # Ensure x is a tensor of the same dtype as knots
+        x = x.as_subclass(torch.Tensor).to(dtype=self.knots.dtype)
+
+        # Raise error if x does not have shape (batch, s)
+        if x.ndim != 2:
+            raise ValueError(
+                f"The input must have shape (batch, s). Got {x.shape}."
+            )
+
+        # Raise error if x has different number of splines than knots
+        if x.shape[1] != self.knots.shape[0]:
+            raise ValueError(
+                f"The number of input features must be the same as the number"
+                f" of univariate splines. Got {x.shape[1]} input features,"
+                f" but {self.knots.shape[0]} univariate splines."
+            )
+
+        # Add a final dimension to x for broadcasting
+        x = x.unsqueeze(-1)
+
+        # Add an initial dimension to knots for broadcasting
+        knots = self.knots.unsqueeze(0)
+
+        # Base case of recursion: indicator functions for the intervals
+        basis = (x >= knots[..., :-1]) & (x < knots[..., 1:])
+        basis = basis.to(x.dtype)
+
+        # Extract left and right knots of the boundary interval for each spline
+        range_tensor = torch.arange(self.knots.shape[0], device=x.device)
+        knot_left = self.knots[range_tensor, self._boundary_interval_idx]
+        knot_right = self.knots[range_tensor, self._boundary_interval_idx + 1]
+
+        # Identify points at the rightmost boundary
+        at_rightmost_boundary = (x >= knot_left.unsqueeze(0)) & torch.isclose(
+            x, knot_right.unsqueeze(0), rtol=1e-8, atol=1e-10
         )
-        if torch.any(at_right):
-            basis_j = basis[..., j].bool() | at_right
-            basis[..., j] = basis_j.to(basis.dtype)
 
-        # Cox-de Boor recursion up to order k
-        # after i-th iteration, basis has length (m-1 - i)
+        # Ensure the correct value is set at the rightmost boundary
+        if torch.any(at_rightmost_boundary):
+            b_idx, s_idx = torch.nonzero(at_rightmost_boundary, as_tuple=True)
+            basis[b_idx, s_idx, self._boundary_interval_idx[s_idx]] = 1.0
+
+        # Cox-de Boor recursion -- iterative case
         for i in range(1, self.order):
+
+            # Compute the denominators for both terms of the recursion
             denom1 = knots[..., i:-1] - knots[..., : -(i + 1)]
             denom2 = knots[..., i + 1 :] - knots[..., 1:-i]
 
+            # Ensure no division by zero
             denom1 = torch.where(
                 denom1.abs() < 1e-8, torch.ones_like(denom1), denom1
             )
@@ -133,46 +306,185 @@ class VectorizedSpline(nn.Module):
                 denom2.abs() < 1e-8, torch.ones_like(denom2), denom2
             )
 
-            term1 = ((x_exp - knots[..., : -(i + 1)]) / denom1) * basis[
-                ..., :-1
-            ]
-            term2 = ((knots[..., i + 1 :] - x_exp) / denom2) * basis[..., 1:]
+            # Compute the two terms of the recursion
+            term1 = ((x - knots[..., : -(i + 1)]) / denom1) * basis[..., :-1]
+            term2 = ((knots[..., i + 1 :] - x) / denom2) * basis[..., 1:]
+
+            # Combine terms to get the new basis
             basis = term1 + term2
 
-        # final basis length is n_ctrl = m - order
-        return basis  # (..., n_ctrl)
+        return basis
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         """
-        Evaluate spline(s) at x.
+        Forward pass for the :class:`VectorizedSpline` model. Each univariate
+        spline is evaluated independently on its corresponding input feature.
 
-        If control_points is (S, n_ctrl): output (..., S)
-        If control_points is (S, O, n_ctrl): output (..., S, O)
+        The input is expected to have shape ``[batch, s]``, where ``s`` is the
+        number of univariate splines. The output has shape ``[batch, s, o]``,
+        where ``o`` is the output dimension of each univariate spline, unless an
+        aggregation method is specified. If ``aggregate_output`` is set to
+        ``"mean"`` or ``"sum"``, the output is aggregated across the last
+        dimension, resulting in an output of shape ``[batch, s]``.
+
+        :param x: The input tensor.
+        :type x: torch.Tensor | LabelTensor
+        :return: The output tensor.
+        :rtype: torch.Tensor
         """
-        B = self.basis(x)  # (..., n_ctrl)
+        # Compute the basis functions at x
+        basis = self.basis(x)
 
-        cp = self.control_points
-        # print("vectorized forward, cp:", cp)
-        if cp.ndim == 2:
-            # (S, n_ctrl)
-            # want (..., S) = (..., n_ctrl) @ (n_ctrl, S)
-            # print('B shape:', B.shape, 'cp shape:', cp.shape)
-            # out = (B @ cp.transpose(0, 1)).squeeze(-1)
-            out = B @ cp.transpose(0, 1)
-            # out = B @ cp[0]
-        else:
-            # (S, O, n_ctrl)
-            # Compute for each S: (..., n_ctrl) @ (n_ctrl, O) -> (..., O), then stack over S
-            # vectorized using einsum (yes, this one is actually appropriate)
-            # (..., n) * (S, O, n) -> (..., S, O)
-            # out = torch.einsum("...n, son -> ...so", B, cp)
-            out = torch.einsum("bsc,soc->bso", B, cp)
+        # Compute the output for each spline
+        out = torch.einsum("bsc,soc->bso", basis, self.control_points)
 
+        # Aggregate output if needed
         if self.aggregate_output == "mean":
-            out = out.mean(dim=-1)  # aggregate over O dimension if present
+            out = out.mean(dim=-1)
         elif self.aggregate_output == "sum":
             out = out.sum(dim=-1)
 
-        # print("vectorized forward, out:", out.shape)
-
         return out
+
+    @property
+    def control_points(self):
+        """
+        The control points of the spline.
+
+        :return: The control points.
+        :rtype: torch.Tensor
+        """
+        return self._control_points
+
+    @control_points.setter
+    def control_points(self, control_points):
+        """
+        Set the control points of the spline.
+
+        :param torch.Tensor control_points: The control points tensor. The
+            tensor must be either of shape ``[s, o, c]`` or ``[s, c]``, where
+            each univariate spline has ``c`` control points and output dimension
+            ``o``. In the latter case, the control points are expanded to shape
+            ``[s, 1, c]``.
+        :raises ValueError: If there are not enough knots to define the control
+            points, due to the relation: #knots = order + #control_points.
+        """
+        # If control points are not provided, initialize them
+        if control_points is None:
+
+            # Check that there are enough knots to define control points
+            if self.knots.shape[-1] < self.order + 1:
+                raise ValueError(
+                    f"Not enough knots to define control points. Got"
+                    f" {self.knots.shape[-1]} knots for each univariate spline,"
+                    f" but need at least {self.order + 1}."
+                )
+
+            # Initialize control points to zero
+            control_points = torch.zeros(
+                self.knots.shape[0], 1, self.knots.shape[-1] - self.order
+            )
+
+        # If a the control points are 2D, add an output dimension of size 1
+        if control_points.ndim == 2:
+            control_points = control_points.unsqueeze(1)
+
+        # Set control points
+        self._control_points = torch.nn.Parameter(
+            control_points, requires_grad=True
+        )
+
+    @property
+    def knots(self):
+        """
+        The knots of the spline.
+
+        :return: The knots.
+        :rtype: torch.Tensor
+        """
+        return self._knots
+
+    @knots.setter
+    def knots(self, value):
+        """
+        Set the knots of the spline.
+        :param value: The knots of the spline. If a tensor is provided, it must
+            have shape ``[s, n]``, where ``s`` is the number of univariate
+            splines and ``n`` is the number of knots per univariate spline. If a
+            dictionary is provided, it must contain the keys ``"n"``, ``"min"``,
+            ``"max"``, ``"mode"``, and ``"n_splines"``. Here, ``"n"`` specifies
+            the number of knots for each univariate spline, ``"min"`` and
+            ``"max"`` define the interval, ``"mode"`` selects the sampling
+            strategy, and ``"n_splines"`` specifies the number of univariate
+            splines. The supported modes are ``"uniform"``, where the knots are
+            evenly spaced over :math:`[min, max]`, and ``"auto"``, where knots
+            are constructed to ensure that each univariate spline interpolates
+            the first and last control points. In this case, the number of knots
+            is adjusted if :math:`n < 2 * order`. If None is given, knots are
+            initialized automatically over :math:`[0, 1]` ensuring interpolation
+            of the first and last control points.
+        :type value: torch.Tensor | dict
+        :raises ValueError: If a dictionary is provided but does not contain
+            the required keys.
+        :raises ValueError: If the mode specified in the dictionary is invalid.
+        """
+        # If a dictionary is provided, initialize knots accordingly
+        if isinstance(value, dict):
+
+            # Check that required keys are present
+            required_keys = {"n", "min", "max", "mode", "n_splines"}
+            if not required_keys.issubset(value.keys()):
+                raise ValueError(
+                    f"When providing knots as a dictionary, the following "
+                    f"keys must be present: {required_keys}. Got "
+                    f"{value.keys()}."
+                )
+
+            # Save number of splines for later use
+            n_splines = value["n_splines"]
+
+            # Uniform sampling of knots
+            if value["mode"] == "uniform":
+                value = torch.linspace(value["min"], value["max"], value["n"])
+
+            # Automatic sampling of interpolating knots
+            elif value["mode"] == "auto":
+
+                # Repeat the first and last knots 'order' times
+                initial_knots = torch.ones(self.order) * value["min"]
+                final_knots = torch.ones(self.order) * value["max"]
+
+                # Number of internal knots
+                n_internal = value["n"] - 2 * self.order
+
+                # If no internal knots are needed, just concatenate boundaries
+                if n_internal <= 0:
+                    value = torch.cat((initial_knots, final_knots))
+
+                # Else, sample internal knots uniformly and exclude boundaries
+                # Recover the correct number of internal knots when slicing by
+                # adding 2 to n_internal
+                else:
+                    internal_knots = torch.linspace(
+                        value["min"], value["max"], n_internal + 2
+                    )[1:-1]
+                    value = torch.cat(
+                        (initial_knots, internal_knots, final_knots)
+                    )
+
+            # Raise error if mode is invalid
+            else:
+                raise ValueError(
+                    f"Invalid mode for knots initialization. Got "
+                    f"{value['mode']}, but expected 'uniform' or 'auto'."
+                )
+
+            # Repeat the knot vector for each spline
+            value = value.unsqueeze(0).repeat(n_splines, 1)
+
+        # Set knots
+        self.register_buffer("_knots", value.sort(dim=1).values)
+
+        # Recompute boundary interval when knots change
+        if hasattr(self, "_boundary_interval_idx"):
+            self._boundary_interval_idx = self._compute_boundary_interval()

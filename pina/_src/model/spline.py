@@ -278,7 +278,7 @@ class Spline(torch.nn.Module):
         :rtype: torch.Tensor
         """
         basis = self.basis(x.as_subclass(torch.Tensor))
-        # print("normal forward, cp:", self.control_points)
+
         return basis @ self.control_points
 
     def derivative(self, x, degree):

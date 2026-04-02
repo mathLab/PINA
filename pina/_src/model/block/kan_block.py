@@ -1,382 +1,146 @@
-"""Create the infrastructure for a KAN layer"""
+"""Module for the Kolmogorov-Arnold Network block."""
 
 import torch
-import numpy as np
-
-from pina._src.model.spline import Spline
 from pina._src.model.vectorized_spline import VectorizedSpline
+from pina._src.core.utils import check_consistency, check_positive_integer
 
-# TODO
-# - Improve documentation and comments throughout the code for better clarity.
-# - Remove any unused parameters or code related to the base function if it's
-#       not being utilized in the current implementation.
-# - Clean unused code
+
 class KANBlock(torch.nn.Module):
-    """define a KAN layer using splines"""
+    """
+    TODO: docstring.
+    """
 
     def __init__(
         self,
-        k,
         input_dimensions,
         output_dimensions,
-        inner_nodes,
-        num=3,
-        grid_eps=0.1,
-        grid_range=[-1, 1],
-        grid_extension=True,
-        noise_scale=0.1,
-        base_function=torch.nn.SiLU(),
-        scale_base_mu=0.0,
-        scale_base_sigma=1.0,
-        scale_sp=1.0,
-        sparse_init=True,
-        sp_trainable=True,
-        sb_trainable=True,
-        vectorized=True,
+        spline_order=3,
+        n_knots=10,
+        grid_range=[0, 1],
+        base_function=torch.nn.SiLU,
+        use_base_linear=True,
+        use_bias=True,
+        init_scale_spline=1e-2,
+        init_scale_base=1.0,
     ):
         """
-        Initialize the KAN layer.
+        Initialization of the :class:`KANBlock` class.
 
-        num è il numero di intervalli nella griglia iniziale (esclusi gli eventuali nodi di estensione)
+        :param int input_dimensions: The number of input features.
+        :param int output_dimensions: The number of output features.
+        :param int spline_order: The order of each spline basis function.
+            Default is 3 (cubic splines).
+        :param int n_knots: The number of knots for each spline basis function.
+            Default is 10.
+        :param grid_range: The range for the spline knots. It must be either a
+            list or a tuple of the form [min, max]. Default is [0, 1].
+        :type grid_range: list | tuple.
+        :param torch.nn.Module base_function: The base activation function to be
+            applied to the input before the linear transformation. Default is
+            :class:`torch.nn.SiLU`.
+        :param bool use_base_linear: Whether to include a linear transformation
+            of the base function output. Default is True.
+        :param bool use_bias: Whether to include a bias term in the output.
+            Default is True.
+        :param init_scale_spline: The scale for initializing each spline
+            control points. Default is 1e-2.
+        :type init_scale_spline: float | int.
+        :param init_scale_base: The scale for initializing the base linear
+            weights. Default is 1.0.
+        :type init_scale_base: float | int.
+        :raises ValueError: If ``grid_range`` is not of length 2.
         """
         super().__init__()
-        self.k = k
-        self.input_dimensions = input_dimensions
-        self.output_dimensions = output_dimensions
-        self.inner_nodes = inner_nodes
-        self.num = num
-        self.grid_eps = grid_eps
-        self.grid_range = grid_range
-        self.grid_extension = grid_extension
-        self.vectorized = vectorized
 
-        if sparse_init:
-            self.mask = torch.nn.Parameter(
-                self.sparse_mask(input_dimensions, output_dimensions)
-            ).requires_grad_(False)
-        else:
-            self.mask = torch.nn.Parameter(
-                torch.ones(input_dimensions, output_dimensions)
-            ).requires_grad_(False)
+        # Check consistency
+        check_consistency(base_function, torch.nn.Module, subclass=True)
+        check_positive_integer(input_dimensions, strict=True)
+        check_positive_integer(output_dimensions, strict=True)
+        check_positive_integer(spline_order, strict=True)
+        check_positive_integer(n_knots, strict=True)
+        check_consistency(use_base_linear, bool)
+        check_consistency(use_bias, bool)
+        check_consistency(init_scale_spline, (int, float))
+        check_consistency(init_scale_base, (int, float))
+        check_consistency(grid_range, (int, float))
 
-        grid = torch.linspace(grid_range[0], grid_range[1], steps=self.num + 1)[
-            None, :
-        ].expand(self.input_dimensions, self.num + 1)
-        knots = torch.linspace(grid_range[0], grid_range[1], steps=self.num + 1)
+        # Raise error if grid_range is not valid
+        if len(grid_range) != 2:
+            raise ValueError("Grid must be a list or tuple with two elements.")
 
-        if grid_extension:
-            h = (grid[:, [-1]] - grid[:, [0]]) / (grid.shape[1] - 1)
-            for i in range(self.k):
-                grid = torch.cat([grid[:, [0]] - h, grid], dim=1)
-                grid = torch.cat([grid, grid[:, [-1]] + h], dim=1)
+        # Knots for the spline basis functions
+        initial_knots = torch.ones(spline_order) * grid_range[0]
+        final_knots = torch.ones(spline_order) * grid_range[1]
 
-        n_control_points = len(knots) - (self.k)
+        # Number of internal knots
+        n_internal = max(0, n_knots - 2 * spline_order)
 
-        # control_points = torch.nn.Parameter(
-        #     torch.randn(self.input_dimensions, self.output_dimensions, n_control_points) * noise_scale
-        # )
-        # print(control_points.shape)
-        if self.vectorized:
-            control_points = torch.randn(
-                self.input_dimensions * self.output_dimensions, n_control_points
+        # Internal knots are uniformly spaced in the grid range
+        internal_knots = torch.linspace(
+            grid_range[0], grid_range[1], n_internal + 2
+        )[1:-1]
+
+        # Define the knots
+        knots = torch.cat((initial_knots, internal_knots, final_knots))
+        knots = knots.unsqueeze(0).repeat(input_dimensions, 1)
+
+        # Define the control points for the spline basis functions
+        control_points = (
+            torch.randn(
+                input_dimensions,
+                output_dimensions,
+                knots.shape[-1] - spline_order,
             )
-            print("control points", control_points.shape)
-            control_points = torch.stack(
-                [
-                    torch.randn(n_control_points)
-                    for _ in range(
-                        self.input_dimensions * self.output_dimensions
-                    )
-                ]
-            )
-            print("control points", control_points.shape)
-            self.spline_q = VectorizedSpline(
-                order=self.k, knots=knots, control_points=control_points
-            )
-
-        else:
-            spline_q = []
-            for q in range(self.output_dimensions):
-                spline_p = []
-                for p in range(self.input_dimensions):
-                    spline_ = Spline(
-                        order=self.k,
-                        knots=knots,
-                        control_points=torch.randn(n_control_points),
-                    )
-                    spline_p.append(spline_)
-                spline_p = torch.nn.ModuleList(spline_p)
-                spline_q.append(spline_p)
-            self.spline_q = torch.nn.ModuleList(spline_q)
-
-        # control_points = torch.nn.Parameter(
-        #     torch.randn(n_control_points, self.output_dimensions) * noise_scale)
-        # print(control_points)
-        # print('uuu')
-
-        # self.spline = Spline(
-        #     order=self.k, knots=knots, control_points=control_points)
-
-        # self.scale_base = torch.nn.Parameter(scale_base_mu * 1 / np.sqrt(input_dimensions) + \
-        #                  scale_base_sigma * (torch.rand(input_dimensions, output_dimensions)*2-1) * 1/np.sqrt(input_dimensions), requires_grad=sb_trainable)
-        # self.scale_spline = torch.nn.Parameter(torch.ones(input_dimensions, output_dimensions) * scale_sp * 1 / np.sqrt(input_dimensions) * self.mask, requires_grad=sp_trainable)
-        self.base_function = base_function
-
-    @staticmethod
-    def sparse_mask(in_dimensions: int, out_dimensions: int) -> torch.Tensor:
-        """
-        get sparse mask
-        """
-        in_coord = torch.arange(in_dimensions) * 1 / in_dimensions + 1 / (
-            2 * in_dimensions
-        )
-        out_coord = torch.arange(out_dimensions) * 1 / out_dimensions + 1 / (
-            2 * out_dimensions
+            * init_scale_spline
         )
 
-        dist_mat = torch.abs(out_coord[:, None] - in_coord[None, :])
-        in_nearest = torch.argmin(dist_mat, dim=0)
-        in_connection = torch.stack(
-            [torch.arange(in_dimensions), in_nearest]
-        ).permute(1, 0)
-        out_nearest = torch.argmin(dist_mat, dim=1)
-        out_connection = torch.stack(
-            [out_nearest, torch.arange(out_dimensions)]
-        ).permute(1, 0)
-        all_connection = torch.cat([in_connection, out_connection], dim=0)
-        mask = torch.zeros(in_dimensions, out_dimensions)
-        mask[all_connection[:, 0], all_connection[:, 1]] = 1.0
-        return mask
+        # Define the vectorized spline module
+        self.spline = VectorizedSpline(
+            order=spline_order, knots=knots, control_points=control_points
+        )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Forward pass through the KAN layer.
-        Each input goes through: w_base*base(x) + w_spline*spline(x)
-        Then sum across input dimensions for each output node.
-        """
-        if hasattr(x, "tensor"):
-            x_tensor = x.tensor
-        else:
-            x_tensor = x
+        # Initialize the base function
+        self.base_function = base_function()
 
-        if self.vectorized:
-            y = self.spline_q.forward(
-                x_tensor
-            )  # (batch, output_dimensions, input_dimensions)
-            y = y.reshape(
-                y.shape[0],
-                y.shape[1],
-                self.output_dimensions,
-                self.input_dimensions,
+        # Initialize the base linear weights if needed
+        if use_base_linear:
+            self.base_weight = torch.nn.Parameter(
+                torch.randn(output_dimensions, input_dimensions)
+                * (init_scale_base / (input_dimensions**0.5))
             )
-            base_out = self.base_function(x_tensor)  # (batch, input_dimensions)
-            y = y + base_out[:, :, None, None]
-            y = y.sum(dim=3).sum(dim=1)  # sum over input dimensions
         else:
-            y = []
-            for q in range(self.output_dimensions):
-                y_q = []
-                for p in range(self.input_dimensions):
-                    spline_out = self.spline_q[q][p].forward(
-                        x_tensor[:, p]
-                    )  # (batch, input_dimensions, output_dimensions)
-                    base_out = self.base_function(
-                        x_tensor[:, p]
-                    )  # (batch, input_dimensions)
-                    y_q.append(spline_out + base_out)
-                y.append(torch.stack(y_q, dim=1).sum(dim=1))
-            y = torch.stack(y, dim=1)
+            self.register_parameter("base_weight", None)
+
+        # Initialize the bias term if needed
+        if use_bias:
+            self.bias = torch.nn.Parameter(torch.zeros(output_dimensions))
+        else:
+            self.register_parameter("bias", None)
+
+    def forward(self, x):
+        """
+        Forward pass of the :class:`KANBlock`. It transforms the input using a
+        vectorized spline basis and optionally adds a linear transformation of a
+        base activation function.
+
+        The input is expected to have shape (batch_size, input_dimensions) and
+        the output will have shape (batch_size, output_dimensions).
+
+        :param torch.Tensor x: The input tensor for the model.
+        :return: The output tensor of the model.
+        :rtype: torch.Tensor
+        """
+        y = self.spline(x)
+
+        if self.base_weight is not None:
+            base_x = self.base_function(x)
+            base_out = torch.einsum("bi,oi->bio", base_x, self.base_weight)
+            y = y + base_out
+
+        # aggregate contributions from all input dimensions
+        y = y.sum(dim=1)
+
+        if self.bias is not None:
+            y = y + self.bias
 
         return y
-
-    def update_grid_from_samples(self, x: torch.Tensor, mode: str = "sample"):
-        """
-        Update grid from input samples to better fit data distribution.
-        Based on PyKAN implementation but with boundary preservation.
-        """
-        # Convert LabelTensor to regular tensor for spline operations
-        if hasattr(x, "tensor"):
-            # This is a LabelTensor, extract the tensor part
-            x_tensor = x.tensor
-        else:
-            x_tensor = x
-
-        with torch.no_grad():
-            batch_size = x_tensor.shape[0]
-            x_sorted = torch.sort(x_tensor, dim=0)[
-                0
-            ]  # (batch_size, input_dimensions)
-
-            # Get current number of intervals (excluding extensions)
-            if self.grid_extension:
-                num_interval = self.spline.knots.shape[1] - 1 - 2 * self.k
-            else:
-                num_interval = self.spline.knots.shape[1] - 1
-
-            def get_grid(num_intervals: int):
-                """PyKAN-style grid creation with boundary preservation"""
-                ids = [
-                    int(batch_size * i / num_intervals)
-                    for i in range(num_intervals)
-                ] + [-1]
-                grid_adaptive = x_sorted[ids, :].transpose(
-                    0, 1
-                )  # (input_dimensions, num_intervals+1)
-
-                original_min = self.grid_range[0]
-                original_max = self.grid_range[1]
-
-                # Clamp adaptive grid to not shrink beyond original domain
-                grid_adaptive[:, 0] = torch.min(
-                    grid_adaptive[:, 0],
-                    torch.full_like(grid_adaptive[:, 0], original_min),
-                )
-                grid_adaptive[:, -1] = torch.max(
-                    grid_adaptive[:, -1],
-                    torch.full_like(grid_adaptive[:, -1], original_max),
-                )
-
-                margin = 0.0
-                h = (
-                    grid_adaptive[:, [-1]] - grid_adaptive[:, [0]] + 2 * margin
-                ) / num_intervals
-                grid_uniform = (
-                    grid_adaptive[:, [0]]
-                    - margin
-                    + h
-                    * torch.arange(
-                        num_intervals + 1,
-                        device=x_tensor.device,
-                        dtype=x_tensor.dtype,
-                    )[None, :]
-                )
-
-                grid_blended = (
-                    self.grid_eps * grid_uniform
-                    + (1 - self.grid_eps) * grid_adaptive
-                )
-
-                return grid_blended
-
-            # Create augmented evaluation points: samples + boundary points
-            # This ensures we preserve boundary behavior while adapting to sample density
-            boundary_points = torch.tensor(
-                [[self.grid_range[0]], [self.grid_range[1]]],
-                device=x_tensor.device,
-                dtype=x_tensor.dtype,
-            ).expand(-1, self.input_dimensions)
-
-            # Combine samples with boundary points for evaluation
-            x_augmented = torch.cat([x_sorted, boundary_points], dim=0)
-            x_augmented = torch.sort(x_augmented, dim=0)[
-                0
-            ]  # Re-sort with boundaries included
-
-            # Evaluate current spline at augmented points (samples + boundaries)
-            basis = self.spline.basis(
-                x_augmented, self.spline.k, self.spline.knots
-            )
-            y_eval = torch.einsum(
-                "bil,iol->bio", basis, self.spline.control_points
-            )
-
-            # Create new grid
-            new_grid = get_grid(num_interval)
-
-            if mode == "grid":
-                # For 'grid' mode, use denser sampling
-                sample_grid = get_grid(2 * num_interval)
-                x_augmented = sample_grid.transpose(
-                    0, 1
-                )  # (batch_size, input_dimensions)
-                basis = self.spline.basis(
-                    x_augmented, self.spline.k, self.spline.knots
-                )
-                y_eval = torch.einsum(
-                    "bil,iol->bio", basis, self.spline.control_points
-                )
-
-            # Add grid extensions if needed
-            if self.grid_extension:
-                h = (new_grid[:, [-1]] - new_grid[:, [0]]) / (
-                    new_grid.shape[1] - 1
-                )
-                for i in range(self.k):
-                    new_grid = torch.cat(
-                        [new_grid[:, [0]] - h, new_grid], dim=1
-                    )
-                    new_grid = torch.cat(
-                        [new_grid, new_grid[:, [-1]] + h], dim=1
-                    )
-
-            # Update grid and refit coefficients
-            self.spline.knots = new_grid
-
-            try:
-                # Refit coefficients using augmented points (preserves boundaries)
-                self.spline.compute_control_points(x_augmented, y_eval)
-            except Exception as e:
-                print(
-                    f"Warning: Failed to update coefficients during grid refinement: {e}"
-                )
-
-    def update_grid_resolution(self, new_num: int):
-        """
-        Update grid resolution to a new number of intervals.
-        """
-        with torch.no_grad():
-            # Sample the current spline function on a dense grid
-            x_eval = torch.linspace(
-                self.grid_range[0],
-                self.grid_range[1],
-                steps=2 * new_num,
-                device=self.spline.knots.device,
-            )
-            x_eval = x_eval.unsqueeze(1).expand(-1, self.input_dimensions)
-
-            basis = self.spline.basis(x_eval, self.spline.k, self.spline.knots)
-            y_eval = torch.einsum(
-                "bil,iol->bio", basis, self.spline.control_points
-            )
-
-            # Update num and create a new grid
-            self.num = new_num
-            new_grid = torch.linspace(
-                self.grid_range[0],
-                self.grid_range[1],
-                steps=self.num + 1,
-                device=self.spline.knots.device,
-            )
-            new_grid = new_grid[None, :].expand(
-                self.input_dimensions, self.num + 1
-            )
-
-            if self.grid_extension:
-                h = (new_grid[:, [-1]] - new_grid[:, [0]]) / (
-                    new_grid.shape[1] - 1
-                )
-                for i in range(self.k):
-                    new_grid = torch.cat(
-                        [new_grid[:, [0]] - h, new_grid], dim=1
-                    )
-                    new_grid = torch.cat(
-                        [new_grid, new_grid[:, [-1]] + h], dim=1
-                    )
-
-            # Update spline with the new grid and re-compute control points
-            self.spline.knots = new_grid
-            self.spline.compute_control_points(x_eval, y_eval)
-
-    def get_grid_statistics(self):
-        """Get statistics about the current grid for debugging/analysis"""
-        return {
-            "grid_shape": self.spline.knots.shape,
-            "grid_min": self.spline.knots.min().item(),
-            "grid_max": self.spline.knots.max().item(),
-            "grid_range": (self.spline.knots.max() - self.spline.knots.min())
-            .mean()
-            .item(),
-            "num_intervals": self.spline.knots.shape[1]
-            - 1
-            - (2 * self.k if self.spline.grid_extension else 0),
-        }
