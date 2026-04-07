@@ -128,6 +128,8 @@ class VectorizedSpline(torch.nn.Module):
         :raises AssertionError: If ``order`` is not a positive integer.
         :raises ValueError: If ``knots`` is neither a torch.Tensor nor a
             dictionary, when provided.
+        :raises ValueError: If ``aggregate_output`` is not None, "mean", or
+            "sum".
         :raises ValueError: If ``control_points`` is not a torch.Tensor,
             when provided.
         :raises ValueError: If both ``knots`` and ``control_points`` are None.
@@ -154,6 +156,13 @@ class VectorizedSpline(torch.nn.Module):
         # Raise error if neither knots nor control points are provided
         if knots is None and control_points is None:
             raise ValueError("knots and control_points cannot both be None.")
+
+        # Raise error if aggregate_output is not None, "mean", or "sum"
+        if aggregate_output not in (None, "mean", "sum"):
+            raise ValueError(
+                f"aggregate_output must be None, 'mean', or 'sum'."
+                f" Got {aggregate_output}."
+            )
 
         # Initialize knots if not provided
         if knots is None and control_points is not None:
@@ -323,9 +332,11 @@ class VectorizedSpline(torch.nn.Module):
         The input is expected to have shape ``[batch, s]``, where ``s`` is the
         number of univariate splines. The output has shape ``[batch, s, o]``,
         where ``o`` is the output dimension of each univariate spline, unless an
-        aggregation method is specified. If ``aggregate_output`` is set to
-        ``"mean"`` or ``"sum"``, the output is aggregated across the last
-        dimension, resulting in an output of shape ``[batch, s]``.
+        aggregation method is specified. If both ``s`` and ``o`` are 1, the
+        output is aggregated across the last dimension, resulting in an output
+        of shape ``[batch, s]``. If ``aggregate_output`` is set to ``"mean"`` or
+        ``"sum"``, the output is aggregated across the last dimension, resulting
+        in an output of shape ``[batch, s]``.
 
         :param x: The input tensor.
         :type x: torch.Tensor | LabelTensor
@@ -343,6 +354,8 @@ class VectorizedSpline(torch.nn.Module):
             out = out.mean(dim=-1)
         elif self.aggregate_output == "sum":
             out = out.sum(dim=-1)
+        elif out.shape[1] == 1 and out.shape[2] == 1:
+            out = out.squeeze(-1)
 
         return out
 
@@ -483,7 +496,7 @@ class VectorizedSpline(torch.nn.Module):
             value = value.unsqueeze(0).repeat(n_splines, 1)
 
         # Set knots
-        self.register_buffer("_knots", value.sort(dim=1).values)
+        self.register_buffer("_knots", value.sort(dim=-1).values)
 
         # Recompute boundary interval when knots change
         if hasattr(self, "_boundary_interval_idx"):
