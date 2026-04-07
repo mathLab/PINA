@@ -55,8 +55,17 @@ class VectorizedSpline(torch.nn.Module):
 
         This class does not represent a single multivariate spline
         :math:`\mathbb{R}^s \to \mathbb{R}^o` with a genuinely multivariate
-        basis. Instead, it represents a vector spline built from ``s``
+        basis. Instead, it represents a vector of splines built from ``s``
         independent univariate splines, one for each input feature.
+
+    .. note::
+
+        When using the :meth:`derivative` method of this class, derivatives are
+        computed directly in vectorized form and returned with the correct
+        shape. In contrast, when relying on ``autograd``, derivatives must be
+        computed separately for each output dimension of each univariate spline
+        and then combined, since autograd does not natively handle this
+        vectorized structure.
 
     :Example:
 
@@ -133,7 +142,8 @@ class VectorizedSpline(torch.nn.Module):
         :raises ValueError: If ``control_points`` is not a torch.Tensor,
             when provided.
         :raises ValueError: If both ``knots`` and ``control_points`` are None.
-        :raises ValueError: If ``knots`` is not two-dimensional.
+        :raises ValueError: If ``knots`` is not two-dimensional, after
+            processing.
         :raises ValueError: If ``control_points``, after expansion when
             two-dimensional, is not three-dimensional.
         :raises ValueError: If, for each univariate spline, the number of
@@ -180,10 +190,6 @@ class VectorizedSpline(torch.nn.Module):
         self.control_points = control_points
         self.aggregate_output = aggregate_output
 
-        # Check dimensionality of knots
-        if self.knots.ndim != 2:
-            raise ValueError("knots must be two-dimensional.")
-
         # Check dimensionality of control points
         if self.control_points.ndim != 3:
             raise ValueError("control_points must be three-dimensional.")
@@ -218,6 +224,9 @@ class VectorizedSpline(torch.nn.Module):
         # Precompute boundary interval index
         self._boundary_interval_idx = self._compute_boundary_interval()
 
+        # Precompute denominators used in derivative formulas
+        self._compute_derivative_denominators()
+
     def _compute_boundary_interval(self):
         """
         Precompute the index of the rightmost non-degenerate interval to improve
@@ -243,8 +252,36 @@ class VectorizedSpline(torch.nn.Module):
             idx[s] = valid_s[-1, 0] if valid_s.numel() > 0 else 0
 
         return idx
+    
+    def _compute_derivative_denominators(self):
+        """
+        Precompute the denominators used in the derivatives for all orders up to
+        the spline order to avoid redundant calculations.
+        """
+        # Precompute for order 2 to k
+        for i in range(2, self.order + 1):
 
-    def basis(self, x):
+            # Denominators for the derivative recurrence relations
+            left_den = self.knots[:, i - 1 : -1] - self.knots[:, :-i]
+            right_den = self.knots[:, i:] - self.knots[:, 1 : -i + 1]
+
+            # If consecutive knots are equal, set left and right factors to zero
+            left_fac = torch.where(
+                torch.abs(left_den) > 1e-10,
+                (i - 1) / left_den,
+                torch.zeros_like(left_den),
+            )
+            right_fac = torch.where(
+                torch.abs(right_den) > 1e-10,
+                (i - 1) / right_den,
+                torch.zeros_like(right_den),
+            )
+
+            # Register buffers
+            self.register_buffer(f"_left_factor_order_{i}", left_fac)
+            self.register_buffer(f"_right_factor_order_{i}", right_fac)
+
+    def basis(self, x, collection=False):
         """
         Evaluate the B-spline basis functions for each univariate spline.
 
@@ -252,12 +289,18 @@ class VectorizedSpline(torch.nn.Module):
         all univariate splines of the vector spline.
 
         :param torch.Tensor x: The points to be evaluated.
+        :param bool collection: If True, returns a list of basis functions for
+            all orders up to the spline order. Default is False.
+        :raise ValueError: If ``collection`` is not a boolean.
         :raises ValueError: If ``x`` is not two-dimensional.
         :raises ValueError: If the number of input features does not match
             the number of univariate splines.
         :return: The basis functions evaluated at x.
         :rtype: torch.Tensor
         """
+        # Check consistency
+        check_consistency(collection, bool)
+
         # Ensure x is a tensor of the same dtype as knots
         x = x.as_subclass(torch.Tensor).to(dtype=self.knots.dtype)
 
@@ -300,6 +343,10 @@ class VectorizedSpline(torch.nn.Module):
             b_idx, s_idx = torch.nonzero(at_rightmost_boundary, as_tuple=True)
             basis[b_idx, s_idx, self._boundary_interval_idx[s_idx]] = 1.0
 
+        # If returning the whole collection, initialize list
+        if collection:
+            basis_collection = [None, basis]
+
         # Cox-de Boor recursion -- iterative case
         for i in range(1, self.order):
 
@@ -322,7 +369,10 @@ class VectorizedSpline(torch.nn.Module):
             # Combine terms to get the new basis
             basis = term1 + term2
 
-        return basis
+            if collection:
+                basis_collection.append(basis)
+
+        return basis_collection if collection else basis
 
     def forward(self, x):
         """
@@ -358,6 +408,91 @@ class VectorizedSpline(torch.nn.Module):
             out = out.squeeze(-1)
 
         return out
+    
+    def derivative(self, x, degree):
+        """
+        Compute the ``degree``-th derivative of each univariate spline at the
+        given input points. 
+        
+        The output has shape ``[batch, s, o]``, where ``o`` is the output
+        dimension of each univariate spline, unless an aggregation method is
+        specified. If both ``s`` and ``o`` are 1, the output is aggregated
+        across the last dimension, resulting in an output of shape
+        ``[batch, s]``. If ``aggregate_output`` is set to ``"mean"`` or
+        ``"sum"``, the output is aggregated across the last dimension, resulting
+        in an output of shape ``[batch, s]``.
+
+        :param x: The input tensor.
+        :type x: torch.Tensor | LabelTensor
+        :param int degree: The derivative degree to compute.
+        :return: The derivative tensor.
+        :rtype: torch.Tensor
+        """
+        # Check consistency
+        check_positive_integer(degree, strict=False)
+
+        # Compute basis derivative
+        der = self._basis_derivative(x.as_subclass(torch.Tensor), degree=degree)
+
+        # Compute the output for each spline
+        out = torch.einsum("bsc,soc->bso", der, self.control_points)
+
+        # Aggregate output if needed
+        if self.aggregate_output == "mean":
+            out = out.mean(dim=-1)
+        elif self.aggregate_output == "sum":
+            out = out.sum(dim=-1)
+        elif out.shape[1] == 1 and out.shape[2] == 1:
+            out = out.squeeze(-1)
+
+        return out
+
+    def _basis_derivative(self, x, degree):
+        """
+        Compute the ``degree``-th derivative of the vectorized spline basis
+        functions at the given input points using an iterative approach.
+
+        :param torch.Tensor x: The points to be evaluated.
+        :param int degree: The derivative degree to compute.
+        :return: The derivative of the basis functions of order ``self.order``.
+        :rtype: torch.Tensor
+        """
+        # Compute the whole basis collection
+        basis = self.basis(x, collection=True)
+
+        # Derivatives initialization (dummy at index 0 for convenience)
+        derivatives = [None] + [basis[o] for o in range(1, self.order + 1)]
+
+        # Iterate over derivative degrees
+        for _ in range(1, degree + 1):
+
+            # Current degree derivatives (with dummy at index 0 for convenience)
+            current_der = [None] * (self.order + 1)
+            current_der[1] = torch.zeros_like(derivatives[1])
+
+            # Iterate over basis orders
+            for o in range(2, self.order + 1):
+                
+                # Retrieve precomputed factors
+                left_fac = getattr(self, f"_left_factor_order_{o}")
+                right_fac = getattr(self, f"_right_factor_order_{o}")
+
+                # derivatives[o - 1] has shape [b, s, m]
+                # Slice previous derivatives to align
+                left_part = derivatives[o - 1][..., :-1]
+                right_part = derivatives[o - 1][..., 1:]
+
+                # Broadcast factors over batch dims
+                left_fac = left_fac.unsqueeze(0)
+                right_fac = right_fac.unsqueeze(0)
+
+                # Compute current derivatives
+                current_der[o] = left_fac * left_part - right_fac * right_part
+
+            # Update derivatives for next degree
+            derivatives = current_der
+
+        return derivatives[self.order]
 
     @property
     def control_points(self):
@@ -440,6 +575,7 @@ class VectorizedSpline(torch.nn.Module):
         :raises ValueError: If a dictionary is provided but does not contain
             the required keys.
         :raises ValueError: If the mode specified in the dictionary is invalid.
+        :raises ValueError: If knots is not two-dimensional after processing.
         """
         # If a dictionary is provided, initialize knots accordingly
         if isinstance(value, dict):
@@ -498,6 +634,13 @@ class VectorizedSpline(torch.nn.Module):
         # Set knots
         self.register_buffer("_knots", value.sort(dim=-1).values)
 
+        # Check dimensionality of knots
+        if self.knots.ndim != 2:
+            raise ValueError("knots must be two-dimensional.")
+
         # Recompute boundary interval when knots change
         if hasattr(self, "_boundary_interval_idx"):
             self._boundary_interval_idx = self._compute_boundary_interval()
+
+        # Recompute derivative denominators when knots change
+        self._compute_derivative_denominators()

@@ -1,6 +1,7 @@
 import torch
 import pytest
 from pina.model import VectorizedSpline, Spline
+from pina.operator import grad
 from pina import LabelTensor
 
 
@@ -225,6 +226,33 @@ def test_backward(args):
     loss = torch.mean(output_)
     loss.backward()
     assert model.control_points.grad.shape == model.control_points.shape
+
+
+@pytest.mark.parametrize("args", valid_args)
+def test_derivative(args):
+
+    # Define and evaluate the model
+    model = VectorizedSpline(**args)
+    pts.requires_grad_(True)
+    output_ = model(pts)
+
+    # Compute analytical derivatives
+    first_der = model.derivative(x=pts, degree=1)
+
+    # Compute autograd derivatives -- we need to loop over output dimensions
+    # since autograd doesn't support vectorized outputs
+    gradients = []
+    for j in range(output_.shape[2]):
+        out = output_[:, :, j].squeeze(-1)
+        out = LabelTensor(out, [f"u{j}" for j in range(out.shape[1])])
+        gradients.append(
+            grad(out, pts)[[f"du{j}dx{j}" for j in range(pts.shape[1])]]
+        )
+    first_der_auto = torch.stack(gradients, dim=-1)
+
+    # Check shape and value
+    assert first_der.shape == first_der_auto.shape
+    assert torch.allclose(first_der, first_der_auto, atol=1e-4, rtol=1e-4)
 
 
 def test_1d_vs_vectorized():
