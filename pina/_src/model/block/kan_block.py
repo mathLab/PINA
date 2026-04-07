@@ -7,7 +7,20 @@ from pina._src.core.utils import check_consistency, check_positive_integer
 
 class KANBlock(torch.nn.Module):
     """
-    TODO: docstring.
+    The inner block of the Kolmogorov-Arnold Network (KAN).
+
+    The block applies a spline transformation to the input, optionally combined
+    with a linear transformation of a base activation function. The output is
+    aggregated across input dimensions to produce the final output.
+
+    .. seealso::
+
+        **Original reference**:
+        Liu Z., Wang Y., Vaidya S., Ruehle F., Halverson J., Soljacic M.,
+        Hou T., Tegmark M. (2025).
+        *KAN: Kolmogorov-Arnold Networks*.
+        DOI: `arXiv preprint arXiv:2404.19756.
+        <https://arxiv.org/abs/2404.19756>`_
     """
 
     def __init__(
@@ -119,16 +132,15 @@ class KANBlock(torch.nn.Module):
 
     def forward(self, x):
         """
-        Forward pass of the :class:`KANBlock`. It transforms the input using a
-        vectorized spline basis and optionally adds a linear transformation of a
-        base activation function.
+        Forward pass of the Kolmogorov-Arnold block. The input is passed through
+        the spline transformation, optionally combined with a linear
+        transformation of the base function output, and then aggregated across
+        input dimensions to produce the final output.
 
-        The input is expected to have shape (batch_size, input_dimensions) and
-        the output will have shape (batch_size, output_dimensions).
-
-        :param torch.Tensor x: The input tensor for the model.
+        :param x: The input tensor for the model.
+        :type x: torch.Tensor | LabelTensor
         :return: The output tensor of the model.
-        :rtype: torch.Tensor
+        :rtype: torch.Tensor | LabelTensor
         """
         y = self.spline(x)
 

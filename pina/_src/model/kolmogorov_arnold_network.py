@@ -5,7 +5,20 @@ from pina._src.core.utils import check_consistency
 
 class KolmogorovArnoldNetwork(torch.nn.Module):
     """
-    TODO: add docstring.
+    Implementation of Kolmogorov-Arnold Network (KAN).
+
+    The model consists of a sequence of KAN blocks, where each block applies a
+    spline transformation to the input, optionally combined with a linear
+    transformation of a base activation function.
+
+    .. seealso::
+
+        **Original reference**:
+        Liu Z., Wang Y., Vaidya S., Ruehle F., Halverson J., Soljacic M.,
+        Hou T., Tegmark M. (2025).
+        *KAN: Kolmogorov-Arnold Networks*.
+        DOI: `arXiv preprint arXiv:2404.19756.
+        <https://arxiv.org/abs/2404.19756>`_
     """
 
     def __init__(
@@ -78,7 +91,13 @@ class KolmogorovArnoldNetwork(torch.nn.Module):
 
     def forward(self, x):
         """
-        TODO: add docstring.
+        Forward pass of the KolmogorovArnoldNetwork model. It passes the input
+        through each KAN block in the network and returns the final output.
+
+        :param x: The input tensor for the model.
+        :type x: torch.Tensor | LabelTensor
+        :return: The output tensor of the model.
+        :rtype: torch.Tensor | LabelTensor
         """
         for layer in self.kan_layers:
             x = layer(x)
