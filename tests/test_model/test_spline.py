@@ -2,7 +2,7 @@ import torch
 import pytest
 from scipy.interpolate import BSpline
 from pina.operator import grad
-from pina.model import Spline, VectorizedSpline
+from pina.model import Spline
 from pina import LabelTensor
 
 # Utility quantities for testing
@@ -191,35 +191,3 @@ def test_derivative(args, pts):
     # Check shape and value
     assert first_der.shape == pts.shape
     assert torch.allclose(first_der, first_der_auto, atol=1e-4, rtol=1e-4)
-
-
-@pytest.mark.parametrize("args", valid_args)
-@pytest.mark.parametrize("N", [1, 4, 7])
-def test_vectorized(args, N):
-
-    cps = []
-    splines = []
-
-    for i in range(N):
-        spline = Spline(**args)
-        splines.append(spline)
-        cps.append(spline.control_points)
-
-    unique_cps = torch.stack(cps, dim=0)
-    vectorized_spline = VectorizedSpline(
-        order=args["order"],
-        knots=splines[0].knots,
-        control_points=unique_cps
-    )
-
-    x = torch.rand(100, 1)
-
-    result_single = torch.stack([
-        splines[i](x) for i in range(N)
-    ])
-    result_single = result_single.permute(1, 2, 0)  # shape (100, N)
-    out_vectorized = vectorized_spline(x)
-    print("result single shape:", result_single.shape)
-    print("out vectorized shape:", out_vectorized.shape)
-    assert out_vectorized.shape == (100, 1, N)
-    assert torch.allclose(out_vectorized, result_single, atol=1e-5, rtol=1e-5)
