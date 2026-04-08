@@ -35,7 +35,7 @@ SPDX-License-Identifier: Apache-2.0
            
   <p style="max-width: 800px; font-size: 1rem; line-height: 1.5;">
     <b>PINA</b> is an open-source Python library designed to simplify and accelerate the development of
-    <b>Scientific Machine Learning</b> (SciML) solutions, including <b>PINNs</b>, Neural Operators,
+    <b>Scientific Machine Learning</b> (SciML) solutions, including PINNs, Neural Operators,
     data-driven modeling, and more.
   </p>
 
@@ -150,8 +150,7 @@ To install additional packages required for development, tests, docs, or tutoria
   <h2>Getting started with PINA</h2>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://mathlab.github.io/PINA/">
-    <img align="center" height="20" src="https://img.shields.io/badge/documentation-fa9900?style=for-the-badge&logo=readthedocs&labelColor=555">
-  </a>
+    <img align="center" height="20" src="https://img.shields.io/badge/documentation-fa9900?style=for-the-badge&logo=readthedocs&labelColor=555"></a>
   &nbsp;&nbsp;&nbsp;&nbsp;
   <a href="API_scheme.md">
     <img align="center" height="20" src="https://img.shields.io/badge/API%20Scheme-fa9900?style=for-the-badge">
