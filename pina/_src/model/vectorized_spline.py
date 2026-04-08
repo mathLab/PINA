@@ -222,7 +222,9 @@ class VectorizedSpline(torch.nn.Module):
             )
 
         # Precompute boundary interval index
-        self._boundary_interval_idx = self._compute_boundary_interval()
+        self.register_buffer(
+            "_boundary_interval_idx", self._compute_boundary_interval()
+        )
 
         # Precompute denominators used in derivative formulas
         self._compute_derivative_denominators()
@@ -252,7 +254,7 @@ class VectorizedSpline(torch.nn.Module):
             idx[s] = valid_s[-1, 0] if valid_s.numel() > 0 else 0
 
         return idx
-    
+
     def _compute_derivative_denominators(self):
         """
         Precompute the denominators used in the derivatives for all orders up to
@@ -334,8 +336,10 @@ class VectorizedSpline(torch.nn.Module):
         knot_right = self.knots[range_tensor, self._boundary_interval_idx + 1]
 
         # Identify points at the rightmost boundary
-        at_rightmost_boundary = (x >= knot_left.unsqueeze(0)) & torch.isclose(
-            x, knot_right.unsqueeze(0), rtol=1e-8, atol=1e-10
+        at_rightmost_boundary = (
+            x.squeeze(-1) >= knot_left.unsqueeze(0)
+        ) & torch.isclose(
+            x.squeeze(-1), knot_right.unsqueeze(0), rtol=1e-8, atol=1e-10
         )
 
         # Ensure the correct value is set at the rightmost boundary
@@ -408,12 +412,12 @@ class VectorizedSpline(torch.nn.Module):
             out = out.squeeze(-1)
 
         return out
-    
+
     def derivative(self, x, degree):
         """
         Compute the ``degree``-th derivative of each univariate spline at the
-        given input points. 
-        
+        given input points.
+
         The output has shape ``[batch, s, o]``, where ``o`` is the output
         dimension of each univariate spline, unless an aggregation method is
         specified. If both ``s`` and ``o`` are 1, the output is aggregated
@@ -472,7 +476,7 @@ class VectorizedSpline(torch.nn.Module):
 
             # Iterate over basis orders
             for o in range(2, self.order + 1):
-                
+
                 # Retrieve precomputed factors
                 left_fac = getattr(self, f"_left_factor_order_{o}")
                 right_fac = getattr(self, f"_right_factor_order_{o}")
@@ -640,7 +644,9 @@ class VectorizedSpline(torch.nn.Module):
 
         # Recompute boundary interval when knots change
         if hasattr(self, "_boundary_interval_idx"):
-            self._boundary_interval_idx = self._compute_boundary_interval()
+            self.register_buffer(
+                "_boundary_interval_idx", self._compute_boundary_interval()
+            )
 
         # Recompute derivative denominators when knots change
         self._compute_derivative_denominators()
