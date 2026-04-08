@@ -289,15 +289,10 @@ class AbstractProblem(metaclass=ABCMeta):
         if not self.are_all_domains_discretised:
             warnings.formatwarning = custom_warning_format
             warnings.filterwarnings("always", category=RuntimeWarning)
-            warning_message = "\n".join(
-                [
-                    f"""{" " * 13} ---> Domain {key} {
+            warning_message = "\n".join([f"""{" " * 13} ---> Domain {key} {
                     "sampled" if key in self.discretised_domains 
                     else
-                    "not sampled"}"""
-                    for key in self.domains
-                ]
-            )
+                    "not sampled"}""" for key in self.domains])
             warnings.warn(
                 "Some of the domains are still not sampled. Consider calling "
                 "problem.discretise_domain function for all domains before "

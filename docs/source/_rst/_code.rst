@@ -110,6 +110,8 @@ Models
     PirateNet <model/pirate_network.rst>
     EquivariantGraphNeuralOperator <model/equivariant_graph_neural_operator.rst>
     SINDy <model/sindy.rst>
+    Vectorized Spline <model/vectorized_spline.rst>
+    Kolmogorov-Arnold Network <model/kolmogorov_arnold_network.rst>
 
 Blocks
 -------------
@@ -128,6 +130,7 @@ Blocks
     Continuous Convolution Block <model/block/convolution.rst>
     Orthogonal Block <model/block/orthogonal.rst>
     PirateNet Block <model/block/pirate_network_block.rst>
+    KAN Block <model/block/kan_block.rst>
 
 Message Passing
 -------------------

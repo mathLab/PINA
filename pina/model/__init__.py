@@ -17,6 +17,8 @@ __all__ = [
     "EquivariantGraphNeuralOperator",
     "SINDy",
     "SplineSurface",
+    "VectorizedSpline",
+    "KolmogorovArnoldNetwork",
 ]
 
 from pina._src.model.feed_forward import FeedForward, ResidualFeedForward
@@ -34,3 +36,5 @@ from pina._src.model.equivariant_graph_neural_operator import (
     EquivariantGraphNeuralOperator,
 )
 from pina._src.model.sindy import SINDy
+from pina._src.model.vectorized_spline import VectorizedSpline
+from pina._src.model.kolmogorov_arnold_network import KolmogorovArnoldNetwork
