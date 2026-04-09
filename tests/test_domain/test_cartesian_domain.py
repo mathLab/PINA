@@ -76,8 +76,8 @@ def test_update(dict):
 
     # Define the domains
     domain_1 = CartesianDomain(dict)
-    domain_2 = CartesianDomain({"new_var": [0, 1]})
-    domain_3 = CartesianDomain(dict | {"new_var": [0, 1]})
+    domain_2 = CartesianDomain({"new_var": [0, 1], "x": 1})
+    domain_3 = CartesianDomain(dict | {"new_var": [0, 1], "x": 1})
 
     # Update domain_1 with domain_2
     updated_domain = domain_1.update(domain_2)

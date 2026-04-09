@@ -103,8 +103,17 @@ class BaseDomain(DomainInterface, metaclass=ABCMeta):
                 f"with domain of type {type(domain)}."
             )
 
-        # Update fixed and ranged variables
+        # Create a deepcopy of the current domain
         updated = deepcopy(self)
+
+        # Remove keys that change category
+        for key in domain.fixed:
+            updated.range.pop(key, None)
+
+        for key in domain.range:
+            updated.fixed.pop(key, None)
+
+        # Update fixed and ranged variables
         updated.fixed.update(domain.fixed)
         updated.range.update(domain.range)
 
