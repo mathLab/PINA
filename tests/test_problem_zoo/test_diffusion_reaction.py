@@ -7,7 +7,7 @@ from pina.problem import TimeDependentProblem, SpatialProblem
 def test_constructor(alpha):
 
     problem = DiffusionReactionProblem(alpha=alpha)
-    problem.discretise_domain(n=10, mode="random", domains="all")
+    problem.discretise_domain(n=10, mode="random", domains=None)
     assert problem.are_all_domains_discretised
     assert isinstance(problem, TimeDependentProblem)
     assert isinstance(problem, SpatialProblem)

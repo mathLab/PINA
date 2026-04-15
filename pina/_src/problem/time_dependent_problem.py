@@ -1,28 +1,33 @@
 """Module for the TimeDependentProblem class."""
 
 from abc import abstractmethod
-
-from .abstract_problem import AbstractProblem
+from pina._src.problem.abstract_problem import AbstractProblem
 
 
 class TimeDependentProblem(AbstractProblem):
     """
-    Class for defining time-dependent problems, where the system's behavior
-    changes with respect to time.
+    Base class for all time-dependent problems, extending the standard problem
+    definition with time-dependent inputs.
+
+    A time-dependent problem is defined over a temporal domain, where input
+    variables represent the time at which the solution is evaluated.
+
+    This class is not meant to be instantiated directly.
     """
 
+    @property
     @abstractmethod
     def temporal_domain(self):
         """
-        The temporal domain of the problem.
+        The domain of temporal variables of the problem.
         """
 
     @property
-    def temporal_variable(self):
+    def temporal_variables(self):
         """
-        Get the time variable of the problem.
+        The temporal variables of the problem.
 
-        :return: The time variable of the problem.
+        :return: The temporal variables of the problem.
         :rtype: list[str]
         """
         return self.temporal_domain.variables

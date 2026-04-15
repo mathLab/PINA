@@ -1,26 +1,32 @@
 """Module for the SpatialProblem class."""
 
 from abc import abstractmethod
-
-from .abstract_problem import AbstractProblem
+from pina._src.problem.abstract_problem import AbstractProblem
 
 
 class SpatialProblem(AbstractProblem):
     """
-    Class for defining spatial problems, where the problem domain is defined in
-    terms of spatial variables.
+    Base class for all spatial problems, extending the standard problem
+    definition with spatial-dependent inputs.
+
+    A spatial problem is defined over a spatial domain, where input variables
+    represent the coordinates of the system (e.g., positions in one or more
+    dimensions) on which the solution is evaluated.
+
+    This class is not meant to be instantiated directly.
     """
 
+    @property
     @abstractmethod
     def spatial_domain(self):
         """
-        The spatial domain of the problem.
+        The domain of spatial variables of the problem.
         """
 
     @property
     def spatial_variables(self):
         """
-        Get the spatial input variables of the problem.
+        The spatial input variables of the problem.
 
         :return: The spatial input variables of the problem.
         :rtype: list[str]
