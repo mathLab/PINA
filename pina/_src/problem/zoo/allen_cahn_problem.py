@@ -28,7 +28,8 @@ def initial_condition(input_, output_):
 class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
     r"""
     Implementation of the Allen Cahn problem in the spatial interval
-    :math:`[-1, 1]` and temporal interval :math:`[0, 1]`.
+    :math:`[-1, 1]` and temporal interval :math:`[0, 1]` with periodic
+    boundary conditions.
 
     .. seealso::
 

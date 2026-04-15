@@ -1,13 +1,13 @@
 """Formulation of the advection problem."""
 
 import torch
-from pina._src.condition.condition import Condition
-from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.problem.time_dependent_problem import TimeDependentProblem
-from pina._src.equation.equation import Equation
-from pina._src.equation.equation_factory import Advection
-from pina._src.core.utils import check_consistency
 from pina._src.domain.cartesian_domain import CartesianDomain
+from pina._src.problem.spatial_problem import SpatialProblem
+from pina._src.equation.equation_factory import Advection
+from pina._src.condition.condition import Condition
+from pina._src.core.utils import check_consistency
+from pina._src.equation.equation import Equation
 
 
 def initial_condition(input_, output_):
@@ -25,7 +25,8 @@ def initial_condition(input_, output_):
 class AdvectionProblem(SpatialProblem, TimeDependentProblem):
     r"""
     Implementation of the advection problem in the spatial interval
-    :math:`[0, 2 \pi]` and temporal interval :math:`[0, 1]`.
+    :math:`[0, 2 \pi]` and temporal interval :math:`[0, 1]` with periodic
+    boundary conditions.
 
     .. seealso::
 
