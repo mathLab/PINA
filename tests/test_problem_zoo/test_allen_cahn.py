@@ -8,7 +8,7 @@ from pina.problem import SpatialProblem, TimeDependentProblem
 def test_constructor(alpha, beta):
 
     problem = AllenCahnProblem(alpha=alpha, beta=beta)
-    problem.discretise_domain(n=10, mode="random", domains="all")
+    problem.discretise_domain(n=10, mode="random", domains=None)
     assert problem.are_all_domains_discretised
     assert isinstance(problem, SpatialProblem)
     assert isinstance(problem, TimeDependentProblem)

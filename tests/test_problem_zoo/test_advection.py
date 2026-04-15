@@ -7,7 +7,7 @@ from pina.problem import SpatialProblem, TimeDependentProblem
 def test_constructor(c):
 
     problem = AdvectionProblem(c=c)
-    problem.discretise_domain(n=10, mode="random", domains="all")
+    problem.discretise_domain(n=10, mode="random", domains=None)
     assert problem.are_all_domains_discretised
     assert isinstance(problem, SpatialProblem)
     assert isinstance(problem, TimeDependentProblem)

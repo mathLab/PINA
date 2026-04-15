@@ -1,13 +1,8 @@
 import torch
 import pytest
+from pina.domain import Union, CartesianDomain, EllipsoidDomain
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from pina import LabelTensor
-from pina.domain import Union, CartesianDomain, EllipsoidDomain
-from pina.condition import (
-    Condition,
-    InputTargetCondition,
-    DomainEquationCondition,
-)
 
 
 def test_discretise_domain():
@@ -85,7 +80,7 @@ def test_wrong_custom_sampling_logic(mode):
         "x": {"n": 100, "mode": mode},
         "y": {"n": 50, "mode": mode},
     }
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ValueError):
         poisson_problem.domains["new"] = EllipsoidDomain({"x": [0, 1]})
         poisson_problem.discretise_domain(sample_rules=sampling_rules)
 

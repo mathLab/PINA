@@ -1,26 +1,32 @@
 """Module for the AbstractProblem class."""
 
-from abc import ABCMeta, abstractmethod
-import warnings
 from copy import deepcopy
-from pina._src.core.utils import check_consistency
+from pina._src.problem.problem_interface import ProblemInterface
 from pina._src.domain.domain_interface import DomainInterface
-from pina._src.domain.cartesian_domain import CartesianDomain
+from pina._src.core.label_tensor import LabelTensor
+from pina._src.condition.condition import Condition
 from pina._src.condition.domain_equation_condition import (
     DomainEquationCondition,
 )
-from pina._src.core.label_tensor import LabelTensor
-from pina._src.core.utils import merge_tensors, custom_warning_format
-from pina._src.condition.condition import Condition
+from pina._src.core.utils import (
+    check_consistency,
+    check_positive_integer,
+    merge_tensors,
+)
 
 
-class AbstractProblem(metaclass=ABCMeta):
+class AbstractProblem(ProblemInterface):
     """
-    Abstract base class for PINA problems. All specific problem types should
-    inherit from this class.
+    Base class for all problems, implementing common functionality.
 
-    A PINA problem is defined by key components, which typically include output
-    variables, conditions, and domains over which the conditions are applied.
+    A problem is defined by core components, including input and output
+    variables, a set of conditions to be satisfied, and optionally the domains
+    on which these conditions are defined.
+
+    All problems must inherit from this class and implement abstract methods
+    defined in :class:`~pina.problem.problem_interface.ProblemInterface`.
+
+    This class is not meant to be instantiated directly.
     """
 
     def __init__(self):
@@ -29,284 +35,262 @@ class AbstractProblem(metaclass=ABCMeta):
         """
         self._discretised_domains = {}
 
-        # create hook conditions <-> problems
+        # Create a correspondence between the problem and the conditions
         for condition_name in self.conditions:
             self.conditions[condition_name].problem = self
 
-        # Store in domains dict all the domains object directly passed to
-        # ConditionInterface. Done for back compatibility with PINA <0.2
+        # Create a dictionary to store the domains of the problem
         if not hasattr(self, "domains"):
             self.domains = {}
-        for cond_name, cond in self.conditions.items():
+
+        # Store all the domains object passed to the problem's conditions
+        for name, cond in self.conditions.items():
             if isinstance(cond, DomainEquationCondition):
                 if isinstance(cond.domain, DomainInterface):
-                    self.domains[cond_name] = cond.domain
-                    cond.domain = cond_name
+                    self.domains[name] = cond.domain
+                    cond.domain = name
 
-    # #  back compatibility 0.1
-    # @property
-    # def input_pts(self):
-    #     """
-    #     Return a dictionary mapping condition names to their corresponding
-    #     input points. If some domains are not sampled, they will not be returned
-    #     and the corresponding condition will be empty.
+    def __deepcopy__(self, memo):
+        """
+        Create a deep copy of the problem instance.
 
-    #     :return: The input points of the problem.
-    #     :rtype: dict
-    #     """
-    #     to_return = {}
-    #     for cond_name, data in self.collected_data.items():
-    #         to_return[cond_name] = data["input"]
-    #     return to_return
+        :param dict memo: The memorization dictionary used by the deepcopy
+            function.
+        :return: A deep copy of the problem instance.
+        :rtype: ProblemInterface
+        """
+        # Create a new instance of the same class and store it in a dictionary
+        result = self.__class__.__new__(self.__class__)
+        memo[id(self)] = result
+
+        # Set the attributes of the new instance to deep copies of the original
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+
+        return result
+
+    def discretise_domain(
+        self, n=None, mode="random", domains=None, sample_rules=None
+    ):
+        """
+        Discretise the problem's domains by sampling a specified number of
+        points according to the selected sampling mode.
+
+        :param int n: The number of points to sample. This is ignored if
+            ``sample_rules`` is provided. Default is ``None``.
+        :param str mode: The sampling method. Available modes include:
+            ``"random"`` for random sampling, ``"latin"`` or ``"lh"`` for latin
+            hypercube sampling, ``"chebyshev"`` for Chebyshev sampling, and
+            ``"grid"`` for grid sampling. Default is ``"random"``.
+        :param domains: The domains from which to sample. If ``None``, all
+            domains are considered for sampling. Default is ``None``.
+        :type domains: str | list[str]
+        :param dict sample_rules: The dictionary specifying custom sampling
+            rules for each input variable. When provided, it overrides the
+            global ``n`` and ``mode`` arguments. Each key in the dictionary must
+            match one of the variables defined in :meth:`input_variables`, and
+            each value must be a dictionary containing two keys: ``n`` for the
+            number of points to sample for that variable, and ``mode`` for the
+            sampling method to use. If ``None``, the global ``n`` and ``mode``
+            parameters are used for all variables. Default is ``None``.
+        :raises ValueError: If ``sample_rules`` is provided but it is not a
+            dictionary.
+        :raises ValueError: If ``sample_rules`` is provided but its keys do not
+            match the input variables of the problem.
+        :raises ValueError: If ``sample_rules`` is provided but any of its rules
+            is not a dictionary containing both ``n`` and ``mode`` keys, with
+            ``n`` being a positive integer and ``mode`` being a string.
+        :raises AssertionError: If ``n`` is not a positive integer.
+        :raises ValueError: If ``mode`` is not a string
+        :raises ValueError: If ``domains`` is provided by it is neither a string
+            nor a list of strings.
+
+        .. warning::
+            ``"random"`` is the only supported ``mode`` across all geometries:
+            :class:`~pina.domain.cartesian_domain.CartesianDomain`,
+            :class:`~pina.domain.ellipsoid_domain.EllipsoidDomain`, and
+            :class:`~pina.domain.simplex_domain.SimplexDomain`.
+            Sampling modes such as ``"latin"``, ``"chebyshev"``, and ``"grid"``
+            are only implemented for
+            :class:~pina.domain.cartesian_domain.CartesianDomain.
+            When custom discretisation is specified via ``sample_rules``, the
+            domain to be discretised must be an instance of
+            :class:~pina.domain.cartesian_domain.CartesianDomain.
+
+        :Example:
+            >>> problem.discretise_domain(n=10, mode="random")
+            >>> problem.discretise_domain(n=10, mode="lh", domains=["boundary"])
+            >>> problem.discretise_domain(
+            ...     sample_rules={
+            ...         'x': {'n': 10, 'mode': 'grid'},
+            ...         'y': {'n': 100, 'mode': 'grid'}
+            ...     },
+            ... )
+        """
+        # Initialize the domains to be discretised
+        if domains is None:
+            domains = list(self.domains)
+        if not isinstance(domains, (list)):
+            domains = [domains]
+
+        # Check sampling rules
+        if sample_rules is not None:
+            check_consistency(sample_rules, dict)
+
+            # Check that the keys of sample_rules match the input variables
+            if sorted(list(sample_rules.keys())) != sorted(
+                self.input_variables
+            ):
+                raise ValueError(
+                    "The keys of the sample_rules dictionary must match the "
+                    "input variables."
+                )
+
+            # Check that the rules for each variable are valid
+            for var, rules in sample_rules.items():
+                check_consistency(rules, dict)
+                if "n" not in rules or "mode" not in rules:
+                    raise ValueError(
+                        f"Sampling rules for variable {var} must contain 'n' "
+                        "and 'mode' keys."
+                    )
+                check_positive_integer(rules["n"], strict=True)
+                check_consistency(rules["mode"], str)
+
+        # Check n only if sample_rules is not provided
+        else:
+            check_positive_integer(n, strict=True)
+
+        # Check consistency
+        check_consistency(mode, str)
+        check_consistency(domains, str)
+
+        # If sample_rules is provided, apply custom discretisation
+        if sample_rules is not None:
+            for d in domains:
+
+                # Discretise each variable according to its custom rules
+                discretised_tensor = [
+                    self.domains[d].sample(rules["n"], rules["mode"], var)
+                    for var, rules in sample_rules.items()
+                ]
+
+                # Merge the discretised tensors into a single one for the domain
+                self.discretised_domains[d] = merge_tensors(discretised_tensor)
+
+        # Otherwise, apply the same n and mode to all specified domains
+        else:
+            for d in domains:
+                self.discretised_domains[d] = self.domains[d].sample(n, mode)
+
+    def add_points(self, new_points_dict):
+        """
+        Append additional points to an already discretised domain.
+
+        :param dict new_points_dict: The dictionary mapping each domain to the
+            corresponding set of new points to be added. Each key in the
+            dictionary must match one of the domains defined in :attr:`domains`,
+            and each value must be a :class:`~pina.tensor.LabelTensor`
+            containing the new points to be added to that domain. The labels of
+            the points to be added must correspond to those of the domain to
+            which they are being added.
+        :raises ValueError: If ``new_points_dict`` is not a dictionary.
+        :raises ValueError: If any of the values in ``new_points_dict`` is not
+            a :class:`~pina.tensor.LabelTensor`.
+        :raises ValueError: If any of the keys in ``new_points_dict`` does not
+            match any of the domains defined in :attr:`domains`.
+        :raises ValueError: If any of the domains in ``new_points_dict`` has not
+            been discretised yet.
+
+        :Example:
+            >>> additional_points = {
+            ...     "boundary": LabelTensor(torch.rand(5, 2), labels=["x", "y"])
+            ... }
+            >>> problem.add_points(additional_points)
+        """
+        # Check consistency
+        check_consistency(new_points_dict, dict)
+
+        # Check the keys and values of the dictionary
+        for key, value in new_points_dict.items():
+            check_consistency(value, LabelTensor)
+            if key not in self.domains:
+                raise ValueError(
+                    f"Key {key} does not match any domain of the problem."
+                )
+            if key not in self.discretised_domains:
+                raise ValueError(f"Domain {key} has not been discretised yet.")
+
+        # Append the new points to the corresponding discretised domains
+        for key, value in new_points_dict.items():
+            self.discretised_domains[key] = LabelTensor.vstack(
+                [self.discretised_domains[key], value]
+            )
+
+    def move_discretisation_into_conditions(self):
+        """
+        Move the sampled points from the discretised domains into their
+        corresponding conditions. This ensures that the conditions are evaluated
+        on the correct set of points after discretisation.
+        """
+        # Move the discretised domains into their corresponding conditions
+        for name, cond in self.conditions.items():
+            if hasattr(cond, "domain"):
+
+                # Create a new condition with the discretised domain as input
+                new_condition = Condition(
+                    input=self.discretised_domains[cond.domain],
+                    equation=cond.equation,
+                )
+
+                # Set the domain and problem attributes of the new condition
+                new_condition.domain = cond.domain
+                new_condition.problem = self
+
+                # Replace the old condition in the conditions dictionary
+                self.conditions[name] = new_condition
+
+    @property
+    def input_variables(self):
+        """
+        The input variables of the problem.
+
+        :return: The input variables of the problem.
+        :rtype: list[str]
+        """
+        # Define a helper function to convert a string to a list if needed
+        _as_list = lambda x: [x] if isinstance(x, str) else x
+
+        # Collect the spatial, temporal, and parametric variables
+        variables = []
+        if hasattr(self, "spatial_variables"):
+            variables += _as_list(self.spatial_variables)
+        if hasattr(self, "temporal_variables"):
+            variables += _as_list(self.temporal_variables)
+        if hasattr(self, "parameters"):
+            variables += _as_list(self.parameters)
+
+        return variables
 
     @property
     def discretised_domains(self):
         """
-        Return a dictionary mapping domains to their corresponding sampled
-        points.
+        The dictionary containing the discretised domains of the problem.Each
+        key corresponds to a domain defined in :attr:`domains`, and each value
+        is a :class:`~pina.tensor.LabelTensor` containing the sampled points for
+        that domain.
 
         :return: The discretised domains.
         :rtype: dict
         """
         return self._discretised_domains
 
-    def __deepcopy__(self, memo):
-        """
-        Perform a deep copy of the :class:`AbstractProblem` instance.
-
-        :param dict memo: A dictionary used to track objects already copied
-            during the deep copy process to prevent redundant copies.
-        :return: A deep copy of the :class:`AbstractProblem` instance.
-        :rtype: AbstractProblem
-        """
-        cls = self.__class__
-        result = cls.__new__(cls)
-        memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            setattr(result, k, deepcopy(v, memo))
-        return result
-
     @property
     def are_all_domains_discretised(self):
         """
-        Check if all the domains are discretised.
+        Whether all domains of the problem have been discretised.
 
         :return: ``True`` if all domains are discretised, ``False`` otherwise.
         :rtype: bool
         """
-        return all(
-            domain in self.discretised_domains for domain in self.domains
-        )
-
-    @property
-    def input_variables(self):
-        """
-        Get the input variables of the problem.
-
-        :return: The input variables of the problem.
-        :rtype: list[str]
-        """
-        variables = []
-
-        if hasattr(self, "spatial_variables"):
-            variables += self.spatial_variables
-        if hasattr(self, "temporal_variable"):
-            variables += self.temporal_variable
-        if hasattr(self, "parameters"):
-            variables += self.parameters
-
-        return variables
-
-    @input_variables.setter
-    def input_variables(self, variables):
-        """
-        Set the input variables of the AbstractProblem.
-
-        :param list[str] variables: The input variables of the problem.
-        :raises RuntimeError: Not implemented.
-        """
-        raise RuntimeError
-
-    @property
-    @abstractmethod
-    def output_variables(self):
-        """
-        Get the output variables of the problem.
-        """
-
-    @property
-    @abstractmethod
-    def conditions(self):
-        """
-        Get the conditions of the problem.
-
-        :return: The conditions of the problem.
-        :rtype: dict
-        """
-        return self.conditions
-
-    def discretise_domain(
-        self, n=None, mode="random", domains="all", sample_rules=None
-    ):
-        """
-        Discretize the problem's domains by sampling a specified number of
-        points according to the selected sampling mode.
-
-        :param int n: The number of points to sample.
-        :param mode: The sampling method. Default is ``random``.
-            Available modes include: random sampling, ``random``;
-            latin hypercube sampling, ``latin`` or ``lh``;
-            chebyshev sampling, ``chebyshev``; grid sampling ``grid``.
-        :param domains: The domains from which to sample. Default is ``all``.
-        :type domains: str | list[str]
-        :param dict sample_rules: A dictionary defining custom sampling rules
-            for input variables. If provided, it must contain a dictionary
-            specifying the sampling rule for each variable, overriding the
-            ``n`` and ``mode`` arguments. Each key must correspond to the
-            input variables from
-            :meth:~pina.problem.AbstractProblem.input_variables, and its value
-            should be another dictionary with
-            two keys: ``n`` (number of points to sample) and ``mode``
-            (sampling method). Defaults to None.
-        :raises RuntimeError: If both ``n`` and ``sample_rules`` are specified.
-        :raises RuntimeError: If neither ``n`` nor ``sample_rules`` are set.
-
-        :Example:
-            >>> problem.discretise_domain(n=10, mode='grid')
-            >>> problem.discretise_domain(n=10, mode='grid', domains=['gamma1'])
-            >>> problem.discretise_domain(
-            ...     sample_rules={
-            ...         'x': {'n': 10, 'mode': 'grid'},
-            ...         'y': {'n': 100, 'mode': 'grid'}
-            ...     },
-            ...     domains=['D']
-            ... )
-
-        .. warning::
-            ``random`` is currently the only implemented ``mode`` for all
-            geometries, i.e. :class:`~pina.domain.ellipsoid.EllipsoidDomain`,
-            :class:`~pina.domain.cartesian.CartesianDomain`,
-            :class:`~pina.domain.simplex.SimplexDomain`, and geometry
-            compositions :class:`~pina.domain.union_domain.Union`,
-            :class:`~pina.domain.difference_domain.Difference`,
-            :class:`~pina.domain.exclusion_domain.Exclusion`, and
-            :class:`~pina.domain.intersection_domain.Intersection`.
-            The modes ``latin`` or ``lh``,  ``chebyshev``, ``grid`` are only
-            implemented for :class:`~pina.domain.cartesian.CartesianDomain`.
-
-        .. warning::
-            If custom discretisation is applied by setting ``sample_rules`` not
-            to ``None``, then the discretised domain must be of class
-            :class:`~pina.domain.cartesian.CartesianDomain`
-        """
-
-        # check consistecy n, mode, variables, locations
-        if sample_rules is not None:
-            check_consistency(sample_rules, dict)
-        if mode is not None:
-            check_consistency(mode, str)
-        check_consistency(domains, (list, str))
-
-        # check correct location
-        if domains == "all":
-            domains = self.domains.keys()
-        elif not isinstance(domains, (list)):
-            domains = [domains]
-        if n is not None and sample_rules is None:
-            self._apply_default_discretization(n, mode, domains)
-        if n is None and sample_rules is not None:
-            self._apply_custom_discretization(sample_rules, domains)
-        elif n is not None and sample_rules is not None:
-            raise RuntimeError(
-                "You can't specify both n and sample_rules at the same time."
-            )
-        elif n is None and sample_rules is None:
-            raise RuntimeError("You have to specify either n or sample_rules.")
-
-    def _apply_default_discretization(self, n, mode, domains):
-        """
-        Apply default discretization to the problem's domains.
-
-        :param int n: The number of points to sample.
-        :param mode: The sampling method.
-        :param domains: The domains from which to sample.
-        :type domains: str | list[str]
-        """
-        for domain in domains:
-            self.discretised_domains[domain] = (
-                self.domains[domain].sample(n, mode).sort_labels()
-            )
-
-    def _apply_custom_discretization(self, sample_rules, domains):
-        """
-        Apply custom discretization to the problem's domains.
-
-        :param dict sample_rules: A dictionary of custom sampling rules.
-        :param domains: The domains from which to sample.
-        :type domains: str | list[str]
-        :raises RuntimeError: If the keys of the sample_rules dictionary are not
-            the same as the input variables.
-        :raises RuntimeError: If custom discretisation is applied on a domain
-            that is not a CartesianDomain.
-        """
-        if sorted(list(sample_rules.keys())) != sorted(self.input_variables):
-            raise RuntimeError(
-                "The keys of the sample_rules dictionary must be the same as "
-                "the input variables."
-            )
-        for domain in domains:
-            if not isinstance(self.domains[domain], CartesianDomain):
-                raise RuntimeError(
-                    "Custom discretisation can be applied only on Cartesian "
-                    "domains"
-                )
-            discretised_tensor = []
-            for var, rules in sample_rules.items():
-                n, mode = rules["n"], rules["mode"]
-                points = self.domains[domain].sample(n, mode, var)
-                discretised_tensor.append(points)
-
-            self.discretised_domains[domain] = merge_tensors(
-                discretised_tensor
-            ).sort_labels()
-
-    def add_points(self, new_points_dict):
-        """
-        Add new points to an already sampled domain.
-
-        :param dict new_points_dict: The dictionary mapping new points to their
-            corresponding domain.
-        """
-        for k, v in new_points_dict.items():
-            self.discretised_domains[k] = LabelTensor.vstack(
-                [self.discretised_domains[k], v]
-            )
-
-    def move_discretisation_into_conditions(self):
-        """
-        Move the discretised domains into their corresponding conditions.
-        """
-        if not self.are_all_domains_discretised:
-            warnings.formatwarning = custom_warning_format
-            warnings.filterwarnings("always", category=RuntimeWarning)
-            warning_message = "\n".join([f"""{" " * 13} ---> Domain {key} {
-                    "sampled" if key in self.discretised_domains 
-                    else
-                    "not sampled"}""" for key in self.domains])
-            warnings.warn(
-                "Some of the domains are still not sampled. Consider calling "
-                "problem.discretise_domain function for all domains before "
-                "accessing the collected data:\n"
-                f"{warning_message}",
-                RuntimeWarning,
-            )
-
-        for name, cond in self.conditions.items():
-            if hasattr(cond, "domain"):
-                domain = cond.domain
-                self.conditions[name] = Condition(
-                    input=self.discretised_domains[cond.domain],
-                    equation=cond.equation,
-                )
-                self.conditions[name].domain = domain
-                self.conditions[name].problem = self
+        return all(d in self.discretised_domains for d in self.domains)

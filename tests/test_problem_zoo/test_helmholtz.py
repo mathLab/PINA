@@ -9,7 +9,7 @@ from pina.problem import SpatialProblem
 def test_constructor(k, alpha_x, alpha_y):
 
     problem = HelmholtzProblem(k=k, alpha_x=alpha_x, alpha_y=alpha_y)
-    problem.discretise_domain(n=10, mode="random", domains="all")
+    problem.discretise_domain(n=10, mode="random", domains=None)
     assert problem.are_all_domains_discretised
     assert isinstance(problem, SpatialProblem)
     assert hasattr(problem, "conditions")

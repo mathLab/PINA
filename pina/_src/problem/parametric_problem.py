@@ -1,17 +1,23 @@
 """Module for the ParametricProblem class."""
 
 from abc import abstractmethod
-
-from .abstract_problem import AbstractProblem
+from pina._src.problem.abstract_problem import AbstractProblem
 
 
 class ParametricProblem(AbstractProblem):
     """
-    Class for defining parametric problems, where certain input variables are
-    treated as parameters that can vary, allowing the model to adapt to
-    different scenarios based on the chosen parameters.
+    Base class for all parametric problems, extending the standard problem
+    definition with parameter-dependent inputs.
+
+    A parametric problem includes additional input variables, defined over a
+    dedicated parameter domain, which represent external quantities
+    (e.g., physical coefficients or control variables) that can vary across
+    different evaluations and influence the solution.
+
+    This class is not meant to be instantiated directly.
     """
 
+    @property
     @abstractmethod
     def parameter_domain(self):
         """
@@ -21,7 +27,7 @@ class ParametricProblem(AbstractProblem):
     @property
     def parameters(self):
         """
-        Get the parameters of the problem.
+        The parameters of the problem.
 
         :return: The parameters of the problem.
         :rtype: list[str]

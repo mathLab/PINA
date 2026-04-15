@@ -7,8 +7,13 @@ from pina._src.problem.abstract_problem import AbstractProblem
 
 class InverseProblem(AbstractProblem):
     """
-    Class for defining inverse problems, where the objective is to determine
-    unknown parameters through training, based on given data.
+    Base class for all inverse problems, extending the standard problem
+    definition with unknown parameters to be determined through training.
+
+    An inverse problem is defined by a set of unknown parameters that need to be
+    estimated from observed data.
+
+    This class is not meant to be instantiated directly.
     """
 
     def __init__(self):
@@ -16,15 +21,15 @@ class InverseProblem(AbstractProblem):
         Initialization of the :class:`InverseProblem` class.
         """
         super().__init__()
-        # storing unknown_parameters for optimization
+
+        # Set the unknown parameters as trainable parameters
         self.unknown_parameters = {}
         for var in self.unknown_variables:
-            range_var = self.unknown_parameter_domain._range[var]
-            tensor_var = (
-                torch.rand(1, requires_grad=True) * range_var[1] + range_var[0]
-            )
+            low, high = self.unknown_parameter_domain._range[var]
+            tensor_var = low + (high - low) * torch.rand(1)
             self.unknown_parameters[var] = torch.nn.Parameter(tensor_var)
 
+    @property
     @abstractmethod
     def unknown_parameter_domain(self):
         """
@@ -34,7 +39,7 @@ class InverseProblem(AbstractProblem):
     @property
     def unknown_variables(self):
         """
-        Get the unknown variables of the problem.
+        The unknown variables of the problem.
 
         :return: The unknown variables of the problem.
         :rtype: list[str]
@@ -44,7 +49,7 @@ class InverseProblem(AbstractProblem):
     @property
     def unknown_parameters(self):
         """
-        Get the unknown parameters of the problem.
+        The unknown parameters of the problem.
 
         :return: The unknown parameters of the problem.
         :rtype: torch.nn.Parameter
