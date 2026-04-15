@@ -2,10 +2,10 @@
 
 import torch
 
-from pina._src.condition.condition import Condition
 from pina._src.equation.equation_factory import FixedValue, Poisson
-from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.domain.cartesian_domain import CartesianDomain
+from pina._src.problem.spatial_problem import SpatialProblem
+from pina._src.condition.condition import Condition
 
 
 def forcing_term(input_):

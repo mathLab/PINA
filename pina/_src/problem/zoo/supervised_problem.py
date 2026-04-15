@@ -8,8 +8,7 @@ class SupervisedProblem(AbstractProblem):
     """
     Definition of a supervised-learning problem.
 
-    This class provides a simple way to define a supervised problem
-    using a single condition of type
+    This class provides a simple way to define a supervised problem using the
     :class:`~pina.condition.input_target_condition.InputTargetCondition`.
 
     :Example:
@@ -20,6 +19,9 @@ class SupervisedProblem(AbstractProblem):
         >>> problem = SupervisedProblem(input_data, output_data)
     """
 
+    # TODO: This is necessary to override the abstract properties of
+    # AbstractProblem, but it is not an ideal solution. We should consider
+    # a different desgin to manage input and output variables.
     conditions = {}
     output_variables = None
     input_variables = None

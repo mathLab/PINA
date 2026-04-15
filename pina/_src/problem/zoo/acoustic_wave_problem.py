@@ -1,13 +1,13 @@
 """Formulation of the acoustic wave problem."""
 
 import torch
-from pina._src.condition.condition import Condition
-from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.problem.time_dependent_problem import TimeDependentProblem
-from pina._src.core.utils import check_consistency
 from pina._src.domain.cartesian_domain import CartesianDomain
-from pina._src.equation.equation import Equation
 from pina._src.equation.system_equation import SystemEquation
+from pina._src.problem.spatial_problem import SpatialProblem
+from pina._src.condition.condition import Condition
+from pina._src.core.utils import check_consistency
+from pina._src.equation.equation import Equation
 from pina._src.equation.equation_factory import (
     FixedValue,
     FixedGradient,
