@@ -11,7 +11,7 @@ def test_constructor(load, data_size):
     problem = InversePoisson2DSquareProblem(load=load, data_size=data_size)
 
     # Discretise the domain
-    problem.discretise_domain(n=10, mode="random", domains="all")
+    problem.discretise_domain(n=10, mode="random", domains=None)
 
     # Check if the problem is correctly set up
     assert problem.are_all_domains_discretised
