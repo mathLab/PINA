@@ -208,6 +208,7 @@ Problems
 .. toctree::
     :titlesonly:
 
+    ProblemInterface <problem/problem_interface.rst>
     AbstractProblem <problem/abstract_problem.rst>
     InverseProblem <problem/inverse_problem.rst>
     ParametricProblem <problem/parametric_problem.rst>
@@ -220,13 +221,13 @@ Problems Zoo
 .. toctree::
     :titlesonly:
 
-    AcousticWaveProblem <problem/zoo/acoustic_wave.rst>
-    AdvectionProblem <problem/zoo/advection.rst>
-    AllenCahnProblem <problem/zoo/allen_cahn.rst>
-    DiffusionReactionProblem <problem/zoo/diffusion_reaction.rst>
-    HelmholtzProblem <problem/zoo/helmholtz.rst>
-    InversePoisson2DSquareProblem <problem/zoo/inverse_poisson_2d_square.rst>
-    Poisson2DSquareProblem <problem/zoo/poisson_2d_square.rst>
+    AcousticWaveProblem <problem/zoo/acoustic_wave_problem.rst>
+    AdvectionProblem <problem/zoo/advection_problem.rst>
+    AllenCahnProblem <problem/zoo/allen_cahn_problem.rst>
+    DiffusionReactionProblem <problem/zoo/diffusion_reaction_problem.rst>
+    HelmholtzProblem <problem/zoo/helmholtz_problem.rst>
+    InversePoisson2DSquareProblem <problem/zoo/inverse_poisson_problem.rst>
+    Poisson2DSquareProblem <problem/zoo/poisson_problem.rst>
     SupervisedProblem <problem/zoo/supervised_problem.rst>
 
 
