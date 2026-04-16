@@ -4,7 +4,7 @@ import torch
 from pina import LabelTensor, Condition
 from pina.model import FeedForward
 from pina.trainer import Trainer
-from pina.solver import DeepEnsemblePINN
+from pina.solver import DeepEnsembleSimpleSolver as DeepEnsemblePINN
 from pina.condition import (
     InputTargetCondition,
     InputEquationCondition,
@@ -22,14 +22,14 @@ input_pts = torch.rand(10, len(problem.input_variables))
 input_pts = LabelTensor(input_pts, problem.input_variables)
 output_pts = torch.rand(10, len(problem.output_variables))
 output_pts = LabelTensor(output_pts, problem.output_variables)
-problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
+# problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
 
 # define models
 models = [
     FeedForward(
         len(problem.input_variables), len(problem.output_variables), n_layers=1
     )
-    for _ in range(5)
+    for _ in range(1)
 ]
 
 

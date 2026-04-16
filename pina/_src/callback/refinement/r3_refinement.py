@@ -6,7 +6,7 @@ from pina._src.callback.refinement.refinement_interface import (
 )
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import check_consistency
-from pina._src.loss.loss_interface import LossInterface
+from pina._src.loss.loss_interface import DualLossInterface as LossInterface
 
 
 class R3Refinement(RefinementInterface):

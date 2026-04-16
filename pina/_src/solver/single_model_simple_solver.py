@@ -11,7 +11,7 @@ from pina._src.condition.input_equation_condition import (
 )
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.core.utils import check_consistency
-from pina._src.loss.loss_interface import LossInterface
+from pina._src.loss.loss_interface import DualLossInterface as LossInterface
 from pina._src.solver.solver import SingleSolverInterface
 
 
