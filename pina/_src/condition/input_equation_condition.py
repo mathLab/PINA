@@ -3,7 +3,7 @@
 from pina._src.condition.condition_base import ConditionBase
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.graph import Graph
-from pina._src.equation.equation_interface import EquationInterface
+from pina._src.equation.base_equation import BaseEquation
 from pina._src.condition.data_manager import _DataManager
 
 
@@ -32,7 +32,7 @@ class InputEquationCondition(ConditionBase):
     # Available input data types
     __fields__ = ["input", "equation"]
     _avail_input_cls = (LabelTensor, Graph)
-    _avail_equation_cls = EquationInterface
+    _avail_equation_cls = BaseEquation
 
     def __new__(cls, input, equation):
         """
@@ -41,7 +41,7 @@ class InputEquationCondition(ConditionBase):
 
         :param input: The input data for the condition.
         :type input: LabelTensor | Graph |  list[Graph] | tuple[Graph]
-        :param EquationInterface equation: The equation to be satisfied over the
+        :param BaseEquation equation: The equation to be satisfied over the
             specified ``input`` data.
         :return: The subclass of InputEquationCondition.
         :rtype: pina.condition.input_equation_condition.
@@ -61,7 +61,7 @@ class InputEquationCondition(ConditionBase):
         # Check equation type
         if not isinstance(equation, cls._avail_equation_cls):
             raise ValueError(
-                "The equation must be an instance of EquationInterface."
+                "The equation must be an instance of BaseEquation."
             )
 
         return super().__new__(cls)
@@ -90,7 +90,7 @@ class InputEquationCondition(ConditionBase):
         Return the equation associated with this condition.
 
         :return: Equation associated with this condition.
-        :rtype: EquationInterface
+        :rtype: BaseEquation
         """
         return self._equation
 
@@ -99,11 +99,9 @@ class InputEquationCondition(ConditionBase):
         """
         Set the equation associated with this condition.
 
-        :param EquationInterface value: The equation to associate with this
+        :param BaseEquation value: The equation to associate with this
             condition
         """
-        if not isinstance(value, EquationInterface):
-            raise TypeError(
-                "The equation must be an instance of EquationInterface."
-            )
+        if not isinstance(value, BaseEquation):
+            raise TypeError("The equation must be an instance of BaseEquation.")
         self._equation = value

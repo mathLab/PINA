@@ -2,7 +2,7 @@
 
 from pina._src.condition.condition_base import ConditionBase
 from pina._src.domain.domain_interface import DomainInterface
-from pina._src.equation.equation_interface import EquationInterface
+from pina._src.equation.base_equation import BaseEquation
 
 
 class DomainEquationCondition(ConditionBase):
@@ -32,7 +32,7 @@ class DomainEquationCondition(ConditionBase):
     __fields__ = ["domain", "equation"]
 
     _avail_domain_cls = (DomainInterface, str)
-    _avail_equation_cls = EquationInterface
+    _avail_equation_cls = BaseEquation
 
     def __new__(cls, domain, equation):
         """
@@ -52,7 +52,7 @@ class DomainEquationCondition(ConditionBase):
 
         if not isinstance(equation, cls._avail_equation_cls):
             raise ValueError(
-                "The equation must be an instance of EquationInterface."
+                "The equation must be an instance of BaseEquation."
             )
 
         return super().__new__(cls)
