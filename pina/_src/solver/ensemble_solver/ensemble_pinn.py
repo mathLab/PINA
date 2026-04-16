@@ -145,7 +145,7 @@ class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):
         model. This method should not be overridden, if not intentionally.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation.
+        :param BaseEquation equation: The governing equation.
         :return: The computed physics loss.
         :rtype: LabelTensor
         """
@@ -161,7 +161,7 @@ class DeepEnsemblePINN(PINNInterface, DeepEnsembleSolverInterface):
         method.
 
         :param LabelTensor samples: The samples to evaluate the loss.
-        :param EquationInterface equation: The governing equation.
+        :param BaseEquation equation: The governing equation.
         :return: The residual loss.
         :rtype: torch.Tensor
         """

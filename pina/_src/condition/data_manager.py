@@ -7,7 +7,7 @@ from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 from pina import LabelTensor
 from pina._src.core.graph import Graph, LabelBatch
-from ..equation.equation_interface import EquationInterface
+from pina._src.equation.base_equation import BaseEquation
 from .batch_manager import _BatchManager
 
 
@@ -39,7 +39,7 @@ class _DataManager:
 
         # Does the data contain only tensors/LabelTensors/Equations?
         is_tensor_only = all(
-            isinstance(v, (torch.Tensor, LabelTensor, EquationInterface))
+            isinstance(v, (torch.Tensor, LabelTensor, BaseEquation))
             for v in kwargs.values()
         )
         # Choose the appropriate subclass, GraphDataManager or TensorDataManager

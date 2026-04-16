@@ -176,7 +176,7 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
         subclasses. It distinguishes different types of PINN solvers.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation.
+        :param BaseEquation equation: The governing equation.
         :return: The computed physics loss.
         :rtype: LabelTensor
         """
@@ -186,7 +186,7 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
         Compute the residuals of the equation.
 
         :param LabelTensor samples: The samples to evaluate the loss.
-        :param EquationInterface equation: The governing equation.
+        :param BaseEquation equation: The governing equation.
         :return: The residual of the solution of the model.
         :rtype: LabelTensor
         """
@@ -204,7 +204,7 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
 
 
         :param LabelTensor samples: The samples to evaluate the loss.
-        :param EquationInterface equation: The governing equation.
+        :param BaseEquation equation: The governing equation.
         :return: The residual loss.
         :rtype: torch.Tensor
         """

@@ -110,7 +110,7 @@ class GradientPINN(PINN):
         provided samples and equation.
 
         :param LabelTensor samples: The samples to evaluate the physics loss.
-        :param EquationInterface equation: The governing equation.
+        :param BaseEquation equation: The governing equation.
         :return: The computed physics loss.
         :rtype: LabelTensor
         """
