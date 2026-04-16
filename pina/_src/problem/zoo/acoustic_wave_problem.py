@@ -93,4 +93,7 @@ class AcousticWaveProblem(TimeDependentProblem, SpatialProblem):
         arg_t = self.c * torch.pi * pts["t"]
         term1 = torch.sin(arg_x) * torch.cos(arg_t)
         term2 = 0.5 * torch.sin(4 * arg_x) * torch.cos(4 * arg_t)
-        return term1 + term2
+
+        sol = term1 + term2
+        sol.labels = self.output_variables
+        return sol
