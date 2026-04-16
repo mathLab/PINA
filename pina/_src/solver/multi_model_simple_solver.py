@@ -11,7 +11,7 @@ from pina._src.condition.input_equation_condition import (
 )
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.core.utils import check_consistency
-from pina._src.loss.loss_interface import LossInterface
+from pina._src.loss.loss_interface import DualLossInterface as LossInterface
 from pina._src.solver.solver import MultiSolverInterface
 
 
@@ -62,7 +62,6 @@ class MultiModelSimpleSolver(MultiSolverInterface):
         weighting=None,
         loss=None,
         use_lt=True,
-        ensemble_dim=0,
     ):
         """
         Initialize the multi-model simple solver.
@@ -90,7 +89,6 @@ class MultiModelSimpleSolver(MultiSolverInterface):
             loss = torch.nn.MSELoss()
 
         check_consistency(loss, (LossInterface, _Loss), subclass=False)
-        check_consistency(ensemble_dim, int)
 
         super().__init__(
             problem=problem,
@@ -103,7 +101,6 @@ class MultiModelSimpleSolver(MultiSolverInterface):
 
         self._loss_fn = loss
         self._reduction = getattr(loss, "reduction", "mean")
-        self._ensemble_dim = ensemble_dim
 
         if hasattr(self._loss_fn, "reduction"):
             self._loss_fn.reduction = "none"
@@ -194,9 +191,16 @@ class MultiModelSimpleSolver(MultiSolverInterface):
                 self.forward = (  # noqa: E731
                     lambda x, _idx=idx: self.models[_idx].forward(x)
                 )
+                from pina._src.core.utils import labelize_forward
+                problem = self.problem
+                self.forward = labelize_forward(
+                    self.forward, 
+                    input_variables=problem.input_variables,
+                    output_variables=problem.output_variables,
+                )
                 loss_tensor = condition.evaluate(
                     condition_data, self, self._loss_fn
-                )
+                ).tensor
                 self.forward = original_forward
                 per_model_losses.append(self._apply_reduction(loss_tensor))
 

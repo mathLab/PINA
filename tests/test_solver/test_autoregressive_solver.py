@@ -9,6 +9,7 @@ from pina.problem import BaseProblem
 from pina.condition import TimeSeriesCondition
 from pina.problem import AbstractProblem
 from pina.model import FeedForward
+from torch._dynamo import OptimizedModule
 
 
 # Hyperparameters and settings

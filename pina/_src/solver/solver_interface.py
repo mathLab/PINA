@@ -1,18 +1,18 @@
-"""Solver module."""
+"""Module for the abstract SolverInterface base class."""
 
 from abc import ABCMeta, abstractmethod
 import lightning
 import torch
 
 from torch._dynamo import OptimizedModule
-from pina._src.problem.base_problem import BaseProblem
+from pina._src.problem.abstract_problem import AbstractProblem
 from pina._src.problem.inverse_problem import InverseProblem
 from pina._src.optim.optimizer_interface import OptimizerInterface
 from pina._src.optim.scheduler_interface import SchedulerInterface
 from pina._src.optim.torch_optimizer import TorchOptimizer
 from pina._src.optim.torch_scheduler import TorchScheduler
-from pina._src.weighting.weighting_interface import WeightingInterface
-from pina._src.weighting.no_weighting import _NoWeighting
+from pina._src.loss.weighting_interface import WeightingInterface
+from pina._src.loss.scalar_weighting import _NoWeighting
 from pina._src.core.utils import check_consistency, labelize_forward
 
 
@@ -31,7 +31,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         Initialization of the :class:`SolverInterface` class.
 
-        :param BaseProblem problem: The problem to be solved.
+        :param AbstractProblem problem: The problem to be solved.
         :param WeightingInterface weighting: The weighting schema to be used.
             If ``None``, no weighting schema is used. Default is ``None``.
         :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
@@ -39,7 +39,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         super().__init__()
 
         # check consistency of the problem
-        check_consistency(problem, BaseProblem)
+        check_consistency(problem, AbstractProblem)
         self._check_solver_consistency(problem)
         self._pina_problem = problem
 
@@ -159,7 +159,6 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :param torch.Tensor value: The value of the log.
         :param int batch_size: The size of the batch.
         """
-
         self.log(
             name=name,
             value=value,
@@ -224,7 +223,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         Check the consistency of the solver with the problem formulation.
 
-        :param BaseProblem problem: The problem to be solved.
+        :param AbstractProblem problem: The problem to be solved.
         """
         for condition in problem.conditions.values():
             check_consistency(condition, self.accepted_conditions_types)
@@ -304,7 +303,6 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The size of the batch.
         :rtype: int
         """
-
         batch_size = 0
         for data in batch:
             batch_size += len(data[1]["input"])
@@ -337,7 +335,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         The problem instance.
 
         :return: The problem instance.
-        :rtype: :class:`~pina.problem.base_problem.BaseProblem`
+        :rtype: :class:`~pina.problem.abstract_problem.AbstractProblem`
         """
         return self._pina_problem
 
@@ -360,283 +358,3 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :rtype: :class:`~pina.loss.weighting_interface.WeightingInterface`
         """
         return self._pina_weighting
-
-
-class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
-    """
-    Base class for PINA solvers using a single :class:`torch.nn.Module`.
-    """
-
-    def __init__(
-        self,
-        problem,
-        model,
-        optimizer=None,
-        scheduler=None,
-        weighting=None,
-        use_lt=True,
-    ):
-        """
-        Initialization of the :class:`SingleSolverInterface` class.
-
-        :param BaseProblem problem: The problem to be solved.
-        :param torch.nn.Module model: The neural network model to be used.
-        :param OptimizerInterface optimizer: The optimizer to be used.
-            If ``None``, the :class:`torch.optim.Adam` optimizer is
-            used. Default is ``None``.
-        :param SchedulerInterface scheduler: The scheduler to be used.
-            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
-            scheduler is used. Default is ``None``.
-        :param WeightingInterface weighting: The weighting schema to be used.
-            If ``None``, no weighting schema is used. Default is ``None``.
-        :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
-        """
-        if optimizer is None:
-            optimizer = self.default_torch_optimizer()
-
-        if scheduler is None:
-            scheduler = self.default_torch_scheduler()
-
-        super().__init__(problem=problem, use_lt=use_lt, weighting=weighting)
-
-        # check consistency of models argument and encapsulate in list
-        check_consistency(model, torch.nn.Module)
-        # check scheduler consistency and encapsulate in list
-        check_consistency(scheduler, SchedulerInterface)
-        # check optimizer consistency and encapsulate in list
-        check_consistency(optimizer, OptimizerInterface)
-
-        # initialize the model (needed by Lightining to go to different devices)
-        self._pina_models = torch.nn.ModuleList([model])
-        self._pina_optimizers = [optimizer]
-        self._pina_schedulers = [scheduler]
-
-    def forward(self, x):
-        """
-        Forward pass implementation.
-
-        :param x: Input tensor.
-        :type x: torch.Tensor | LabelTensor | Graph | Data
-        :return: Solver solution.
-        :rtype: torch.Tensor | LabelTensor | Graph | Data
-        """
-        return self.model(x)
-
-    def configure_optimizers(self):
-        """
-        Optimizer configuration for the solver.
-
-        :return: The optimizer and the scheduler
-        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
-        """
-        self.optimizer.hook(self.model.parameters())
-        if isinstance(self.problem, InverseProblem):
-            self.optimizer.instance.add_param_group(
-                {
-                    "params": [
-                        self._params[var]
-                        for var in self.problem.unknown_variables
-                    ]
-                }
-            )
-        self.scheduler.hook(self.optimizer)
-        return ([self.optimizer.instance], [self.scheduler.instance])
-
-    @property
-    def model(self):
-        """
-        The model used for training.
-
-        :return: The model used for training.
-        :rtype: torch.nn.Module
-        """
-        return self._pina_models[0]
-
-    @property
-    def scheduler(self):
-        """
-        The scheduler used for training.
-
-        :return: The scheduler used for training.
-        :rtype: SchedulerInterface
-        """
-        return self._pina_schedulers[0]
-
-    @property
-    def optimizer(self):
-        """
-        The optimizer used for training.
-
-        :return: The optimizer used for training.
-        :rtype: OptimizerInterface
-        """
-        return self._pina_optimizers[0]
-
-
-class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
-    """
-    Base class for PINA solvers using multiple :class:`torch.nn.Module`.
-    """
-
-    def __init__(
-        self,
-        problem,
-        models,
-        optimizers=None,
-        schedulers=None,
-        weighting=None,
-        use_lt=True,
-    ):
-        """
-        Initialization of the :class:`MultiSolverInterface` class.
-
-        :param BaseProblem problem: The problem to be solved.
-        :param models: The neural network models to be used.
-        :type model: list[torch.nn.Module] | tuple[torch.nn.Module]
-        :param list[OptimizerInterface] optimizers: The optimizers to be used.
-            If ``None``, the :class:`torch.optim.Adam` optimizer is used for all
-            models. Default is ``None``.
-        :param list[SchedulerInterface] schedulers: The schedulers to be used.
-            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
-            scheduler is used for all the models. Default is ``None``.
-        :param WeightingInterface weighting: The weighting schema to be used.
-            If ``None``, no weighting schema is used. Default is ``None``.
-        :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
-        :raises ValueError: If the models are not a list or tuple with length
-            greater than one.
-
-        .. warning::
-            :class:`MultiSolverInterface` uses manual optimization by setting
-            ``automatic_optimization=False`` in
-            :class:`~lightning.pytorch.core.LightningModule`. For more
-            information on manual optimization please
-            see `here <https://lightning.ai/docs/pytorch/stable/\
-                model/manual_optimization.html>`_.
-        """
-        if not isinstance(models, (list, tuple)) or len(models) < 2:
-            raise ValueError(
-                "models should be list[torch.nn.Module] or "
-                "tuple[torch.nn.Module] with len greater than "
-                "one."
-            )
-
-        if optimizers is None:
-            optimizers = [
-                self.default_torch_optimizer() for _ in range(len(models))
-            ]
-
-        if schedulers is None:
-            schedulers = [
-                self.default_torch_scheduler() for _ in range(len(models))
-            ]
-
-        if any(opt is None for opt in optimizers):
-            optimizers = [
-                self.default_torch_optimizer() if opt is None else opt
-                for opt in optimizers
-            ]
-
-        if any(sched is None for sched in schedulers):
-            schedulers = [
-                self.default_torch_scheduler() if sched is None else sched
-                for sched in schedulers
-            ]
-
-        super().__init__(problem=problem, use_lt=use_lt, weighting=weighting)
-
-        # check consistency of models argument and encapsulate in list
-        check_consistency(models, torch.nn.Module)
-
-        # check scheduler consistency and encapsulate in list
-        check_consistency(schedulers, SchedulerInterface)
-
-        # check optimizer consistency and encapsulate in list
-        check_consistency(optimizers, OptimizerInterface)
-
-        # check length consistency optimizers
-        if len(models) != len(optimizers):
-            raise ValueError(
-                "You must define one optimizer for each model."
-                f"Got {len(models)} models, and {len(optimizers)}"
-                " optimizers."
-            )
-        if len(schedulers) != len(optimizers):
-            raise ValueError(
-                "You must define one scheduler for each optimizer."
-                f"Got {len(schedulers)} schedulers, and {len(optimizers)}"
-                " optimizers."
-            )
-
-        # initialize the model
-        self._pina_models = torch.nn.ModuleList(models)
-        self._pina_optimizers = optimizers
-        self._pina_schedulers = schedulers
-
-        # Set automatic optimization to False.
-        # For more information on manual optimization see:
-        # http://lightning.ai/docs/pytorch/stable/model/manual_optimization.html
-        self.automatic_optimization = False
-
-    def on_train_batch_end(self, outputs, batch, batch_idx):
-        """
-        This method is called at the end of each training batch and overrides
-        the PyTorch Lightning implementation to log checkpoints.
-
-        :param torch.Tensor outputs: The ``model``'s output for the current
-            batch.
-        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
-            tuple containing a condition name and a dictionary of points.
-        :param int batch_idx: The index of the current batch.
-        """
-        # increase by one the counter of optimization to save loggers
-        epoch_loop = self.trainer.fit_loop.epoch_loop
-        epoch_loop.manual_optimization.optim_step_progress.total.completed += 1
-        return super().on_train_batch_end(outputs, batch, batch_idx)
-
-    def configure_optimizers(self):
-        """
-        Optimizer configuration for the solver.
-
-        :return: The optimizer and the scheduler
-        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
-        """
-        for optimizer, scheduler, model in zip(
-            self.optimizers, self.schedulers, self.models
-        ):
-            optimizer.hook(model.parameters())
-            scheduler.hook(optimizer)
-
-        return (
-            [optimizer.instance for optimizer in self.optimizers],
-            [scheduler.instance for scheduler in self.schedulers],
-        )
-
-    @property
-    def models(self):
-        """
-        The models used for training.
-
-        :return: The models used for training.
-        :rtype: torch.nn.ModuleList
-        """
-        return self._pina_models
-
-    @property
-    def optimizers(self):
-        """
-        The optimizers used for training.
-
-        :return: The optimizers used for training.
-        :rtype: list[OptimizerInterface]
-        """
-        return self._pina_optimizers
-
-    @property
-    def schedulers(self):
-        """
-        The schedulers used for training.
-
-        :return: The schedulers used for training.
-        :rtype: list[SchedulerInterface]
-        """
-        return self._pina_schedulers

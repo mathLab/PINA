@@ -3,14 +3,14 @@
 import warnings
 import torch
 
-from pina._src.solver.physics_informed_solver.pinn_interface import (
-    PINNInterface,
-)
+# from pina._src.solver.physics_informed_solver.pinn_interface import (
+#     PINNInterface,
+# )
 from pina._src.solver.single_model_simple_solver import (
     SingleModelSimpleSolver,
 )
 
-PINNBaseInterface = PINNInterface
+# PINNBaseInterface = PINNInterface
 
 
 class PINN(SingleModelSimpleSolver):

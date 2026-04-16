@@ -6,9 +6,7 @@ network training process.
 from abc import ABCMeta, abstractmethod
 from lightning.pytorch import Callback
 from pina._src.core.utils import check_consistency
-from pina._src.solver.physics_informed_solver.pinn_interface import (
-    PINNInterface,
-)
+from pina._src.solver.pinn import PINN as PINNInterface
 
 
 class RefinementInterface(Callback, metaclass=ABCMeta):
