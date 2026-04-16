@@ -1,35 +1,31 @@
 """Module for the System of Equation."""
 
+from typing import Callable
 import torch
-from pina._src.equation.equation_interface import EquationInterface
-from pina._src.equation.equation import Equation
+from pina._src.equation.base_equation import BaseEquation
 from pina._src.core.utils import check_consistency
+from pina._src.equation.equation import Equation
 
 
-class SystemEquation(EquationInterface):
+class SystemEquation(BaseEquation):
     """
-    Implementation of the System of Equations, to be passed to a
-    :class:`~pina.condition.condition.Condition` object.
+    Implementation of the SystemEquation class, representing a system of
+    mathematical equation to be satisfied by the model outputs. It is useful for
+    multi-component outputs or coupled problems, where multiple constraints must
+    be evaluated together.
 
-    Unlike the :class:`~pina.equation.equation.Equation` class, which represents
-    a single equation, the :class:`SystemEquation` class allows multiple
-    equations to be grouped together into a system. This is particularly useful
-    when dealing with multi-component outputs or coupled physical models, where
-    the residual must be computed collectively across several constraints.
+    It can be passed to a :class:`~pina.condition.condition.Condition` object to
+    define the conditions under which the model is trained.
 
-    Each equation in the system must be either:
-    - An instance of :class:`~pina.equation.equation.Equation`;
-    - A callable function.
+    Each equation in the system must be either an instance of
+    :class:`~pina.equation.equation.Equation`, or a callable function.
 
-    The residuals from each equation are computed independently and then
-    aggregated using an optional reduction strategy (e.g., ``mean``, ``sum``).
-    The resulting residual is returned as a single :class:`~pina.LabelTensor`.
+    Residuals are computed independently for each equation and then aggregated
+    using an optional reduction (e.g., ``mean``, ``sum``). The final result is
+    returned as a single :class:`~pina.LabelTensor`.
 
     :Example:
 
-    >>> from pina.equation import SystemEquation, FixedValue, FixedGradient
-    >>> from pina import LabelTensor
-    >>> import torch
     >>> pts = LabelTensor(torch.rand(10, 2), labels=["x", "y"])
     >>> pts.requires_grad = True
     >>> output_ = torch.pow(pts, 2)
@@ -37,40 +33,44 @@ class SystemEquation(EquationInterface):
     >>> system_equation = SystemEquation(
     ...     [
     ...         FixedValue(value=1.0, components=["u"]),
-    ...         FixedGradient(value=0.0, components=["v"],d=["y"]),
+    ...         FixedGradient(value=0.0, components=["v"], d=["y"]),
     ...     ],
     ...     reduction="mean",
     ... )
     >>> residual = system_equation.residual(pts, output_)
-
     """
 
     def __init__(self, list_equation, reduction=None):
         """
         Initialization of the :class:`SystemEquation` class.
 
-        :param list_equation: A list containing either callable functions or
-            instances of :class:`~pina.equation.equation.Equation`, used to
-            compute the residuals of mathematical equations.
+        :param list_equation: The list of equations used for the computation of
+            the residuals. Each element of the list can be either a callable
+            function or a :class:`~pina.equation.equation.Equation` instance.
         :type list_equation: list[Callable] | list[Equation]
-        :param str reduction: The reduction method to aggregate the residuals of
-            each equation. Available options are: ``None``, ``mean``, ``sum``,
-            ``callable``.
-            If ``None``, no reduction is applied. If ``mean``, the output sum is
-            divided by the number of elements in the output. If ``sum``, the
-            output is summed. ``callable`` is a user-defined callable function
-            to perform reduction, no checks guaranteed. Default is ``None``.
-        :raises NotImplementedError: If the reduction is not implemented.
+        :param reduction: The method used to combine the residuals from each
+            equation. Available options are: ``None``, ``"mean"``, ``"sum"``, or
+            a custom callable. If ``None``, no reduction is applied. If
+            ``"mean"``, the residuals are averaged. If ``"sum"``, the residuals
+            are summed. If a callable is provided, it is used as a custom
+            reduction (no validation is performed).
+        :raises ValueError: If the list of equations is not a list.
+        :raises ValueError: If any element of the list of equations is not a
+            callable function or a :class:`~pina.equation.equation.Equation`
+            instance.
+        :raises ValueError: If an invalid reduction method is used.
         """
+        # Check consistency
         check_consistency([list_equation], list)
+        check_consistency(list_equation, (Callable, Equation))
 
-        # equations definition
+        # Convert all callable functions to Equation instances, if necessary
         self.equations = [
             equation if isinstance(equation, Equation) else Equation(equation)
             for equation in list_equation
         ]
 
-        # possible reduction
+        # Validate and set the reduction method
         if reduction == "mean":
             self.reduction = torch.mean
         elif reduction == "sum":
@@ -78,26 +78,24 @@ class SystemEquation(EquationInterface):
         elif (reduction is None) or callable(reduction):
             self.reduction = reduction
         else:
-            raise NotImplementedError(
-                "Only mean and sum reductions are currenly supported."
+            raise ValueError(
+                "Invalid reduction method. Available options include: None, "
+                "'mean', 'sum', or a custom callable."
             )
 
     def residual(self, input_, output_, params_=None):
         """
-        Compute the residual for each equation in the system of equations and
-        aggregate it according to the ``reduction`` specified in the
-        ``__init__`` method.
+        Evaluate each equation residual from the system of equations at the
+        given inputs and aggregate it according to the specified ``reduction``.
 
-        :param LabelTensor input_: Input points where each equation of the
-            system is evaluated.
-        :param LabelTensor output_: Output tensor, eventually produced by a
+        :param LabelTensor input_: The input points where the residual is
+            computed.
+        :param LabelTensor output_: The output tensor, potentially produced by a
             :class:`torch.nn.Module` instance.
-        :param dict params_: Dictionary of unknown parameters, associated with a
-            :class:`~pina.problem.inverse_problem.InverseProblem` instance.
-            If the equation is not related to a
-            :class:`~pina.problem.inverse_problem.InverseProblem` instance, the
-            parameters must be initialized to ``None``. Default is ``None``.
-
+        :param dict params_: An optional dictionary of unknown parameters, used
+            in :class:`~pina.problem.inverse_problem.InverseProblem` settings.
+            If the equation is not related to an inverse problem, this should be
+            set to ``None``. Default is ``None``.
         :return: The aggregated residuals of the system of equations.
         :rtype: LabelTensor
         """

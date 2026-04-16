@@ -195,9 +195,10 @@ Equations and Differential Operators
 .. toctree::
     :titlesonly:
 
-    EquationInterface <equation/equation_interface.rst>
+    Equation Interface <equation/equation_interface.rst>
+    Base Equation <equation/base_equation.rst>
     Equation <equation/equation.rst>
-    SystemEquation <equation/system_equation.rst>
+    System Equation <equation/system_equation.rst>
     Equation Factory <equation/equation_factory.rst>
     Differential Operators <operator.rst>
 

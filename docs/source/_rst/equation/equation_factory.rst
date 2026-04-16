@@ -41,3 +41,7 @@ Equation Factory
 .. autoclass:: pina._src.equation.equation_factory.Poisson
    :members:
    :show-inheritance:
+
+.. autoclass:: pina._src.equation.equation_factory.AcousticWave
+   :members:
+   :show-inheritance:
