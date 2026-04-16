@@ -63,9 +63,9 @@ class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
         """
         Initialization of the :class:`AllenCahnProblem`.
 
-        :param alpha: The diffusion coefficient. Default is 1e-4.
+        :param alpha: The diffusion coefficient. Default is ``1e-4``.
         :type alpha: float | int
-        :param beta: The reaction coefficient. Default is 5.0.
+        :param beta: The reaction coefficient. Default is ``5.0``.
         :type beta: float | int
         """
         super().__init__()

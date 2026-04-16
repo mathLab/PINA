@@ -31,7 +31,7 @@ def _load_tensor_from_url(url, labels, timeout=10):
     :param str url: URL to the remote `.pth` tensor file.
     :param labels: Labels for the resulting LabelTensor.
     :type labels: list[str] | tuple[str]
-    :param int timeout: Timeout for the request in seconds. Default is 10s.
+    :param int timeout: Timeout for the request in seconds. Default is ``10`` s.
     :return: A LabelTensor object if successful, otherwise None.
     :rtype: LabelTensor | None
     """
@@ -108,10 +108,10 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
 
         :param bool load: If True, it attempts to load data from remote URLs.
             Set to False to skip data loading (e.g., if no internet connection).
-            Default is True.
+            Default is ``True``.
         :param float data_size: The fraction of the total data to use for the
             "data" condition. If set to 1.0, all available data is used.
-            If set to 0.0, no data is used. Default is 1.0.
+            If set to 0.0, no data is used. Default is ``1.0``.
         :raises ValueError: If `data_size` is not in the range [0.0, 1.0].
         :raises ValueError: If `data_size` is not a float.
         """

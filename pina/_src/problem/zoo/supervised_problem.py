@@ -38,10 +38,10 @@ class SupervisedProblem(AbstractProblem):
         :type output_: torch.Tensor | LabelTensor | Graph | Data
         :param list[str] input_variables: List of names of the input variables.
             If None, the input variables are inferred from `input_`.
-            Default is None.
+            Default is ``None``.
         :param list[str] output_variables: List of names of the output
             variables. If None, the output variables are inferred from
-            `output_`. Default is None.
+            `output_`. Default is ``None``.
         """
         # Set input and output variables
         self.input_variables = input_variables

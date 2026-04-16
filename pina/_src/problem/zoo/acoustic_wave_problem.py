@@ -70,7 +70,7 @@ class AcousticWaveProblem(TimeDependentProblem, SpatialProblem):
         """
         Initialization of the :class:`AcousticWaveProblem` class.
 
-        :param c: The wave propagation speed. Default is 2.0.
+        :param c: The wave propagation speed. Default is ``2.0``.
         :type c: float | int
         """
         super().__init__()

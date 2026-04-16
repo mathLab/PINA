@@ -112,10 +112,10 @@ class AbstractProblem(ProblemInterface):
             :class:`~pina.domain.simplex_domain.SimplexDomain`.
             Sampling modes such as ``"latin"``, ``"chebyshev"``, and ``"grid"``
             are only implemented for
-            :class:~pina.domain.cartesian_domain.CartesianDomain.
+            :class:`~pina.domain.cartesian_domain.CartesianDomain`.
             When custom discretisation is specified via ``sample_rules``, the
             domain to be discretised must be an instance of
-            :class:~pina.domain.cartesian_domain.CartesianDomain.
+            :class:`~pina.domain.cartesian_domain.CartesianDomain`.
 
         :Example:
             >>> problem.discretise_domain(n=10, mode="random")
@@ -275,7 +275,7 @@ class AbstractProblem(ProblemInterface):
     @property
     def discretised_domains(self):
         """
-        The dictionary containing the discretised domains of the problem.Each
+        The dictionary containing the discretised domains of the problem. Each
         key corresponds to a domain defined in :attr:`domains`, and each value
         is a :class:`~pina.tensor.LabelTensor` containing the sampled points for
         that domain.

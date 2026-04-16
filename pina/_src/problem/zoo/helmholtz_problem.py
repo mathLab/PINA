@@ -41,10 +41,10 @@ class HelmholtzProblem(SpatialProblem):
         """
         Initialization of the :class:`HelmholtzProblem` class.
 
-        :param k: The squared wavenumber. Default is 1.0.
+        :param k: The squared wavenumber. Default is ``1.0``.
         :type k: float | int
-        :param int alpha_x: The frequency in the x-direction. Default is 1.
-        :param int alpha_y: The frequency in the y-direction. Default is 4.
+        :param int alpha_x: The frequency in the x-direction. Default is ``1``.
+        :param int alpha_y: The frequency in the y-direction. Default is ``4``.
         """
         super().__init__()
         check_consistency(k, (int, float))
