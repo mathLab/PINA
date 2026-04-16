@@ -65,7 +65,7 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
         """
         Initialization of the :class:`DiffusionReactionProblem`.
 
-        :param alpha: The diffusion coefficient. Default is 1e-4.
+        :param alpha: The diffusion coefficient. Default is ``1e-4``.
         :type alpha: float | int
         """
         super().__init__()
@@ -80,7 +80,7 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
             spatial_d = [di for di in input_.labels if di != "t"]
             x = input_.extract(spatial_d)
             t = input_.extract("t")
-        
+
             return torch.exp(-t) * (
                 (self.alpha - 1) * torch.sin(x)
                 + ((4 * self.alpha - 1) / 2) * torch.sin(2 * x)

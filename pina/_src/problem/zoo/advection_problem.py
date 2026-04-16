@@ -57,7 +57,7 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
         """
         Initialization of the :class:`AdvectionProblem`.
 
-        :param c: The advection velocity parameter. Default is 1.0.
+        :param c: The advection velocity parameter. Default is ``1.0``.
         :type c: float | int
         """
         super().__init__()

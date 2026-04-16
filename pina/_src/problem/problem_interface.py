@@ -21,13 +21,14 @@ class ProblemInterface(metaclass=ABCMeta):
 
     @abstractmethod
     def discretise_domain(
-        self, n, mode="random", domains=None, sample_rules=None
+        self, n=None, mode="random", domains=None, sample_rules=None
     ):
         """
         Discretise the problem's domains by sampling a specified number of
         points according to the selected sampling mode.
 
-        :param int n: The number of points to sample.
+        :param int n: The number of points to sample. This is ignored if
+            ``sample_rules`` is provided. Default is ``None``.
         :param str mode: The sampling method. Available modes include:
             ``"random"`` for random sampling, ``"latin"`` or ``"lh"`` for latin
             hypercube sampling, ``"chebyshev"`` for Chebyshev sampling, and
@@ -51,10 +52,10 @@ class ProblemInterface(metaclass=ABCMeta):
             :class:`~pina.domain.simplex_domain.SimplexDomain`.
             Sampling modes such as ``"latin"``, ``"chebyshev"``, and ``"grid"``
             are only implemented for
-            :class:~pina.domain.cartesian_domain.CartesianDomain.
+            :class:`~pina.domain.cartesian_domain.CartesianDomain`.
             When custom discretisation is specified via ``sample_rules``, the
             domain to be discretised must be an instance of
-            :class:~pina.domain.cartesian_domain.CartesianDomain.
+            :class:`~pina.domain.cartesian_domain.CartesianDomain`.
 
         :Example:
             >>> problem.discretise_domain(n=10, mode="random")
@@ -129,7 +130,7 @@ class ProblemInterface(metaclass=ABCMeta):
     @abstractmethod
     def discretised_domains(self):
         """
-        The dictionary containing the discretised domains of the problem.Each
+        The dictionary containing the discretised domains of the problem. Each
         key corresponds to a domain defined in :attr:`domains`, and each value
         is a :class:`~pina.tensor.LabelTensor` containing the sampled points for
         that domain.
