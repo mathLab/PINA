@@ -1,4 +1,5 @@
-"""Mathematical equations and physical laws.
+"""
+Mathematical equations and physical laws.
 
 This module provides a framework for defining differential equations,
 boundary conditions, and complex systems of equations. It includes
@@ -7,8 +8,10 @@ along with factories for common derivative-based constraints.
 """
 
 __all__ = [
-    "SystemEquation",
+    "EquationInterface",
+    "BaseEquation",
     "Equation",
+    "SystemEquation",
     "FixedValue",
     "FixedGradient",
     "FixedFlux",
@@ -22,7 +25,10 @@ __all__ = [
     "AcousticWave",
 ]
 
+from pina._src.equation.equation_interface import EquationInterface
+from pina._src.equation.base_equation import BaseEquation
 from pina._src.equation.equation import Equation
+from pina._src.equation.system_equation import SystemEquation
 from pina._src.equation.equation_factory import (
     FixedFlux,
     FixedGradient,
@@ -36,4 +42,3 @@ from pina._src.equation.equation_factory import (
     Poisson,
     AcousticWave,
 )
-from pina._src.equation.system_equation import SystemEquation

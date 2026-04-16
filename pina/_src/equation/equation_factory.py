@@ -28,11 +28,11 @@ class FixedValue(Equation):  # pylint: disable=R0903
             """
             Definition of the equation to enforce a fixed value.
 
-            :param LabelTensor input_: Input points where the equation is
-                evaluated.
-            :param LabelTensor output_: Output tensor, eventually produced by a
-                :class:`torch.nn.Module` instance.
-            :return: The computed residual of the equation.
+            :param LabelTensor input_: The input points where the residual is
+                computed.
+            :param LabelTensor output_: The output tensor, potentially produced
+                by a :class:`torch.nn.Module` instance.
+            :return: The residual values of the equation.
             :rtype: LabelTensor
             """
             if components is None:
@@ -66,11 +66,11 @@ class FixedGradient(Equation):  # pylint: disable=R0903
             """
             Definition of the equation to enforce a fixed gradient.
 
-            :param LabelTensor input_: Input points where the equation is
-                evaluated.
-            :param LabelTensor output_: Output tensor, eventually produced by a
-                :class:`torch.nn.Module` instance.
-            :return: The computed residual of the equation.
+            :param LabelTensor input_: The input points where the residual is
+                computed.
+            :param LabelTensor output_: The output tensor, potentially produced
+                by a :class:`torch.nn.Module` instance.
+            :return: The residual values of the equation.
             :rtype: LabelTensor
             """
             return grad(output_, input_, components=components, d=d) - value
@@ -101,11 +101,11 @@ class FixedFlux(Equation):  # pylint: disable=R0903
             """
             Definition of the equation to enforce a fixed flux.
 
-            :param LabelTensor input_: Input points where the equation is
-                evaluated.
-            :param LabelTensor output_: Output tensor, eventually produced by a
-                :class:`torch.nn.Module` instance.
-            :return: The computed residual of the equation.
+            :param LabelTensor input_: The input points where the residual is
+                computed.
+            :param LabelTensor output_: The output tensor, potentially produced
+                by a :class:`torch.nn.Module` instance.
+            :return: The residual values of the equation.
             :rtype: LabelTensor
             """
             return div(output_, input_, components=components, d=d) - value
@@ -137,11 +137,11 @@ class FixedLaplacian(Equation):  # pylint: disable=R0903
             """
             Definition of the equation to enforce a fixed laplacian.
 
-            :param LabelTensor input_: Input points where the equation is
-                evaluated.
-            :param LabelTensor output_: Output tensor, eventually produced by a
-                :class:`torch.nn.Module` instance.
-            :return: The computed residual of the equation.
+            :param LabelTensor input_: The input points where the residual is
+                computed.
+            :param LabelTensor output_: The output tensor, potentially produced
+                by a :class:`torch.nn.Module` instance.
+            :return: The residual values of the equation.
             :rtype: LabelTensor
             """
             return (
@@ -158,7 +158,7 @@ class Laplace(FixedLaplacian):  # pylint: disable=R0903
 
     .. math::
 
-        \delta u = 0
+        \Delta u = 0
 
     """
 
