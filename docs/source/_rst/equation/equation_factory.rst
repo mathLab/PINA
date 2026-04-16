@@ -21,27 +21,3 @@ Equation Factory
 .. autoclass:: pina._src.equation.equation_factory.Laplace
    :members:
    :show-inheritance:
-
-.. autoclass:: pina._src.equation.equation_factory.Advection
-   :members:
-   :show-inheritance:
-
-.. autoclass:: pina._src.equation.equation_factory.AllenCahn
-   :members:
-   :show-inheritance:
-
-.. autoclass:: pina._src.equation.equation_factory.DiffusionReaction
-   :members:
-   :show-inheritance:
-
-.. autoclass:: pina._src.equation.equation_factory.Helmholtz
-   :members:
-   :show-inheritance:
-
-.. autoclass:: pina._src.equation.equation_factory.Poisson
-   :members:
-   :show-inheritance:
-
-.. autoclass:: pina._src.equation.equation_factory.AcousticWave
-   :members:
-   :show-inheritance:

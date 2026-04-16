@@ -4,7 +4,7 @@ import torch
 from pina._src.problem.time_dependent_problem import TimeDependentProblem
 from pina._src.domain.cartesian_domain import CartesianDomain
 from pina._src.problem.spatial_problem import SpatialProblem
-from pina._src.equation.equation_factory import Advection
+from pina._src.equation.zoo.advection_equation import AdvectionEquation
 from pina._src.condition.condition import Condition
 from pina._src.core.utils import check_consistency
 from pina._src.equation.equation import Equation
@@ -64,7 +64,9 @@ class AdvectionProblem(SpatialProblem, TimeDependentProblem):
         check_consistency(c, (float, int))
         self.c = c
 
-        self.conditions["D"] = Condition(domain="D", equation=Advection(self.c))
+        self.conditions["D"] = Condition(
+            domain="D", equation=AdvectionEquation(self.c)
+        )
 
     def solution(self, pts):
         """

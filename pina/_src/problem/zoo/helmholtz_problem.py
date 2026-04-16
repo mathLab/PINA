@@ -1,9 +1,9 @@
 """Formulation of the Helmholtz problem."""
 
 import torch
-
 from pina._src.condition.condition import Condition
-from pina._src.equation.equation_factory import FixedValue, Helmholtz
+from pina._src.equation.equation_factory import FixedValue
+from pina._src.equation.zoo.helmholtz_equation import HelmholtzEquation
 from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.core.utils import check_consistency
 from pina._src.domain.cartesian_domain import CartesianDomain
@@ -68,7 +68,7 @@ class HelmholtzProblem(SpatialProblem):
 
         self.conditions["D"] = Condition(
             domain="D",
-            equation=Helmholtz(self.k, forcing_term),
+            equation=HelmholtzEquation(self.k, forcing_term),
         )
 
     def solution(self, pts):

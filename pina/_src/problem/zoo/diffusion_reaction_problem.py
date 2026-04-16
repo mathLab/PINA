@@ -3,11 +3,14 @@
 import torch
 from pina._src.condition.condition import Condition
 from pina._src.equation.equation import Equation
-from pina._src.equation.equation_factory import FixedValue, DiffusionReaction
+from pina._src.equation.equation_factory import FixedValue
 from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.problem.time_dependent_problem import TimeDependentProblem
 from pina._src.core.utils import check_consistency
 from pina._src.domain.cartesian_domain import CartesianDomain
+from pina._src.equation.zoo.diffusion_reaction_equation import (
+    DiffusionReactionEquation,
+)
 
 
 def initial_condition(input_, output_):
@@ -91,7 +94,7 @@ class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
 
         self.conditions["D"] = Condition(
             domain="D",
-            equation=DiffusionReaction(self.alpha, forcing_term),
+            equation=DiffusionReactionEquation(self.alpha, forcing_term),
         )
 
     def solution(self, pts):

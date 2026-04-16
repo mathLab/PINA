@@ -8,11 +8,8 @@ from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.condition.condition import Condition
 from pina._src.core.utils import check_consistency
 from pina._src.equation.equation import Equation
-from pina._src.equation.equation_factory import (
-    FixedValue,
-    FixedGradient,
-    AcousticWave,
-)
+from pina._src.equation.equation_factory import FixedValue, FixedGradient
+from pina._src.equation.zoo.acoustic_wave_equation import AcousticWaveEquation
 
 
 def initial_condition(input_, output_):
@@ -78,7 +75,7 @@ class AcousticWaveProblem(TimeDependentProblem, SpatialProblem):
         self.c = c
 
         self.conditions["D"] = Condition(
-            domain="D", equation=AcousticWave(self.c)
+            domain="D", equation=AcousticWaveEquation(self.c)
         )
 
     def solution(self, pts):

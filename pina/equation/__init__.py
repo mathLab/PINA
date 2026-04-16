@@ -17,12 +17,6 @@ __all__ = [
     "FixedFlux",
     "FixedLaplacian",
     "Laplace",
-    "Advection",
-    "AllenCahn",
-    "DiffusionReaction",
-    "Helmholtz",
-    "Poisson",
-    "AcousticWave",
 ]
 
 from pina._src.equation.equation_interface import EquationInterface
@@ -35,10 +29,4 @@ from pina._src.equation.equation_factory import (
     FixedLaplacian,
     FixedValue,
     Laplace,
-    Advection,
-    AllenCahn,
-    DiffusionReaction,
-    Helmholtz,
-    Poisson,
-    AcousticWave,
 )
