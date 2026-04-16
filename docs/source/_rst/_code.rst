@@ -203,6 +203,20 @@ Equations and Differential Operators
     Differential Operators <operator.rst>
 
 
+Equations Zoo
+---------------------------------------
+
+.. toctree::
+    :titlesonly:
+
+    Acoustic Wave Equation <equation/zoo/acoustic_wave_equation.rst>
+    Advection Equation <equation/zoo/advection_equation.rst>
+    Allen-Cahn Equation <equation/zoo/allen_cahn_equation.rst>
+    Diffusion-Reaction Equation <equation/zoo/diffusion_reaction_equation.rst>
+    Helmholtz Equation <equation/zoo/helmholtz_equation.rst>
+    Poisson Equation <equation/zoo/poisson_equation.rst>
+
+
 Problems
 --------------
 

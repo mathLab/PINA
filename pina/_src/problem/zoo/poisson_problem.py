@@ -2,10 +2,11 @@
 
 import torch
 
-from pina._src.equation.equation_factory import FixedValue, Poisson
+from pina._src.equation.equation_factory import FixedValue
 from pina._src.domain.cartesian_domain import CartesianDomain
 from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.condition.condition import Condition
+from pina._src.equation.zoo.poisson_equation import PoissonEquation
 
 
 def forcing_term(input_):
@@ -43,7 +44,9 @@ class Poisson2DSquareProblem(SpatialProblem):
 
     conditions = {
         "boundary": Condition(domain="boundary", equation=FixedValue(0.0)),
-        "D": Condition(domain="D", equation=Poisson(forcing_term=forcing_term)),
+        "D": Condition(
+            domain="D", equation=PoissonEquation(forcing_term=forcing_term)
+        ),
     }
 
     def solution(self, pts):
