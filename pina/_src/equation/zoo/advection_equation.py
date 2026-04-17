@@ -29,9 +29,8 @@ class AdvectionEquation(Equation):  # pylint: disable=R0903
         :raises ValueError: If ``c`` is an empty list.
         """
         # Check consistency
-        check_consistency(c, (float, int, list))
+        check_consistency(c, (float, int))
         if isinstance(c, list):
-            all(check_consistency(ci, (float, int)) for ci in c)
             if len(c) < 1:
                 raise ValueError("'c' cannot be an empty list.")
         else:
