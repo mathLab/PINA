@@ -121,7 +121,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         """
         Initialization of the :class:`SelfAdaptivePINN` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module model: The model to be used.
         :param torch.nn.Module weight_function: The Self-Adaptive mask model.
             Default is ``torch.nn.Sigmoid()``.

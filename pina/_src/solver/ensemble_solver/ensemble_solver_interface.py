@@ -13,7 +13,7 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
     The ensemble dimension can be customized to control how outputs are stacked.
 
     By default, it is compatible with problems defined by
-    :class:`~pina.problem.abstract_problem.AbstractProblem`,
+    :class:`~pina.problem.base_problem.BaseProblem`,
     and users can choose the problem type the solver is meant to address.
 
     An ensemble model is constructed by combining multiple models that solve
@@ -59,7 +59,7 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
         """
         Initialization of the :class:`DeepEnsembleSolverInterface` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module models: The neural network models to be used.
         :param Optimizer optimizer: The optimizer to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.

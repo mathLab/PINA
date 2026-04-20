@@ -42,7 +42,7 @@ class ConditionBase(ConditionInterface):
         Return the problem associated with this condition.
 
         :return: Problem associated with this condition.
-        :rtype: ~pina.problem.abstract_problem.AbstractProblem
+        :rtype: ~pina.problem.base_problem.BaseProblem
         """
         return self._problem
 
@@ -51,8 +51,8 @@ class ConditionBase(ConditionInterface):
         """
         Set the problem associated with this condition.
 
-        :param pina.problem.abstract_problem.AbstractProblem value: The problem
-            to associate with this condition
+        :param pina.problem.base_problem.BaseProblem value: The problem to
+            associate with this condition.
         """
         self._problem = value
 

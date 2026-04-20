@@ -69,7 +69,7 @@ class GradientPINN(PINN):
         """
         Initialization of the :class:`GradientPINN` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
             It must inherit from at least
             :class:`~pina.problem.spatial_problem.SpatialProblem` to compute the
             gradient of the loss.

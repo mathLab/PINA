@@ -42,7 +42,7 @@ class GAROM(MultiSolverInterface):
         """
         Initialization of the :class:`GAROM` class.
 
-        :param AbstractProblem problem: The formulation of the problem.
+        :param BaseProblem problem: The formulation of the problem.
         :param torch.nn.Module generator: The generator model.
         :param torch.nn.Module discriminator: The discriminator model.
         :param torch.nn.Module loss: The loss function to be minimized.

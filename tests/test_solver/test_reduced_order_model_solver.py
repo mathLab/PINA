@@ -2,7 +2,7 @@ import torch
 import pytest
 
 from pina import Condition, LabelTensor
-from pina.problem import AbstractProblem
+from pina.problem import BaseProblem
 from pina.condition import InputTargetCondition
 from pina.solver import ReducedOrderModelSolver
 from pina.trainer import Trainer
@@ -11,7 +11,7 @@ from pina.problem.zoo import Poisson2DSquareProblem
 from torch._dynamo.eval_frame import OptimizedModule
 
 
-class LabelTensorProblem(AbstractProblem):
+class LabelTensorProblem(BaseProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {
@@ -22,7 +22,7 @@ class LabelTensorProblem(AbstractProblem):
     }
 
 
-class TensorProblem(AbstractProblem):
+class TensorProblem(BaseProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {

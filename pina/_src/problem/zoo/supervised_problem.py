@@ -1,10 +1,10 @@
 """Formulation of a Supervised Problem in PINA."""
 
-from pina._src.problem.abstract_problem import AbstractProblem
+from pina._src.problem.base_problem import BaseProblem
 from pina._src.condition.condition import Condition
 
 
-class SupervisedProblem(AbstractProblem):
+class SupervisedProblem(BaseProblem):
     """
     Definition of a supervised-learning problem.
 
@@ -20,7 +20,7 @@ class SupervisedProblem(AbstractProblem):
     """
 
     # TODO: This is necessary to override the abstract properties of
-    # AbstractProblem, but it is not an ideal solution. We should consider
+    # BaseProblem, but it is not an ideal solution. We should consider
     # a different desgin to manage input and output variables.
     conditions = {}
     output_variables = None

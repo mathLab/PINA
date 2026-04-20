@@ -1,5 +1,6 @@
-"""Module for the AbstractProblem class."""
+"""Module for the BaseProblem class."""
 
+import warnings
 from copy import deepcopy
 from pina._src.problem.problem_interface import ProblemInterface
 from pina._src.domain.domain_interface import DomainInterface
@@ -15,7 +16,7 @@ from pina._src.core.utils import (
 )
 
 
-class AbstractProblem(ProblemInterface):
+class BaseProblem(ProblemInterface):
     """
     Base class for all problems, implementing common functionality.
 
@@ -31,7 +32,7 @@ class AbstractProblem(ProblemInterface):
 
     def __init__(self):
         """
-        Initialization of the :class:`AbstractProblem` class.
+        Initialization of the :class:`BaseProblem` class.
         """
         self._discretised_domains = {}
 
@@ -294,3 +295,14 @@ class AbstractProblem(ProblemInterface):
         :rtype: bool
         """
         return all(d in self.discretised_domains for d in self.domains)
+
+
+# Back-compatibility with version 0.2, to be removed soon
+class AbstractProblem(BaseProblem):
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "AbstractProblem is deprecated, use BaseProblem instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)

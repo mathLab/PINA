@@ -6,7 +6,7 @@ from torch._dynamo.eval_frame import OptimizedModule
 from pina import Condition, Trainer, LabelTensor
 from pina.solver import AutoregressiveSolver
 from pina.condition import DataCondition
-from pina.problem import AbstractProblem
+from pina.problem import BaseProblem
 from pina.model import FeedForward
 
 
@@ -47,7 +47,7 @@ data = create_data(
 
 
 # Problem
-class Problem(AbstractProblem):
+class Problem(BaseProblem):
 
     input_variables = [f"feat_{i}" for i in range(n_feats)]
     output_variables = [f"feat_{i}" for i in range(n_feats)]

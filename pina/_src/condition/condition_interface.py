@@ -25,7 +25,7 @@ class ConditionInterface(metaclass=ABCMeta):
         Return the problem associated with this condition.
 
         :return: Problem associated with this condition.
-        :rtype: ~pina.problem.abstract_problem.AbstractProblem
+        :rtype: ~pina.problem.base_problem.BaseProblem
         """
 
     @problem.setter
@@ -34,7 +34,7 @@ class ConditionInterface(metaclass=ABCMeta):
         """
         Set the problem associated with this condition.
 
-        :param pina.problem.abstract_problem.AbstractProblem value: The problem
+        :param pina.problem.base_problem.BaseProblem value: The problem
             to associate with this condition
         """
 

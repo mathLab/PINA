@@ -48,7 +48,7 @@ class Trainer(lightning.pytorch.Trainer):
 
         :param SolverInterface solver: A
             :class:`~pina.solver.solver.SolverInterface` solver used to solve a
-            :class:`~pina.problem.abstract_problem.AbstractProblem`.
+            :class:`~pina.problem.base_problem.BaseProblem`.
         :param int batch_size: The number of samples per batch to load.
             If ``None``, all samples are loaded and data is not batched.
             Default is ``None``.
@@ -184,7 +184,7 @@ class Trainer(lightning.pytorch.Trainer):
     def _move_to_device(self):
         """
         Moves the ``unknown_parameters`` of an instance of
-        :class:`~pina.problem.abstract_problem.AbstractProblem` to the
+        :class:`~pina.problem.base_problem.BaseProblem` to the
         :class:`Trainer` device.
         """
         device = self._accelerator_connector._parallel_devices[0]

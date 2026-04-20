@@ -1,5 +1,5 @@
 import torch
-from pina.problem import AbstractProblem
+from pina.problem import BaseProblem
 from pina.condition import InputTargetCondition
 from pina.problem.zoo import SupervisedProblem
 from pina.graph import RadiusGraph
@@ -9,7 +9,7 @@ def test_constructor():
     input_ = torch.rand((100, 10))
     output_ = torch.rand((100, 10))
     problem = SupervisedProblem(input_=input_, output_=output_)
-    assert isinstance(problem, AbstractProblem)
+    assert isinstance(problem, BaseProblem)
     assert hasattr(problem, "conditions")
     assert isinstance(problem.conditions, dict)
     assert list(problem.conditions.keys()) == ["data"]
@@ -25,7 +25,7 @@ def test_constructor_graph():
     ]
     output_ = torch.rand((20, 100, 10))
     problem = SupervisedProblem(input_=input_, output_=output_)
-    assert isinstance(problem, AbstractProblem)
+    assert isinstance(problem, BaseProblem)
     assert hasattr(problem, "conditions")
     assert isinstance(problem.conditions, dict)
     assert list(problem.conditions.keys()) == ["data"]

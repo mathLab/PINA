@@ -93,9 +93,9 @@ def labelize_forward(forward, input_variables, output_variables):
 
     :param Callable forward: The forward function of a :class:`torch.nn.Module`.
     :param list[str] input_variables: The names of the input variables of a
-        :class:`~pina.problem.abstract_problem.AbstractProblem`.
+        :class:`~pina.problem.base_problem.BaseProblem`.
     :param list[str] output_variables: The names of the output variables of a
-        :class:`~pina.problem.abstract_problem.AbstractProblem`.
+        :class:`~pina.problem.base_problem.BaseProblem`.
     :return: The decorated forward function.
     :rtype: Callable
     """

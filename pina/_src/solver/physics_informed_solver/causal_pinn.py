@@ -78,7 +78,7 @@ class CausalPINN(PINN):
         """
         Initialization of the :class:`CausalPINN` class.
 
-        :param AbstractProblem problem: The problem to be solved. It must
+        :param BaseProblem problem: The problem to be solved. It must
             inherit from at least
             :class:`~pina.problem.time_dependent_problem.TimeDependentProblem`.
         :param torch.nn.Module model: The neural network model to be used.

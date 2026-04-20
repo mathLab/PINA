@@ -1,10 +1,10 @@
 """Module for the SpatialProblem class."""
 
 from abc import abstractmethod
-from pina._src.problem.abstract_problem import AbstractProblem
+from pina._src.problem.base_problem import BaseProblem
 
 
-class SpatialProblem(AbstractProblem):
+class SpatialProblem(BaseProblem):
     """
     Base class for all spatial problems, extending the standard problem
     definition with spatial-dependent inputs.

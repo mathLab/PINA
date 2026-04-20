@@ -45,7 +45,7 @@ class SupervisedSolver(SupervisedSolverInterface, SingleSolverInterface):
         """
         Initialization of the :class:`SupervisedSolver` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module model: The neural network model to be used.
         :param torch.nn.Module loss: The loss function to be minimized.
             If ``None``, the :class:`torch.nn.MSELoss` loss is used.

@@ -6,7 +6,7 @@ from pina import Trainer, LabelTensor, Condition
 from pina.solver import SupervisedSolver
 from pina.model import FeedForward
 from pina.callback import NormalizerDataCallback
-from pina.problem import AbstractProblem
+from pina.problem import BaseProblem
 from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from pina.solver import PINN
 from pina.graph import RadiusGraph
@@ -25,7 +25,7 @@ input_2 = torch.rand(20, 2) * 5
 target_2 = torch.rand(20, 1) * 5
 
 
-class LabelTensorProblem(AbstractProblem):
+class LabelTensorProblem(BaseProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {
@@ -40,7 +40,7 @@ class LabelTensorProblem(AbstractProblem):
     }
 
 
-class TensorProblem(AbstractProblem):
+class TensorProblem(BaseProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {
@@ -53,7 +53,7 @@ input_graph = [RadiusGraph(radius=0.5, pos=torch.rand(10, 2)) for _ in range(5)]
 output_graph = torch.rand(5, 1)
 
 
-class GraphProblem(AbstractProblem):
+class GraphProblem(BaseProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {

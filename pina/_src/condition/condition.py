@@ -12,7 +12,7 @@ class Condition:
     """
     The :class:`Condition` class is a core component of the PINA framework that
     provides a unified interface to define heterogeneous constraints that must
-    be satisfied by a :class:`~pina.problem.abstract_problem.AbstractProblem`.
+    be satisfied by a :class:`~pina.problem.base_problem.BaseProblem`.
 
     It encapsulates all types of constraints - physical, boundary, initial, or
     data-driven - that the solver must satisfy during training. The specific
