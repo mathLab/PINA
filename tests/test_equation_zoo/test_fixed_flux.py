@@ -26,3 +26,15 @@ def test_fixed_flux(value, components, d):
     # Residual
     residual = equation.residual(pts, u)
     assert residual.shape == (pts.shape[0], 1)
+
+    # Should fail if value is neither a float nor an integer
+    with pytest.raises(ValueError):
+        FixedFlux(value="invalid", components=components, d=d)
+
+    # Should fail if components is neither a string nor a list of strings
+    with pytest.raises(ValueError):
+        FixedFlux(value=value, components=123, d=d)
+
+    # Should fail if d is neither a string nor a list of strings
+    with pytest.raises(ValueError):
+        FixedFlux(value=value, components=components, d=123)

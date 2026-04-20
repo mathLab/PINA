@@ -22,3 +22,15 @@ def test_fixed_gradient(value, components, d):
     len_c = len(components) if components is not None else u.shape[1]
     len_d = len(d) if d is not None else pts.shape[1]
     assert residual.shape == (pts.shape[0], len_c * len_d)
+
+    # Should fail if value is neither a float nor an integer
+    with pytest.raises(ValueError):
+        FixedGradient(value="invalid", components=components, d=d)
+
+    # Should fail if components is neither a string nor a list of strings
+    with pytest.raises(ValueError):
+        FixedGradient(value=value, components=123, d=d)
+
+    # Should fail if d is neither a string nor a list of strings
+    with pytest.raises(ValueError):
+        FixedGradient(value=value, components=components, d=123)

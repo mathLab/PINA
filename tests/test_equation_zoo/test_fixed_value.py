@@ -20,3 +20,11 @@ def test_fixed_value(value, components):
     residual = equation.residual(pts, u)
     len_c = len(components) if components is not None else u.shape[1]
     assert residual.shape == (pts.shape[0], len_c)
+
+    # Should fail if value is neither a float nor an integer
+    with pytest.raises(ValueError):
+        FixedValue(value="not a number", components=components)
+
+    # Should fail if components is neither a string nor a list of strings
+    with pytest.raises(ValueError):
+        FixedValue(value=value, components=123)

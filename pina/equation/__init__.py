@@ -20,7 +20,6 @@ from pina._src.equation.base_equation import BaseEquation
 from pina._src.equation.equation import Equation
 from pina._src.equation.system_equation import SystemEquation
 
-
 # Back-compatibility with version 0.2, to be removed soon
 import warnings
 import importlib
