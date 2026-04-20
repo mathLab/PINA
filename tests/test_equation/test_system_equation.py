@@ -1,4 +1,5 @@
-from pina.equation import SystemEquation, FixedValue, FixedGradient
+from pina.equation import SystemEquation
+from pina.equation.zoo import FixedValue, FixedGradient
 from pina.operator import grad, laplacian
 from pina import LabelTensor
 import torch

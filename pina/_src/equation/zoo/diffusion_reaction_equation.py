@@ -6,7 +6,7 @@ from pina._src.core.operator import grad, laplacian
 from pina._src.core.utils import check_consistency
 
 
-class DiffusionReactionEquation(Equation):  # pylint: disable=R0903
+class DiffusionReactionEquation(Equation):
     r"""
     Implementation of the N-dimensional Diffusion-Reaction equation,
     defined as follows:

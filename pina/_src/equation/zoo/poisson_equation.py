@@ -6,7 +6,7 @@ from pina._src.core.operator import laplacian
 from pina._src.core.utils import check_consistency
 
 
-class PoissonEquation(Equation):  # pylint: disable=R0903
+class PoissonEquation(Equation):
     r"""
     Implementation of the Poisson equation, defined as follows:
 

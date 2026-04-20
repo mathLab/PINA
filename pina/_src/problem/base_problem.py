@@ -301,7 +301,7 @@ class BaseProblem(ProblemInterface):
 class AbstractProblem(BaseProblem):
     def __init__(self, *args, **kwargs):
         warnings.warn(
-            "AbstractProblem is deprecated, use BaseProblem instead",
+            "AbstractProblem is deprecated, use BaseProblem instead.",
             DeprecationWarning,
             stacklevel=2,
         )

@@ -5,7 +5,7 @@ from pina._src.core.operator import laplacian
 from pina._src.core.utils import check_consistency
 
 
-class AcousticWaveEquation(Equation):  # pylint: disable=R0903
+class AcousticWaveEquation(Equation):
     r"""
     Implementation of the N-dimensional isotropic acoustic wave equation.
     The equation is defined as follows:

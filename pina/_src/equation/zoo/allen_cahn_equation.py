@@ -5,7 +5,7 @@ from pina._src.core.operator import grad, laplacian
 from pina._src.core.utils import check_consistency
 
 
-class AllenCahnEquation(Equation):  # pylint: disable=R0903
+class AllenCahnEquation(Equation):
     r"""
     Implementation of the N-dimensional Allen-Cahn equation, defined as follows:
 

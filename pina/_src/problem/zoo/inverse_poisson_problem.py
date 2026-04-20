@@ -9,7 +9,7 @@ from pina._src.core.utils import custom_warning_format, check_consistency
 from pina._src.domain.cartesian_domain import CartesianDomain
 from pina._src.problem.inverse_problem import InverseProblem
 from pina._src.problem.spatial_problem import SpatialProblem
-from pina._src.equation.equation_factory import FixedValue
+from pina._src.equation.zoo.fixed_value import FixedValue
 from pina._src.condition.condition import Condition
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.equation.equation import Equation
