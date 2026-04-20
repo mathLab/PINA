@@ -3,6 +3,7 @@
 import warnings
 from pina._src.equation.equation import Equation
 from pina._src.core.operator import laplacian
+from pina._src.core.utils import check_consistency
 
 
 class FixedLaplacian(Equation):
@@ -14,16 +15,29 @@ class FixedLaplacian(Equation):
         """
         Initialization of the :class:`FixedLaplacian` class.
 
-        :param float value: The fixed value to be enforced to the laplacian.
-        :param list[str] components: The name of the output variables for which
-            the fixed laplace condition is applied. It should be a subset of the
-            output labels. If ``None``, all output variables are considered.
-            Default is ``None``.
-        :param list[str] d: The name of the input variables on which the
-            laplacian is computed. It should be a subset of the input labels.
-            If ``None``, all the input variables are considered.
-            Default is ``None``.
+        :param value: The fixed value to be enforced to the laplacian.
+        :type value: float | int
+        :param components: The name of the output variables for which the fixed
+            laplace condition is applied. It should be a subset of the output
+            labels. If ``None``, all output variables are considered. Default is
+            ``None``.
+        :type components: str | list[str]
+        :param d: The name of the input variables on which the laplacian is
+            computed. It should be a subset of the input labels. If ``None``,
+            all the input variables are considered. Default is ``None``.
+        :type d: str | list[str]
+        :raises ValueError: If ``value`` is neither a float nor an integer.
+        :raises ValueError: If, when provided, ``components`` is neither a
+            string nor a list of strings.
+        :raises ValueError: If, when provided, ``d`` is neither a string nor a
+            list of strings.
         """
+        # Check consistency
+        check_consistency(value, (float, int))
+        if components is not None:
+            check_consistency(components, str)
+        if d is not None:
+            check_consistency(d, str)
 
         def equation(input_, output_):
             """

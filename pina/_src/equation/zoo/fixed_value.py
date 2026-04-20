@@ -1,6 +1,7 @@
 """Module for defining the fixed value equation."""
 
 from pina._src.equation.equation import Equation
+from pina._src.core.utils import check_consistency
 
 
 class FixedValue(Equation):
@@ -13,12 +14,21 @@ class FixedValue(Equation):
         """
         Initialization of the :class:`FixedValue` class.
 
-        :param float value: The fixed value to be enforced.
-        :param list[str] components: The name of the output variables for which
-            the fixed value condition is applied. It should be a subset of the
-            output labels. If ``None``, all output variables are considered.
-            Default is ``None``.
+        :param value: The fixed value to be enforced.
+        :type value: float | int
+        :param components: The name of the output variables for which the fixed
+            value condition is applied. It should be a subset of the output
+            labels. If ``None``, all output variables are considered. Default is
+            ``None``.
+        :type components: str | list[str]
+        :raises ValueError: If ``value`` is neither a float nor an integer.
+        :raises ValueError: If, when provided, ``components`` is neither a
+            string nor a list of strings.
         """
+        # Check consistency
+        check_consistency(value, (float, int))
+        if components is not None:
+            check_consistency(components, str)
 
         def equation(_, output_):
             """

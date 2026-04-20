@@ -21,3 +21,15 @@ def test_fixed_laplacian(value, components, d):
     residual = equation.residual(pts, u)
     len_c = len(components) if components is not None else u.shape[1]
     assert residual.shape == (pts.shape[0], len_c)
+
+    # Should fail if value is neither a float nor an integer
+    with pytest.raises(ValueError):
+        FixedLaplacian(value="invalid", components=components, d=d)
+
+    # Should fail if components is neither a string nor a list of strings
+    with pytest.raises(ValueError):
+        FixedLaplacian(value=value, components=123, d=d)
+
+    # Should fail if d is neither a string nor a list of strings
+    with pytest.raises(ValueError):
+        FixedLaplacian(value=value, components=components, d=123)
