@@ -199,7 +199,6 @@ Equations and Differential Operators
     Base Equation <equation/base_equation.rst>
     Equation <equation/equation.rst>
     System Equation <equation/system_equation.rst>
-    Equation Factory <equation/equation_factory.rst>
     Differential Operators <operator.rst>
 
 
@@ -213,6 +212,10 @@ Equations Zoo
     Advection Equation <equation/zoo/advection_equation.rst>
     Allen-Cahn Equation <equation/zoo/allen_cahn_equation.rst>
     Diffusion-Reaction Equation <equation/zoo/diffusion_reaction_equation.rst>
+    Fixed Flux <equation/zoo/fixed_flux.rst>
+    Fixed Gradient <equation/zoo/fixed_gradient.rst>
+    Fixed Laplacian <equation/zoo/fixed_laplacian.rst>
+    Fixed Value <equation/zoo/fixed_value.rst>
     Helmholtz Equation <equation/zoo/helmholtz_equation.rst>
     Poisson Equation <equation/zoo/poisson_equation.rst>
 

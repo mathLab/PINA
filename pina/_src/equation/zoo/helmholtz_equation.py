@@ -6,7 +6,7 @@ from pina._src.core.operator import laplacian
 from pina._src.core.utils import check_consistency
 
 
-class HelmholtzEquation(Equation):  # pylint: disable=R0903
+class HelmholtzEquation(Equation):
     r"""
     Implementation of the Helmholtz equation, defined as follows:
 

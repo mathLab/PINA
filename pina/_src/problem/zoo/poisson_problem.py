@@ -2,7 +2,7 @@
 
 import torch
 
-from pina._src.equation.equation_factory import FixedValue
+from pina._src.equation.zoo.fixed_value import FixedValue
 from pina._src.domain.cartesian_domain import CartesianDomain
 from pina._src.problem.spatial_problem import SpatialProblem
 from pina._src.condition.condition import Condition

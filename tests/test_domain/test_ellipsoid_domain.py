@@ -92,11 +92,11 @@ def test_update(dict, sample_surface):
     )
     domain_2 = EllipsoidDomain(
         ellipsoid_dict={"new_var": [0, 1], "x": 1},
-        sample_surface=sample_surface
+        sample_surface=sample_surface,
     )
     domain_3 = EllipsoidDomain(
         ellipsoid_dict=dict | {"new_var": [0, 1], "x": 1},
-        sample_surface=sample_surface
+        sample_surface=sample_surface,
     )
 
     # Update domain_1 with domain_2

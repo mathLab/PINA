@@ -6,7 +6,7 @@ from pina._src.core.operator import grad
 from pina._src.core.utils import check_consistency
 
 
-class AdvectionEquation(Equation):  # pylint: disable=R0903
+class AdvectionEquation(Equation):
     r"""
     Implementation of the N-dimensional advection equation with constant
     velocity parameter. The equation is defined as follows:

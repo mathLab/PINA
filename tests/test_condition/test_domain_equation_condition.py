@@ -1,7 +1,7 @@
 import pytest
 from pina import Condition
 from pina.domain import CartesianDomain
-from pina._src.equation.equation_factory import FixedValue
+from pina.equation.zoo import FixedValue
 from pina.condition import DomainEquationCondition
 
 example_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
