@@ -95,7 +95,7 @@ class ReducedOrderModelSolver(SupervisedSolverInterface, SingleSolverInterface):
         """
         Initialization of the :class:`ReducedOrderModelSolver` class.
 
-        :param AbstractProblem problem: The formualation of the problem.
+        :param BaseProblem problem: The formualation of the problem.
         :param torch.nn.Module reduction_network: The reduction network used
             for reducing the input space. It must contain two methods, namely
             ``encode`` for input encoding, and ``decode`` for decoding the

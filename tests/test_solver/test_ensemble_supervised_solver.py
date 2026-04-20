@@ -2,17 +2,16 @@ import torch
 import pytest
 from torch._dynamo.eval_frame import OptimizedModule
 from torch_geometric.nn import GCNConv
-from torch_geometric.utils import to_dense_batch
 from pina import Condition, LabelTensor
 from pina.condition import InputTargetCondition
-from pina.problem import AbstractProblem
+from pina.problem import BaseProblem
 from pina.solver import DeepEnsembleSupervisedSolver
 from pina.model import FeedForward
 from pina.trainer import Trainer
 from pina.graph import KNNGraph
 
 
-class LabelTensorProblem(AbstractProblem):
+class LabelTensorProblem(BaseProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {
@@ -23,7 +22,7 @@ class LabelTensorProblem(AbstractProblem):
     }
 
 
-class TensorProblem(AbstractProblem):
+class TensorProblem(BaseProblem):
     input_variables = ["u_0", "u_1"]
     output_variables = ["u"]
     conditions = {
@@ -40,7 +39,7 @@ input_ = [
 ]
 
 
-class GraphProblem(AbstractProblem):
+class GraphProblem(BaseProblem):
     output_variables = None
     conditions = {"data": Condition(input=input_, target=output_)}
 
@@ -54,7 +53,7 @@ input_ = [
 ]
 
 
-class GraphProblemLT(AbstractProblem):
+class GraphProblemLT(BaseProblem):
     output_variables = ["u"]
     input_variables = ["a", "b", "c", "d", "e"]
     conditions = {"data": Condition(input=input_, target=output_)}

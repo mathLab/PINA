@@ -209,7 +209,7 @@ Problems
     :titlesonly:
 
     ProblemInterface <problem/problem_interface.rst>
-    AbstractProblem <problem/abstract_problem.rst>
+    BaseProblem <problem/base_problem.rst>
     InverseProblem <problem/inverse_problem.rst>
     ParametricProblem <problem/parametric_problem.rst>
     SpatialProblem <problem/spatial_problem.rst>

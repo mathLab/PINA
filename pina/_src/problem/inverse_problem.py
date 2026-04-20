@@ -2,10 +2,10 @@
 
 from abc import abstractmethod
 import torch
-from pina._src.problem.abstract_problem import AbstractProblem
+from pina._src.problem.base_problem import BaseProblem
 
 
-class InverseProblem(AbstractProblem):
+class InverseProblem(BaseProblem):
     """
     Base class for all inverse problems, extending the standard problem
     definition with unknown parameters to be determined through training.

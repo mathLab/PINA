@@ -76,7 +76,7 @@ class DeepEnsembleSupervisedSolver(
         """
         Initialization of the :class:`DeepEnsembleSupervisedSolver` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module models: The neural network models to be used.
         :param torch.nn.Module loss: The loss function to be minimized.
             If ``None``, the :class:`torch.nn.MSELoss` loss is used.

@@ -68,7 +68,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         """
         Initialization of the :class:`CompetitivePINN` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module model: The neural network model to be used.
         :param torch.nn.Module discriminator: The discriminator to be used.
             If ``None``, the discriminator is a deepcopy of the ``model``.

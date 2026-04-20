@@ -26,7 +26,7 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
 
     The `PINNInterface` class can be used to define PINNs that work with one or
     multiple optimizers and/or models. By default, it is compatible with
-    problems defined by :class:`~pina.problem.abstract_problem.AbstractProblem`,
+    problems defined by :class:`~pina.problem.base_problem.BaseProblem`,
     and users can choose the problem type the solver is meant to address.
     """
 
@@ -40,7 +40,7 @@ class PINNInterface(SupervisedSolverInterface, metaclass=ABCMeta):
         """
         Initialization of the :class:`PINNInterface` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module loss: The loss function to be minimized.
             If ``None``, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.

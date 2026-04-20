@@ -84,7 +84,7 @@ class PinaDataModule(LightningDataModule):
         """
         Initialize the object and creating datasets based on the input problem.
 
-        :param AbstractProblem problem: The problem containing the data on which
+        :param BaseProblem problem: The problem containing the data on which
             to create the datasets and dataloaders.
         :param float train_size: Fraction of elements in the training split. It
             must be in the range [0, 1].

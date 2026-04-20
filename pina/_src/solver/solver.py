@@ -5,7 +5,7 @@ import lightning
 import torch
 
 from torch._dynamo import OptimizedModule
-from pina._src.problem.abstract_problem import AbstractProblem
+from pina._src.problem.base_problem import BaseProblem
 from pina._src.problem.inverse_problem import InverseProblem
 from pina._src.optim.optimizer_interface import Optimizer
 from pina._src.optim.scheduler_interface import Scheduler
@@ -31,7 +31,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         Initialization of the :class:`SolverInterface` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param WeightingInterface weighting: The weighting schema to be used.
             If ``None``, no weighting schema is used. Default is ``None``.
         :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
@@ -39,7 +39,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         super().__init__()
 
         # check consistency of the problem
-        check_consistency(problem, AbstractProblem)
+        check_consistency(problem, BaseProblem)
         self._check_solver_consistency(problem)
         self._pina_problem = problem
 
@@ -224,7 +224,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         """
         Check the consistency of the solver with the problem formulation.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         """
         for condition in problem.conditions.values():
             check_consistency(condition, self.accepted_conditions_types)
@@ -337,7 +337,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         The problem instance.
 
         :return: The problem instance.
-        :rtype: :class:`~pina.problem.abstract_problem.AbstractProblem`
+        :rtype: :class:`~pina.problem.base_problem.BaseProblem`
         """
         return self._pina_problem
 
@@ -379,7 +379,7 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
         """
         Initialization of the :class:`SingleSolverInterface` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module model: The neural network model to be used.
         :param Optimizer optimizer: The optimizer to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is
@@ -490,7 +490,7 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         """
         Initialization of the :class:`MultiSolverInterface` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param models: The neural network models to be used.
         :type model: list[torch.nn.Module] | tuple[torch.nn.Module]
         :param list[Optimizer] optimizers: The optimizers to be used.

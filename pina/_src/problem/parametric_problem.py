@@ -1,10 +1,10 @@
 """Module for the ParametricProblem class."""
 
 from abc import abstractmethod
-from pina._src.problem.abstract_problem import AbstractProblem
+from pina._src.problem.base_problem import BaseProblem
 
 
-class ParametricProblem(AbstractProblem):
+class ParametricProblem(BaseProblem):
     """
     Base class for all parametric problems, extending the standard problem
     definition with parameter-dependent inputs.

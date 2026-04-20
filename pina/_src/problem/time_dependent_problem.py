@@ -1,10 +1,10 @@
 """Module for the TimeDependentProblem class."""
 
 from abc import abstractmethod
-from pina._src.problem.abstract_problem import AbstractProblem
+from pina._src.problem.base_problem import BaseProblem
 
 
-class TimeDependentProblem(AbstractProblem):
+class TimeDependentProblem(BaseProblem):
     """
     Base class for all time-dependent problems, extending the standard problem
     definition with time-dependent inputs.
