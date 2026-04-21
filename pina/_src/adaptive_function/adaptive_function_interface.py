@@ -19,8 +19,8 @@ class AdaptiveFunctionInterface(metaclass=ABCMeta):
         :rtype: torch.Tensor | LabelTensor
         """
 
-    @abstractmethod
     @property
+    @abstractmethod
     def alpha(self):
         """
         The output scaling parameter of the adaptive function.
@@ -29,8 +29,8 @@ class AdaptiveFunctionInterface(metaclass=ABCMeta):
         :rtype: torch.nn.Parameter | torch.Tensor
         """
 
-    @abstractmethod
     @property
+    @abstractmethod
     def beta(self):
         """
         The input scaling parameter of the adaptive function.
@@ -39,8 +39,8 @@ class AdaptiveFunctionInterface(metaclass=ABCMeta):
         :rtype: torch.nn.Parameter | torch.Tensor
         """
 
-    @abstractmethod
     @property
+    @abstractmethod
     def gamma(self):
         """
         The input shifting parameter of the adaptive function.
@@ -49,8 +49,8 @@ class AdaptiveFunctionInterface(metaclass=ABCMeta):
         :rtype: torch.nn.Parameter | torch.Tensor
         """
 
-    @abstractmethod
     @property
+    @abstractmethod
     def func(self):
         """
         The adaptive function.
@@ -59,8 +59,8 @@ class AdaptiveFunctionInterface(metaclass=ABCMeta):
         :rtype: callable
         """
 
-    @abstractmethod
     @func.setter
+    @abstractmethod
     def func(self, value):
         """
         Set the adaptive function.
