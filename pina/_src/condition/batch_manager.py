@@ -1,17 +1,15 @@
-"""
-Module for managing batches of data with device transfer capabilities.
-"""
+"""Module for the Batch Manager class."""
 
 
 class _BatchManager(dict):
     """
-    A dictionary-based batch manager that supports dot-notation
-    and moving tensors to devices.
+    Dict-like container for batched data with attribute-style access and
+    convenience methods for device placement.
     """
 
     def to(self, device):
         """
-        Move all tensors in the batch to the specified device.
+        Move all compatible values in the batch to the specified device.
 
         :param device: The target device.
         :type device: torch.device | str
@@ -21,19 +19,25 @@ class _BatchManager(dict):
         for key, value in self.items():
             if hasattr(value, "to"):
                 moved_value = value.to(device)
-                self[key] = moved_value  # Updates both dict and attribute
+                self[key] = moved_value
+
         return self
 
     def __getattribute__(self, name):
         """
-        Alias attribute access to dictionary keys.
+        Provide attribute-style access to dictionary keys.
 
         :param str name: The name of the attribute to retrieve.
+        :raises AttributeError: If the attribute is not found as a standard
+            attribute or a dictionary key.
         :return: The value associated with the attribute name.
         :rtype: Any
         """
+        # First, attempt to retrieve the attribute using the standard method.
         try:
             return super().__getattribute__(name)
+
+        # If not found, attempt to retrieve the attribute as a dictionary key.
         except AttributeError:
             try:
                 return self[name]

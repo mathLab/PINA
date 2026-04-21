@@ -1,11 +1,11 @@
 """Module for the Condition class."""
 
+from pina._src.condition.input_equation_condition import InputEquationCondition
+from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.condition.data_condition import DataCondition
 from pina._src.condition.domain_equation_condition import (
     DomainEquationCondition,
 )
-from pina._src.condition.input_equation_condition import InputEquationCondition
-from pina._src.condition.input_target_condition import InputTargetCondition
 
 
 class Condition:
@@ -26,7 +26,6 @@ class Condition:
     arguments, the class automatically selects the appropriate internal
     implementation.
 
-
     Available `Condition` types:
 
     - :class:`~pina.condition.input_target_condition.InputTargetCondition`:
@@ -34,9 +33,8 @@ class Condition:
       data. The model is trained to reproduce the ``target`` values given the
       ``input``. Supported data types include :class:`torch.Tensor`,
       :class:`~pina.label_tensor.LabelTensor`, :class:`~pina.graph.Graph`, or
-      :class:`~torch_geometric.data.Data`.
-      The class automatically selects the appropriate implementation based on
-      the types of ``input`` and ``target``.
+      :class:`~torch_geometric.data.Data`. The class automatically selects the
+      appropriate implementation based on the types of ``input`` and ``target``.
 
     - :class:`~pina.condition.domain_equation_condition.DomainEquationCondition`
       : represents a general physics-informed condition defined by a ``domain``
@@ -60,9 +58,8 @@ class Condition:
       specified when the model depends on additional parameters.
       Supported data types include :class:`torch.Tensor`,
       :class:`~pina.label_tensor.LabelTensor`, :class:`~pina.graph.Graph`, or
-      :class:`~torch_geometric.data.Data`.
-      The class automatically selects the appropriate implementation based on
-      the type of the ``input``.
+      :class:`~torch_geometric.data.Data`. The class automatically selects the
+      appropriate implementation based on the type of the ``input``.
 
     .. note::
 
