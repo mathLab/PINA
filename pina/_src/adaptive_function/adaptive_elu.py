@@ -56,13 +56,13 @@ class AdaptiveELU(BaseAdaptiveFunction):
 
         :param alpha: The output scaling parameter of the adaptive function.
             If ``None``, it is initialized to ``1``. Default is ``None``.
-        :type alpha: int | float | complex
+        :type alpha: int | float
         :param beta: The input scaling parameter of the adaptive function.
             If ``None``, it is initialized to ``1``. Default is ``None``.
-        :type beta: int | float | complex
+        :type beta: int | float
         :param gamma: The input shifting parameter of the adaptive function.
             If ``None``, it is initialized to ``0``. Default is ``None``.
-        :type gamma: int | float | complex
+        :type gamma: int | float
         :param fixed: The names of parameters to keep fixed during training.
             These parameters will not be optimized and will have
             ``requires_grad=False``. Available options are ``"alpha"``,
@@ -77,4 +77,4 @@ class AdaptiveELU(BaseAdaptiveFunction):
         :raises ValueError: If fixed contains invalid parameter names.
         """
         super().__init__(alpha, beta, gamma, fixed)
-        self.func = torch.nn.ELU()
+        self._func = torch.nn.ELU()

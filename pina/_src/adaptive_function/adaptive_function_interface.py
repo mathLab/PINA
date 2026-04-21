@@ -48,23 +48,3 @@ class AdaptiveFunctionInterface(metaclass=ABCMeta):
         :return: The gamma parameter.
         :rtype: torch.nn.Parameter | torch.Tensor
         """
-
-    @property
-    @abstractmethod
-    def func(self):
-        """
-        The adaptive function.
-
-        :return: The adaptive function.
-        :rtype: callable
-        """
-
-    @func.setter
-    @abstractmethod
-    def func(self, value):
-        """
-        Set the adaptive function.
-
-        :param value: The adaptive function.
-        :type value: callable
-        """

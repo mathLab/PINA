@@ -55,13 +55,13 @@ class BaseAdaptiveFunction(torch.nn.Module, AdaptiveFunctionInterface):
 
         :param alpha: The output scaling parameter of the adaptive function.
             If ``None``, it is initialized to ``1``. Default is ``None``.
-        :type alpha: int | float | complex
+        :type alpha: int | float
         :param beta: The input scaling parameter of the adaptive function.
             If ``None``, it is initialized to ``1``. Default is ``None``.
-        :type beta: int | float | complex
+        :type beta: int | float
         :param gamma: The input shifting parameter of the adaptive function.
             If ``None``, it is initialized to ``0``. Default is ``None``.
-        :type gamma: int | float | complex
+        :type gamma: int | float
         :param fixed: The names of parameters to keep fixed during training.
             These parameters will not be optimized and will have
             ``requires_grad=False``. Available options are ``"alpha"``,
@@ -83,9 +83,9 @@ class BaseAdaptiveFunction(torch.nn.Module, AdaptiveFunctionInterface):
         gamma = 0.0 if gamma is None else gamma
 
         # Check consistency
-        check_consistency(alpha, (int, float, complex))
-        check_consistency(beta, (int, float, complex))
-        check_consistency(gamma, (int, float, complex))
+        check_consistency(alpha, (int, float))
+        check_consistency(beta, (int, float))
+        check_consistency(gamma, (int, float))
 
         # Process fixed parameters
         if fixed is not None:
@@ -110,7 +110,7 @@ class BaseAdaptiveFunction(torch.nn.Module, AdaptiveFunctionInterface):
             specified in the ``fixed`` argument.
             """
             # Convert value to tensor
-            tensor = torch.tensor(value)
+            tensor = torch.tensor(value, dtype=torch.float32)
 
             # Register as buffer if fixed, otherwise as parameter
             if name in fixed:
@@ -133,14 +133,19 @@ class BaseAdaptiveFunction(torch.nn.Module, AdaptiveFunctionInterface):
         :param x: The input tensor to evaluate the adaptive function.
         :type x: torch.Tensor | LabelTensor
         :raises RuntimeError: If the adaptive function has not been set.
+        :raises RuntimeError: If the adaptive function is not callable.
         :return: The output of the adaptive function.
         :rtype: torch.Tensor | LabelTensor
         """
         # Raise an error if the adaptive function has not been set
-        if self.func is None:
+        if self._func is None:
             raise RuntimeError("The adaptive function has not been set.")
 
-        return self.alpha * (self.func(self.beta * x + self.gamma))
+        # Raise an error if the adaptive function is not callable
+        if not callable(self._func):
+            raise RuntimeError("The adaptive function is not callable.")
+
+        return self.alpha * (self._func(self.beta * x + self.gamma))
 
     @property
     def alpha(self):
@@ -171,27 +176,3 @@ class BaseAdaptiveFunction(torch.nn.Module, AdaptiveFunctionInterface):
         :rtype: torch.nn.Parameter | torch.Tensor
         """
         return self._gamma
-
-    @property
-    def func(self):
-        """
-        The adaptive function.
-
-        :return: The adaptive function.
-        :rtype: callable
-        """
-        return self._func
-
-    @func.setter
-    def func(self, value):
-        """
-        Set the adaptive function.
-
-        :param value: The adaptive function.
-        :type value: callable
-        :raises ValueError: If the provided value is not callable.
-        """
-        if not callable(value):
-            raise ValueError("The provided function must be callable.")
-
-        self._func = value
