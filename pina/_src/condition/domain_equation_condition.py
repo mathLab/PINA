@@ -1,11 +1,12 @@
-"""Module for the DomainEquationCondition class."""
+"""Module for the Domain-Equation Condition class."""
 
-from pina._src.condition.condition_base import ConditionBase
+from pina._src.condition.base_condition import BaseCondition
 from pina._src.domain.domain_interface import DomainInterface
 from pina._src.equation.base_equation import BaseEquation
+from pina._src.core.utils import check_consistency
 
 
-class DomainEquationCondition(ConditionBase):
+class DomainEquationCondition(BaseCondition):
     """
     The class :class:`DomainEquationCondition` defines a condition based on a
     ``domain`` and an ``equation``. This condition is typically used in
@@ -28,68 +29,95 @@ class DomainEquationCondition(ConditionBase):
     >>> condition = Condition(domain=domain, equation=Equation(dummy_equation))
     """
 
-    # Available slots
+    # Available fields, domain and equation data types
     __fields__ = ["domain", "equation"]
-
     _avail_domain_cls = (DomainInterface, str)
     _avail_equation_cls = BaseEquation
 
-    def __new__(cls, domain, equation):
-        """
-        Check the types of ``domain`` and ``equation`` and instantiate an
-        instance of :class:`DomainEquationCondition`.
-
-        :return: An instance of :class:`DomainEquationCondition`.
-        :rtype: pina.condition.domain_equation_condition.DomainEquationCondition
-        :raises ValueError: If ``domain`` is not of type
-        :class:`DomainInterface` or
-            ``equation`` is not of type :class:`
-        """
-        if not isinstance(domain, cls._avail_domain_cls):
-            raise ValueError(
-                "The domain must be an instance of DomainInterface."
-            )
-
-        if not isinstance(equation, cls._avail_equation_cls):
-            raise ValueError(
-                "The equation must be an instance of BaseEquation."
-            )
-
-        return super().__new__(cls)
-
     def __len__(self):
         """
-        Raise NotImplementedError since the number of points is determined by
-        the domain sampling strategy.
+        Return the number of data points in the condition.
 
         :raises NotImplementedError: Always raised since the number of points is
-            determined by the domain sampling strategy.
+            determined by the domain sampling strategy and is not fixed.
         """
         raise NotImplementedError(
-            "`__len__` method is not implemented for "
-            "`DomainEquationCondition` since the number of points is "
-            "determined by the domain sampling strategy."
+            "The number of data points in a DomainEquationCondition is not "
+            "fixed and is determined by the domain sampling strategy. "
+            "Therefore, the :meth:`__len__` method is not implemented for this "
+            "condition."
         )
 
     def __getitem__(self, idx):
         """
-        Raise NotImplementedError since data retrieval is not applicable.
+        Return the data point at the specified index.
 
-        :param int idx: Index of the data point(s) to retrieve.
-        :raises NotImplementedError: Always raised since data retrieval is not
-            applicable for this condition.
+        :raises NotImplementedError: Always raised since the data points are not
+            stored in a list-like structure and cannot be accessed by index.
         """
         raise NotImplementedError(
-            "`__getitem__` method is not implemented for "
-            "`DomainEquationCondition`"
+            "Data points in a DomainEquationCondition are not stored in a "
+            "list-like structure and cannot be accessed by index. Therefore, "
+            "the :meth:`__getitem__` method is not implemented for this "
+            "condition."
         )
 
     def store_data(self, **kwargs):
         """
-        Store data for the condition. No data is stored for this condition.
+        Store the domain and the equation for the condition. It sets the
+        attributes ``domain`` and ``equation`` of the condition instance based
+        on the provided keyword arguments.
 
-        :return: An empty dictionary since no data is stored.
-        :rtype: dict
+        :param dict kwargs: The keyword arguments containing the data to be
+            stored.
         """
+        # Store domain and equation as attributes of the condition instance
         setattr(self, "domain", kwargs.get("domain"))
         setattr(self, "equation", kwargs.get("equation"))
+
+    @property
+    def equation(self):
+        """
+        The equation associated with the condition.
+
+        :return: The equation.
+        :rtype: BaseEquation
+        """
+        return self._equation
+
+    @equation.setter
+    def equation(self, value):
+        """
+        Set the equation associated with this condition.
+
+        :param BaseEquation value: The equation to associate with the condition.
+        :raises ValueError: If ``value`` is not an instance of
+            :class:`~pina.equation.base_equation.BaseEquation`.
+        """
+        # Check consistency
+        check_consistency(value, self._avail_equation_cls)
+        self._equation = value
+
+    @property
+    def domain(self):
+        """
+        The domain associated with the condition.
+
+        :return: The domain.
+        :rtype: DomainInterface
+        """
+        return self._domain
+
+    @domain.setter
+    def domain(self, value):
+        """
+        Set the domain associated with this condition.
+
+        :param DomainInterface value: The domain to associate with the
+            condition.
+        :raises ValueError: If ``value`` is neither a string nor an instance of
+            :class:`~pina.domain.domain_interface.DomainInterface`.
+        """
+        # Check consistency
+        check_consistency(value, self._avail_domain_cls)
+        self._domain = value

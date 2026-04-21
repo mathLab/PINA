@@ -52,12 +52,24 @@ Conditions
 .. toctree::
     :titlesonly:
 
-    ConditionInterface <condition/condition_interface.rst>
+    Condition Interface <condition/condition_interface.rst>
+    Base Condition <condition/base_condition.rst>
     Condition <condition/condition.rst>
-    DataCondition <condition/data_condition.rst>
-    DomainEquationCondition <condition/domain_equation_condition.rst>
-    InputEquationCondition <condition/input_equation_condition.rst>
-    InputTargetCondition <condition/input_target_condition.rst>
+    Data Condition <condition/data_condition.rst>
+    Domain Equation Condition <condition/domain_equation_condition.rst>
+    Input Equation Condition <condition/input_equation_condition.rst>
+    Input Target Condition <condition/input_target_condition.rst>
+
+Batch and Data Managers
+--------------------------
+.. toctree::
+    :titlesonly:
+
+    Batch Manager <condition/batch_manager.rst>
+    Data Manager Interface <condition/data_manager_interface.rst>
+    Data Manager <condition/data_manager.rst>
+    Graph Data Manager <condition/graph_data_manager.rst>
+    Tensor Data Manager <condition/tensor_data_manager.rst>
 
 Solvers
 --------------
@@ -203,7 +215,7 @@ Equations and Differential Operators
     Differential Operators <operator.rst>
 
 
-Equations Zoo
+Equation Zoo
 ---------------------------------------
 
 .. toctree::
@@ -234,7 +246,7 @@ Problems
     SpatialProblem <problem/spatial_problem.rst>
     TimeDependentProblem <problem/time_dependent_problem.rst>
 
-Problems Zoo
+Problem Zoo
 --------------
 
 .. toctree::

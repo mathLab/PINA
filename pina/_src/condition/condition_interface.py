@@ -5,27 +5,99 @@ from abc import ABCMeta, abstractmethod
 
 class ConditionInterface(metaclass=ABCMeta):
     """
-    Abstract base class for PINA conditions. All specific conditions must
-    inherit from this interface.
+    Abstract interface for all conditions.
 
     Refer to :class:`pina.condition.condition.Condition` for a thorough
     description of all available conditions and how to instantiate them.
     """
 
     @abstractmethod
-    def __init__(self, **kwargs):
+    def __len__(self):
         """
-        Initialization of the :class:`ConditionInterface` class.
+        Return the number of data points in the condition.
+
+        :return: The number of data points.
+        :rtype: int
+        """
+
+    @abstractmethod
+    def __getitem__(self, idx):
+        """
+        Return the data point at the specified index.
+
+        :param int idx: The index of the data point to retrieve.
+        :return: The data point at the specified index.
+        :rtype: Any
+        """
+
+    @abstractmethod
+    def store_data(self, **kwargs):
+        """
+        Store the data for the condition in a suitable format.
+
+        :param dict kwargs: The keyword arguments containing the data to be
+            stored.
+        :return: The stored data in a suitable format.
+        :rtype: Any
+        """
+
+    @abstractmethod
+    def create_dataloader(
+        self, dataset, batch_size, automatic_batching, **kwargs
+    ):
+        """
+        Create the DataLoader for the condition.
+
+        :param Dataset dataset: The dataset for the DataLoader.
+        :param int batch_size: The batch size for the DataLoader.
+        :param bool automatic_batching: Whether to use automatic batching.
+        :param dict kwargs: Additional keyword arguments for the DataLoader.
+        :return: The DataLoader for the condition.
+        :rtype: torch.utils.data.DataLoader
+        """
+
+    @abstractmethod
+    def switch_dataloader_fn(self, create_dataloader_fn):
+        """
+        Switch the dataloader function for the condition.
+
+        :param Callable create_dataloader_fn: The new dataloader function to use
+            for the condition.
+        :return: The new dataloader function for the condition.
+        :rtype: Callable
+        """
+
+    @classmethod
+    @abstractmethod
+    def automatic_batching_collate_fn(cls, batch):
+        """
+        Collate function for automatic batching to be used in the DataLoader.
+
+        :param list batch: A list of items from the dataset.
+        :return: A collated batch.
+        :rtype: dict
+        """
+
+    @staticmethod
+    @abstractmethod
+    def collate_fn(batch, condition):
+        """
+        Collate function for custom batching to be used in the DataLoader.
+
+        :param list batch: A list of items from the dataset.
+        :param BaseCondition condition: The condition instance.
+        :return: A collated batch.
+        :rtype: dict
         """
 
     @property
     @abstractmethod
     def problem(self):
         """
-        Return the problem associated with this condition.
+        The problem associated with this condition.
 
-        :return: Problem associated with this condition.
-        :rtype: ~pina.problem.base_problem.BaseProblem
+        :return: The problem associated with this condition.
+        :rtype: BaseProblem
         """
 
     @problem.setter
@@ -34,24 +106,5 @@ class ConditionInterface(metaclass=ABCMeta):
         """
         Set the problem associated with this condition.
 
-        :param pina.problem.base_problem.BaseProblem value: The problem
-            to associate with this condition
-        """
-
-    @abstractmethod
-    def __len__(self):
-        """
-        Return the number of data points in the condition.
-
-        :return: Number of data points.
-        :rtype: int
-        """
-
-    @abstractmethod
-    def __getitem__(self, idx):
-        """
-        Return the data point(s) at the specified index.
-
-        :param int idx: Index of the data point(s) to retrieve.
-        :return: Data point(s) at the specified index.
+        :param BaseProblem value: The problem to associate with this condition.
         """

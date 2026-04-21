@@ -1,14 +1,15 @@
-"""Module for the DataCondition class."""
+"""Module for the Data Condition class."""
 
 import torch
 from torch_geometric.data import Data
-from pina._src.condition.condition_base import ConditionBase
+from pina._src.condition.base_condition import BaseCondition
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.graph import Graph
 from pina._src.condition.data_manager import _DataManager
+from pina._src.core.utils import check_consistency
 
 
-class DataCondition(ConditionBase):
+class DataCondition(BaseCondition):
     """
     The class :class:`DataCondition` defines an unsupervised condition based on
     ``input`` data. This condition is typically used in data-driven problems,
@@ -27,94 +28,80 @@ class DataCondition(ConditionBase):
     >>> condition = Condition(input=pts, conditional_variables=cond_vars)
     """
 
-    # Available input data types
+    # Available fields, input and conditional variables data types
     __fields__ = ["input", "conditional_variables"]
-    _avail_input_cls = (torch.Tensor, LabelTensor, Data, Graph, list, tuple)
+    _avail_input_cls = (torch.Tensor, LabelTensor, Data, Graph)
     _avail_conditional_variables_cls = (torch.Tensor, LabelTensor)
 
     def __new__(cls, input, conditional_variables=None):
         """
         Check the types of ``input`` and ``conditional_variables`` and
-        instantiate a class of :class:`DataCondition` accordingly.
+        instantiate an instance of :class:`DataCondition` accordingly.
 
-        :param input: The input data for the condition.
+        :param input: The input data associated with the condition.
         :type input: torch.Tensor | LabelTensor | Graph |
             Data | list[Graph] | list[Data] | tuple[Graph] | tuple[Data]
-        :param conditional_variables: The conditional variables for the
-            condition. Default is ``None``.
+        :param conditional_variables: The conditional variables associated with
+            the condition. Default is ``None``.
         :type conditional_variables: torch.Tensor | LabelTensor
-        :return: The subclass of DataCondition.
-        :rtype: pina.condition.data_condition.TensorDataCondition |
-            pina.condition.data_condition.GraphDataCondition
         :raises ValueError: If ``input`` is not of type :class:`torch.Tensor`,
             :class:`~pina.label_tensor.LabelTensor`, :class:`~pina.graph.Graph`,
-            or :class:`~torch_geometric.data.Data`.
+            or :class:`~torch_geometric.data.Data`, nor is it a list or tuple of
+            :class:`~pina.graph.Graph` or :class:`~torch_geometric.data.Data`.
+        :raises ValueError: If ``conditional_variables`` is not of type
+            :class:`torch.Tensor` or :class:`~pina.label_tensor.LabelTensor`.
+        :return: A new instance of :class:`DataCondition`.
+        :rtype: DataCondition
         """
-        if cls != DataCondition:
-            return super().__new__(cls)
-
-        # Check input type
-        if not isinstance(input, cls._avail_input_cls):
-            raise ValueError(
-                "Invalid input type. Expected one of the following: "
-                "torch.Tensor, LabelTensor, Graph, Data or "
-                "an iterable of the previous types."
-            )
+        # Check input type - if iterable, ensure it is either Data or Graph
         if isinstance(input, (list, tuple)):
-            for item in input:
-                if not isinstance(item, (Data, Graph)):
-                    raise ValueError(
-                        "if input is a list or tuple, all its elements must"
-                        " be of type Graph or Data."
-                    )
+            check_consistency(input, (Data, Graph))
+        else:
+            check_consistency(input, cls._avail_input_cls)
 
         # Check conditional_variables type
         if conditional_variables is not None:
-            if not isinstance(
+            check_consistency(
                 conditional_variables, cls._avail_conditional_variables_cls
-            ):
-                raise ValueError(
-                    "Invalid conditional_variables type. Expected one of the "
-                    "following: torch.Tensor, LabelTensor."
-                )
+            )
 
         return super().__new__(cls)
 
     def store_data(self, **kwargs):
         """
-        Store the input data and conditional variables in a dictionary.
+        Store the input data and the conditional variables in a dictionary-like
+        structure.
 
-        :param input: The input data for the condition.
-        :type input: torch.Tensor | LabelTensor | Graph |
-            Data | list[Graph] | list[Data] | tuple[Graph] | tuple[Data]
-        :param conditional_variables: The conditional variables for the
-            condition.
-        :type conditional_variables: torch.Tensor | LabelTensor
-        :return: A dictionary containing the stored data.
-        :rtype: dict
+        :param dict kwargs: The keyword arguments containing the data to be
+            stored.
+        :return: A dictionary-like structure containing the stored data.
+        :rtype: _DataManager
         """
+        # Store input and conditional variables in a dictionary-like structure
         data_dict = {"input": kwargs.get("input")}
         cond_vars = kwargs.get("conditional_variables", None)
         if cond_vars is not None:
             data_dict["conditional_variables"] = cond_vars
+
         return _DataManager(**data_dict)
 
     @property
     def conditional_variables(self):
         """
-        Return the conditional variables for the condition.
+        The conditional variables associated with the condition.
 
         :return: The conditional variables.
         :rtype: torch.Tensor | LabelTensor | None
         """
         if hasattr(self.data, "conditional_variables"):
             return self.data.conditional_variables
+
         return None
 
     @property
     def input(self):
         """
-        Return the input data for the condition.
+        The input data associated with the condition.
 
         :return: The input data.
         :rtype: torch.Tensor | LabelTensor | Graph | Data |
