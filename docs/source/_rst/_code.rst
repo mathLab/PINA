@@ -168,25 +168,26 @@ Optimizers and Schedulers
     TorchScheduler <optim/torch_scheduler.rst>
     
 
-Adaptive Activation Functions
+Adaptive Functions
 -------------------------------
 
 .. toctree::
     :titlesonly:
 
-    Adaptive Function Interface <adaptive_function/AdaptiveActivationFunctionInterface.rst>
-    Adaptive ReLU <adaptive_function/AdaptiveReLU.rst>
-    Adaptive Sigmoid <adaptive_function/AdaptiveSigmoid.rst>
-    Adaptive Tanh <adaptive_function/AdaptiveTanh.rst>
-    Adaptive SiLU <adaptive_function/AdaptiveSiLU.rst>
-    Adaptive Mish <adaptive_function/AdaptiveMish.rst>
-    Adaptive ELU <adaptive_function/AdaptiveELU.rst>
-    Adaptive CELU <adaptive_function/AdaptiveCELU.rst>
-    Adaptive GELU <adaptive_function/AdaptiveGELU.rst>
-    Adaptive Softmin <adaptive_function/AdaptiveSoftmin.rst>
-    Adaptive Softmax <adaptive_function/AdaptiveSoftmax.rst>
-    Adaptive SIREN <adaptive_function/AdaptiveSIREN.rst>
-    Adaptive Exp <adaptive_function/AdaptiveExp.rst>
+    Adaptive Function Interface <adaptive_function/adaptive_function_interface.rst>
+    Base Adaptive Function <adaptive_function/base_adaptive_function.rst>
+    Adaptive CELU <adaptive_function/adaptive_celu.rst>
+    Adaptive ELU <adaptive_function/adaptive_elu.rst>
+    Adaptive Exp <adaptive_function/adaptive_exp.rst>
+    Adaptive GELU <adaptive_function/adaptive_gelu.rst>
+    Adaptive Mish <adaptive_function/adaptive_mish.rst>
+    Adaptive ReLU <adaptive_function/adaptive_relu.rst>
+    Adaptive Sigmoid <adaptive_function/adaptive_sigmoid.rst>
+    Adaptive SiLU <adaptive_function/adaptive_silu.rst>
+    Adaptive SIREN <adaptive_function/adaptive_siren.rst>
+    Adaptive Softmax <adaptive_function/adaptive_softmax.rst>
+    Adaptive Softmin <adaptive_function/adaptive_softmin.rst>
+    Adaptive Tanh <adaptive_function/adaptive_tanh.rst>
 
 
 Equations and Differential Operators
