@@ -1,409 +1,379 @@
 import torch
 import pytest
+from pina.graph import RadiusGraph, Graph
 from pina import LabelTensor, Condition
-from pina.graph import RadiusGraph
-from pina._src.condition.batch_manager import _BatchManager
+from pina.condition import (
+    InputTargetCondition,
+    _BatchManager,
+    _TensorDataManager,
+    _GraphDataManager,
+)
 
 
-def _create_tensor_data(use_lt=False):
+# Helper function to create tensor data
+def _create_tensor_data(use_lt):
+
+    # If LabelTensor is used, create tensors with labels
     if use_lt:
         input_tensor = LabelTensor(torch.rand((10, 3)), ["x", "y", "z"])
         target_tensor = LabelTensor(torch.rand((10, 2)), ["a", "b"])
         return input_tensor, target_tensor
+
+    # Standard torch.Tensor without labels
     input_tensor = torch.rand((10, 3))
     target_tensor = torch.rand((10, 2))
+
     return input_tensor, target_tensor
 
 
-def _create_graph_data(tensor_input=True, use_lt=False):
+# Helper function to create graph data
+def _create_graph_data(is_input, use_lt):
+
+    # If LabelTensor is used, create graph data with LabelTensors
     if use_lt:
         x = LabelTensor(torch.rand(10, 20, 2), ["u", "v"])
         pos = LabelTensor(torch.rand(10, 20, 2), ["x", "y"])
+        tensor = LabelTensor(torch.rand(10, 20, 1), ["f"])
+
+    # Standard torch.Tensor without labels
     else:
         x = torch.rand(10, 20, 2)
         pos = torch.rand(10, 20, 2)
-    radius = 0.1
+        tensor = torch.rand(10, 20, 1)
+
+    # Create a list of Graphs
     graph = [
         RadiusGraph(
             pos=pos[i],
-            radius=radius,
-            x=x[i] if not tensor_input else None,
-            y=x[i] if tensor_input else None,
+            radius=0.1,
+            x=x[i] if is_input else None,
+            y=x[i] if not is_input else None,
         )
         for i in range(len(x))
     ]
-    if use_lt:
-        tensor = LabelTensor(torch.rand(10, 20, 1), ["f"])
-    else:
-        tensor = torch.rand(10, 20, 1)
+
     return graph, tensor
 
 
-def test_init_tensor_input_tensor_target_condition_tensor():
-    # Setup for standard torch.Tensor
-    input_tensor, target_tensor = _create_tensor_data(use_lt=False)
-    condition = Condition(input=input_tensor, target=target_tensor)
-
-    # Numerical assertions
-    assert torch.allclose(
-        condition.input, input_tensor
-    ), "Standard input tensor equality failed"
-    assert torch.allclose(
-        condition.target, target_tensor
-    ), "Standard target tensor equality failed"
-
-    # Type assertions
-    assert isinstance(condition.input, torch.Tensor)
-    assert not isinstance(condition.input, LabelTensor)
-    assert isinstance(condition.target, torch.Tensor)
-    assert not isinstance(condition.target, LabelTensor)
+# Helper function to check tensor types
+def _assert_tensor_type(t, use_lt):
+    if use_lt:
+        assert isinstance(t, LabelTensor)
+    else:
+        assert isinstance(t, torch.Tensor) and not isinstance(t, LabelTensor)
 
 
-def test_init_tensor_input_tensor_target_condition_label_tensor():
-    # Setup for LabelTensor
-    input_tensor, target_tensor = _create_tensor_data(use_lt=True)
-    condition = Condition(input=input_tensor, target=target_tensor)
+# Helper function to check input graph
+def _assert_graph_type(graph_list, use_lt, is_input):
 
-    # Type and Label assertions for Input
-    assert isinstance(
-        condition.input, LabelTensor
-    ), "Input did not preserve LabelTensor type"
-    assert condition.input.labels == [
-        "x",
-        "y",
-        "z",
-    ], "Input labels were lost or corrupted"
-
-    # Type and Label assertions for Target
-    assert isinstance(
-        condition.target, LabelTensor
-    ), "Target did not preserve LabelTensor type"
-    assert condition.target.labels == [
-        "a",
-        "b",
-    ], "Target labels were lost or corrupted"
-
-    # Numerical parity check still applies
-    assert torch.allclose(condition.input, input_tensor)
-    assert torch.allclose(condition.target, target_tensor)
-
-
-def test_init_tensor_input_graph_target_condition_tensor():
-    # Setup for standard torch.Tensor
-    target_graph, input_tensor = _create_graph_data(use_lt=False)
-    condition = Condition(input=input_tensor, target=target_graph)
-
-    # Input assertions (Tensor)
-    assert isinstance(condition.input, torch.Tensor)
-    assert not isinstance(condition.input, LabelTensor)
-    assert torch.allclose(condition.input, input_tensor)
-
-    # Target assertions (Graph List)
-    assert isinstance(condition.target, list)
-    for i, graph in enumerate(target_graph):
-        assert isinstance(condition.target[i].y, torch.Tensor)
-        assert not isinstance(condition.target[i].y, LabelTensor)
-        assert torch.allclose(condition.target[i].y, graph.y)
-
-
-def test_init_tensor_input_graph_target_condition_label_tensor():
-    # Setup for LabelTensor
-    target_graph, input_tensor = _create_graph_data(use_lt=True)
-    condition = Condition(input=input_tensor, target=target_graph)
-
-    # Input assertions with label validation
-    assert isinstance(condition.input, LabelTensor)
-    assert condition.input.labels == ["f"]
-    assert torch.allclose(condition.input, input_tensor)
-
-    # Target assertions with nested label validation
-    for i, graph in enumerate(target_graph):
-        target_y = condition.target[i].y
-        assert isinstance(target_y, LabelTensor)
-        assert target_y.labels == ["u", "v"]
-        assert torch.allclose(target_y, graph.y)
-
-
-def test_init_graph_input_tensor_target_condition_tensor():
-    # Setup for standard torch.Tensor (use_lt=False)
-    input_graph, target_tensor = _create_graph_data(False, use_lt=False)
-    condition = Condition(input=input_graph, target=target_tensor)
-
-    # Input assertions: Check graph list integrity
-    assert isinstance(condition.input, list)
-    for i, original_graph in enumerate(input_graph):
-        assert torch.allclose(condition.input[i].x, original_graph.x)
-        assert isinstance(condition.input[i].x, torch.Tensor)
-        assert not isinstance(condition.input[i].x, LabelTensor)
-
-    # Target assertions: Check raw tensor integrity
-    assert torch.allclose(condition.target, target_tensor)
-    assert isinstance(condition.target, torch.Tensor)
-    assert not isinstance(condition.target, LabelTensor)
-
-
-def test_init_graph_input_tensor_target_condition_label_tensor():
-    # Setup for LabelTensor (use_lt=True)
-    input_graph, target_tensor = _create_graph_data(False, use_lt=True)
-    condition = Condition(input=input_graph, target=target_tensor)
-
-    # Input assertions: Check LabelTensor preservation in Graphs
-    for i, original_graph in enumerate(input_graph):
-        input_x = condition.input[i].x
-        assert isinstance(input_x, LabelTensor)
-        assert input_x.labels == original_graph.x.labels
-        assert torch.allclose(input_x, original_graph.x)
-
-    # Target assertions: Check LabelTensor preservation in Target
-    assert isinstance(condition.target, LabelTensor)
-    assert condition.target.labels == ["f"]
-    assert torch.allclose(condition.target, target_tensor)
-
-
-def test_wrong_init():
-    input_tensor, target_tensor = _create_tensor_data()
-    with pytest.raises(ValueError):
-        Condition(input="invalid_input", target=target_tensor)
-    with pytest.raises(ValueError):
-        Condition(input=input_tensor, target="invalid_target")
-    with pytest.raises(ValueError):
-        Condition(input=[input_tensor], target=target_tensor)
-    with pytest.raises(ValueError):
-        Condition(input=input_tensor, target=[target_tensor])
-
-
-def test_getitem_tensor_input_tensor_target_condition_tensor():
-    # Setup for standard torch.Tensor
-    input_tensor, target_tensor = _create_tensor_data(use_lt=False)
-    condition = Condition(input=input_tensor, target=target_tensor)
-
-    # We test a single index to verify __getitem__ logic
-    index = 0
-    item = condition[index]
-
-    # Numerical and Type Assertions
-    assert torch.allclose(item.input, input_tensor[index])
-    assert isinstance(item.input, torch.Tensor)
-    assert not isinstance(item.input, LabelTensor)
-
-    assert torch.allclose(item.target, target_tensor[index])
-    assert isinstance(item.target, torch.Tensor)
-    assert not isinstance(item.target, LabelTensor)
-
-
-def test_getitem_tensor_input_tensor_target_condition_label_tensor():
-    # Setup for LabelTensor
-    input_tensor, target_tensor = _create_tensor_data(use_lt=True)
-    condition = Condition(input=input_tensor, target=target_tensor)
-
-    index = 0
-    item = condition[index]
-
-    # Verify Input LabelTensor preservation
-    assert isinstance(item.input, LabelTensor)
-    assert item.input.labels == input_tensor.labels
-    assert torch.allclose(item.input, input_tensor[index])
-
-    # Verify Target LabelTensor preservation
-    assert isinstance(item.target, LabelTensor)
-    assert item.target.labels == target_tensor.labels
-    assert torch.allclose(item.target, target_tensor[index])
+    assert isinstance(graph_list, list)
+    for graph in graph_list:
+        value = graph.x if is_input else graph.y
+        _assert_tensor_type(value, use_lt)
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
-def test_getitem_graph_input_tensor_target_condition(use_lt):
-    input_graph, target_tensor = _create_graph_data(False, use_lt=use_lt)
-    condition = Condition(input=input_graph, target=target_tensor)
-    assert len(condition) == len(input_graph)
-    for i in range(len(input_graph)):
-        item = condition[i]
-        assert torch.allclose(
-            item.input.x, input_graph[i].x
-        ), "GraphInputTensorTargetCondition __getitem__ input failed"
-        assert torch.allclose(
-            item.target, target_tensor[i]
-        ), "GraphInputTensorTargetCondition __getitem__ target failed"
+@pytest.mark.parametrize(
+    "case", [["tensor", "tensor"], ["tensor", "graph"], ["graph", "tensor"]]
+)
+def test_constructor(use_lt, case):
+
+    # Tensor - tensor
+    if case == ["tensor", "tensor"]:
+
+        # Define the condition
+        input_tensor, target_tensor = _create_tensor_data(use_lt=use_lt)
+        condition = Condition(input=input_tensor, target=target_tensor)
+
+        # Assert correct types
+        assert isinstance(condition, InputTargetCondition)
+        _assert_tensor_type(condition.input, use_lt)
+        _assert_tensor_type(condition.target, use_lt)
+
+        # Assert numerical parity
+        assert torch.allclose(condition.input, input_tensor)
+        assert torch.allclose(condition.target, target_tensor)
+
+        # Assert labels if LabelTensor is used
         if use_lt:
-            assert isinstance(
-                item.input.x, LabelTensor
-            ), "GraphInputTensorTargetCondition __getitem__ input type failed"
-            assert (
-                item.input.x.labels == input_graph[i].x.labels
-            ), "GraphInputTensorTargetCondition __getitem__ input labels failed"
-            assert isinstance(
-                item.target, LabelTensor
-            ), "GraphInputTensorTargetCondition __getitem__ target type failed"
-            assert item.target.labels == [
-                "f"
-            ], "GraphInputTensorTargetCondition __getitem__ target labels failed"
+            assert condition.input.labels == ["x", "y", "z"]
+            assert condition.target.labels == ["a", "b"]
+
+    # Tensor - graph
+    elif case == ["tensor", "graph"]:
+
+        # Define the condition
+        target_graph, input_tensor = _create_graph_data(
+            is_input=False, use_lt=use_lt
+        )
+        condition = Condition(input=input_tensor, target=target_graph)
+
+        # Assert correct types
+        assert isinstance(condition, InputTargetCondition)
+        _assert_tensor_type(condition.input, use_lt)
+        _assert_graph_type(condition.target, use_lt, is_input=False)
+
+        # Assert numerical parity
+        assert torch.allclose(condition.input, input_tensor)
+        for i, graph in enumerate(target_graph):
+            assert torch.allclose(condition.target[i].y, graph.y)
+
+        # Assert labels if LabelTensor is used
+        if use_lt:
+            assert condition.input.labels == ["f"]
+            for i in range(len(target_graph)):
+                assert condition.target[i].y.labels == ["u", "v"]
+                assert condition.target[i].pos.labels == ["x", "y"]
+
+    # Graph - tensor
+    elif case == ["graph", "tensor"]:
+
+        # Define the condition
+        input_graph, target_tensor = _create_graph_data(
+            is_input=True, use_lt=use_lt
+        )
+        condition = Condition(input=input_graph, target=target_tensor)
+
+        # Assert correct types
+        assert isinstance(condition, InputTargetCondition)
+        _assert_graph_type(condition.input, use_lt, is_input=True)
+        _assert_tensor_type(condition.target, use_lt)
+
+        # Assert numerical parity
+        assert torch.allclose(condition.target, target_tensor)
+        for i, graph in enumerate(input_graph):
+            assert torch.allclose(condition.input[i].x, graph.x)
+
+        # Assert labels if LabelTensor is used
+        if use_lt:
+            assert condition.target.labels == ["f"]
+            for i in range(len(input_graph)):
+                assert condition.input[i].x.labels == ["u", "v"]
+                assert condition.input[i].pos.labels == ["x", "y"]
+
+    # Prepare for invalid input tests
+    input_ = input_tensor if case[0] == "tensor" else input_graph
+    target_ = target_tensor if case[1] == "tensor" else target_graph
+
+    # Should fail if the input is neither a tensor nor a graph
+    with pytest.raises(ValueError):
+        Condition(input="invalid_input", target=target_)
+
+    # Should fail if the target is neither a tensor nor a graph
+    with pytest.raises(ValueError):
+        Condition(input=input_, target="invalid_target")
+
+    # Should fail if the input is a list of tensors
+    if case[0] == "tensor":
+        with pytest.raises(ValueError):
+            Condition(input=[input_], target=target_)
+
+    # Should fail if the target is a list of tensors
+    if case[1] == "tensor":
+        with pytest.raises(ValueError):
+            Condition(input=input_, target=[target_])
 
 
-def test_getitem_tensor_input_graph_target_condition_tensor():
-    # Setup for standard torch.Tensor
-    target_graph, input_tensor = _create_graph_data(use_lt=False)
-    condition = Condition(input=input_tensor, target=target_graph)
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize(
+    "case", [["tensor", "tensor"], ["tensor", "graph"], ["graph", "tensor"]]
+)
+def test_get_item(use_lt, case):
 
-    # Check first item indexing
-    idx = 0
-    item = condition[idx]
+    # Tensor - tensor
+    if case == ["tensor", "tensor"]:
 
-    # Input assertions (Tensor)
-    assert torch.allclose(item.input, input_tensor[idx])
-    assert isinstance(item.input, torch.Tensor)
-    assert not isinstance(item.input, LabelTensor)
+        # Define the condition
+        input_tensor, target_tensor = _create_tensor_data(use_lt=use_lt)
+        condition = Condition(input=input_tensor, target=target_tensor)
 
-    # Target assertions (Graph Data)
-    assert torch.allclose(item.target.y, target_graph[idx].y)
-    assert isinstance(item.target.y, torch.Tensor)
-    assert not isinstance(item.target.y, LabelTensor)
+        # Extract item using __getitem__
+        index = 0
+        item = condition[index]
 
+        # Assert correct types
+        assert isinstance(item, _TensorDataManager)
+        _assert_tensor_type(item.input, use_lt)
+        _assert_tensor_type(item.target, use_lt)
 
-def test_getitem_tensor_input_graph_target_condition_label_tensor():
-    # Setup for LabelTensor
-    target_graph, input_tensor = _create_graph_data(use_lt=True)
-    condition = Condition(input=input_tensor, target=target_graph)
+        # Assert numerical parity
+        assert torch.allclose(item.input, input_tensor[index])
+        assert torch.allclose(item.target, target_tensor[index])
 
-    idx = 0
-    item = condition[idx]
+    # Tensor - graph
+    elif case == ["tensor", "graph"]:
 
-    # Input LabelTensor validation
-    assert isinstance(item.input, LabelTensor)
-    assert item.input.labels == input_tensor.labels
-    assert torch.allclose(item.input, input_tensor[idx])
+        # Define the condition
+        target_graph, input_tensor = _create_graph_data(
+            is_input=False, use_lt=use_lt
+        )
+        condition = Condition(input=input_tensor, target=target_graph)
 
-    # Target Graph LabelTensor validation
-    target_y = item.target.y
-    assert isinstance(target_y, LabelTensor)
-    assert target_y.labels == ["u", "v"]
-    assert torch.allclose(target_y, target_graph[idx].y)
+        # Extract item using __getitem__
+        index = 0
+        item = condition[index]
 
+        # Assert correct types
+        assert isinstance(item, _GraphDataManager)
+        _assert_tensor_type(item.input, use_lt)
+        assert isinstance(item.target, Graph)
+        _assert_tensor_type(item.target.y, use_lt)
 
-def test_getitems_tensor_input_tensor_target_condition_tensor():
-    # Setup for standard torch.Tensor
-    input_tensor, target_tensor = _create_tensor_data(use_lt=False)
-    condition = Condition(input=input_tensor, target=target_tensor)
+        # Assert numerical parity
+        assert torch.allclose(item.input, input_tensor[index])
+        assert torch.allclose(item.target.y, target_graph[index].y)
 
-    indices = [1, 3, 5, 7]
-    items = condition[indices]
+    # Graph - tensor
+    elif case == ["graph", "tensor"]:
 
-    # Verify values by comparing against manually stacked slices
-    expected_input = torch.stack([input_tensor[i] for i in indices])
-    expected_target = torch.stack([target_tensor[i] for i in indices])
+        # Define the condition
+        input_graph, target_tensor = _create_graph_data(
+            is_input=True, use_lt=use_lt
+        )
+        condition = Condition(input=input_graph, target=target_tensor)
 
-    assert torch.allclose(items.input, expected_input)
-    assert torch.allclose(items.target, expected_target)
+        # Extract item using __getitem__
+        index = 0
+        item = condition[index]
 
-    # Ensure types remain standard torch.Tensor
-    assert isinstance(items.input, torch.Tensor)
-    assert not isinstance(items.input, LabelTensor)
-    assert isinstance(items.target, torch.Tensor)
+        # Assert correct types
+        assert isinstance(item, _GraphDataManager)
+        assert isinstance(item.input, Graph)
+        _assert_tensor_type(item.input.x, use_lt)
+        _assert_tensor_type(item.target, use_lt)
 
-
-def test_getitems_tensor_input_tensor_target_condition_label_tensor():
-    # Setup for LabelTensor
-    input_tensor, target_tensor = _create_tensor_data(use_lt=True)
-    condition = Condition(input=input_tensor, target=target_tensor)
-
-    indices = [1, 3, 5, 7]
-    items = condition[indices]
-
-    # Assertions for Input LabelTensor
-    assert isinstance(items.input, LabelTensor)
-    assert items.input.labels == ["x", "y", "z"]
-    assert torch.allclose(items.input, input_tensor[indices])
-
-    # Assertions for Target LabelTensor
-    assert isinstance(items.target, LabelTensor)
-    assert items.target.labels == ["a", "b"]
-    assert torch.allclose(items.target, target_tensor[indices])
+        # Assert numerical parity
+        assert torch.allclose(item.target, target_tensor[index])
+        assert torch.allclose(item.input.x, input_graph[index].x)
 
 
-def test_getitems_tensor_input_graph_target_condition_tensor():
-    # Setup for standard torch.Tensor
-    target_graph, input_tensor = _create_graph_data(True, use_lt=False)
-    condition = Condition(input=input_tensor, target=target_graph)
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize(
+    "case", [["tensor", "tensor"], ["tensor", "graph"], ["graph", "tensor"]]
+)
+def test_create_batch(use_lt, case):
 
-    indices = [0, 2, 4]
-    items = condition[indices]
+    # Tensor - tensor
+    if case == ["tensor", "tensor"]:
 
-    # 1. Verify Input Batch (Tensor)
-    expected_input = torch.stack([input_tensor[i] for i in indices])
-    assert torch.allclose(items.input, expected_input)
-    assert isinstance(items.input, torch.Tensor)
-    assert not isinstance(items.input, LabelTensor)
+        # Define the condition
+        input_tensor, target_tensor = _create_tensor_data(use_lt=use_lt)
+        condition = Condition(input=input_tensor, target=target_tensor)
 
-    # 2. Verify Target Batch (Graph List)
-    assert len(items.target) == len(indices)
-    for i, original_idx in enumerate(indices):
-        assert torch.allclose(items.target[i].y, target_graph[original_idx].y)
-        assert isinstance(items.target[i].y, torch.Tensor)
+        # Create batches using automatic batching or condition's collate_fn
+        idx = [0, 2]
+        data_to_collate = [condition.data[i] for i in idx]
+        batch_auto = condition.automatic_batching_collate_fn(data_to_collate)
+        batch_collate = condition.collate_fn(idx, condition)
 
+        # Check that the automatic batch has been properly created
+        assert isinstance(batch_auto, _BatchManager)
+        assert hasattr(batch_auto, "input")
+        assert hasattr(batch_auto, "target")
 
-def test_getitems_tensor_input_graph_target_condition_label_tensor():
-    # Setup for LabelTensor
-    target_graph, input_tensor = _create_graph_data(True, use_lt=True)
-    condition = Condition(input=input_tensor, target=target_graph)
+        # Check that the collate_fn batch has been properly created
+        assert isinstance(batch_collate, dict)
+        assert hasattr(batch_collate, "input")
+        assert hasattr(batch_collate, "target")
 
-    indices = [0, 2, 4]
-    items = condition[indices]
+        # Create expected input and target batches
+        expected_input = torch.stack([input_tensor[i] for i in idx])
+        expected_target = torch.stack([target_tensor[i] for i in idx])
 
-    # 1. Verify Input LabelTensor preservation
-    assert isinstance(items.input, LabelTensor)
-    assert items.input.labels == ["f"]
-    # Verify values still match
-    assert torch.allclose(items.input, input_tensor[indices])
+        # Assert that the automatic batch input and target are correct
+        assert torch.allclose(batch_auto.input, expected_input)
+        assert torch.allclose(batch_auto.target, expected_target)
+        assert batch_auto.input.shape == expected_input.shape
+        assert batch_auto.target.shape == expected_target.shape
 
-    # 2. Verify Target Graphs LabelTensor preservation
-    assert len(items.target) == len(indices)
-    for i, original_idx in enumerate(indices):
-        target_y = items.target[i].y
-        assert isinstance(target_y, LabelTensor)
-        assert target_y.labels == ["u", "v"]
-        # Verify numerical parity
-        assert torch.allclose(target_y, target_graph[original_idx].y)
+        # Assert that the collate_fn batch input and target are correct
+        assert torch.allclose(batch_collate.input, expected_input)
+        assert torch.allclose(batch_collate.target, expected_target)
+        assert batch_collate.input.shape == expected_input.shape
+        assert batch_collate.target.shape == expected_target.shape
 
+    # Tensor - graph
+    elif case == ["tensor", "graph"]:
 
-def test_create_batch_tensor():
-    input_tensor, target_tensor = _create_tensor_data()
-    condition = Condition(input=input_tensor, target=target_tensor)
-    idx = [0, 2, 4, 6]
-    data_to_collate = [condition.data[i] for i in idx]
-    batch = condition.automatic_batching_collate_fn(data_to_collate)
-    assert isinstance(batch, _BatchManager)
-    assert hasattr(batch, "input")
-    assert hasattr(batch, "target")
-    expected_input = torch.stack([input_tensor[i] for i in idx])
-    expected_target = torch.stack([target_tensor[i] for i in idx])
-    assert torch.allclose(batch.input, expected_input)
-    assert torch.allclose(batch.target, expected_target)
+        # Define the condition
+        target_graph, input_tensor = _create_graph_data(
+            is_input=False, use_lt=use_lt
+        )
+        condition = Condition(input=input_tensor, target=target_graph)
 
-    batch = condition.collate_fn(idx, condition)
-    # assert isinstance(batch, _BatchManager)
-    assert hasattr(batch, "input")
-    assert hasattr(batch, "target")
-    expected_input = torch.stack([input_tensor[i] for i in idx])
-    expected_target = torch.stack([target_tensor[i] for i in idx])
-    assert torch.allclose(batch.input, expected_input)
-    assert torch.allclose(batch.target, expected_target)
+        # Create batches using automatic batching or condition's collate_fn
+        idx = [0, 2]
+        data_to_collate = [condition.data[i] for i in idx]
+        batch_auto = condition.automatic_batching_collate_fn(data_to_collate)
+        batch_collate = condition.collate_fn(idx, condition)
 
+        # Check that the automatic batch has been properly created
+        assert isinstance(batch_auto, _BatchManager)
+        assert hasattr(batch_auto, "input")
+        assert hasattr(batch_auto, "target")
 
-def test_create_batch_graph():
-    input_graph, target_tensor = _create_graph_data(False)
-    condition = Condition(input=input_graph, target=target_tensor)
-    idx = [1, 3, 5]
-    data_to_collate = [condition.data[i] for i in idx]
-    batch = condition.automatic_batching_collate_fn(data_to_collate)
-    assert isinstance(batch, _BatchManager)
-    assert hasattr(batch, "input")
-    assert hasattr(batch, "target")
-    expected_target = torch.cat([target_tensor[i] for i in idx])
-    print(expected_target.shape, batch.target.shape)
-    assert torch.allclose(batch.target, expected_target)
-    assert batch.input.num_graphs == len(idx)
+        # Check that the collate_fn batch has been properly created
+        assert isinstance(batch_collate, dict)
+        assert hasattr(batch_collate, "input")
+        assert hasattr(batch_collate, "target")
 
-    batch = condition.collate_fn(idx, condition)
-    assert isinstance(batch, _BatchManager)
-    assert hasattr(batch, "input")
-    assert hasattr(batch, "target")
-    assert torch.allclose(batch.target, expected_target)
-    assert batch.input.num_graphs == len(idx)
+        # Create expected input and target batches
+        expected_input = torch.cat([input_tensor[i] for i in idx])
+        expected_target = [target_graph[i] for i in idx]
+
+        # Assert that the automatic batch input and target are correct
+        assert torch.allclose(batch_auto.input, expected_input)
+        for i, graph in enumerate(expected_target):
+            assert torch.allclose(batch_auto.target[i].y, graph.y)
+        assert batch_auto.input.shape == expected_input.shape
+        assert batch_auto.target.num_graphs == len(idx)
+
+        # Assert that the collate_fn batch input and target are correct
+        assert torch.allclose(batch_collate.input, expected_input)
+        for i, graph in enumerate(expected_target):
+            assert torch.allclose(batch_collate.target[i].y, graph.y)
+        assert batch_collate.input.shape == expected_input.shape
+        assert batch_collate.target.num_graphs == len(idx)
+
+    # Graph - tensor
+    elif case == ["graph", "tensor"]:
+
+        # Define the condition
+        input_graph, target_tensor = _create_graph_data(
+            is_input=True, use_lt=use_lt
+        )
+        condition = Condition(input=input_graph, target=target_tensor)
+
+        # Create batches using automatic batching or condition's collate_fn
+        idx = [0, 2]
+        data_to_collate = [condition.data[i] for i in idx]
+        batch_auto = condition.automatic_batching_collate_fn(data_to_collate)
+        batch_collate = condition.collate_fn(idx, condition)
+
+        # Check that the automatic batch has been properly created
+        assert isinstance(batch_auto, _BatchManager)
+        assert hasattr(batch_auto, "input")
+        assert hasattr(batch_auto, "target")
+
+        # Check that the collate_fn batch has been properly created
+        assert isinstance(batch_collate, dict)
+        assert hasattr(batch_collate, "input")
+        assert hasattr(batch_collate, "target")
+
+        # Create expected input and target batches
+        expected_input = [input_graph[i] for i in idx]
+        expected_target = torch.cat([target_tensor[i] for i in idx])
+
+        # Assert that the automatic batch input and target are correct
+        for i, graph in enumerate(expected_input):
+            assert torch.allclose(batch_auto.input[i].x, graph.x)
+        assert torch.allclose(batch_auto.target, expected_target)
+        assert batch_auto.input.num_graphs == len(idx)
+        assert batch_auto.target.shape == expected_target.shape
+
+        # Assert that the collate_fn batch input and target are correct
+        for i, graph in enumerate(expected_input):
+            assert torch.allclose(batch_collate.input[i].x, graph.x)
+        assert torch.allclose(batch_collate.target, expected_target)
+        assert batch_collate.input.num_graphs == len(idx)
+        assert batch_collate.target.shape == expected_target.shape
