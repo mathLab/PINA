@@ -1,332 +1,301 @@
-import pytest
 import torch
-from pina import Condition, LabelTensor
-from pina.condition import DataCondition
-from pina.graph import RadiusGraph
-from torch_geometric.data import Data
-from pina._src.condition.data_manager import _DataManager
+import pytest
+from pina.graph import RadiusGraph, Graph
+from pina import LabelTensor, Condition
+from pina.condition import (
+    DataCondition,
+    _BatchManager,
+    _TensorDataManager,
+    _GraphDataManager,
+)
 
 
-def _create_tensor_data(use_lt=False, conditional_variables=False):
-    input_tensor = torch.rand((10, 3))
+# Helper function to create tensor data
+def _create_tensor_data(use_lt, conditional_variables):
+
+    # If LabelTensor is used, create tensors with labels
     if use_lt:
-        input_tensor = LabelTensor(input_tensor, ["x", "y", "z"])
-    if conditional_variables:
-        cond_vars = torch.rand((10, 2))
-        if use_lt:
-            cond_vars = LabelTensor(cond_vars, ["a", "b"])
-    else:
-        cond_vars = None
+        input_tensor = LabelTensor(torch.rand((10, 3)), ["x", "y", "z"])
+        cond_vars = LabelTensor(torch.rand((10, 2)), ["a", "b"])
+        cond_vars = cond_vars if conditional_variables else None
+
+        return input_tensor, cond_vars
+
+    # Standard torch.Tensor without labels
+    input_tensor = torch.rand((10, 3))
+    cond_vars = torch.rand((10, 2))
+    cond_vars = cond_vars if conditional_variables else None
+
     return input_tensor, cond_vars
 
 
-def _create_graph_data(use_lt=False, conditional_variables=False):
+# Helper function to create graph data
+def _create_graph_data(use_lt, conditional_variables):
+
+    # If LabelTensor is used, create graph data with LabelTensors
     if use_lt:
         x = LabelTensor(torch.rand(10, 20, 2), ["u", "v"])
         pos = LabelTensor(torch.rand(10, 20, 2), ["x", "y"])
+        cond_vars = LabelTensor(torch.rand(10, 20, 1), ["f"])
+
+    # Standard torch.Tensor without labels
     else:
         x = torch.rand(10, 20, 2)
         pos = torch.rand(10, 20, 2)
-    radius = 0.1
-    input_graph = [
-        RadiusGraph(pos=pos[i], radius=radius, x=x[i]) for i in range(len(x))
-    ]
-    if conditional_variables:
+        cond_vars = torch.rand(10, 20, 1)
+
+    # Create a list of Graphs
+    graph = [RadiusGraph(pos=pos[i], radius=0.1, x=x[i]) for i in range(len(x))]
+
+    # Create conditional variables if needed
+    cond_vars = cond_vars if conditional_variables else None
+
+    return graph, cond_vars
+
+
+# Helper function to check tensor types
+def _assert_tensor_type(t, use_lt):
+    if use_lt:
+        assert isinstance(t, LabelTensor)
+    else:
+        assert isinstance(t, torch.Tensor) and not isinstance(t, LabelTensor)
+
+
+# Helper function to check input graph
+def _assert_graph_type(graph_list, use_lt):
+    assert isinstance(graph_list, list)
+    for graph in graph_list:
+        _assert_tensor_type(graph.x, use_lt)
+
+
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("conditional_variables", [False, True])
+@pytest.mark.parametrize("case", ["tensor", "graph"])
+def test_constructor(case, use_lt, conditional_variables):
+
+    # Tensor input case
+    if case == "tensor":
+
+        # Define the condition
+        input_tensor, cond_vars = _create_tensor_data(
+            use_lt, conditional_variables
+        )
+        condition = Condition(
+            input=input_tensor, conditional_variables=cond_vars
+        )
+
+        # Assert correct types
+        assert isinstance(condition, DataCondition)
+        _assert_tensor_type(condition.input, use_lt)
+        if cond_vars is not None:
+            _assert_tensor_type(condition.conditional_variables, use_lt)
+
+        # Assert numerical parity
+        assert torch.allclose(condition.input, input_tensor)
+        if cond_vars is not None:
+            assert torch.allclose(condition.conditional_variables, cond_vars)
+
+        # Assert labels if LabelTensor is used
         if use_lt:
-            cond_vars = LabelTensor(torch.rand(10, 20, 1), ["f"])
-        else:
-            cond_vars = torch.rand(10, 20, 1)
-    else:
-        cond_vars = None
-    return input_graph, cond_vars
+            assert condition.input.labels == ["x", "y", "z"]
+            if cond_vars is not None:
+                assert condition.conditional_variables.labels == ["a", "b"]
 
+    # Graph input case
+    elif case == "graph":
 
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_init_tensor_data_condition_tensor(conditional_variables):
-    # Setup for standard torch.Tensor
-    input_tensor, cond_vars = _create_tensor_data(
-        use_lt=False, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_tensor, conditional_variables=cond_vars)
+        # Define the condition
+        input_graph, cond_vars = _create_graph_data(
+            use_lt, conditional_variables
+        )
+        condition = Condition(
+            input=input_graph, conditional_variables=cond_vars
+        )
 
-    assert isinstance(condition, DataCondition)
+        # Assert correct types
+        assert isinstance(condition, DataCondition)
+        _assert_graph_type(condition.input, use_lt)
+        if cond_vars is not None:
+            _assert_tensor_type(condition.conditional_variables, use_lt)
 
-    # Input assertions
-    assert isinstance(condition.input, torch.Tensor)
-    assert not isinstance(condition.input, LabelTensor)
+        # Assert numerical parity for graph inputs
+        for i in range(len(input_graph)):
+            assert torch.allclose(condition.input[i].x, input_graph[i].x)
+            assert torch.allclose(condition.input[i].pos, input_graph[i].pos)
 
-    # Conditional variables assertions
-    if conditional_variables:
-        assert condition.conditional_variables is not None
-        assert isinstance(condition.conditional_variables, torch.Tensor)
-        assert not isinstance(condition.conditional_variables, LabelTensor)
-    else:
-        assert condition.conditional_variables is None
+        # Assert numerical parity for conditional variables
+        if cond_vars is not None:
+            assert torch.allclose(condition.conditional_variables, cond_vars)
 
+        # Assert labels if LabelTensor is used
+        if use_lt:
+            for graph in condition.input:
+                assert graph.x.labels == ["u", "v"]
+                assert graph.pos.labels == ["x", "y"]
+            if cond_vars is not None:
+                assert condition.conditional_variables.labels == ["f"]
 
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_init_tensor_data_condition_label_tensor(conditional_variables):
-    # Setup for LabelTensor
-    input_tensor, cond_vars = _create_tensor_data(
-        use_lt=True, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_tensor, conditional_variables=cond_vars)
+    # Prepare for invalid input tests
+    input_ = input_tensor if case == "tensor" else input_graph
 
-    assert isinstance(condition, DataCondition)
-
-    # Input assertions with label validation
-    assert isinstance(condition.input, LabelTensor)
-    assert condition.input.labels == ["x", "y", "z"]
-
-    # Conditional variables assertions with label validation
-    if conditional_variables:
-        assert isinstance(condition.conditional_variables, LabelTensor)
-        assert condition.conditional_variables.labels == ["a", "b"]
-    else:
-        assert condition.conditional_variables is None
-
-
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_init_graph_data_condition_tensor(conditional_variables):
-    # Setup for standard torch.Tensor
-    input_graph, cond_vars = _create_graph_data(
-        use_lt=False, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_graph, conditional_variables=cond_vars)
-
-    assert isinstance(condition, DataCondition)
-
-    # Validate Input list
-    assert isinstance(condition.input, list)
-    for graph in condition.input:
-        assert isinstance(graph, Data)
-        assert isinstance(graph.x, torch.Tensor)
-        assert not isinstance(graph.x, LabelTensor)
-        assert isinstance(graph.pos, torch.Tensor)
-
-    # Validate Conditional Variables
-    if conditional_variables:
-        assert isinstance(condition.conditional_variables, torch.Tensor)
-        assert not isinstance(condition.conditional_variables, LabelTensor)
-    else:
-        assert condition.conditional_variables is None
-
-
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_init_graph_data_condition_label_tensor(conditional_variables):
-    # Setup for LabelTensor
-    input_graph, cond_vars = _create_graph_data(
-        use_lt=True, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_graph, conditional_variables=cond_vars)
-
-    assert isinstance(condition, DataCondition)
-
-    # Validate Input list and Labels
-    for graph in condition.input:
-        assert isinstance(graph.x, LabelTensor)
-        assert graph.x.labels == ["u", "v"]
-
-        assert isinstance(graph.pos, LabelTensor)
-        assert graph.pos.labels == ["x", "y"]
-
-    # Validate Conditional Variables and Labels
-    if conditional_variables:
-        assert isinstance(condition.conditional_variables, LabelTensor)
-        assert condition.conditional_variables.labels == ["f"]
-    else:
-        assert condition.conditional_variables is None
-
-
-def test_wrong_init_data_condition():
-    input_tensor, cond_vars = _create_tensor_data()
-    # Wrong input type
+    # Should fail if the input is neither a tensor nor a graph
     with pytest.raises(ValueError):
         Condition(input="invalid_input", conditional_variables=cond_vars)
-    # Wrong conditional_variables type
+
+    # Should fail if the conditional_variables is neither a tensor nor a graph
     with pytest.raises(ValueError):
-        Condition(input=input_tensor, conditional_variables="invalid_cond_vars")
-    # Wrong input type (list with wrong elements)
-    with pytest.raises(ValueError):
-        Condition(input=[input_tensor], conditional_variables=cond_vars)
-    # Wrong conditional_variables type (list)
-    with pytest.raises(ValueError):
-        Condition(input=input_tensor, conditional_variables=[cond_vars])
+        Condition(input=input_, conditional_variables="invalid_cond_vars")
+
+    # Should fail if the input is a list of tensors
+    if case == "tensor":
+        with pytest.raises(ValueError):
+            Condition(input=[input_], conditional_variables=cond_vars)
+
+    # Should fail if the conditional_variables is a list of tensors
+    if case == "tensor":
+        with pytest.raises(ValueError):
+            Condition(input=input_, conditional_variables=[cond_vars])
 
 
+@pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("conditional_variables", [False, True])
-def test_getitem_tensor_data_condition_tensor(conditional_variables):
-    # Setup for standard torch.Tensor
-    input_tensor, cond_vars = _create_tensor_data(
-        use_lt=False, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_tensor, conditional_variables=cond_vars)
+@pytest.mark.parametrize("case", ["tensor", "graph"])
+def test_get_item(case, use_lt, conditional_variables):
 
-    item = condition[0]
+    # Tensor input case
+    if case == "tensor":
 
-    # Input assertions
-    assert isinstance(item.input, torch.Tensor)
-    assert not isinstance(item.input, LabelTensor)
-    assert item.input.shape == (3,)
+        # Define the condition
+        input_tensor, cond_vars = _create_tensor_data(
+            use_lt, conditional_variables
+        )
+        condition = Condition(
+            input=input_tensor, conditional_variables=cond_vars
+        )
 
-    # Conditional variables assertions
-    if conditional_variables:
-        assert isinstance(item.conditional_variables, torch.Tensor)
-        assert item.conditional_variables.shape == (2,)
-    else:
-        assert not hasattr(item, "conditional_variables")
+        # Extract item using __getitem__
+        index = 0
+        item = condition[index]
+
+        # Assert correct types
+        assert isinstance(item, _TensorDataManager)
+        _assert_tensor_type(item.input, use_lt)
+        if cond_vars is not None:
+            _assert_tensor_type(item.conditional_variables, use_lt)
+
+        # Assert numerical parity
+        assert torch.allclose(item.input, input_tensor[index])
+        if cond_vars is not None:
+            assert torch.allclose(item.conditional_variables, cond_vars[index])
+
+    # Graph input case
+    elif case == "graph":
+
+        # Define the condition
+        input_graph, cond_vars = _create_graph_data(
+            use_lt, conditional_variables
+        )
+        condition = Condition(
+            input=input_graph, conditional_variables=cond_vars
+        )
+
+        # Extract item using __getitem__
+        index = 0
+        item = condition[index]
+
+        # Assert correct types
+        assert isinstance(item, _GraphDataManager)
+        assert isinstance(item.input, Graph)
+        _assert_tensor_type(item.input.x, use_lt)
+        if cond_vars is not None:
+            _assert_tensor_type(item.conditional_variables, use_lt)
+
+        # Assert numerical parity
+        assert torch.allclose(item.input.x, input_graph[index].x)
+        assert torch.allclose(item.input.pos, input_graph[index].pos)
+        if cond_vars is not None:
+            assert torch.allclose(item.conditional_variables, cond_vars[index])
 
 
+@pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("conditional_variables", [False, True])
-def test_getitem_tensor_data_condition_label_tensor(conditional_variables):
-    # Setup for LabelTensor
-    input_tensor, cond_vars = _create_tensor_data(
-        use_lt=True, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_tensor, conditional_variables=cond_vars)
+@pytest.mark.parametrize("case", ["tensor", "graph"])
+def test_create_batch(case, use_lt, conditional_variables):
 
-    item = condition[0]
+    # Tensor case
+    if case == "tensor":
+        input_, cond_vars = _create_tensor_data(use_lt, conditional_variables)
 
-    # Input assertions with label validation
-    assert isinstance(item.input, LabelTensor)
-    assert item.input.shape == (3,)
-    assert item.input.labels == ["x", "y", "z"]
+    # Graph case
+    elif case == "graph":
+        input_, cond_vars = _create_graph_data(use_lt, conditional_variables)
 
-    # Conditional variables assertions with label validation
-    if conditional_variables:
-        assert isinstance(item.conditional_variables, LabelTensor)
-        assert item.conditional_variables.shape == (2,)
-        assert item.conditional_variables.labels == ["a", "b"]
-    else:
-        assert not hasattr(item, "conditional_variables")
+    # Define the condition
+    condition = Condition(input=input_, conditional_variables=cond_vars)
 
+    # Create batches using automatic batching or condition's collate_fn
+    idx = [0, 2]
+    data_to_collate = [condition.data[i] for i in idx]
+    batch_auto = condition.automatic_batching_collate_fn(data_to_collate)
+    batch_collate = condition.collate_fn(idx, condition)
 
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_getitem_graph_data_condition_tensor(conditional_variables):
-    # Setup specifically for standard torch.Tensor
-    input_graph, cond_vars = _create_graph_data(
-        use_lt=False, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_graph, conditional_variables=cond_vars)
+    # Check that the automatic batch has been properly created
+    assert isinstance(batch_auto, _BatchManager)
+    assert hasattr(batch_auto, "input")
+    if cond_vars is not None:
+        assert hasattr(batch_auto, "conditional_variables")
 
-    item = condition[0]
+    # Check that the collate_fn batch has been properly created
+    assert isinstance(batch_collate, dict)
+    assert hasattr(batch_collate, "input")
+    if cond_vars is not None:
+        assert hasattr(batch_collate, "conditional_variables")
 
-    # Assertions for the graph data
-    assert isinstance(item.input, Data)
-    assert isinstance(item.input.x, torch.Tensor)
-    assert not isinstance(item.input.x, LabelTensor)
-    assert item.input.x.shape == (20, 2)
+    # Retrieve tensor class for expected batch creation
+    cls = LabelTensor if use_lt else torch
 
-    # Assertions for conditional variables
-    if conditional_variables:
-        assert isinstance(item.conditional_variables, torch.Tensor)
-        assert item.conditional_variables.shape == (1, 20, 1)
+    # Validate batch contents for tensor case
+    if case == "tensor":
 
+        # Create expected input batch
+        expected_input = cls.stack([input_[i] for i in idx])
+        if cond_vars is not None:
+            exp_cond = cls.stack([cond_vars[i] for i in idx])
 
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_getitem_graph_data_condition_label_tensor(conditional_variables):
-    # Setup specifically for LabelTensor
-    input_graph, cond_vars = _create_graph_data(
-        use_lt=True, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_graph, conditional_variables=cond_vars)
+        # Assert that the automatic batch input is correct
+        assert torch.allclose(batch_auto.input, expected_input)
+        assert batch_auto.input.shape == expected_input.shape
+        if cond_vars is not None:
+            assert torch.allclose(batch_auto.conditional_variables, exp_cond)
+            assert batch_auto.conditional_variables.shape == exp_cond.shape
 
-    item = condition[0]
-    graph = item.input
+        # Assert that the collate_fn batch input is correct
+        assert torch.allclose(batch_collate.input, expected_input)
+        assert batch_collate.input.shape == expected_input.shape
+        if cond_vars is not None:
+            assert torch.allclose(batch_collate.conditional_variables, exp_cond)
+            assert batch_collate.conditional_variables.shape == exp_cond.shape
 
-    # Assertions for LabelTensor attributes
-    assert isinstance(graph.x, LabelTensor)
-    assert graph.x.labels == ["u", "v"]
-    assert graph.x.shape == (20, 2)
+    # Validate batch contents for graph case
+    elif case == "graph":
 
-    assert isinstance(graph.pos, LabelTensor)
-    assert graph.pos.labels == ["x", "y"]
+        # Create expected input batch
+        expected_input = [condition.data[i].input for i in idx]
+        if cond_vars is not None:
+            exp_cond = cls.cat([cond_vars[i] for i in idx])
 
-    # Assertions for labeled conditional variables
-    if conditional_variables:
-        cond_var = item.conditional_variables
-        assert isinstance(cond_var, LabelTensor)
-        assert cond_var.labels == ["f"]
-        assert cond_var.shape == (1, 20, 1)
+        # Assert that the automatic batch input is correct
+        for i, graph in enumerate(expected_input):
+            assert torch.allclose(batch_auto.input[i].x, graph.x)
+        assert batch_auto.input.num_graphs == len(idx)
+        if cond_vars is not None:
+            assert torch.allclose(batch_auto.conditional_variables, exp_cond)
+            assert batch_auto.conditional_variables.shape == exp_cond.shape
 
-
-@pytest.mark.parametrize("use_lt", [False, True])
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_getitems_tensor_data_condition(use_lt, conditional_variables):
-    input_tensor, cond_vars = _create_tensor_data(
-        use_lt=use_lt, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_tensor, conditional_variables=cond_vars)
-    idxs = [0, 1, 3]
-    items = condition[idxs]
-    assert isinstance(items, _DataManager)
-    assert hasattr(items, "input")
-    type_ = LabelTensor if use_lt else torch.Tensor
-    inputs = items.input
-    assert isinstance(inputs, type_)
-    assert inputs.shape == (3, 3)
-    if use_lt:
-        assert inputs.labels == ["x", "y", "z"]
-    if conditional_variables:
-        assert hasattr(items, "conditional_variables")
-        cond_vars_items = items.conditional_variables
-        assert isinstance(cond_vars_items, type_)
-        assert cond_vars_items.shape == (3, 2)
-        if use_lt:
-            assert cond_vars_items.labels == ["a", "b"]
-    else:
-        assert not hasattr(items, "conditional_variables")
-
-
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_getitems_graph_data_condition_tensor(conditional_variables):
-    # Setup with use_lt=False
-    input_graph, cond_vars = _create_graph_data(
-        use_lt=False, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_graph, conditional_variables=cond_vars)
-
-    idxs = [0, 1, 3]
-    items = condition[idxs]
-
-    # Assertions for DataManager and Graphs
-    assert isinstance(items, _DataManager)
-    graphs = items.input
-    assert len(graphs) == 3
-
-    for graph in graphs:
-        assert isinstance(graph.x, torch.Tensor)
-        assert not isinstance(graph.x, LabelTensor)
-        assert graph.x.shape == (20, 2)
-
-    # Assertions for Conditional Variables
-    if conditional_variables:
-        assert isinstance(items.conditional_variables, torch.Tensor)
-        assert items.conditional_variables.shape == (3, 20, 1)
-
-
-@pytest.mark.parametrize("conditional_variables", [False, True])
-def test_getitems_graph_data_condition_label_tensor(conditional_variables):
-    # Setup with use_lt=True
-    input_graph, cond_vars = _create_graph_data(
-        use_lt=True, conditional_variables=conditional_variables
-    )
-    condition = Condition(input=input_graph, conditional_variables=cond_vars)
-
-    idxs = [0, 1, 3]
-    items = condition[idxs]
-
-    # Assertions for LabelTensor specific attributes in Graphs
-    for graph in items.input:
-        assert isinstance(graph.x, LabelTensor)
-        assert graph.x.labels == ["u", "v"]
-
-        assert isinstance(graph.pos, LabelTensor)
-        assert graph.pos.labels == ["x", "y"]
-
-    # Assertions for LabelTensor in Conditional Variables
-    if conditional_variables:
-        cv = items.conditional_variables
-        assert isinstance(cv, LabelTensor)
-        assert cv.labels == ["f"]
-        assert cv.shape == (3, 20, 1)
+        # Assert that the collate_fn batch input is correct
+        for i, graph in enumerate(expected_input):
+            assert torch.allclose(batch_collate.input[i].x, graph.x)
+        assert batch_collate.input.num_graphs == len(idx)
+        if cond_vars is not None:
+            assert torch.allclose(batch_collate.conditional_variables, exp_cond)
+            assert batch_collate.conditional_variables.shape == exp_cond.shape
