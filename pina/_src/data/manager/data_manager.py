@@ -3,8 +3,8 @@
 import torch
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.equation.base_equation import BaseEquation
-from pina._src.condition.graph_data_manager import _GraphDataManager
-from pina._src.condition.tensor_data_manager import _TensorDataManager
+from pina._src.data.manager.graph_data_manager import _GraphDataManager
+from pina._src.data.manager.tensor_data_manager import _TensorDataManager
 
 
 class _DataManager:
@@ -12,9 +12,9 @@ class _DataManager:
     Factory class for data manager implementations.
 
     This class dispatches object creation to either
-    :class:`~pina.condition.tensor_data_manager._TensorDataManager` or
-    :class:`~pina.condition.graph_data_manager._GraphDataManager` depending on
-    the types of the provided keyword arguments.
+    :class:`~pina.data.manager.tensor_data_manager._TensorDataManager` or
+    :class:`~pina.data.manager.graph_data_manager._GraphDataManager` depending
+    on the types of the provided keyword arguments.
     """
 
     def __new__(cls, **kwargs):
@@ -25,9 +25,9 @@ class _DataManager:
         If all values in ``kwargs`` are instances of :class:`torch.Tensor`,
         :class:`~pina.label_tensor.LabelTensor`, or
         :class:`~pina.equation.base_equation.BaseEquation`, an instance of
-        :class:`~pina.condition.tensor_data_manager._TensorDataManager` is
+        :class:`~pina.data.manager.tensor_data_manager._TensorDataManager` is
         created. Otherwise, an instance of
-        :class:`~pina.condition.graph_data_manager._GraphDataManager` is
+        :class:`~pina.data.manager.graph_data_manager._GraphDataManager` is
         created.
 
         :param dict kwargs: The keyword arguments for the data manager.

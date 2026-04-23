@@ -14,11 +14,6 @@ __all__ = [
     "InputTargetCondition",
     "InputEquationCondition",
     "DataCondition",
-    "_DataManagerInterface",
-    "_DataManager",
-    "_GraphDataManager",
-    "_TensorDataManager",
-    "_BatchManager",
 ]
 
 from pina._src.condition.condition_interface import ConditionInterface
@@ -30,8 +25,3 @@ from pina._src.condition.domain_equation_condition import (
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.data_condition import DataCondition
-from pina._src.condition.batch_manager import _BatchManager
-from pina._src.condition.data_manager_interface import _DataManagerInterface
-from pina._src.condition.data_manager import _DataManager
-from pina._src.condition.tensor_data_manager import _TensorDataManager
-from pina._src.condition.graph_data_manager import _GraphDataManager

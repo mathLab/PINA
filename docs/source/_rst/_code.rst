@@ -65,11 +65,11 @@ Batch and Data Managers
 .. toctree::
     :titlesonly:
 
-    Batch Manager <condition/batch_manager.rst>
-    Data Manager Interface <condition/data_manager_interface.rst>
-    Data Manager <condition/data_manager.rst>
-    Graph Data Manager <condition/graph_data_manager.rst>
-    Tensor Data Manager <condition/tensor_data_manager.rst>
+    Batch Manager <data/manager/batch_manager.rst>
+    Data Manager Interface <data/manager/data_manager_interface.rst>
+    Data Manager <data/manager/data_manager.rst>
+    Graph Data Manager <data/manager/graph_data_manager.rst>
+    Tensor Data Manager <data/manager/tensor_data_manager.rst>
 
 Solvers
 --------------
@@ -80,8 +80,8 @@ Solvers
     SolverInterface <solver/solver_interface.rst>
     SingleSolverInterface <solver/single_solver_interface.rst>
     MultiSolverInterface <solver/multi_solver_interface.rst>
-    SupervisedSolverInterface <solver/supervised_solver/supervised_solver_interface>
-    DeepEnsembleSolverInterface <solver/ensemble_solver/ensemble_solver_interface>
+    SupervisedSolverInterface <solver/supervised_solver/supervised_solver_interface.rst>
+    DeepEnsembleSolverInterface <solver/ensemble_solver/ensemble_solver_interface.rst>
     PINNInterface <solver/physics_informed_solver/pinn_interface.rst>
     PINN <solver/physics_informed_solver/pinn.rst>
     GradientPINN <solver/physics_informed_solver/gradient_pinn.rst>
@@ -89,9 +89,9 @@ Solvers
     CompetitivePINN <solver/physics_informed_solver/competitive_pinn.rst>
     SelfAdaptivePINN <solver/physics_informed_solver/self_adaptive_pinn.rst>
     RBAPINN <solver/physics_informed_solver/rba_pinn.rst>
-    DeepEnsemblePINN <solver/ensemble_solver/ensemble_pinn>
+    DeepEnsemblePINN <solver/ensemble_solver/ensemble_pinn.rst>
     SupervisedSolver <solver/supervised_solver/supervised.rst>
-    DeepEnsembleSupervisedSolver <solver/ensemble_solver/ensemble_supervised>
+    DeepEnsembleSupervisedSolver <solver/ensemble_solver/ensemble_supervised.rst>
     ReducedOrderModelSolver <solver/supervised_solver/reduced_order_model.rst>
     GAROM <solver/garom.rst>
     AutoregressiveSolverInterface <solver/autoregressive_solver/autoregressive_solver_interface.rst>

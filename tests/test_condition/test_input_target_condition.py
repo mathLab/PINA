@@ -2,11 +2,11 @@ import torch
 import pytest
 from pina.graph import RadiusGraph, Graph
 from pina import LabelTensor, Condition
-from pina.condition import (
-    InputTargetCondition,
-    _BatchManager,
+from pina.condition import InputTargetCondition
+from pina.data.manager import (
     _TensorDataManager,
     _GraphDataManager,
+    _BatchManager,
 )
 
 

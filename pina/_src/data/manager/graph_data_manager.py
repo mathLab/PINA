@@ -5,8 +5,8 @@ from torch_geometric.data import Data
 from torch_geometric.data.batch import Batch
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.graph import Graph, LabelBatch
-from pina._src.condition.batch_manager import _BatchManager
-from pina._src.condition.data_manager_interface import _DataManagerInterface
+from pina._src.data.manager.batch_manager import _BatchManager
+from pina._src.data.manager.data_manager_interface import _DataManagerInterface
 
 
 class _GraphDataManager(_DataManagerInterface):
