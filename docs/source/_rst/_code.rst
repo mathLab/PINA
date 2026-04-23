@@ -256,6 +256,7 @@ Problem Zoo
     AcousticWaveProblem <problem/zoo/acoustic_wave_problem.rst>
     AdvectionProblem <problem/zoo/advection_problem.rst>
     AllenCahnProblem <problem/zoo/allen_cahn_problem.rst>
+    BurgersProblem <problem/zoo/burgers_problem.rst>
     DiffusionReactionProblem <problem/zoo/diffusion_reaction_problem.rst>
     HelmholtzProblem <problem/zoo/helmholtz_problem.rst>
     InversePoisson2DSquareProblem <problem/zoo/inverse_poisson_problem.rst>
