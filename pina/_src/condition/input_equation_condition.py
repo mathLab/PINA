@@ -4,7 +4,7 @@ from pina._src.condition.base_condition import BaseCondition
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.graph import Graph
 from pina._src.equation.base_equation import BaseEquation
-from pina._src.condition.data_manager import _DataManager
+from pina._src.data.manager.data_manager import _DataManager
 from pina._src.core.utils import check_consistency
 
 

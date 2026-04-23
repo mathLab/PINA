@@ -3,12 +3,13 @@ import pytest
 from pina.equation import Equation
 from pina import LabelTensor, Condition
 from pina.graph import RadiusGraph, Graph
-from pina.condition import (
-    InputEquationCondition,
+from pina.condition import InputEquationCondition
+from pina.data.manager import (
     _TensorDataManager,
     _GraphDataManager,
     _BatchManager,
 )
+
 
 # Generate input and equation data for testing - tensor case
 input_tensor = LabelTensor(torch.rand((10, 2)), ["x", "y"])

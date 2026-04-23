@@ -1,4 +1,4 @@
-"""Module for the Tensor-Data Manager interface."""
+"""Module for the Data Manager interface."""
 
 from abc import ABCMeta, abstractmethod
 
