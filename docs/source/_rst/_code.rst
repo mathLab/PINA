@@ -224,6 +224,7 @@ Equation Zoo
     Acoustic Wave Equation <equation/zoo/acoustic_wave_equation.rst>
     Advection Equation <equation/zoo/advection_equation.rst>
     Allen-Cahn Equation <equation/zoo/allen_cahn_equation.rst>
+    Burgers Equation <equation/zoo/burgers_equation.rst>
     Diffusion-Reaction Equation <equation/zoo/diffusion_reaction_equation.rst>
     Fixed Flux <equation/zoo/fixed_flux.rst>
     Fixed Gradient <equation/zoo/fixed_gradient.rst>
