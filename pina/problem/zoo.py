@@ -9,6 +9,7 @@ __all__ = [
     "DiffusionReactionProblem",
     "InversePoisson2DSquareProblem",
     "AcousticWaveProblem",
+    "BurgersProblem",
 ]
 
 from pina._src.problem.zoo.acoustic_wave_problem import AcousticWaveProblem
@@ -17,6 +18,7 @@ from pina._src.problem.zoo.allen_cahn_problem import AllenCahnProblem
 from pina._src.problem.zoo.advection_problem import AdvectionProblem
 from pina._src.problem.zoo.helmholtz_problem import HelmholtzProblem
 from pina._src.problem.zoo.poisson_problem import Poisson2DSquareProblem
+from pina._src.problem.zoo.burgers_problem import BurgersProblem
 from pina._src.problem.zoo.diffusion_reaction_problem import (
     DiffusionReactionProblem,
 )

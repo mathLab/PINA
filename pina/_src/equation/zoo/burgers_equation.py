@@ -30,7 +30,7 @@ class BurgersEquation(Equation):
         check_consistency(nu, (float, int))
         if nu < 0:
             raise ValueError(
-                "The viscosity ``nu`` must be a positive float or int."
+                "The viscosity ``nu`` must be a non-negative float or int."
             )
 
         # Store viscosity coefficient
