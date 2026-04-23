@@ -202,7 +202,7 @@ class Spline(torch.nn.Module):
         :param torch.Tensor x: The points to be evaluated.
         :param bool collection: If True, returns a list of basis functions for
             all orders up to the spline order. Default is False.
-        :raise ValueError: If ``collection`` is not a boolean.
+        :raises ValueError: If ``collection`` is not a boolean.
         :return: The basis functions evaluated at x.
         :rtype: torch.Tensor | list[torch.Tensor]
         """
@@ -290,7 +290,7 @@ class Spline(torch.nn.Module):
         :param x: The input tensor.
         :type x: torch.Tensor | LabelTensor
         :param int degree: The derivative degree to compute.
-        :raise ValueError: If ``degree`` is not an integer.
+        :raises ValueError: If ``degree`` is not an integer.
         :return: The derivative tensor.
         :rtype: torch.Tensor
         """

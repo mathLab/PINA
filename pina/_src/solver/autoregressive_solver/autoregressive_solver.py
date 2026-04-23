@@ -66,8 +66,9 @@ class AutoregressiveSolver(
             averages used for adaptive weighting are reset at the start of each
             epoch. Setting this parameter to ``False`` can improve training
             stability, especially when data are scarce. Default is ``True``.
-        :raise ValueError: If the provided loss function is not compatible.
-        :raise ValueError: If ``reset_weights_at_epoch_start`` is not a boolean.
+        :raises ValueError: If the provided loss function is not compatible.
+        :raises ValueError: If ``reset_weights_at_epoch_start`` is not a
+            boolean.
         """
         super().__init__(
             problem=problem,
@@ -147,7 +148,7 @@ class AutoregressiveSolver(
         :param input: The input tensor containing unroll windows.
         :type input: torch.Tensor | LabelTensor
         :param dict kwargs: Additional keyword arguments for loss computation.
-        :raise ValueError: If ``input`` has less than 4 dimensions.
+        :raises ValueError: If ``input`` has less than 4 dimensions.
         :return: The scalar loss value for the given batch.
         :rtype: torch.Tensor | LabelTensor
         """
@@ -270,7 +271,7 @@ class AutoregressiveSolver(
         :type initial_state: torch.Tensor | LabelTensor
         :param int n_steps: The number of autoregressive steps to predict.
         :param dict kwargs: Additional keyword arguments.
-        :raise ValueError: If the provided initial_state tensor has less than 3
+        :raises ValueError: If the provided initial_state tensor has less than 3
             dimensions.
         :return: The predicted trajectory, including the initial state. It has
             shape ``[trajectories, n_steps + 1, *features]``, where the first
@@ -320,8 +321,8 @@ class AutoregressiveSolver(
             If ``None``, all valid windows are returned. Default is ``None``.
         :param bool randomize: If ``True``, starting indices are randomly
             permuted before applying ``n_unrolls``. Default is ``True``.
-        :raise ValueError: If the input ``data`` has less than 3 dimensions.
-        :raise ValueError: If ``unroll_length`` is greater or equal to the
+        :raises ValueError: If the input ``data`` has less than 3 dimensions.
+        :raises ValueError: If ``unroll_length`` is greater or equal to the
             number of time steps in ``data``.
         :return: A tensor of unrolled windows.
         :rtype: torch.Tensor | LabelTensor
@@ -358,7 +359,7 @@ class AutoregressiveSolver(
             If ``None``, all valid windows are returned. Default is ``None``.
         :param bool randomize: If ``True``, starting indices are randomly
             permuted before applying ``n_unrolls``. Default is ``True``.
-        :raise ValueError: If ``unroll_length`` is greater or equal to the
+        :raises ValueError: If ``unroll_length`` is greater or equal to the
             number of time steps in ``data``.
         :return: A tensor of starting indices for unroll windows.
         :rtype: torch.Tensor

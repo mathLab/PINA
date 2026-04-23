@@ -134,8 +134,8 @@ class SplineSurface(torch.nn.Module):
             parameter direction.
         :param int degree_v: The degree of the derivative along the second
             parameter direction.
-        :raise ValueError: If ``degree_u`` is not an integer.
-        :raise ValueError: If ``degree_v`` is not an integer.
+        :raises ValueError: If ``degree_u`` is not an integer.
+        :raises ValueError: If ``degree_v`` is not an integer.
         :return: The derivative tensor.
         :rtype: torch.Tensor
         """

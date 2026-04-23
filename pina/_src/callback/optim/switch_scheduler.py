@@ -22,8 +22,8 @@ class SwitchScheduler(Callback):
         :type new_schedulers: pina.optim.TorchScheduler |
             list[pina.optim.TorchScheduler]
         :param int epoch_switch: The epoch at which the scheduler switch occurs.
-        :raise AssertionError: If epoch_switch is less than 1.
-        :raise ValueError: If each scheduler in ``new_schedulers`` is not an
+        :raises AssertionError: If epoch_switch is less than 1.
+        :raises ValueError: If each scheduler in ``new_schedulers`` is not an
             instance of :class:`pina.optim.TorchScheduler`.
 
         Example:

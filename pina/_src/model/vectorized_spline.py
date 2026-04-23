@@ -293,7 +293,7 @@ class VectorizedSpline(torch.nn.Module):
         :param torch.Tensor x: The points to be evaluated.
         :param bool collection: If True, returns a list of basis functions for
             all orders up to the spline order. Default is False.
-        :raise ValueError: If ``collection`` is not a boolean.
+        :raises ValueError: If ``collection`` is not a boolean.
         :raises ValueError: If ``x`` is not two-dimensional.
         :raises ValueError: If the number of input features does not match
             the number of univariate splines.
