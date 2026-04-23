@@ -36,6 +36,7 @@ _DEPRECATED_IMPORTS = {
     "AdvectionEquation": ".zoo",
     "AllenCahnEquation": ".zoo",
     "DiffusionReactionEquation": ".zoo",
+    "BurgersEquation": ".zoo",
 }
 
 
