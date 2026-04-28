@@ -26,9 +26,35 @@ def initial_condition(input_, output_):
 
 class AllenCahnProblem(TimeDependentProblem, SpatialProblem):
     r"""
-    Implementation of the Allen Cahn problem in the spatial interval
-    :math:`[-1, 1]` and temporal interval :math:`[0, 1]` with periodic
-    boundary conditions.
+    Implementation of the one-dimensional Allen-Cahn problem on the space-time
+    domain :math:`\Omega\times T = [-1, 1] \times [0, 1]`.
+
+    The problem is governed by the Allen-Cahn equation
+
+    .. math::
+
+        \frac{\partial u}{\partial t}
+        -
+        \alpha \frac{\partial^2 u}{\partial x^2}
+        +
+        \beta \left(u^3 - u\right)
+        =
+        0,
+
+    where :math:`u = u(x, t)` is the solution field, :math:`\alpha` is the
+    diffusion coefficient, and :math:`\beta` is the reaction coefficient.
+
+    Periodic boundary conditions are imposed at the spatial boundaries:
+
+    .. math::
+
+        u(-1, t) = u(1, t), \qquad t \in [0, 1].
+
+    The initial condition is prescribed as
+
+    .. math::
+
+        u(x, 0) = x^2 \cos(\pi x), \qquad x \in [-1, 1].
 
     .. seealso::
 

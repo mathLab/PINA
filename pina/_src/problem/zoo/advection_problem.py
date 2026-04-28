@@ -24,9 +24,39 @@ def initial_condition(input_, output_):
 
 class AdvectionProblem(SpatialProblem, TimeDependentProblem):
     r"""
-    Implementation of the advection problem in the spatial interval
-    :math:`[0, 2 \pi]` and temporal interval :math:`[0, 1]` with periodic
-    boundary conditions.
+    Implementation of the one-dimensional advection problem on the space-time
+    domain :math:`\Omega\times T = [0, 2\pi] \times [0, 1]`.
+
+    The problem is governed by the linear advection equation
+
+    .. math::
+
+        \frac{\partial u}{\partial t}
+        +
+        c \frac{\partial u}{\partial x}
+        =
+        0,
+
+    where :math:`u = u(x, t)` is the solution field and :math:`c` is the
+    advection velocity.
+
+    Periodic boundary conditions are imposed at the spatial boundaries:
+
+    .. math::
+
+        u(0, t) = u(2\pi, t), \qquad t \in [0, 1].
+
+    The initial condition is prescribed as
+
+    .. math::
+
+        u(x, 0) = \sin(x), \qquad x \in [0, 2\pi].
+
+    The analytical solution is given by
+
+    .. math::
+
+        u(x, t) = \sin(x - ct).
 
     .. seealso::
 

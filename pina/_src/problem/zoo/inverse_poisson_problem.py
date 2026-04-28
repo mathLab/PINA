@@ -74,9 +74,33 @@ def laplace_equation(input_, output_, params_):
 
 class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
     r"""
-    Implementation of the inverse 2-dimensional Poisson problem in the square
-    domain :math:`[0, 1] \times [0, 1]`, with unknown parameter domain
-    :math:`[-1, 1] \times [-1, 1]`.
+    Implementation of the inverse two-dimensional Poisson problem on the square
+    domain :math:`\Omega = [-2, 2] \times [-2, 2]`, with unknown parameter
+    domain :math:`\Theta = [-1, 1] \times [-1, 1]`.
+
+    The problem is governed by the parameterized Poisson equation
+
+    .. math::
+
+        \Delta u
+        =
+        \exp\left(
+        -2(x - \mu_1)^2
+        -2(y - \mu_2)^2
+        \right),
+
+    where :math:`u = u(x, y)` is the solution field and :math:`\mu_1, \mu_2` are
+    unknown parameters controlling the forcing term.
+
+    Homogeneous Dirichlet boundary conditions are imposed on the boundary of the
+    domain:
+
+    .. math::
+
+        u(x, y) = 0, \qquad (x, y) \in \partial \Omega.
+
+    The inverse problem aims to infer the unknown parameters :math:`\mu_1` and
+    :math:`\mu_2` from solution data.
 
     The `"data"` condition is added only if the required files are downloaded
     successfully.

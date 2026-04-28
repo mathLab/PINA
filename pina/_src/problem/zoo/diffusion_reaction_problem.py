@@ -35,8 +35,63 @@ def initial_condition(input_, output_):
 
 class DiffusionReactionProblem(TimeDependentProblem, SpatialProblem):
     r"""
-    Implementation of the diffusion-reaction problem in the spatial interval
-    :math:`[-\pi, \pi]` and temporal interval :math:`[0, 1]`.
+    Implementation of the one-dimensional diffusion-reaction problem on the
+    space-time domain :math:`\Omega\times T = [-\pi, \pi] \times [0, 1]`.
+
+    The problem is governed by the forced diffusion-reaction equation
+
+    .. math::
+
+        \frac{\partial u}{\partial t}
+        -
+        \alpha \frac{\partial^2 u}{\partial x^2}
+        =
+        f(x, t),
+
+    where :math:`u = u(x, t)` is the solution field, :math:`\alpha` is the
+    diffusion coefficient, and :math:`f(x, t)` is a forcing term.
+
+    Homogeneous Dirichlet boundary conditions are imposed at the spatial
+    boundaries:
+
+    .. math::
+
+        u(-\pi, t) = u(\pi, t) = 0, \qquad t \in [0, 1].
+
+    The initial condition is prescribed as
+
+    .. math::
+
+        u(x, 0)
+        =
+        \sin(x)
+        +
+        \frac{1}{2}\sin(2x)
+        +
+        \frac{1}{3}\sin(3x)
+        +
+        \frac{1}{4}\sin(4x)
+        +
+        \frac{1}{8}\sin(8x).
+
+    The analytical solution is given by
+
+    .. math::
+
+        u(x, t)
+        =
+        e^{-t}
+        \left(
+        \sin(x)
+        +
+        \frac{1}{2}\sin(2x)
+        +
+        \frac{1}{3}\sin(3x)
+        +
+        \frac{1}{4}\sin(4x)
+        +
+        \frac{1}{8}\sin(8x)
+        \right).
 
     .. seealso::
 
