@@ -1,4 +1,4 @@
-LpLoss
+Lp Loss
 ===============
 .. currentmodule:: pina.loss.lp_loss
 

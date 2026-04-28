@@ -1,4 +1,4 @@
-PowerLoss
+Power Loss
 ====================
 .. currentmodule:: pina.loss.power_loss
 

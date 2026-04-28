@@ -1,63 +1,64 @@
-"""Module for the PowerLoss class."""
+"""Module for the Power Loss class."""
 
 import torch
+from pina._src.loss.base_loss import BaseLoss
+from pina._src.core.utils import check_consistency, check_positive_integer
 
-from pina._src.loss.loss_interface import LossInterface
-from pina._src.core.utils import check_consistency
 
-
-class PowerLoss(LossInterface):
+class PowerLoss(BaseLoss):
     r"""
-    Implementation of the Power Loss. It defines a criterion to measures the 
-    pointwise error between values in the input :math:`x` and values in the
-    target :math:`y`.
+    Implementation of the Power loss, measuring the pointwise averaged
+    :math:`p`-power error between an input tensor :math:`x` and a target tensor
+    :math:`y`.
 
-    If ``reduction`` is set to ``none``, the loss can be written as:
-
-    .. math::
-        \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
-        l_n = \frac{1}{D}\left[\sum_{i=1}^{D} 
-        \left| x_n^i - y_n^i \right|^p\right],
-    
-    If ``relative`` is set to ``True``, the relative error is computed:
+    Given a batch of size :math:`N` and feature dimension :math:`D`, the
+    unreduced loss (``reduction="none"``) is defined as:
 
     .. math::
-        \ell(x, y) = L = \{l_1,\dots,l_N\}^\top, \quad
-        l_n = \frac{ \sum_{i=1}^{D} | x_n^i - y_n^i|^p }
-        {\sum_{i=1}^{D}|y_n^i|^p},
+        L = \{l_1, \dots, l_N\}^\top, \quad
+        l_n = \frac{1}{D} \sum_{i=1}^{D} \left| x_n^i - y_n^i \right|^p
 
-    where :math:`N` is the batch size.
-    
-    If ``reduction`` is not ``none``, then:
+    If ``relative=True``, each term is normalized by the averaged
+    :math:`p`-power magnitude of the input tensor :math:`x`:
+
+    .. math::
+        l_n = \frac{\frac{1}{D} \sum_{i=1}^{D} |x_n^i - y_n^i|^p}
+                {\frac{1}{D} \sum_{i=1}^{D} |x_n^i|^p}
+
+    If ``reduction`` is set to ``"mean"`` or ``"sum"``, the vector :math:`L`
+    is aggregated accordingly:
 
     .. math::
         \ell(x, y) =
         \begin{cases}
-            \operatorname{mean}(L), & \text{if reduction} = \text{`mean';}\\
-            \operatorname{sum}(L),  & \text{if reduction} = \text{`sum'.}
+            \operatorname{mean}(L), & \text{if reduction} = \text{``mean''} \\
+            \operatorname{sum}(L),  & \text{if reduction} = \text{``sum''}
         \end{cases}
+
+    where :math:`N` is the batch size.
     """
 
     def __init__(self, p=2, reduction="mean", relative=False):
         """
         Initialization of the :class:`PowerLoss` class.
 
-        :param int p: Degree of the Lp norm. It specifies the norm to be
-            computed. Default is ``2`` (euclidean norm).
-        :param str reduction: The reduction method for the loss.
-            Available options: ``none``, ``mean``, ``sum``.
-            If ``none``, no reduction is applied. If ``mean``, the sum of the
-            loss values is divided by the number of values. If ``sum``, the loss
-            values are summed. Default is ``mean``.
-        :param bool relative: If ``True``, the relative error is computed.
+        :param int p: The order of the p-norm. Default is ``2``.
+        :param str reduction: The reduction method to aggregate pointwise loss
+            values. Available options include: ``"none"`` for unreduced loss,
+            ``"mean"`` for the average of the loss values, and ``"sum"`` for
+            their total sum. Default is ``"mean"``.
+        :param bool relative: If ``True``, computes the relative error.
             Default is ``False``.
+        :raises ValueError: If ``relative`` is not a boolean.
+        :raises ValueError: If ``p`` is not a positive integer.
         """
         super().__init__(reduction=reduction)
 
-        # check consistency
-        check_consistency(p, (str, int, float))
+        # Check consistency
         check_consistency(relative, bool)
+        check_positive_integer(p, strict=True)
 
+        # Initialize attributes
         self.p = p
         self.relative = relative
 
@@ -65,12 +66,16 @@ class PowerLoss(LossInterface):
         """
         Forward method of the loss function.
 
-        :param torch.Tensor input: Input tensor from real data.
-        :param torch.Tensor target: Model tensor output.
-        :return: Loss evaluation.
+        :param torch.Tensor input: The input tensor.
+        :param torch.Tensor target: The target tensor.
+        :return: The computed loss.
         :rtype: torch.Tensor
         """
+        # Compute the standard loss
         loss = torch.abs((input - target)).pow(self.p).mean(-1)
+
+        # Compute the input norm for relative error
         if self.relative:
             loss = loss / torch.abs(input).pow(self.p).mean(-1)
+
         return self._reduction(loss)

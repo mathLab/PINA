@@ -1,4 +1,4 @@
-LossInterface
+Loss Interface
 ===============
 .. currentmodule:: pina.loss.loss_interface
 
