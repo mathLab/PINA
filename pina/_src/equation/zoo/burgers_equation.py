@@ -8,7 +8,7 @@ import torch
 
 class BurgersEquation(Equation):
     r"""
-    Implementation of the N-dimensional Burgers equation, defined as follows:
+    Implementation of the N-dimensional Burgers' equation, defined as follows:
 
     .. math::
 
@@ -38,7 +38,7 @@ class BurgersEquation(Equation):
 
         def equation(input_, output_):
             """
-            Implementation of the Burgers equation.
+            Implementation of the Burgers' equation.
 
             :param LabelTensor input_: The input data of the problem.
             :param LabelTensor output_: The output data of the problem.
@@ -46,7 +46,7 @@ class BurgersEquation(Equation):
                 match the number of spatial dimensions.
             :raises ValueError: If the ``input_`` labels do not contain the time
                 variable 't'.
-            :return: The residual of the Burgers equation.
+            :return: The residual of the Burgers' equation.
             :rtype: LabelTensor
             """
             # Store labels
