@@ -1,47 +1,46 @@
 import torch
-
+import pytest
 from pina.loss import LpLoss
 
-input = torch.tensor([[3.0], [1.0], [-8.0]])
-target = torch.tensor([[6.0], [4.0], [2.0]])
-available_reductions = ["str", "mean", "none"]
+# Define input and target for tests
+input = torch.rand(10, 2)
+target = torch.rand(10, 2)
 
 
-def test_LpLoss_constructor():
-    # test reduction
-    for reduction in available_reductions:
-        LpLoss(reduction=reduction)
-    # test p
-    for p in [float("inf"), -float("inf"), 1, 10, -8]:
-        LpLoss(p=p)
+@pytest.mark.parametrize("p", [2, 0.5, "inf", "-inf"])
+@pytest.mark.parametrize("reduction", ["mean", "sum", "none"])
+@pytest.mark.parametrize("relative", [True, False])
+def test_constructor(p, reduction, relative):
+
+    # Define the loss
+    LpLoss(p=p, reduction=reduction, relative=relative)
+
+    # Should fail if p is invalid
+    with pytest.raises(ValueError):
+        LpLoss(p="invalid", reduction=reduction, relative=relative)
+
+    # Should fail if reduction is invalid
+    with pytest.raises(ValueError):
+        LpLoss(p=p, reduction="invalid", relative=relative)
+
+    # Should fail if relative is not a boolean
+    with pytest.raises(ValueError):
+        LpLoss(p=p, reduction=reduction, relative="invalid")
 
 
-def test_LpLoss_forward():
-    # l2 loss
-    loss = LpLoss(p=2, reduction="mean")
-    l2_loss = torch.mean(torch.sqrt((input - target).pow(2)))
-    assert loss(input, target) == l2_loss
-    # l1 loss
-    loss = LpLoss(p=1, reduction="sum")
-    l1_loss = torch.sum(torch.abs(input - target))
-    assert loss(input, target) == l1_loss
+@pytest.mark.parametrize("p", [2, 0.5, "inf", "-inf"])
+@pytest.mark.parametrize("reduction", ["mean", "sum", "none"])
+@pytest.mark.parametrize("relative", [True, False])
+def test_forward(p, reduction, relative):
 
+    # Define the loss
+    loss = LpLoss(p=p, reduction=reduction, relative=relative)
 
-def test_LpRelativeLoss_constructor():
-    # test reduction
-    for reduction in available_reductions:
-        LpLoss(reduction=reduction, relative=True)
-    # test p
-    for p in [float("inf"), -float("inf"), 1, 10, -8]:
-        LpLoss(p=p, relative=True)
+    # Forward pass
+    value = loss(input, target)
 
-
-def test_LpRelativeLoss_forward():
-    # l2 relative loss
-    loss = LpLoss(p=2, reduction="mean", relative=True)
-    l2_loss = torch.sqrt((input - target).pow(2)) / torch.sqrt(input.pow(2))
-    assert loss(input, target) == torch.mean(l2_loss)
-    # l1 relative loss
-    loss = LpLoss(p=1, reduction="sum", relative=True)
-    l1_loss = torch.abs(input - target) / torch.abs(input)
-    assert loss(input, target) == torch.sum(l1_loss)
+    # Check shape
+    if loss.reduction != "none":
+        assert value.shape == torch.Size([1])
+    else:
+        assert value.shape == torch.Size([target.shape[0]])

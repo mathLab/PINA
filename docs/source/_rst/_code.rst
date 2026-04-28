@@ -310,8 +310,9 @@ Losses and Weightings
     :titlesonly:
 
     LossInterface <loss/loss_interface.rst>
-    LpLoss <loss/lploss.rst>
-    PowerLoss <loss/powerloss.rst>
+    BaseLoss <loss/base_loss.rst>
+    LpLoss <loss/lp_loss.rst>
+    PowerLoss <loss/power_loss.rst>
     WeightingInterface <loss/weighting_interface.rst>
     ScalarWeighting <loss/scalar_weighting.rst>
     NeuralTangentKernelWeighting <loss/ntk_weighting.rst>
