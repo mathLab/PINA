@@ -26,8 +26,40 @@ def forcing_term(input_):
 
 class Poisson2DSquareProblem(SpatialProblem):
     r"""
-    Implementation of the 2-dimensional Poisson problem in the square domain
-    :math:`[0, 1] \times [0, 1]`.
+    Implementation of the two-dimensional Poisson problem on the square domain
+    :math:`\Omega = [0, 1] \times [0, 1]`.
+
+    The problem is governed by the Poisson equation
+
+    .. math::
+
+        \Delta u = f(x, y),
+
+    where :math:`u = u(x, y)` is the solution field and :math:`f(x, y)` is the
+    forcing term.
+
+    Homogeneous Dirichlet boundary conditions are imposed on the boundary of the
+    domain:
+
+    .. math::
+
+        u(x, y) = 0, \qquad (x, y) \in \partial \Omega.
+
+    The forcing term is given by
+
+    .. math::
+
+        f(x, y)
+        =
+        2\pi^2 \sin(\pi x)\sin(\pi y).
+
+    The analytical solution is given by
+
+    .. math::
+
+        u(x, y)
+        =
+        -\sin(\pi x)\sin(\pi y).
 
     :Example:
 

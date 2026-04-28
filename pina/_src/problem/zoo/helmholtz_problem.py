@@ -11,8 +11,45 @@ from pina._src.domain.cartesian_domain import CartesianDomain
 
 class HelmholtzProblem(SpatialProblem):
     r"""
-    Implementation of the Helmholtz problem in the square domain
-    :math:`[-1, 1] \times [-1, 1]`.
+    Implementation of the two-dimensional Helmholtz problem on the square domain
+    :math:`\Omega = [-1, 1] \times [-1, 1]`.
+
+    The problem is governed by the forced Helmholtz equation
+
+    .. math::
+
+        \Delta u + k u = f(x, y),
+
+    where :math:`u = u(x, y)` is the solution field, :math:`k` is the squared
+    wavenumber, and :math:`f(x, y)` is a forcing term.
+
+    Homogeneous Dirichlet boundary conditions are imposed on the boundary of
+    the domain:
+
+    .. math::
+
+        u(x, y) = 0, \qquad (x, y) \in \partial \Omega.
+
+    The analytical solution is given by
+
+    .. math::
+
+        u(x, y)
+        =
+        \sin(\alpha_x \pi x)
+        \sin(\alpha_y \pi y),
+
+    with forcing term
+
+    .. math::
+
+        f(x, y)
+        =
+        \left[
+        k - (\alpha_x^2 + \alpha_y^2)\pi^2
+        \right]
+        \sin(\alpha_x \pi x)
+        \sin(\alpha_y \pi y).
 
     .. seealso::
 

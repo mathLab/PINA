@@ -28,8 +28,50 @@ def initial_condition(input_, output_):
 
 class AcousticWaveProblem(TimeDependentProblem, SpatialProblem):
     r"""
-    Implementation of the acoustic wave problem in the spatial interval
-    :math:`[0, 1]` and temporal interval :math:`[0, 1]`.
+    Implementation of the one-dimensional acoustic wave problem on the
+    space-time domain :math:`\Omega\times T = [0, 1] \times [0, 1]`.
+
+    The problem is governed by the acoustic wave equation
+
+    .. math::
+
+        \frac{\partial^2 u}{\partial t^2}
+        =
+        c^2 \frac{\partial^2 u}{\partial x^2},
+
+    where :math:`u = u(x, t)` is the solution field and :math:`c > 0` is the
+    wave propagation speed.
+
+    Homogeneous Dirichlet boundary conditions are imposed at the spatial
+    boundaries:
+
+    .. math::
+
+        u(0, t) = u(1, t) = 0, \qquad t \in [0, 1].
+
+    The initial displacement is prescribed as
+
+    .. math::
+
+        u(x, 0) = \sin(\pi x) + \frac{1}{2}\sin(4\pi x),
+        \qquad x \in [0, 1],
+
+    together with zero initial velocity:
+
+    .. math::
+
+        \frac{\partial u}{\partial t}(x, 0) = 0,
+        \qquad x \in [0, 1].
+
+    The analytical solution is given by
+
+    .. math::
+
+        u(x, t)
+        =
+        \sin(\pi x)\cos(c\pi t)
+        +
+        \frac{1}{2}\sin(4\pi x)\cos(4c\pi t).
 
     .. seealso::
 
