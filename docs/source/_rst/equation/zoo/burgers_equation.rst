@@ -1,4 +1,4 @@
-Burgers Equation
+Burgers' Equation
 ====================
 .. currentmodule:: pina.equation.zoo.burgers_equation
 

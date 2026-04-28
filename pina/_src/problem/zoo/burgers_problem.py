@@ -1,4 +1,4 @@
-"""Formulation of the burgers problem."""
+"""Formulation of the Burgers' problem."""
 
 import torch
 from pina._src.problem.time_dependent_problem import TimeDependentProblem
@@ -13,7 +13,7 @@ from pina._src.equation.zoo.burgers_equation import BurgersEquation
 
 def initial_condition(input_, output_):
     """
-    Definition of the initial condition of the burgers problem.
+    Definition of the initial condition of the Burgers' problem.
 
     :param LabelTensor input_: The input data of the problem.
     :param LabelTensor output_: The output data of the problem.
@@ -25,8 +25,31 @@ def initial_condition(input_, output_):
 
 class BurgersProblem(TimeDependentProblem, SpatialProblem):
     r"""
-    Implementation of the burgers problem in the spatial interval
-    :math:`[-1, 1]` and temporal interval :math:`[0, 1]`.
+    Implementation of the one-dimensional Burgers' problem on the space-time
+    domain :math:`\Omega\times T = [-1, 1] \times [0, 1]`.
+
+    The problem is governed by the Burgers' equation
+
+    .. math::
+
+        \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} =
+        \nu \frac{\partial^2 u}{\partial x^2},
+
+    where :math:`u = u(x, t)` is the solution field and :math:`\nu \geq 0`
+    is the viscosity coefficient. For :math:`\nu = 0`, the equation reduces
+    to the inviscid Burgers' equation.
+
+    Homogeneous Dirichlet boundary conditions are imposed at the spatial
+    boundaries:
+
+    .. math::
+        u(-1, t) = u(1, t) = 0, \qquad t \in [0, 1].
+
+    The initial condition is prescribed as
+
+    .. math::
+        u(x, 0) = -\sin(\pi x), \qquad x \in [-1, 1].
+
 
     .. seealso::
 

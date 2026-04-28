@@ -224,7 +224,7 @@ Equation Zoo
     Acoustic Wave Equation <equation/zoo/acoustic_wave_equation.rst>
     Advection Equation <equation/zoo/advection_equation.rst>
     Allen-Cahn Equation <equation/zoo/allen_cahn_equation.rst>
-    Burgers Equation <equation/zoo/burgers_equation.rst>
+    Burgers' Equation <equation/zoo/burgers_equation.rst>
     Diffusion-Reaction Equation <equation/zoo/diffusion_reaction_equation.rst>
     Fixed Flux <equation/zoo/fixed_flux.rst>
     Fixed Gradient <equation/zoo/fixed_gradient.rst>
@@ -253,15 +253,15 @@ Problem Zoo
 .. toctree::
     :titlesonly:
 
-    AcousticWaveProblem <problem/zoo/acoustic_wave_problem.rst>
-    AdvectionProblem <problem/zoo/advection_problem.rst>
-    AllenCahnProblem <problem/zoo/allen_cahn_problem.rst>
-    BurgersProblem <problem/zoo/burgers_problem.rst>
-    DiffusionReactionProblem <problem/zoo/diffusion_reaction_problem.rst>
-    HelmholtzProblem <problem/zoo/helmholtz_problem.rst>
-    InversePoisson2DSquareProblem <problem/zoo/inverse_poisson_problem.rst>
-    Poisson2DSquareProblem <problem/zoo/poisson_problem.rst>
-    SupervisedProblem <problem/zoo/supervised_problem.rst>
+    Acoustic Wave Problem <problem/zoo/acoustic_wave_problem.rst>
+    Advection Problem <problem/zoo/advection_problem.rst>
+    Allen-Cahn Problem <problem/zoo/allen_cahn_problem.rst>
+    Burgers' Problem <problem/zoo/burgers_problem.rst>
+    Diffusion-Reaction Problem <problem/zoo/diffusion_reaction_problem.rst>
+    Helmholtz Problem <problem/zoo/helmholtz_problem.rst>
+    Inverse Poisson 2D Square Problem <problem/zoo/inverse_poisson_problem.rst>
+    Poisson 2D Square Problem <problem/zoo/poisson_problem.rst>
+    Supervised Problem <problem/zoo/supervised_problem.rst>
 
 
 Geometrical Domains

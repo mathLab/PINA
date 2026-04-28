@@ -1,4 +1,4 @@
-Burgers Problem
+Burgers' Problem
 =====================
 .. currentmodule:: pina.problem.zoo.burgers_problem
 
