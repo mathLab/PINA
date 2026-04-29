@@ -44,8 +44,8 @@ def __getattr__(name):
     if name in _DEPRECATED_IMPORTS:
 
         warnings.warn(
-            f"Importing '{name}' from 'equation' is deprecated; "
-            f"import it from 'equation.zoo' instead.",
+            f"Importing '{name}' from 'pina.equation' is deprecated; "
+            f"import it from 'pina.equation.zoo' instead.",
             DeprecationWarning,
             stacklevel=2,
         )

@@ -303,8 +303,8 @@ Callbacks
     Refinement Interface <callback/refinement/refinement_interface.rst>
     R3 Refinement <callback/refinement/r3_refinement.rst>
 
-Losses and Weightings
----------------------
+Losses 
+---------
 
 .. toctree::
     :titlesonly:
@@ -313,8 +313,17 @@ Losses and Weightings
     BaseLoss <loss/base_loss.rst>
     LpLoss <loss/lp_loss.rst>
     PowerLoss <loss/power_loss.rst>
-    WeightingInterface <loss/weighting_interface.rst>
-    ScalarWeighting <loss/scalar_weighting.rst>
-    NeuralTangentKernelWeighting <loss/ntk_weighting.rst>
-    SelfAdaptiveWeighting <loss/self_adaptive_weighting.rst>
-    LinearWeighting <loss/linear_weighting.rst>
+
+Weighting Schemas
+--------------------
+
+.. toctree::
+    :titlesonly:
+
+    Weighting Interface <weighting/weighting_interface.rst>
+    Base Weighting <weighting/base_weighting.rst>
+    Linear Weighting <weighting/linear_weighting.rst>
+    Neural-Tangent-Kernel Weighting <weighting/ntk_weighting.rst>
+    No Weighting <weighting/no_weighting.rst>
+    Scalar Weighting <weighting/scalar_weighting.rst>
+    Self-Adaptive Weighting <weighting/self_adaptive_weighting.rst>
