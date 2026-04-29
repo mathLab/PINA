@@ -11,8 +11,8 @@ from pina._src.optim.optimizer_interface import Optimizer
 from pina._src.optim.scheduler_interface import Scheduler
 from pina._src.optim.torch_optimizer import TorchOptimizer
 from pina._src.optim.torch_scheduler import TorchScheduler
-from pina._src.loss.weighting_interface import WeightingInterface
-from pina._src.loss.scalar_weighting import _NoWeighting
+from pina._src.weighting.weighting_interface import WeightingInterface
+from pina._src.weighting.no_weighting import _NoWeighting
 from pina._src.core.utils import check_consistency, labelize_forward
 
 

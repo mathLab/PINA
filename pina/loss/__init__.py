@@ -1,27 +1,39 @@
-"""Loss functions and balancing strategies for multi-objective optimization.
-
-This module provides standard error metrics (Lp, Power loss) and sophisticated
-weighting schemes designed to balance residual, boundary, and data-driven loss
-terms, including dynamic methods like Neural Tangent Kernel (NTK) and
-self-adaptive weighting.
-"""
+"""Module for loss functions."""
 
 __all__ = [
     "LossInterface",
+    "BaseLoss",
     "LpLoss",
     "PowerLoss",
-    "WeightingInterface",
-    "ScalarWeighting",
-    "NeuralTangentKernelWeighting",
-    "SelfAdaptiveWeighting",
-    "LinearWeighting",
 ]
 
 from pina._src.loss.loss_interface import LossInterface
+from pina._src.loss.base_loss import BaseLoss
 from pina._src.loss.power_loss import PowerLoss
 from pina._src.loss.lp_loss import LpLoss
-from pina._src.loss.weighting_interface import WeightingInterface
-from pina._src.loss.scalar_weighting import ScalarWeighting
-from pina._src.loss.ntk_weighting import NeuralTangentKernelWeighting
-from pina._src.loss.self_adaptive_weighting import SelfAdaptiveWeighting
-from pina._src.loss.linear_weighting import LinearWeighting
+
+# Back-compatibility with version 0.2, to be removed soon
+import warnings
+import importlib
+
+_DEPRECATED_IMPORTS = {
+    "WeightingInterface": "pina.weighting",
+    "ScalarWeighting": "pina.weighting",
+    "NeuralTangentKernelWeighting": "pina.weighting",
+    "SelfAdaptiveWeighting": "pina.weighting",
+    "LinearWeighting": "pina.weighting",
+}
+
+
+def __getattr__(name):
+    if name in _DEPRECATED_IMPORTS:
+
+        warnings.warn(
+            f"Importing '{name}' from 'pina.loss' is deprecated; "
+            f"use 'pina.weighting' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        module = importlib.import_module(_DEPRECATED_IMPORTS[name], __name__)
+        return getattr(module, name)
