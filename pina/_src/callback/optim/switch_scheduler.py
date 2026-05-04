@@ -1,30 +1,31 @@
 """Module for the SwitchScheduler callback."""
 
 from lightning.pytorch.callbacks import Callback
-from pina._src.optim.torch_scheduler import TorchScheduler
+from pina._src.optim.scheduler_interface import SchedulerInterface
 from pina._src.core.utils import check_consistency, check_positive_integer
 
 
 class SwitchScheduler(Callback):
     """
-    Callback to switch scheduler during training.
+    Lightning callback for dynamically replacing schedulers during training.
+
+    This callback enables switching to new scheduler(s) at a specified epoch
+    without interrupting the training loop. It is useful for staged training
+    strategies where different learning rate policies are applied sequentially.
     """
 
     def __init__(self, new_schedulers, epoch_switch):
         """
-        This callback allows switching between different schedulers during
-        training, enabling the exploration of multiple optimization strategies
-        without interrupting the training process.
+        Initialization of the :class:`SwitchScheduler` class.
 
         :param new_schedulers: The scheduler or list of schedulers to switch to.
             Use a single scheduler for single-model solvers, or a list of
             schedulers when working with multiple models.
-        :type new_schedulers: pina.optim.TorchScheduler |
-            list[pina.optim.TorchScheduler]
+        :type new_schedulers: SchedulerInterface | list[SchedulerInterface]
         :param int epoch_switch: The epoch at which the scheduler switch occurs.
-        :raises AssertionError: If epoch_switch is less than 1.
-        :raises ValueError: If each scheduler in ``new_schedulers`` is not an
-            instance of :class:`pina.optim.TorchScheduler`.
+        :raises AssertionError: If ``epoch_switch`` is not a positive integer.
+        :raises ValueError:  If any of the provided schedulers are not instances
+            of :class:`pina.optim.SchedulerInterface`.
 
         Example:
             >>> scheduler = TorchScheduler(
@@ -36,16 +37,13 @@ class SwitchScheduler(Callback):
         """
         super().__init__()
 
-        # Check if epoch_switch is greater than 1
-        check_positive_integer(epoch_switch - 1, strict=True)
+        # Check consistency
+        check_positive_integer(epoch_switch, strict=True)
+        check_consistency(new_schedulers, SchedulerInterface)
 
         # If new_schedulers is not a list, convert it to a list
         if not isinstance(new_schedulers, list):
             new_schedulers = [new_schedulers]
-
-        # Check consistency
-        for scheduler in new_schedulers:
-            check_consistency(scheduler, TorchScheduler)
 
         # Store the new schedulers and epoch switch
         self._new_schedulers = new_schedulers
@@ -55,9 +53,9 @@ class SwitchScheduler(Callback):
         """
         Switch the scheduler at the start of the specified training epoch.
 
-        :param lightning.pytorch.Trainer trainer: The trainer object managing
+        :param Trainer trainer: The trainer object managing
             the training process.
-        :param __: Placeholder argument (not used).
+        :param __: Placeholder argument, not used.
         """
         # Check if the current epoch matches the switch epoch
         if trainer.current_epoch == self._epoch_switch:
