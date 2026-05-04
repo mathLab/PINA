@@ -1,27 +1,36 @@
 """Module for the SwitchOptimizer callback."""
 
 from lightning.pytorch.callbacks import Callback
-from pina._src.optim.torch_optimizer import TorchOptimizer
-from pina._src.core.utils import check_consistency
+from pina._src.optim.optimizer_interface import OptimizerInterface
+from pina._src.core.utils import check_consistency, check_positive_integer
 
 
 class SwitchOptimizer(Callback):
     """
-    PINA Implementation of a Lightning Callback to switch optimizer during
-    training.
+    Lightning callback for dynamically replacing optimizers during training.
+
+    This callback enables switching to one or more new optimizers at a specified
+    epoch without restarting the training loop. It is particularly useful for
+    staged optimization strategies (e.g., coarse-to-fine training or optimizer
+    warm-up phases), where different optimizers are applied sequentially.
+
+    At the target epoch, the provided optimizers are hooked to the model
+    parameters and replace the current optimizers in both the PINA solver and
+    the Lightning trainer strategy.
     """
 
     def __init__(self, new_optimizers, epoch_switch):
         """
-        This callback allows switching between different optimizers during
-        training, enabling the exploration of multiple optimization strategies
-        without interrupting the training process.
+        Initialization of the :class:`SwitchOptimizer` class.
 
         :param new_optimizers: The model optimizers to switch to. Can be a
             single :class:`torch.optim.Optimizer` instance or a list of them
             for multiple model solver.
-        :type new_optimizers: pina.optim.TorchOptimizer | list
+        :type new_optimizers: pina.optim.OptimizerInterface | list
         :param int epoch_switch: The epoch at which the optimizer switch occurs.
+        :raises AssertionError: If ``epoch_switch`` is not a positive integer.
+        :raises ValueError: If any of the provided optimizers are not instances
+            of :class:`pina.optim.OptimizerInterface`.
 
         Example:
             >>> optimizer = TorchOptimizer(torch.optim.Adam, lr=0.01)
@@ -31,18 +40,13 @@ class SwitchOptimizer(Callback):
         """
         super().__init__()
 
-        # Check if epoch_switch is greater than 1
-        if epoch_switch < 1:
-            raise ValueError("epoch_switch must be greater than one.")
+        # Check consistency
+        check_positive_integer(epoch_switch, strict=True)
+        check_consistency(new_optimizers, OptimizerInterface)
 
         # If new_optimizers is not a list, convert it to a list
         if not isinstance(new_optimizers, list):
             new_optimizers = [new_optimizers]
-
-        # Check consistency
-        check_consistency(epoch_switch, int)
-        for optimizer in new_optimizers:
-            check_consistency(optimizer, TorchOptimizer)
 
         # Store the new optimizers and epoch switch
         self._new_optimizers = new_optimizers
@@ -52,9 +56,9 @@ class SwitchOptimizer(Callback):
         """
         Switch the optimizer at the start of the specified training epoch.
 
-        :param lightning.pytorch.Trainer trainer: The trainer object managing
-            the training process.
-        :param _: Placeholder argument (not used).
+        :param Trainer trainer: The trainer object managing the training
+            process.
+        :param __: Placeholder argument, not used.
         """
         # Check if the current epoch matches the switch epoch
         if trainer.current_epoch == self._epoch_switch:
