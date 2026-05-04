@@ -82,10 +82,10 @@ class CausalPINN(PINN):
             inherit from at least
             :class:`~pina.problem.time_dependent_problem.TimeDependentProblem`.
         :param torch.nn.Module model: The neural network model to be used.
-        :param Optimizer optimizer: The optimizer to be used.
+        :param OptimizerInterface optimizer: The optimizer to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param torch.optim.LRScheduler scheduler: Learning rate scheduler.
+        :param SchedulerInterface scheduler: Learning rate scheduler.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.

@@ -63,10 +63,10 @@ class PINN(PINNInterface, SingleSolverInterface):
 
         :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module model: The neural network model to be used.
-        :param Optimizer optimizer: The optimizer to be used.
+        :param OptimizerInterface optimizer: The optimizer to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param Scheduler scheduler: Learning rate scheduler.
+        :param SchedulerInterface scheduler: Learning rate scheduler.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
@@ -117,7 +117,7 @@ class PINN(PINNInterface, SingleSolverInterface):
         Optimizer configuration for the PINN solver.
 
         :return: The optimizers and the schedulers
-        :rtype: tuple[list[Optimizer], list[Scheduler]]
+        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
         """
         # If the problem is an InverseProblem, add the unknown parameters
         # to the parameters to be optimized.

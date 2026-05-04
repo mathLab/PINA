@@ -50,10 +50,10 @@ class SupervisedSolver(SupervisedSolverInterface, SingleSolverInterface):
         :param torch.nn.Module loss: The loss function to be minimized.
             If ``None``, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
-        :param Optimizer optimizer: The optimizer to be used.
+        :param OptimizerInterface optimizer: The optimizer to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param Scheduler scheduler: Learning rate scheduler.
+        :param SchedulerInterface scheduler: Learning rate scheduler.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.

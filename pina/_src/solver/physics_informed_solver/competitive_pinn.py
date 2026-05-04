@@ -73,18 +73,18 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         :param torch.nn.Module discriminator: The discriminator to be used.
             If ``None``, the discriminator is a deepcopy of the ``model``.
             Default is ``None``.
-        :param torch.optim.Optimizer optimizer_model: The optimizer of the
+        :param OptimizerInterface optimizer_model: The optimizer of the
             ``model``. If ``None``, the :class:`torch.optim.Adam` optimizer is
             used. Default is ``None``.
-        :param torch.optim.Optimizer optimizer_discriminator: The optimizer of
+        :param OptimizerInterface optimizer_discriminator: The optimizer of
             the ``discriminator``. If ``None``, the :class:`torch.optim.Adam`
             optimizer is used. Default is ``None``.
-        :param Scheduler scheduler_model: Learning rate scheduler for the
-            ``model``.
+        :param SchedulerInterface scheduler_model: Learning rate scheduler for
+            the ``model``.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
-        :param Scheduler scheduler_discriminator: Learning rate scheduler for
-            the ``discriminator``.
+        :param SchedulerInterface scheduler_discriminator: Learning rate
+            scheduler for the ``discriminator``.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
@@ -184,7 +184,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         Optimizer configuration.
 
         :return: The optimizers and the schedulers
-        :rtype: tuple[list[Optimizer], list[Scheduler]]
+        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
         """
         # If the problem is an InverseProblem, add the unknown parameters
         # to the parameters to be optimized
@@ -238,7 +238,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         The optimizer associated to the model.
 
         :return: The optimizer for the model.
-        :rtype: Optimizer
+        :rtype: OptimizerInterface
         """
         return self.optimizers[0]
 
@@ -248,7 +248,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         The optimizer associated to the discriminator.
 
         :return: The optimizer for the discriminator.
-        :rtype: Optimizer
+        :rtype: OptimizerInterface
         """
         return self.optimizers[1]
 
@@ -258,7 +258,7 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         The scheduler associated to the model.
 
         :return: The scheduler for the model.
-        :rtype: Scheduler
+        :rtype: SchedulerInterface
         """
         return self.schedulers[0]
 
@@ -268,6 +268,6 @@ class CompetitivePINN(PINNInterface, MultiSolverInterface):
         The scheduler associated to the discriminator.
 
         :return: The scheduler for the discriminator.
-        :rtype: Scheduler
+        :rtype: SchedulerInterface
         """
         return self.schedulers[1]

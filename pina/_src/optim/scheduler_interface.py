@@ -1,23 +1,31 @@
-"""Module for the PINA Scheduler."""
+"""Module for the Scheduler Interface."""
 
 from abc import ABCMeta, abstractmethod
 
 
-class Scheduler(metaclass=ABCMeta):
+class SchedulerInterface(metaclass=ABCMeta):
     """
-    Abstract base class for defining a scheduler. All specific schedulers should
-    inherit form this class and implement the required methods.
+    Abstract interface for all schedulers.
     """
+
+    @abstractmethod
+    def hook(self, optimizer):
+        """
+        Execute custom logic associated with the scheduler instance.
+
+        This method is intended to encapsulate any additional behavior that
+        should be triggered during the optimization process.
+
+        :param OptimizerInterface optimizer: The optimizer instance associated
+            with the scheduler.
+        """
 
     @property
     @abstractmethod
     def instance(self):
         """
-        Abstract property to retrieve the scheduler instance.
-        """
+        The underlying scheduler object.
 
-    @abstractmethod
-    def hook(self):
-        """
-        Abstract method to define the hook logic for the scheduler.
+        :return: The scheduler instance.
+        :rtype: object
         """

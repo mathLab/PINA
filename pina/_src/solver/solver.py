@@ -7,8 +7,8 @@ import torch
 from torch._dynamo import OptimizedModule
 from pina._src.problem.base_problem import BaseProblem
 from pina._src.problem.inverse_problem import InverseProblem
-from pina._src.optim.optimizer_interface import Optimizer
-from pina._src.optim.scheduler_interface import Scheduler
+from pina._src.optim.optimizer_interface import OptimizerInterface
+from pina._src.optim.scheduler_interface import SchedulerInterface
 from pina._src.optim.torch_optimizer import TorchOptimizer
 from pina._src.optim.torch_scheduler import TorchScheduler
 from pina._src.weighting.weighting_interface import WeightingInterface
@@ -316,7 +316,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         Set the default optimizer to :class:`torch.optim.Adam`.
 
         :return: The default optimizer.
-        :rtype: Optimizer
+        :rtype: OptimizerInterface
         """
         return TorchOptimizer(torch.optim.Adam, lr=0.001)
 
@@ -327,7 +327,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :class:`torch.optim.lr_scheduler.ConstantLR`.
 
         :return: The default scheduler.
-        :rtype: Scheduler
+        :rtype: SchedulerInterface
         """
         return TorchScheduler(torch.optim.lr_scheduler.ConstantLR, factor=1.0)
 
@@ -381,10 +381,10 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
 
         :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module model: The neural network model to be used.
-        :param Optimizer optimizer: The optimizer to be used.
+        :param OptimizerInterface optimizer: The optimizer to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is
             used. Default is ``None``.
-        :param Scheduler scheduler: The scheduler to be used.
+        :param SchedulerInterface scheduler: The scheduler to be used.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
@@ -402,9 +402,9 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
         # check consistency of models argument and encapsulate in list
         check_consistency(model, torch.nn.Module)
         # check scheduler consistency and encapsulate in list
-        check_consistency(scheduler, Scheduler)
+        check_consistency(scheduler, SchedulerInterface)
         # check optimizer consistency and encapsulate in list
-        check_consistency(optimizer, Optimizer)
+        check_consistency(optimizer, OptimizerInterface)
 
         # initialize the model (needed by Lightining to go to different devices)
         self._pina_models = torch.nn.ModuleList([model])
@@ -427,7 +427,7 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
         Optimizer configuration for the solver.
 
         :return: The optimizer and the scheduler
-        :rtype: tuple[list[Optimizer], list[Scheduler]]
+        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
         """
         self.optimizer.hook(self.model.parameters())
         if isinstance(self.problem, InverseProblem):
@@ -458,7 +458,7 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
         The scheduler used for training.
 
         :return: The scheduler used for training.
-        :rtype: Scheduler
+        :rtype: SchedulerInterface
         """
         return self._pina_schedulers[0]
 
@@ -468,7 +468,7 @@ class SingleSolverInterface(SolverInterface, metaclass=ABCMeta):
         The optimizer used for training.
 
         :return: The optimizer used for training.
-        :rtype: Optimizer
+        :rtype: OptimizerInterface
         """
         return self._pina_optimizers[0]
 
@@ -493,10 +493,10 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         :param BaseProblem problem: The problem to be solved.
         :param models: The neural network models to be used.
         :type model: list[torch.nn.Module] | tuple[torch.nn.Module]
-        :param list[Optimizer] optimizers: The optimizers to be used.
+        :param list[OptimizerInterface] optimizers: The optimizers to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used for all
             models. Default is ``None``.
-        :param list[Scheduler] schedulers: The schedulers to be used.
+        :param list[SchedulerInterface] schedulers: The schedulers to be used.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used for all the models. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
@@ -548,10 +548,10 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         check_consistency(models, torch.nn.Module)
 
         # check scheduler consistency and encapsulate in list
-        check_consistency(schedulers, Scheduler)
+        check_consistency(schedulers, SchedulerInterface)
 
         # check optimizer consistency and encapsulate in list
-        check_consistency(optimizers, Optimizer)
+        check_consistency(optimizers, OptimizerInterface)
 
         # check length consistency optimizers
         if len(models) != len(optimizers):
@@ -598,7 +598,7 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         Optimizer configuration for the solver.
 
         :return: The optimizer and the scheduler
-        :rtype: tuple[list[Optimizer], list[Scheduler]]
+        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
         """
         for optimizer, scheduler, model in zip(
             self.optimizers, self.schedulers, self.models
@@ -627,7 +627,7 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         The optimizers used for training.
 
         :return: The optimizers used for training.
-        :rtype: list[Optimizer]
+        :rtype: list[OptimizerInterface]
         """
         return self._pina_optimizers
 
@@ -637,6 +637,6 @@ class MultiSolverInterface(SolverInterface, metaclass=ABCMeta):
         The schedulers used for training.
 
         :return: The schedulers used for training.
-        :rtype: list[Scheduler]
+        :rtype: list[SchedulerInterface]
         """
         return self._pina_schedulers

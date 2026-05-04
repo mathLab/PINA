@@ -125,19 +125,19 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         :param torch.nn.Module model: The model to be used.
         :param torch.nn.Module weight_function: The Self-Adaptive mask model.
             Default is ``torch.nn.Sigmoid()``.
-        :param Optimizer optimizer_model: The optimizer of the ``model``.
-            If ``None``, the :class:`torch.optim.Adam` optimizer is used.
-            Default is ``None``.
-        :param Optimizer optimizer_weights: The optimizer of the
+        :param OptimizerInterface optimizer_model: The optimizer of the
+            ``model``. If ``None``, the :class:`torch.optim.Adam` optimizer is
+            used. Default is ``None``.
+        :param OptimizerInterface optimizer_weights: The optimizer of the
             ``weight_function``.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param Scheduler scheduler_model: Learning rate scheduler for the
-            ``model``.
+        :param SchedulerInterface scheduler_model: Learning rate scheduler for
+            the ``model``.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
-        :param Scheduler scheduler_weights: Learning rate scheduler for the
-            ``weight_function``.
+        :param SchedulerInterface scheduler_weights: Learning rate scheduler for
+            the ``weight_function``.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
@@ -296,7 +296,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         Optimizer configuration.
 
         :return: The optimizers and the schedulers
-        :rtype: tuple[list[Optimizer], list[Scheduler]]
+        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
         """
         # Hook the optimizers to the models
         self.optimizer_model.hook(self.model.parameters())
@@ -421,7 +421,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         The scheduler associated to the model.
 
         :return: The scheduler for the model.
-        :rtype: Scheduler
+        :rtype: SchedulerInterface
         """
         return self.schedulers[0]
 
@@ -431,7 +431,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         The scheduler associated to the mask model.
 
         :return: The scheduler for the mask model.
-        :rtype: Scheduler
+        :rtype: SchedulerInterface
         """
         return self.schedulers[1]
 
@@ -441,7 +441,7 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         Returns the optimizer associated to the model.
 
         :return: The optimizer for the model.
-        :rtype: Optimizer
+        :rtype: OptimizerInterface
         """
         return self.optimizers[0]
 
@@ -451,6 +451,6 @@ class SelfAdaptivePINN(PINNInterface, MultiSolverInterface):
         The optimizer associated to the mask model.
 
         :return: The optimizer for the mask model.
-        :rtype: Optimizer
+        :rtype: OptimizerInterface
         """
         return self.optimizers[1]
