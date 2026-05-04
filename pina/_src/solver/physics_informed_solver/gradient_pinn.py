@@ -74,10 +74,10 @@ class GradientPINN(PINN):
             :class:`~pina.problem.spatial_problem.SpatialProblem` to compute the
             gradient of the loss.
         :param torch.nn.Module model: The neural network model to be used.
-        :param Optimizer optimizer: The optimizer to be used.
+        :param OptimizerInterface optimizer: The optimizer to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param Scheduler scheduler: Learning rate scheduler.
+        :param SchedulerInterface scheduler: Learning rate scheduler.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.

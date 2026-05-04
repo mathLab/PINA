@@ -61,10 +61,10 @@ class DeepEnsembleSolverInterface(MultiSolverInterface):
 
         :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module models: The neural network models to be used.
-        :param Optimizer optimizer: The optimizer to be used.
+        :param OptimizerInterface optimizers: The optimizers to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used.
             Default is ``None``.
-        :param Scheduler scheduler: Learning rate scheduler.
+        :param SchedulerInterface schedulers: Learning rate schedulers.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.

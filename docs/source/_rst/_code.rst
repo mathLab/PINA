@@ -174,10 +174,10 @@ Optimizers and Schedulers
 .. toctree::
     :titlesonly:
 
-    Optimizer <optim/optimizer_interface.rst>
-    Scheduler <optim/scheduler_interface.rst>
-    TorchOptimizer <optim/torch_optimizer.rst>
-    TorchScheduler <optim/torch_scheduler.rst>
+    Optimizer Interface <optim/optimizer_interface.rst>
+    Scheduler Interface <optim/scheduler_interface.rst>
+    Torch Optimizer <optim/torch_optimizer.rst>
+    Torch Scheduler <optim/torch_scheduler.rst>
     
 
 Adaptive Functions

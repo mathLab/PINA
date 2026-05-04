@@ -1,23 +1,30 @@
-"""Module for the PINA Optimizer."""
+"""Module for the Optimizer Interface."""
 
 from abc import ABCMeta, abstractmethod
 
 
-class Optimizer(metaclass=ABCMeta):
+class OptimizerInterface(metaclass=ABCMeta):
     """
-    Abstract base class for defining an optimizer. All specific optimizers
-    should inherit form this class and implement the required methods.
+    Abstract interface for all optimizers.
     """
+
+    @abstractmethod
+    def hook(self, parameters):
+        """
+        Execute custom logic associated with the optimizer instance.
+
+        This method is intended to encapsulate any additional behavior that
+        should be triggered during the optimization process.
+
+        :param dict parameters: The parameters of the model to be optimized.
+        """
 
     @property
     @abstractmethod
     def instance(self):
         """
-        Abstract property to retrieve the optimizer instance.
-        """
+        The underlying optimizer object.
 
-    @abstractmethod
-    def hook(self):
-        """
-        Abstract method to define the hook logic for the optimizer.
+        :return: The optimizer instance.
+        :rtype: object
         """

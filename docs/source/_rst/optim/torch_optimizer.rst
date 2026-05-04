@@ -1,4 +1,4 @@
-TorchOptimizer
+Torch Optimizer
 ===============
 .. currentmodule:: pina.optim.torch_optimizer
 

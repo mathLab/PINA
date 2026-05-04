@@ -48,18 +48,18 @@ class GAROM(MultiSolverInterface):
         :param torch.nn.Module loss: The loss function to be minimized.
             If ``None``, :class:`~pina.loss.power_loss.PowerLoss` with ``p=1``
             is used. Default is ``None``.
-        :param Optimizer optimizer_generator: The optimizer for the generator.
-            If ``None``, the :class:`torch.optim.Adam` optimizer is used.
-            Default is ``None``.
-        :param Optimizer optimizer_discriminator: The optimizer for the
+        :param OptimizerInterface optimizer_generator: The optimizer for the
+            generator. If ``None``, the :class:`torch.optim.Adam` optimizer is
+            used. Default is ``None``.
+        :param OptimizerInterface optimizer_discriminator: The optimizer for the
             discriminator. If ``None``, the :class:`torch.optim.Adam`
             optimizer is used. Default is ``None``.
-        :param Scheduler scheduler_generator: The learning rate scheduler for
-            the generator.
+        :param SchedulerInterface scheduler_generator: The learning rate
+            scheduler for the generator.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
-        :param Scheduler scheduler_discriminator: The learning rate scheduler
-            for the discriminator.
+        :param SchedulerInterface scheduler_discriminator: The learning rate
+            scheduler for the discriminator.
             If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
             scheduler is used. Default is ``None``.
         :param float gamma: Ratio of expected loss for generator and
@@ -328,7 +328,7 @@ class GAROM(MultiSolverInterface):
         The optimizer for the generator.
 
         :return: The optimizer for the generator.
-        :rtype: Optimizer
+        :rtype: OptimizerInterface
         """
         return self.optimizers[0]
 
@@ -338,7 +338,7 @@ class GAROM(MultiSolverInterface):
         The optimizer for the discriminator.
 
         :return: The optimizer for the discriminator.
-        :rtype: Optimizer
+        :rtype: OptimizerInterface
         """
         return self.optimizers[1]
 
@@ -348,7 +348,7 @@ class GAROM(MultiSolverInterface):
         The scheduler for the generator.
 
         :return: The scheduler for the generator.
-        :rtype: Scheduler
+        :rtype: SchedulerInterface
         """
         return self.schedulers[0]
 
@@ -358,6 +358,6 @@ class GAROM(MultiSolverInterface):
         The scheduler for the discriminator.
 
         :return: The scheduler for the discriminator.
-        :rtype: Scheduler
+        :rtype: SchedulerInterface
         """
         return self.schedulers[1]

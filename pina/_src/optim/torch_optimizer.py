@@ -1,35 +1,46 @@
-"""Module for the PINA Torch Optimizer"""
+"""Module for wrapping PyTorch optimizers."""
 
 import torch
-
 from pina._src.core.utils import check_consistency
-from pina._src.optim.optimizer_interface import Optimizer
+from pina._src.optim.optimizer_interface import OptimizerInterface
 
 
-class TorchOptimizer(Optimizer):
+class TorchOptimizer(OptimizerInterface):
     """
-    A wrapper class for using PyTorch optimizers.
+    The wrapper class for PyTorch optimizers.
+
+    This class wraps a ``torch.optim.Optimizer`` class and defers its
+    instantiation until runtime. It enables a consistent interface across
+    different optimizer backends while leveraging PyTorch’s optimization
+    algorithms.
     """
 
     def __init__(self, optimizer_class, **kwargs):
         """
         Initialization of the :class:`TorchOptimizer` class.
 
-        :param torch.optim.Optimizer optimizer_class: A
-            :class:`torch.optim.Optimizer` class.
-        :param dict kwargs: Additional parameters passed to ``optimizer_class``,
-            see more
+        :param torch.optim.Optimizer optimizer_class: The subclass of
+            ``torch.optim.Optimizer`` to be instantiated.
+        :param dict kwargs: Additional keyword arguments forwarded to the
+            optimizer constructor. See more
             `here <https://pytorch.org/docs/stable/optim.html#algorithms>`_.
+        :raises ValueError: If ``optimizer_class`` is not a subclass of
+            ``torch.optim.Optimizer``.
         """
+        # Check consistency
         check_consistency(optimizer_class, torch.optim.Optimizer, subclass=True)
 
+        # Initialize attributes
         self.optimizer_class = optimizer_class
         self.kwargs = kwargs
         self._optimizer_instance = None
 
     def hook(self, parameters):
         """
-        Initialize the optimizer instance with the given parameters.
+        Execute custom logic associated with the optimizer instance.
+
+        This method is intended to encapsulate any additional behavior that
+        should be triggered during the optimization process.
 
         :param dict parameters: The parameters of the model to be optimized.
         """
@@ -40,7 +51,7 @@ class TorchOptimizer(Optimizer):
     @property
     def instance(self):
         """
-        Get the optimizer instance.
+        The underlying optimizer object.
 
         :return: The optimizer instance.
         :rtype: torch.optim.Optimizer

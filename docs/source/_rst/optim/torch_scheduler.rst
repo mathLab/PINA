@@ -1,4 +1,4 @@
-TorchScheduler
+Torch Scheduler
 ===============
 .. currentmodule:: pina.optim.torch_scheduler
 
