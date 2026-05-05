@@ -129,11 +129,14 @@ class BaseRefinement(Callback, RefinementInterface):
     @property
     def dataset(self):
         """
-        The training dataset managed by the refinement strategy, which can be
-        updated dynamically.
+        The training datasets managed by the refinement strategy.
 
-        :return: The current training dataset.
-        :rtype: PinaDataset
+        The dataset is stored as a dictionary whose keys are condition names and
+        whose values are the corresponding dataset subsets. The content of this
+        dictionary can be updated dynamically during refinement.
+
+        :return: The mapping between condition names and dataset subsets.
+        :rtype: dict
         """
         return self._dataset
 

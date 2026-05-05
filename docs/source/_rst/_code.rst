@@ -300,7 +300,7 @@ Callbacks
     Refinement Interface <callback/refinement/refinement_interface.rst>
     Base Refinement <callback/refinement/base_refinement.rst>
     R3 Refinement <callback/refinement/r3_refinement.rst>
-    Normalizer Data <callback/processing/normalizer_data_callback.rst>
+    Data Normalizer <callback/processing/data_normalizer.rst>
     Metric Tracker <callback/processing/metric_tracker.rst>
     PINA Progress Bar <callback/processing/pina_progress_bar.rst>
 
