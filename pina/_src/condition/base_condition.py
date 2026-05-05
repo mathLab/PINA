@@ -67,7 +67,7 @@ class BaseCondition(ConditionInterface):
         """
         Create the DataLoader for the condition.
 
-        :param Dataset dataset: The dataset for the DataLoader.
+        :param _ConditionSubset dataset: The dataset for the DataLoader.
         :param int batch_size: The batch size for the DataLoader.
         :param bool automatic_batching: Whether to use automatic batching.
         :param dict kwargs: Additional keyword arguments for the DataLoader.

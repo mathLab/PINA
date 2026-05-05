@@ -83,7 +83,7 @@ class R3Refinement(BaseRefinement):
         current_points = current_points.to(device).requires_grad_(True)
 
         # Compute residuals for the given condition
-        target = solver.compute_residual(current_points, condition.equation)
+        target = condition.evaluate({"input": current_points}, solver)
         residuals = self.loss_fn(target, torch.zeros_like(target)).mean(
             dim=tuple(range(1, target.ndim))
         )
