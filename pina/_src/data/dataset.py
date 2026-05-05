@@ -5,6 +5,8 @@ from torch.utils.data import Dataset
 from torch_geometric.data import Data
 from pina._src.core.graph import Graph, LabelBatch
 
+# TODO: the whole file seems to be unused, check if it can be safely deleted.
+
 
 class PinaDatasetFactory:
     """

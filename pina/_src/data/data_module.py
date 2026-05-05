@@ -156,6 +156,8 @@ class PinaDataModule(LightningDataModule):
         self.problem.move_discretisation_into_conditions()
         self._check_slit_sizes(train_size, test_size, val_size)
 
+        # TODO: singular forms (train_dataset, val_dataset, test_dataset) seem
+        # to be unused. Clean code.
         if train_size > 0:
             self.train_dataset = None
         else:
