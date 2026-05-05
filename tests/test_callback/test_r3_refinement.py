@@ -1,6 +1,6 @@
 import torch
 import pytest
-from pina.solver import PINN, SupervisedSolver
+from pina.solver import PINN
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.callback import R3Refinement
