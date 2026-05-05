@@ -11,14 +11,20 @@ __all__ = [
     "NormalizerDataCallback",
     "PINAProgressBar",
     "MetricTracker",
+    "RefinementInterface",
+    "BaseRefinement",
     "R3Refinement",
 ]
 
+from pina._src.callback.processing.pina_progress_bar import PINAProgressBar
+from pina._src.callback.processing.metric_tracker import MetricTracker
 from pina._src.callback.optim.switch_optimizer import SwitchOptimizer
 from pina._src.callback.optim.switch_scheduler import SwitchScheduler
+from pina._src.callback.refinement.base_refinement import BaseRefinement
+from pina._src.callback.refinement.r3_refinement import R3Refinement
+from pina._src.callback.refinement.refinement_interface import (
+    RefinementInterface,
+)
 from pina._src.callback.processing.normalizer_data_callback import (
     NormalizerDataCallback,
 )
-from pina._src.callback.processing.pina_progress_bar import PINAProgressBar
-from pina._src.callback.processing.metric_tracker import MetricTracker
-from pina._src.callback.refinement.r3_refinement import R3Refinement

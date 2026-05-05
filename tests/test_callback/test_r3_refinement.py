@@ -1,53 +1,104 @@
+import torch
 import pytest
-from torch.nn import MSELoss
-from pina.solver import PINN
+from pina.solver import PINN, SupervisedSolver
 from pina.trainer import Trainer
 from pina.model import FeedForward
-from pina.problem.zoo import Poisson2DSquareProblem as Poisson
 from pina.callback import R3Refinement
-
-# make the problem
-poisson_problem = Poisson()
-poisson_problem.discretise_domain(10, "grid", domains="boundary")
-poisson_problem.discretise_domain(10, "grid", domains="D")
-model = FeedForward(
-    len(poisson_problem.input_variables), len(poisson_problem.output_variables)
-)
-solver = PINN(problem=poisson_problem, model=model)
+from pina.problem.zoo import Poisson2DSquareProblem
 
 
-def test_constructor():
-    # good constructor
-    R3Refinement(sample_every=10)
-    R3Refinement(sample_every=10, residual_loss=MSELoss)
-    R3Refinement(sample_every=10, condition_to_update=["D"])
-    # wrong constructor
+@pytest.mark.parametrize("sample_every", [1, 3])
+@pytest.mark.parametrize("residual_loss", [torch.nn.MSELoss, torch.nn.L1Loss])
+@pytest.mark.parametrize("condition_to_update", [None, ["D"]])
+def test_constructor(sample_every, residual_loss, condition_to_update):
+
+    # Initialize the callback
+    R3Refinement(
+        sample_every=sample_every,
+        residual_loss=residual_loss,
+        condition_to_update=condition_to_update,
+    )
+
+    # Should fail if sample_every is not a positive integer
+    with pytest.raises(AssertionError):
+        R3Refinement(sample_every=0)
+
+    # Should fail if residual_loss is not a valid loss class
     with pytest.raises(ValueError):
-        R3Refinement(sample_every="str")
+        R3Refinement(sample_every=10, residual_loss="not_a_loss")
+
+    # Should fail if condition_to_update is not a string or iterable of strings
     with pytest.raises(ValueError):
-        R3Refinement(sample_every=10, condition_to_update=3)
+        R3Refinement(sample_every=10, condition_to_update=123)
 
 
-@pytest.mark.parametrize("condition_to_update", [["D"], ["boundary", "D"]])
-def test_sample(condition_to_update):
+@pytest.mark.parametrize("sample_every", [1, 3])
+@pytest.mark.parametrize("residual_loss", [torch.nn.MSELoss, torch.nn.L1Loss])
+@pytest.mark.parametrize("condition_to_update", [None, ["D"], ["boundary"]])
+def test_sample(sample_every, residual_loss, condition_to_update):
+
+    # Define the problem, model, and solver for testing
+    problem = Poisson2DSquareProblem()
+    problem.discretise_domain(10, "grid", domains="boundary")
+    problem.discretise_domain(10, "grid", domains="D")
+    model = FeedForward(
+        len(problem.input_variables), len(problem.output_variables)
+    )
+    solver = PINN(problem=problem, model=model)
+
+    # Initialize the callback
+    callback = R3Refinement(
+        sample_every=sample_every,
+        residual_loss=residual_loss,
+        condition_to_update=condition_to_update,
+    )
+
+    # Initialize the trainer
     trainer = Trainer(
         solver=solver,
-        callbacks=[
-            R3Refinement(
-                sample_every=1, condition_to_update=condition_to_update
-            )
-        ],
+        callbacks=callback,
         accelerator="cpu",
         max_epochs=5,
     )
-    before_n_points = {
-        loc: len(trainer.solver.problem.input_pts[loc])
-        for loc in condition_to_update
+
+    # Initialize the conditions to update if None
+    if callback._condition_to_update is None:
+        callback._condition_to_update = [
+            name
+            for name, cond in solver.problem.conditions.items()
+            if hasattr(cond, "domain")
+        ]
+
+    # Check initial population size and dataset before training
+    n_points_before_train = {
+        cond: len(trainer.solver.problem.conditions[cond].data.input)
+        for cond in callback._condition_to_update
     }
+
+    # Train the model to trigger refinement
     trainer.train()
-    after_n_points = {
-        loc: len(trainer.data_module.train_dataset.input[loc])
-        for loc in condition_to_update
+
+    # Check population size after training to ensure it has been updated
+    n_points_after_train = {
+        cond: len(trainer.solver.problem.conditions[cond].data.input)
+        for cond in callback._condition_to_update
     }
-    assert before_n_points == trainer.callbacks[0].initial_population_size
-    assert before_n_points == after_n_points
+
+    # Assert population size has been updated according to the refinement
+    assert n_points_before_train == trainer.callbacks[0].initial_population_size
+    assert n_points_before_train == n_points_after_train
+
+    # Should fail if the specified condition does not exist in the problem
+    with pytest.raises(RuntimeError):
+        callback = R3Refinement(
+            sample_every=sample_every,
+            residual_loss=residual_loss,
+            condition_to_update="non_existent_condition",
+        )
+        trainer = Trainer(
+            solver=solver,
+            callbacks=callback,
+            accelerator="cpu",
+            max_epochs=5,
+        )
+        callback.on_train_start(trainer, solver=solver)

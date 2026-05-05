@@ -301,6 +301,7 @@ Callbacks
     PINA Progress Bar <callback/processing/pina_progress_bar.rst>
     Metric Tracker <callback/processing/metric_tracker.rst>
     Refinement Interface <callback/refinement/refinement_interface.rst>
+    Base Refinement <callback/refinement/base_refinement.rst>
     R3 Refinement <callback/refinement/r3_refinement.rst>
 
 Losses 
