@@ -1,8 +1,10 @@
 Metric Tracker
 ==================
 .. currentmodule:: pina.callback.processing.metric_tracker
+
 .. automodule:: pina._src.callback.processing.metric_tracker
-    :show-inheritance:
-.. autoclass:: MetricTracker
+
+.. autoclass:: pina._src.callback.processing.metric_tracker.MetricTracker
    :members:
    :show-inheritance:
+   :noindex:

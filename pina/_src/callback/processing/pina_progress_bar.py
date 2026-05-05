@@ -9,8 +9,18 @@ from pina._src.core.utils import check_consistency
 
 class PINAProgressBar(TQDMProgressBar):
     """
-    PINA Implementation of a Lightning Callback for enriching the progress bar.
+    Custom progress bar callback for PINA training workflows.
+
+    This callback extends the default Lightning progress bar by filtering the
+    displayed metrics.
+
+    Metrics can refer either to condition-specific losses, identified by the
+    names assigned to the problem conditions, or to global losses. Global losses
+    are selected using ``"train"``, ``"val"``, or ``"test"``, and are internally
+    expanded to the corresponding logged loss metrics.
     """
+
+    GLOBAL_LOSS_KEYS = ("train", "val", "test")
 
     BAR_FORMAT = (
         "{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, "
@@ -19,81 +29,88 @@ class PINAProgressBar(TQDMProgressBar):
 
     def __init__(self, metrics="val", **kwargs):
         """
-        This class enables the display of only relevant metrics during training.
+        Initialization of the :class:`PINAProgressBar`.
 
-        :param metrics: Logged metrics to be shown during the training.
-            Must be a subset of the conditions keys defined in
-            :obj:`pina.condition.Condition`.
+        :param metrics: The names of the metrics to be shown in the progress
+            bar. Each entry can be either a key of a condition defined in the
+            problem or one of the global loss keys: ``"train"``, ``"val"``, or
+            ``"test"``. These global keys are internally expanded to the
+            corresponding logged loss names. Default is ``"val"``.
         :type metrics: str | list(str) | tuple(str)
-
-        :Keyword Arguments:
-            The additional keyword arguments specify the progress bar and can be
-            choosen from the `pytorch-lightning TQDMProgressBar API
-            <https://lightning.ai/docs/pytorch/stable/_modules/lightning/pytorch/callback/progress/tqdm_progress.html#TQDMProgressBar>`_
-
-        Example:
-            >>> pbar = PINAProgressBar(['mean'])
-            >>> # ... Perform training ...
-            >>> trainer = Trainer(solver, callbacks=[pbar])
+        :param dict kwargs: Additional keyword arguments passed to
+            :class:`lightning.pytorch.callbacks.TQDMProgressBar`.
+        :raises TypeError: If ``metrics`` contains non-string elements.
         """
         super().__init__(**kwargs)
-        # check consistency
-        if not isinstance(metrics, (list, tuple)):
-            metrics = [metrics]
+
+        # Check consistency
         check_consistency(metrics, str)
-        self._sorted_metrics = metrics
 
-    def get_metrics(self, trainer, pl_module):
-        r"""Combine progress bar metrics collected from the trainer with
-        standard metrics from get_standard_metrics.
-        Override this method to customize the items shown in the progress bar.
-        The progress bar metrics are sorted according to ``metrics``.
+        # Convert to list if a single string is provided
+        if isinstance(metrics, str):
+            metrics = [metrics]
 
-        Here is an example of how to override the defaults:
+        # Store the sorted metrics for later use in get_metrics
+        self._sorted_metrics = sorted(metrics)
 
-        .. code-block:: python
-
-            def get_metrics(self, trainer, model):
-                # don't show the version number
-                items = super().get_metrics(trainer, model)
-                items.pop("v_num", None)
-                return items
-
-        :return: Dictionary with the items to be displayed in the progress bar.
-        :rtype: tuple(dict)
+    def get_metrics(self, trainer, __):
         """
+        Retrieve and filter metrics to be displayed in the progress bar.
+
+        This method combines standard Lightning metrics with user-selected
+        progress bar metrics, retaining only the metrics specified at
+        initialization.
+
+        :param Trainer trainer: The trainer managing the training loop.
+        :param __: Placeholder argument, not used.
+        :return: Dictionary containing the metrics to display.
+        :rtype: dict
+
+        .. note::
+            This method overrides the default Lightning behavior. It can be
+            further customized by subclassing.
+        """
+        # Retrieve standard metrics and user-selected progress bar metrics
         standard_metrics = get_standard_metrics(trainer)
-        pbar_metrics = trainer.progress_bar_metrics
-        if pbar_metrics:
-            pbar_metrics = {
-                key: pbar_metrics[key]
-                for key in pbar_metrics
+        progress_bar_metrics = trainer.progress_bar_metrics
+
+        # Filter progress bar metrics to include only specified keys
+        if progress_bar_metrics:
+            progress_bar_metrics = {
+                key: progress_bar_metrics[key]
+                for key in progress_bar_metrics
                 if key in self._sorted_metrics
             }
-        return {**standard_metrics, **pbar_metrics}
+
+        return {**standard_metrics, **progress_bar_metrics}
 
     def setup(self, trainer, pl_module, stage):
         """
-        Check that the initialized metrics are available and correctly logged.
+        Configure the metrics to track before execution starts.
 
-        :param trainer: The trainer object managing the training process.
-        :type trainer: pytorch_lightning.Trainer
-        :param pl_module: Placeholder argument.
+        The requested metrics must be either names assigned to problem
+        conditions or global loss keys. The accepted global loss keys are
+        ``"train"``, ``"val"``, and ``"test"``.
+
+        :param Trainer trainer: The trainer instance managing the execution.
+        :param SolverInterface pl_module: The solver module being executed.
+        :param str stage: Current execution stage.
+        :raises KeyError: If a metric key is neither a condition key nor one of
+            ``"train"``, ``"val"``, or ``"test"``.
         """
-        # Check if all keys in sort_keys are present in the dictionary
+        # Get the condition keys from the problem
+        condition_keys = trainer.solver.problem.conditions.keys()
         for key in self._sorted_metrics:
-            if (
-                key not in trainer.solver.problem.conditions.keys()
-                and key != "train"
-                and key != "val"
-            ):
-                raise KeyError(f"Key '{key}' is not present in the dictionary")
-        # add the loss pedix
-        if trainer.batch_size is not None:
-            pedix = "_loss_epoch"
-        else:
-            pedix = "_loss"
+            if key not in condition_keys and key not in self.GLOBAL_LOSS_KEYS:
+                raise KeyError(
+                    f"Key '{key}' is not a valid metric. It must be either a "
+                    f"problem condition key or one of {self.GLOBAL_LOSS_KEYS}."
+                )
+
+        # Add the appropriate suffix to the metric names based on batch size
+        suffix = "_loss_epoch" if trainer.batch_size is not None else "_loss"
         self._sorted_metrics = [
-            metric + pedix for metric in self._sorted_metrics
+            metric + suffix for metric in self._sorted_metrics
         ]
+
         return super().setup(trainer, pl_module, stage)
