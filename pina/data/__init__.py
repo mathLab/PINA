@@ -1,14 +1,6 @@
-"""Data management utilities for PINA.
+"""Module containing utilities for dataset and data loader management."""
 
-This module provides specialized Dataset and DataModule implementations
-designed to handle physical coordinates, experimental observations, and
-graph-structured data within the PINA training pipeline.
-"""
+__all__ = ["PinaDataModule", "_SingleBatchDataLoader"]
 
-from pina._src.data.data_module import (
-    PinaDataModule,
-)
-
-__all__ = [
-    "PinaDataModule",
-]
+from pina._src.data.data_module import PinaDataModule
+from pina._src.data.single_batch_data_loader import _SingleBatchDataLoader

@@ -8,7 +8,7 @@ from pina._src.condition.condition_interface import ConditionInterface
 from pina._src.core.graph import LabelBatch
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import check_consistency
-from pina._src.data.dummy_dataloader import DummyDataloader
+from pina._src.data.single_batch_data_loader import _SingleBatchDataLoader
 from pina._src.problem.problem_interface import ProblemInterface
 
 
@@ -74,9 +74,9 @@ class BaseCondition(ConditionInterface):
         :return: The DataLoader for the condition.
         :rtype: torch.utils.data.DataLoader
         """
-        # If batching the entire dataset, return a DummyDataloader
+        # If batching the entire dataset, return a _SingleBatchDataLoader
         if batch_size == len(dataset):
-            return DummyDataloader(dataset)
+            return _SingleBatchDataLoader(dataset)
 
         # Otherwise, return a regular DataLoader with the appropriate collate
         return DataLoader(
