@@ -2,6 +2,15 @@ import pytest
 from pina.data import _Aggregator
 
 
+"""
+Note: this test intentionally avoids relying on the actual DataLoader
+implementation in order to keep the test focused on the aggregator logic itself
+and independent from the behavior of external classes. The full pipeline is 
+tested in the DataLoader tests, which ensures that the aggregator works
+correctly when used in the intended context.
+"""
+
+
 # Define a dummy dataloader for testing purposes
 class DummyDataloader:
     def __init__(self, data):
