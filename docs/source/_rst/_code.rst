@@ -26,6 +26,7 @@ Trainer, Data Loader and Data Module
     Trainer <trainer.rst>
     Data Module <data/data_module.rst>
     Single-Batch Data Loader <data/single_batch_data_loader.rst>
+    Aggregator <data/aggregator.rst>
 
 Data Types
 ------------
