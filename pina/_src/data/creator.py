@@ -1,19 +1,29 @@
-"""
-Module defining the Creator class, responsible for creating dataloaders
-for multiple conditions with various batching strategies.
-"""
+"""Module for creating dataloaders for multiple conditions."""
 
 import torch
-from torch.utils.data import RandomSampler, SequentialSampler
 from torch.utils.data.distributed import DistributedSampler
 
 
 class _Creator:
     """
-    The class :class:`_Creator` is responsible for creating dataloaders for
+    The class :class:`_Creator` is responsible for creating data loaders for
     multiple conditions based on specified batching strategies. It supports
-    different batching modes to accommodate various training requirements.
+    different batching strategies to accommodate various training requirements.
     """
+
+    """
+    Utility class for creating data loaders associated with multiple conditions.
+
+    The class supports different batching strategies to adapt data loading
+    behavior to specific training requirements
+    """
+
+    # Available batching modes
+    _AVAIL_BATCHING_MODES = {
+        "common_batch_size",
+        "proportional",
+        "separate_conditions",
+    }
 
     def __init__(
         self,
@@ -28,28 +38,37 @@ class _Creator:
         """
         Initialization of the :class:`_Creator` class.
 
-        :param batching_mode: The batching mode to use. Options are
-            ``"common_batch_size"``, ``"proportional"``, and
-            ``"separate_conditions"``.
-        :type batching_mode: str
-        :param batch_size: The batch size to use for dataloaders. If
-            ``batching_mode`` is ``"proportional"``, this represents the total
-            batch size across all conditions.
-        :type batch_size: int | None
-        :param shuffle: Whether to shuffle the data in the dataloaders.
-        :type shuffle: bool
-        :param automatic_batching: Whether to use automatic batching in the
-            dataloaders.
-        :type automatic_batching: bool
-        :param num_workers: The number of worker processes to use for data
+        :param str batching_mode: The strategy used to aggregate batches across
+            data loaders. Available options are ``"common_batch_size"`` for
+            uniform batch sizes across conditions, ``"proportional"`` for batch
+            sizes proportional to dataset sizes, and ``"separate_conditions"``
+            for iterating through each condition separately.
+        :param int batch_size: Batch size configuration used by the selected
+            batching strategy. For ``"common_batch_size"``, the same batch size
+            is assigned to all conditions. For ``"proportional"``, this value
+            represents the total batch size distributed proportionally across
+            conditions. For ``"separate_conditions"``, this value is applied
+            independently to each condition and capped by the corresponding
+            dataset size.
+        :param bool shuffle: Whether samples should be shuffled during loading.
+        :param bool automatic_batching: Whether automatic batching should be
+            enabled in the data loaders.
+        :param int num_workers: The number of worker processes used for data
             loading.
-        :type num_workers: int
-        :param pin_memory: Whether to pin memory in the dataloaders.
-        :type pin_memory: bool
-        :param conditions: A dictionary mapping condition names to their
-            respective condition objects.
-        :type conditions: dict[str, Condition]
+        :param bool pin_memory: Whether data loaders should pin memory.
+        :param dict[str, BaseCondition] conditions: The mapping between
+            condition names and condition objects responsible for data loader
+            creation.
+        :raises ValueError: If an invalid batching mode is provided.
         """
+        # Check consistency
+        if batching_mode not in self._AVAIL_BATCHING_MODES:
+            raise ValueError(
+                f"Invalid batching mode '{batching_mode}'. "
+                f"Available options are: {self._AVAIL_BATCHING_MODES}"
+            )
+
+        # Initialize attributes
         self.batching_mode = batching_mode
         self.batch_size = batch_size
         self.shuffle = shuffle
@@ -58,126 +77,38 @@ class _Creator:
         self.pin_memory = pin_memory
         self.conditions = conditions
 
-    def _define_sampler(self, dataset, shuffle):
-        if torch.distributed.is_initialized():
-            return DistributedSampler(dataset, shuffle=shuffle)
-        if shuffle:
-            return RandomSampler(dataset)
-        return SequentialSampler(dataset)
-
-    def _compute_batch_sizes(self, datasets):
-        """
-        Compute batch sizes for each condition based on the specified
-        batching mode.
-
-        :param datasets: A dictionary mapping condition names to their
-            respective datasets.
-        :type datasets: dict[str, Dataset]
-        :return: A dictionary mapping condition names to their computed batch
-            sizes.
-        :rtype: dict[str, int]
-        """
-        batch_sizes = {}
-        if self.batching_mode == "common_batch_size":
-
-            if self.batch_size is None:
-                batch_size = max(
-                    dataset.length for dataset in datasets.values()
-                )
-            else:
-                batch_size = self.batch_size
-
-            for name in datasets.keys():
-                batch_sizes[name] = min(batch_size, len(datasets[name]))
-            return batch_sizes
-        if self.batching_mode == "proportional":
-            return self._compute_proportional_batch_sizes(datasets)
-        if self.batching_mode == "separate_conditions":
-            for name in datasets.keys():
-                condition = self.conditions[name]
-                if self.batch_size is None:
-                    batch_sizes[name] = len(datasets[name])
-                else:
-                    batch_sizes[name] = min(
-                        self.batch_size, len(datasets[name])
-                    )
-            return batch_sizes
-        raise ValueError(f"Unknown batching mode: {self.batching_mode}")
-
-    def _compute_proportional_batch_sizes(self, datasets):
-        """
-        Compute batch sizes for each condition proportionally based on the
-        size of their datasets.
-        :param datasets: A dictionary mapping condition names to their
-            respective datasets.
-        :type datasets: dict[str, Dataset]
-        :return: A dictionary mapping condition names to their computed batch
-            sizes.
-        :rtype: dict[str, int]
-        """
-        # Compute number of elements per dataset
-        elements_per_dataset = {
-            dataset_name: len(dataset)
-            for dataset_name, dataset in datasets.items()
-        }
-        # Compute the total number of elements
-        total_elements = sum(el for el in elements_per_dataset.values())
-        # Compute the portion of each dataset
-        portion_per_dataset = {
-            name: el / total_elements
-            for name, el in elements_per_dataset.items()
-        }
-        # Compute batch size per dataset. Ensure at least 1 element per
-        # dataset.
-        batch_size_per_dataset = {
-            name: max(1, int(portion * self.batch_size))
-            for name, portion in portion_per_dataset.items()
-        }
-        # Adjust batch sizes to match the specified total batch size
-        tot_el_per_batch = sum(el for el in batch_size_per_dataset.values())
-        if self.batch_size > tot_el_per_batch:
-            difference = self.batch_size - tot_el_per_batch
-            while difference > 0:
-                for k, v in batch_size_per_dataset.items():
-                    if difference == 0:
-                        break
-                    if v > 1:
-                        batch_size_per_dataset[k] += 1
-                        difference -= 1
-        if self.batch_size < tot_el_per_batch:
-            difference = tot_el_per_batch - self.batch_size
-            while difference > 0:
-                for k, v in batch_size_per_dataset.items():
-                    if difference == 0:
-                        break
-                    if v > 1:
-                        batch_size_per_dataset[k] -= 1
-                        difference -= 1
-        return batch_size_per_dataset
-
     def __call__(self, datasets):
         """
-        Create dataloaders for each condition based on the specified batching
-        mode.
-        :param datasets: A dictionary mapping condition names to their
-            respective datasets.
-        :type datasets: dict[str, Dataset]
-        :return: A dictionary mapping condition names to their created
-            dataloaders.
+        Create data loaders for all provided datasets.
+
+        Batch sizes are computed according to the selected batching mode, and a
+        dedicated data loader is created for each condition.
+
+        :param dict[str, _ConditionSubset] datasets: The mapping between
+            condition names and datasets.
+        :return: The mapping between condition names and the corresponding
+            data loaders.
         :rtype: dict[str, DataLoader]
         """
         # Compute batch sizes per condition based on batching_mode
         batch_sizes = self._compute_batch_sizes(datasets)
         dataloaders = {}
+
+        # If common_batch_size mode, ensure all datasets have the same length
         if self.batching_mode == "common_batch_size":
             max_len = max(len(dataset) for dataset in datasets.values())
 
+        # Iterate through datasets and create dataloaders
         for name, dataset in datasets.items():
+
+            # If common_batch_size mode, set max_len for datasets
             if (
                 self.batching_mode == "common_batch_size"
                 and dataset.length != batch_sizes[name]
             ):
                 dataset.max_len = max_len
+
+            # Create dataloader for the current condition
             dataloaders[name] = self.conditions[name].create_dataloader(
                 dataset=dataset,
                 batch_size=batch_sizes[name],
@@ -186,4 +117,145 @@ class _Creator:
                 num_workers=self.num_workers,
                 pin_memory=self.pin_memory,
             )
+
         return dataloaders
+
+    def _define_sampler(self, dataset, shuffle):
+        """
+        Define the sampling strategy for a dataset.
+
+        Distributed training uses :class:`DistributedSampler`, while
+        non-distributed execution uses either :class:`RandomSampler` or
+        :class:`SequentialSampler` depending on ``shuffle``.
+
+        :param _ConditionSubset dataset: The dataset associated with the
+            sampler.
+        :param bool shuffle: Whether samples should be shuffled during loading.
+        :return: The configured sampler instance.
+        :rtype: Sampler
+        """
+        # Distributed training case
+        if torch.distributed.is_initialized():
+            return DistributedSampler(dataset, shuffle=shuffle)
+
+        # Non-distributed training case - shuffle True
+        if shuffle:
+            return torch.utils.data.RandomSampler(dataset)
+
+        # Non-distributed training case - shuffle False
+        return torch.utils.data.SequentialSampler(dataset)
+
+    def _compute_batch_sizes(self, datasets):
+        """
+        Compute batch sizes for each dataset according to the selected batching
+        mode.
+
+        :param dict[str, _ConditionSubset] datasets: The mapping between
+            condition names and datasets.
+        :return: The mapping between condition names and computed batch sizes.
+        :rtype: dict[str, int]
+        """
+        # Common batch size mode
+        if self.batching_mode == "common_batch_size":
+
+            # Compute batch size
+            batch_size = (
+                max(dataset.length for dataset in datasets.values())
+                if self.batch_size is None
+                else self.batch_size
+            )
+
+            return {
+                name: min(batch_size, len(dataset))
+                for name, dataset in datasets.items()
+            }
+
+        # Proportional batch size mode
+        if self.batching_mode == "proportional":
+            return self._compute_proportional_batch_sizes(datasets)
+
+        # Separate conditions mode
+        return {
+            name: (
+                len(dataset)
+                if self.batch_size is None
+                else min(self.batch_size, len(dataset))
+            )
+            for name, dataset in datasets.items()
+        }
+
+    def _compute_proportional_batch_sizes(self, datasets):
+        """
+        Compute batch sizes proportionally to dataset sizes.
+
+        Each dataset receives a fraction of the total batch size proportional to
+        its number of samples, while ensuring that each dataset contributes at
+        least one sample.
+
+        :param dict[str, _ConditionSubset] datasets: The mapping between
+            condition names and datasets.
+        :return: The mapping between condition names and proportional batch
+            sizes.
+        :rtype: dict[str, int]
+        """
+        # Compute the sizes of each dataset
+        dataset_sizes = {
+            name: len(dataset) for name, dataset in datasets.items()
+        }
+
+        # Determine the total number of elements across all datasets
+        total_size = sum(dataset_sizes.values())
+
+        # Compute the batch sizes
+        batch_sizes = {
+            name: max(1, int(self.batch_size * (size / total_size)))
+            for name, size in dataset_sizes.items()
+        }
+
+        # Compute assigned batch size and difference with the total batch size
+        assigned_batch_size = sum(batch_sizes.values())
+        difference = self.batch_size - assigned_batch_size
+
+        # If difference > 0, distribute to datasets with more than 1 sample
+        if difference > 0:
+
+            # Sort datasets by size in descending order
+            sorted_datasets = sorted(
+                dataset_sizes,
+                key=lambda name: dataset_sizes[name],
+                reverse=True,
+            )
+
+            # Distribute to datasets with more than 1 sample
+            for name in sorted_datasets:
+
+                # Stop distribution when the difference is fully allocated
+                if difference == 0:
+                    break
+
+                # Distribute to datasets with more than 1 sample
+                if dataset_sizes[name] > 1:
+                    batch_sizes[name] += 1
+                    difference -= 1
+
+        # If difference < 0, reduce from datasets with more than 1 sample
+        if difference < 0:
+
+            # Sort batches by size in descending order
+            sorted_batches = sorted(
+                batch_sizes, key=lambda name: batch_sizes[name], reverse=True
+            )
+
+            # Reduce from datasets with more than 1 sample
+            for name in sorted_batches:
+
+                # Stop reduction when the difference is fully allocated
+                if difference == 0:
+                    break
+
+                # Reduce from datasets with more than 1 sample
+                if batch_sizes[name] > 1:
+                    batch_sizes[name] -= 1
+                    difference += 1
+
+        return batch_sizes
