@@ -1,9 +1,7 @@
 import pytest
 import torch
-
-from pina import LabelTensor, Condition
+from pina import LabelTensor, Condition, Trainer
 from pina.model import FeedForward
-from pina.trainer import Trainer
 from pina.solver import PINN
 from pina.condition import (
     InputTargetCondition,
@@ -14,6 +12,7 @@ from pina.problem.zoo import (
     Poisson2DSquareProblem as Poisson,
     InversePoisson2DSquareProblem as InversePoisson,
 )
+from torch._dynamo.eval_frame import OptimizedModule
 
 # define problems
 problem = Poisson()
@@ -114,9 +113,6 @@ def test_train_load_restore(clean_tmp_dir, problem):
         default_root_dir=dir,
     )
     trainer.train()
-    import os
-
-    print(os.listdir(f"{dir}/lightning_logs/version_0/checkpoints/"))
 
     # restore
     new_trainer = Trainer(solver=solver, max_epochs=5, accelerator="cpu")

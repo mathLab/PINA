@@ -11,11 +11,13 @@ from pina._src.condition.input_equation_condition import (
 )
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.core.utils import check_consistency
-from pina._src.loss.loss_interface import DualLossInterface as LossInterface
-from pina._src.solver.solver import MultiSolverInterface
+from pina._src.loss.loss_interface import DualLossInterface
+from pina._src.optim.optimizer_interface import OptimizerInterface
+from pina._src.optim.scheduler_interface import SchedulerInterface
+from pina._src.solver.base_solver import BaseSolver
 
 
-class MultiModelSimpleSolver(MultiSolverInterface):
+class MultiModelSimpleSolver(BaseSolver):
     """
     Minimal multi-model solver with explicit residual evaluation, reduction,
     and loss aggregation across conditions.
@@ -66,15 +68,15 @@ class MultiModelSimpleSolver(MultiSolverInterface):
         """
         Initialize the multi-model simple solver.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param list[torch.nn.Module] models: The neural network models to be
             used. Must be a list or tuple with at least two models.
-        :param list[Optimizer] optimizers: The optimizers to be used.
+        :param list[OptimizerInterface] optimizers: The optimizers to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used for
             each model. Default is ``None``.
-        :param list[Scheduler] schedulers: The learning rate schedulers.
-            If ``None``, :class:`torch.optim.lr_scheduler.ConstantLR` is used
-            for each model. Default is ``None``.
+        :param list[SchedulerInterface] schedulers: The learning rate
+            schedulers. If ``None`` :class:`torch.optim.lr_scheduler.ConstantLR`
+            is used for each model. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If ``None``, no weighting schema is used. Default is ``None``.
         :param torch.nn.Module loss: The element-wise loss module whose
@@ -88,13 +90,13 @@ class MultiModelSimpleSolver(MultiSolverInterface):
         if loss is None:
             loss = torch.nn.MSELoss()
 
-        check_consistency(loss, (LossInterface, _Loss), subclass=False)
+        check_consistency(loss, (DualLossInterface, _Loss), subclass=False)
 
         super().__init__(
             problem=problem,
-            models=models,
-            optimizers=optimizers,
-            schedulers=schedulers,
+            model=models,
+            optimizer=optimizers,
+            scheduler=schedulers,
             weighting=weighting,
             use_lt=use_lt,
         )
@@ -104,6 +106,68 @@ class MultiModelSimpleSolver(MultiSolverInterface):
 
         if hasattr(self._loss_fn, "reduction"):
             self._loss_fn.reduction = "none"
+        if not isinstance(models, (list, tuple)) or len(models) < 2:
+            raise ValueError(
+                "models should be list[torch.nn.Module] or "
+                "tuple[torch.nn.Module] with len greater than "
+                "one."
+            )
+
+        if optimizers is None:
+            optimizers = [
+                self.default_torch_optimizer() for _ in range(len(models))
+            ]
+
+        if schedulers is None:
+            schedulers = [
+                self.default_torch_scheduler() for _ in range(len(models))
+            ]
+
+        if any(opt is None for opt in optimizers):
+            optimizers = [
+                self.default_torch_optimizer() if opt is None else opt
+                for opt in optimizers
+            ]
+
+        if any(sched is None for sched in schedulers):
+            schedulers = [
+                self.default_torch_scheduler() if sched is None else sched
+                for sched in schedulers
+            ]
+
+        # check consistency of models argument and encapsulate in list
+        check_consistency(models, torch.nn.Module)
+
+        # check scheduler consistency and encapsulate in list
+        check_consistency(schedulers, SchedulerInterface)
+
+        # check optimizer consistency and encapsulate in list
+        check_consistency(optimizers, OptimizerInterface)
+
+        # check length consistency optimizers
+        if len(models) != len(optimizers):
+            raise ValueError(
+                "You must define one optimizer for each model."
+                f"Got {len(models)} models, and {len(optimizers)}"
+                " optimizers."
+            )
+        if len(schedulers) != len(optimizers):
+            raise ValueError(
+                "You must define one scheduler for each optimizer."
+                f"Got {len(schedulers)} schedulers, and {len(optimizers)}"
+                " optimizers."
+            )
+
+        # initialize the model
+        self._pina_models = torch.nn.ModuleList(models)
+        self._pina_optimizers = optimizers
+        self._pina_schedulers = schedulers
+        self._loss_fn = loss
+
+        # Set automatic optimization to False.
+        # For more information on manual optimization see:
+        # http://lightning.ai/docs/pytorch/stable/model/manual_optimization.html
+        self.automatic_optimization = False
 
     # ------------------------------------------------------------------
     # Forward
@@ -129,7 +193,6 @@ class MultiModelSimpleSolver(MultiSolverInterface):
             return self.models[model_idx].forward(x)
         return torch.stack(
             [self.forward(x, idx) for idx in range(self.num_models)],
-            dim=self._ensemble_dim,
         )
 
     # ------------------------------------------------------------------
@@ -188,13 +251,14 @@ class MultiModelSimpleSolver(MultiSolverInterface):
                 # Temporarily expose only one model through forward so that
                 # condition.evaluate uses just that model.
                 original_forward = self.forward
-                self.forward = (  # noqa: E731
-                    lambda x, _idx=idx: self.models[_idx].forward(x)
-                )
+                self.forward = lambda x, _idx=idx: self.models[  # noqa: E731
+                    _idx
+                ].forward(x)
                 from pina._src.core.utils import labelize_forward
+
                 problem = self.problem
                 self.forward = labelize_forward(
-                    self.forward, 
+                    self.forward,
                     input_variables=problem.input_variables,
                     output_variables=problem.output_variables,
                 )
@@ -247,16 +311,6 @@ class MultiModelSimpleSolver(MultiSolverInterface):
         return self._loss_fn
 
     @property
-    def ensemble_dim(self):
-        """
-        The dimension along which the per-model outputs are stacked.
-
-        :return: The ensemble dimension.
-        :rtype: int
-        """
-        return self._ensemble_dim
-
-    @property
     def num_models(self):
         """
         The number of models in the ensemble.
@@ -265,3 +319,67 @@ class MultiModelSimpleSolver(MultiSolverInterface):
         :rtype: int
         """
         return len(self.models)
+
+    def on_train_batch_end(self, outputs, batch, batch_idx):
+        """
+        This method is called at the end of each training batch and overrides
+        the PyTorch Lightning implementation to log checkpoints.
+
+        :param torch.Tensor outputs: The ``model``'s output for the current
+            batch.
+        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
+            tuple containing a condition name and a dictionary of points.
+        :param int batch_idx: The index of the current batch.
+        """
+        # increase by one the counter of optimization to save loggers
+        epoch_loop = self.trainer.fit_loop.epoch_loop
+        epoch_loop.manual_optimization.optim_step_progress.total.completed += 1
+        return super().on_train_batch_end(outputs, batch, batch_idx)
+
+    def configure_optimizers(self):
+        """
+        Optimizer configuration for the solver.
+
+        :return: The optimizer and the scheduler
+        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
+        """
+        for optimizer, scheduler, model in zip(
+            self.optimizers, self.schedulers, self.models
+        ):
+            optimizer.hook(model.parameters())
+            scheduler.hook(optimizer)
+
+        return (
+            [optimizer.instance for optimizer in self.optimizers],
+            [scheduler.instance for scheduler in self.schedulers],
+        )
+
+    @property
+    def models(self):
+        """
+        The models used for training.
+
+        :return: The models used for training.
+        :rtype: torch.nn.ModuleList
+        """
+        return self._pina_models
+
+    @property
+    def optimizers(self):
+        """
+        The optimizers used for training.
+
+        :return: The optimizers used for training.
+        :rtype: list[OptimizerInterface]
+        """
+        return self._pina_optimizers
+
+    @property
+    def schedulers(self):
+        """
+        The schedulers used for training.
+
+        :return: The schedulers used for training.
+        :rtype: list[SchedulerInterface]
+        """
+        return self._pina_schedulers

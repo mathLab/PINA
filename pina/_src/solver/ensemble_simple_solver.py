@@ -4,9 +4,9 @@ from pina._src.solver.multi_model_simple_solver import MultiModelSimpleSolver
 from pina._src.core.utils import check_consistency
 
 
-class DeepEnsembleSimpleSolver(MultiModelSimpleSolver):
+class EnsembleSimpleSolver(MultiModelSimpleSolver):
     r"""
-    Deep Ensemble Simple Solver class. This class implements a Deep Ensemble
+    Ensemble Simple Solver class. This class implements an ensemble
     solver for generic conditions (data, equations, or domain residuals) using
     user-specified ``models`` to solve a specific ``problem``.
 
@@ -68,20 +68,19 @@ class DeepEnsembleSimpleSolver(MultiModelSimpleSolver):
         weighting=None,
         loss=None,
         use_lt=True,
-        ensemble_dim=0,
     ):
         """
         Initialization of the :class:`DeepEnsembleSimpleSolver` class.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param list[torch.nn.Module] models: The neural network models to be
             used. Must be a list or tuple with at least two models.
-        :param list[Optimizer] optimizers: The optimizers to be used.
+        :param list[OptimizerInterface] optimizers: The optimizers to be used.
             If ``None``, the :class:`torch.optim.Adam` optimizer is used for
             each model. Default is ``None``.
-        :param list[Scheduler] schedulers: The learning rate schedulers.
-            If ``None``, :class:`torch.optim.lr_scheduler.ConstantLR` is used
-            for each model. Default is ``None``.
+        :param list[SchedulerInterface] schedulers: The learning rate
+            schedulers. If ``None`` :class:`torch.optim.lr_scheduler.ConstantLR`
+            is used for each model. Default is ``None``.
         :param WeightingInterface weighting: The weighting schema to be used.
             If ``None``, no weighting schema is used. Default is ``None``.
         :param torch.nn.Module loss: The element-wise loss module.
@@ -92,7 +91,8 @@ class DeepEnsembleSimpleSolver(MultiModelSimpleSolver):
         :param int ensemble_dim: The dimension along which the per-model
             outputs are stacked in :meth:`forward`. Default is ``0``.
         """
-        super().__init__(
+        MultiModelSimpleSolver.__init__(
+            self,
             problem=problem,
             models=models,
             optimizers=optimizers,
@@ -102,5 +102,12 @@ class DeepEnsembleSimpleSolver(MultiModelSimpleSolver):
             use_lt=use_lt,
         )
 
-        check_consistency(ensemble_dim, int)
-        self.num_ensemble = len(models)
+    @property
+    def num_ensemble(self):
+        """
+        The number of models in the ensemble.
+
+        :return: The number of models in the ensemble.
+        :rtype: int
+        """
+        return len(self.models)

@@ -2,18 +2,6 @@
 
 from abc import ABCMeta, abstractmethod
 import lightning
-import torch
-
-from torch._dynamo import OptimizedModule
-from pina._src.problem.abstract_problem import AbstractProblem
-from pina._src.problem.inverse_problem import InverseProblem
-from pina._src.optim.optimizer_interface import OptimizerInterface
-from pina._src.optim.scheduler_interface import SchedulerInterface
-from pina._src.optim.torch_optimizer import TorchOptimizer
-from pina._src.optim.torch_scheduler import TorchScheduler
-from pina._src.loss.weighting_interface import WeightingInterface
-from pina._src.loss.scalar_weighting import _NoWeighting
-from pina._src.core.utils import check_consistency, labelize_forward
 
 
 class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
@@ -26,55 +14,6 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     By inheriting from this base class, solvers gain access to built-in training
     loops, logging utilities, and optimization techniques.
     """
-
-    def __init__(self, problem, weighting, use_lt):
-        """
-        Initialization of the :class:`SolverInterface` class.
-
-        :param AbstractProblem problem: The problem to be solved.
-        :param WeightingInterface weighting: The weighting schema to be used.
-            If ``None``, no weighting schema is used. Default is ``None``.
-        :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
-        """
-        super().__init__()
-
-        # check consistency of the problem
-        check_consistency(problem, AbstractProblem)
-        self._check_solver_consistency(problem)
-        self._pina_problem = problem
-
-        # check consistency of the weighting and hook the condition names
-        if weighting is None:
-            weighting = _NoWeighting()
-        check_consistency(weighting, WeightingInterface)
-        self._pina_weighting = weighting
-        weighting._solver = self
-
-        # check consistency use_lt
-        check_consistency(use_lt, bool)
-        self._use_lt = use_lt
-
-        # if use_lt is true add extract operation in input
-        if use_lt is True:
-            self.forward = labelize_forward(
-                forward=self.forward,
-                input_variables=problem.input_variables,
-                output_variables=problem.output_variables,
-            )
-
-        # PINA private attributes (some are overridden by derived classes)
-        self._pina_problem = problem
-        self._pina_models = None
-        self._pina_optimizers = None
-        self._pina_schedulers = None
-
-        # inverse problem handling
-        if isinstance(self.problem, InverseProblem):
-            self._params = self.problem.unknown_parameters
-            self._clamp_params = self._clamp_inverse_problem_params
-        else:
-            self._params = None
-            self._clamp_params = lambda: None
 
     @abstractmethod
     def forward(self, *args, **kwargs):
@@ -99,6 +38,7 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :rtype: dict
         """
 
+    @abstractmethod
     def training_step(self, batch, **kwargs):
         """
         Solver training step. It computes the optimization cycle and aggregates
@@ -111,10 +51,8 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
-        loss = self._optimization_cycle(batch=batch, **kwargs)
-        self.store_log("train_loss", loss, self.get_batch_size(batch))
-        return loss
 
+    @abstractmethod
     def validation_step(self, batch, **kwargs):
         """
         Solver validation step. It computes the optimization cycle and
@@ -128,11 +66,8 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
-        losses = self.optimization_cycle(batch=batch, **kwargs)
-        loss = (sum(losses.values()) / len(losses)).as_subclass(torch.Tensor)
-        self.store_log("val_loss", loss, self.get_batch_size(batch))
-        return loss
 
+    @abstractmethod
     def test_step(self, batch, **kwargs):
         """
         Solver test step. It computes the optimization cycle and
@@ -146,26 +81,8 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
-        losses = self.optimization_cycle(batch=batch, **kwargs)
-        loss = (sum(losses.values()) / len(losses)).as_subclass(torch.Tensor)
-        self.store_log("test_loss", loss, self.get_batch_size(batch))
-        return loss
 
-    def store_log(self, name, value, batch_size):
-        """
-        Store the log of the solver.
-
-        :param str name: The name of the log.
-        :param torch.Tensor value: The value of the log.
-        :param int batch_size: The size of the batch.
-        """
-        self.log(
-            name=name,
-            value=value,
-            batch_size=batch_size,
-            **self.trainer.logging_kwargs,
-        )
-
+    @abstractmethod
     def setup(self, stage):
         """
         This method is called at the start of the train and test process to
@@ -177,184 +94,3 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
         :return: The result of the parent class ``setup`` method.
         :rtype: Any
         """
-        if self.trainer.compile and not self._is_compiled():
-            self._setup_compile()
-        return super().setup(stage)
-
-    def _is_compiled(self):
-        """
-        Check if the model is compiled.
-
-        :return: ``True`` if the model is compiled, ``False`` otherwise.
-        :rtype: bool
-        """
-        for model in self._pina_models:
-            if not isinstance(model, OptimizedModule):
-                return False
-        return True
-
-    def _setup_compile(self):
-        """
-        Compile all models in the solver using ``torch.compile``.
-
-        This method iterates through each model stored in the solver
-        list and attempts to compile them for optimized execution. It supports
-        models of type `torch.nn.Module` and `torch.nn.ModuleDict`. For models
-        stored in a `ModuleDict`, each submodule is compiled individually.
-        Models on Apple Silicon (MPS) use the 'eager' backend,
-        while others use 'inductor'.
-
-        :raises RuntimeError: If a model is neither `torch.nn.Module`
-            nor `torch.nn.ModuleDict`.
-        """
-        for i, model in enumerate(self._pina_models):
-            if isinstance(model, torch.nn.ModuleDict):
-                for name, module in model.items():
-                    self._pina_models[i][name] = self._compile_modules(module)
-            elif isinstance(model, torch.nn.Module):
-                self._pina_models[i] = self._compile_modules(model)
-            else:
-                raise RuntimeError(
-                    "Compilation available only for "
-                    "torch.nn.Module or torch.nn.ModuleDict."
-                )
-
-    def _check_solver_consistency(self, problem):
-        """
-        Check the consistency of the solver with the problem formulation.
-
-        :param AbstractProblem problem: The problem to be solved.
-        """
-        for condition in problem.conditions.values():
-            check_consistency(condition, self.accepted_conditions_types)
-
-    def _optimization_cycle(self, batch, **kwargs):
-        """
-        Aggregate the loss for each condition in the batch.
-
-        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
-            tuple containing a condition name and a dictionary of points.
-        :param dict kwargs: Additional keyword arguments passed to
-            ``optimization_cycle``.
-        :return: The losses computed for all conditions in the batch, casted
-            to a subclass of :class:`torch.Tensor`. It should return a dict
-            containing the condition name and the associated scalar loss.
-        :rtype: dict
-        """
-        # compute losses
-        losses = self.optimization_cycle(batch)
-        # clamp unknown parameters in InverseProblem (if needed)
-        self._clamp_params()
-        # store log
-        for name, value in losses.items():
-            self.store_log(
-                f"{name}_loss", value.item(), self.get_batch_size(batch)
-            )
-        # aggregate
-        loss = self.weighting.aggregate(losses).as_subclass(torch.Tensor)
-        return loss
-
-    def _clamp_inverse_problem_params(self):
-        """
-        Clamps the parameters of the inverse problem solver to specified ranges.
-        """
-        for v in self._params:
-            self._params[v].data.clamp_(
-                self.problem.unknown_parameter_domain.range[v][0],
-                self.problem.unknown_parameter_domain.range[v][1],
-            )
-
-    @staticmethod
-    def _compile_modules(model):
-        """
-        Perform the compilation of the model.
-
-        This method attempts to compile the given PyTorch model
-        using ``torch.compile`` to improve execution performance. The
-        backend is selected based on the device on which the model resides:
-        ``eager`` is used for MPS devices (Apple Silicon), and ``inductor``
-        is used for all others.
-
-        If compilation fails, the method prints the error and returns the
-        original, uncompiled model.
-
-        :param torch.nn.Module model: The model to compile.
-        :raises Exception: If the compilation fails.
-        :return: The compiled model.
-        :rtype: torch.nn.Module
-        """
-        model_device = next(model.parameters()).device
-        try:
-            if model_device == torch.device("mps:0"):
-                model = torch.compile(model, backend="eager")
-            else:
-                model = torch.compile(model, backend="inductor")
-        except Exception as e:
-            print("Compilation failed, running in normal mode.:\n", e)
-        return model
-
-    @staticmethod
-    def get_batch_size(batch):
-        """
-        Get the batch size.
-
-        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
-            tuple containing a condition name and a dictionary of points.
-        :return: The size of the batch.
-        :rtype: int
-        """
-        batch_size = 0
-        for data in batch:
-            batch_size += len(data[1]["input"])
-        return batch_size
-
-    @staticmethod
-    def default_torch_optimizer():
-        """
-        Set the default optimizer to :class:`torch.optim.Adam`.
-
-        :return: The default optimizer.
-        :rtype: OptimizerInterface
-        """
-        return TorchOptimizer(torch.optim.Adam, lr=0.001)
-
-    @staticmethod
-    def default_torch_scheduler():
-        """
-        Set the default scheduler to
-        :class:`torch.optim.lr_scheduler.ConstantLR`.
-
-        :return: The default scheduler.
-        :rtype: SchedulerInterface
-        """
-        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR, factor=1.0)
-
-    @property
-    def problem(self):
-        """
-        The problem instance.
-
-        :return: The problem instance.
-        :rtype: :class:`~pina.problem.abstract_problem.AbstractProblem`
-        """
-        return self._pina_problem
-
-    @property
-    def use_lt(self):
-        """
-        Using LabelTensors as input during training.
-
-        :return: The use_lt attribute.
-        :rtype: bool
-        """
-        return self._use_lt
-
-    @property
-    def weighting(self):
-        """
-        The weighting schema.
-
-        :return: The weighting schema.
-        :rtype: :class:`~pina.loss.weighting_interface.WeightingInterface`
-        """
-        return self._pina_weighting

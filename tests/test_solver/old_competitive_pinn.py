@@ -1,9 +1,7 @@
 import torch
 import pytest
-
-from pina import LabelTensor, Condition
-from pina.solver import CompetitivePINN as CompPINN
-from pina.trainer import Trainer
+from pina import LabelTensor, Condition, Trainer
+from pina.solver import CompetitivePINN
 from pina.model import FeedForward
 from pina.problem.zoo import (
     Poisson2DSquareProblem as Poisson,
@@ -36,8 +34,8 @@ model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 @pytest.mark.parametrize("discr", [None, model])
 def test_constructor(problem, discr):
-    solver = CompPINN(problem=problem, model=model)
-    solver = CompPINN(problem=problem, model=model, discriminator=discr)
+    solver = CompetitivePINN(problem=problem, model=model)
+    solver = CompetitivePINN(problem=problem, model=model, discriminator=discr)
 
     assert solver.accepted_conditions_types == (
         InputTargetCondition,
@@ -50,7 +48,7 @@ def test_constructor(problem, discr):
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_train(problem, batch_size, compile):
-    solver = CompPINN(problem=problem, model=model)
+    solver = CompetitivePINN(problem=problem, model=model)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -72,7 +70,7 @@ def test_solver_train(problem, batch_size, compile):
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_validation(problem, batch_size, compile):
-    solver = CompPINN(problem=problem, model=model)
+    solver = CompetitivePINN(problem=problem, model=model)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -94,7 +92,7 @@ def test_solver_validation(problem, batch_size, compile):
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_test(problem, batch_size, compile):
-    solver = CompPINN(problem=problem, model=model)
+    solver = CompetitivePINN(problem=problem, model=model)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -115,7 +113,7 @@ def test_solver_test(problem, batch_size, compile):
 @pytest.mark.parametrize("problem", [problem, inverse_problem])
 def test_train_load_restore(clean_tmp_dir, problem):
     dir = clean_tmp_dir
-    solver = CompPINN(problem=problem, model=model)
+    solver = CompetitivePINN(problem=problem, model=model)
     trainer = Trainer(
         solver=solver,
         max_epochs=5,
@@ -136,7 +134,7 @@ def test_train_load_restore(clean_tmp_dir, problem):
     )
 
     # loading
-    new_solver = CompPINN.load_from_checkpoint(
+    new_solver = CompetitivePINN.load_from_checkpoint(
         f"{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt",
         problem=problem,
         model=model,

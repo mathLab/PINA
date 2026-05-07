@@ -1,11 +1,9 @@
 import pytest
 import torch
-
-from pina import LabelTensor, Condition
+from pina import LabelTensor, Condition, Trainer
 from pina.problem import TimeDependentProblem
 from pina.solver import GradientPINN
 from pina.model import FeedForward
-from pina.trainer import Trainer
 from pina.problem.zoo import (
     Poisson2DSquareProblem as Poisson,
     InversePoisson2DSquareProblem as InversePoisson,

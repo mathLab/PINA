@@ -2,12 +2,10 @@ import torch
 import pytest
 from torch._dynamo.eval_frame import OptimizedModule
 from torch_geometric.nn import GCNConv
-from pina import Condition, LabelTensor
-from pina.condition import InputTargetCondition
+from pina import Condition, LabelTensor, Trainer
 from pina.problem import BaseProblem
-from pina.solver import DeepEnsembleSupervisedSolver
+from pina.solver import EnsembleSimpleSolver
 from pina.model import FeedForward
-from pina.trainer import Trainer
 from pina.graph import KNNGraph
 
 
@@ -90,11 +88,9 @@ graph_models = [Models() for i in range(10)]
 
 
 def test_constructor():
-    solver = DeepEnsembleSupervisedSolver(
-        problem=TensorProblem(), models=models
-    )
-    DeepEnsembleSupervisedSolver(problem=LabelTensorProblem(), models=models)
-    # assert DeepEnsembleSupervisedSolver.accepted_conditions_types == (
+    solver = EnsembleSimpleSolver(problem=TensorProblem(), models=models)
+    EnsembleSimpleSolver(problem=LabelTensorProblem(), models=models)
+    # assert EnsembleSimpleSolver.accepted_conditions_types == (
     #     InputTargetCondition
     # )
     assert solver.num_ensemble == 10
@@ -105,9 +101,7 @@ def test_constructor():
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_train(use_lt, batch_size, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
-    solver = DeepEnsembleSupervisedSolver(
-        problem=problem, models=models, use_lt=use_lt
-    )
+    solver = EnsembleSimpleSolver(problem=problem, models=models, use_lt=use_lt)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -130,7 +124,7 @@ def test_solver_train(use_lt, batch_size, compile):
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_train_graph(batch_size, use_lt):
     problem = GraphProblemLT() if use_lt else GraphProblem()
-    solver = DeepEnsembleSupervisedSolver(
+    solver = EnsembleSimpleSolver(
         problem=problem, models=graph_models, use_lt=use_lt
     )
     trainer = Trainer(
@@ -150,9 +144,7 @@ def test_solver_train_graph(batch_size, use_lt):
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_validation(use_lt, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
-    solver = DeepEnsembleSupervisedSolver(
-        problem=problem, models=models, use_lt=use_lt
-    )
+    solver = EnsembleSimpleSolver(problem=problem, models=models, use_lt=use_lt)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -174,7 +166,7 @@ def test_solver_validation(use_lt, compile):
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_validation_graph(batch_size, use_lt):
     problem = GraphProblemLT() if use_lt else GraphProblem()
-    solver = DeepEnsembleSupervisedSolver(
+    solver = EnsembleSimpleSolver(
         problem=problem, models=graph_models, use_lt=use_lt
     )
     trainer = Trainer(
@@ -194,9 +186,7 @@ def test_solver_validation_graph(batch_size, use_lt):
 @pytest.mark.parametrize("compile", [True, False])
 def test_solver_test(use_lt, compile):
     problem = LabelTensorProblem() if use_lt else TensorProblem()
-    solver = DeepEnsembleSupervisedSolver(
-        problem=problem, models=models, use_lt=use_lt
-    )
+    solver = EnsembleSimpleSolver(problem=problem, models=models, use_lt=use_lt)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -218,7 +208,7 @@ def test_solver_test(use_lt, compile):
 @pytest.mark.parametrize("use_lt", [True, False])
 def test_solver_test_graph(batch_size, use_lt):
     problem = GraphProblemLT() if use_lt else GraphProblem()
-    solver = DeepEnsembleSupervisedSolver(
+    solver = EnsembleSimpleSolver(
         problem=problem, models=graph_models, use_lt=use_lt
     )
     trainer = Trainer(
@@ -237,7 +227,7 @@ def test_solver_test_graph(batch_size, use_lt):
 def test_train_load_restore(clean_tmp_dir):
     dir = clean_tmp_dir
     problem = LabelTensorProblem()
-    solver = DeepEnsembleSupervisedSolver(problem=problem, models=models)
+    solver = EnsembleSimpleSolver(problem=problem, models=models)
     trainer = Trainer(
         solver=solver,
         max_epochs=5,
@@ -258,7 +248,7 @@ def test_train_load_restore(clean_tmp_dir):
     )
 
     # loading
-    new_solver = DeepEnsembleSupervisedSolver.load_from_checkpoint(
+    new_solver = EnsembleSimpleSolver.load_from_checkpoint(
         f"{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt",
         problem=problem,
         models=models,

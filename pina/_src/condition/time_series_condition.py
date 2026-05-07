@@ -2,12 +2,12 @@
 
 import torch
 
-from pina._src.condition.condition_base import ConditionBase
-from pina._src.condition.data_manager import _DataManager
+from pina._src.data.manager.data_manager import _DataManager
 from pina._src.core.label_tensor import LabelTensor
+from pina._src.condition.base_condition import BaseCondition
 
 
-class TimeSeriesCondition(ConditionBase):
+class TimeSeriesCondition(BaseCondition):
     """
     Condition for autoregressive time-series training.
 
@@ -49,9 +49,7 @@ class TimeSeriesCondition(ConditionBase):
             "kwargs": getattr(self, "_kwargs", {}),
         }
 
-    def __init__(
-        self, input, eps=None, aggregation_strategy=None, kwargs=None
-    ):
+    def __init__(self, input, eps=None, aggregation_strategy=None, kwargs=None):
         super().__init__(input=input)
         self._eps = eps
         self._aggregation_strategy = aggregation_strategy
@@ -72,7 +70,9 @@ class TimeSeriesCondition(ConditionBase):
         step_kwargs = self._kwargs.copy()
 
         for step in range(1, input_tensor.shape[2]):
-            processed_input = solver.preprocess_step(current_state, **step_kwargs)
+            processed_input = solver.preprocess_step(
+                current_state, **step_kwargs
+            )
             output = solver.forward(processed_input)
             predicted_state = solver.postprocess_step(output, **step_kwargs)
 
@@ -85,10 +85,10 @@ class TimeSeriesCondition(ConditionBase):
 
         with torch.no_grad():
             name = condition_name or getattr(self, "name", None) or "default"
-            #weights = solver._get_weights(name, step_losses, self._eps)
+            # weights = solver._get_weights(name, step_losses, self._eps)
 
         aggregation_strategy = self._aggregation_strategy or torch.mean
-        return aggregation_strategy(step_losses)# * weights)
+        return aggregation_strategy(step_losses)  # * weights)
 
     @staticmethod
     def unroll(data, unroll_length, n_unrolls=None, randomize=True):

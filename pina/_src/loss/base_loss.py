@@ -1,10 +1,10 @@
 """Module for the BaseLoss class."""
 
 import torch
-from pina._src.loss.loss_interface import LossInterface
+from pina._src.loss.loss_interface import DualLossInterface
 
 
-class BaseLoss(LossInterface):
+class BaseLoss(DualLossInterface):
     """
     Base class for all losses, implementing common functionality.
 

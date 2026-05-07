@@ -6,7 +6,7 @@ from pina._src.callback.refinement.refinement_interface import (
 )
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.utils import check_consistency
-from pina._src.loss.loss_interface import DualLossInterface as LossInterface
+from pina._src.loss.loss_interface import DualLossInterface
 
 
 class R3Refinement(RefinementInterface):
@@ -44,7 +44,7 @@ class R3Refinement(RefinementInterface):
         :param int sample_every: The sampling frequency.
         :param loss: The loss function to compute the residuals.
             Default is :class:`~torch.nn.L1Loss`.
-        :type loss: LossInterface | :class:`~torch.nn.modules.loss._Loss`
+        :type loss: DualLossInterface | :class:`~torch.nn.modules.loss._Loss`
         :param condition_to_update: The conditions to update during the
             refinement process. If None, all conditions will be updated.
             Default is None.
@@ -59,7 +59,7 @@ class R3Refinement(RefinementInterface):
         # Check consistency
         check_consistency(
             residual_loss,
-            (LossInterface, torch.nn.modules.loss._Loss),
+            (DualLossInterface, torch.nn.modules.loss._Loss),
             subclass=True,
         )
 

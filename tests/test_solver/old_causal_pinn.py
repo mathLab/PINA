@@ -1,10 +1,9 @@
+import shutil
 import torch
 import pytest
-
-from pina import LabelTensor, Condition
+from pina import LabelTensor, Condition, Trainer
 from pina.problem import SpatialProblem
 from pina.solver import CausalPINN
-from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.problem.zoo import DiffusionReactionProblem
 from pina.condition import (
@@ -155,6 +154,4 @@ def test_train_load_restore(problem):
     )
 
     # rm directories
-    import shutil
-
     shutil.rmtree("tests/test_solver/tmp")
