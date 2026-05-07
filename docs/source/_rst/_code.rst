@@ -18,14 +18,14 @@ The pipeline to solve differential equations with PINA follows just five steps:
     5. Train the model with the PINA :doc:`Trainer <solver/solver_interface>`, enhance the train with `Callbacks`_
 
 
-Trainer, Dataset and Datamodule
---------------------------------
+Trainer, Data Loader and Data Module
+----------------------------------------
 .. toctree::
     :titlesonly:
 
     Trainer <trainer.rst>
-    Dataset <data/dataset.rst>
-    DataModule <data/data_module.rst>
+    Data Module <data/data_module.rst>
+    Single-Batch Data Loader <data/single_batch_data_loader.rst>
 
 Data Types
 ------------
