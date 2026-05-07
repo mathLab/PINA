@@ -10,15 +10,6 @@ from pina.data.manager import (
 )
 
 
-# Helper function to create tensor data
-def _create_tensor_data(use_lt):
-
-    # If LabelTensor is used, create tensors with labels
-class DummySolver:
-    def forward(self, samples):
-        return 2 * samples
-
-
 def _create_tensor_data(use_lt=False):
     if use_lt:
         input_tensor = LabelTensor(torch.rand((10, 3)), ["x", "y", "z"])

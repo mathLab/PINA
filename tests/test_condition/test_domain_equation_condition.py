@@ -10,7 +10,6 @@ from pina.condition import DomainEquationCondition
 # Define a simple domain and equation for testing
 domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
 equation = FixedValue(0.0)
-from pina._src.equation.equation_factory import FixedValue
 from pina.equation import Equation
 from pina.condition import DomainEquationCondition
 
@@ -21,6 +20,7 @@ class DummySolver:
 
     def forward(self, samples):
         return samples.extract(["x"]) - samples.extract(["y"])
+
 
 example_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
 example_equation = FixedValue(0.0)
@@ -69,6 +69,8 @@ def test_create_batch():
     # Should raise TypeError when trying to access condition.data since None
     with pytest.raises(TypeError):
         _ = [condition.data[i] for i in [0, 2, 4, 6]]
+
+
 def test_getitem_not_implemented():
     cond = Condition(domain=example_domain, equation=FixedValue(0.0))
     with pytest.raises(NotImplementedError):

@@ -9,11 +9,13 @@ import torch
 from pina._src.solver.single_model_simple_solver import (
     SingleModelSimpleSolver,
 )
+from pina._src.solver.ensemble_simple_solver import EnsembleSimpleSolver
+from pina._src.solver.pinn import PINN
 
 # PINNBaseInterface = PINNInterface
 
 
-class PINN(SingleModelSimpleSolver):
+class EnsemblePINN(EnsembleSimpleSolver, PINN):
     r"""
     Physics-Informed Neural Network (PINN) solver class.
     This class implements Physics-Informed Neural Network solver, using a user
@@ -56,12 +58,12 @@ class PINN(SingleModelSimpleSolver):
     def __init__(
         self,
         problem,
-        model,
-        optimizer=None,
-        scheduler=None,
+        models,
+        optimizers=None,
+        schedulers=None,
         weighting=None,
         loss=None,
-        use_lt=True,
+        ensemble_dim=0,
     ):
         """
         Initialization of the :class:`PINN` class.
@@ -80,41 +82,35 @@ class PINN(SingleModelSimpleSolver):
             If ``None``, the :class:`torch.nn.MSELoss` loss is used.
             Default is `None`.
         """
-        SingleModelSimpleSolver.__init__(
+        EnsembleSimpleSolver.__init__(
             self,
-            model=model,
+            models=models,
             problem=problem,
-            optimizer=optimizer,
-            scheduler=scheduler,
+            optimizers=optimizers,
+            schedulers=schedulers,
             weighting=weighting,
             loss=loss,
-            use_lt=use_lt,
+            use_lt=True,
         )
 
     def setup(self, stage):
         """
-        Preserve the old PINN compile guard for problematic torch versions.
+        Setup the solver for training, validation, or testing.
 
-        :param str stage: The current stage of the training process.
-        :return: The result of the parent setup method.
+        :param str stage: The stage of the setup. Can be 'fit', 'validate', or
+            'test'.
+        :return: The setup output from the parent class.
         :rtype: Any
         """
-        if torch.__version__ >= "2.8":
-            self.trainer.compile = False
-            warnings.warn(
-                "Compilation is disabled for torch >= 2.8. "
-                "Forcing compilation may cause runtime errors or instability.",
-                UserWarning,
-            )
-        return super().setup(stage)
+        return PINN.setup(self, stage)
 
     def validation_step(self, batch, **kwargs):
         """
-        Run validation with gradients enabled for physics residual operators.
+        Perform a validation step with gradients enabled for physics residual
+        operators.
 
-        :param batch: Validation batch.
-        :type batch: list[tuple[str, dict]]
-        :return: Validation loss.
+        :param batch: The batch of data for validation.
+        :return: The validation loss.
         :rtype: torch.Tensor
         """
         with torch.set_grad_enabled(True):
@@ -123,11 +119,11 @@ class PINN(SingleModelSimpleSolver):
 
     def test_step(self, batch, **kwargs):
         """
-        Run test with gradients enabled for physics residual operators.
+        Perform a test step with gradients enabled for physics residual
+        operators.
 
-        :param batch: Test batch.
-        :type batch: list[tuple[str, dict]]
-        :return: Test loss.
+        :param batch: The batch of data for testing.
+        :return: The test loss.
         :rtype: torch.Tensor
         """
         with torch.set_grad_enabled(True):

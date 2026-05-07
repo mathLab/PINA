@@ -1,13 +1,14 @@
 import torch
 import pytest
+import shutil
+from pathlib import Path
 from torch._dynamo.eval_frame import OptimizedModule
 from torch_geometric.nn import GCNConv
-from pina import Condition, LabelTensor
+from pina import Condition, LabelTensor, Trainer
 from pina.condition import InputTargetCondition
 from pina.problem import BaseProblem
 from pina.solver import SupervisedSolver
 from pina.model import FeedForward
-from pina.trainer import Trainer
 from pina.graph import KNNGraph
 
 
@@ -92,7 +93,7 @@ graph_model = Model()
 def test_constructor():
     SupervisedSolver(problem=TensorProblem(), model=model)
     SupervisedSolver(problem=LabelTensorProblem(), model=model)
-    assert SupervisedSolver.accepted_conditions_types == (InputTargetCondition)
+    assert SupervisedSolver.accepted_conditions_types == (InputTargetCondition,)
 
 
 @pytest.mark.parametrize("batch_size", [None, 1, 5, 20])
@@ -209,11 +210,6 @@ def test_solver_test_graph(batch_size, use_lt):
     )
 
     trainer.test()
-
-
-import shutil
-from pathlib import Path
-import pytest
 
 
 @pytest.fixture

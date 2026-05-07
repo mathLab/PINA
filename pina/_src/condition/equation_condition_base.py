@@ -1,9 +1,9 @@
 """Module for the EquationConditionBase class."""
 
-from pina._src.condition.condition_base import ConditionBase
+from pina._src.condition.base_condition import BaseCondition
 
 
-class EquationConditionBase(ConditionBase):
+class EquationConditionBase(BaseCondition):
     """
     Base class for conditions that involve an equation.
 
@@ -44,8 +44,6 @@ class EquationConditionBase(ConditionBase):
             >>> # residuals is a non-reduced tensor of shape (n_samples, ...)
         """
         samples = batch["input"].requires_grad_(True)
-        residual = self.equation.residual(
+        return self.equation.residual(
             samples, solver.forward(samples), solver._params
         )
-        # assert False
-        return residual

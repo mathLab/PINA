@@ -1,13 +1,10 @@
 import shutil
 import pytest
 import torch
-
-from pina import Condition, Trainer, LabelTensor
+from pina import Trainer, LabelTensor
 from pina.solver import AutoregressiveSolver
-from pina.condition import DataCondition
 from pina.problem import BaseProblem
 from pina.condition import TimeSeriesCondition
-from pina.problem import AbstractProblem
 from pina.model import FeedForward
 from torch._dynamo import OptimizedModule
 
@@ -77,9 +74,7 @@ def test_constructor(use_lt, bool_value):
         use_lt=use_lt,
     )
 
-    assert solver.accepted_conditions_types == (
-        TimeSeriesCondition,
-    )
+    assert solver.accepted_conditions_types == (TimeSeriesCondition,)
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
@@ -101,7 +96,7 @@ def test_solver_train(use_lt, batch_size, compile, bool_value):
         train_size=1.0,
         val_size=0.0,
         test_size=0.0,
-        #compile=compile,
+        # compile=compile,
     )
     trainer.train()
 

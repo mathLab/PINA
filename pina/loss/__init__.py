@@ -1,13 +1,13 @@
 """Module for loss functions."""
 
 __all__ = [
-    "LossInterface",
+    "DualLossInterface",
     "BaseLoss",
     "LpLoss",
     "PowerLoss",
 ]
 
-from pina._src.loss.loss_interface import LossInterface
+from pina._src.loss.loss_interface import DualLossInterface
 from pina._src.loss.base_loss import BaseLoss
 from pina._src.loss.power_loss import PowerLoss
 from pina._src.loss.lp_loss import LpLoss

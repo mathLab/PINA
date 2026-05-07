@@ -9,6 +9,7 @@ from pina._src.data.data_module import PinaDataModule
 from pina._src.solver.solver_interface import (
     SolverInterface,
 )
+
 # from pina._src.solver.physics_informed_solver.pinn_interface import (
 #     PINNInterface,
 # )
@@ -99,7 +100,7 @@ class Trainer(lightning.pytorch.Trainer):
 
         # inference mode set to false when validating/testing PINNs otherwise
         # gradient is not tracked and optimization_cycle fails
-        #if isinstance(solver, PINNInterface):
+        # if isinstance(solver, PINNInterface):
         kwargs["inference_mode"] = False
 
         # Logging depends on the batch size, when batch_size is None then

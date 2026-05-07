@@ -1,11 +1,10 @@
+import shutil
 import torch
 import pytest
-
-from pina import Condition, LabelTensor
+from pina import Condition, LabelTensor, Trainer
 from pina.problem import BaseProblem
 from pina.condition import InputTargetCondition
 from pina.solver import ReducedOrderModelSolver
-from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.problem.zoo import Poisson2DSquareProblem
 from torch._dynamo.eval_frame import OptimizedModule
@@ -223,6 +222,4 @@ def test_train_load_restore():
         new_solver.forward(test_pts), solver.forward(test_pts)
     )
     # rm directories
-    import shutil
-
     shutil.rmtree("tests/test_solver/tmp")

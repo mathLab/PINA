@@ -1,9 +1,8 @@
+import shutil
 import torch
 import pytest
-
-from pina import LabelTensor, Condition
-from pina.solver import SelfAdaptivePINN as SAPINN
-from pina.trainer import Trainer
+from pina import LabelTensor, Condition, Trainer
+from pina.solver import SelfAdaptivePINN
 from pina.model import FeedForward
 from pina.problem.zoo import (
     Poisson2DSquareProblem as Poisson,
@@ -37,10 +36,12 @@ model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 @pytest.mark.parametrize("weight_fn", [torch.nn.Sigmoid(), torch.nn.Tanh()])
 def test_constructor(problem, weight_fn):
 
-    solver = SAPINN(problem=problem, model=model, weight_function=weight_fn)
+    solver = SelfAdaptivePINN(
+        problem=problem, model=model, weight_function=weight_fn
+    )
 
     with pytest.raises(ValueError):
-        SAPINN(model=model, problem=problem, weight_function=1)
+        SelfAdaptivePINN(model=model, problem=problem, weight_function=1)
 
     assert solver.accepted_conditions_types == (
         InputTargetCondition,
@@ -55,7 +56,7 @@ def test_constructor(problem, weight_fn):
     "loss", [torch.nn.L1Loss(reduction="sum"), torch.nn.MSELoss()]
 )
 def test_solver_train(problem, compile, loss):
-    solver = SAPINN(model=model, problem=problem, loss=loss)
+    solver = SelfAdaptivePINN(model=model, problem=problem, loss=loss)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -82,7 +83,7 @@ def test_solver_train(problem, compile, loss):
     "loss", [torch.nn.L1Loss(reduction="sum"), torch.nn.MSELoss()]
 )
 def test_solver_validation(problem, compile, loss):
-    solver = SAPINN(model=model, problem=problem, loss=loss)
+    solver = SelfAdaptivePINN(model=model, problem=problem, loss=loss)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -109,7 +110,7 @@ def test_solver_validation(problem, compile, loss):
     "loss", [torch.nn.L1Loss(reduction="sum"), torch.nn.MSELoss()]
 )
 def test_solver_test(problem, compile, loss):
-    solver = SAPINN(model=model, problem=problem, loss=loss)
+    solver = SelfAdaptivePINN(model=model, problem=problem, loss=loss)
     trainer = Trainer(
         solver=solver,
         max_epochs=2,
@@ -134,7 +135,7 @@ def test_solver_test(problem, compile, loss):
 def test_train_load_restore(problem):
     dir = "tests/test_solver/tmp"
     problem = problem
-    solver = SAPINN(model=model, problem=problem)
+    solver = SelfAdaptivePINN(model=model, problem=problem)
     trainer = Trainer(
         solver=solver,
         max_epochs=5,
@@ -154,7 +155,7 @@ def test_train_load_restore(problem):
     )
 
     # loading
-    new_solver = SAPINN.load_from_checkpoint(
+    new_solver = SelfAdaptivePINN.load_from_checkpoint(
         f"{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt",
         problem=problem,
         model=model,
@@ -170,6 +171,4 @@ def test_train_load_restore(problem):
     )
 
     # rm directories
-    import shutil
-
     shutil.rmtree("tests/test_solver/tmp")

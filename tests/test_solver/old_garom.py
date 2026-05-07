@@ -1,13 +1,10 @@
 import torch
-import torch.nn as nn
-
 import pytest
-from pina import Condition
+from pina import Condition, Trainer
 from pina.solver import GAROM
 from pina.condition import InputTargetCondition
 from pina.problem import BaseProblem
 from pina.model import FeedForward
-from pina.trainer import Trainer
 from torch._dynamo.eval_frame import OptimizedModule
 
 
@@ -20,7 +17,7 @@ class TensorProblem(BaseProblem):
 
 
 # simple Generator Network
-class Generator(nn.Module):
+class Generator(torch.nn.Module):
 
     def __init__(
         self,
@@ -54,7 +51,7 @@ class Generator(nn.Module):
 # Simple Discriminator Network
 
 
-class Discriminator(nn.Module):
+class Discriminator(torch.nn.Module):
 
     def __init__(
         self,

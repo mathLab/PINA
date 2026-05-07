@@ -1,9 +1,7 @@
 import pytest
 import torch
-
-from pina import LabelTensor, Condition
+from pina import LabelTensor, Condition, Trainer
 from pina.model import FeedForward
-from pina.trainer import Trainer
 from pina.solver import RBAPINN
 from pina.condition import (
     InputTargetCondition,

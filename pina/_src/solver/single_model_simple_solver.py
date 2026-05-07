@@ -11,11 +11,11 @@ from pina._src.condition.input_equation_condition import (
 )
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.core.utils import check_consistency
-from pina._src.loss.loss_interface import DualLossInterface as LossInterface
-from pina._src.solver.solver import SingleSolverInterface
+from pina._src.loss.loss_interface import DualLossInterface
+from pina._src.solver.base_solver import BaseSolver
 
 
-class SingleModelSimpleSolver(SingleSolverInterface):
+class SingleModelSimpleSolver(BaseSolver):
     """
     Minimal single-model solver with explicit residual evaluation, reduction,
     and loss aggregation across conditions.
@@ -47,10 +47,10 @@ class SingleModelSimpleSolver(SingleSolverInterface):
         """
         Initialize the single-model simple solver.
 
-        :param AbstractProblem problem: The problem to be solved.
+        :param BaseProblem problem: The problem to be solved.
         :param torch.nn.Module model: The neural network model to be used.
-        :param Optimizer optimizer: The optimizer to be used.
-        :param Scheduler scheduler: Learning rate scheduler.
+        :param OptimizerInterface optimizer: The optimizer to be used.
+        :param SchedulerInterface scheduler: Learning rate scheduler.
         :param WeightingInterface weighting: The weighting schema to be used.
         :param torch.nn.Module loss: The element-wise loss module whose
             reduction strategy is reused by the solver. If ``None``,
@@ -60,9 +60,10 @@ class SingleModelSimpleSolver(SingleSolverInterface):
         if loss is None:
             loss = torch.nn.MSELoss()
 
-        check_consistency(loss, (LossInterface, _Loss), subclass=False)
+        check_consistency(loss, (DualLossInterface, _Loss), subclass=False)
 
-        super().__init__(
+        BaseSolver.__init__(
+            self,
             model=model,
             problem=problem,
             optimizer=optimizer,

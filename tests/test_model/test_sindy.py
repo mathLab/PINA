@@ -37,8 +37,6 @@ def test_forward(data):
     output_ = model(data)
     vals = data.pow(2) + torch.sin(data)
 
-    print(data.shape, output_.shape, vals.shape)
-
     assert output_.shape == data.shape
     assert torch.allclose(output_, vals, atol=1e-6, rtol=1e-6)
 
