@@ -16,8 +16,8 @@ correctly when used in the intended context.
 class DummyDataset:
     def __init__(self, data, length=None):
         self.data = data
-        self.length = len(data) if length is None else length
-        self.max_len = None
+        self.dataset_length = len(data) if length is None else length
+        self.iterable_length = None
 
     def __len__(self):
         return len(self.data)
@@ -153,7 +153,7 @@ def test_call(
         assert created_loaders[name]["automatic_batching"] is True
         assert created_loaders[name]["num_workers"] == 0
         assert created_loaders[name]["pin_memory"] is False
-        assert datasets[name].max_len == expected_max_len[name]
+        assert datasets[name].iterable_length == expected_max_len[name]
 
         # Check that the correct sampler is used based on the shuffle parameter
         if shuffle:
