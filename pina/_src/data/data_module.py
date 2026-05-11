@@ -5,60 +5,11 @@ different types of Datasets defined in PINA.
 """
 
 import warnings
-from lightning.pytorch import LightningDataModule
 import torch
-from torch_geometric.data import Batch
-from pina._src.data.creator import _Creator
-from pina._src.core.graph import LabelBatch, Graph
+from lightning.pytorch import LightningDataModule
+from pina._src.data.condition_subset import _ConditionSubset
 from pina._src.data.aggregator import _Aggregator
-
-
-class _ConditionSubset:
-    """
-    This class extends the :class:`torch.utils.data.Subset` class, allowing to
-    fetch the data from the dataset based on a list of indices.
-    """
-
-    def __init__(self, condition, indices, automatic_batching):
-        super().__init__()
-        self.condition = condition
-        self.indices = indices
-        self.automatic_batching = automatic_batching
-        self.length = len(self.indices)
-        self.max_len = self.length
-
-    def __len__(self):
-        return self.max_len
-
-    def __getitem__(self, idx):
-        """
-        Fetch the data from the dataset based on the list of indices.
-
-        :param int idx: The index of the data to be fetched.
-        :return: The data corresponding to the given index.
-        :rtype: dict
-        """
-        if idx >= self.length:
-            idx = idx % self.length
-        idx = self.indices[idx]
-        if not self.automatic_batching:
-            return idx
-        return self.condition[idx]
-
-    def get_all_data(self):
-        data = self.condition[self.indices]
-        if "data" in data and isinstance(data["data"], list):
-            batch_fn = (
-                LabelBatch.from_data_list
-                if isinstance(data["data"][0], Graph)
-                else Batch.from_data_list
-            )
-            data["data"] = batch_fn(data["data"])
-            data = {
-                "input": data["data"],
-                "target": data["data"].y,
-            }
-        return data
+from pina._src.data.creator import _Creator
 
 
 class PinaDataModule(LightningDataModule):

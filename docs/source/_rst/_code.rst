@@ -28,6 +28,7 @@ Trainer, Data Loader and Data Module
     Single-Batch Data Loader <data/single_batch_data_loader.rst>
     Aggregator <data/aggregator.rst>
     Creator <data/creator.rst>
+    Condition Subset <data/condition_subset.rst>
 
 Data Types
 ------------

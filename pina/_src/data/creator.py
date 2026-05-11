@@ -6,12 +6,6 @@ from torch.utils.data.distributed import DistributedSampler
 
 class _Creator:
     """
-    The class :class:`_Creator` is responsible for creating data loaders for
-    multiple conditions based on specified batching strategies. It supports
-    different batching strategies to accommodate various training requirements.
-    """
-
-    """
     Utility class for creating data loaders associated with multiple conditions.
 
     The class supports different batching strategies to adapt data loading
@@ -96,7 +90,7 @@ class _Creator:
 
         # If common_batch_size mode, ensure all datasets have the same length
         if self.batching_mode == "common_batch_size":
-            max_len = max(len(dataset) for dataset in datasets.values())
+            iterable_length = max(len(dataset) for dataset in datasets.values())
 
         # Iterate through datasets and create dataloaders
         for name, dataset in datasets.items():
@@ -104,9 +98,9 @@ class _Creator:
             # If common_batch_size mode, set max_len for datasets
             if (
                 self.batching_mode == "common_batch_size"
-                and dataset.length != batch_sizes[name]
+                and dataset.dataset_length != batch_sizes[name]
             ):
-                dataset.max_len = max_len
+                dataset.iterable_length = iterable_length
 
             # Create dataloader for the current condition
             dataloaders[name] = self.conditions[name].create_dataloader(
@@ -160,7 +154,7 @@ class _Creator:
 
             # Compute batch size
             batch_size = (
-                max(dataset.length for dataset in datasets.values())
+                max(dataset.dataset_length for dataset in datasets.values())
                 if self.batch_size is None
                 else self.batch_size
             )
