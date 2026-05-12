@@ -1,168 +1,239 @@
 """Module for the TimeSeriesCondition class."""
 
 import torch
-
+from pina._src.core.utils import check_consistency, check_positive_integer
 from pina._src.data.manager.data_manager import _DataManager
-from pina._src.core.label_tensor import LabelTensor
 from pina._src.condition.base_condition import BaseCondition
+from pina._src.core.label_tensor import LabelTensor
 
 
 class TimeSeriesCondition(BaseCondition):
     """
-    Condition for autoregressive time-series training.
+    The :class:`TimeSeriesCondition` class represents an autoregressive time
+    series condition defined by temporal ``input`` data. The input is expected
+    to have shape ``[trajectories, time_steps, *features]``, where the second
+    dimension corresponds to the temporal evolution of each trajectory.
 
-    The condition stores an input tensor containing unroll windows with shape
-    ``[trajectories, windows, time_steps, *features]`` and computes the
-    autoregressive non-aggregated/aggregated temporal loss inside
-    :meth:`evaluate` by recursively applying the solver model over time.
+    During training, the condition automatically extracts overlapping temporal
+    windows from the trajectories. The parameter ``unroll_length`` defines the
+    number of consecutive time steps contained in each temporal window, while
+    ``n_windows`` controls how many temporal windows are created from the
+    available trajectories.
+
+    Internally, the unrolled data is stored as a tensor of shape
+    ``[trajectories, n_windows, unroll_length, *features]``.
+
+    Supported data types include :class:`~pina.label_tensor.LabelTensor` and
+    :class:`torch.Tensor`.
+
+    :Example:
+
+    >>> from pina import Condition, LabelTensor
+    >>> import torch
+
+    >>> data = LabelTensor(torch.rand(5, 10, 2), labels=["u", "v"])
+    >>> condition = Condition(input=data, unroll_length=5, n_windows=3)
     """
 
-    __fields__ = ["input", "eps", "aggregation_strategy", "kwargs"]
+    # Available fields and input data types
+    __fields__ = ["input", "unroll_length", "n_windows", "randomize"]
     _avail_input_cls = (torch.Tensor, LabelTensor)
 
-    def __new__(cls, input, eps=None, aggregation_strategy=None, kwargs=None):
-        if cls != TimeSeriesCondition:
-            return super().__new__(cls)
+    def __new__(cls, input, n_windows, unroll_length, randomize=False):
+        """
+        Validate the input data and time-series parameters.
 
-        if not isinstance(input, cls._avail_input_cls):
+        :param input: The temporal input data.
+        :type input: torch.Tensor | LabelTensor
+        :param int n_windows: The maximum number of temporal windows to extract.
+        :param int unroll_length: The number of time steps in each window.
+        :param bool randomize: If ``True``, randomly permute the valid starting
+            indices before selecting the windows. Default is ``False``.
+        :raises ValueError: If ``input`` is not of type :class:`torch.Tensor` or
+            :class:`~pina.label_tensor.LabelTensor`.
+        :raises AssertionError: If ``unroll_length`` is not a positive integer.
+        :raises AssertionError: If ``n_windows`` is not a positive integer.
+        :raises ValueError: If ``randomize`` is not a boolean value.
+        :raises ValueError: If ``input`` has fewer than three dimensions.
+        :raises ValueError: If ``unroll_length`` is lower than 2.
+        :return: A new :class:`TimeSeriesCondition` instance.
+        :rtype: TimeSeriesCondition
+        """
+        # Check consistency
+        check_consistency(input, cls._avail_input_cls)
+        check_consistency(randomize, bool)
+        check_positive_integer(n_windows, strict=True)
+        check_positive_integer(unroll_length, strict=True)
+
+        # Validate input
+        if input.dim() < 3:
             raise ValueError(
-                "Invalid input type. Expected one of the following: "
-                "torch.Tensor, LabelTensor."
+                "The provided data tensor must have at least 3 dimensions: "
+                f"[trajectories, time, *features]. Got shape {input.shape}."
+            )
+
+        # Validate unroll_length
+        if unroll_length < 2:
+            raise ValueError(
+                f"unroll_length must be strictly greater than 1 to create "
+                f" temporal windows. Got unroll_length={unroll_length}."
             )
 
         return super().__new__(cls)
 
     def store_data(self, **kwargs):
-        return _DataManager(input=kwargs.get("input"))
-
-    @property
-    def input(self):
-        return self.data.input
-
-    @property
-    def settings(self):
-        return {
-            "eps": getattr(self, "_eps", None),
-            "aggregation_strategy": getattr(
-                self, "_aggregation_strategy", None
-            ),
-            "kwargs": getattr(self, "_kwargs", {}),
-        }
-
-    def __init__(self, input, eps=None, aggregation_strategy=None, kwargs=None):
-        super().__init__(input=input)
-        self._eps = eps
-        self._aggregation_strategy = aggregation_strategy
-        self._kwargs = kwargs or {}
-
-    def evaluate(self, batch, solver, loss, condition_name=None):
-        input_tensor = batch["input"]
-
-        if input_tensor.dim() < 4:
-            raise ValueError(
-                "The provided input tensor must have at least 4 dimensions:"
-                " [trajectories, windows, time_steps, *features]."
-                f" Got shape {input_tensor.shape}."
-            )
-
-        current_state = input_tensor[:, :, 0]
-        losses = []
-        step_kwargs = self._kwargs.copy()
-
-        for step in range(1, input_tensor.shape[2]):
-            processed_input = solver.preprocess_step(
-                current_state, **step_kwargs
-            )
-            output = solver.forward(processed_input)
-            predicted_state = solver.postprocess_step(output, **step_kwargs)
-
-            target_state = input_tensor[:, :, step]
-            step_loss = loss(predicted_state, target_state, **step_kwargs)
-            losses.append(step_loss)
-            current_state = predicted_state
-
-        step_losses = torch.stack(losses).as_subclass(torch.Tensor)
-
-        with torch.no_grad():
-            name = condition_name or getattr(self, "name", None) or "default"
-            # weights = solver._get_weights(name, step_losses, self._eps)
-
-        aggregation_strategy = self._aggregation_strategy or torch.mean
-        return aggregation_strategy(step_losses)  # * weights)
-
-    @staticmethod
-    def unroll(data, unroll_length, n_unrolls=None, randomize=True):
         """
-        Create unrolling time windows from temporal data.
+        Store the unrolled time-series input data.
 
-        This function takes as input a tensor of shape
-        ``[trajectories, time_steps, *features]`` and produces a tensor of
-        shape ``[trajectories, windows, unroll_length, *features]``.
-        Each window contains a sequence of subsequent states used for
-        computing the multi-step loss during training.
+        The method extracts the time-series input data and creates the temporal
+        windows based on the specified ``unroll_length`` and ``n_windows``.
 
-        :param data: The temporal data tensor to be unrolled.
-        :type data: torch.Tensor | LabelTensor
-        :param int unroll_length: The number of time steps in each window.
-        :param int n_unrolls: The maximum number of windows to return.
-            If ``None``, all valid windows are returned. Default is ``None``.
-        :param bool randomize: If ``True``, starting indices are randomly
-            permuted before applying ``n_unrolls``. Default is ``True``.
-        :raise ValueError: If the input ``data`` has less than 3 dimensions.
-        :raise ValueError: If ``unroll_length`` is greater or equal to the
-            number of time steps in ``data``.
-        :return: A tensor of unrolled windows.
-        :rtype: torch.Tensor | LabelTensor
+        :param dict kwargs: The keyword arguments containing the data to be
+            stored.
+        :return: A dictionary-like structure containing the stored data.
+        :rtype: _DataManager
         """
-        if data.dim() < 3:
-            raise ValueError(
-                "The provided data tensor must have at least 3 dimensions:"
-                " [trajectories, time_steps, *features]."
-                f" Got shape {data.shape}."
-            )
+        # Extract unrolling parameters from kwargs
+        unroll_length = kwargs.get("unroll_length")
+        n_windows = kwargs.get("n_windows")
+        randomize = kwargs.get("randomize", False)
+        data = kwargs.get("input")
 
-        start_idx = TimeSeriesCondition._get_start_idx(
-            n_steps=data.shape[1],
+        # Create unrolled windows from the input data
+        unrolled_data = self._unroll(
+            data=data,
+            n_windows=n_windows,
             unroll_length=unroll_length,
-            n_unrolls=n_unrolls,
             randomize=randomize,
         )
 
-        windows = [data[:, s : s + unroll_length] for s in start_idx]
-        return torch.stack(windows, dim=1)
+        # Preserve labels if the input data is a LabelTensor
+        if isinstance(data, LabelTensor):
+            unrolled_data = unrolled_data.as_subclass(LabelTensor)
+            unrolled_data.labels = data.labels
 
-    @staticmethod
-    def _get_start_idx(n_steps, unroll_length, n_unrolls=None, randomize=True):
+        return _DataManager(input=unrolled_data)
+
+    def _unroll(self, data, n_windows, unroll_length, randomize):
         """
-        Determine starting indices for unroll windows.
+        Build temporal windows from time-series data.
 
-        :param int n_steps: The total number of time steps in the data.
+        Given data with shape ``[trajectories, time_steps, *features]``, this
+        method returns a tensor of overlapping temporal windows with shape
+        ``[trajectories, windows, unroll_length, *features]``.
+
+        :param data: The temporal data tensor to be unrolled.
+        :type data: torch.Tensor | LabelTensor
+        :param int n_windows: The maximum number of temporal windows to extract.
         :param int unroll_length: The number of time steps in each window.
-        :param int n_unrolls: The maximum number of windows to return.
-            If ``None``, all valid windows are returned. Default is ``None``.
         :param bool randomize: If ``True``, starting indices are randomly
-            permuted before applying ``n_unrolls``. Default is ``True``.
-        :raise ValueError: If ``unroll_length`` is greater or equal to the
-            number of time steps in ``data``.
-        :return: A tensor of starting indices for unroll windows.
-        :rtype: torch.Tensor
+            permuted before applying ``n_windows``. Default is ``True``.
+        :raises ValueError: If ``unroll_length`` is greater than the number of
+            time steps in the data.
+        :return: A tensor of unrolled windows.
+        :rtype: torch.Tensor | LabelTensor
         """
-        last_idx = n_steps - unroll_length
+        # Store the number of time steps in the data
+        time_steps = data.shape[1]
 
+        # Compute the last valid starting index for unroll windows
+        last_idx = time_steps - unroll_length
+
+        # Raise error if unroll_length is greater than time_steps
         if last_idx < 0:
             raise ValueError(
-                "Cannot create unroll windows: "
-                f"unroll_length ({unroll_length})"
-                " cannot be greater or equal to the number of time_steps"
-                f" ({n_steps})."
+                f"Cannot create unroll windows: unroll_length {unroll_length} "
+                f"exceeds the available number of time steps {time_steps}."
             )
 
-        indices = torch.arange(last_idx + 1)
+        # Extract starting indices
+        start_indices = torch.arange(last_idx + 1)
 
+        # Randomly permute starting indices if randomize is True
         if randomize:
-            indices = indices[torch.randperm(len(indices))]
+            start_indices = start_indices[torch.randperm(len(start_indices))]
 
-        if n_unrolls is not None and n_unrolls < len(indices):
-            indices = indices[:n_unrolls]
+        # Limit the number of unroll windows to n_windows if specified
+        if n_windows is not None and n_windows < len(start_indices):
+            start_indices = start_indices[:n_windows]
 
-        return indices
+        # Create unroll windows by slicing the input data at the starting idx
+        windows = [data[:, s : s + unroll_length] for s in start_indices]
+
+        return torch.stack(windows, dim=1)
+
+    def evaluate(self, batch, solver, loss):
+        """
+        Evaluate the residual of the condition on the given batch using the
+        solver.
+
+        This method computes the non-aggregated, element-wise residual of the
+        condition. A forward pass of the solver's model is performed on the
+        input samples, and the condition residual is evaluated accordingly.
+
+        The returned tensor is not reduced, preserving the per-sample residual
+        values.
+
+        :param dict batch: The batch containing the data required by the
+            condition evaluation.
+        :param SolverInterface solver: The solver used to perform the forward
+            pass and compute the residual. The solver provides access to the
+            model and its parameters, which may be necessary for evaluating the
+            condition residual.
+        :param torch.nn.Module loss: The non-aggregating loss function used to
+            compare the condition residual against its reference value.
+        :raises ValueError: If the input tensor in the batch has less than 4
+            dimensions.
+        :return: The non-aggregated residual tensor.
+        :rtype: torch.Tensor | LabelTensor
+        """
+        # Raise error if input tensor does not have at least4 dimensions
+        if batch["input"].dim() < 4:
+            raise ValueError(
+                "The provided input tensor must have at least 4 dimensions:"
+                " [trajectories, windows, time_steps, *features]."
+                f" Got shape {batch["input"].shape}."
+            )
+
+        # Copy the kwargs to avoid modifying the original settings
+        kwargs = solver._kwargs.copy()
+
+        # Extract the initial state and initialize the list of step-wise losses
+        current_state = batch["input"][:, :, 0]
+        losses = []
+
+        # Iterate over the time steps
+        for step in range(1, batch["input"].shape[2]):
+
+            # Pre-process, forward, and post-process the current state
+            processed_input = solver.preprocess_step(current_state, **kwargs)
+            output = solver.forward(processed_input)
+            predicted_state = solver.postprocess_step(output, **kwargs)
+
+            # Retrieve the target and compute the step-wise loss
+            target_state = batch["input"][:, :, step]
+            step_loss = loss(predicted_state, target_state, **kwargs)
+            losses.append(step_loss)
+
+            # Update the current state for the next iteration
+            current_state = predicted_state
+
+        # Stack the step-wise losses
+        step_losses = torch.stack(losses).as_subclass(torch.Tensor)
+
+        # Compute adaptive weights and aggregate the step-wise losses
+        with torch.no_grad():
+            name = getattr(self, "name", None) or "default"
+            weights = solver._get_weights(name, step_losses)
+
+        return solver.aggregation_strategy(step_losses * weights)
+
+    @property
+    def input(self):
+        """
+        The unrolled temporal input data.
+
+        :return: The input data.
+        :rtype: torch.Tensor | LabelTensor
+        """
+        return self.data.input

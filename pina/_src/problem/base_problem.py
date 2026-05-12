@@ -39,6 +39,7 @@ class BaseProblem(ProblemInterface):
         # Create a correspondence between the problem and the conditions
         for condition_name in self.conditions:
             self.conditions[condition_name].problem = self
+            self.conditions[condition_name].name = condition_name
 
         # Create a dictionary to store the domains of the problem
         if not hasattr(self, "domains"):

@@ -2,6 +2,7 @@
 
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.input_target_condition import InputTargetCondition
+from pina._src.condition.time_series_condition import TimeSeriesCondition
 from pina._src.condition.data_condition import DataCondition
 from pina._src.condition.domain_equation_condition import (
     DomainEquationCondition,
@@ -45,10 +46,19 @@ class Condition:
       represents a general physics-informed condition defined by ``input``
       points and an ``equation``. The model learns to minimize the equation
       residual through evaluations performed at the provided ``input``.
-      Supported data types for the ``input`` include
-      :class:`~pina.label_tensor.LabelTensor` or :class:`~pina.graph.Graph`.
+      Supported data types for the ``input`` include :class:`~pina.graph.Graph`
+      or :class:`~pina.label_tensor.LabelTensor`. The class automatically
+      selects the appropriate implementation based on the types of the
+      ``input``.
+
+    - :class:`~pina.condition.time_series_condition.TimeSeriesCondition`:
+      represents a condition designed for time series data, where the model is
+      trained to capture temporal dependencies and dynamics. It is defined by an
+      ``input`` tensor of shape ``[trajectories, time_steps, *features]``
+      containing time series data. Supported data types for the ``input``
+      include class:`~pina.label_tensor.LabelTensor` or :class:`torch.Tensor`.
       The class automatically selects the appropriate implementation based on
-      the types of the ``input``.
+      the type of the ``input``.
 
     - :class:`~pina.condition.data_condition.DataCondition`: represents an
       unsupervised, data-driven condition defined by the ``input`` only.
@@ -56,9 +66,9 @@ class Condition:
       chosen :class:`~pina.solver.solver.SolverInterface`, while leveraging the
       provided data during training. Optional ``conditional_variables`` can be
       specified when the model depends on additional parameters.
-      Supported data types include :class:`torch.Tensor`,
-      :class:`~pina.label_tensor.LabelTensor`, :class:`~pina.graph.Graph`, or
-      :class:`~torch_geometric.data.Data`. The class automatically selects the
+      Supported data types include  :class:`~pina.label_tensor.LabelTensor`,
+      :class:`torch.Tensor`, :class:`~torch_geometric.data.Data`, or
+      :class:`~pina.graph.Graph`. The class automatically selects the
       appropriate implementation based on the type of the ``input``.
 
     .. note::
@@ -80,19 +90,31 @@ class Condition:
     >>> # Example of InputEquationCondition signature
     >>> condition = Condition(input=input, equation=equation)
 
+    >>> # Example of TimeSeriesCondition signature
+    >>> condition = Condition(
+    ...    input=input, n_windows=n_windows, unroll_length=unroll_length
+    ... )
+
     >>> # Example of DataCondition signature
     >>> condition = Condition(input=data, conditional_variables=cond_vars)
     """
 
-    # Combine all possible keyword arguments from the different Condition types
-    available_kwargs = list(
-        set(
-            InputTargetCondition.__fields__
-            + InputEquationCondition.__fields__
-            + DomainEquationCondition.__fields__
-            + DataCondition.__fields__
-        )
+    # Internal specifications for condition types, used for dispatching
+    # Each tuple contains: (condition class, required kwargs, optional kwargs)
+    _SPECS = (
+        (InputTargetCondition, {"input", "target"}, set()),
+        (InputEquationCondition, {"input", "equation"}, set()),
+        (DomainEquationCondition, {"domain", "equation"}, set()),
+        (DataCondition, {"input"}, {"conditional_variables"}),
+        (
+            TimeSeriesCondition,
+            {"input", "n_windows", "unroll_length"},
+            {"randomize"},
+        ),
     )
+
+    # Compute the set of all available keyword arguments (optional + required)
+    available_kwargs = sorted(set().union(*(rq | op for _, rq, op in _SPECS)))
 
     def __new__(cls, *args, **kwargs):
         """
@@ -103,38 +125,35 @@ class Condition:
         :param dict kwargs: The keyword arguments corresponding to the
             parameters of the specific :class:`Condition` type to instantiate.
         :raises ValueError: If unexpected positional arguments are provided.
-        :raises ValueError: If the keyword arguments are invalid.
+        :raises ValueError: If the keyword arguments do not match any valid
+            signature for the available condition types.
         :return: The appropriate :class:`Condition` object.
         :rtype: ConditionInterface
         """
-        # Check keyword arguments
-        if len(args) != 0:
+        # Ensure no positional arguments are provided
+        if args:
             raise ValueError(
-                "Condition takes only the following keyword "
-                f"arguments: {Condition.available_kwargs}."
+                "Condition takes only keyword arguments. "
+                f"Available arguments are: {cls.available_kwargs}."
             )
 
-        # Class specialization based on keyword arguments
-        sorted_keys = sorted(kwargs.keys())
+        # Iterate through the specifications to find a matching condition type
+        for condition_cls, required, optional in cls._SPECS:
 
-        # Input - Target Condition
-        if sorted_keys == sorted(InputTargetCondition.__fields__):
-            return InputTargetCondition(**kwargs)
+            # Find allowed keys for condition type
+            allowed = required | optional
 
-        # Input - Equation Condition
-        if sorted_keys == sorted(InputEquationCondition.__fields__):
-            return InputEquationCondition(**kwargs)
+            # Check if the provided keys match the required and optional keys
+            if required <= set(kwargs) <= allowed:
+                return condition_cls(**kwargs)
 
-        # Domain - Equation Condition
-        if sorted_keys == sorted(DomainEquationCondition.__fields__):
-            return DomainEquationCondition(**kwargs)
+        # If no valid signature is found, prepare a list of valid signatures
+        valid_signatures = [
+            sorted(required | optional) for _, required, optional in cls._SPECS
+        ]
 
-        # Data Condition
-        if (
-            sorted_keys == sorted(DataCondition.__fields__)
-            or sorted_keys[0] == DataCondition.__fields__[0]
-        ):
-            return DataCondition(**kwargs)
-
-        # Invalid keyword arguments
-        raise ValueError(f"Invalid keyword arguments {kwargs.keys()}.")
+        # If no valid signature is found, raise an error
+        raise ValueError(
+            f"Invalid keyword arguments {sorted(set(kwargs))}. "
+            f"Valid signatures are: {valid_signatures}."
+        )

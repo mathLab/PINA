@@ -1,51 +1,294 @@
 import pytest
 import torch
-
+from pina.data.manager import _TensorDataManager, _BatchManager
+from pina._src.core.utils import labelize_forward
 from pina.condition import TimeSeriesCondition
+from pina import LabelTensor, Condition
+
+# Number of samples and time steps for testing
+n_samples = 5
+time_steps = 10
 
 
+# Helper function to create tensor data
+def _create_tensor_data(use_lt=False):
+
+    # Input tensor
+    input_tensor = torch.rand((n_samples, time_steps, 2))
+
+    # If LabelTensor is used, create tensor data with labels
+    if use_lt:
+        return LabelTensor(input_tensor, labels=["u", "v"])
+
+    return input_tensor
+
+
+# Helper function to check tensor types
+def _assert_tensor_type(t, use_lt):
+    if use_lt:
+        assert isinstance(t, LabelTensor)
+    else:
+        assert isinstance(t, torch.Tensor) and not isinstance(t, LabelTensor)
+
+
+# Helper function to compute expected unroll windows
+def _expected_unroll(data, n_windows, unroll_length, randomize):
+
+    # Compute valid starting indices
+    last_idx = data.shape[1] - unroll_length
+    start_indices = torch.arange(last_idx + 1)
+
+    # Randomize indices if required
+    if randomize:
+        start_indices = start_indices[torch.randperm(len(start_indices))]
+
+    # Limit the number of windows
+    if n_windows is not None and n_windows < len(start_indices):
+        start_indices = start_indices[:n_windows]
+
+    # Build expected windows
+    windows = [data[:, s : s + unroll_length] for s in start_indices]
+
+    return torch.stack(windows, dim=1)
+
+
+# Define a dummy solver for testing
 class DummySolver:
-    def __init__(self):
-        self.weight_calls = []
+
+    def __init__(self, use_lt, input_vars):
+        if use_lt:
+            self.forward = labelize_forward(
+                forward=self.forward,
+                input_variables=input_vars,
+                output_variables=input_vars,
+            )
+
+        self._params = None
+        self._kwargs = {}
+        self.aggregation_strategy = torch.mean
+
+    def forward(self, samples):
+        return samples
 
     def preprocess_step(self, current_state, **kwargs):
         return current_state
 
-    def forward(self, x):
-        return x + 1.0
-
     def postprocess_step(self, predicted_state, **kwargs):
         return predicted_state
 
-    def _get_weights(self, condition_name, step_losses, eps):
-        self.weight_calls.append((condition_name, eps, step_losses.shape))
-        return torch.ones_like(step_losses)
+    def _get_weights(self, condition_name, step_losses):
+        return 1.0
 
 
-def test_evaluate_time_series_condition_mean_aggregation():
-    input_tensor = torch.tensor([[[[0.0], [1.0], [2.0]]]])
-    condition = TimeSeriesCondition(input=input_tensor, eps=0.1)
-    solver = DummySolver()
-    loss = torch.nn.MSELoss(reduction="none")
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("n_windows", [4, 8])
+@pytest.mark.parametrize("unroll_length", [3, 5])
+@pytest.mark.parametrize("randomize", [True, False])
+def test_constructor(use_lt, n_windows, unroll_length, randomize):
 
-    value = condition.evaluate(
-        {"input": input_tensor},
-        solver,
-        loss,
-        condition_name="autoregressive",
+    # Define the condition
+    input_tensor = _create_tensor_data(use_lt)
+    condition = Condition(
+        input=input_tensor,
+        n_windows=n_windows,
+        unroll_length=unroll_length,
+        randomize=randomize,
     )
 
-    torch.testing.assert_close(value, torch.tensor(0.0))
-    assert solver.weight_calls == [
-        ("autoregressive", 0.1, torch.Size([2, 1, 1, 1]))
-    ]
+    # Assert correct types
+    assert isinstance(condition, TimeSeriesCondition)
+    _assert_tensor_type(condition.input, use_lt)
+
+    # Assert numerical parity
+    if not randomize:
+        expected_tensor = _expected_unroll(
+            input_tensor, n_windows, unroll_length, randomize
+        )
+        assert torch.allclose(condition.input, expected_tensor)
+
+    # Assert labels if LabelTensor is used
+    if use_lt:
+        assert condition.input.labels == ["u", "v"]
+
+    # Should fail if unroll_length is not a positive integer
+    with pytest.raises(AssertionError):
+        Condition(
+            input=input_tensor,
+            n_windows=n_windows,
+            unroll_length=0,
+            randomize=randomize,
+        )
+
+    # Should fail if n_windows is not a positive integer
+    with pytest.raises(AssertionError):
+        Condition(
+            input=input_tensor,
+            n_windows=0,
+            unroll_length=unroll_length,
+            randomize=randomize,
+        )
+
+    # Should fail if randomize is not a boolean value
+    with pytest.raises(ValueError):
+        Condition(
+            input=input_tensor,
+            n_windows=n_windows,
+            unroll_length=unroll_length,
+            randomize="not_a_boolean",
+        )
+
+    # Should fail if the input tensor has less than 3 dimensions
+    with pytest.raises(ValueError):
+        Condition(
+            input=torch.rand(n_samples, 2),
+            n_windows=n_windows,
+            unroll_length=unroll_length,
+            randomize=randomize,
+        )
+
+    # Should fail if unroll_length is not greater than 1
+    with pytest.raises(ValueError):
+        Condition(
+            input=input_tensor,
+            n_windows=n_windows,
+            unroll_length=1,
+            randomize=randomize,
+        )
+
+    # Should fail if unroll_length is greater than the number of time steps
+    with pytest.raises(ValueError):
+        Condition(
+            input=input_tensor,
+            n_windows=n_windows,
+            unroll_length=time_steps + 1,
+            randomize=randomize,
+        )
 
 
-def test_evaluate_time_series_condition_invalid_shape():
-    input_tensor = torch.randn(2, 3, 4)
-    condition = TimeSeriesCondition(input=input_tensor)
-    solver = DummySolver()
-    loss = torch.nn.MSELoss(reduction="none")
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("n_windows", [4, 8])
+@pytest.mark.parametrize("unroll_length", [3, 5])
+@pytest.mark.parametrize("randomize", [True, False])
+def test_get_item(use_lt, n_windows, unroll_length, randomize):
 
-    with pytest.raises(ValueError, match="at least 4 dimensions"):
-        condition.evaluate({"input": input_tensor}, solver, loss)
+    # Define the condition
+    input_tensor = _create_tensor_data(use_lt)
+    condition = Condition(
+        input=input_tensor,
+        n_windows=n_windows,
+        unroll_length=unroll_length,
+        randomize=randomize,
+    )
+
+    # Extract item using __getitem__
+    index = 0
+    item = condition[index]
+
+    # Assert correct types
+    assert isinstance(item, _TensorDataManager)
+    _assert_tensor_type(item.input, use_lt)
+
+    # Assert correct shapes
+    expected_window = min(n_windows, time_steps - unroll_length + 1)
+    expected_shape = torch.Size([expected_window, unroll_length, 2])
+    assert item.input.shape == expected_shape
+
+    # Assert numerical parity
+    if not randomize:
+        expected_tensor = _expected_unroll(
+            input_tensor, n_windows, unroll_length, randomize
+        )
+        assert torch.allclose(item.input, expected_tensor[index])
+
+
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("n_windows", [4, 8])
+@pytest.mark.parametrize("unroll_length", [3, 5])
+@pytest.mark.parametrize("randomize", [True, False])
+def test_create_batch(use_lt, n_windows, unroll_length, randomize):
+
+    # Define the condition
+    input_tensor = _create_tensor_data(use_lt)
+    condition = Condition(
+        input=input_tensor,
+        n_windows=n_windows,
+        unroll_length=unroll_length,
+        randomize=randomize,
+    )
+
+    # Create batches using automatic batching or condition's collate_fn
+    idx = [0, 2]
+    data_to_collate = [condition.data[i] for i in idx]
+    batch_auto = condition.automatic_batching_collate_fn(data_to_collate)
+    batch_collate = condition.collate_fn(idx, condition)
+
+    # Check that the automatic batch has been properly created
+    assert isinstance(batch_auto, _BatchManager)
+    assert hasattr(batch_auto, "input")
+
+    # Check that the collate_fn batch has been properly created
+    assert isinstance(batch_collate, dict)
+    assert hasattr(batch_collate, "input")
+
+    # Assert that the automatic batch input is correct
+    expected_window = min(n_windows, time_steps - unroll_length + 1)
+    expected_shape = torch.Size([len(idx), expected_window, unroll_length, 2])
+    assert batch_auto.input.shape == expected_shape
+
+    # Assert that the collate_fn batch input is correct
+    expected_window = min(n_windows, time_steps - unroll_length + 1)
+    expected_shape = torch.Size([len(idx), expected_window, unroll_length, 2])
+    assert batch_collate.input.shape == expected_shape
+
+    # Create input values
+    if not randomize:
+        expected_tensor = _expected_unroll(
+            input_tensor, n_windows, unroll_length, randomize
+        )
+        assert torch.allclose(batch_collate.input, expected_tensor[idx])
+        assert torch.allclose(batch_auto.input, expected_tensor[idx])
+
+
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("n_windows", [4, 8])
+@pytest.mark.parametrize("unroll_length", [3, 5])
+@pytest.mark.parametrize("randomize", [True, False])
+def test_evaluate(use_lt, n_windows, unroll_length, randomize):
+
+    # Define the input tensor
+    input_tensor = _create_tensor_data(use_lt)
+    input_vars = input_tensor.labels if use_lt else None
+
+    # Define the condition and the solver
+    condition = Condition(
+        input=input_tensor,
+        n_windows=n_windows,
+        unroll_length=unroll_length,
+        randomize=randomize,
+    )
+    solver = DummySolver(use_lt, input_vars)
+    loss_fn = torch.nn.MSELoss(reduction="none")
+
+    # Extract the batch
+    batch = {"input": condition.input}
+
+    # Evaluate the condition and compute the expected loss
+    loss = condition.evaluate(batch, solver, loss_fn)
+
+    # Compute expected autoregressive step losses
+    step_losses = []
+    current_state = batch["input"][:, :, 0]
+
+    for step in range(1, batch["input"].shape[2]):
+        predicted_state = current_state
+        target_state = batch["input"][:, :, step]
+
+        step_loss = loss_fn(predicted_state, target_state)
+        step_losses.append(step_loss)
+
+        current_state = predicted_state
+
+    expected = torch.mean(torch.stack(step_losses).as_subclass(torch.Tensor))
+
+    # Assert that the evaluated loss is correct
+    assert torch.allclose(loss, expected)

@@ -1,8 +1,10 @@
 import torch
 import pytest
+from pina._src.core.utils import labelize_forward
+from pina._src.core.graph import LabelBatch
 from pina.graph import RadiusGraph, Graph
-from pina import LabelTensor, Condition
 from pina.condition import DataCondition
+from pina import LabelTensor, Condition
 from pina.data.manager import (
     _TensorDataManager,
     _GraphDataManager,
@@ -10,20 +12,26 @@ from pina.data.manager import (
 )
 
 
+# Number of graphs and tensor samples for testing
+n_samples = 10
+n_graphs = 10
+n_nodes = 20
+
+
 # Helper function to create tensor data
 def _create_tensor_data(use_lt, conditional_variables):
 
     # If LabelTensor is used, create tensors with labels
     if use_lt:
-        input_tensor = LabelTensor(torch.rand((10, 3)), ["x", "y", "z"])
-        cond_vars = LabelTensor(torch.rand((10, 2)), ["a", "b"])
+        input_tensor = LabelTensor(torch.rand((n_samples, 3)), ["x", "y", "z"])
+        cond_vars = LabelTensor(torch.rand((n_samples, 1)), ["a"])
         cond_vars = cond_vars if conditional_variables else None
 
         return input_tensor, cond_vars
 
     # Standard torch.Tensor without labels
-    input_tensor = torch.rand((10, 3))
-    cond_vars = torch.rand((10, 2))
+    input_tensor = torch.rand((n_samples, 3))
+    cond_vars = torch.rand((n_samples, 1))
     cond_vars = cond_vars if conditional_variables else None
 
     return input_tensor, cond_vars
@@ -34,18 +42,21 @@ def _create_graph_data(use_lt, conditional_variables):
 
     # If LabelTensor is used, create graph data with LabelTensors
     if use_lt:
-        x = LabelTensor(torch.rand(10, 20, 2), ["u", "v"])
-        pos = LabelTensor(torch.rand(10, 20, 2), ["x", "y"])
-        cond_vars = LabelTensor(torch.rand(10, 20, 1), ["f"])
+        x = LabelTensor(torch.rand(n_graphs, n_nodes, 2), ["u", "v"])
+        pos = LabelTensor(torch.rand(n_graphs, n_nodes, 2), ["x", "y"])
+        cond_vars = LabelTensor(torch.rand(n_graphs, n_nodes, 1), ["f"])
 
     # Standard torch.Tensor without labels
     else:
-        x = torch.rand(10, 20, 2)
-        pos = torch.rand(10, 20, 2)
-        cond_vars = torch.rand(10, 20, 1)
+        x = torch.rand(n_graphs, n_nodes, 2)
+        pos = torch.rand(n_graphs, n_nodes, 2)
+        cond_vars = torch.rand(n_graphs, n_nodes, 1)
 
     # Create a list of Graphs
-    graph = [RadiusGraph(pos=pos[i], radius=0.1, x=x[i]) for i in range(len(x))]
+    graph = [
+        RadiusGraph(pos=pos[i], radius=0.1, x=x[i], cond_vars=cond_vars[i])
+        for i in range(len(x))
+    ]
 
     # Create conditional variables if needed
     cond_vars = cond_vars if conditional_variables else None
@@ -66,6 +77,34 @@ def _assert_graph_type(graph_list, use_lt):
     assert isinstance(graph_list, list)
     for graph in graph_list:
         _assert_tensor_type(graph.x, use_lt)
+
+
+# Define a dummy solver for testing
+class DummySolver:
+
+    def __init__(self, use_lt, input_vars, cond_vars):
+        if use_lt:
+            self.forward = labelize_forward(
+                forward=self.forward,
+                input_variables=input_vars,
+                output_variables="z",
+            )
+
+        self.cond_vars = cond_vars
+        self._params = None
+
+    def forward(self, pts):
+
+        # Tensor case
+        if isinstance(pts, torch.Tensor):
+            factor = self.cond_vars if self.cond_vars is not None else 1.0
+            return pts.mean(dim=-1, keepdim=True) * factor
+
+        # Graph case
+        else:
+            factor = pts.cond_vars if pts.cond_vars is not None else 1.0
+            output_ = pts.x.mean(dim=-1, keepdim=True) * factor
+            return output_.reshape(n_graphs, n_nodes, 1)
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
@@ -99,7 +138,7 @@ def test_constructor(case, use_lt, conditional_variables):
         if use_lt:
             assert condition.input.labels == ["x", "y", "z"]
             if cond_vars is not None:
-                assert condition.conditional_variables.labels == ["a", "b"]
+                assert condition.conditional_variables.labels == ["a"]
 
     # Graph input case
     elif case == "graph":
@@ -299,3 +338,53 @@ def test_create_batch(case, use_lt, conditional_variables):
         if cond_vars is not None:
             assert torch.allclose(batch_collate.conditional_variables, exp_cond)
             assert batch_collate.conditional_variables.shape == exp_cond.shape
+
+
+@pytest.mark.parametrize("use_lt", [True, False])
+@pytest.mark.parametrize("conditional_variables", [False, True])
+@pytest.mark.parametrize("case", ["tensor", "graph"])
+def test_evaluate(case, use_lt, conditional_variables):
+
+    # Tensor case
+    if case == "tensor":
+
+        # Define the input and the target
+        input_, cond_vars = _create_tensor_data(use_lt, conditional_variables)
+        input_vars = input_.labels if use_lt else None
+
+        # Define the condition and the solver
+        condition = Condition(input=input_, conditional_variables=cond_vars)
+        solver = DummySolver(use_lt, input_vars, cond_vars)
+        loss_fn = torch.nn.MSELoss(reduction="none")
+
+        # Extract the batch
+        batch = {
+            "input": condition.input,
+            "conditional_variables": condition.conditional_variables,
+        }
+
+    # Graph case
+    elif case == "graph":
+
+        # Define the input and the target
+        input_, cond_vars = _create_graph_data(use_lt, conditional_variables)
+        input_vars = input_[0].x.labels if use_lt else None
+
+        # Define the condition and the solver
+        condition = Condition(input=input_, conditional_variables=cond_vars)
+        solver = DummySolver(use_lt, input_vars, cond_vars)
+        loss_fn = torch.nn.MSELoss(reduction="none")
+
+        # Extract the batch
+        batch = {
+            "input": LabelBatch.from_data_list(condition.input),
+            "conditional_variables": condition.conditional_variables,
+        }
+
+    # Evaluate the condition and compute the expected value
+    loss = condition.evaluate(batch, solver, loss_fn)
+    output_ = solver.forward(batch["input"])
+    expected = loss_fn(output_, torch.zeros_like(output_))
+
+    # Assert that the evaluated loss is correct
+    assert torch.allclose(loss, expected)

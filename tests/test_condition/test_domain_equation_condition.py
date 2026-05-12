@@ -1,7 +1,5 @@
 import pytest
-import torch
 from pina import Condition
-from pina import LabelTensor
 from pina.domain import CartesianDomain
 from pina.equation.zoo import FixedValue
 from pina.condition import DomainEquationCondition
@@ -10,20 +8,6 @@ from pina.condition import DomainEquationCondition
 # Define a simple domain and equation for testing
 domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
 equation = FixedValue(0.0)
-from pina.equation import Equation
-from pina.condition import DomainEquationCondition
-
-
-class DummySolver:
-    def __init__(self):
-        self._params = {"shift": torch.tensor(0.25)}
-
-    def forward(self, samples):
-        return samples.extract(["x"]) - samples.extract(["y"])
-
-
-example_domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
-example_equation = FixedValue(0.0)
 
 
 def test_constructor():
@@ -71,26 +55,11 @@ def test_create_batch():
         _ = [condition.data[i] for i in [0, 2, 4, 6]]
 
 
-def test_getitem_not_implemented():
-    cond = Condition(domain=example_domain, equation=FixedValue(0.0))
+def test_evaluate():
+
+    # Define the condition
+    condition = Condition(domain=domain, equation=equation)
+
+    # Should raise NotImplementedError when trying to evaluate the condition
     with pytest.raises(NotImplementedError):
-        cond[0]
-
-
-def test_evaluate_domain_equation_condition():
-    def equation_func(input_, output_, params_):
-        return output_ + input_.extract(["y"]) - params_["shift"]
-
-    samples = LabelTensor(torch.randn(12, 2), labels=["x", "y"])
-    cond = Condition(domain=example_domain, equation=Equation(equation_func))
-    solver = DummySolver()
-    batch = {"input": samples}
-    loss = torch.nn.MSELoss(reduction="none")
-
-    residual = cond.evaluate(batch, solver, loss)
-    expected = loss(
-        samples.extract(["x"]) - solver._params["shift"],
-        torch.zeros_like(samples.extract(["x"]) - solver._params["shift"]),
-    )
-
-    torch.testing.assert_close(residual, expected)
+        condition.evaluate(None, None, None)
