@@ -1,7 +1,8 @@
 """
-This module contains the PinaDataModule class, which extends the
-LightningDataModule class to allow proper creation and management of
-different types of Datasets defined in PINA.
+Utilities for creating and managing datasets and dataloaders.
+
+This module defines a custom extension of the Lighting DataModule used to handle
+dataset splitting, batching, and dataloader creation for PINA conditions.
 """
 
 import warnings
@@ -12,193 +13,174 @@ from pina._src.data.aggregator import _Aggregator
 from pina._src.data.creator import _Creator
 
 
-class PinaDataModule(LightningDataModule):
+class DataModule(LightningDataModule):
     """
-    This class extends :class:`~lightning.pytorch.core.LightningDataModule`,
-    allowing proper creation and management of different types of datasets
-    defined in PINA.
+    An extension of the Lightning data module for managing PINA condition
+    datasets.
+
+    The data module handles train/validation/test dataset splitting, condition
+    subset creation, dataloader construction, and batching coordination across
+    multiple conditions.
+
+    Dataset splitting is performed independently for each condition, and the
+    resulting subsets are wrapped into :class:`_ConditionSubset` objects.
+    Dataloaders are then created and aggregated according to the selected
+    batching strategy.
     """
 
     def __init__(
         self,
         problem,
-        train_size=0.7,
-        test_size=0.2,
-        val_size=0.1,
-        batch_size=None,
-        shuffle=True,
-        batching_mode="common_batch_size",
-        automatic_batching=None,
-        num_workers=0,
-        pin_memory=False,
+        train_size,
+        val_size,
+        test_size,
+        batch_size,
+        batching_mode,
+        automatic_batching,
+        shuffle,
+        num_workers,
+        pin_memory,
     ):
         """
-        Initialize the object and creating datasets based on the input problem.
+        Initialization of the :class:`DataModule` class.
 
-        :param BaseProblem problem: The problem containing the data on which
-            to create the datasets and dataloaders.
-        :param float train_size: Fraction of elements in the training split. It
-            must be in the range [0, 1].
-        :param float test_size: Fraction of elements in the test split. It must
-            be in the range [0, 1].
-        :param float val_size: Fraction of elements in the validation split. It
-            must be in the range [0, 1].
-        :param int batch_size: The batch size used for training. If ``None``,
-            the entire dataset is returned in a single batch.
-            Default is ``None``.
-        :param bool shuffle: Whether to shuffle the dataset before splitting.
-            Default ``True``.
-        :param str batching_mode: The batching mode to use. Options are
-            ``"common_batch_size"``, ``"proportional"``, and
-            ``"separate_conditions"``. Default is ``"common_batch_size"``.
-        :param automatic_batching: If ``True``, automatic PyTorch batching
-            is performed, which consists of extracting one element at a time
-            from the dataset and collating them into a batch. This is useful
-            when the dataset is too large to fit into memory. On the other hand,
-            if ``False``, the items are retrieved from the dataset all at once
-            avoind the overhead of collating them into a batch and reducing the
-            ``__getitem__`` calls to the dataset. This is useful when the
-            dataset fits into memory. Avoid using automatic batching when
-            ``batch_size`` is large. Default is ``False``.
-        :param int num_workers: Number of worker threads for data loading.
-            Default ``0`` (serial loading).
-        :param bool pin_memory: Whether to use pinned memory for faster data
-            transfer to GPU. Default ``False``.
-
-        :raises ValueError: If at least one of the splits is negative.
-        :raises ValueError: If the sum of the splits is different from 1.
-
-        .. seealso::
-            For more information on multi-process data loading, see:
-            https://pytorch.org/docs/stable/data.html#multi-process-data-loading
-
-            For details on memory pinning, see:
-            https://pytorch.org/docs/stable/data.html#memory-pinning
+        :param BaseProblem problem: The problem containing the conditions and
+            sampled data used to construct datasets and dataloaders.
+        :param float train_size: The fraction of samples assigned to the
+            training split. Must belong to the interval ``[0, 1]``.
+        :param float val_size: The fraction of samples assigned to the
+            validation split. Must belong to the interval ``[0, 1]``.
+        :param float test_size: The fraction of samples assigned to the test
+            split. Must belong to the interval ``[0, 1]``.
+        :param int batch_size: The number of samples per batch. If ``None``, the
+            entire dataset is processed as a single batch.
+        :param str batching_mode: The strategy used to aggregate batches across
+            dataloaders. Available options are ``"common_batch_size"`` for
+            uniform batch sizes across conditions, ``"proportional"`` for batch
+            sizes proportional to dataset sizes, and ``"separate_conditions"``
+            for iterating through each condition separately.
+        :param bool automatic_batching: Whether PyTorch automatic batching
+            should be enabled. If ``True``, dataset elements are retrieved
+            individually and collated into batches by the dataloader.
+            If ``False``, entire subsets are retrieved directly from the
+            condition object.
+        :param bool shuffle: Whether condition samples should be shuffled before
+            splitting.
+        :param int num_workers: The number of worker processes used by
+            dataloaders.
+        :param bool pin_memory: Whether pinned memory should be enabled during
+            data loading.
+        :raises UserWarning: If ``num_workers`` is set to non-default value
+            while ``batch_size`` is None.
+        :raises UserWarning: If ``pin_memory`` is set to ``True`` while
+            ``batch_size`` is None.
         """
         super().__init__()
 
+        # Initialize the attributes -- consistency checked in trainer
         self.problem = problem
-        # Store fixed attributes
         self.batch_size = batch_size
-        self.shuffle = shuffle
         self.batching_mode = batching_mode
         self.automatic_batching = automatic_batching
-        self.batching_mode = batching_mode
+        self.shuffle = shuffle
+        self.num_workers = num_workers
+        self.pin_memory = pin_memory
 
         # If batch size is None, num_workers has no effect
         if batch_size is None and num_workers != 0:
-            warnings.warn(
-                "Setting num_workers when batch_size is None has no effect on "
-                "the DataLoading process."
-            )
+            warnings.warn("num_workers has no effect when batch_size is None.")
             self.num_workers = 0
-        else:
-            self.num_workers = num_workers
 
         # If batch size is None, pin_memory has no effect
         if batch_size is None and pin_memory:
-            warnings.warn(
-                "Setting pin_memory to True has no effect when "
-                "batch_size is None."
-            )
+            warnings.warn("pin_memory has no effect when batch_size is None.")
             self.pin_memory = False
-        else:
-            self.pin_memory = pin_memory
+
+        # Move domain discretisation into conditions subsets
         self.problem.move_discretisation_into_conditions()
-        self._check_slit_sizes(train_size, test_size, val_size)
 
-        # TODO: singular forms (train_dataset, val_dataset, test_dataset) seem
-        # to be unused. Clean code.
-        if train_size > 0:
-            self.train_dataset = None
-        else:
-            # Use the super method to create the train dataloader which
-            # raises NotImplementedError
-            self.train_dataloader = super().train_dataloader
-        if test_size > 0:
-            self.test_dataset = None
-        else:
-            # Use the super method to create the train dataloader which
-            # raises NotImplementedError
-            self.test_dataloader = super().test_dataloader
-        if val_size > 0:
-            self.val_dataset = None
-        else:
-            # Use the super method to create the train dataloader which
-            # raises NotImplementedError
-            self.val_dataloader = super().val_dataloader
+        # Verify which splits are zero
+        self._has_train = train_size > 0
+        self._has_val = val_size > 0
+        self._has_test = test_size > 0
 
-        self._create_condition_splits(problem, train_size, test_size, val_size)
+        # Otherwise, create the condition splits and initialize the creator
+        self._create_condition_splits(train_size, test_size)
         self.creator = _Creator(
-            batching_mode=batching_mode,
-            batch_size=batch_size,
-            shuffle=shuffle,
-            automatic_batching=automatic_batching,
-            num_workers=num_workers,
-            pin_memory=pin_memory,
-            conditions=problem.conditions,
+            batching_mode=self.batching_mode,
+            batch_size=self.batch_size,
+            shuffle=self.shuffle,
+            automatic_batching=self.automatic_batching,
+            num_workers=self.num_workers,
+            pin_memory=self.pin_memory,
+            conditions=self.problem.conditions,
         )
 
-    @staticmethod
-    def _check_slit_sizes(train_size, test_size, val_size):
+    def _create_condition_splits(self, train_size, test_size):
         """
-        Check if the splits are correct. The splits sizes must be positive and
-        the sum of the splits must be 1.
+        Create train/validation/test index splits for each condition.
 
-        :param float train_size: The size of the training split.
-        :param float test_size: The size of the testing split.
-        :param float val_size: The size of the validation split.
+        Samples belonging to each condition are optionally shuffled before being
+        partitioned into train, validation, and test subsets according to the
+        specified split fractions.
 
-        :raises ValueError: If at least one of the splits is negative.
-        :raises ValueError: If the sum of the splits is different
-            from 1.
+        :param float train_size: The fraction of samples assigned to the
+            training split. Must belong to the interval ``[0, 1]``.
+        :param float test_size: The fraction of samples assigned to the test
+            split. Must belong to the interval ``[0, 1]``.
         """
-
-        if train_size < 0 or test_size < 0 or val_size < 0:
-            raise ValueError("The splits must be positive")
-        if abs(train_size + test_size + val_size - 1) > 1e-6:
-            raise ValueError("The sum of the splits must be 1")
-
-    def _create_condition_splits(
-        self, problem, train_size, test_size, val_size
-    ):
+        # Initialize the dictionary to store the split idx for each condition
         self.split_idxs = {}
-        for condition_name, condition in problem.conditions.items():
-            len_condition = len(condition)
-            # Create the indices for shuffling and splitting
+
+        # Iterate through conditions and create the splits
+        for condition_name, condition in self.problem.conditions.items():
+
+            # Get the total number of samples for the current condition
+            condition_length = len(condition)
+
+            # Generate shuffled or sequential indices for the condition samples
             indices = (
-                torch.randperm(len_condition).tolist()
+                torch.randperm(condition_length).tolist()
                 if self.shuffle
-                else list(range(len_condition))
+                else list(range(condition_length))
             )
 
-            # Determine split sizes
-            train_end = int(train_size * len_condition)
-            test_end = train_end + int(test_size * len_condition)
+            # Compute the split indices for train, validation, and test subsets
+            train_end = int(train_size * condition_length)
+            test_end = train_end + int(test_size * condition_length)
 
-            # Split indices
-            train_indices = indices[:train_end]
-            test_indices = indices[train_end:test_end]
-            val_indices = indices[test_end:]
-            splits = {}
-            splits["train"], splits["test"], splits["val"] = (
-                train_indices,
-                test_indices,
-                val_indices,
-            )
-            self.split_idxs[condition_name] = splits
+            # Store the computed split indices in the dictionary
+            self.split_idxs[condition_name] = {
+                "train": indices[:train_end],
+                "test": indices[train_end:test_end],
+                "val": indices[test_end:],
+            }
 
     def setup(self, stage=None):
         """
-        Create the dataset objects for the given stage.
-        If the stage is "fit", the training and validation datasets are created.
-        If the stage is "test", the testing dataset is created.
+        Create dataset subsets for the requested execution stage.
 
-        :param str stage: The stage for which to perform the dataset setup.
+        Depending on the selected stage, it initializes the ``train_datasets``,
+        the ``val_datasets``, or the ``test_datasets`` attributes. Each dataset
+        is represented as a mapping between condition names and
+        :class:`_ConditionSubset` instances.
 
-        :raises ValueError: If the stage is neither "fit" nor "test".
+        :param str stage: The execution stage. Available options are ``"fit"``
+            for training/validation and ``"test"`` for testing. If ``None``, both
+            training/validation and testing datasets are created.
+            Default is ``None``.
+        :raises ValueError: If the provided stage is invalid.
         """
+        # Validate the stage argument
+        if stage not in ("fit", "test", None):
+            raise ValueError(
+                f"Invalid stage. Got {stage}, expected either 'fit' or  'test'."
+            )
+
+        # Fit stage: create training and validation datasets
         if stage in ("fit", None):
+
+            # Train dataset
             self.train_datasets = {
                 name: _ConditionSubset(
                     condition,
@@ -209,6 +191,7 @@ class PinaDataModule(LightningDataModule):
                 if len(self.split_idxs[name]["train"]) > 0
             }
 
+            # Validation dataset
             self.val_datasets = {
                 name: _ConditionSubset(
                     condition,
@@ -219,7 +202,10 @@ class PinaDataModule(LightningDataModule):
                 if len(self.split_idxs[name]["val"]) > 0
             }
 
+        # Test stage: create testing dataset
         if stage in ("test", None):
+
+            # Test dataset
             self.test_datasets = {
                 name: _ConditionSubset(
                     condition,
@@ -229,56 +215,85 @@ class PinaDataModule(LightningDataModule):
                 for name, condition in self.problem.conditions.items()
                 if len(self.split_idxs[name]["test"]) > 0
             }
-        if stage not in ("fit", "test", None):
-            raise ValueError(
-                f"Invalid stage {stage}. Stage must be either 'fit' or 'test'."
-            )
+
+    def transfer_batch_to_device(self, batch, device, _):
+        """
+        Transfer a batch to the target device.
+
+        The method transfers all condition batches contained in the aggregated
+        batch dictionary to the specified device.
+
+        :param dict batch: The mapping between the condition names and the
+            condition batches.
+        :param torch.device device: The target device.
+        :param _: Placeholder argument, not used.
+        :return: A list of tuples containing condition names and transferred
+            batches.
+        :rtype: list[tuple[str, Any]]
+        """
+        return [
+            (condition_name, condition.to(device))
+            for condition_name, condition in batch.items()
+        ]
 
     def train_dataloader(self):
+        """
+        Create the aggregated train dataloader.
+
+        :return: The aggregated dataloader coordinating all train condition
+            dataloaders.
+        :rtype: _Aggregator
+        """
+        # If no training split is defined, return the default dataloader
+        if not self._has_train:
+            return super().train_dataloader()
+
+        # If the training dataloaders have not been created yet, call setup
+        if not hasattr(self, "train_datasets"):
+            self.setup("fit")
+
         return _Aggregator(
             self.creator(self.train_datasets),
             batching_mode=self.batching_mode,
         )
 
     def val_dataloader(self):
+        """
+        Create the aggregated validation dataloader.
+
+        :return: The aggregated dataloader coordinating all validation condition
+            dataloaders.
+        :rtype: _Aggregator
+        """
+        # If no validation split is defined, return the default dataloader
+        if not self._has_val:
+            return super().val_dataloader()
+
+        # If the validation dataloaders have not been created yet, call setup
+        if not hasattr(self, "val_datasets"):
+            self.setup("fit")
+
         return _Aggregator(
             self.creator(self.val_datasets), batching_mode=self.batching_mode
         )
 
     def test_dataloader(self):
+        """
+        Create the aggregated test dataloader.
+
+        :return: The aggregated dataloader coordinating all test condition
+            dataloaders.
+        :rtype: _Aggregator
+        """
+        # If no test split is defined, return the default dataloader
+        if not self._has_test:
+            return super().test_dataloader()
+
+        # If the test dataloaders have not been created yet, call setup
+        if not hasattr(self, "test_datasets"):
+            self.setup("test")
+
         return _Aggregator(
             self.creator(self.test_datasets),
             batching_mode=self.batching_mode,
         )
-
-    @staticmethod
-    def _transfer_batch_to_device_dummy(batch, device, dataloader_idx):
-        """
-        Transfer the batch to the device. This method is used when the batch
-        size is None: batch has already been transferred to the device.
-
-        :param list[tuple] batch: List of tuple where the first element of the
-            tuple is the condition name and the second element is the data.
-        :param torch.device device: Device to which the batch is transferred.
-        :param int dataloader_idx: Index of the dataloader.
-        :return: The batch transferred to the device.
-        :rtype: list[tuple]
-        """
-        return batch
-
-    def transfer_batch_to_device(self, batch, device, dataloader_idx):
-        """
-        Transfer the batch to the device. This method is called in the
-        training loop and is used to transfer the batch to the device.
-
-        :param dict batch: The batch to be transferred to the device.
-        :param torch.device device: The device to which the batch is
-            transferred.
-        :param int dataloader_idx: The index of the dataloader.
-        :return: The batch transferred to the device.
-        :rtype: list[tuple]
-        """
-        to_return = []
-        for condition_name, condition in batch.items():
-            to_return.append((condition_name, condition.to(device)))
-        return to_return

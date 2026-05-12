@@ -18,6 +18,9 @@ from pina._src.solver.solver_interface import (
 warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=UserWarning)
 
+# TODO: add checks on training, val and test sizes
+# TODO: rimuovi tutti i check inutili a cascata in tutto il data module
+
 
 class Trainer(lightning.pytorch.Trainer):
     """
@@ -69,7 +72,7 @@ class Trainer(lightning.pytorch.Trainer):
         :param bool automatic_batching: If ``True``, automatic PyTorch batching
             is performed, otherwise the items are retrieved from the dataset
             all at once. For further details, see the
-            :class:`~pina.data.data_module.PinaDataModule` class. Default is
+            :class:`~pina.data.data_module.DataModule` class. Default is
             ``False``.
         :param int num_workers: The number of worker threads for data loading.
             Default is ``0`` (serial loading).
@@ -248,7 +251,7 @@ class Trainer(lightning.pytorch.Trainer):
                 "are sampled. The Trainer got the following:\n"
                 f"{error_message}"
             )
-        self.data_module = PinaDataModule(
+        self.data_module = DataModule(
             self.solver.problem,
             train_size=train_size,
             test_size=test_size,
