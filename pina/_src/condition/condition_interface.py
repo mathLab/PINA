@@ -57,6 +57,31 @@ class ConditionInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
+    def evaluate(self, batch, solver, loss):
+        """
+        Evaluate the residual of the condition on the given batch using the
+        solver.
+
+        This method computes the non-aggregated, element-wise residual of the
+        condition. A forward pass of the solver's model is performed on the
+        input samples, and the condition residual is evaluated accordingly.
+
+        The returned tensor is not reduced, preserving the per-sample residual
+        values.
+
+        :param dict batch: The batch containing the data required by the
+            condition evaluation.
+        :param SolverInterface solver: The solver used to perform the forward
+            pass and compute the residual. The solver provides access to the
+            model and its parameters, which may be necessary for evaluating the
+            condition residual.
+        :param torch.nn.Module loss: The non-aggregating loss function used to
+            compare the condition residual against its reference value.
+        :return: The non-aggregated residual tensor.
+        :rtype: torch.Tensor | LabelTensor
+        """
+
+    @abstractmethod
     def switch_dataloader_fn(self, create_dataloader_fn):
         """
         Switch the dataloader function for the condition.

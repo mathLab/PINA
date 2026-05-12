@@ -108,33 +108,27 @@ class InputEquationCondition(BaseCondition):
         check_consistency(value, self._avail_equation_cls)
         self._equation = value
 
-    def evaluate(self, batch, solver, loss):
+    def evaluate(self, batch, solver, _):
         """
-        Evaluate the equation residual on the given batch using the solver.
+        Evaluate the residual of the condition on the given batch using the
+        solver.
 
         This method computes the non-aggregated, element-wise residual of the
-        equation. It performs a forward pass of the solver's model on the
-        input samples and then evaluates the equation residual. The returned
-        tensor is **not** reduced (i.e., no mean, sum, etc.), preserving the
-        per-sample residual values.
+        condition. A forward pass of the solver's model is performed on the
+        input samples, and the condition residual is evaluated accordingly.
 
-        :param batch: The batch containing the ``input`` entry.
-        :type batch: dict | _DataManager
-        :param solver: The solver containing the model and any additional
-            parameters (e.g., unknown parameters for inverse problems).
-        :type solver: ~pina.solver.solver.SolverInterface
-        :param loss: The non-aggregating loss function to apply to the
-            computed residual against zero.
-        :type loss: torch.nn.Module
-        :return: The non-aggregated loss tensor.
-        :rtype: ~pina.label_tensor.LabelTensor
+        The returned tensor is not reduced, preserving the per-sample residual
+        values.
 
-        :Example:
-
-            >>> residuals = condition.evaluate(
-            ...     {"input": input_samples}, solver, loss
-            ... )
-            >>> # residuals is a non-reduced tensor of shape (n_samples, ...)
+        :param dict batch: The batch containing the data required by the
+            condition evaluation.
+        :param SolverInterface solver: The solver used to perform the forward
+            pass and compute the residual. The solver provides access to the
+            model and its parameters, which may be necessary for evaluating the
+            condition residual.
+        :param _: Placeholder argument (not used).
+        :return: The non-aggregated residual tensor.
+        :rtype: LabelTensor
         """
         samples = batch["input"].requires_grad_(True)
         return self.equation.residual(
