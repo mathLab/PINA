@@ -200,7 +200,7 @@ class TimeSeriesCondition(BaseCondition):
             raise ValueError(
                 "The provided input tensor must have at least 4 dimensions:"
                 " [trajectories, windows, time_steps, *features]."
-                f" Got shape {batch["input"].shape}."
+                f" Got shape {batch['input'].shape}."
             )
 
         # Copy the kwargs to avoid modifying the original settings

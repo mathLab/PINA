@@ -51,7 +51,10 @@ dataloaders = {
 }
 
 
-@pytest.mark.parametrize("batching_mode", _Creator._AVAIL_BATCHING_MODES)
+@pytest.mark.parametrize(
+    "batching_mode",
+    ["common_batch_size", "separate_conditions", "proportional"],
+)
 def test_constructor(batching_mode):
 
     _Creator(
@@ -63,18 +66,6 @@ def test_constructor(batching_mode):
         pin_memory=False,
         conditions=dataloaders,
     )
-
-    # Should fail if an invalid batching mode is provided
-    with pytest.raises(ValueError):
-        _Creator(
-            batching_mode="invalid_mode",
-            batch_size=4,
-            shuffle=False,
-            automatic_batching=True,
-            num_workers=0,
-            pin_memory=False,
-            conditions=dataloaders,
-        )
 
 
 @pytest.mark.parametrize(

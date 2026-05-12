@@ -296,14 +296,3 @@ class BaseProblem(ProblemInterface):
         :rtype: bool
         """
         return all(d in self.discretised_domains for d in self.domains)
-
-
-# Back-compatibility with version 0.2, to be removed soon
-class AbstractProblem(BaseProblem):
-    def __init__(self, *args, **kwargs):
-        warnings.warn(
-            "AbstractProblem is deprecated, use BaseProblem instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        super().__init__(*args, **kwargs)
