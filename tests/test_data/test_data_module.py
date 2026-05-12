@@ -1,11 +1,9 @@
 import torch
 import pytest
-from torch_geometric.data import Batch
+from copy import copy
 from pina.problem.zoo import SupervisedProblem, Poisson2DSquareProblem
-from pina.data import DataModule, _ConditionSubset, _Aggregator
-from pina.solver import SupervisedSolver, PINN
+from pina.data import DataModule, _ConditionSubset
 from pina.graph import RadiusGraph
-from pina import Trainer
 
 # Number of samples in the synthetic datasets
 n_samples = 100
@@ -27,6 +25,15 @@ def _create_graph_data(n=n_samples):
     output_tensor = torch.rand((n, 50, 2))
 
     return input_graphs, output_tensor
+
+
+# Fixture remove data condition from pinns, caused by external tests in suite
+@pytest.fixture(autouse=True)
+def remove_data_from_pinn_conditions():
+    yield
+
+    # Remove the data condition
+    Poisson2DSquareProblem.conditions.pop("data", None)
 
 
 @pytest.mark.parametrize("problem_type", ["tensor", "graph", "pinn"])

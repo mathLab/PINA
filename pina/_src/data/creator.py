@@ -12,13 +12,6 @@ class _Creator:
     behavior to specific training requirements
     """
 
-    # Available batching modes
-    _AVAIL_BATCHING_MODES = {
-        "common_batch_size",
-        "proportional",
-        "separate_conditions",
-    }
-
     def __init__(
         self,
         batching_mode,
@@ -53,15 +46,7 @@ class _Creator:
         :param dict[str, BaseCondition] conditions: The mapping between
             condition names and condition objects responsible for data loader
             creation.
-        :raises ValueError: If an invalid batching mode is provided.
         """
-        # Check consistency
-        if batching_mode not in self._AVAIL_BATCHING_MODES:
-            raise ValueError(
-                f"Invalid batching mode '{batching_mode}'. "
-                f"Available options are: {self._AVAIL_BATCHING_MODES}"
-            )
-
         # Initialize attributes
         self.batching_mode = batching_mode
         self.batch_size = batch_size

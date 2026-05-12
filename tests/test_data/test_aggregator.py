@@ -69,10 +69,6 @@ def test_constructor(batching_mode):
     # Initialize the aggregator
     _Aggregator(dataloaders, batching_mode=batching_mode)
 
-    # Should fail if an invalid batching mode is provided
-    with pytest.raises(ValueError):
-        _Aggregator(dataloaders, batching_mode="invalid_mode")
-
     # Should raise NotImplementedError for separate_conditions mode
     with pytest.raises(NotImplementedError):
         _Aggregator(dataloaders, batching_mode="separate_conditions")

@@ -99,10 +99,13 @@ class DataModule(LightningDataModule):
         # Move domain discretisation into conditions subsets
         self.problem.move_discretisation_into_conditions()
 
-        # Verify which splits are zero
-        self._has_train = train_size > 0
-        self._has_val = val_size > 0
-        self._has_test = test_size > 0
+        # If no splits are defined, use the default dataloaders
+        if train_size == 0:
+            self.train_dataloader = super().train_dataloader
+        if val_size == 0:
+            self.val_dataloader = super().val_dataloader
+        if test_size == 0:
+            self.test_dataloader = super().test_dataloader
 
         # Otherwise, create the condition splits and initialize the creator
         self._create_condition_splits(train_size, test_size)
@@ -244,14 +247,6 @@ class DataModule(LightningDataModule):
             dataloaders.
         :rtype: _Aggregator
         """
-        # If no training split is defined, return the default dataloader
-        if not self._has_train:
-            return super().train_dataloader()
-
-        # If the training dataloaders have not been created yet, call setup
-        if not hasattr(self, "train_datasets"):
-            self.setup("fit")
-
         return _Aggregator(
             self.creator(self.train_datasets),
             batching_mode=self.batching_mode,
@@ -265,14 +260,6 @@ class DataModule(LightningDataModule):
             dataloaders.
         :rtype: _Aggregator
         """
-        # If no validation split is defined, return the default dataloader
-        if not self._has_val:
-            return super().val_dataloader()
-
-        # If the validation dataloaders have not been created yet, call setup
-        if not hasattr(self, "val_datasets"):
-            self.setup("fit")
-
         return _Aggregator(
             self.creator(self.val_datasets), batching_mode=self.batching_mode
         )
@@ -285,14 +272,6 @@ class DataModule(LightningDataModule):
             dataloaders.
         :rtype: _Aggregator
         """
-        # If no test split is defined, return the default dataloader
-        if not self._has_test:
-            return super().test_dataloader()
-
-        # If the test dataloaders have not been created yet, call setup
-        if not hasattr(self, "test_datasets"):
-            self.setup("test")
-
         return _Aggregator(
             self.creator(self.test_datasets),
             batching_mode=self.batching_mode,

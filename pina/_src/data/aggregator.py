@@ -10,12 +10,6 @@ class _Aggregator:
     iteration of multiple training conditions within a single training loop.
     """
 
-    _AVAIL_BATCHING_MODES = {
-        "common_batch_size",
-        "proportional",
-        "separate_conditions",
-    }
-
     def __init__(self, dataloaders, batching_mode):
         """
         Initialization of the :class:`_Aggregator` class.
@@ -27,17 +21,9 @@ class _Aggregator:
             uniform batch sizes across conditions, ``"proportional"`` for batch
             sizes proportional to dataset sizes, and ``"separate_conditions"``
             for iterating through each condition separately.
-        :raises ValueError: If an invalid batching mode is provided.
         :raises NotImplementedError: If the selected batching mode is not yet
             implemented.
         """
-        # Check consistency
-        if batching_mode not in self._AVAIL_BATCHING_MODES:
-            raise ValueError(
-                f"Invalid batching mode '{batching_mode}'. "
-                f"Available options are: {self._AVAIL_BATCHING_MODES}"
-            )
-
         # Raise not implemented error for separate_conditions mode
         if batching_mode == "separate_conditions":
             raise NotImplementedError(
