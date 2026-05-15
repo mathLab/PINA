@@ -81,7 +81,7 @@ class DummySolver:
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
-@pytest.mark.parametrize("n_windows", [4, 8])
+@pytest.mark.parametrize("n_windows", [4, 6])
 @pytest.mark.parametrize("unroll_length", [3, 5])
 @pytest.mark.parametrize("randomize", [True, False])
 def test_constructor(use_lt, n_windows, unroll_length, randomize):
@@ -164,9 +164,18 @@ def test_constructor(use_lt, n_windows, unroll_length, randomize):
             randomize=randomize,
         )
 
+    # Should fail if n_windows is greater than the number of valid windows
+    with pytest.raises(ValueError):
+        Condition(
+            input=input_tensor,
+            n_windows=10,
+            unroll_length=unroll_length,
+            randomize=randomize,
+        )
+
 
 @pytest.mark.parametrize("use_lt", [True, False])
-@pytest.mark.parametrize("n_windows", [4, 8])
+@pytest.mark.parametrize("n_windows", [4, 6])
 @pytest.mark.parametrize("unroll_length", [3, 5])
 @pytest.mark.parametrize("randomize", [True, False])
 def test_get_item(use_lt, n_windows, unroll_length, randomize):
@@ -189,8 +198,7 @@ def test_get_item(use_lt, n_windows, unroll_length, randomize):
     _assert_tensor_type(item.input, use_lt)
 
     # Assert correct shapes
-    expected_window = min(n_windows, time_steps - unroll_length + 1)
-    expected_shape = torch.Size([expected_window, unroll_length, 2])
+    expected_shape = torch.Size([n_windows, unroll_length, 2])
     assert item.input.shape == expected_shape
 
     # Assert numerical parity
@@ -202,7 +210,7 @@ def test_get_item(use_lt, n_windows, unroll_length, randomize):
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
-@pytest.mark.parametrize("n_windows", [4, 8])
+@pytest.mark.parametrize("n_windows", [4, 6])
 @pytest.mark.parametrize("unroll_length", [3, 5])
 @pytest.mark.parametrize("randomize", [True, False])
 def test_create_batch(use_lt, n_windows, unroll_length, randomize):
@@ -231,13 +239,11 @@ def test_create_batch(use_lt, n_windows, unroll_length, randomize):
     assert hasattr(batch_collate, "input")
 
     # Assert that the automatic batch input is correct
-    expected_window = min(n_windows, time_steps - unroll_length + 1)
-    expected_shape = torch.Size([len(idx), expected_window, unroll_length, 2])
+    expected_shape = torch.Size([len(idx), n_windows, unroll_length, 2])
     assert batch_auto.input.shape == expected_shape
 
     # Assert that the collate_fn batch input is correct
-    expected_window = min(n_windows, time_steps - unroll_length + 1)
-    expected_shape = torch.Size([len(idx), expected_window, unroll_length, 2])
+    expected_shape = torch.Size([len(idx), n_windows, unroll_length, 2])
     assert batch_collate.input.shape == expected_shape
 
     # Create input values
@@ -250,7 +256,7 @@ def test_create_batch(use_lt, n_windows, unroll_length, randomize):
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
-@pytest.mark.parametrize("n_windows", [4, 8])
+@pytest.mark.parametrize("n_windows", [4, 6])
 @pytest.mark.parametrize("unroll_length", [3, 5])
 @pytest.mark.parametrize("randomize", [True, False])
 def test_evaluate(use_lt, n_windows, unroll_length, randomize):

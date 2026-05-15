@@ -153,9 +153,17 @@ class TimeSeriesCondition(BaseCondition):
         if randomize:
             start_indices = start_indices[torch.randperm(len(start_indices))]
 
-        # Limit the number of unroll windows to n_windows if specified
-        if n_windows is not None and n_windows < len(start_indices):
-            start_indices = start_indices[:n_windows]
+        # Raise error if n_windows is greater than the number of valid windows
+        if len(start_indices) < n_windows:
+            raise ValueError(
+                f"Cannot create {n_windows} unroll windows with the selected "
+                f"unroll_length {unroll_length} from data with {time_steps} "
+                f"time steps. Only {len(start_indices)} valid windows are "
+                "available."
+            )
+
+        # Limit the number of windows to n_windows
+        start_indices = start_indices[:n_windows]
 
         # Create unroll windows by slicing the input data at the starting idx
         windows = [data[:, s : s + unroll_length] for s in start_indices]
