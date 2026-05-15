@@ -6,7 +6,7 @@ network training process.
 from abc import ABCMeta, abstractmethod
 from lightning.pytorch import Callback
 from pina._src.core.utils import check_consistency
-from pina._src.solver.pinn import PINN as PINNInterface
+from pina._src.solver.pinn import PINN
 
 
 class RefinementInterface(Callback, metaclass=ABCMeta):
@@ -50,7 +50,7 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
             object.
         :param ~pina.solver.solver.SolverInterface solver: The solver
             object associated with the trainer.
-        :raises RuntimeError: If the solver is not a PINNInterface.
+        :raises RuntimeError: If the solver is not a PINN.
         :raises RuntimeError: If the conditions do not have a domain to sample
             from.
         """
@@ -74,11 +74,11 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
                     "sample from."
                 )
         # check solver
-        if not isinstance(solver, PINNInterface):
+        if not isinstance(solver, PINN):
             raise RuntimeError(
                 "Refinment strategies are currently implemented only "
                 "for physics informed based solvers. Please use a Solver "
-                "inheriting from 'PINNInterface'."
+                "inheriting from 'PINN'."
             )
         # store dataset
         self._dataset = trainer.datamodule.train_dataset
@@ -93,7 +93,7 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         Performs the refinement at the end of each training epoch (if needed).
 
         :param ~lightning.pytorch.trainer.trainer.Trainer: The trainer object.
-        :param PINNInterface solver: The solver object.
+        :param PINN solver: The solver object.
         """
         if (trainer.current_epoch % self.sample_every == 0) and (
             trainer.current_epoch != 0
@@ -108,7 +108,7 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
 
         :param current_points: Current points in the domain.
         :param condition_name: Name of the condition to update.
-        :param PINNInterface solver: The solver object.
+        :param PINN solver: The solver object.
         :return: New points sampled based on the R3 strategy.
         :rtype: LabelTensor
         """
@@ -131,7 +131,7 @@ class RefinementInterface(Callback, metaclass=ABCMeta):
         """
         Performs the refinement of the points.
 
-        :param PINNInterface solver: The solver object.
+        :param PINN solver: The solver object.
         """
         new_points = {}
         for name in self._condition_to_update:
