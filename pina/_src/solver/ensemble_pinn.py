@@ -1,18 +1,8 @@
 """Module for the Physics-Informed Neural Network solver."""
 
-import warnings
 import torch
-
-# from pina._src.solver.physics_informed_solver.pinn_interface import (
-#     PINNInterface,
-# )
-from pina._src.solver.single_model_simple_solver import (
-    SingleModelSimpleSolver,
-)
 from pina._src.solver.ensemble_simple_solver import EnsembleSimpleSolver
 from pina._src.solver.pinn import PINN
-
-# PINNBaseInterface = PINNInterface
 
 
 class EnsemblePINN(EnsembleSimpleSolver, PINN):
@@ -63,7 +53,6 @@ class EnsemblePINN(EnsembleSimpleSolver, PINN):
         schedulers=None,
         weighting=None,
         loss=None,
-        ensemble_dim=0,
     ):
         """
         Initialization of the :class:`PINN` class.
@@ -104,28 +93,26 @@ class EnsemblePINN(EnsembleSimpleSolver, PINN):
         """
         return PINN.setup(self, stage)
 
+    @torch.enable_grad()
     def validation_step(self, batch, **kwargs):
         """
-        Perform a validation step with gradients enabled for physics residual
-        operators.
+        Run validation with gradients enabled for physics residual operators.
 
-        :param batch: The batch of data for validation.
-        :return: The validation loss.
+        :param batch: Validation batch.
+        :type batch: list[tuple[str, dict]]
+        :return: Validation loss.
         :rtype: torch.Tensor
         """
-        with torch.set_grad_enabled(True):
-            output_ = super().validation_step(batch, **kwargs)
-        return output_
+        return super().validation_step(batch, **kwargs)
 
+    @torch.enable_grad()
     def test_step(self, batch, **kwargs):
         """
-        Perform a test step with gradients enabled for physics residual
-        operators.
+        Run test with gradients enabled for physics residual operators.
 
-        :param batch: The batch of data for testing.
-        :return: The test loss.
+        :param batch: Test batch.
+        :type batch: list[tuple[str, dict]]
+        :return: Test loss.
         :rtype: torch.Tensor
         """
-        with torch.set_grad_enabled(True):
-            output_ = super().test_step(batch, **kwargs)
-        return output_
+        return super().test_step(batch, **kwargs)

@@ -2,23 +2,22 @@
 
 import torch
 from torch.nn.modules.loss import _Loss
-
+from pina._src.condition.input_target_condition import InputTargetCondition
+from pina._src.core.utils import check_consistency, labelize_forward
+from pina._src.optim.optimizer_interface import OptimizerInterface
+from pina._src.optim.scheduler_interface import SchedulerInterface
+from pina._src.loss.loss_interface import DualLossInterface
+from pina._src.solver.base_solver import BaseSolver
 from pina._src.condition.domain_equation_condition import (
     DomainEquationCondition,
 )
 from pina._src.condition.input_equation_condition import (
     InputEquationCondition,
 )
-from pina._src.condition.input_target_condition import InputTargetCondition
-from pina._src.core.utils import check_consistency
-from pina._src.loss.loss_interface import DualLossInterface
-from pina._src.optim.optimizer_interface import OptimizerInterface
-from pina._src.optim.scheduler_interface import SchedulerInterface
-from pina._src.solver.base_solver import BaseSolver
 
 
 class MultiModelSimpleSolver(BaseSolver):
-    """
+    r"""
     Minimal multi-model solver with explicit residual evaluation, reduction,
     and loss aggregation across conditions.
 
@@ -27,16 +26,16 @@ class MultiModelSimpleSolver(BaseSolver):
     and the outputs are stacked along ``ensemble_dim``:
 
     .. math::
-        \\hat{\\mathbf{u}}_i = \\mathcal{M}_i(\\mathbf{s}),
-        \\quad i = 1, \\dots, N_{\\rm ensemble}
+        \hat{\mathbf{u}}_i = \mathcal{M}_i(\mathbf{s}),
+        \quad i = 1, \dots, N_{\rm ensemble}
 
     During the optimization cycle each model's prediction is evaluated against
     the condition independently, and the resulting per-model losses are
     averaged to form the aggregated condition loss:
 
     .. math::
-        \\mathcal{L}_{\\rm condition} = \\frac{1}{N_{\\rm ensemble}}
-        \\sum_{i=1}^{N_{\\rm ensemble}} \\mathcal{L}_i
+        \mathcal{L}_{\rm condition} = \frac{1}{N_{\rm ensemble}}
+        \sum_{i=1}^{N_{\rm ensemble}} \mathcal{L}_i
 
     The per-condition workflow is:
 
@@ -54,6 +53,12 @@ class MultiModelSimpleSolver(BaseSolver):
         InputEquationCondition,
         DomainEquationCondition,
     )
+
+    _AVAILABLE_REDUCTIONS = {
+        "none": lambda x: x,
+        "mean": lambda x: x.mean(),
+        "sum": lambda x: x.sum(),
+    }
 
     def __init__(
         self,
@@ -169,10 +174,6 @@ class MultiModelSimpleSolver(BaseSolver):
         # http://lightning.ai/docs/pytorch/stable/model/manual_optimization.html
         self.automatic_optimization = False
 
-    # ------------------------------------------------------------------
-    # Forward
-    # ------------------------------------------------------------------
-
     def forward(self, x, model_idx=None):
         """
         Forward pass through the ensemble models.
@@ -194,10 +195,6 @@ class MultiModelSimpleSolver(BaseSolver):
         return torch.stack(
             [self.forward(x, idx) for idx in range(self.num_models)],
         )
-
-    # ------------------------------------------------------------------
-    # Training
-    # ------------------------------------------------------------------
 
     def training_step(self, batch):
         """
@@ -254,7 +251,6 @@ class MultiModelSimpleSolver(BaseSolver):
                 self.forward = lambda x, _idx=idx: self.models[  # noqa: E731
                     _idx
                 ].forward(x)
-                from pina._src.core.utils import labelize_forward
 
                 problem = self.problem
                 self.forward = labelize_forward(
@@ -274,10 +270,6 @@ class MultiModelSimpleSolver(BaseSolver):
 
         return condition_losses
 
-    # ------------------------------------------------------------------
-    # Helpers
-    # ------------------------------------------------------------------
-
     def _apply_reduction(self, value):
         """
         Apply the configured reduction to a non-aggregated condition tensor.
@@ -288,38 +280,18 @@ class MultiModelSimpleSolver(BaseSolver):
         :rtype: torch.Tensor
         :raises ValueError: If the reduction is not supported.
         """
-        if self._reduction == "none":
-            return value
-        if self._reduction == "mean":
-            return value.mean()
-        if self._reduction == "sum":
-            return value.sum()
-        raise ValueError(f"Unsupported reduction '{self._reduction}'.")
+        reduction_fn = self._AVAILABLE_REDUCTIONS.get(
+            self._reduction
+        )
 
-    # ------------------------------------------------------------------
-    # Properties
-    # ------------------------------------------------------------------
+        if reduction_fn is None:
+            raise ValueError(
+                f"Unsupported reduction '{self._reduction}'. "
+                f"Available options include {self._AVAILABLE_REDUCTIONS.keys()}"
+            )
 
-    @property
-    def loss(self):
-        """
-        The underlying element-wise loss module.
-
-        :return: The stored loss module.
-        :rtype: torch.nn.Module
-        """
-        return self._loss_fn
-
-    @property
-    def num_models(self):
-        """
-        The number of models in the ensemble.
-
-        :return: The number of models.
-        :rtype: int
-        """
-        return len(self.models)
-
+        return reduction_fn(value)
+    
     def on_train_batch_end(self, outputs, batch, batch_idx):
         """
         This method is called at the end of each training batch and overrides
@@ -353,6 +325,26 @@ class MultiModelSimpleSolver(BaseSolver):
             [optimizer.instance for optimizer in self.optimizers],
             [scheduler.instance for scheduler in self.schedulers],
         )
+
+    @property
+    def loss(self):
+        """
+        The underlying element-wise loss module.
+
+        :return: The stored loss module.
+        :rtype: torch.nn.Module
+        """
+        return self._loss_fn
+
+    @property
+    def num_models(self):
+        """
+        The number of models in the ensemble.
+
+        :return: The number of models.
+        :rtype: int
+        """
+        return len(self.models)
 
     @property
     def models(self):

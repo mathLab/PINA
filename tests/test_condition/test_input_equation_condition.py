@@ -223,7 +223,7 @@ def test_evaluate(case):
 
     # Evaluate the condition and compute the expected value
     loss = condition.evaluate(batch, solver, loss_fn)
-    expected = solver.forward(batch["input"]) - 0.0
+    expected = solver.forward(batch["input"]).pow(2)
 
     # Assert that the evaluated loss is correct
     assert torch.allclose(loss, expected)
