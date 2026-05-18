@@ -34,6 +34,12 @@ class SingleModelSimpleSolver(BaseSolver):
         DomainEquationCondition,
     )
 
+    _AVAILABLE_REDUCTIONS = {
+        "none": lambda x: x,
+        "mean": lambda x: x.mean(),
+        "sum": lambda x: x.sum(),
+    }
+
     def __init__(
         self,
         problem,
@@ -111,13 +117,17 @@ class SingleModelSimpleSolver(BaseSolver):
         :rtype: torch.Tensor
         :raises ValueError: If the reduction is not supported.
         """
-        if self._reduction == "none":
-            return value
-        if self._reduction == "mean":
-            return value.mean()
-        if self._reduction == "sum":
-            return value.sum()
-        raise ValueError(f"Unsupported reduction '{self._reduction}'.")
+        reduction_fn = self._AVAILABLE_REDUCTIONS.get(
+            self._reduction
+        )
+
+        if reduction_fn is None:
+            raise ValueError(
+                f"Unsupported reduction '{self._reduction}'. "
+                f"Available options include {self._AVAILABLE_REDUCTIONS.keys()}"
+            )
+
+        return reduction_fn(value)
 
     @property
     def loss(self):

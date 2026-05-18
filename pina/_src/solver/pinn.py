@@ -2,15 +2,9 @@
 
 import warnings
 import torch
-
-# from pina._src.solver.physics_informed_solver.pinn_interface import (
-#     PINNInterface,
-# )
 from pina._src.solver.single_model_simple_solver import (
     SingleModelSimpleSolver,
 )
-
-# PINNBaseInterface = PINNInterface
 
 
 class PINN(SingleModelSimpleSolver):
@@ -108,6 +102,7 @@ class PINN(SingleModelSimpleSolver):
             )
         return super().setup(stage)
 
+    @torch.enable_grad()
     def validation_step(self, batch, **kwargs):
         """
         Run validation with gradients enabled for physics residual operators.
@@ -117,10 +112,9 @@ class PINN(SingleModelSimpleSolver):
         :return: Validation loss.
         :rtype: torch.Tensor
         """
-        with torch.set_grad_enabled(True):
-            output_ = super().validation_step(batch, **kwargs)
-        return output_
+        return super().validation_step(batch, **kwargs)
 
+    @torch.enable_grad()
     def test_step(self, batch, **kwargs):
         """
         Run test with gradients enabled for physics residual operators.
@@ -130,6 +124,4 @@ class PINN(SingleModelSimpleSolver):
         :return: Test loss.
         :rtype: torch.Tensor
         """
-        with torch.set_grad_enabled(True):
-            output_ = super().test_step(batch, **kwargs)
-        return output_
+        return super().test_step(batch, **kwargs)

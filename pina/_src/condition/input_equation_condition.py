@@ -1,5 +1,6 @@
 """Module for the Input-Equation Condition class."""
 
+import torch
 from pina._src.condition.base_condition import BaseCondition
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.graph import Graph
@@ -108,7 +109,7 @@ class InputEquationCondition(BaseCondition):
         check_consistency(value, self._avail_equation_cls)
         self._equation = value
 
-    def evaluate(self, batch, solver, _):
+    def evaluate(self, batch, solver, loss):
         """
         Evaluate the residual of the condition on the given batch using the
         solver.
@@ -126,11 +127,15 @@ class InputEquationCondition(BaseCondition):
             pass and compute the residual. The solver provides access to the
             model and its parameters, which may be necessary for evaluating the
             condition residual.
-        :param _: Placeholder argument (not used).
+        :param torch.nn.Module loss: The non-aggregating loss function used to
+            compare the condition residual against its reference value.
         :return: The non-aggregated residual tensor.
         :rtype: LabelTensor
         """
+        # Compute residuals
         samples = batch["input"].requires_grad_(True)
-        return self.equation.residual(
+        residual = self.equation.residual(
             samples, solver.forward(samples), solver._params
         )
+
+        return loss(residual, torch.zeros_like(residual))
