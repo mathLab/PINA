@@ -1,10 +1,10 @@
-"""Module for the SingleSolverInterface base class."""
+"""Module for the BaseSolver class."""
 
 from abc import ABCMeta
 
 import torch
 import lightning
-
+from torch._dynamo.eval_frame import OptimizedModule
 from pina._src.problem.inverse_problem import InverseProblem
 from pina._src.optim.optimizer_interface import OptimizerInterface
 from pina._src.optim.scheduler_interface import SchedulerInterface
@@ -17,8 +17,6 @@ from pina._src.optim.torch_scheduler import TorchScheduler
 from pina._src.weighting.weighting_interface import WeightingInterface
 from pina._src.weighting.no_weighting import _NoWeighting
 from pina._src.core.utils import labelize_forward
-
-from torch._dynamo.eval_frame import OptimizedModule
 
 
 class BaseSolver(SolverInterface, metaclass=ABCMeta):

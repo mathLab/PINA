@@ -1,7 +1,6 @@
 """Module for the DeepEnsemble simple solver."""
 
 from pina._src.solver.multi_model_simple_solver import MultiModelSimpleSolver
-from pina._src.core.utils import check_consistency
 
 
 class EnsembleSimpleSolver(MultiModelSimpleSolver):

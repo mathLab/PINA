@@ -245,22 +245,23 @@ class MultiModelSimpleSolver(BaseSolver):
             # Evaluate each model independently and average the losses.
             per_model_losses = []
             for idx in range(self.num_models):
+
                 # Temporarily expose only one model through forward so that
                 # condition.evaluate uses just that model.
                 original_forward = self.forward
-                self.forward = lambda x, _idx=idx: self.models[  # noqa: E731
-                    _idx
-                ].forward(x)
+                raw_forward = lambda x, _idx=idx: self.models[_idx](x)
 
-                problem = self.problem
-                self.forward = labelize_forward(
-                    self.forward,
-                    input_variables=problem.input_variables,
-                    output_variables=problem.output_variables,
-                )
+                # Labelize the new forward to use LabelTensors if use_lt is True
+                if self.use_lt:
+                    self.forward = labelize_forward(
+                        raw_forward,
+                        self.problem.input_variables,
+                        self.problem.output_variables,
+                    )
+
                 loss_tensor = condition.evaluate(
                     condition_data, self, self._loss_fn
-                ).tensor
+                )
                 self.forward = original_forward
                 per_model_losses.append(self._apply_reduction(loss_tensor))
 
@@ -280,9 +281,7 @@ class MultiModelSimpleSolver(BaseSolver):
         :rtype: torch.Tensor
         :raises ValueError: If the reduction is not supported.
         """
-        reduction_fn = self._AVAILABLE_REDUCTIONS.get(
-            self._reduction
-        )
+        reduction_fn = self._AVAILABLE_REDUCTIONS.get(self._reduction)
 
         if reduction_fn is None:
             raise ValueError(
@@ -291,7 +290,7 @@ class MultiModelSimpleSolver(BaseSolver):
             )
 
         return reduction_fn(value)
-    
+
     def on_train_batch_end(self, outputs, batch, batch_idx):
         """
         This method is called at the end of each training batch and overrides
