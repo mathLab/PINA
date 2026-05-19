@@ -117,9 +117,7 @@ class SingleModelSimpleSolver(BaseSolver):
         :rtype: torch.Tensor
         :raises ValueError: If the reduction is not supported.
         """
-        reduction_fn = self._AVAILABLE_REDUCTIONS.get(
-            self._reduction
-        )
+        reduction_fn = self._AVAILABLE_REDUCTIONS.get(self._reduction)
 
         if reduction_fn is None:
             raise ValueError(
