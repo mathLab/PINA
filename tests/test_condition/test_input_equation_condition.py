@@ -221,9 +221,9 @@ def test_evaluate(case):
         # Extract the batch
         batch = {"input": LabelBatch.from_data_list(condition.input).x}
 
-    # Evaluate the condition and compute the expected value
-    loss = condition.evaluate(batch, solver, loss_fn)
-    expected = solver.forward(batch["input"]).pow(2)
+    # Evaluate the condition and compute the expected residuals
+    residual = condition.evaluate(batch, solver)
+    expected = solver.forward(batch["input"])
 
-    # Assert that the evaluated loss is correct
-    assert torch.allclose(loss, expected)
+    # Assert that the evaluated residual is correct
+    assert torch.allclose(residual, expected)

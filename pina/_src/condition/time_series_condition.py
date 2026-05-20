@@ -170,17 +170,18 @@ class TimeSeriesCondition(BaseCondition):
 
         return torch.stack(windows, dim=1)
 
-    def evaluate(self, batch, solver, loss):
+    def evaluate(self, batch, solver):
         """
         Evaluate the residual of the condition on the given batch using the
         solver.
 
-        This method computes the non-aggregated, element-wise residual of the
-        condition. A forward pass of the solver's model is performed on the
-        input samples, and the condition residual is evaluated accordingly.
+        This method computes the per-step residuals through autoregressive
+        unrolling. A forward pass of the solver's model is performed at each
+        time step, and the per-step residuals (predicted - target) are
+        returned as a stacked tensor.
 
-        The returned tensor is not reduced, preserving the per-sample residual
-        values.
+        The returned tensor preserves all per-step residual values without
+        reduction or loss aggregation.
 
         :param dict batch: The batch containing the data required by the
             condition evaluation.
@@ -188,14 +189,13 @@ class TimeSeriesCondition(BaseCondition):
             pass and compute the residual. The solver provides access to the
             model and its parameters, which may be necessary for evaluating the
             condition residual.
-        :param torch.nn.Module loss: The non-aggregating loss function used to
-            compare the condition residual against its reference value.
         :raises ValueError: If the input tensor in the batch has less than 4
             dimensions.
-        :return: The non-aggregated residual tensor.
+        :return: The stacked per-step residual tensor of shape
+            [time_steps - 1, trajectories, windows, *features].
         :rtype: torch.Tensor | LabelTensor
         """
-        # Raise error if input tensor does not have at least4 dimensions
+        # Raise error if input tensor does not have at least 4 dimensions
         if batch["input"].dim() < 4:
             raise ValueError(
                 "The provided input tensor must have at least 4 dimensions:"
@@ -206,9 +206,9 @@ class TimeSeriesCondition(BaseCondition):
         # Copy the kwargs to avoid modifying the original settings
         kwargs = solver._kwargs.copy()
 
-        # Extract the initial state and initialize the list of step-wise losses
+        # Extract the initial state and initialize the step-wise residuals list
         current_state = batch["input"][:, :, 0]
-        losses = []
+        residuals = []
 
         # Iterate over the time steps
         for step in range(1, batch["input"].shape[2]):
@@ -218,23 +218,16 @@ class TimeSeriesCondition(BaseCondition):
             output = solver.forward(processed_input)
             predicted_state = solver.postprocess_step(output, **kwargs)
 
-            # Retrieve the target and compute the step-wise loss
+            # Retrieve the target and compute the step-wise residual
             target_state = batch["input"][:, :, step]
-            step_loss = loss(predicted_state, target_state, **kwargs)
-            losses.append(step_loss)
+            step_residual = predicted_state - target_state
+            residuals.append(step_residual)
 
             # Update the current state for the next iteration
             current_state = predicted_state
 
-        # Stack the step-wise losses
-        step_losses = torch.stack(losses).as_subclass(torch.Tensor)
-
-        # Compute adaptive weights and aggregate the step-wise losses
-        with torch.no_grad():
-            name = getattr(self, "name", None) or "default"
-            weights = solver._get_weights(name, step_losses)
-
-        return solver.aggregation_strategy(step_losses * weights)
+        # Stack the step-wise residuals
+        return torch.stack(residuals).as_subclass(torch.Tensor)
 
     @property
     def input(self):

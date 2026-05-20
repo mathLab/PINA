@@ -53,7 +53,7 @@ def test_solver_train(problem, batch_size, compile):
         train_size=1.0,
         val_size=0.0,
         test_size=0.0,
-        # compile=compile,
+        compile=compile,
     )
     trainer.train()
     if trainer.compile:
@@ -73,7 +73,7 @@ def test_solver_validation(problem, batch_size, compile):
         train_size=0.9,
         val_size=0.1,
         test_size=0.0,
-        # compile=compile,
+        compile=compile,
     )
     trainer.train()
     if trainer.compile:
@@ -93,6 +93,6 @@ def test_solver_test(problem, batch_size, compile):
         train_size=0.7,
         val_size=0.2,
         test_size=0.1,
-        # compile=compile,
+        compile=compile,
     )
     trainer.test()

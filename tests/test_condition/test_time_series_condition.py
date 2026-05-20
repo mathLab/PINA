@@ -278,23 +278,23 @@ def test_evaluate(use_lt, n_windows, unroll_length, randomize):
     # Extract the batch
     batch = {"input": condition.input}
 
-    # Evaluate the condition and compute the expected loss
-    loss = condition.evaluate(batch, solver, loss_fn)
+    # Evaluate the condition and compute the expected residuals
+    residuals = condition.evaluate(batch, solver)
 
-    # Compute expected autoregressive step losses
-    step_losses = []
+    # Compute expected autoregressive step residuals
+    step_residuals = []
     current_state = batch["input"][:, :, 0]
 
     for step in range(1, batch["input"].shape[2]):
         predicted_state = current_state
         target_state = batch["input"][:, :, step]
 
-        step_loss = loss_fn(predicted_state, target_state)
-        step_losses.append(step_loss)
+        step_residual = predicted_state - target_state
+        step_residuals.append(step_residual)
 
         current_state = predicted_state
 
-    expected = torch.mean(torch.stack(step_losses).as_subclass(torch.Tensor))
+    expected = torch.stack(step_residuals).as_subclass(torch.Tensor)
 
-    # Assert that the evaluated loss is correct
-    assert torch.allclose(loss, expected)
+    # Assert that the evaluated residuals are correct
+    assert torch.allclose(residuals, expected)

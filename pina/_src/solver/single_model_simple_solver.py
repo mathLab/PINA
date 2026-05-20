@@ -22,8 +22,9 @@ class SingleModelSimpleSolver(BaseSolver):
 
     The solver orchestrates a uniform workflow for all conditions in the batch:
 
-         1. evaluate the condition and obtain a non-aggregated loss tensor;
-         2. apply a reduction to obtain a scalar loss for that condition;
+     1. evaluate the condition and obtain a non-aggregated residual tensor;
+     2. apply the pointwise loss and a reduction to obtain a scalar loss for
+         that condition;
      4. return the per-condition losses, which are aggregated by the inherited
        solver machinery through the configured weighting.
     """
@@ -99,12 +100,19 @@ class SingleModelSimpleSolver(BaseSolver):
             condition = self.problem.conditions[condition_name]
             condition_data = dict(data)
 
-            condition_loss_tensor = condition.evaluate(
-                condition_data, self, self._loss_fn
+            # Store the residual tensor
+            self.residual_tensor = condition.evaluate(condition_data, self)
+
+            # Compute the per-sample loss tensor
+            loss_tensor = self._loss_fn(
+                self.residual_tensor, torch.zeros_like(self.residual_tensor)
             )
+
+            # Apply reduction and store the result
             condition_losses[condition_name] = self._apply_reduction(
-                condition_loss_tensor
+                loss_tensor
             )
+
         return condition_losses
 
     def _apply_reduction(self, value):

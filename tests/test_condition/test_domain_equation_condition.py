@@ -62,4 +62,4 @@ def test_evaluate():
 
     # Should raise NotImplementedError when trying to evaluate the condition
     with pytest.raises(NotImplementedError):
-        condition.evaluate(None, None, None)
+        condition.evaluate(None, None)
