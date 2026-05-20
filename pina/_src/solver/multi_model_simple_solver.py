@@ -30,8 +30,9 @@ class MultiModelSimpleSolver(BaseSolver):
         \quad i = 1, \dots, N_{\rm ensemble}
 
     During the optimization cycle each model's prediction is evaluated against
-    the condition independently, and the resulting per-model losses are
-    averaged to form the aggregated condition loss:
+    the condition independently, the residual is converted into a pointwise
+    loss, and the resulting per-model losses are averaged to form the
+    aggregated condition loss:
 
     .. math::
         \mathcal{L}_{\rm condition} = \frac{1}{N_{\rm ensemble}}
@@ -39,13 +40,14 @@ class MultiModelSimpleSolver(BaseSolver):
 
     The per-condition workflow is:
 
-         1. evaluate the condition for each model and obtain non-aggregated
-            loss tensors;
-         2. apply the configured reduction to each per-model tensor;
-         3. average the reduced per-model losses into a single scalar for
-            the condition;
-         4. return the per-condition losses, which are aggregated by the
-            inherited solver machinery through the configured weighting.
+     1. evaluate the condition for each model and obtain non-aggregated
+         residual tensors;
+     2. apply the pointwise loss and the configured reduction to each
+         per-model tensor;
+     3. average the reduced per-model losses into a single scalar for the
+         condition;
+     4. return the per-condition losses, which are aggregated by the
+         inherited solver machinery through the configured weighting.
     """
 
     accepted_conditions_types = (
@@ -191,7 +193,7 @@ class MultiModelSimpleSolver(BaseSolver):
         :rtype: LabelTensor | torch.Tensor
         """
         if model_idx is not None:
-            return self.models[model_idx].forward(x)
+            return self.models[model_idx](x)
         return torch.stack(
             [self.forward(x, idx) for idx in range(self.num_models)],
         )
@@ -259,10 +261,16 @@ class MultiModelSimpleSolver(BaseSolver):
                         self.problem.output_variables,
                     )
 
-                loss_tensor = condition.evaluate(
-                    condition_data, self, self._loss_fn
+                # Store the residual tensor
+                self.residual_tensor = condition.evaluate(condition_data, self)
+
+                # Compute the per-sample loss tensor
+                loss_tensor = self._loss_fn(
+                    self.residual_tensor, torch.zeros_like(self.residual_tensor)
                 )
                 self.forward = original_forward
+
+                # Apply reduction and store the result
                 per_model_losses.append(self._apply_reduction(loss_tensor))
 
             condition_losses[condition_name] = torch.stack(

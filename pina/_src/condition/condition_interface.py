@@ -57,7 +57,7 @@ class ConditionInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def evaluate(self, batch, solver, loss):
+    def evaluate(self, batch, solver):
         """
         Evaluate the residual of the condition on the given batch using the
         solver.
@@ -75,8 +75,6 @@ class ConditionInterface(metaclass=ABCMeta):
             pass and compute the residual. The solver provides access to the
             model and its parameters, which may be necessary for evaluating the
             condition residual.
-        :param torch.nn.Module loss: The non-aggregating loss function used to
-            compare the condition residual against its reference value.
         :return: The non-aggregated residual tensor.
         :rtype: torch.Tensor | LabelTensor
         """

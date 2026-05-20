@@ -480,9 +480,9 @@ def test_evaluate(case, use_lt):
             "target": condition.target,
         }
 
-    # Evaluate the condition and compute the expected loss
-    loss = condition.evaluate(batch, solver, loss_fn)
-    expected = loss_fn(solver.forward(batch["input"]), batch["target"])
+    # Evaluate the condition and compute the expected residual
+    residual = condition.evaluate(batch, solver)
+    expected = solver.forward(batch["input"]) - batch["target"]
 
-    # Assert that the evaluated loss is correct
-    assert torch.allclose(loss, expected)
+    # Assert that the evaluated residual is correct
+    assert torch.allclose(residual, expected)

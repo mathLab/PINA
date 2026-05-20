@@ -216,6 +216,45 @@ class AutoregressiveSolver(SingleModelSimpleSolver):
         """
         return predicted_state
 
+    def optimization_cycle(self, batch):
+        """
+        Compute one reduced, aggregated loss per condition in the batch.
+
+        For TimeSeriesCondition, this method evaluates the condition to obtain
+        per-step residuals, applies the pointwise loss function to each step,
+        computes adaptive weights based on the step-wise losses, and returns
+        the aggregated weighted loss.
+
+        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
+            tuple containing a condition name and a dictionary of points.
+        :return: The reduced, aggregated losses for all conditions.
+        :rtype: dict[str, torch.Tensor]
+        """
+        condition_losses = {}
+
+        for condition_name, data in batch:
+            condition = self.problem.conditions[condition_name]
+            condition_data = dict(data)
+
+            # Evaluate condition to get per-step residuals
+            self.step_residuals = condition.evaluate(condition_data, self)
+
+            # Apply the loss function to each step-wise residual
+            step_losses = self._loss_fn(
+                self.step_residuals, torch.zeros_like(self.step_residuals)
+            )
+
+            # Compute adaptive weights and aggregate the step-wise losses
+            with torch.no_grad():
+                name = condition_name or "default"
+                weights = self._get_weights(name, step_losses)
+
+            # Aggregate using the configured strategy
+            aggregated_loss = self.aggregation_strategy(step_losses * weights)
+            condition_losses[condition_name] = aggregated_loss
+
+        return condition_losses
+
     def predict(self, initial_state, n_steps, **kwargs):
         """
         Generate predictions by recursively calling the model's forward.

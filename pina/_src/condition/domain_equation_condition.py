@@ -75,7 +75,7 @@ class DomainEquationCondition(BaseCondition):
         setattr(self, "domain", kwargs.get("domain"))
         setattr(self, "equation", kwargs.get("equation"))
 
-    def evaluate(self, batch, solver, loss):
+    def evaluate(self, batch, solver):
         """
         Evaluate the residual of the condition on the given batch using the
         solver.
@@ -93,8 +93,6 @@ class DomainEquationCondition(BaseCondition):
             pass and compute the residual. The solver provides access to the
             model and its parameters, which may be necessary for evaluating the
             condition residual.
-        :param torch.nn.Module loss: The non-aggregating loss function used to
-            compare the condition residual against its reference value.
         :raises NotImplementedError: Always raised since any domain-equation
             condition is transformed into an input-equation condition before
             evaluation, and the residual is computed using the input-equation

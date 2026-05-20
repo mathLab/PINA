@@ -382,9 +382,8 @@ def test_evaluate(case, use_lt, conditional_variables):
         }
 
     # Evaluate the condition and compute the expected value
-    loss = condition.evaluate(batch, solver, loss_fn)
-    output_ = solver.forward(batch["input"])
-    expected = loss_fn(output_, torch.zeros_like(output_))
+    loss = condition.evaluate(batch, solver)
+    expected = solver.forward(batch["input"])
 
     # Assert that the evaluated loss is correct
     assert torch.allclose(loss, expected)
