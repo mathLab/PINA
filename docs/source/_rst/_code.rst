@@ -311,8 +311,8 @@ Losses
 .. toctree::
     :titlesonly:
 
-    LossInterface <loss/loss_interface.rst>
-    BaseLoss <loss/base_loss.rst>
+    DualLossInterface <loss/dual_loss_interface.rst>
+    BaseDualLoss <loss/base_dual_loss.rst>
     LpLoss <loss/lp_loss.rst>
     PowerLoss <loss/power_loss.rst>
 

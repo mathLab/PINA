@@ -1,11 +1,11 @@
 """Module for the Power Loss class."""
 
 import torch
-from pina._src.loss.base_loss import BaseLoss
+from pina._src.loss.base_dual_loss import BaseDualLoss
 from pina._src.core.utils import check_consistency, check_positive_integer
 
 
-class PowerLoss(BaseLoss):
+class PowerLoss(BaseDualLoss):
     r"""
     Implementation of the Power loss, measuring the pointwise averaged
     :math:`p`-power error between an input tensor :math:`x` and a target tensor

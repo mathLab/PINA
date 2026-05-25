@@ -3,7 +3,7 @@
 import torch
 from pina._src.core.utils import check_consistency
 from pina._src.core.label_tensor import LabelTensor
-from pina._src.loss.loss_interface import DualLossInterface
+from pina._src.loss.dual_loss_interface import DualLossInterface
 from pina._src.callback.refinement.base_refinement import BaseRefinement
 
 
@@ -44,7 +44,7 @@ class R3Refinement(BaseRefinement):
             refinement steps.
         :param residual_loss: The loss used to evaluate residual magnitude. Must
             be a subclass of :class:`torch.nn.Module` or
-            :class:`pina.loss.LossInterface`.
+            :class:`pina.loss.DualLossInterface`.
             Default is :class:`torch.nn.L1Loss`.
         :type residual_loss: DualLossInterface | torch.nn.modules.loss._Loss
         :param condition_to_update: The condition(s) to be updated during

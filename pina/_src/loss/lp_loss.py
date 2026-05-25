@@ -1,11 +1,11 @@
 """Module for the Lp Loss class."""
 
 import torch
-from pina._src.loss.base_loss import BaseLoss
+from pina._src.loss.base_dual_loss import BaseDualLoss
 from pina._src.core.utils import check_consistency
 
 
-class LpLoss(BaseLoss):
+class LpLoss(BaseDualLoss):
     r"""
     Implementation of the :math:`L^p` loss measuring the pointwise :math:`L^p`
     distance between an input tensor :math:`x` and a target tensor :math:`y`.

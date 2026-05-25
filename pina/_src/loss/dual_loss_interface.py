@@ -6,7 +6,8 @@ from torch.nn.modules.loss import _Loss
 
 class DualLossInterface(_Loss, metaclass=ABCMeta):
     """
-    Abstract interface for all losses.
+    Abstract interface for all losses requiring both an input and a target
+    tensor.
     """
 
     @abstractmethod
