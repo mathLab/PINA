@@ -2,13 +2,13 @@
 
 __all__ = [
     "DualLossInterface",
-    "BaseLoss",
+    "BaseDualLoss",
     "LpLoss",
     "PowerLoss",
 ]
 
-from pina._src.loss.loss_interface import DualLossInterface
-from pina._src.loss.base_loss import BaseLoss
+from pina._src.loss.dual_loss_interface import DualLossInterface
+from pina._src.loss.base_dual_loss import BaseDualLoss
 from pina._src.loss.power_loss import PowerLoss
 from pina._src.loss.lp_loss import LpLoss
 

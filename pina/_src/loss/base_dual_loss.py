@@ -1,12 +1,13 @@
-"""Module for the BaseLoss class."""
+"""Module for the BaseDualLoss class."""
 
 import torch
-from pina._src.loss.loss_interface import DualLossInterface
+from pina._src.loss.dual_loss_interface import DualLossInterface
 
 
-class BaseLoss(DualLossInterface):
+class BaseDualLoss(DualLossInterface):
     """
-    Base class for all losses, implementing common functionality.
+    Base class for all losses requiring both an input and a target tensor,
+    implementing common functionality.
 
     All specific loss types should inherit from this class and implement its
     abstract methods.
@@ -23,7 +24,7 @@ class BaseLoss(DualLossInterface):
 
     def __init__(self, reduction="mean"):
         """
-        Initialization of the :class:`BaseLoss` class.
+        Initialization of the :class:`BaseDualLoss` class.
 
         :param str reduction: The reduction method to aggregate pointwise loss
             values. Available options include: ``"none"`` for unreduced loss,
