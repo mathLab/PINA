@@ -1,97 +1,66 @@
-"""Module for the BaseSolver class."""
+"""Module for the base solver class."""
 
 from abc import ABCMeta
-
-import torch
 import lightning
-from torch._dynamo.eval_frame import OptimizedModule
-from pina._src.problem.inverse_problem import InverseProblem
-from pina._src.optim.optimizer_interface import OptimizerInterface
-from pina._src.optim.scheduler_interface import SchedulerInterface
-from pina._src.core.utils import check_consistency
+import torch
+from pina._src.core.utils import labelize_forward, check_consistency
 from pina._src.solver.solver_interface import SolverInterface
-from pina._src.problem.base_problem import BaseProblem
+from pina._src.weighting.base_weighting import BaseWeighting
 from pina._src.problem.inverse_problem import InverseProblem
 from pina._src.optim.torch_optimizer import TorchOptimizer
 from pina._src.optim.torch_scheduler import TorchScheduler
-from pina._src.weighting.weighting_interface import WeightingInterface
 from pina._src.weighting.no_weighting import _NoWeighting
-from pina._src.core.utils import labelize_forward
+from pina._src.problem.base_problem import BaseProblem
+from pina._src.loss.base_dual_loss import BaseDualLoss
 
 
 class BaseSolver(SolverInterface, metaclass=ABCMeta):
     """
-    Base class for PINA solvers using a single :class:`torch.nn.Module`.
+    Base class for all solvers, implementing common functionality.
+
+    All solvers must inherit from this class and implement abstract methods
+    defined in :class:`~pina.solver.solver_interface.SolverInterface`.
+
+    This class is not meant to be instantiated directly.
     """
 
-    def __init__(
-        self,
-        problem,
-        model,
-        optimizer=None,
-        scheduler=None,
-        weighting=None,
-        use_lt=True,
-    ):
+    # Define the available reductions for loss computation
+    _AVAILABLE_REDUCTIONS = {
+        "none": lambda x: x,
+        "mean": lambda x: x.mean(),
+        "sum": lambda x: x.sum(),
+    }
+
+    def __init__(self, problem, use_lt=True):
         """
         Initialization of the :class:`BaseSolver` class.
 
         :param BaseProblem problem: The problem to be solved.
-        :param torch.nn.Module model: The neural network model to be used.
-        :param OptimizerInterface optimizer: The optimizer to be used.
-            If ``None``, the :class:`torch.optim.Adam` optimizer is
-            used. Default is ``None``.
-        :param SchedulerInterface scheduler: The scheduler to be used.
-            If ``None``, the :class:`torch.optim.lr_scheduler.ConstantLR`
-            scheduler is used. Default is ``None``.
-        :param WeightingInterface weighting: The weighting schema to be used.
-            If ``None``, no weighting schema is used. Default is ``None``.
         :param bool use_lt: If ``True``, the solver uses LabelTensors as input.
+            Default is ``True``.
+        :raises ValueError: If ``use_lt`` is not a boolean.
+        :raises ValueError: If ``problem`` is not an instance of
+            :class:`~pina.problem.base_problem.BaseProblem`.
+        :raises ValueError: If one or more problem conditions are not supported
+            by the solver.
         """
-        if optimizer is None:
-            optimizer = self.default_torch_optimizer()
-
-        if scheduler is None:
-            scheduler = self.default_torch_scheduler()
-
-        if weighting is None:
-            weighting = _NoWeighting()
-
-        check_consistency(model, torch.nn.Module)
-        check_consistency(scheduler, SchedulerInterface)
-        check_consistency(optimizer, OptimizerInterface)
-        check_consistency(problem, BaseProblem)
-        check_consistency(use_lt, bool)
-        check_consistency(weighting, WeightingInterface)
-
-        # initialize the model (needed by Lightining to go to different devices)
+        # Reset the solver state
         self.reset()
+
+        # Call the parent class initializer
         lightning.pytorch.LightningModule.__init__(self)
-        if not isinstance(model, list):
-            model = [model]
-        self._pina_models = torch.nn.ModuleList(model)
-        self._pina_optimizers = [optimizer]
-        self._pina_schedulers = [scheduler]
-        self._check_solver_consistency(problem)
+
+        # Check consistency
+        check_consistency(use_lt, bool)
+        check_consistency(problem, BaseProblem)
+        for condition in problem.conditions.values():
+            check_consistency(condition, self.accepted_conditions_types)
+
+        # Initialize the solver components
         self._pina_problem = problem
-
-        self._pina_weighting = weighting
-        weighting._solver = self
-
-        # check consistency use_lt
         self._use_lt = use_lt
 
-        # if use_lt is true add extract operation in input
-        if use_lt is True:
-            self.forward = labelize_forward(
-                forward=self.forward,
-                input_variables=problem.input_variables,
-                output_variables=problem.output_variables,
-            )
-
-        # PINA private attributes (some are overridden by derived classes)
-
-        # inverse problem handling
+        # Manage InverseProblem parameters if needed
         if isinstance(self.problem, InverseProblem):
             self._params = self.problem.unknown_parameters
             self._clamp_params = self._clamp_inverse_problem_params
@@ -99,231 +68,29 @@ class BaseSolver(SolverInterface, metaclass=ABCMeta):
             self._params = None
             self._clamp_params = lambda: None
 
+        # Labelize the forward method if using LabelTensors
+        if self.use_lt:
+            self.forward = labelize_forward(
+                forward=self.forward,
+                input_variables=problem.input_variables,
+                output_variables=problem.output_variables,
+            )
+
     def reset(self):
+        """
+        Reset the internal solver state, clearing the stored problem, models,
+        optimizers and schedulers.
+        """
         self._pina_problem = None
         self._pina_models = None
         self._pina_optimizers = None
         self._pina_schedulers = None
 
-    def forward(self, x):
-        """
-        Forward pass implementation.
-
-        :param x: Input tensor.
-        :type x: torch.Tensor | LabelTensor | Graph | Data
-        :return: Solver solution.
-        :rtype: torch.Tensor | LabelTensor | Graph | Data
-        """
-        return self.model(x)
-
-    def configure_optimizers(self):
-        """
-        Optimizer configuration for the solver.
-
-        :return: The optimizer and the scheduler
-        :rtype: tuple[list[OptimizerInterface], list[SchedulerInterface]]
-        """
-        self.optimizer.hook(self.model.parameters())
-        if isinstance(self.problem, InverseProblem):
-            self.optimizer.instance.add_param_group(
-                {
-                    "params": [
-                        self._params[var]
-                        for var in self.problem.unknown_variables
-                    ]
-                }
-            )
-        self.scheduler.hook(self.optimizer)
-        return ([self.optimizer.instance], [self.scheduler.instance])
-
-    @property
-    def model(self):
-        """
-        The model used for training.
-
-        :return: The model used for training.
-        :rtype: torch.nn.Module
-        """
-        return self._pina_models[0]
-
-    @property
-    def scheduler(self):
-        """
-        The scheduler used for training.
-
-        :return: The scheduler used for training.
-        :rtype: SchedulerInterface
-        """
-        return self._pina_schedulers[0]
-
-    @property
-    def optimizer(self):
-        """
-        The optimizer used for training.
-
-        :return: The optimizer used for training.
-        :rtype: OptimizerInterface
-        """
-        return self._pina_optimizers[0]
-
-    def training_step(self, batch, **kwargs):
-        """
-        Solver training step. It computes the optimization cycle and aggregates
-        the losses using the ``weighting`` attribute.
-
-        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
-            tuple containing a condition name and a dictionary of points.
-        :param dict kwargs: Additional keyword arguments passed to
-            ``optimization_cycle``.
-        :return: The loss of the training step.
-        :rtype: torch.Tensor
-        """
-        loss = self._optimization_cycle(batch=batch, **kwargs)
-        self.store_log("train_loss", loss, self.get_batch_size(batch))
-        return loss
-
-    def validation_step(self, batch, **kwargs):
-        """
-        Solver validation step. It computes the optimization cycle and
-        averages the losses. No aggregation using the ``weighting`` attribute is
-        performed.
-
-        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
-            tuple containing a condition name and a dictionary of points.
-        :param dict kwargs: Additional keyword arguments passed to
-            ``optimization_cycle``.
-        :return: The loss of the training step.
-        :rtype: torch.Tensor
-        """
-        losses = self.optimization_cycle(batch=batch, **kwargs)
-        loss = (sum(losses.values()) / len(losses)).as_subclass(torch.Tensor)
-        self.store_log("val_loss", loss, self.get_batch_size(batch))
-        return loss
-
-    def test_step(self, batch, **kwargs):
-        """
-        Solver test step. It computes the optimization cycle and
-        averages the losses. No aggregation using the ``weighting`` attribute is
-        performed.
-
-        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
-            tuple containing a condition name and a dictionary of points.
-        :param dict kwargs: Additional keyword arguments passed to
-            ``optimization_cycle``.
-        :return: The loss of the training step.
-        :rtype: torch.Tensor
-        """
-        losses = self.optimization_cycle(batch=batch, **kwargs)
-        loss = (sum(losses.values()) / len(losses)).as_subclass(torch.Tensor)
-        self.store_log("test_loss", loss, self.get_batch_size(batch))
-        return loss
-
-    def store_log(self, name, value, batch_size):
-        """
-        Store the log of the solver.
-
-        :param str name: The name of the log.
-        :param torch.Tensor value: The value of the log.
-        :param int batch_size: The size of the batch.
-        """
-        self.log(
-            name=name,
-            value=value,
-            batch_size=batch_size,
-            **self.trainer.logging_kwargs,
-        )
-
-    def setup(self, stage):
-        """
-        This method is called at the start of the train and test process to
-        compile the model if the :class:`~pina.trainer.Trainer`
-        ``compile`` is ``True``.
-
-        :param str stage: The current stage of the training process
-            (e.g., ``fit``, ``validate``, ``test``, ``predict``).
-        :return: The result of the parent class ``setup`` method.
-        :rtype: Any
-        """
-        if self.trainer.compile and not self._is_compiled():
-            self._setup_compile()
-        return super().setup(stage)
-
-    def _is_compiled(self):
-        """
-        Check if the model is compiled.
-
-        :return: ``True`` if the model is compiled, ``False`` otherwise.
-        :rtype: bool
-        """
-        for model in self._pina_models:
-            if not isinstance(model, OptimizedModule):
-                return False
-        return True
-
-    def _setup_compile(self):
-        """
-        Compile all models in the solver using ``torch.compile``.
-
-        This method iterates through each model stored in the solver
-        list and attempts to compile them for optimized execution. It supports
-        models of type `torch.nn.Module` and `torch.nn.ModuleDict`. For models
-        stored in a `ModuleDict`, each submodule is compiled individually.
-        Models on Apple Silicon (MPS) use the 'eager' backend,
-        while others use 'inductor'.
-
-        :raises RuntimeError: If a model is neither `torch.nn.Module`
-            nor `torch.nn.ModuleDict`.
-        """
-        for i, model in enumerate(self._pina_models):
-            if isinstance(model, torch.nn.ModuleDict):
-                for name, module in model.items():
-                    self._pina_models[i][name] = self._compile_modules(module)
-            elif isinstance(model, torch.nn.Module):
-                self._pina_models[i] = self._compile_modules(model)
-            else:
-                raise RuntimeError(
-                    "Compilation available only for "
-                    "torch.nn.Module or torch.nn.ModuleDict."
-                )
-
-    def _check_solver_consistency(self, problem):
-        """
-        Check the consistency of the solver with the problem formulation.
-
-        :param BaseProblem problem: The problem to be solved.
-        """
-        for condition in problem.conditions.values():
-            check_consistency(condition, self.accepted_conditions_types)
-
-    def _optimization_cycle(self, batch, **kwargs):
-        """
-        Aggregate the loss for each condition in the batch.
-
-        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
-            tuple containing a condition name and a dictionary of points.
-        :param dict kwargs: Additional keyword arguments passed to
-            ``optimization_cycle``.
-        :return: The losses computed for all conditions in the batch, casted
-            to a subclass of :class:`torch.Tensor`. It should return a dict
-            containing the condition name and the associated scalar loss.
-        :rtype: dict
-        """
-        # compute losses
-        losses = self.optimization_cycle(batch)
-        # clamp unknown parameters in InverseProblem (if needed)
-        self._clamp_params()
-        # store log
-        for name, value in losses.items():
-            self.store_log(
-                f"{name}_loss", value.item(), self.get_batch_size(batch)
-            )
-        # aggregate
-        loss = self.weighting.aggregate(losses).as_subclass(torch.Tensor)
-        return loss
-
     def _clamp_inverse_problem_params(self):
         """
-        Clamps the parameters of the inverse problem solver to specified ranges.
+        Clamp the unknown parameters of an inverse problem. Each unknown
+        parameter is constrained to lie within the corresponding bounds defined
+        by the inverse problem parameter domain.
         """
         for v in self._params:
             self._params[v].data.clamp_(
@@ -331,34 +98,242 @@ class BaseSolver(SolverInterface, metaclass=ABCMeta):
                 self.problem.unknown_parameter_domain.range[v][1],
             )
 
-    @staticmethod
-    def _compile_modules(model):
+    def _init_weighting_and_loss(self, weighting=None, loss=None):
         """
-        Perform the compilation of the model.
+        Initialize the weighting strategy and loss function.
 
-        This method attempts to compile the given PyTorch model
-        using ``torch.compile`` to improve execution performance. The
-        backend is selected based on the device on which the model resides:
-        ``eager`` is used for MPS devices (Apple Silicon), and ``inductor``
-        is used for all others.
-
-        If compilation fails, the method prints the error and returns the
-        original, uncompiled model.
-
-        :param torch.nn.Module model: The model to compile.
-        :raises Exception: If the compilation fails.
-        :return: The compiled model.
-        :rtype: torch.nn.Module
+        :param BaseWeighting weighting: The weighting strategy used to combine
+            condition losses. If ``None``, no weighting is applied. Default is
+            ``None``.
+        :param loss: The loss function used to compute residual losses.
+            If ``None``, :class:`torch.nn.MSELoss` is used. Default is ``None``.
+        :type loss: torch.nn.Module | BaseDualLoss
+        :raises ValueError: If ``weighting`` is not an instance of
+            :class:`~pina.weighting.base_weighting.BaseWeighting`.
+        :raises ValueError: If ``loss`` is not a valid PyTorch loss or
+            :class:`~pina.loss.base_dual_loss.BaseDualLoss`.
         """
-        model_device = next(model.parameters()).device
-        try:
-            if model_device == torch.device("mps:0"):
-                model = torch.compile(model, backend="eager")
-            else:
-                model = torch.compile(model, backend="inductor")
-        except Exception as e:
-            print("Compilation failed, running in normal mode.:\n", e)
-        return model
+        # If no weighting schema is provided, use a default no-weighting schema
+        if weighting is None:
+            weighting = _NoWeighting()
+
+        # Set default loss function to MSE if not provided
+        if loss is None:
+            loss = torch.nn.MSELoss()
+
+        # Check consistency
+        check_consistency(weighting, BaseWeighting)
+        check_consistency(loss, (BaseDualLoss, torch.nn.modules.loss._Loss))
+
+        # Store the weighting and loss function for use in the solver
+        self._pina_weighting = weighting
+        weighting._solver = self
+        self._loss_fn = loss
+        self._reduction = getattr(loss, "reduction", "mean")
+        if hasattr(self._loss_fn, "reduction"):
+            self._loss_fn.reduction = "none"
+
+    def _init_solver_components(
+        self,
+        models,
+        optimizers=None,
+        schedulers=None,
+    ):
+        """
+        Initialize the solver models, optimizers and schedulers.
+
+        :param models: The model or list of models used by the solver.
+        :type models: torch.nn.Module | list[torch.nn.Module]
+        :param optimizers: The optimizer or list of optimizers used by the
+            solver. If ``None``, the ``torch.optim.Adam`` optimizer with a
+            learning rate of ``0.001`` is used for each model.
+            Default is ``None``.
+        :type optimizers: TorchOptimizer | list[TorchOptimizer]
+        :param schedulers: The scheduler or list of schedulers used by the
+            solver. If ``None``, the ``torch.optim.lr_scheduler.ConstantLR``
+            scheduler with a factor of ``1.0`` is used for each model.
+            Default is ``None``.
+        :type schedulers: TorchScheduler | list[TorchScheduler]
+        :raises ValueError: If ``models`` are not instances of
+            :class:`torch.nn.Module`.
+        :raises ValueError: If ``optimizers`` are not instances of
+            :class:`~pina.optim.torch_optimizer.TorchOptimizer`.
+        :raises ValueError: If ``schedulers`` are not instances of
+            :class:`~pina.optim.torch_scheduler.TorchScheduler`.
+        :raises ValueError: If the number of optimizers does not match that of
+            models.
+        :raises ValueError: If the number of schedulers does not match that of
+            models.
+        """
+
+        # Helper function to map single items to lists if needed
+        _to_list = lambda x: [x] if not isinstance(x, (list, tuple)) else x
+
+        # Map models to list if a single model is provided
+        models = _to_list(models)
+
+        # Set default optimizers to Adam if not provided
+        if optimizers is None:
+            optimizers = [
+                TorchOptimizer(torch.optim.Adam, lr=0.001)
+                for _ in range(len(models))
+            ]
+
+        # Set default schedulers to ConstantLR if not provided
+        if schedulers is None:
+            schedulers = [
+                TorchScheduler(torch.optim.lr_scheduler.ConstantLR, factor=1.0)
+                for _ in range(len(models))
+            ]
+
+        # Map optimizers and schedulers to lists if single items are provided
+        optimizers = _to_list(optimizers)
+        schedulers = _to_list(schedulers)
+
+        # Check consistency
+        check_consistency(optimizers, TorchOptimizer)
+        check_consistency(schedulers, TorchScheduler)
+        check_consistency(models, torch.nn.Module)
+
+        # Check that the number of optimizers matches the number of models
+        if len(optimizers) != len(models):
+            raise ValueError(
+                "You must define one optimizer for each model."
+                f"Got {len(models)} models, and {len(optimizers)} optimizers."
+            )
+
+        # Check that the number of schedulers matches the number of models
+        if len(schedulers) != len(models):
+            raise ValueError(
+                "You must define one scheduler for each model."
+                f"Got {len(models)} models, and {len(schedulers)} schedulers."
+            )
+
+        # Initialize the solver components
+        self._pina_models = torch.nn.ModuleList(models)
+        self._pina_optimizers = optimizers
+        self._pina_schedulers = schedulers
+
+    def training_step(self, batch, batch_idx):
+        """
+        Solver training step.
+
+        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
+            tuple containing a condition name and a dictionary of points.
+        :param int batch_idx: The index of the current batch.
+        :return: The loss of the training step.
+        :rtype: torch.Tensor
+        """
+        loss = self.batch_evaluation_step(batch=batch, batch_idx=batch_idx)
+        self.log(
+            name="train_loss",
+            value=loss.item(),
+            batch_size=self.get_batch_size(batch),
+            **self.trainer.logging_kwargs,
+        )
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        """
+        Solver validation step.
+
+        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
+            tuple containing a condition name and a dictionary of points.
+        :param int batch_idx: The index of the current batch.
+        :return: The loss of the training step.
+        :rtype: torch.Tensor
+        """
+        loss = self.batch_evaluation_step(batch=batch, batch_idx=batch_idx)
+        self.log(
+            name="val_loss",
+            value=loss.item(),
+            batch_size=self.get_batch_size(batch),
+            **self.trainer.logging_kwargs,
+        )
+        return loss
+
+    def test_step(self, batch, batch_idx):
+        """
+        Solver test step.
+
+        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
+            tuple containing a condition name and a dictionary of points.
+        :param int batch_idx: The index of the current batch.
+        :return: The loss of the training step.
+        :rtype: torch.Tensor
+        """
+        loss = self.batch_evaluation_step(batch=batch, batch_idx=batch_idx)
+        self.log(
+            name="test_loss",
+            value=loss.item(),
+            batch_size=self.get_batch_size(batch),
+            **self.trainer.logging_kwargs,
+        )
+        return loss
+
+    def _compute_condition_loss(self, condition, data, batch_idx):
+        """
+        Compute the scalar loss for a given condition and its data.
+
+        :param BaseCondition condition: The condition for which to compute the
+            loss.
+        :param dict data: The data corresponding to the condition.
+        :param int batch_idx: The index of the current batch.
+        :return: The scalar loss for the condition.
+        :rtype: torch.Tensor
+        """
+        # Clone the input tensor if it exists to avoid in-place modifications
+        if "input" in data and hasattr(data["input"], "clone"):
+            data = dict(data)
+            data["input"] = data["input"].clone()
+
+        # Compute and store the residual tensor for the condition
+        self.residual_tensor = condition.evaluate(data, self)
+
+        # Retrieve condition name for more complex weighting schemes
+        condition_name = condition.name if hasattr(condition, "name") else None
+
+        # Compute the tensor loss from the residual tensor
+        condition_tensor_loss = self._loss_from_residual(condition_name)
+
+        # Compute the scalar loss from the tensor loss and return it
+        condition_scalar_loss = self._apply_reduction(condition_tensor_loss)
+
+        return condition_scalar_loss
+
+    def _loss_from_residual(self, condition_name=None):
+        """
+        Compute the tensor loss from the residual tensor.
+
+        :param str condition_name: The name of the condition.
+        :return: The tensor loss computed from the residual tensor.
+        :rtype: torch.Tensor | LabelTensor
+        """
+        # Compute the loss tensor and appply reduction
+        return self._loss_fn(
+            self.residual_tensor, torch.zeros_like(self.residual_tensor)
+        )
+
+    def _apply_reduction(self, value):
+        """
+        Apply the specified reduction to the loss tensor.
+
+        :param value: The loss tensor to reduce.
+        :type value: torch.Tensor | LabelTensor
+        :return: The reduced loss.
+        :rtype: torch.Tensor | LabelTensor
+        """
+        # Get the reduction function based on the specified reduction type
+        reduction_fn = self._AVAILABLE_REDUCTIONS.get(self._reduction)
+
+        # If the reduction type is not supported, raise an error
+        if reduction_fn is None:
+            raise ValueError(
+                f"Unsupported reduction '{self._reduction}'. "
+                f"Available options include {self._AVAILABLE_REDUCTIONS.keys()}"
+            )
+
+        return reduction_fn(value)
 
     @staticmethod
     def get_batch_size(batch):
@@ -370,31 +345,7 @@ class BaseSolver(SolverInterface, metaclass=ABCMeta):
         :return: The size of the batch.
         :rtype: int
         """
-        batch_size = 0
-        for data in batch:
-            batch_size += len(data[1]["input"])
-        return batch_size
-
-    @staticmethod
-    def default_torch_optimizer():
-        """
-        Set the default optimizer to :class:`torch.optim.Adam`.
-
-        :return: The default optimizer.
-        :rtype: OptimizerInterface
-        """
-        return TorchOptimizer(torch.optim.Adam, lr=0.001)
-
-    @staticmethod
-    def default_torch_scheduler():
-        """
-        Set the default scheduler to
-        :class:`torch.optim.lr_scheduler.ConstantLR`.
-
-        :return: The default scheduler.
-        :rtype: SchedulerInterface
-        """
-        return TorchScheduler(torch.optim.lr_scheduler.ConstantLR, factor=1.0)
+        return sum(len(data[1]["input"]) for data in batch)
 
     @property
     def problem(self):
@@ -419,9 +370,19 @@ class BaseSolver(SolverInterface, metaclass=ABCMeta):
     @property
     def weighting(self):
         """
-        The weighting schema.
+        The weighting schema used by the solver.
 
-        :return: The weighting schema.
-        :rtype: :class:`~pina.loss.weighting_interface.WeightingInterface`
+        :return: The weighting schema used by the solver.
+        :rtype: :class:`~pina.weighting.base_weighting.BaseWeighting`
         """
         return self._pina_weighting
+
+    @property
+    def loss(self):
+        """
+        The element-wise loss module used by the solver.
+
+        :return: The element-wise loss module used by the solver.
+        :rtype: torch.nn.Module
+        """
+        return self._loss_fn

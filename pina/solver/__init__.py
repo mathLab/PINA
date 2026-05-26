@@ -1,72 +1,38 @@
-"""
-Unified solvers for Physics-Informed and Data-Driven modeling.
-
-This module provides the high-level training orchestrators used to solve
-differential equations and regression problems. It includes:
-* **Physics-Informed Solvers**: Standard PINN, Gradient-enhanced (gPINN), Causal,
-  and Self-Adaptive variants.
-* **Supervised Solvers**: For purely data-driven tasks and Reduced Order Modeling.
-* **Ensemble Solvers**: For uncertainty quantification via Deep Ensembles.
-"""
+"""Module for all solvers in PINA."""
 
 __all__ = [
     "SolverInterface",
-    "SingleSolverInterface",
-    "MultiSolverInterface",
-    "SingleModelSimpleSolver",
-    "MultiModelSimpleSolver",
-    "PINNInterface",
-    "PINN",
-    "GradientPINN",
-    "CausalPINN",
-    "CompetitivePINN",
-    "SelfAdaptivePINN",
-    "RBAPINN",
-    "SupervisedSolverInterface",
-    "SupervisedSolver",
-    "ReducedOrderModelSolver",
-    "DeepEnsembleSolverInterface",
-    "DeepEnsembleSupervisedSolver",
-    "DeepEnsemblePINN",
-    "EnsembleSimpleSolver",
-    "GAROM",
-    "AutoregressiveSolver",
+    "BaseSolver",
+    "SingleModelSolver",
+    "MultiModelSolver",
+    "EnsembleSolver",
+    "SupervisedSingleModelSolver",
+    "PhysicsInformedSingleModelSolver",
+    "SupervisedEnsembleSolver",
+    "PhysicsInformedEnsembleSolver",
+    "AutoregressiveSingleModelSolver",
+    "AutoregressiveEnsembleSolver",
 ]
 
 
-from pina._src.solver.single_model_simple_solver import (
-    SingleModelSimpleSolver,
-)
-from pina._src.solver.multi_model_simple_solver import (
-    MultiModelSimpleSolver,
-)
-from pina._src.solver.pinn import PINN
-
-# from pina._src.solver.physics_informed_solver.gradient_pinn import GradientPINN
-# from pina._src.solver.physics_informed_solver.causal_pinn import CausalPINN
-# from pina._src.solver.physics_informed_solver.competitive_pinn import (
-# CompetitivePINN,
-# )
-# from pina._src.solver.physics_informed_solver.self_adaptive_pinn import (
-# SelfAdaptivePINN,
-# )
-# from pina._src.solver.physics_informed_solver.rba_pinn import RBAPINN
-from pina._src.solver.supervised import SupervisedSolver
-
-# from pina._src.solver.supervised_solver.reduced_order_model import (
-#     ReducedOrderModelSolver,
-# )
-# from pina._src.solver.ensemble_solver_interface import (
-#     DeepEnsembleSolverInterface,
-# )
-# from pina._src.solver.ensemble_pinn import DeepEnsemblePINN
-# from pina._src.solver.ensemble_supervised import (
-#     DeepEnsembleSupervisedSolver,
-# )
-from pina._src.solver.ensemble_simple_solver import EnsembleSimpleSolver
-
-# from pina._src.solver.garom import GAROM
-
-from pina._src.solver.autoregressive_solver import AutoregressiveSolver
-from pina._src.solver.ensemble_pinn import EnsemblePINN
+from pina._src.solver.solver_interface import SolverInterface
 from pina._src.solver.base_solver import BaseSolver
+from pina._src.solver.single_model_solver import SingleModelSolver
+from pina._src.solver.multi_model_solver import MultiModelSolver
+from pina._src.solver.ensemble_solver import EnsembleSolver
+from pina._src.solver.supervised_single_model_solver import (
+    SupervisedSingleModelSolver,
+)
+from pina._src.solver.physics_informed_single_model_solver import (
+    PhysicsInformedSingleModelSolver,
+)
+from pina._src.solver.supervised_ensemble_solver import SupervisedEnsembleSolver
+from pina._src.solver.physics_informed_ensemble_solver import (
+    PhysicsInformedEnsembleSolver,
+)
+from pina._src.solver.autoregressive_single_model_solver import (
+    AutoregressiveSingleModelSolver,
+)
+from pina._src.solver.autoregressive_ensemble_solver import (
+    AutoregressiveEnsembleSolver,
+)

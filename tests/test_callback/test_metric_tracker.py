@@ -1,6 +1,6 @@
 import torch
 import pytest
-from pina.solver import PINN
+from pina.solver import PhysicsInformedSingleModelSolver
 from pina.model import FeedForward
 from pina.callback import MetricTracker
 from pina import Trainer, Condition, LabelTensor
@@ -16,7 +16,7 @@ problem.conditions["data"] = Condition(
 
 # Initialize the model and solver
 model = FeedForward(len(problem.input_variables), len(problem.output_variables))
-solver = PINN(problem=problem, model=model)
+solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
 
 
 @pytest.mark.parametrize(
@@ -67,5 +67,6 @@ def test_routine(metrics_to_track, batch_size):
             for metric in expected_metrics
             for suffix in ("step", "epoch")
         ]
-
+    print(f"Logged metrics: {logged_metrics}")
+    print(f"Expected metrics: {expected_metrics}")
     assert sorted(logged_metrics) == sorted(expected_metrics)

@@ -73,7 +73,7 @@ class R3Refinement(BaseRefinement):
 
         :param LabelTensor current_points: The existing points in the domain.
         :param str condition_name: The identifier of the condition to refine.
-        :param SolverInterface solver: The solver used for sampling decisions.
+        :param BaseSolver solver: The solver used for sampling decisions.
         :return: Newly sampled points.
         :rtype: LabelTensor
         """

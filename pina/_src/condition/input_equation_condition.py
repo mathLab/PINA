@@ -1,6 +1,5 @@
 """Module for the Input-Equation Condition class."""
 
-import torch
 from pina._src.condition.base_condition import BaseCondition
 from pina._src.core.label_tensor import LabelTensor
 from pina._src.core.graph import Graph
@@ -123,9 +122,9 @@ class InputEquationCondition(BaseCondition):
 
         :param dict batch: The batch containing the data required by the
             condition evaluation.
-        :param SolverInterface solver: The solver used to perform the forward
-            pass and compute the residual. The solver provides access to the
-            model and its parameters, which may be necessary for evaluating the
+        :param BaseSolver solver: The solver used to perform the forward pass
+            and compute the residual. The solver provides access to the model
+            and its parameters, which may be necessary for evaluating the
             condition residual.
         :return: The non-aggregated residual tensor.
         :rtype: LabelTensor

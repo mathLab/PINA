@@ -1,8 +1,10 @@
-SolverInterface
-=================
-.. currentmodule:: pina.solver.solver
+Solver Interface
+=================================
+.. currentmodule:: pina.solver.solver_interface
 
-.. autoclass:: pina._src.solver.solver.SolverInterface
-    :show-inheritance:
+.. automodule:: pina._src.solver.solver_interface
+
+.. autoclass:: pina._src.solver.solver_interface.SolverInterface
     :members:
-    
+    :show-inheritance:
+    :noindex:

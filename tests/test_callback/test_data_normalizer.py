@@ -1,7 +1,7 @@
 import torch
 import pytest
 from pina import Trainer, LabelTensor, Condition
-from pina.solver import SupervisedSolver
+from pina.solver import SupervisedSingleModelSolver
 from pina.callback import DataNormalizer
 from pina.problem import BaseProblem
 from pina.model import FeedForward
@@ -93,7 +93,9 @@ def test_routine(apply_to, stage, scale_fn, shift_fn, use_lt):
     model = FeedForward(
         len(problem.input_variables), len(problem.output_variables)
     )
-    solver = SupervisedSolver(problem=problem, model=model, use_lt=use_lt)
+    solver = SupervisedSingleModelSolver(
+        problem=problem, model=model, use_lt=use_lt
+    )
 
     # Initialize the callback
     callback = DataNormalizer(
@@ -170,7 +172,9 @@ def test_routine(apply_to, stage, scale_fn, shift_fn, use_lt):
             len(GraphProblem.input_variables),
             len(GraphProblem.output_variables),
         )
-        solver = SupervisedSolver(problem=GraphProblem(), model=model)
+        solver = SupervisedSingleModelSolver(
+            problem=GraphProblem(), model=model
+        )
 
         # Initialize the callback
         callback = DataNormalizer(

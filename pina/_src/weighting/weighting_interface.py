@@ -56,5 +56,5 @@ class WeightingInterface(metaclass=ABCMeta):
         enabling strategies that depend on training state or model information.
 
         :return: The solver instance.
-        :rtype: :class:`~pina.solver.SolverInterface`
+        :rtype: :class:`~pina.solver.base_solver.BaseSolver`
         """

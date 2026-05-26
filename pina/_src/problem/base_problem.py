@@ -248,6 +248,7 @@ class BaseProblem(ProblemInterface):
                 # Set the domain and problem attributes of the new condition
                 new_condition.domain = cond.domain
                 new_condition.problem = self
+                new_condition.name = name
 
                 # Replace the old condition in the conditions dictionary
                 self.conditions[name] = new_condition

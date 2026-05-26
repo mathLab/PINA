@@ -1,6 +1,6 @@
 import torch
 import pytest
-from pina.solver import PINN
+from pina.solver import PhysicsInformedSingleModelSolver
 from pina.model import FeedForward
 from pina.callback import PINAProgressBar
 from pina import Trainer, Condition, LabelTensor
@@ -16,7 +16,7 @@ problem.conditions["data"] = Condition(
 
 # Initialize the model and solver
 model = FeedForward(len(problem.input_variables), len(problem.output_variables))
-solver = PINN(problem=problem, model=model)
+solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
 
 # Define metrics to be used in the progress bar
 metrics_list = ["train", "val", "test", ["test", "data"], ["train", "val"]]

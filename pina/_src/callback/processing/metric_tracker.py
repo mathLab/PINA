@@ -47,7 +47,7 @@ class MetricTracker(Callback):
         ``["train_loss_step", "train_loss_epoch"]``.
 
         :param Trainer trainer: The trainer instance managing the execution.
-        :param SolverInterface pl_module: The solver module being executed.
+        :param BaseSolver pl_module: The solver module being executed.
         :param str stage: Current execution stage.
         """
         # Set default metrics to train_loss if no batch size is available

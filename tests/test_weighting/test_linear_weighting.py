@@ -2,7 +2,7 @@ import math
 import torch
 import pytest
 from pina import Trainer
-from pina.solver import PINN
+from pina.solver import PhysicsInformedSingleModelSolver
 from pina.model import FeedForward
 from pina.weighting import LinearWeighting
 from pina.problem.zoo import Poisson2DSquareProblem
@@ -82,7 +82,9 @@ def test_train_aggregation(initial_weights, final_weights, target_epoch):
         final_weights=final_weights,
         target_epoch=target_epoch,
     )
-    solver = PINN(problem=problem, model=model, weighting=weighting)
+    solver = PhysicsInformedSingleModelSolver(
+        problem=problem, model=model, weighting=weighting
+    )
     trainer = Trainer(
         solver=solver,
         max_epochs=target_epoch + torch.randint(1, 5, (1,)).item(),

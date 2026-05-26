@@ -1,6 +1,8 @@
 """Module for the Base Refinement class."""
 
-from pina._src.solver.pinn import PINN
+from pina._src.solver.physics_informed_single_model_solver import (
+    PhysicsInformedSingleModelSolver,
+)
 from lightning.pytorch import Callback
 from pina._src.core.utils import check_consistency, check_positive_integer
 from pina._src.callback.refinement.refinement_interface import (
@@ -56,7 +58,7 @@ class BaseRefinement(Callback, RefinementInterface):
         to initialize datasets, sampling conditions, or internal state.
 
         :param Trainer trainer: The trainer managing the training loop.
-        :param SolverInterface solver: The solver associated with the trainer.
+        :param BaseSolver solver: The solver associated with the trainer.
         :raise RuntimeError: If the solver is not physics-informed (i.e., does
             not implement PINNInterface).
         :raise RuntimeError: If any of the specified conditions do not exist in
@@ -65,7 +67,7 @@ class BaseRefinement(Callback, RefinementInterface):
             'domain' attribute for sampling.
         """
         # Check solver consistency
-        if not isinstance(solver, PINN):
+        if not isinstance(solver, PhysicsInformedSingleModelSolver):
             raise RuntimeError(
                 "Refinement strategies require a physics-informed solver. "
                 f"Got '{type(solver).__name__}'."
@@ -111,7 +113,7 @@ class BaseRefinement(Callback, RefinementInterface):
         on the current state of the model.
 
         :param Trainer trainer: The trainer managing the training loop.
-        :param SolverInterface solver: The solver associated with the trainer.
+        :param BaseSolver solver: The solver associated with the trainer.
         """
         # Store current epoch
         epoch = trainer.current_epoch

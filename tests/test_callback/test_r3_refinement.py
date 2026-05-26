@@ -1,6 +1,6 @@
 import torch
 import pytest
-from pina.solver import PINN
+from pina.solver import PhysicsInformedSingleModelSolver
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.callback import R3Refinement
@@ -44,7 +44,7 @@ def test_sample(sample_every, residual_loss, condition_to_update):
     model = FeedForward(
         len(problem.input_variables), len(problem.output_variables)
     )
-    solver = PINN(problem=problem, model=model)
+    solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
 
     # Initialize the callback
     callback = R3Refinement(

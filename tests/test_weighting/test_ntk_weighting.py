@@ -1,6 +1,6 @@
 import pytest
 from pina import Trainer
-from pina.solver import PINN
+from pina.solver import PhysicsInformedSingleModelSolver
 from pina.model import FeedForward
 from pina.weighting import NeuralTangentKernelWeighting
 from pina.problem.zoo import Poisson2DSquareProblem
@@ -51,7 +51,9 @@ def test_aggregate(update_every_n_epochs, alpha):
     weighting = NeuralTangentKernelWeighting(
         update_every_n_epochs=update_every_n_epochs, alpha=alpha
     )
-    solver = PINN(problem=problem, model=model, weighting=weighting)
+    solver = PhysicsInformedSingleModelSolver(
+        problem=problem, model=model, weighting=weighting
+    )
     trainer = Trainer(solver=solver, max_epochs=5, accelerator="cpu")
 
     # Train

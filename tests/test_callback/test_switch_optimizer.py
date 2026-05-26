@@ -1,6 +1,6 @@
 import torch
 import pytest
-from pina.solver import PINN
+from pina.solver import PhysicsInformedSingleModelSolver
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.optim import TorchOptimizer
@@ -16,7 +16,9 @@ model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 optimizer = TorchOptimizer(torch.optim.Adam)
 
 # Initialize the solver
-solver = PINN(problem=problem, model=model, optimizer=optimizer)
+solver = PhysicsInformedSingleModelSolver(
+    problem=problem, model=model, optimizer=optimizer
+)
 
 # Define new optimizers for testing
 lbfgs = TorchOptimizer(torch.optim.LBFGS, lr=1.0)

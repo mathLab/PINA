@@ -1,6 +1,6 @@
 import torch
 import pytest
-from pina.solver import PINN
+from pina.solver import PhysicsInformedSingleModelSolver
 from pina.trainer import Trainer
 from pina.model import FeedForward
 from pina.optim import TorchScheduler
@@ -16,7 +16,9 @@ model = FeedForward(len(problem.input_variables), len(problem.output_variables))
 scheduler = TorchScheduler(torch.optim.lr_scheduler.ConstantLR, factor=0.1)
 
 # Initialize the solver
-solver = PINN(problem=problem, model=model, scheduler=scheduler)
+solver = PhysicsInformedSingleModelSolver(
+    problem=problem, model=model, scheduler=scheduler
+)
 
 # Define new schedulers for testing
 step = TorchScheduler(torch.optim.lr_scheduler.StepLR, step_size=10, gamma=0.1)
