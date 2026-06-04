@@ -1,3 +1,6 @@
+"""Module for the manual optimization mixin class."""
+
+
 class _ManualOptimizationMixin:
     """
     Mixin that handles Lightning manual optimization loops, useful for solvers

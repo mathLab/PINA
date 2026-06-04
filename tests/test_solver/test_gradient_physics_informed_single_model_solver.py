@@ -1,8 +1,8 @@
 import torch
 import pytest
+from pina.problem.zoo import Poisson2DSquareProblem, SupervisedProblem
+from pina.solver import GradientPhysicsInformedSingleModelSolver
 from pina.problem.zoo import InversePoisson2DSquareProblem
-from pina.solver import PhysicsInformedSingleModelSolver
-from pina.problem.zoo import Poisson2DSquareProblem
 from pina import LabelTensor, Condition, Trainer
 from pina.model import FeedForward
 from pina.condition import (
@@ -49,8 +49,23 @@ def define_inverse_problem_model(n_pts=10):
     return problem, model
 
 
+# Helper for a dummy supervised problem definition
+def define_dummy_problem():
+
+    # Initialize a dummy supervised problem
+    input_pts = torch.rand(10, 2)
+    input_pts = LabelTensor(input_pts, ["x", "y"])
+    output_pts = torch.rand(10, 1)
+    output_pts = LabelTensor(output_pts, ["u"])
+    problem = SupervisedProblem(input_=input_pts, output_=output_pts)
+
+    return problem
+
+
 @pytest.mark.parametrize("case", ["direct", "inverse"])
-def test_constructor(case):
+@pytest.mark.parametrize("regularization_weight", [0.5, 1])
+@pytest.mark.parametrize("regularized_conditions", [None, "D"])
+def test_constructor(case, regularization_weight, regularized_conditions):
 
     # Initialize problems and model based on the case
     if case == "direct":
@@ -59,7 +74,12 @@ def test_constructor(case):
         problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
+    solver = GradientPhysicsInformedSingleModelSolver(
+        problem=problem,
+        model=model,
+        regularization_weight=regularization_weight,
+        regularized_conditions=regularized_conditions,
+    )
 
     # Assert accepted conditions types
     assert solver.accepted_conditions_types == (
@@ -68,10 +88,36 @@ def test_constructor(case):
         DomainEquationCondition,
     )
 
+    # Should fail if regularization_weight is not a float or int
+    with pytest.raises(ValueError):
+        GradientPhysicsInformedSingleModelSolver(
+            problem=problem, model=model, regularization_weight="invalid"
+        )
+
+    # Should fail if regularized_conditions is not a string or a list of strings
+    with pytest.raises(ValueError):
+        GradientPhysicsInformedSingleModelSolver(
+            problem=problem, model=model, regularized_conditions=123
+        )
+
+    # Should fail if problem is not an instance of SpatialProblem
+    with pytest.raises(ValueError):
+        dummy_problem = define_dummy_problem()
+        GradientPhysicsInformedSingleModelSolver(
+            problem=dummy_problem,
+            model=model,
+            regularization_weight=regularization_weight,
+            regularized_conditions=regularized_conditions,
+        )
+
 
 @pytest.mark.parametrize("case", ["direct", "inverse"])
 @pytest.mark.parametrize("batch_size", [None, 5])
-def test_solver_train(case, batch_size):
+@pytest.mark.parametrize("regularization_weight", [0.5, 1])
+@pytest.mark.parametrize("regularized_conditions", [None, "D"])
+def test_solver_train(
+    case, batch_size, regularization_weight, regularized_conditions
+):
 
     # Initialize problems and model based on the case
     if case == "direct":
@@ -80,7 +126,12 @@ def test_solver_train(case, batch_size):
         problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
+    solver = GradientPhysicsInformedSingleModelSolver(
+        problem=problem,
+        model=model,
+        regularization_weight=regularization_weight,
+        regularized_conditions=regularized_conditions,
+    )
 
     # Training procedure
     trainer = Trainer(
@@ -97,7 +148,11 @@ def test_solver_train(case, batch_size):
 
 @pytest.mark.parametrize("case", ["direct", "inverse"])
 @pytest.mark.parametrize("batch_size", [None, 5])
-def test_solver_validation(case, batch_size):
+@pytest.mark.parametrize("regularization_weight", [0.5, 1])
+@pytest.mark.parametrize("regularized_conditions", [None, "D"])
+def test_solver_validation(
+    case, batch_size, regularization_weight, regularized_conditions
+):
 
     # Initialize problems and model based on the case
     if case == "direct":
@@ -106,7 +161,12 @@ def test_solver_validation(case, batch_size):
         problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
+    solver = GradientPhysicsInformedSingleModelSolver(
+        problem=problem,
+        model=model,
+        regularization_weight=regularization_weight,
+        regularized_conditions=regularized_conditions,
+    )
 
     # Training procedure
     trainer = Trainer(
@@ -123,7 +183,11 @@ def test_solver_validation(case, batch_size):
 
 @pytest.mark.parametrize("case", ["direct", "inverse"])
 @pytest.mark.parametrize("batch_size", [None, 5])
-def test_solver_test(case, batch_size):
+@pytest.mark.parametrize("regularization_weight", [0.5, 1])
+@pytest.mark.parametrize("regularized_conditions", [None, "D"])
+def test_solver_test(
+    case, batch_size, regularization_weight, regularized_conditions
+):
 
     # Initialize problems and model based on the case
     if case == "direct":
@@ -132,7 +196,12 @@ def test_solver_test(case, batch_size):
         problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
+    solver = GradientPhysicsInformedSingleModelSolver(
+        problem=problem,
+        model=model,
+        regularization_weight=regularization_weight,
+        regularized_conditions=regularized_conditions,
+    )
 
     # Training procedure
     trainer = Trainer(
@@ -160,7 +229,9 @@ def test_train_load_restore(clean_tmp_dir, case):
         problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
+    solver = GradientPhysicsInformedSingleModelSolver(
+        problem=problem, model=model
+    )
 
     # Training procedure
     trainer = Trainer(
@@ -183,7 +254,7 @@ def test_train_load_restore(clean_tmp_dir, case):
     )
 
     # Load the solver from a checkpoint
-    new_solver = PhysicsInformedSingleModelSolver.load_from_checkpoint(
+    new_solver = GradientPhysicsInformedSingleModelSolver.load_from_checkpoint(
         f"{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt",
         problem=problem,
         model=model,

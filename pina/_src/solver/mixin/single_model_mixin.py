@@ -1,3 +1,5 @@
+"""Module for the single-model mixin class."""
+
 from pina._src.problem.inverse_problem import InverseProblem
 
 

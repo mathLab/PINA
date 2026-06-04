@@ -1,3 +1,5 @@
+"""Module for the condition aggregator mixin class."""
+
 import torch
 
 

@@ -1,3 +1,5 @@
+"""Module for the ensemble mixin class."""
+
 import torch
 from pina._src.solver.mixin.multi_model_mixin import _MultiModelMixin
 

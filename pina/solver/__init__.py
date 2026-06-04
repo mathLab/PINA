@@ -12,6 +12,11 @@ __all__ = [
     "PhysicsInformedEnsembleSolver",
     "AutoregressiveSingleModelSolver",
     "AutoregressiveEnsembleSolver",
+    "SelfAdaptivePhysicsInformedSolver",
+    "CompetitivePhysicsInformedSolver",
+    "GradientPhysicsInformedSingleModelSolver",
+    "RBAPhysicsInformedSingleModelSolver",
+    "CausalPhysicsInformedSingleModelSolver",
 ]
 
 
@@ -35,4 +40,19 @@ from pina._src.solver.autoregressive_single_model_solver import (
 )
 from pina._src.solver.autoregressive_ensemble_solver import (
     AutoregressiveEnsembleSolver,
+)
+from pina._src.solver.self_adaptive_physics_informed_solver import (
+    SelfAdaptivePhysicsInformedSolver,
+)
+from pina._src.solver.competitive_physics_informed_solver import (
+    CompetitivePhysicsInformedSolver,
+)
+from pina._src.solver.gradient_physics_informed_single_model_solver import (
+    GradientPhysicsInformedSingleModelSolver,
+)
+from pina._src.solver.rba_physics_informed_single_model_solver import (
+    RBAPhysicsInformedSingleModelSolver,
+)
+from pina._src.solver.causal_physics_informed_single_model_solver import (
+    CausalPhysicsInformedSingleModelSolver,
 )

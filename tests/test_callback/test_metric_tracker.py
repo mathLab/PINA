@@ -67,6 +67,5 @@ def test_routine(metrics_to_track, batch_size):
             for metric in expected_metrics
             for suffix in ("step", "epoch")
         ]
-    print(f"Logged metrics: {logged_metrics}")
-    print(f"Expected metrics: {expected_metrics}")
+
     assert sorted(logged_metrics) == sorted(expected_metrics)

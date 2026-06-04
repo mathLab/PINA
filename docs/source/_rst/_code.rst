@@ -91,6 +91,11 @@ Solvers and Mixins
     Physics-Informed Ensemble Solver <solver/physics_informed_ensemble_solver.rst>
     Autoregressive Single-Model Solver <solver/autoregressive_single_model_solver.rst>
     Autoregressive Ensemble Solver <solver/autoregressive_ensemble_solver.rst>
+    Self-Adaptive Physics-Informed Solver <solver/self_adaptive_physics_informed_solver.rst>
+    Competitive Physics-Informed Solver <solver/competitive_physics_informed_solver.rst>
+    Gradient Physics-Informed Single-Model Solver <solver/gradient_physics_informed_single_model_solver.rst>
+    RBA Physics-Informed Single-Model Solver <solver/rba_physics_informed_single_model_solver.rst>
+    Causal Physics-Informed Single-Model Solver <solver/causal_physics_informed_single_model_solver.rst>
     Single-Model Mixin <solver/mixin/single_model_mixin.rst>
     Multi-Model Mixin <solver/mixin/multi_model_mixin.rst>
     Ensemble Mixin <solver/mixin/ensemble_mixin.rst>
@@ -98,6 +103,8 @@ Solvers and Mixins
     Manual Optimization Mixin <solver/mixin/manual_optimization_mixin.rst>
     Physics-Informed Mixin <solver/mixin/physics_informed_mixin.rst>
     Autoregressive Mixin <solver/mixin/autoregressive_mixin.rst>
+    Gradient-Enhanced Mixin <solver/mixin/gradient_enhanced_mixin.rst>
+    Residual-Based Attention Mixin <solver/mixin/residual_based_attention_mixin.rst>
 
 Models
 ------------

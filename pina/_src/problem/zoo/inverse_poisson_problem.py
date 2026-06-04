@@ -174,3 +174,5 @@ class InversePoisson2DSquareProblem(SpatialProblem, InverseProblem):
                 self.conditions["data"] = Condition(
                     input=input_data[:n_data], target=output_data[:n_data]
                 )
+                self.conditions["data"].problem = self
+                self.conditions["data"].name = "data"

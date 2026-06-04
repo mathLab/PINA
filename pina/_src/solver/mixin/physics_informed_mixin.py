@@ -1,3 +1,5 @@
+"""Module for the physics-informed mixin class."""
+
 import torch
 
 

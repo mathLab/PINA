@@ -1,3 +1,5 @@
+"""Module for the multi-model mixin class."""
+
 import torch
 from pina._src.problem.inverse_problem import InverseProblem
 

@@ -1,9 +1,9 @@
-import pytest
 import torch
+import pytest
 from pina.problem.zoo import InversePoisson2DSquareProblem
-from pina.solver import PhysicsInformedEnsembleSolver
+from pina.solver import RBAPhysicsInformedSingleModelSolver
 from pina.problem.zoo import Poisson2DSquareProblem
-from pina import LabelTensor, Trainer, Condition
+from pina import LabelTensor, Condition, Trainer
 from pina.model import FeedForward
 from pina.condition import (
     InputTargetCondition,
@@ -13,7 +13,7 @@ from pina.condition import (
 
 
 # Helper function for direct problem definition
-def define_direct_problem_model(n_pts=10, n_models=3):
+def define_direct_problem_model(n_pts=10):
 
     # Initialize direct problem
     problem = Poisson2DSquareProblem()
@@ -25,65 +25,105 @@ def define_direct_problem_model(n_pts=10, n_models=3):
     output_pts = torch.rand(10, len(problem.output_variables))
     output_pts = LabelTensor(output_pts, problem.output_variables)
     problem.conditions["data"] = Condition(input=input_pts, target=output_pts)
+    problem.conditions["data"].name = "data"
 
-    # Initialize the models
-    models = [
-        FeedForward(len(problem.input_variables), len(problem.output_variables))
-        for _ in range(n_models)
-    ]
+    # Initialize the model
+    model = FeedForward(
+        len(problem.input_variables), len(problem.output_variables)
+    )
 
-    return problem, models
+    return problem, model
 
 
 # Helper function for inverse problem definition
-def define_inverse_problem_model(n_pts=10, n_models=5):
+def define_inverse_problem_model(n_pts=10):
 
     # Initialize inverse problem
     problem = InversePoisson2DSquareProblem(load=True, data_size=0.01)
     problem.discretise_domain(n_pts)
 
-    # Initialize the models
-    models = [
-        FeedForward(len(problem.input_variables), len(problem.output_variables))
-        for _ in range(n_models)
-    ]
+    # Initialize the model
+    model = FeedForward(
+        len(problem.input_variables), len(problem.output_variables)
+    )
 
-    return problem, models
+    return problem, model
 
 
 @pytest.mark.parametrize("case", ["direct", "inverse"])
-def test_constructor(case):
+@pytest.mark.parametrize("regularized_conditions", [None, "D"])
+def test_constructor(case, regularized_conditions):
 
     # Initialize problems and model based on the case
     if case == "direct":
-        problem, models = define_direct_problem_model()
+        problem, model = define_direct_problem_model()
     else:
-        problem, models = define_inverse_problem_model()
+        problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedEnsembleSolver(problem=problem, models=models)
+    solver = RBAPhysicsInformedSingleModelSolver(
+        problem=problem,
+        model=model,
+        eta=0.001,
+        gamma=0.999,
+        regularized_conditions=regularized_conditions,
+    )
 
-    # Assert accepted conditions types and number of ensemble members
+    # Assert accepted conditions types
     assert solver.accepted_conditions_types == (
         InputTargetCondition,
         InputEquationCondition,
         DomainEquationCondition,
     )
-    assert solver.num_models == len(models)
+
+    # Should fail if eta is not a positive number
+    with pytest.raises(ValueError):
+        RBAPhysicsInformedSingleModelSolver(
+            problem=problem,
+            model=model,
+            eta=-0.001,
+            gamma=0.999,
+            regularized_conditions=regularized_conditions,
+        )
+
+    # Should fail if gamma is not in the range (0, 1)
+    with pytest.raises(ValueError):
+        RBAPhysicsInformedSingleModelSolver(
+            problem=problem,
+            model=model,
+            eta=0.001,
+            gamma=1.0,
+            regularized_conditions=regularized_conditions,
+        )
+
+    # Should fail if regularized_conditions is not among the problem conditions
+    with pytest.raises(ValueError):
+        RBAPhysicsInformedSingleModelSolver(
+            problem=problem,
+            model=model,
+            eta=0.001,
+            gamma=0.999,
+            regularized_conditions="invalid_condition",
+        )
 
 
 @pytest.mark.parametrize("case", ["direct", "inverse"])
 @pytest.mark.parametrize("batch_size", [None, 5])
-def test_solver_train(batch_size, case):
+@pytest.mark.parametrize("regularized_conditions", [None, "D"])
+def test_solver_train(case, batch_size, regularized_conditions):
 
     # Initialize problems and model based on the case
     if case == "direct":
-        problem, models = define_direct_problem_model()
+        problem, model = define_direct_problem_model()
     else:
-        problem, models = define_inverse_problem_model()
+        problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedEnsembleSolver(problem=problem, models=models)
+    solver = RBAPhysicsInformedSingleModelSolver(
+        problem=problem,
+        model=model,
+        regularized_conditions=regularized_conditions,
+    )
 
     # Training procedure
     trainer = Trainer(
@@ -100,16 +140,21 @@ def test_solver_train(batch_size, case):
 
 @pytest.mark.parametrize("case", ["direct", "inverse"])
 @pytest.mark.parametrize("batch_size", [None, 5])
-def test_solver_validation(batch_size, case):
+@pytest.mark.parametrize("regularized_conditions", [None, "D"])
+def test_solver_validation(case, batch_size, regularized_conditions):
 
     # Initialize problems and model based on the case
     if case == "direct":
-        problem, models = define_direct_problem_model()
+        problem, model = define_direct_problem_model()
     else:
-        problem, models = define_inverse_problem_model()
+        problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedEnsembleSolver(problem=problem, models=models)
+    solver = RBAPhysicsInformedSingleModelSolver(
+        problem=problem,
+        model=model,
+        regularized_conditions=regularized_conditions,
+    )
 
     # Training procedure
     trainer = Trainer(
@@ -126,16 +171,21 @@ def test_solver_validation(batch_size, case):
 
 @pytest.mark.parametrize("case", ["direct", "inverse"])
 @pytest.mark.parametrize("batch_size", [None, 5])
-def test_solver_test(batch_size, case):
+@pytest.mark.parametrize("regularized_conditions", [None, "D"])
+def test_solver_test(case, batch_size, regularized_conditions):
 
     # Initialize problems and model based on the case
     if case == "direct":
-        problem, models = define_direct_problem_model()
+        problem, model = define_direct_problem_model()
     else:
-        problem, models = define_inverse_problem_model()
+        problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedEnsembleSolver(problem=problem, models=models)
+    solver = RBAPhysicsInformedSingleModelSolver(
+        problem=problem,
+        model=model,
+        regularized_conditions=regularized_conditions,
+    )
 
     # Training procedure
     trainer = Trainer(
@@ -158,12 +208,12 @@ def test_train_load_restore(clean_tmp_dir, case):
 
     # Initialize problems and model based on the case
     if case == "direct":
-        problem, models = define_direct_problem_model()
+        problem, model = define_direct_problem_model()
     else:
-        problem, models = define_inverse_problem_model()
+        problem, model = define_inverse_problem_model()
 
     # Define the solver
-    solver = PhysicsInformedEnsembleSolver(problem=problem, models=models)
+    solver = RBAPhysicsInformedSingleModelSolver(problem=problem, model=model)
 
     # Training procedure
     trainer = Trainer(
@@ -186,10 +236,10 @@ def test_train_load_restore(clean_tmp_dir, case):
     )
 
     # Load the solver from a checkpoint
-    new_solver = PhysicsInformedEnsembleSolver.load_from_checkpoint(
+    new_solver = RBAPhysicsInformedSingleModelSolver.load_from_checkpoint(
         f"{dir}/lightning_logs/version_0/checkpoints/epoch=4-step=5.ckpt",
         problem=problem,
-        models=models,
+        model=model,
     )
 
     # Create input data for testing the forward pass

@@ -1,3 +1,5 @@
+"""Module for the autoregressive mixin class."""
+
 import torch
 from pina._src.core.utils import check_consistency
 
