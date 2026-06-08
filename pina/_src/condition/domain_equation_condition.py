@@ -89,9 +89,9 @@ class DomainEquationCondition(BaseCondition):
 
         :param dict batch: The batch containing the data required by the
             condition evaluation.
-        :param SolverInterface solver: The solver used to perform the forward
-            pass and compute the residual. The solver provides access to the
-            model and its parameters, which may be necessary for evaluating the
+        :param BaseSolver solver: The solver used to perform the forward pass
+            and compute the residual. The solver provides access to the model
+            and its parameters, which may be necessary for evaluating the
             condition residual.
         :raises NotImplementedError: Always raised since any domain-equation
             condition is transformed into an input-equation condition before

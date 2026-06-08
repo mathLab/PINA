@@ -4,9 +4,9 @@ import sys
 import warnings
 import torch
 import lightning
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.solver.base_solver import BaseSolver
 from pina._src.data.data_module import DataModule
-from pina._src.solver.pinn import PINN
 from pina._src.core.utils import (
     check_consistency,
     custom_warning_format,
@@ -52,8 +52,8 @@ class Trainer(lightning.pytorch.Trainer):
         """
         Initialization of the :class:`Trainer` class.
 
-        :param SolverInterface solver: The solver used to train, validate, and
-            test the associated problem.
+        :param BaseSolver solver: The solver used to train, validate, and test
+            the associated problem.
         :param int batch_size: The number of samples per batch. If ``None``, the
             entire dataset is processed as a single batch. Default is ``None``.
         :param float train_size: The fraction of samples assigned to the
@@ -132,8 +132,8 @@ class Trainer(lightning.pytorch.Trainer):
                 f"Expected one of: {sorted(self._AVAIL_BATCHING_MODES)}."
             )
 
-        # Set inference mode to false for PINN solvers to track gradients
-        if isinstance(solver, PINN):
+        # Set inference mode to false when usiing physics-informed mixin
+        if isinstance(solver, PhysicsInformedMixin):
             kwargs["inference_mode"] = False
 
         # Set log_every_n_steps to 0 if batch_size is None, otherwise default
@@ -287,7 +287,7 @@ class Trainer(lightning.pytorch.Trainer):
         Return the solver attached to the trainer.
 
         :return: The solver used by the trainer.
-        :rtype: SolverInterface
+        :rtype: BaseSolver
         """
         return self._solver
 
@@ -296,7 +296,7 @@ class Trainer(lightning.pytorch.Trainer):
         """
         Set the solver attached to the trainer.
 
-        :param SolverInterface solver: The solver instance to attach.
+        :param BaseSolver solver: The solver instance to attach.
         """
         self._solver = solver
 

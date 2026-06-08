@@ -1,4 +1,4 @@
-"""Module for the abstract SolverInterface base class."""
+"""Module for the solver interface."""
 
 from abc import ABCMeta, abstractmethod
 import lightning
@@ -16,81 +16,77 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def forward(self, *args, **kwargs):
+    def training_step(self, batch, batch_idx):
         """
-        Abstract method for the forward pass implementation.
-
-        :param args: The input tensor.
-        :type args: torch.Tensor | LabelTensor | Data | Graph
-        :param dict kwargs: Additional keyword arguments.
-        """
-
-    @abstractmethod
-    def optimization_cycle(self, batch):
-        """
-        The optimization cycle for the solvers.
+        Solver training step.
 
         :param list[tuple[str, dict]] batch: A batch of data. Each element is a
             tuple containing a condition name and a dictionary of points.
-        :return: The losses computed for all conditions in the batch, casted
-            to a subclass of :class:`torch.Tensor`. It should return a dict
-            containing the condition name and the associated scalar loss.
-        :rtype: dict
-        """
-
-    @abstractmethod
-    def training_step(self, batch, **kwargs):
-        """
-        Solver training step. It computes the optimization cycle and aggregates
-        the losses using the ``weighting`` attribute.
-
-        :param list[tuple[str, dict]] batch: A batch of data. Each element is a
-            tuple containing a condition name and a dictionary of points.
-        :param dict kwargs: Additional keyword arguments passed to
-            ``optimization_cycle``.
+        :param int batch_idx: The index of the current batch.
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
 
     @abstractmethod
-    def validation_step(self, batch, **kwargs):
+    def validation_step(self, batch, batch_idx):
         """
-        Solver validation step. It computes the optimization cycle and
-        averages the losses. No aggregation using the ``weighting`` attribute is
-        performed.
+        Solver validation step.
 
         :param list[tuple[str, dict]] batch: A batch of data. Each element is a
             tuple containing a condition name and a dictionary of points.
-        :param dict kwargs: Additional keyword arguments passed to
-            ``optimization_cycle``.
+        :param int batch_idx: The index of the current batch.
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
 
     @abstractmethod
-    def test_step(self, batch, **kwargs):
+    def test_step(self, batch, batch_idx):
         """
-        Solver test step. It computes the optimization cycle and
-        averages the losses. No aggregation using the ``weighting`` attribute is
-        performed.
+        Solver test step.
 
         :param list[tuple[str, dict]] batch: A batch of data. Each element is a
             tuple containing a condition name and a dictionary of points.
-        :param dict kwargs: Additional keyword arguments passed to
-            ``optimization_cycle``.
+        :param int batch_idx: The index of the current batch.
         :return: The loss of the training step.
         :rtype: torch.Tensor
         """
 
+    @property
     @abstractmethod
-    def setup(self, stage):
+    def problem(self):
         """
-        This method is called at the start of the train and test process to
-        compile the model if the :class:`~pina.trainer.Trainer`
-        ``compile`` is ``True``.
+        The problem instance.
 
-        :param str stage: The current stage of the training process
-            (e.g., ``fit``, ``validate``, ``test``, ``predict``).
-        :return: The result of the parent class ``setup`` method.
-        :rtype: Any
+        :return: The problem instance.
+        :rtype: :class:`~pina.problem.base_problem.BaseProblem`
+        """
+
+    @property
+    @abstractmethod
+    def use_lt(self):
+        """
+        Using LabelTensors as input during training.
+
+        :return: The use_lt attribute.
+        :rtype: bool
+        """
+
+    @property
+    @abstractmethod
+    def weighting(self):
+        """
+        The weighting schema used by the solver.
+
+        :return: The weighting schema used by the solver.
+        :rtype: :class:`~pina.weighting.base_weighting.BaseWeighting`
+        """
+
+    @property
+    @abstractmethod
+    def loss(self):
+        """
+        The element-wise loss module used by the solver.
+
+        :return: The element-wise loss module used by the solver.
+        :rtype: torch.nn.Module
         """

@@ -15,7 +15,7 @@ class RefinementInterface(metaclass=ABCMeta):
         to initialize datasets, sampling conditions, or internal state.
 
         :param Trainer trainer: The trainer managing the training loop.
-        :param SolverInterface solver: The solver associated with the trainer.
+        :param BaseSolver solver: The solver associated with the trainer.
         """
 
     @abstractmethod
@@ -27,7 +27,7 @@ class RefinementInterface(metaclass=ABCMeta):
         on the current state of the model.
 
         :param Trainer trainer: The trainer managing the training loop.
-        :param SolverInterface solver: The solver associated with the trainer.
+        :param BaseSolver solver: The solver associated with the trainer.
         """
 
     @abstractmethod
@@ -37,7 +37,7 @@ class RefinementInterface(metaclass=ABCMeta):
 
         :param LabelTensor current_points: The existing points in the domain.
         :param str condition_name: The identifier of the condition to refine.
-        :param SolverInterface solver: The solver used for sampling decisions.
+        :param BaseSolver solver: The solver used for sampling decisions.
         :return: Newly sampled points.
         :rtype: LabelTensor
         """

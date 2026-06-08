@@ -15,7 +15,7 @@ The pipeline to solve differential equations with PINA follows just five steps:
     2. Generate data using built in `Geometrical Domains`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
     3. Choose or build one or more `Models`_ to solve the problem
     4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solver/solver_interface>`
-    5. Train the model with the PINA :doc:`Trainer <solver/solver_interface>`, enhance the train with `Callbacks`_
+    5. Train the model with the PINA :doc:`Trainer <trainer>`, enhance the train with `Callbacks`_
 
 
 Trainer, Data Loader and Data Module
@@ -75,31 +75,43 @@ Batch and Data Managers
     Tensor Data Manager <data/manager/tensor_data_manager.rst>
 
 Solvers
---------------
+------------------------
 
 .. toctree::
     :titlesonly:
 
-    SolverInterface <solver/solver_interface.rst>
-    SingleSolverInterface <solver/single_solver_interface.rst>
-    MultiSolverInterface <solver/multi_solver_interface.rst>
-    SupervisedSolverInterface <solver/supervised_solver/supervised_solver_interface.rst>
-    DeepEnsembleSolverInterface <solver/ensemble_solver/ensemble_solver_interface.rst>
-    PINNInterface <solver/physics_informed_solver/pinn_interface.rst>
-    PINN <solver/physics_informed_solver/pinn.rst>
-    GradientPINN <solver/physics_informed_solver/gradient_pinn.rst>
-    CausalPINN <solver/physics_informed_solver/causal_pinn.rst>
-    CompetitivePINN <solver/physics_informed_solver/competitive_pinn.rst>
-    SelfAdaptivePINN <solver/physics_informed_solver/self_adaptive_pinn.rst>
-    RBAPINN <solver/physics_informed_solver/rba_pinn.rst>
-    DeepEnsemblePINN <solver/ensemble_solver/ensemble_pinn.rst>
-    SupervisedSolver <solver/supervised_solver/supervised.rst>
-    DeepEnsembleSupervisedSolver <solver/ensemble_solver/ensemble_supervised.rst>
-    ReducedOrderModelSolver <solver/supervised_solver/reduced_order_model.rst>
-    GAROM <solver/garom.rst>
-    AutoregressiveSolverInterface <solver/autoregressive_solver/autoregressive_solver_interface.rst>
-    AutoregressiveSolver <solver/autoregressive_solver/autoregressive_solver.rst>
+    Solver Interface <solver/solver_interface.rst>
+    Base Solver <solver/base_solver.rst>
+    Single-Model Solver <solver/single_model_solver.rst>
+    Multi-Model Solver <solver/multi_model_solver.rst>
+    Ensemble Solver <solver/ensemble_solver.rst>
+    Supervised Single-Model Solver <solver/supervised_single_model_solver.rst>
+    Supervised Ensemble Solver <solver/supervised_ensemble_solver.rst>
+    Physics-Informed Single-Model Solver <solver/physics_informed_single_model_solver.rst>
+    Physics-Informed Ensemble Solver <solver/physics_informed_ensemble_solver.rst>
+    Autoregressive Single-Model Solver <solver/autoregressive_single_model_solver.rst>
+    Autoregressive Ensemble Solver <solver/autoregressive_ensemble_solver.rst>
+    Self-Adaptive Physics-Informed Solver <solver/self_adaptive_physics_informed_solver.rst>
+    Competitive Physics-Informed Solver <solver/competitive_physics_informed_solver.rst>
+    Gradient Physics-Informed Single-Model Solver <solver/gradient_physics_informed_single_model_solver.rst>
+    RBA Physics-Informed Single-Model Solver <solver/rba_physics_informed_single_model_solver.rst>
+    Causal Physics-Informed Single-Model Solver <solver/causal_physics_informed_single_model_solver.rst>
 
+Mixins
+------------------------
+
+.. toctree::
+    :titlesonly:
+
+    Single-Model Mixin <solver/mixin/single_model_mixin.rst>
+    Multi-Model Mixin <solver/mixin/multi_model_mixin.rst>
+    Ensemble Mixin <solver/mixin/ensemble_mixin.rst>
+    Condition Aggregator Mixin <solver/mixin/condition_aggregator_mixin.rst>
+    Manual Optimization Mixin <solver/mixin/manual_optimization_mixin.rst>
+    Physics-Informed Mixin <solver/mixin/physics_informed_mixin.rst>
+    Autoregressive Mixin <solver/mixin/autoregressive_mixin.rst>
+    Gradient-Enhanced Mixin <solver/mixin/gradient_enhanced_mixin.rst>
+    Residual-Based Attention Mixin <solver/mixin/residual_based_attention_mixin.rst>
 
 Models
 ------------

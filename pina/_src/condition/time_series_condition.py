@@ -185,9 +185,9 @@ class TimeSeriesCondition(BaseCondition):
 
         :param dict batch: The batch containing the data required by the
             condition evaluation.
-        :param SolverInterface solver: The solver used to perform the forward
-            pass and compute the residual. The solver provides access to the
-            model and its parameters, which may be necessary for evaluating the
+        :param BaseSolver solver: The solver used to perform the forward pass
+            and compute the residual. The solver provides access to the model
+            and its parameters, which may be necessary for evaluating the
             condition residual.
         :raises ValueError: If the input tensor in the batch has less than 4
             dimensions.

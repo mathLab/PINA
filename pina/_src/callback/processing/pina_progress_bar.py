@@ -93,7 +93,7 @@ class PINAProgressBar(TQDMProgressBar):
         ``"train"``, ``"val"``, and ``"test"``.
 
         :param Trainer trainer: The trainer instance managing the execution.
-        :param SolverInterface pl_module: The solver module being executed.
+        :param BaseSolver pl_module: The solver module being executed.
         :param str stage: Current execution stage.
         :raises KeyError: If a metric key is neither a condition key nor one of
             ``"train"``, ``"val"``, or ``"test"``.

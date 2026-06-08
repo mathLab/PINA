@@ -14,7 +14,7 @@ class DataCondition(BaseCondition):
     The class :class:`DataCondition` defines an unsupervised condition based on
     ``input`` data. This condition is typically used in data-driven problems,
     where the model is trained using a custom unsupervised loss determined by
-    the chosen :class:`~pina.solver.solver.SolverInterface`, while leveraging
+    the chosen :class:`~pina.solver.base_solver.BaseSolver`, while leveraging
     the provided data during training. Optional ``conditional_variables`` can be
     specified when the model depends on additional parameters.
 
@@ -99,9 +99,9 @@ class DataCondition(BaseCondition):
 
         :param dict batch: The batch containing the data required by the
             condition evaluation.
-        :param SolverInterface solver: The solver used to perform the forward
-            pass and compute the residual. The solver provides access to the
-            model and its parameters, which may be necessary for evaluating the
+        :param BaseSolver solver: The solver used to perform the forward pass
+            and compute the residual. The solver provides access to the model
+            and its parameters, which may be necessary for evaluating the
             condition residual.
         :return: The non-aggregated residual tensor.
         :rtype: torch.Tensor | LabelTensor

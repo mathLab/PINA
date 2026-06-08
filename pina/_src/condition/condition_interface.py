@@ -71,9 +71,9 @@ class ConditionInterface(metaclass=ABCMeta):
 
         :param dict batch: The batch containing the data required by the
             condition evaluation.
-        :param SolverInterface solver: The solver used to perform the forward
-            pass and compute the residual. The solver provides access to the
-            model and its parameters, which may be necessary for evaluating the
+        :param BaseSolver solver: The solver used to perform the forward pass
+            and compute the residual. The solver provides access to the model
+            and its parameters, which may be necessary for evaluating the
             condition residual.
         :return: The non-aggregated residual tensor.
         :rtype: torch.Tensor | LabelTensor

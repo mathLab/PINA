@@ -63,7 +63,7 @@ class Condition:
     - :class:`~pina.condition.data_condition.DataCondition`: represents an
       unsupervised, data-driven condition defined by the ``input`` only.
       The model is trained using a custom unsupervised loss determined by the
-      chosen :class:`~pina.solver.solver.SolverInterface`, while leveraging the
+      chosen :class:`~pina.solver.base_solver.BaseSolver`, while leveraging the
       provided data during training. Optional ``conditional_variables`` can be
       specified when the model depends on additional parameters.
       Supported data types include  :class:`~pina.label_tensor.LabelTensor`,

@@ -102,7 +102,7 @@ class DataNormalizer(Callback):
         Compute and apply normalization during the setup phase.
 
         :param Trainer trainer: The trainer instance managing the execution.
-        :param SolverInterface pl_module: The solver module being executed.
+        :param BaseSolver pl_module: The solver module being executed.
         :param str stage: Current execution stage.
         :raises NotImplementedError: If the dataset is graph-based and
             therefore unsupported.

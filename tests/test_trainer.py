@@ -1,6 +1,6 @@
 import pytest
 from pina import Trainer
-from pina.solver import PINN
+from pina.solver import PhysicsInformedSingleModelSolver
 from pina.model import FeedForward
 from pina.problem.zoo import Poisson2DSquareProblem
 
@@ -9,7 +9,7 @@ from pina.problem.zoo import Poisson2DSquareProblem
 problem = Poisson2DSquareProblem()
 problem.discretise_domain(n=10, mode="random")
 model = FeedForward(len(problem.input_variables), len(problem.output_variables))
-solver = PINN(model=model, problem=problem)
+solver = PhysicsInformedSingleModelSolver(model=model, problem=problem)
 
 
 @pytest.mark.parametrize("batching_mode", Trainer._AVAIL_BATCHING_MODES)
@@ -196,7 +196,9 @@ def test_constructor(
 
         # Create a new problem without discretising the domain
         new_problem = Poisson2DSquareProblem()
-        new_solver = PINN(model=model, problem=new_problem)
+        new_solver = PhysicsInformedSingleModelSolver(
+            model=model, problem=new_problem
+        )
 
         Trainer(
             solver=new_solver,
