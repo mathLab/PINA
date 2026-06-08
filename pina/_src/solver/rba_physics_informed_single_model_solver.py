@@ -3,12 +3,12 @@ Module for the residual-based attention physics-informed single-model solver
 class.
 """
 
-from pina._src.solver.mixin.physics_informed_mixin import _PhysicsInformedMixin
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.solver.single_model_solver import SingleModelSolver
 from pina._src.solver.mixin.residual_based_attention_mixin import (
-    _ResidualBasedAttentionMixin,
+    ResidualBasedAttentionMixin,
 )
 from pina._src.condition.domain_equation_condition import (
     DomainEquationCondition,
@@ -16,7 +16,7 @@ from pina._src.condition.domain_equation_condition import (
 
 
 class RBAPhysicsInformedSingleModelSolver(
-    _PhysicsInformedMixin, _ResidualBasedAttentionMixin, SingleModelSolver
+    PhysicsInformedMixin, ResidualBasedAttentionMixin, SingleModelSolver
 ):
     r"""
     Residual-based attention solver for physics-informed learning problems.

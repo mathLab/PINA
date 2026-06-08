@@ -1,7 +1,7 @@
 """Module for the competitive physics-informed multi-model solver."""
 
 import copy
-from pina._src.solver.mixin.physics_informed_mixin import _PhysicsInformedMixin
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.solver.multi_model_solver import MultiModelSolver
@@ -10,7 +10,7 @@ from pina._src.condition.domain_equation_condition import (
 )
 
 
-class CompetitivePhysicsInformedSolver(_PhysicsInformedMixin, MultiModelSolver):
+class CompetitivePhysicsInformedSolver(PhysicsInformedMixin, MultiModelSolver):
     r"""
     Multi-model solver for competitive physics-informed learning problems.
 

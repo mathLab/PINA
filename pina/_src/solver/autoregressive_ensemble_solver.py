@@ -1,11 +1,11 @@
 """Module for the autoregressive ensemble solver class."""
 
-from pina._src.solver.mixin.autoregressive_mixin import _AutoregressiveMixin
+from pina._src.solver.mixin.autoregressive_mixin import AutoregressiveMixin
 from pina._src.condition.time_series_condition import TimeSeriesCondition
 from pina._src.solver.ensemble_solver import EnsembleSolver
 
 
-class AutoregressiveEnsembleSolver(_AutoregressiveMixin, EnsembleSolver):
+class AutoregressiveEnsembleSolver(AutoregressiveMixin, EnsembleSolver):
     r"""
     Ensemble-model solver for autoregressive learning problems.
 

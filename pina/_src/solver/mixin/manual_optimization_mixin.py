@@ -1,7 +1,7 @@
 """Module for the manual optimization mixin class."""
 
 
-class _ManualOptimizationMixin:
+class ManualOptimizationMixin:
     """
     Mixin that handles Lightning manual optimization loops, useful for solvers
     that require explicit control over optimization steps, such as those with

@@ -5,7 +5,7 @@ Ensemble Mixin
 
 .. automodule:: pina._src.solver.mixin.ensemble_mixin
 
-.. autoclass:: pina._src.solver.mixin.ensemble_mixin._EnsembleMixin
+.. autoclass:: pina._src.solver.mixin.ensemble_mixin.EnsembleMixin
     :members:
     :show-inheritance:
     :noindex:

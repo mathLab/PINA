@@ -3,7 +3,7 @@
 from pina._src.problem.inverse_problem import InverseProblem
 
 
-class _SingleModelMixin:
+class SingleModelMixin:
     """
     Mixin that defines the forward pass and optimizer configuration for solvers
     backed by exactly one model. Provides properties to access the single model,

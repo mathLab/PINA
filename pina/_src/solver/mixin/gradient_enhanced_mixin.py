@@ -6,7 +6,7 @@ from pina._src.core.utils import check_consistency
 from pina._src.core.operator import grad
 
 
-class _GradientEnhancedMixin:
+class GradientEnhancedMixin:
     """
     Mixin that augments residual losses with a gradient-based regularization
     term.

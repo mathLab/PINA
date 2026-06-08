@@ -1,19 +1,19 @@
 """Module for the multi-model solver class."""
 
-from pina._src.solver.mixin.multi_model_mixin import _MultiModelMixin
+from pina._src.solver.mixin.multi_model_mixin import MultiModelMixin
 from pina._src.solver.base_solver import BaseSolver
 from pina._src.solver.mixin.manual_optimization_mixin import (
-    _ManualOptimizationMixin,
+    ManualOptimizationMixin,
 )
 from pina._src.solver.mixin.condition_aggregator_mixin import (
-    _ConditionAggregatorMixin,
+    ConditionAggregatorMixin,
 )
 
 
 class MultiModelSolver(
-    _ManualOptimizationMixin,
-    _MultiModelMixin,
-    _ConditionAggregatorMixin,
+    ManualOptimizationMixin,
+    MultiModelMixin,
+    ConditionAggregatorMixin,
     BaseSolver,
 ):
     """

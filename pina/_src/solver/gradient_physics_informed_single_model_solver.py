@@ -1,11 +1,11 @@
 """Module for the gradient physics-informed single-model solver class."""
 
-from pina._src.solver.mixin.physics_informed_mixin import _PhysicsInformedMixin
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.solver.single_model_solver import SingleModelSolver
 from pina._src.solver.mixin.gradient_enhanced_mixin import (
-    _GradientEnhancedMixin,
+    GradientEnhancedMixin,
 )
 from pina._src.condition.domain_equation_condition import (
     DomainEquationCondition,
@@ -13,7 +13,7 @@ from pina._src.condition.domain_equation_condition import (
 
 
 class GradientPhysicsInformedSingleModelSolver(
-    _PhysicsInformedMixin, _GradientEnhancedMixin, SingleModelSolver
+    PhysicsInformedMixin, GradientEnhancedMixin, SingleModelSolver
 ):
     r"""
     Single-model solver for gradient-enhanced physics-informed learning

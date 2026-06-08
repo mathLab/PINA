@@ -3,7 +3,7 @@
 import torch
 
 
-class _PhysicsInformedMixin:
+class PhysicsInformedMixin:
     """
     Mixin that enables physics-informed training by ensuring gradients are
     enabled during validation and testing, which is necessary for computing

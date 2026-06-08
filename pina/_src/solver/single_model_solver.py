@@ -1,15 +1,13 @@
 """Module for the single-model solver class."""
 
-from pina._src.solver.mixin.single_model_mixin import _SingleModelMixin
+from pina._src.solver.mixin.single_model_mixin import SingleModelMixin
 from pina._src.solver.base_solver import BaseSolver
 from pina._src.solver.mixin.condition_aggregator_mixin import (
-    _ConditionAggregatorMixin,
+    ConditionAggregatorMixin,
 )
 
 
-class SingleModelSolver(
-    _SingleModelMixin, _ConditionAggregatorMixin, BaseSolver
-):
+class SingleModelSolver(SingleModelMixin, ConditionAggregatorMixin, BaseSolver):
     """
     Base class for implementing single-model solvers.
 

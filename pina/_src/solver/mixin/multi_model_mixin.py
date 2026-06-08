@@ -4,7 +4,7 @@ import torch
 from pina._src.problem.inverse_problem import InverseProblem
 
 
-class _MultiModelMixin:
+class MultiModelMixin:
     """
     Mixin that defines the forward pass and optimizer configuration for solvers
     backed by multiple models. Provides properties to access the models,

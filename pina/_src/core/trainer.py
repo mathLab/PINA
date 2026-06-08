@@ -4,7 +4,7 @@ import sys
 import warnings
 import torch
 import lightning
-from pina._src.solver.mixin.physics_informed_mixin import _PhysicsInformedMixin
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.solver.base_solver import BaseSolver
 from pina._src.data.data_module import DataModule
 from pina._src.core.utils import (
@@ -133,7 +133,7 @@ class Trainer(lightning.pytorch.Trainer):
             )
 
         # Set inference mode to false when usiing physics-informed mixin
-        if isinstance(solver, _PhysicsInformedMixin):
+        if isinstance(solver, PhysicsInformedMixin):
             kwargs["inference_mode"] = False
 
         # Set log_every_n_steps to 0 if batch_size is None, otherwise default

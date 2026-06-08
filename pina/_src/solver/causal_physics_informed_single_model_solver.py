@@ -2,7 +2,7 @@
 
 import torch
 from pina._src.condition.input_equation_condition import InputEquationCondition
-from pina._src.solver.mixin.physics_informed_mixin import _PhysicsInformedMixin
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.core.utils import check_consistency, check_positive_integer
 from pina._src.problem.time_dependent_problem import TimeDependentProblem
@@ -14,7 +14,7 @@ from pina._src.condition.domain_equation_condition import (
 
 
 class CausalPhysicsInformedSingleModelSolver(
-    _PhysicsInformedMixin, SingleModelSolver
+    PhysicsInformedMixin, SingleModelSolver
 ):
     r"""
     Single-model solver for causal physics-informed learning problems.

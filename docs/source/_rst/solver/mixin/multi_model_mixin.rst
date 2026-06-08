@@ -5,7 +5,7 @@ Multi-Model Mixin
 
 .. automodule:: pina._src.solver.mixin.multi_model_mixin
 
-.. autoclass:: pina._src.solver.mixin.multi_model_mixin._MultiModelMixin
+.. autoclass:: pina._src.solver.mixin.multi_model_mixin.MultiModelMixin
     :members:
     :show-inheritance:
     :noindex:

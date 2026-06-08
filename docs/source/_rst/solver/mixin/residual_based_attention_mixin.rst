@@ -5,7 +5,7 @@ Residual-Based Attention Mixin
 
 .. automodule:: pina._src.solver.mixin.residual_based_attention_mixin
 
-.. autoclass:: pina._src.solver.mixin.residual_based_attention_mixin._ResidualBasedAttentionMixin
+.. autoclass:: pina._src.solver.mixin.residual_based_attention_mixin.ResidualBasedAttentionMixin
     :members:
     :show-inheritance:
     :noindex:

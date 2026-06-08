@@ -5,7 +5,7 @@ Gradient-Enhanced Mixin
 
 .. automodule:: pina._src.solver.mixin.gradient_enhanced_mixin
 
-.. autoclass:: pina._src.solver.mixin.gradient_enhanced_mixin._GradientEnhancedMixin
+.. autoclass:: pina._src.solver.mixin.gradient_enhanced_mixin.GradientEnhancedMixin
     :members:
     :show-inheritance:
     :noindex:

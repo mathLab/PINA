@@ -5,7 +5,7 @@ Physics-Informed Mixin
 
 .. automodule:: pina._src.solver.mixin.physics_informed_mixin
 
-.. autoclass:: pina._src.solver.mixin.physics_informed_mixin._PhysicsInformedMixin
+.. autoclass:: pina._src.solver.mixin.physics_informed_mixin.PhysicsInformedMixin
     :members:
     :show-inheritance:
     :noindex:

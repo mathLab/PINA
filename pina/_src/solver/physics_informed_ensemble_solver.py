@@ -1,6 +1,6 @@
 """Module for the physics-informed ensemble solver class."""
 
-from pina._src.solver.mixin.physics_informed_mixin import _PhysicsInformedMixin
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.solver.ensemble_solver import EnsembleSolver
@@ -9,7 +9,7 @@ from pina._src.condition.domain_equation_condition import (
 )
 
 
-class PhysicsInformedEnsembleSolver(_PhysicsInformedMixin, EnsembleSolver):
+class PhysicsInformedEnsembleSolver(PhysicsInformedMixin, EnsembleSolver):
     r"""
     Ensemble-model solver for physics-informed learning problems.
 

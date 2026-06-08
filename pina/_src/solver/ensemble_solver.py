@@ -1,19 +1,19 @@
 """Module for the ensemble solver class."""
 
-from pina._src.solver.mixin.ensemble_mixin import _EnsembleMixin
+from pina._src.solver.mixin.ensemble_mixin import EnsembleMixin
 from pina._src.solver.base_solver import BaseSolver
 from pina._src.solver.mixin.manual_optimization_mixin import (
-    _ManualOptimizationMixin,
+    ManualOptimizationMixin,
 )
 from pina._src.solver.mixin.condition_aggregator_mixin import (
-    _ConditionAggregatorMixin,
+    ConditionAggregatorMixin,
 )
 
 
 class EnsembleSolver(
-    _ManualOptimizationMixin,
-    _EnsembleMixin,
-    _ConditionAggregatorMixin,
+    ManualOptimizationMixin,
+    EnsembleMixin,
+    ConditionAggregatorMixin,
     BaseSolver,
 ):
     """

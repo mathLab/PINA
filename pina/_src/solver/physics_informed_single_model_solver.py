@@ -1,6 +1,6 @@
 """Module for the physics-informed single-model solver class."""
 
-from pina._src.solver.mixin.physics_informed_mixin import _PhysicsInformedMixin
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.solver.single_model_solver import SingleModelSolver
@@ -9,9 +9,7 @@ from pina._src.condition.domain_equation_condition import (
 )
 
 
-class PhysicsInformedSingleModelSolver(
-    _PhysicsInformedMixin, SingleModelSolver
-):
+class PhysicsInformedSingleModelSolver(PhysicsInformedMixin, SingleModelSolver):
     r"""
     Single-model solver for physics-informed learning problems.
 

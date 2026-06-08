@@ -1,11 +1,11 @@
 """Module for the autoregressive single model solver class."""
 
-from pina._src.solver.mixin.autoregressive_mixin import _AutoregressiveMixin
+from pina._src.solver.mixin.autoregressive_mixin import AutoregressiveMixin
 from pina._src.condition.time_series_condition import TimeSeriesCondition
 from pina._src.solver.single_model_solver import SingleModelSolver
 
 
-class AutoregressiveSingleModelSolver(_AutoregressiveMixin, SingleModelSolver):
+class AutoregressiveSingleModelSolver(AutoregressiveMixin, SingleModelSolver):
     r"""
     Single-model solver for autoregressive learning problems.
 

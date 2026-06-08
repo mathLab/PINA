@@ -5,7 +5,7 @@ Manual Optimization Mixin
 
 .. automodule:: pina._src.solver.mixin.manual_optimization_mixin
 
-.. autoclass:: pina._src.solver.mixin.manual_optimization_mixin._ManualOptimizationMixin
+.. autoclass:: pina._src.solver.mixin.manual_optimization_mixin.ManualOptimizationMixin
     :members:
     :show-inheritance:
     :noindex:

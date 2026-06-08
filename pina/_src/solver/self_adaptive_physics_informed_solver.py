@@ -1,7 +1,7 @@
 """Module for the self-adaptive physics-informed multi-model solver."""
 
 import torch
-from pina._src.solver.mixin.physics_informed_mixin import _PhysicsInformedMixin
+from pina._src.solver.mixin.physics_informed_mixin import PhysicsInformedMixin
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.solver.multi_model_solver import MultiModelSolver
@@ -11,9 +11,7 @@ from pina._src.condition.domain_equation_condition import (
 )
 
 
-class SelfAdaptivePhysicsInformedSolver(
-    _PhysicsInformedMixin, MultiModelSolver
-):
+class SelfAdaptivePhysicsInformedSolver(PhysicsInformedMixin, MultiModelSolver):
     r"""
     Multi-model solver for self-adaptive physics-informed learning problems.
 

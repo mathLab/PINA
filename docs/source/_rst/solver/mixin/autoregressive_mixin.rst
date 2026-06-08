@@ -5,7 +5,7 @@ Autoregressive Mixin
 
 .. automodule:: pina._src.solver.mixin.autoregressive_mixin
 
-.. autoclass:: pina._src.solver.mixin.autoregressive_mixin._AutoregressiveMixin
+.. autoclass:: pina._src.solver.mixin.autoregressive_mixin.AutoregressiveMixin
     :members:
     :show-inheritance:
     :noindex:

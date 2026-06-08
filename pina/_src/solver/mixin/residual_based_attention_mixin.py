@@ -7,7 +7,7 @@ from pina._src.condition.domain_equation_condition import (
 )
 
 
-class _ResidualBasedAttentionMixin:
+class ResidualBasedAttentionMixin:
     """
     Mixin that augments the residual loss with an attention mechanism based on
     the residual values.

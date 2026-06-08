@@ -3,7 +3,7 @@
 import torch
 
 
-class _ConditionAggregatorMixin:
+class ConditionAggregatorMixin:
     """
     Mixin that logs per-condition scalar losses, weights them following the
     provided weighting scheme, and aggregates them into the total loss.

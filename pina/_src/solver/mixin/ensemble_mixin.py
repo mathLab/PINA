@@ -1,10 +1,10 @@
 """Module for the ensemble mixin class."""
 
 import torch
-from pina._src.solver.mixin.multi_model_mixin import _MultiModelMixin
+from pina._src.solver.mixin.multi_model_mixin import MultiModelMixin
 
 
-class _EnsembleMixin(_MultiModelMixin):
+class EnsembleMixin(MultiModelMixin):
     """
     Mixin that defines the forward pass and optimizer configuration for solvers
     backed by an ensemble of models. Provides properties to access the models,

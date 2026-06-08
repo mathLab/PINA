@@ -4,7 +4,7 @@ import torch
 from pina._src.core.utils import check_consistency
 
 
-class _AutoregressiveMixin:
+class AutoregressiveMixin:
     """
     Mixin that enables the autoregressive rollout loss logic by maintaining a
     running average of step losses and computing adaptive weights for each step

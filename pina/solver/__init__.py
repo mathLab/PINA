@@ -56,3 +56,54 @@ from pina._src.solver.rba_physics_informed_single_model_solver import (
 from pina._src.solver.causal_physics_informed_single_model_solver import (
     CausalPhysicsInformedSingleModelSolver,
 )
+
+# Back-compatibility with version 0.2, to be removed soon
+import warnings
+
+_DEPRECATED_IMPORTS = {
+    "SingleSolverInterface": "SingleModelSolver",
+    "MultiSolverInterface": "MultiModelSolver",
+    "DeepEnsembleSolverInterface": "EnsembleSolver",
+    "SupervisedSolver": "SupervisedSingleModelSolver",
+    "DeepEnsembleSupervisedSolver": "SupervisedEnsembleSolver",
+    "PINN": "PhysicsInformedSingleModelSolver",
+    "DeepEnsemblePINN": "PhysicsInformedEnsembleSolver",
+    "GradientPINN": "GradientPhysicsInformedSingleModelSolver",
+    "RBAPINN": "RBAPhysicsInformedSingleModelSolver",
+    "CausalPINN": "CausalPhysicsInformedSingleModelSolver",
+    "CompetitivePINN": "CompetitivePhysicsInformedSolver",
+    "SelfAdaptivePINN": "SelfAdaptivePhysicsInformedSolver",
+}
+
+_REMOVED_IMPORTS = {
+    "SupervisedSolverInterface": (
+        "`SupervisedSolverInterface` has been removed. Its logic is now managed"
+        " by `pina.solver.BaseSolver`, from which every solver inherits."
+    ),
+    "PINNInterface": (
+        "`PINNInterface` has been removed. The underlying physics-informed "
+        "logic is now handled by `pina.solver.mixin.PhysicsInformedMixin`."
+    ),
+    "ReducedOrderModelSolver": (
+        "`ReducedOrderModelSolver` is no longer supported."
+    ),
+    "GAROM": ("`GAROM` is no longer supported."),
+}
+
+
+def __getattr__(name):
+    if name in _DEPRECATED_IMPORTS:
+
+        warnings.warn(
+            f"Importing '{name}' from 'pina.solver' is deprecated; use "
+            f"pina.solver.{_DEPRECATED_IMPORTS[name]} instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        return globals()[_DEPRECATED_IMPORTS[name]]
+
+    if name in _REMOVED_IMPORTS:
+        raise ImportError(_REMOVED_IMPORTS[name])
+
+    raise AttributeError(f"module 'pina.solver' has no attribute '{name}'")

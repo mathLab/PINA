@@ -14,7 +14,7 @@ The pipeline to solve differential equations with PINA follows just five steps:
     1. Define the `Problems`_ the user aim to solve
     2. Generate data using built in `Geometrical Domains`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
     3. Choose or build one or more `Models`_ to solve the problem
-    4. Choose a solver across PINA available `Solvers and Mixins`_, or build one using the :doc:`SolverInterface <solver/solver_interface>`
+    4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solver/solver_interface>`
     5. Train the model with the PINA :doc:`Trainer <trainer>`, enhance the train with `Callbacks`_
 
 
@@ -74,7 +74,7 @@ Batch and Data Managers
     Graph Data Manager <data/manager/graph_data_manager.rst>
     Tensor Data Manager <data/manager/tensor_data_manager.rst>
 
-Solvers and Mixins
+Solvers
 ------------------------
 
 .. toctree::
@@ -96,6 +96,13 @@ Solvers and Mixins
     Gradient Physics-Informed Single-Model Solver <solver/gradient_physics_informed_single_model_solver.rst>
     RBA Physics-Informed Single-Model Solver <solver/rba_physics_informed_single_model_solver.rst>
     Causal Physics-Informed Single-Model Solver <solver/causal_physics_informed_single_model_solver.rst>
+
+Mixins
+------------------------
+
+.. toctree::
+    :titlesonly:
+
     Single-Model Mixin <solver/mixin/single_model_mixin.rst>
     Multi-Model Mixin <solver/mixin/multi_model_mixin.rst>
     Ensemble Mixin <solver/mixin/ensemble_mixin.rst>
