@@ -5,7 +5,7 @@ __all__ = [
     "BaseDualLoss",
     "LpLoss",
     "PowerLoss",
-    "SinkhornLoss"
+    "SinkhornLoss",
 ]
 
 from pina._src.loss.dual_loss_interface import DualLossInterface

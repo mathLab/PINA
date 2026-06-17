@@ -330,6 +330,8 @@ Losses
     BaseDualLoss <loss/base_dual_loss.rst>
     LpLoss <loss/lp_loss.rst>
     PowerLoss <loss/power_loss.rst>
+    SinkhornLoss <loss/sinkhorn_loss.rst>
+
 
 Weighting Schemas
 --------------------
