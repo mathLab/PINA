@@ -1,5 +1,6 @@
-Lp Loss
+Sinkhorn Loss
 ===============
+
 .. currentmodule:: pina.loss.sinkhorn_loss
 
 .. automodule:: pina._src.loss.sinkhorn_loss
