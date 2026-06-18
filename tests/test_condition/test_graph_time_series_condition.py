@@ -282,10 +282,9 @@ def test_create_batch(use_lt, n_windows, unroll_length, randomize):
 @pytest.mark.parametrize("randomize", [True, False])
 def test_evaluate(use_lt, n_windows, unroll_length, randomize):
 
-    """ CHECK
     # Define the input tensor
     graph = _create_graph_data(use_lt=use_lt)
-    input_vars = graph.labels if use_lt else None
+    input_vars = graph.x.labels if use_lt else None
 
     # Define the condition and the solver
     condition = GraphTimeSeriesCondition(
@@ -295,7 +294,6 @@ def test_evaluate(use_lt, n_windows, unroll_length, randomize):
         randomize=randomize,
     )
     solver = DummySolver(use_lt, input_vars)
-    loss_fn = torch.nn.MSELoss(reduction="none")
 
     # Extract the batch
     batch = {"input": condition.input}
@@ -305,11 +303,11 @@ def test_evaluate(use_lt, n_windows, unroll_length, randomize):
 
     # Compute expected autoregressive step residuals
     step_residuals = []
-    current_state = batch["input"][:, :, 0]
+    current_state = batch["input"].x[:, :, 0, :]
 
-    for step in range(1, batch["input"].shape[2]):
+    for step in range(1, batch["input"].x.shape[2]):
         predicted_state = current_state
-        target_state = batch["input"][:, :, step]
+        target_state = batch["input"].x[:, :, step, :]
 
         step_residual = predicted_state - target_state
         step_residuals.append(step_residual)
@@ -320,4 +318,3 @@ def test_evaluate(use_lt, n_windows, unroll_length, randomize):
 
     # Assert that the evaluated residuals are correct
     assert torch.allclose(residuals, expected)
-    """

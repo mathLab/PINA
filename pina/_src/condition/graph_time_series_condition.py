@@ -113,7 +113,7 @@ class GraphTimeSeriesCondition(TimeSeriesCondition):
         :rtype: torch.Tensor | LabelTensor
         """
         # Raise error if input tensor does not have at least 4 dimensions
-        if batch["input"].dim() < 4:
+        if batch["input"].x.dim() < 4:
             raise ValueError(
                 "The provided input tensor must have at least 4 dimensions:"
                 " [trajectories, windows, time_steps, *features]."
@@ -124,11 +124,11 @@ class GraphTimeSeriesCondition(TimeSeriesCondition):
         kwargs = solver._kwargs.copy()
 
         # Extract the initial state and initialize the step-wise residuals list
-        current_state = batch["input"][:, :, 0]
+        current_state = batch["input"].x[:, :, 0, :]
         residuals = []
 
         # Iterate over the time steps
-        for step in range(1, batch["input"].shape[2]):
+        for step in range(1, batch["input"].x.shape[2]):
 
             # Pre-process, forward, and post-process the current state
             processed_input = solver.preprocess_step(current_state, **kwargs)
@@ -136,7 +136,7 @@ class GraphTimeSeriesCondition(TimeSeriesCondition):
             predicted_state = solver.postprocess_step(output, **kwargs)
 
             # Retrieve the target and compute the step-wise residual
-            target_state = batch["input"][:, :, step]
+            target_state = batch["input"].x[:, :, step, :]
             step_residual = predicted_state - target_state
             residuals.append(step_residual)
 
@@ -145,13 +145,3 @@ class GraphTimeSeriesCondition(TimeSeriesCondition):
 
         # Stack the step-wise residuals
         return torch.stack(residuals).as_subclass(torch.Tensor)
-
-    @property
-    def input(self):
-        """
-        The unrolled temporal input data.
-
-        :return: The input data.
-        :rtype: torch.Tensor | LabelTensor
-        """
-        return self.data.input
