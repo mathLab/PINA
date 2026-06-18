@@ -72,32 +72,18 @@ class GraphTimeSeriesCondition(TimeSeriesCondition):
         graph = kwargs.get("input")
 
         # Create unrolled windows from the input data
-        if isinstance(graph, Data):
-            if not hasattr(graph, key):
-                raise ValueError(
-                    f"The provided graph does not have the specified key '{key}'."
-                )
-            unrolled_data = self._unroll(
-                data=graph.__getattribute__(key),
-                n_windows=n_windows,
-                unroll_length=unroll_length,
-                randomize=randomize,
+        if not hasattr(graph, key):
+            raise ValueError(
+                f"The provided graph does not have the specified key '{key}'."
             )
-            graph.__setattr__(key, unrolled_data)
 
-        elif isinstance(graph, Graph):
-            for graph_ in graph:
-                if not hasattr(graph_, key):
-                    raise ValueError(
-                        f"One of the provided graphs does not have the specified key '{key}'."
-                    )
-                unrolled_data = self._unroll(
-                    data=graph_.__getattribute__(key),
-                    n_windows=n_windows,
-                    unroll_length=unroll_length,
-                    randomize=randomize,
-                )
-                graph_.__setattr__(key, unrolled_data)
+        unrolled_data = self._unroll(
+            data=graph.__getattribute__(key),
+            n_windows=n_windows,
+            unroll_length=unroll_length,
+            randomize=randomize,
+        )
+        graph.__setattr__(key, unrolled_data)
 
         return _DataManager(input=graph)
 
