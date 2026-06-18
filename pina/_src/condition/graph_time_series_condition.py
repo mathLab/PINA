@@ -39,7 +39,7 @@ class GraphTimeSeriesCondition(TimeSeriesCondition):
     """
 
     # Available fields and input data types
-    __fields__ = ["input", "unroll_length", "n_windows", "randomize"]
+    __fields__ = ["input", "unroll_length", "n_windows", "key", "randomize"]
     _avail_input_cls = (Data, Graph)
 
     def __new__(cls, input, n_windows, unroll_length, key='x', randomize=False):

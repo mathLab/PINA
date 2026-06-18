@@ -111,6 +111,11 @@ class Condition:
             {"input", "n_windows", "unroll_length"},
             {"randomize"},
         ),
+        (
+            GraphTimeSeriesCondition,
+            {"input", "n_windows", "unroll_length"},
+            {"key", "randomize"},
+        ),
     )
 
     # Compute the set of all available keyword arguments (optional + required)
