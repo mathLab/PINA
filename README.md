@@ -61,16 +61,13 @@ SPDX-License-Identifier: Apache-2.0
 <div style="border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin: 12px 0;">
   <ul style="margin: 0; padding-left: 18px; line-height: 1.55;">
     <li>
-      <b>[YYYY-MM-DD]</b> – Short announcement headline.
-      <a href="LINK">More</a>
+      <b>[v0.3]</b> – <b>PINA 0.3 coming soon!</b> Major architectural overhaul: solvers, conditions, problems, losses, and the data module have all been refactored with cleaner base-class hierarchies; the core has been migrated to the <code>_src</code> pattern for better modularity.
     </li>
     <li>
-      <b>[YYYY-MM-DD]</b> – Another update: new release / tutorial / paper / feature.
-      <a href="LINK">Details</a>
+      <b>[v0.3]</b> – New models & features in 0.3: <b>KAN</b> (Kolmogorov–Arnold Networks) with vectorized spline support, <b>SINDy</b> model, <b>EGNO</b>, <b>PIRATE</b> network, B-spline surface, autoregressive solver, and multi-model support.
     </li>
     <li>
-      <b>[YYYY-MM-DD]</b> – Maintenance note / deprecation / API change.
-      <a href="LINK">Read</a>
+      <b>[v0.3]</b> – Equation & problem zoo reorganized: specialized equations and fixed equations moved to dedicated zoo sub-modules; Burgers, Helmholtz, and acoustic-wave problems added. Domain and callback modules also refactored; new Normalizer and SwitchScheduler callbacks introduced.
     </li>
   </ul>
 </div>
