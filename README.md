@@ -61,24 +61,23 @@ SPDX-License-Identifier: Apache-2.0
 <div style="border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin: 12px 0;">
   <ul style="margin: 0; padding-left: 18px; line-height: 1.55;">
     <li>
-      <b>[YYYY-MM-DD]</b> – Short announcement headline.
-      <a href="LINK">More</a>
+      <b>[v0.3]</b> – <b>New solvers:</b> autoregressive solver for sequential prediction tasks and multi-model solver support. Internals redesigned around a <b>mixin architecture</b> — lightweight, single-responsibility mixins (preprocessing, forward, postprocessing) that can be freely composed, with residual computation and loss aggregation clearly separated.
     </li>
     <li>
-      <b>[YYYY-MM-DD]</b> – Another update: new release / tutorial / paper / feature.
-      <a href="LINK">Details</a>
+      <b>[v0.3]</b> – <b>Conditions refactoring:</b> evaluation logic moved out of the solver and into the condition itself via a dedicated <code>evaluate</code> method, decoupling the training loop from problem-specific logic and enabling fully modular, solver-agnostic conditions.
     </li>
     <li>
-      <b>[YYYY-MM-DD]</b> – Maintenance note / deprecation / API change.
-      <a href="LINK">Read</a>
+      <b>[v0.3]</b> – <b>Code cleanup:</b> core internals migrated to the <code>_src</code> pattern; interfaces and base classes introduced across conditions, problems (<code>AbstractProblem</code> → <code>BaseProblem</code>), losses, and data module; equation zoo reorganized with Burgers added.
+    </li>
+    <li>
+      <b>[v0.3]</b> – <b>KAN support:</b> Kolmogorov–Arnold Networks with fully vectorized spline basis and analytical derivatives.
     </li>
   </ul>
 </div>
 
 <p style="margin-top: 6px;">
   <i>Want the full history?</i>
-  See the <a href="https://github.com/mathLab/PINA/releases"><b>Releases</b></a> page and the
-  <a href="https://github.com/mathLab/PINA/blob/master/CHANGELOG.md"><b>Changelog</b></a> (if present).
+  See the <a href="https://github.com/mathLab/PINA/releases"><b>Releases</b></a> page.
 </p>
 
 <hr/>
