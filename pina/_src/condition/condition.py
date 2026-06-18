@@ -3,6 +3,9 @@
 from pina._src.condition.input_equation_condition import InputEquationCondition
 from pina._src.condition.input_target_condition import InputTargetCondition
 from pina._src.condition.time_series_condition import TimeSeriesCondition
+from pina._src.condition.graph_time_series_condition import (
+    GraphTimeSeriesCondition,
+)
 from pina._src.condition.data_condition import DataCondition
 from pina._src.condition.domain_equation_condition import (
     DomainEquationCondition,

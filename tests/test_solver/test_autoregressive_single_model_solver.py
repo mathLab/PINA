@@ -52,7 +52,7 @@ class DummyProblem(BaseProblem):
         super().__init__()
 
         # Initialize the time series condition with the provided data
-        self.conditions["time"] = Condition(
+        self.conditions["time"] = TimeSeriesCondition(
             input=data, n_windows=n_windows, unroll_length=unroll_length
         )
 
@@ -197,12 +197,13 @@ def test_solver_test(use_lt, batch_size, compile, create_data):
 
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("create_data", [create_scalar_data, create_vector_data])
-def test_train_load_restore(use_lt, create_data):
+def test_train_load_restore(clean_tmp_dir, use_lt, create_data):
 
     # Define the problem
     data = create_data(use_lt)
     problem = DummyProblem(data)
     model = FeedForward(n_feats, n_feats, 10, 2)
+    dir = clean_tmp_dir
 
     # Define the solver
     solver = AutoregressiveSingleModelSolver(
