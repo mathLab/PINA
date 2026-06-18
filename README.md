@@ -61,21 +61,23 @@ SPDX-License-Identifier: Apache-2.0
 <div style="border: 1px solid #ddd; border-radius: 10px; padding: 14px; margin: 12px 0;">
   <ul style="margin: 0; padding-left: 18px; line-height: 1.55;">
     <li>
-      <b>[v0.3]</b> – <b>PINA 0.3 coming soon!</b> Major architectural overhaul: solvers, conditions, problems, losses, and the data module have all been refactored with cleaner base-class hierarchies; the core has been migrated to the <code>_src</code> pattern for better modularity.
+      <b>[v0.3]</b> – <b>New solvers:</b> autoregressive solver for sequential prediction tasks and multi-model solver support. Internals redesigned around a <b>mixin architecture</b> — lightweight, single-responsibility mixins (preprocessing, forward, postprocessing) that can be freely composed, with residual computation and loss aggregation clearly separated.
     </li>
     <li>
-      <b>[v0.3]</b> – New models & features in 0.3: <b>KAN</b> (Kolmogorov–Arnold Networks) with vectorized spline support, <b>SINDy</b> model, <b>EGNO</b>, <b>PIRATE</b> network, B-spline surface, autoregressive solver, and multi-model support.
+      <b>[v0.3]</b> – <b>Conditions refactoring:</b> evaluation logic moved out of the solver and into the condition itself via a dedicated <code>evaluate</code> method, decoupling the training loop from problem-specific logic and enabling fully modular, solver-agnostic conditions.
     </li>
     <li>
-      <b>[v0.3]</b> – Equation & problem zoo reorganized: specialized equations and fixed equations moved to dedicated zoo sub-modules; Burgers, Helmholtz, and acoustic-wave problems added. Domain and callback modules also refactored; new Normalizer and SwitchScheduler callbacks introduced.
+      <b>[v0.3]</b> – <b>Code cleanup:</b> core internals migrated to the <code>_src</code> pattern; interfaces and base classes introduced across conditions, problems (<code>AbstractProblem</code> → <code>BaseProblem</code>), losses, and data module; equation zoo reorganized with Burgers added.
+    </li>
+    <li>
+      <b>[v0.3]</b> – <b>KAN support:</b> Kolmogorov–Arnold Networks with fully vectorized spline basis and analytical derivatives.
     </li>
   </ul>
 </div>
 
 <p style="margin-top: 6px;">
   <i>Want the full history?</i>
-  See the <a href="https://github.com/mathLab/PINA/releases"><b>Releases</b></a> page and the
-  <a href="https://github.com/mathLab/PINA/blob/master/CHANGELOG.md"><b>Changelog</b></a> (if present).
+  See the <a href="https://github.com/mathLab/PINA/releases"><b>Releases</b></a> page.
 </p>
 
 <hr/>
