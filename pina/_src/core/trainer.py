@@ -1,6 +1,5 @@
 """Trainer utilities built on top of the PyTorch Lightning Trainer class."""
 
-import sys
 import warnings
 import torch
 import lightning
@@ -13,7 +12,7 @@ from pina._src.core.utils import (
     check_positive_integer,
 )
 
-# set the warning for compile options
+# Set custom warning format and filter warnings
 warnings.formatwarning = custom_warning_format
 warnings.filterwarnings("always", category=UserWarning)
 
@@ -23,8 +22,8 @@ class Trainer(lightning.pytorch.Trainer):
     PINA-specific extension of :class:`lightning.pytorch.Trainer`.
 
     The trainer configures solver execution, dataset splitting, batching,
-    logging, compilation support, device placement for unknown parameters, and
-    gradient tracking requirements for physics-informed solvers.
+    logging, device placement for unknown parameters, and gradient tracking
+    requirements for physics-informed solvers.
     """
 
     # Available batching modes
@@ -41,7 +40,6 @@ class Trainer(lightning.pytorch.Trainer):
         train_size=1.0,
         test_size=0.0,
         val_size=0.0,
-        compile=False,
         batching_mode="common_batch_size",
         automatic_batching=False,
         num_workers=0,
@@ -64,9 +62,6 @@ class Trainer(lightning.pytorch.Trainer):
             Default is ``0.0``.
         :param float test_size: The fraction of samples assigned to the test
             split. Must belong to the interval ``[0, 1]``. Default is ``0.0``.
-        :param bool compile: Whether to compile the model before training.
-            Compilation is disabled on Windows and with Python 3.14 or later.
-            Default is ``False``.
         :param str batching_mode: The strategy used to aggregate batches across
             dataloaders. Available options are ``"common_batch_size"`` for
             uniform batch sizes across conditions, ``"proportional"`` for batch
@@ -91,26 +86,33 @@ class Trainer(lightning.pytorch.Trainer):
             not a float in the interval ``[0, 1]``.
         :raises ValueError: If the sum of ``train_size``, ``val_size``, and
             ``test_size`` is not equal to 1.
-        :raises ValueError: If ``compile``, ``automatic_batching``,
-            ``pin_memory``, or ``shuffle`` is not a boolean.
+        :raises ValueError: If ``automatic_batching``, ``pin_memory``, or
+            ``shuffle`` is not a boolean.
         :raises AssertionError: If ``num_workers`` is a negative integer.
         :raises ValueError: If ``batch_size``, when provided, is not a positive
             integer.
         :raises ValueError: If ``batching_mode`` is not one of the available
              options.
-        :raises UserWarning: If compilation is requested on an unsupported
-            platform or Python version.
         :raises UserWarning: If the provided ``batching_mode`` is incompatible
             with the ``batch_size``.
         :raises RuntimeError: If any domain in the problem has not been
             discretised.
         """
+        # Backward compatibility: compile has been removed
+        if "compile" in kwargs:
+            warnings.warn(
+                "`compile` is deprecated and no longer used. Compilation is "
+                "now disabled and the argument will be ignored.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            kwargs.pop("compile")
+
         # Check consistency
         check_consistency(solver, BaseSolver)
         check_consistency(train_size, float)
         check_consistency(test_size, float)
         check_consistency(val_size, float)
-        check_consistency(compile, bool)
         check_consistency(automatic_batching, bool)
         check_consistency(pin_memory, bool)
         check_consistency(shuffle, bool)
@@ -147,19 +149,6 @@ class Trainer(lightning.pytorch.Trainer):
         # Initialize the parent class with the provided keyword arguments
         super().__init__(**kwargs)
 
-        # Disable compilation for Windows and Python 3.14+
-        if sys.platform == "win32" or sys.version_info >= (3, 14) and compile:
-
-            # Raise a warning if compilation is requested but not supported
-            warnings.warn(
-                "Model compilation is not supported on Windows or with Python "
-                "3.14+. Compilation has been disabled.",
-                UserWarning,
-            )
-
-            # Set compile to False if not supported
-            compile = False
-
         # Raise warning if batch size and batching mode are incompatible
         if batch_size is None and batching_mode != "common_batch_size":
             warnings.warn(
@@ -189,7 +178,6 @@ class Trainer(lightning.pytorch.Trainer):
 
         # Initialize the class attributes
         self.solver = solver
-        self.compile = compile
         self.batch_size = batch_size
 
         # Move the unknown parameters to the correct device
@@ -299,22 +287,3 @@ class Trainer(lightning.pytorch.Trainer):
         :param BaseSolver solver: The solver instance to attach.
         """
         self._solver = solver
-
-    @property
-    def compile(self):
-        """
-        Return whether model compilation is enabled.
-
-        :return: ``True`` if compilation is enabled, otherwise ``False``.
-        :rtype: bool
-        """
-        return self._compile
-
-    @compile.setter
-    def compile(self, value):
-        """
-        Set the value of compile.
-
-        :param bool value: Whether compilation is required or not.
-        """
-        self._compile = value
