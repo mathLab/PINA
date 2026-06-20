@@ -16,7 +16,6 @@ solver = PhysicsInformedSingleModelSolver(model=model, problem=problem)
 @pytest.mark.parametrize("automatic_batching", [True, False])
 @pytest.mark.parametrize("pin_memory", [True, False])
 @pytest.mark.parametrize("shuffle", [True, False])
-@pytest.mark.parametrize("compile", [True, False])
 @pytest.mark.parametrize("batch_size", [None, 5])
 @pytest.mark.parametrize(
     "train_size, test_size, val_size", [(0.8, 0.1, 0.1), (0.7, 0.2, 0.1)]
@@ -26,7 +25,6 @@ def test_constructor(
     train_size,
     test_size,
     val_size,
-    compile,
     batching_mode,
     automatic_batching,
     pin_memory,
@@ -39,7 +37,6 @@ def test_constructor(
         train_size=train_size,
         test_size=test_size,
         val_size=val_size,
-        compile=compile,
         batching_mode=batching_mode if batch_size else "common_batch_size",
         automatic_batching=automatic_batching,
         num_workers=0,
@@ -55,7 +52,6 @@ def test_constructor(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            compile=compile,
             batching_mode=batching_mode if batch_size else "common_batch_size",
             automatic_batching=automatic_batching,
             num_workers=0,
@@ -71,23 +67,6 @@ def test_constructor(
             train_size=0.5,
             test_size=0.3,
             val_size=0.3,
-            compile=compile,
-            batching_mode=batching_mode if batch_size else "common_batch_size",
-            automatic_batching=automatic_batching,
-            num_workers=0,
-            pin_memory=pin_memory if batch_size else False,
-            shuffle=shuffle,
-        )
-
-    # Should raise ValueError if compile is not a boolean
-    with pytest.raises(ValueError):
-        Trainer(
-            solver=solver,
-            batch_size=batch_size,
-            train_size=train_size,
-            test_size=test_size,
-            val_size=val_size,
-            compile="not_a_boolean",
             batching_mode=batching_mode if batch_size else "common_batch_size",
             automatic_batching=automatic_batching,
             num_workers=0,
@@ -103,7 +82,6 @@ def test_constructor(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            compile=compile,
             batching_mode=batching_mode if batch_size else "common_batch_size",
             automatic_batching="not_a_boolean",
             num_workers=0,
@@ -119,7 +97,6 @@ def test_constructor(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            compile=compile,
             batching_mode=batching_mode if batch_size else "common_batch_size",
             automatic_batching=automatic_batching,
             num_workers=0,
@@ -135,7 +112,6 @@ def test_constructor(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            compile=compile,
             batching_mode=batching_mode if batch_size else "common_batch_size",
             automatic_batching=automatic_batching,
             num_workers=0,
@@ -151,7 +127,6 @@ def test_constructor(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            compile=compile,
             batching_mode=batching_mode if batch_size else "common_batch_size",
             automatic_batching=automatic_batching,
             num_workers=-1,
@@ -167,7 +142,6 @@ def test_constructor(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            compile=compile,
             batching_mode=batching_mode if batch_size else "common_batch_size",
             automatic_batching=automatic_batching,
             num_workers=0,
@@ -183,7 +157,6 @@ def test_constructor(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            compile=compile,
             batching_mode="invalid_mode",
             automatic_batching=automatic_batching,
             num_workers=0,
@@ -206,7 +179,6 @@ def test_constructor(
             train_size=train_size,
             test_size=test_size,
             val_size=val_size,
-            compile=compile,
             batching_mode=batching_mode if batch_size else "common_batch_size",
             automatic_batching=automatic_batching,
             num_workers=0,
