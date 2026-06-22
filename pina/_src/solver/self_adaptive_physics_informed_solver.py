@@ -240,6 +240,9 @@ class SelfAdaptivePhysicsInformedSolver(PhysicsInformedMixin, MultiModelSolver):
             data = dict(data)
             data["input"] = data["input"].clone()
 
+        # Prepare condition data, e.g. by enabling gradient for regularizations
+        data = self._prepare_condition_data(data=data)
+
         # Compute and store the residual tensor for the condition
         self.residual_tensor = condition.evaluate(data, self)
 
@@ -252,6 +255,14 @@ class SelfAdaptivePhysicsInformedSolver(PhysicsInformedMixin, MultiModelSolver):
 
         # Compute the tensor loss from the residual tensor
         condition_tensor_loss = self._loss_from_residual(condition_name)
+
+        # Optional regularization hook, e.g gradient-enhanced or residual-based
+        condition_tensor_loss = self._regularize_condition_loss(
+            condition_tensor_loss=condition_tensor_loss,
+            condition_name=condition_name,
+            data=data,
+            batch_idx=batch_idx,
+        )
 
         # Get the correct indices to retrieve the weights for the current batch
         len_residuals = self.residual_tensor.shape[0]

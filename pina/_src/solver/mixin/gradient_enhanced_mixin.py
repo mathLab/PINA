@@ -81,40 +81,51 @@ class GradientEnhancedMixin:
         self.regularization_weight = regularization_weight
         self.regularized_conditions = regularized_conditions
 
-    def _compute_condition_loss(self, condition, data, batch_idx):
+    def _prepare_condition_data(self, data):
         """
-        Compute the scalar loss for a given condition and its data.
+        Prepare the condition data for loss computation. This method can be
+        overridden by mixins to implement specific data preparation steps, such
+        as enabling gradient tracking for inputs in gradient-enhanced solvers.
 
-        :param BaseCondition condition: The condition for which to compute the
-            loss.
-        :param dict data: The data corresponding to the condition.
-        :param int batch_idx: The index of the current batch.
-        :return: The scalar loss for the condition.
-        :rtype: torch.Tensor
+        :param dict data: The original condition data.
+        :return: The prepared condition data.
+        :rtype: dict
         """
-        # Clone the input tensor if it exists to avoid in-place modifications
-        if "input" in data and hasattr(data["input"], "clone"):
-            data = dict(data)
-            data["input"] = data["input"].clone()
-
         # If data does not require grad, force requires_grad to True
         if "input" in data and not data["input"].requires_grad:
             data["input"].requires_grad_(True)
 
-        # Compute and store the residual tensor for the condition
-        self.residual_tensor = condition.evaluate(data, self)
-        self.residual_tensor.labels = [
-            f"res_{i}" for i in range(self.residual_tensor.shape[1])
-        ]
+        return data
 
-        # Retrieve condition name for more complex weighting schemes
-        condition_name = condition.name if hasattr(condition, "name") else None
+    def _regularize_condition_loss(
+        self,
+        condition_tensor_loss,
+        condition_name,
+        data,
+        batch_idx,
+    ):
+        """
+        Regularize the condition loss if needed. This method can be overridden
+        by mixins to implement specific regularization strategies, such as
+        adding a gradient penalty in gradient-enhanced solvers or applying
+        residual-based attention.
 
-        # Compute the tensor loss from the residual tensor
-        condition_tensor_loss = self._loss_from_residual(condition_name)
-
+        :param condition_tensor_loss: The original tensor loss for the
+            condition.
+        :type condition_tensor_loss: torch.Tensor | LabelTensor
+        :param str condition_name: The name of the condition.
+        :param dict data: The data corresponding to the condition.
+        :param int batch_idx: The index of the current batch.
+        :return: The regularized tensor loss for the condition.
+        :rtype: torch.Tensor | LabelTensor
+        """
         # Regularize the loss with the gradient penalty if needed
         if condition_name in self.regularized_conditions:
+
+            # Apply labels to the residual tensor for gradient computation
+            self.residual_tensor.labels = [
+                f"res_{i}" for i in range(self.residual_tensor.shape[1])
+            ]
 
             # Compute the gradient of the residual with respect to spatial input
             residual_gradient = grad(
@@ -134,7 +145,4 @@ class GradientEnhancedMixin:
             # Add the gradient penalty to the original condition tensor loss
             condition_tensor_loss = condition_tensor_loss + penalty
 
-        # Compute the scalar loss from the tensor loss and return it
-        condition_scalar_loss = self._apply_reduction(condition_tensor_loss)
-
-        return condition_scalar_loss
+        return condition_tensor_loss

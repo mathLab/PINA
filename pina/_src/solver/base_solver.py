@@ -287,6 +287,9 @@ class BaseSolver(SolverInterface, metaclass=ABCMeta):
             data = dict(data)
             data["input"] = data["input"].clone()
 
+        # Prepare condition data, e.g. by enabling gradient for regularizations
+        data = self._prepare_condition_data(data=data)
+
         # Compute and store the residual tensor for the condition
         self.residual_tensor = condition.evaluate(data, self)
 
@@ -296,10 +299,54 @@ class BaseSolver(SolverInterface, metaclass=ABCMeta):
         # Compute the tensor loss from the residual tensor
         condition_tensor_loss = self._loss_from_residual(condition_name)
 
+        # Optional regularization hook, e.g gradient-enhanced or residual-based
+        condition_tensor_loss = self._regularize_condition_loss(
+            condition_tensor_loss=condition_tensor_loss,
+            condition_name=condition_name,
+            data=data,
+            batch_idx=batch_idx,
+        )
+
         # Compute the scalar loss from the tensor loss and return it
         condition_scalar_loss = self._apply_reduction(condition_tensor_loss)
 
         return condition_scalar_loss
+
+    def _prepare_condition_data(self, data):
+        """
+        Prepare the condition data for loss computation. This method can be
+        overridden by mixins to implement specific data preparation steps, such
+        as enabling gradient tracking for inputs in gradient-enhanced solvers.
+
+        :param dict data: The original condition data.
+        :return: The prepared condition data.
+        :rtype: dict
+        """
+        return data
+
+    def _regularize_condition_loss(
+        self,
+        condition_tensor_loss,
+        condition_name,
+        data,
+        batch_idx,
+    ):
+        """
+        Regularize the condition loss if needed. This method can be overridden
+        by mixins to implement specific regularization strategies, such as
+        adding a gradient penalty in gradient-enhanced solvers or applying
+        residual-based attention.
+
+        :param condition_tensor_loss: The original tensor loss for the
+            condition.
+        :type condition_tensor_loss: torch.Tensor | LabelTensor
+        :param str condition_name: The name of the condition.
+        :param dict data: The data corresponding to the condition.
+        :param int batch_idx: The index of the current batch.
+        :return: The regularized tensor loss for the condition.
+        :rtype: torch.Tensor | LabelTensor
+        """
+        return condition_tensor_loss
 
     def _loss_from_residual(self, condition_name=None):
         """
