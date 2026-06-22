@@ -234,7 +234,12 @@ def test_train_load_restore(clean_tmp_dir, use_lt):
     )
 
     # Assert that the predictions from the loaded solver match original ones
-    assert new_solver.forward(test_pts).shape == (n_traj, t_steps, n_feats)
+    assert new_solver.forward(test_pts).shape == (
+        n_models,
+        n_traj,
+        t_steps,
+        n_feats,
+    )
     assert new_solver.forward(test_pts).shape == solver.forward(test_pts).shape
     torch.testing.assert_close(
         new_solver.forward(test_pts), solver.forward(test_pts)

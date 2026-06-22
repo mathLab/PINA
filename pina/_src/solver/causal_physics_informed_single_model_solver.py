@@ -200,6 +200,9 @@ class CausalPhysicsInformedSingleModelSolver(
             data = dict(data)
             data["input"] = data["input"].clone()
 
+        # Prepare condition data, e.g. by enabling gradient for regularizations
+        data = self._prepare_condition_data(data=data)
+
         # Extract the temporal domain
         time_domain = self.problem.temporal_domain
 
@@ -250,6 +253,14 @@ class CausalPhysicsInformedSingleModelSolver(
 
             # Compute the tensor loss from the residual tensor
             condition_tensor_loss = self._loss_from_residual(condition_name)
+
+            # Optional regularization hook
+            condition_tensor_loss = self._regularize_condition_loss(
+                condition_tensor_loss=condition_tensor_loss,
+                condition_name=condition_name,
+                data=data,
+                batch_idx=batch_idx,
+            )
 
             # Append the loss for the current time step to the list
             time_loss.append(condition_tensor_loss)

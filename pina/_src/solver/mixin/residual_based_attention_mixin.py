@@ -94,31 +94,28 @@ class ResidualBasedAttentionMixin:
             self.register_buffer(f"weight_{cond}", torch.zeros((n_pts, 1)))
             self.weight_buffers[cond] = f"weight_{cond}"
 
-    def _compute_condition_loss(self, condition, data, batch_idx):
+    def _regularize_condition_loss(
+        self,
+        condition_tensor_loss,
+        condition_name,
+        data,
+        batch_idx,
+    ):
         """
-        Compute the scalar loss for a given condition and its data.
+        Regularize the condition loss if needed. This method can be overridden
+        by mixins to implement specific regularization strategies, such as
+        adding a gradient penalty in gradient-enhanced solvers or applying
+        residual-based attention.
 
-        :param BaseCondition condition: The condition for which to compute the
-            loss.
+        :param condition_tensor_loss: The original tensor loss for the
+            condition.
+        :type condition_tensor_loss: torch.Tensor | LabelTensor
+        :param str condition_name: The name of the condition.
         :param dict data: The data corresponding to the condition.
         :param int batch_idx: The index of the current batch.
-        :return: The scalar loss for the condition.
-        :rtype: torch.Tensor
+        :return: The regularized tensor loss for the condition.
+        :rtype: torch.Tensor | LabelTensor
         """
-        # Clone the input tensor if it exists to avoid in-place modifications
-        if "input" in data and hasattr(data["input"], "clone"):
-            data = dict(data)
-            data["input"] = data["input"].clone()
-
-        # Compute and store the residual tensor for the condition
-        self.residual_tensor = condition.evaluate(data, self)
-
-        # Retrieve condition name for more complex weighting schemes
-        condition_name = condition.name
-
-        # Compute the tensor loss from the residual tensor
-        condition_tensor_loss = self._loss_from_residual(condition_name)
-
         # Apply residual-based attention mechanism if needed
         if condition_name in self.regularized_conditions:
 
@@ -150,7 +147,4 @@ class ResidualBasedAttentionMixin:
             # Weight the condition tensor loss with attention weights
             condition_tensor_loss = condition_tensor_loss * weights[idx]
 
-        # Compute the scalar loss from the tensor loss and return it
-        condition_scalar_loss = self._apply_reduction(condition_tensor_loss)
-
-        return condition_scalar_loss
+        return condition_tensor_loss
