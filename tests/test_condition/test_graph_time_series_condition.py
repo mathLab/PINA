@@ -101,11 +101,12 @@ def test_constructor(use_lt, n_windows, unroll_length, randomize):
     # Define the condition
     graph = _create_graph_data(use_lt=use_lt)
     original_timeseries = graph.x.clone()  # Store original time series for later comparison
-    condition = GraphTimeSeriesCondition(
+    condition = Condition(
         input=graph,
         n_windows=n_windows,
         unroll_length=unroll_length,
         randomize=randomize,
+        key='x'
     )
 
     # Assert correct types
@@ -211,8 +212,6 @@ def test_get_item(use_lt, n_windows, unroll_length, randomize):
 
     # Assert correct shapes
     expected_shape = torch.Size([n_nodes, n_windows, unroll_length, 2])
-    print(item.input.x.shape)
-    print(expected_shape)   
     assert item.input.x.shape == expected_shape
 
     # TODO: Why this test?
@@ -274,7 +273,6 @@ def test_create_batch(use_lt, n_windows, unroll_length, randomize):
         assert torch.allclose(batch_collate.input, expected_tensor[idx])
         assert torch.allclose(batch_auto.input, expected_tensor[idx])
     """
-
 
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("n_windows", [4, 6])
