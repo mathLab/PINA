@@ -10,18 +10,28 @@ from pina.model import FeedForward
 # Settings for test purposes
 n_traj = 5
 t_steps = 10
+n_dofs = 40
 n_feats = 2
 n_windows = 3
 unroll_length = 5
 
 
 # Helper function to create tensor data
-def create_data(n_traj, t_steps, n_feats, use_lt):
+def create_scalar_data(use_lt):
 
     # Define the data tensor
     data = torch.rand(n_traj, t_steps, n_feats)
 
     # Add labels if use_lt is True
+    if use_lt:
+        labels = [f"feat_{i}" for i in range(n_feats)]
+        return LabelTensor(data, labels=labels)
+    else:
+        return data
+
+
+def create_vector_data(use_lt):
+    data = torch.rand(n_traj, t_steps, n_dofs, n_feats)
     if use_lt:
         labels = [f"feat_{i}" for i in range(n_feats)]
         return LabelTensor(data, labels=labels)
@@ -43,7 +53,7 @@ class DummyProblem(BaseProblem):
         super().__init__()
 
         # Initialize the time series condition with the provided data
-        self.conditions["time"] = Condition(
+        self.conditions["time"] = TimeSeriesCondition(
             input=data, n_windows=n_windows, unroll_length=unroll_length
         )
 
@@ -51,10 +61,16 @@ class DummyProblem(BaseProblem):
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("bool_value", [True, False])
 @pytest.mark.parametrize("eps", [0.0, 1.0])
-def test_constructor(use_lt, bool_value, eps):
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
+@pytest.mark.parametrize("aggregation_strategy", [torch.mean, torch.sum])
+def test_constructor(
+    use_lt, bool_value, eps, create_data, aggregation_strategy
+):
 
-    # Define the problem and model
-    data = create_data(n_traj, t_steps, n_feats, use_lt)
+    # Define the problem
+    data = create_data(use_lt)
     problem = DummyProblem(data)
     model = FeedForward(n_feats, n_feats, 10, 2)
 
@@ -93,10 +109,14 @@ def test_constructor(use_lt, bool_value, eps):
 
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("batch_size", [None, 1, 2, 5])
-def test_solver_train(use_lt, batch_size):
+@pytest.mark.parametrize("compile", [True, False])
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
+def test_solver_train(use_lt, batch_size, compile, create_data):
 
-    # Define the problem and model
-    data = create_data(n_traj, t_steps, n_feats, use_lt)
+    # Define the problem
+    data = create_data(use_lt)
     problem = DummyProblem(data)
     model = FeedForward(n_feats, n_feats, 10, 2)
 
@@ -122,10 +142,14 @@ def test_solver_train(use_lt, batch_size):
 
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("batch_size", [None, 1, 2, 5])
-def test_solver_validation(use_lt, batch_size):
+@pytest.mark.parametrize("compile", [True, False])
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
+def test_solver_validation(use_lt, batch_size, compile, create_data):
 
-    # Define the problem and model
-    data = create_data(n_traj, t_steps, n_feats, use_lt)
+    # Define the problem
+    data = create_data(use_lt)
     problem = DummyProblem(data)
     model = FeedForward(n_feats, n_feats, 10, 2)
 
@@ -151,10 +175,14 @@ def test_solver_validation(use_lt, batch_size):
 
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("batch_size", [None, 1, 2, 5])
-def test_solver_test(use_lt, batch_size):
+@pytest.mark.parametrize("compile", [True, False])
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
+def test_solver_test(use_lt, batch_size, compile, create_data):
 
-    # Define the problem and model
-    data = create_data(n_traj, t_steps, n_feats, use_lt)
+    # Define the problem
+    data = create_data(use_lt)
     problem = DummyProblem(data)
     model = FeedForward(n_feats, n_feats, 10, 2)
 
@@ -179,15 +207,16 @@ def test_solver_test(use_lt, batch_size):
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
-def test_train_load_restore(clean_tmp_dir, use_lt):
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
+def test_train_load_restore(clean_tmp_dir, use_lt, create_data):
 
-    # Initialize the directory to store the checkpoints
-    dir = clean_tmp_dir
-
-    # Define the problem and model
-    data = create_data(n_traj, t_steps, n_feats, use_lt)
+    # Define the problem
+    data = create_data(use_lt)
     problem = DummyProblem(data)
     model = FeedForward(n_feats, n_feats, 10, 2)
+    dir = clean_tmp_dir
 
     # Define the solver
     solver = AutoregressiveSingleModelSolver(

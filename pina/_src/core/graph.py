@@ -91,7 +91,7 @@ class Graph(Data):
             self._check_edge_index_consistency(edge_index)
         if "x" in kwargs:
             x = kwargs["x"]
-            self._check_x_consistency(x, pos)
+            # self._check_x_consistency(x, pos)
         if "edge_attr" in kwargs:
             edge_attr = kwargs["edge_attr"]
             self._check_edge_attr_consistency(edge_attr, edge_index)

@@ -168,7 +168,14 @@ class TimeSeriesCondition(BaseCondition):
         # Create unroll windows by slicing the input data at the starting idx
         windows = [data[:, s : s + unroll_length] for s in start_indices]
 
-        return torch.stack(windows, dim=1)
+        if isinstance(data, LabelTensor):
+            # Preserve labels if the input data is a LabelTensor
+            unrolled_data = torch.stack(windows, dim=1).as_subclass(LabelTensor)
+            unrolled_data.labels = data.labels
+        else:
+            unrolled_data = torch.stack(windows, dim=1)
+
+        return unrolled_data
 
     def evaluate(self, batch, solver):
         """
@@ -192,7 +199,7 @@ class TimeSeriesCondition(BaseCondition):
         :raises ValueError: If the input tensor in the batch has less than 4
             dimensions.
         :return: The stacked per-step residual tensor of shape
-            [time_steps - 1, trajectories, windows, *features].
+            ``[time_steps - 1, trajectories, windows, *features]``.
         :rtype: torch.Tensor | LabelTensor
         """
         # Raise error if input tensor does not have at least 4 dimensions

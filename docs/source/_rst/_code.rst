@@ -60,8 +60,10 @@ Conditions
     Condition <condition/condition.rst>
     Data Condition <condition/data_condition.rst>
     Domain Equation Condition <condition/domain_equation_condition.rst>
+    Graph Time Series Condition <condition/graph_time_series_condition.rst>
     Input Equation Condition <condition/input_equation_condition.rst>
     Input Target Condition <condition/input_target_condition.rst>
+    Time Series Condition <condition/time_series_condition.rst>
 
 Batch and Data Managers
 --------------------------
