@@ -42,7 +42,7 @@ class GraphTimeSeriesCondition(TimeSeriesCondition):
     __fields__ = ["input", "unroll_length", "n_windows", "key", "randomize"]
     _avail_input_cls = (Data, Graph)
 
-    def __new__(cls, input, n_windows, unroll_length, key='x', randomize=False):
+    def __new__(cls, input, n_windows, unroll_length, key="x", randomize=False):
         # Check consistency
         check_consistency(input, cls._avail_input_cls)
         check_consistency(randomize, bool)
