@@ -29,6 +29,7 @@ def create_scalar_data(use_lt):
     else:
         return data
 
+
 def create_vector_data(use_lt):
     data = torch.rand(n_traj, t_steps, n_dofs, n_feats)
     if use_lt:
@@ -60,9 +61,13 @@ class DummyProblem(BaseProblem):
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("bool_value", [True, False])
 @pytest.mark.parametrize("eps", [0.0, 1.0])
-@pytest.mark.parametrize("create_data", [create_scalar_data, create_vector_data])
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
 @pytest.mark.parametrize("aggregation_strategy", [torch.mean, torch.sum])
-def test_constructor(use_lt, bool_value, eps, create_data, aggregation_strategy):
+def test_constructor(
+    use_lt, bool_value, eps, create_data, aggregation_strategy
+):
 
     # Define the problem
     data = create_data(use_lt)
@@ -105,7 +110,9 @@ def test_constructor(use_lt, bool_value, eps, create_data, aggregation_strategy)
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("batch_size", [None, 1, 2, 5])
 @pytest.mark.parametrize("compile", [True, False])
-@pytest.mark.parametrize("create_data", [create_scalar_data, create_vector_data])
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
 def test_solver_train(use_lt, batch_size, compile, create_data):
 
     # Define the problem
@@ -136,7 +143,9 @@ def test_solver_train(use_lt, batch_size, compile, create_data):
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("batch_size", [None, 1, 2, 5])
 @pytest.mark.parametrize("compile", [True, False])
-@pytest.mark.parametrize("create_data", [create_scalar_data, create_vector_data])
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
 def test_solver_validation(use_lt, batch_size, compile, create_data):
 
     # Define the problem
@@ -167,7 +176,9 @@ def test_solver_validation(use_lt, batch_size, compile, create_data):
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("batch_size", [None, 1, 2, 5])
 @pytest.mark.parametrize("compile", [True, False])
-@pytest.mark.parametrize("create_data", [create_scalar_data, create_vector_data])
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
 def test_solver_test(use_lt, batch_size, compile, create_data):
 
     # Define the problem
@@ -196,7 +207,9 @@ def test_solver_test(use_lt, batch_size, compile, create_data):
 
 
 @pytest.mark.parametrize("use_lt", [True, False])
-@pytest.mark.parametrize("create_data", [create_scalar_data, create_vector_data])
+@pytest.mark.parametrize(
+    "create_data", [create_scalar_data, create_vector_data]
+)
 def test_train_load_restore(clean_tmp_dir, use_lt, create_data):
 
     # Define the problem

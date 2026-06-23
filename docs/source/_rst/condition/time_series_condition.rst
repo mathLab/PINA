@@ -1,5 +1,6 @@
 Time Series Condition
-=====================
+=======================
+
 .. currentmodule:: pina.condition.time_series_condition
 
 .. automodule:: pina._src.condition.time_series_condition

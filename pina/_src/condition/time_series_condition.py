@@ -199,7 +199,7 @@ class TimeSeriesCondition(BaseCondition):
         :raises ValueError: If the input tensor in the batch has less than 4
             dimensions.
         :return: The stacked per-step residual tensor of shape
-            [time_steps - 1, trajectories, windows, *features].
+            ``[time_steps - 1, trajectories, windows, *features]``.
         :rtype: torch.Tensor | LabelTensor
         """
         # Raise error if input tensor does not have at least 4 dimensions

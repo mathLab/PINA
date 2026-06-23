@@ -1,10 +1,16 @@
 import pytest
 import torch
-from pina.data.manager import _TensorDataManager, _BatchManager, _GraphDataManager
+from pina.data.manager import (
+    _TensorDataManager,
+    _BatchManager,
+    _GraphDataManager,
+)
 from pina._src.core.utils import labelize_forward
 from pina.condition import TimeSeriesCondition
 from pina import LabelTensor, Condition
-from pina._src.condition.graph_time_series_condition import GraphTimeSeriesCondition
+from pina._src.condition.graph_time_series_condition import (
+    GraphTimeSeriesCondition,
+)
 from pina.graph import RadiusGraph
 
 # Number of samples and time steps for testing
@@ -18,7 +24,9 @@ def _assert_tensor_type(t, use_lt):
     if use_lt:
         assert isinstance(t.x, LabelTensor)
     else:
-        assert isinstance(t.x, torch.Tensor) and not isinstance(t.x, LabelTensor)
+        assert isinstance(t.x, torch.Tensor) and not isinstance(
+            t.x, LabelTensor
+        )
 
 
 # Helper function to compute expected unroll windows
@@ -41,7 +49,8 @@ def _expected_unroll(data, n_windows, unroll_length, randomize):
 
     return torch.stack(windows, dim=1)
 
-# Helper function to create graph data 
+
+# Helper function to create graph data
 def _create_graph_data(use_lt):
 
     # If LabelTensor is used, create graph data with LabelTensors
@@ -100,13 +109,15 @@ def test_constructor(use_lt, n_windows, unroll_length, randomize):
 
     # Define the condition
     graph = _create_graph_data(use_lt=use_lt)
-    original_timeseries = graph.x.clone()  # Store original time series for later comparison
+    original_timeseries = (
+        graph.x.clone()
+    )  # Store original time series for later comparison
     condition = Condition(
         input=graph,
         n_windows=n_windows,
         unroll_length=unroll_length,
         randomize=randomize,
-        key='x'
+        key="x",
     )
 
     # Assert correct types
@@ -121,7 +132,7 @@ def test_constructor(use_lt, n_windows, unroll_length, randomize):
 
     # Assert labels if LabelTensor is used
     if use_lt:
-        assert condition.input['x'].labels == ["u", "v"]
+        assert condition.input["x"].labels == ["u", "v"]
 
     # Should fail if unroll_length is not a positive integer
     with pytest.raises(AssertionError):
@@ -273,6 +284,7 @@ def test_create_batch(use_lt, n_windows, unroll_length, randomize):
         assert torch.allclose(batch_collate.input, expected_tensor[idx])
         assert torch.allclose(batch_auto.input, expected_tensor[idx])
     """
+
 
 @pytest.mark.parametrize("use_lt", [True, False])
 @pytest.mark.parametrize("n_windows", [4, 6])
