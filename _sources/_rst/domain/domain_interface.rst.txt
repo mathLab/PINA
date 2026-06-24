@@ -2,8 +2,8 @@ DomainInterface
 ================
 .. currentmodule:: pina.domain.domain_interface
 
-.. automodule:: pina.domain.domain_interface
+.. automodule:: pina._src.domain.domain_interface
 
-.. autoclass:: DomainInterface
+.. autoclass:: pina._src.domain.domain_interface.DomainInterface
     :members:
     :show-inheritance:

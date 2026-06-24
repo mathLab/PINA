@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Spectral Convolution Block &#8212; pina-mathlab 0.2.6.post2603 documentation</title>
+    <title>Spectral Convolution Block &#8212; pina-mathlab 0.3.0 documentation</title>
   
   
   
@@ -27,20 +27,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../../_static/documentation_options.js?v=0801991d"></script>
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -48,28 +48,35 @@
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_rst/model/block/spectral';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Fourier Neural Operator Block" href="fourier_block.html" />
     <link rel="prev" title="EnhancedLinear Block" href="enhanced_linear.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.6.post2603" />
-    <meta name="docbuild:last-update" content="Mar 01, 2026"/>
+  <meta name="docsearch:version" content="0.3.0" />
+    <meta name="docbuild:last-update" content="Jun 24, 2026"/>
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
-
+  <body data-default-mode="light">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -95,7 +102,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -119,8 +126,8 @@
     
     
     
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.2.6.post2603 documentation - Home"/>
-    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.2.6.post2603 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0 documentation - Home"/>
+    <img src="../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0 documentation - Home"/>
   
   
 </a></div>
@@ -213,8 +220,7 @@
           
           
           
-          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
         <li class="nav-item">
           
@@ -225,8 +231,7 @@
           
           
           
-          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Twitter</span></a>
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
         </li>
         <li class="nav-item">
           
@@ -237,8 +242,7 @@
           
           
           
-          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Email</span></a>
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i><span class="visually-hidden">Email</span></a>
         </li>
 </ul></div>
       
@@ -357,8 +361,7 @@
           
           
           
-          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
         <li class="nav-item">
           
@@ -369,8 +372,7 @@
           
           
           
-          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Twitter</span></a>
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
         </li>
         <li class="nav-item">
           
@@ -381,8 +383,7 @@
           
           
           
-          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">Email</span></a>
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i><span class="visually-hidden">Email</span></a>
         </li>
 </ul></div>
         
@@ -391,14 +392,24 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../trainer.html">Trainer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../data/dataset.html">Dataset</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../data/data_module.html">DataModule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/data_module.html">Data Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/single_batch_data_loader.html">Single-Batch Data Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/aggregator.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/creator.html">Creator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/condition_subset.html">Condition Subset</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../label_tensor.html">LabelTensor</a></li>
@@ -411,31 +422,51 @@
 <li class="toctree-l1"><a class="reference internal" href="../../graph/knn_graph.html">KNNGraph</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../condition/condition_interface.html">ConditionInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/condition_interface.html">Condition Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/base_condition.html">Base Condition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../condition/condition.html">Condition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../condition/data_condition.html">DataCondition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../condition/domain_equation_condition.html">DomainEquationCondition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../condition/input_equation_condition.html">InputEquationCondition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../condition/input_target_condition.html">InputTargetCondition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/data_condition.html">Data Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/domain_equation_condition.html">Domain Equation Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/graph_time_series_condition.html">Graph Time Series Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/input_equation_condition.html">Input Equation Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/input_target_condition.html">Input Target Condition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../condition/time_series_condition.html">Time Series Condition</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../solver/solver_interface.html">SolverInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/single_solver_interface.html">SingleSolverInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/multi_solver_interface.html">MultiSolverInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/supervised_solver/supervised_solver_interface.html">SupervisedSolverInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/ensemble_solver/ensemble_solver_interface.html">DeepEnsembleSolverInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/pinn_interface.html">PINNInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/pinn.html">PINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/gradient_pinn.html">GradientPINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/causal_pinn.html">CausalPINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/competitive_pinn.html">CompetitivePINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/self_adaptive_pinn.html">SelfAdaptivePINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_solver/rba_pinn.html">RBAPINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/ensemble_solver/ensemble_pinn.html">DeepEnsemblePINN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/supervised_solver/supervised.html">SupervisedSolver</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/ensemble_solver/ensemble_supervised.html">DeepEnsembleSupervisedSolver</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/supervised_solver/reduced_order_model.html">ReducedOrderModelSolver</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solver/garom.html">GAROM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/manager/batch_manager.html">Batch Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/manager/data_manager_interface.html">Data Manager Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/manager/data_manager.html">Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/manager/graph_data_manager.html">Graph Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/manager/tensor_data_manager.html">Tensor Data Manager</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../solver/solver_interface.html">Solver Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/base_solver.html">Base Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/single_model_solver.html">Single-Model Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/multi_model_solver.html">Multi-Model Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/ensemble_solver.html">Ensemble Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/supervised_single_model_solver.html">Supervised Single-Model Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/supervised_ensemble_solver.html">Supervised Ensemble Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_single_model_solver.html">Physics-Informed Single-Model Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/physics_informed_ensemble_solver.html">Physics-Informed Ensemble Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/autoregressive_single_model_solver.html">Autoregressive Single-Model Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/autoregressive_ensemble_solver.html">Autoregressive Ensemble Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/self_adaptive_physics_informed_solver.html">Self-Adaptive Physics-Informed Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/competitive_physics_informed_solver.html">Competitive Physics-Informed Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/gradient_physics_informed_single_model_solver.html">Gradient Physics-Informed Single-Model Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/rba_physics_informed_single_model_solver.html">RBA Physics-Informed Single-Model Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/causal_physics_informed_single_model_solver.html">Causal Physics-Informed Single-Model Solver</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/single_model_mixin.html">Single-Model Mixin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/multi_model_mixin.html">Multi-Model Mixin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/ensemble_mixin.html">Ensemble Mixin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/condition_aggregator_mixin.html">Condition Aggregator Mixin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/manual_optimization_mixin.html">Manual Optimization Mixin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/physics_informed_mixin.html">Physics-Informed Mixin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/autoregressive_mixin.html">Autoregressive Mixin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/gradient_enhanced_mixin.html">Gradient-Enhanced Mixin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solver/mixin/residual_based_attention_mixin.html">Residual-Based Attention Mixin</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../feed_forward.html">FeedForward</a></li>
@@ -455,6 +486,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../pirate_network.html">PirateNet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../equivariant_graph_neural_operator.html">EquivariantGraphNeuralOperator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sindy.html">SINDy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vectorized_spline.html">Vectorized Spline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../kolmogorov_arnold_network.html">Kolmogorov-Arnold Network</a></li>
 </ul>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="residual.html">Residual Block</a></li>
@@ -468,6 +501,7 @@
 <li class="toctree-l1"><a class="reference internal" href="convolution.html">Continuous Convolution Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orthogonal.html">Orthogonal Block</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pirate_network_block.html">PirateNet Block</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kan_block.html">KAN Block</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="message_passing/deep_tensor_network_block.html">Deep Tensor Network Block</a></li>
@@ -483,49 +517,65 @@
 <li class="toctree-l1"><a class="reference internal" href="rbf_block.html">Radial Basis Function Interpolation</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../optim/optimizer_interface.html">Optimizer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../optim/scheduler_interface.html">Scheduler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../optim/torch_optimizer.html">TorchOptimizer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../optim/torch_scheduler.html">TorchScheduler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/optimizer_interface.html">Optimizer Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/scheduler_interface.html">Scheduler Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/torch_optimizer.html">Torch Optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optim/torch_scheduler.html">Torch Scheduler</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveActivationFunctionInterface.html">Adaptive Function Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveReLU.html">Adaptive ReLU</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSigmoid.html">Adaptive Sigmoid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveTanh.html">Adaptive Tanh</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSiLU.html">Adaptive SiLU</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveMish.html">Adaptive Mish</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveELU.html">Adaptive ELU</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveCELU.html">Adaptive CELU</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveGELU.html">Adaptive GELU</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSoftmin.html">Adaptive Softmin</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSoftmax.html">Adaptive Softmax</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveSIREN.html">Adaptive SIREN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/AdaptiveExp.html">Adaptive Exp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_function_interface.html">Adaptive Function Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/base_adaptive_function.html">Base Adaptive Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_celu.html">Adaptive CELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_elu.html">Adaptive ELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_exp.html">Adaptive Exp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_gelu.html">Adaptive GELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_mish.html">Adaptive Mish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_relu.html">Adaptive ReLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_sigmoid.html">Adaptive Sigmoid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_silu.html">Adaptive SiLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_siren.html">Adaptive SIREN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_softmax.html">Adaptive Softmax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_softmin.html">Adaptive Softmin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../adaptive_function/adaptive_tanh.html">Adaptive Tanh</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../equation/equation_interface.html">EquationInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/equation_interface.html">Equation Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/base_equation.html">Base Equation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../equation/equation.html">Equation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../equation/system_equation.html">SystemEquation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../equation/equation_factory.html">Equation Factory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/system_equation.html">System Equation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../operator.html">Differential Operators</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../problem/abstract_problem.html">AbstractProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/acoustic_wave_equation.html">Acoustic Wave Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/advection_equation.html">Advection Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/allen_cahn_equation.html">Allen-Cahn Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/burgers_equation.html">Burgers' Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/diffusion_reaction_equation.html">Diffusion-Reaction Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/fixed_flux.html">Fixed Flux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/fixed_gradient.html">Fixed Gradient</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/fixed_laplacian.html">Fixed Laplacian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/fixed_value.html">Fixed Value</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/helmholtz_equation.html">Helmholtz Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../equation/zoo/poisson_equation.html">Poisson Equation</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../problem/problem_interface.html">ProblemInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/base_problem.html">BaseProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../problem/inverse_problem.html">InverseProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../problem/parametric_problem.html">ParametricProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../problem/spatial_problem.html">SpatialProblem</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../problem/time_dependent_problem.html">TimeDependentProblem</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/acoustic_wave.html">AcousticWaveProblem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/advection.html">AdvectionProblem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/allen_cahn.html">AllenCahnProblem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/diffusion_reaction.html">DiffusionReactionProblem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/helmholtz.html">HelmholtzProblem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/inverse_poisson_2d_square.html">InversePoisson2DSquareProblem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/poisson_2d_square.html">Poisson2DSquareProblem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/supervised_problem.html">SupervisedProblem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/acoustic_wave_problem.html">Acoustic Wave Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/advection_problem.html">Advection Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/allen_cahn_problem.html">Allen-Cahn Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/burgers_problem.html">Burgers' Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/diffusion_reaction_problem.html">Diffusion-Reaction Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/helmholtz_problem.html">Helmholtz Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/inverse_poisson_problem.html">Inverse Poisson 2D Square Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/poisson_problem.html">Poisson 2D Square Problem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../problem/zoo/supervised_problem.html">Supervised Problem</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../domain/domain_interface.html">DomainInterface</a></li>
@@ -545,21 +595,28 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../callback/optim/switch_optimizer.html">Switch Optimizer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../callback/optim/switch_scheduler.html">Switch Scheduler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/normalizer_data_callback.html">Normalizer Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/pina_progress_bar.html">PINA Progress Bar</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/metric_tracker.html">Metric Tracker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/refinement_interface.html">Refinement Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/base_refinement.html">Base Refinement</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../callback/refinement/r3_refinement.html">R3 Refinement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/data_normalizer.html">Data Normalizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/metric_tracker.html">Metric Tracker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callback/processing/pina_progress_bar.html">PINA Progress Bar</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../loss/loss_interface.html">LossInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../loss/lploss.html">LpLoss</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../loss/powerloss.html">PowerLoss</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../loss/weighting_interface.html">WeightingInterface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../loss/scalar_weighting.html">ScalarWeighting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../loss/ntk_weighting.html">NeuralTangentKernelWeighting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../loss/self_adaptive_weighting.html">SelfAdaptiveWeighting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../loss/linear_weighting.html">LinearWeighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/dual_loss_interface.html">DualLossInterface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/base_dual_loss.html">BaseDualLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/lp_loss.html">LpLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/power_loss.html">PowerLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loss/sinkhorn_loss.html">SinkhornLoss</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../weighting/weighting_interface.html">Weighting Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../weighting/base_weighting.html">Base Weighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../weighting/linear_weighting.html">Linear Weighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../weighting/ntk_weighting.html">Neural-Tangent-Kernel Weighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../weighting/no_weighting.html">No Weighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../weighting/scalar_weighting.html">Scalar Weighting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../weighting/self_adaptive_weighting.html">Self-Adaptive Weighting</a></li>
 </ul>
 </div>
 </nav></div>
@@ -623,16 +680,16 @@
   <section id="spectral-convolution-block">
 <h1>Spectral Convolution Block<a class="headerlink" href="#spectral-convolution-block" title="Link to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="pina.model.block.spectral.SpectralConvBlock1D">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpectralConvBlock1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/spectral.html#SpectralConvBlock1D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.spectral.SpectralConvBlock1D" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dt class="sig sig-object py" id="pina._src.model.block.spectral.SpectralConvBlock1D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpectralConvBlock1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/_src/model/block/spectral.html#SpectralConvBlock1D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina._src.model.block.spectral.SpectralConvBlock1D" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Spectral Convolution Block for one-dimensional tensors.</p>
 <p>This class computes the spectral convolution of the input with a linear
 kernel in the fourier space, and then it maps the input back to the physical
 space.
 The block expects an input of size [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">input_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span></code>]
 and returns an output of size [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">output_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span></code>].</p>
-<p>Initialization of the <a class="reference internal" href="#pina.model.block.spectral.SpectralConvBlock1D" title="pina.model.block.spectral.SpectralConvBlock1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectralConvBlock1D</span></code></a> class.</p>
+<p>Initialization of the <a class="reference internal" href="#pina._src.model.block.spectral.SpectralConvBlock1D" title="pina._src.model.block.spectral.SpectralConvBlock1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectralConvBlock1D</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -644,12 +701,12 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="pina.model.block.spectral.SpectralConvBlock1D.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/spectral.html#SpectralConvBlock1D.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.spectral.SpectralConvBlock1D.forward" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pina._src.model.block.spectral.SpectralConvBlock1D.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/_src/model/block/spectral.html#SpectralConvBlock1D.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina._src.model.block.spectral.SpectralConvBlock1D.forward" title="Link to this definition">#</a></dt>
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)"><em>torch.Tensor</em></a>) – The input tensor. Expected of size
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.12)"><em>torch.Tensor</em></a>) – The input tensor. Expected of size
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">input_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span></code>].</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -657,7 +714,7 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">output_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span></code>].</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.12)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -665,9 +722,9 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="pina.model.block.spectral.SpectralConvBlock2D">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpectralConvBlock2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/spectral.html#SpectralConvBlock2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.spectral.SpectralConvBlock2D" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dt class="sig sig-object py" id="pina._src.model.block.spectral.SpectralConvBlock2D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpectralConvBlock2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/_src/model/block/spectral.html#SpectralConvBlock2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina._src.model.block.spectral.SpectralConvBlock2D" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Spectral Convolution Block for two-dimensional tensors.</p>
 <p>This class computes the spectral convolution of the input with a linear
 kernel in the fourier space, and then it maps the input back to the physical
@@ -676,7 +733,7 @@ The block expects an input of size
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">input_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">Nx</span></code>, <code class="docutils literal notranslate"><span class="pre">Ny</span></code>]
 and returns an output of size
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">output_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">Nx</span></code>, <code class="docutils literal notranslate"><span class="pre">Ny</span></code>].</p>
-<p>Initialization of the <a class="reference internal" href="#pina.model.block.spectral.SpectralConvBlock2D" title="pina.model.block.spectral.SpectralConvBlock2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectralConvBlock2D</span></code></a> class.</p>
+<p>Initialization of the <a class="reference internal" href="#pina._src.model.block.spectral.SpectralConvBlock2D" title="pina._src.model.block.spectral.SpectralConvBlock2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectralConvBlock2D</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -695,12 +752,12 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="pina.model.block.spectral.SpectralConvBlock2D.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/spectral.html#SpectralConvBlock2D.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.spectral.SpectralConvBlock2D.forward" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pina._src.model.block.spectral.SpectralConvBlock2D.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/_src/model/block/spectral.html#SpectralConvBlock2D.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina._src.model.block.spectral.SpectralConvBlock2D.forward" title="Link to this definition">#</a></dt>
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)"><em>torch.Tensor</em></a>) – The input tensor. Expected of size
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.12)"><em>torch.Tensor</em></a>) – The input tensor. Expected of size
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">input_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">Nx</span></code>, <code class="docutils literal notranslate"><span class="pre">Ny</span></code>].</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -708,7 +765,7 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">output_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">Nx</span></code>, <code class="docutils literal notranslate"><span class="pre">Ny</span></code>].</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.12)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -716,9 +773,9 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="pina.model.block.spectral.SpectralConvBlock3D">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpectralConvBlock3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/spectral.html#SpectralConvBlock3D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.spectral.SpectralConvBlock3D" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
+<dt class="sig sig-object py" id="pina._src.model.block.spectral.SpectralConvBlock3D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpectralConvBlock3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_numb_fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/_src/model/block/spectral.html#SpectralConvBlock3D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina._src.model.block.spectral.SpectralConvBlock3D" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a></p>
 <p>Spectral Convolution Block for three-dimensional tensors.</p>
 <p>This class computes the spectral convolution of the input with a linear
 kernel in the fourier space, and then it maps the input back to the physical
@@ -727,7 +784,7 @@ The block expects an input of size
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">input_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">Nx</span></code>, <code class="docutils literal notranslate"><span class="pre">Ny</span></code>, <code class="docutils literal notranslate"><span class="pre">Nz</span></code>]
 and returns an output of size
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">output_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">Nx</span></code>, <code class="docutils literal notranslate"><span class="pre">Ny</span></code>, <code class="docutils literal notranslate"><span class="pre">Nz</span></code>].</p>
-<p>Initialization of the <a class="reference internal" href="#pina.model.block.spectral.SpectralConvBlock3D" title="pina.model.block.spectral.SpectralConvBlock3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectralConvBlock3D</span></code></a> class.</p>
+<p>Initialization of the <a class="reference internal" href="#pina._src.model.block.spectral.SpectralConvBlock3D" title="pina._src.model.block.spectral.SpectralConvBlock3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpectralConvBlock3D</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -746,12 +803,12 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="pina.model.block.spectral.SpectralConvBlock3D.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/model/block/spectral.html#SpectralConvBlock3D.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina.model.block.spectral.SpectralConvBlock3D.forward" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pina._src.model.block.spectral.SpectralConvBlock3D.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pina/_src/model/block/spectral.html#SpectralConvBlock3D.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina._src.model.block.spectral.SpectralConvBlock3D.forward" title="Link to this definition">#</a></dt>
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)"><em>torch.Tensor</em></a>) – The input tensor. Expected of size
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.12)"><em>torch.Tensor</em></a>) – The input tensor. Expected of size
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">input_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">Nx</span></code>, <code class="docutils literal notranslate"><span class="pre">Ny</span></code>, <code class="docutils literal notranslate"><span class="pre">Nz</span></code>].</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -759,7 +816,7 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
 [<code class="docutils literal notranslate"><span class="pre">batch</span></code>, <code class="docutils literal notranslate"><span class="pre">output_numb_fields</span></code>, <code class="docutils literal notranslate"><span class="pre">Nx</span></code>, <code class="docutils literal notranslate"><span class="pre">Ny</span></code>, <code class="docutils literal notranslate"><span class="pre">Nz</span></code>].</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)">torch.Tensor</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.12)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -789,31 +846,31 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.spectral.SpectralConvBlock1D"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock1D</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.spectral.SpectralConvBlock1D.forward"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock1D.forward()</span></code></a></li>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina._src.model.block.spectral.SpectralConvBlock1D"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock1D</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina._src.model.block.spectral.SpectralConvBlock1D.forward"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock1D.forward()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.spectral.SpectralConvBlock2D"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock2D</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.spectral.SpectralConvBlock2D.forward"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock2D.forward()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina._src.model.block.spectral.SpectralConvBlock2D"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock2D</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina._src.model.block.spectral.SpectralConvBlock2D.forward"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock2D.forward()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.spectral.SpectralConvBlock3D"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock3D</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina.model.block.spectral.SpectralConvBlock3D.forward"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock3D.forward()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pina._src.model.block.spectral.SpectralConvBlock3D"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock3D</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pina._src.model.block.spectral.SpectralConvBlock3D.forward"><code class="docutils literal notranslate"><span class="pre">SpectralConvBlock3D.forward()</span></code></a></li>
 </ul>
 </li>
 </ul>
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../../_sources/_rst/model/block/spectral.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/_rst/model/block/spectral.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -828,8 +885,8 @@ It must be at most equal to <span class="math notranslate nohighlight">\(\floor(
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
 
 <footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
     <div class="container">

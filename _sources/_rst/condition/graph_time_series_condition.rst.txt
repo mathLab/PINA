@@ -1,0 +1,10 @@
+Graph Time Series Condition
+=============================
+
+.. currentmodule:: pina.condition.graph_time_series_condition
+
+.. automodule:: pina._src.condition.graph_time_series_condition
+
+.. autoclass:: pina._src.condition.graph_time_series_condition.GraphTimeSeriesCondition
+    :members:
+    :show-inheritance:

@@ -15,17 +15,20 @@ The pipeline to solve differential equations with PINA follows just five steps:
     2. Generate data using built in `Geometrical Domains`_, or load high level simulation results as :doc:`LabelTensor <label_tensor>`
     3. Choose or build one or more `Models`_ to solve the problem
     4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solver/solver_interface>`
-    5. Train the model with the PINA :doc:`Trainer <solver/solver_interface>`, enhance the train with `Callbacks`_
+    5. Train the model with the PINA :doc:`Trainer <trainer>`, enhance the train with `Callbacks`_
 
 
-Trainer, Dataset and Datamodule
---------------------------------
+Trainer, Data Loader and Data Module
+----------------------------------------
 .. toctree::
     :titlesonly:
 
     Trainer <trainer.rst>
-    Dataset <data/dataset.rst>
-    DataModule <data/data_module.rst>
+    Data Module <data/data_module.rst>
+    Single-Batch Data Loader <data/single_batch_data_loader.rst>
+    Aggregator <data/aggregator.rst>
+    Creator <data/creator.rst>
+    Condition Subset <data/condition_subset.rst>
 
 Data Types
 ------------
@@ -52,37 +55,65 @@ Conditions
 .. toctree::
     :titlesonly:
 
-    ConditionInterface <condition/condition_interface.rst>
+    Condition Interface <condition/condition_interface.rst>
+    Base Condition <condition/base_condition.rst>
     Condition <condition/condition.rst>
-    DataCondition <condition/data_condition.rst>
-    DomainEquationCondition <condition/domain_equation_condition.rst>
-    InputEquationCondition <condition/input_equation_condition.rst>
-    InputTargetCondition <condition/input_target_condition.rst>
+    Data Condition <condition/data_condition.rst>
+    Domain Equation Condition <condition/domain_equation_condition.rst>
+    Graph Time Series Condition <condition/graph_time_series_condition.rst>
+    Input Equation Condition <condition/input_equation_condition.rst>
+    Input Target Condition <condition/input_target_condition.rst>
+    Time Series Condition <condition/time_series_condition.rst>
+
+Batch and Data Managers
+--------------------------
+.. toctree::
+    :titlesonly:
+
+    Batch Manager <data/manager/batch_manager.rst>
+    Data Manager Interface <data/manager/data_manager_interface.rst>
+    Data Manager <data/manager/data_manager.rst>
+    Graph Data Manager <data/manager/graph_data_manager.rst>
+    Tensor Data Manager <data/manager/tensor_data_manager.rst>
 
 Solvers
---------------
+------------------------
 
 .. toctree::
     :titlesonly:
 
-    SolverInterface <solver/solver_interface.rst>
-    SingleSolverInterface <solver/single_solver_interface.rst>
-    MultiSolverInterface <solver/multi_solver_interface.rst>
-    SupervisedSolverInterface <solver/supervised_solver/supervised_solver_interface>
-    DeepEnsembleSolverInterface <solver/ensemble_solver/ensemble_solver_interface>
-    PINNInterface <solver/physics_informed_solver/pinn_interface.rst>
-    PINN <solver/physics_informed_solver/pinn.rst>
-    GradientPINN <solver/physics_informed_solver/gradient_pinn.rst>
-    CausalPINN <solver/physics_informed_solver/causal_pinn.rst>
-    CompetitivePINN <solver/physics_informed_solver/competitive_pinn.rst>
-    SelfAdaptivePINN <solver/physics_informed_solver/self_adaptive_pinn.rst>
-    RBAPINN <solver/physics_informed_solver/rba_pinn.rst>
-    DeepEnsemblePINN <solver/ensemble_solver/ensemble_pinn>
-    SupervisedSolver <solver/supervised_solver/supervised.rst>
-    DeepEnsembleSupervisedSolver <solver/ensemble_solver/ensemble_supervised>
-    ReducedOrderModelSolver <solver/supervised_solver/reduced_order_model.rst>
-    GAROM <solver/garom.rst>
+    Solver Interface <solver/solver_interface.rst>
+    Base Solver <solver/base_solver.rst>
+    Single-Model Solver <solver/single_model_solver.rst>
+    Multi-Model Solver <solver/multi_model_solver.rst>
+    Ensemble Solver <solver/ensemble_solver.rst>
+    Supervised Single-Model Solver <solver/supervised_single_model_solver.rst>
+    Supervised Ensemble Solver <solver/supervised_ensemble_solver.rst>
+    Physics-Informed Single-Model Solver <solver/physics_informed_single_model_solver.rst>
+    Physics-Informed Ensemble Solver <solver/physics_informed_ensemble_solver.rst>
+    Autoregressive Single-Model Solver <solver/autoregressive_single_model_solver.rst>
+    Autoregressive Ensemble Solver <solver/autoregressive_ensemble_solver.rst>
+    Self-Adaptive Physics-Informed Solver <solver/self_adaptive_physics_informed_solver.rst>
+    Competitive Physics-Informed Solver <solver/competitive_physics_informed_solver.rst>
+    Gradient Physics-Informed Single-Model Solver <solver/gradient_physics_informed_single_model_solver.rst>
+    RBA Physics-Informed Single-Model Solver <solver/rba_physics_informed_single_model_solver.rst>
+    Causal Physics-Informed Single-Model Solver <solver/causal_physics_informed_single_model_solver.rst>
 
+Mixins
+------------------------
+
+.. toctree::
+    :titlesonly:
+
+    Single-Model Mixin <solver/mixin/single_model_mixin.rst>
+    Multi-Model Mixin <solver/mixin/multi_model_mixin.rst>
+    Ensemble Mixin <solver/mixin/ensemble_mixin.rst>
+    Condition Aggregator Mixin <solver/mixin/condition_aggregator_mixin.rst>
+    Manual Optimization Mixin <solver/mixin/manual_optimization_mixin.rst>
+    Physics-Informed Mixin <solver/mixin/physics_informed_mixin.rst>
+    Autoregressive Mixin <solver/mixin/autoregressive_mixin.rst>
+    Gradient-Enhanced Mixin <solver/mixin/gradient_enhanced_mixin.rst>
+    Residual-Based Attention Mixin <solver/mixin/residual_based_attention_mixin.rst>
 
 Models
 ------------
@@ -108,6 +139,8 @@ Models
     PirateNet <model/pirate_network.rst>
     EquivariantGraphNeuralOperator <model/equivariant_graph_neural_operator.rst>
     SINDy <model/sindy.rst>
+    Vectorized Spline <model/vectorized_spline.rst>
+    Kolmogorov-Arnold Network <model/kolmogorov_arnold_network.rst>
 
 Blocks
 -------------
@@ -126,6 +159,7 @@ Blocks
     Continuous Convolution Block <model/block/convolution.rst>
     Orthogonal Block <model/block/orthogonal.rst>
     PirateNet Block <model/block/pirate_network_block.rst>
+    KAN Block <model/block/kan_block.rst>
 
 Message Passing
 -------------------
@@ -157,31 +191,32 @@ Optimizers and Schedulers
 .. toctree::
     :titlesonly:
 
-    Optimizer <optim/optimizer_interface.rst>
-    Scheduler <optim/scheduler_interface.rst>
-    TorchOptimizer <optim/torch_optimizer.rst>
-    TorchScheduler <optim/torch_scheduler.rst>
+    Optimizer Interface <optim/optimizer_interface.rst>
+    Scheduler Interface <optim/scheduler_interface.rst>
+    Torch Optimizer <optim/torch_optimizer.rst>
+    Torch Scheduler <optim/torch_scheduler.rst>
     
 
-Adaptive Activation Functions
+Adaptive Functions
 -------------------------------
 
 .. toctree::
     :titlesonly:
 
-    Adaptive Function Interface <adaptive_function/AdaptiveActivationFunctionInterface.rst>
-    Adaptive ReLU <adaptive_function/AdaptiveReLU.rst>
-    Adaptive Sigmoid <adaptive_function/AdaptiveSigmoid.rst>
-    Adaptive Tanh <adaptive_function/AdaptiveTanh.rst>
-    Adaptive SiLU <adaptive_function/AdaptiveSiLU.rst>
-    Adaptive Mish <adaptive_function/AdaptiveMish.rst>
-    Adaptive ELU <adaptive_function/AdaptiveELU.rst>
-    Adaptive CELU <adaptive_function/AdaptiveCELU.rst>
-    Adaptive GELU <adaptive_function/AdaptiveGELU.rst>
-    Adaptive Softmin <adaptive_function/AdaptiveSoftmin.rst>
-    Adaptive Softmax <adaptive_function/AdaptiveSoftmax.rst>
-    Adaptive SIREN <adaptive_function/AdaptiveSIREN.rst>
-    Adaptive Exp <adaptive_function/AdaptiveExp.rst>
+    Adaptive Function Interface <adaptive_function/adaptive_function_interface.rst>
+    Base Adaptive Function <adaptive_function/base_adaptive_function.rst>
+    Adaptive CELU <adaptive_function/adaptive_celu.rst>
+    Adaptive ELU <adaptive_function/adaptive_elu.rst>
+    Adaptive Exp <adaptive_function/adaptive_exp.rst>
+    Adaptive GELU <adaptive_function/adaptive_gelu.rst>
+    Adaptive Mish <adaptive_function/adaptive_mish.rst>
+    Adaptive ReLU <adaptive_function/adaptive_relu.rst>
+    Adaptive Sigmoid <adaptive_function/adaptive_sigmoid.rst>
+    Adaptive SiLU <adaptive_function/adaptive_silu.rst>
+    Adaptive SIREN <adaptive_function/adaptive_siren.rst>
+    Adaptive Softmax <adaptive_function/adaptive_softmax.rst>
+    Adaptive Softmin <adaptive_function/adaptive_softmin.rst>
+    Adaptive Tanh <adaptive_function/adaptive_tanh.rst>
 
 
 Equations and Differential Operators
@@ -190,11 +225,30 @@ Equations and Differential Operators
 .. toctree::
     :titlesonly:
 
-    EquationInterface <equation/equation_interface.rst>
+    Equation Interface <equation/equation_interface.rst>
+    Base Equation <equation/base_equation.rst>
     Equation <equation/equation.rst>
-    SystemEquation <equation/system_equation.rst>
-    Equation Factory <equation/equation_factory.rst>
+    System Equation <equation/system_equation.rst>
     Differential Operators <operator.rst>
+
+
+Equation Zoo
+---------------------------------------
+
+.. toctree::
+    :titlesonly:
+
+    Acoustic Wave Equation <equation/zoo/acoustic_wave_equation.rst>
+    Advection Equation <equation/zoo/advection_equation.rst>
+    Allen-Cahn Equation <equation/zoo/allen_cahn_equation.rst>
+    Burgers' Equation <equation/zoo/burgers_equation.rst>
+    Diffusion-Reaction Equation <equation/zoo/diffusion_reaction_equation.rst>
+    Fixed Flux <equation/zoo/fixed_flux.rst>
+    Fixed Gradient <equation/zoo/fixed_gradient.rst>
+    Fixed Laplacian <equation/zoo/fixed_laplacian.rst>
+    Fixed Value <equation/zoo/fixed_value.rst>
+    Helmholtz Equation <equation/zoo/helmholtz_equation.rst>
+    Poisson Equation <equation/zoo/poisson_equation.rst>
 
 
 Problems
@@ -203,26 +257,28 @@ Problems
 .. toctree::
     :titlesonly:
 
-    AbstractProblem <problem/abstract_problem.rst>
+    ProblemInterface <problem/problem_interface.rst>
+    BaseProblem <problem/base_problem.rst>
     InverseProblem <problem/inverse_problem.rst>
     ParametricProblem <problem/parametric_problem.rst>
     SpatialProblem <problem/spatial_problem.rst>
     TimeDependentProblem <problem/time_dependent_problem.rst>
 
-Problems Zoo
+Problem Zoo
 --------------
 
 .. toctree::
     :titlesonly:
 
-    AcousticWaveProblem <problem/zoo/acoustic_wave.rst>
-    AdvectionProblem <problem/zoo/advection.rst>
-    AllenCahnProblem <problem/zoo/allen_cahn.rst>
-    DiffusionReactionProblem <problem/zoo/diffusion_reaction.rst>
-    HelmholtzProblem <problem/zoo/helmholtz.rst>
-    InversePoisson2DSquareProblem <problem/zoo/inverse_poisson_2d_square.rst>
-    Poisson2DSquareProblem <problem/zoo/poisson_2d_square.rst>
-    SupervisedProblem <problem/zoo/supervised_problem.rst>
+    Acoustic Wave Problem <problem/zoo/acoustic_wave_problem.rst>
+    Advection Problem <problem/zoo/advection_problem.rst>
+    Allen-Cahn Problem <problem/zoo/allen_cahn_problem.rst>
+    Burgers' Problem <problem/zoo/burgers_problem.rst>
+    Diffusion-Reaction Problem <problem/zoo/diffusion_reaction_problem.rst>
+    Helmholtz Problem <problem/zoo/helmholtz_problem.rst>
+    Inverse Poisson 2D Square Problem <problem/zoo/inverse_poisson_problem.rst>
+    Poisson 2D Square Problem <problem/zoo/poisson_problem.rst>
+    Supervised Problem <problem/zoo/supervised_problem.rst>
 
 
 Geometrical Domains
@@ -258,23 +314,37 @@ Callbacks
 
     Switch Optimizer <callback/optim/switch_optimizer.rst>
     Switch Scheduler <callback/optim/switch_scheduler.rst>
-    Normalizer Data <callback/processing/normalizer_data_callback.rst>
-    PINA Progress Bar <callback/processing/pina_progress_bar.rst>
-    Metric Tracker <callback/processing/metric_tracker.rst>
     Refinement Interface <callback/refinement/refinement_interface.rst>
+    Base Refinement <callback/refinement/base_refinement.rst>
     R3 Refinement <callback/refinement/r3_refinement.rst>
+    Data Normalizer <callback/processing/data_normalizer.rst>
+    Metric Tracker <callback/processing/metric_tracker.rst>
+    PINA Progress Bar <callback/processing/pina_progress_bar.rst>
 
-Losses and Weightings
----------------------
+
+Losses 
+---------
 
 .. toctree::
     :titlesonly:
 
-    LossInterface <loss/loss_interface.rst>
-    LpLoss <loss/lploss.rst>
-    PowerLoss <loss/powerloss.rst>
-    WeightingInterface <loss/weighting_interface.rst>
-    ScalarWeighting <loss/scalar_weighting.rst>
-    NeuralTangentKernelWeighting <loss/ntk_weighting.rst>
-    SelfAdaptiveWeighting <loss/self_adaptive_weighting.rst>
-    LinearWeighting <loss/linear_weighting.rst>
+    DualLossInterface <loss/dual_loss_interface.rst>
+    BaseDualLoss <loss/base_dual_loss.rst>
+    LpLoss <loss/lp_loss.rst>
+    PowerLoss <loss/power_loss.rst>
+    SinkhornLoss <loss/sinkhorn_loss.rst>
+
+
+Weighting Schemas
+--------------------
+
+.. toctree::
+    :titlesonly:
+
+    Weighting Interface <weighting/weighting_interface.rst>
+    Base Weighting <weighting/base_weighting.rst>
+    Linear Weighting <weighting/linear_weighting.rst>
+    Neural-Tangent-Kernel Weighting <weighting/ntk_weighting.rst>
+    No Weighting <weighting/no_weighting.rst>
+    Scalar Weighting <weighting/scalar_weighting.rst>
+    Self-Adaptive Weighting <weighting/self_adaptive_weighting.rst>

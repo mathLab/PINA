@@ -1,0 +1,937 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pina._src.solver.base_solver &#8212; pina-mathlab 0.3.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/_src/solver/base_solver';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3.0" />
+    <meta name="docbuild:last-update" content="Jun 24, 2026"/>
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_tutorial.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i><span class="visually-hidden">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_tutorial.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i><span class="visually-hidden">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina._src.solver.base_solver</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pina._src.solver.base_solver</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for the base solver class.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">import</span> <span class="nn">lightning</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">pina._src.core.utils</span> <span class="kn">import</span> <span class="n">labelize_forward</span><span class="p">,</span> <span class="n">check_consistency</span>
+<span class="kn">from</span> <span class="nn">pina._src.solver.solver_interface</span> <span class="kn">import</span> <span class="n">SolverInterface</span>
+<span class="kn">from</span> <span class="nn">pina._src.weighting.base_weighting</span> <span class="kn">import</span> <span class="n">BaseWeighting</span>
+<span class="kn">from</span> <span class="nn">pina._src.problem.inverse_problem</span> <span class="kn">import</span> <span class="n">InverseProblem</span>
+<span class="kn">from</span> <span class="nn">pina._src.optim.torch_optimizer</span> <span class="kn">import</span> <span class="n">TorchOptimizer</span>
+<span class="kn">from</span> <span class="nn">pina._src.optim.torch_scheduler</span> <span class="kn">import</span> <span class="n">TorchScheduler</span>
+<span class="kn">from</span> <span class="nn">pina._src.weighting.no_weighting</span> <span class="kn">import</span> <span class="n">_NoWeighting</span>
+<span class="kn">from</span> <span class="nn">pina._src.problem.base_problem</span> <span class="kn">import</span> <span class="n">BaseProblem</span>
+<span class="kn">from</span> <span class="nn">pina._src.loss.base_dual_loss</span> <span class="kn">import</span> <span class="n">BaseDualLoss</span>
+
+
+<div class="viewcode-block" id="BaseSolver">
+<a class="viewcode-back" href="../../../../_rst/solver/base_solver.html#pina._src.solver.base_solver.BaseSolver">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseSolver</span><span class="p">(</span><span class="n">SolverInterface</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for all solvers, implementing common functionality.</span>
+
+<span class="sd">    All solvers must inherit from this class and implement abstract methods</span>
+<span class="sd">    defined in :class:`~pina.solver.solver_interface.SolverInterface`.</span>
+
+<span class="sd">    This class is not meant to be instantiated directly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Define the available reductions for loss computation</span>
+    <span class="n">_AVAILABLE_REDUCTIONS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;none&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+        <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">,</span> <span class="n">use_lt</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`BaseSolver` class.</span>
+
+<span class="sd">        :param BaseProblem problem: The problem to be solved.</span>
+<span class="sd">        :param bool use_lt: If ``True``, the solver uses LabelTensors as input.</span>
+<span class="sd">            Default is ``True``.</span>
+<span class="sd">        :raises ValueError: If ``use_lt`` is not a boolean.</span>
+<span class="sd">        :raises ValueError: If ``problem`` is not an instance of</span>
+<span class="sd">            :class:`~pina.problem.base_problem.BaseProblem`.</span>
+<span class="sd">        :raises ValueError: If one or more problem conditions are not supported</span>
+<span class="sd">            by the solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reset the solver state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="c1"># Call the parent class initializer</span>
+        <span class="n">lightning</span><span class="o">.</span><span class="n">pytorch</span><span class="o">.</span><span class="n">LightningModule</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">use_lt</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">BaseProblem</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">problem</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">check_consistency</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accepted_conditions_types</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the solver components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span> <span class="o">=</span> <span class="n">problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_use_lt</span> <span class="o">=</span> <span class="n">use_lt</span>
+
+        <span class="c1"># Manage InverseProblem parameters if needed</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span> <span class="n">InverseProblem</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">unknown_parameters</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clamp_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clamp_inverse_problem_params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clamp_params</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span>
+
+        <span class="c1"># Labelize the forward method if using LabelTensors</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_lt</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="n">labelize_forward</span><span class="p">(</span>
+                <span class="n">forward</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span>
+                <span class="n">input_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">input_variables</span><span class="p">,</span>
+                <span class="n">output_variables</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">output_variables</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="BaseSolver.reset">
+<a class="viewcode-back" href="../../../../_rst/solver/base_solver.html#pina._src.solver.base_solver.BaseSolver.reset">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset the internal solver state, clearing the stored problem, models,</span>
+<span class="sd">        optimizers and schedulers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_schedulers</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_clamp_inverse_problem_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clamp the unknown parameters of an inverse problem. Each unknown</span>
+<span class="sd">        parameter is constrained to lie within the corresponding bounds defined</span>
+<span class="sd">        by the inverse problem parameter domain.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">unknown_parameter_domain</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">unknown_parameter_domain</span><span class="o">.</span><span class="n">range</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_weighting_and_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the weighting strategy and loss function.</span>
+
+<span class="sd">        :param BaseWeighting weighting: The weighting strategy used to combine</span>
+<span class="sd">            condition losses. If ``None``, no weighting is applied. Default is</span>
+<span class="sd">            ``None``.</span>
+<span class="sd">        :param loss: The loss function used to compute residual losses.</span>
+<span class="sd">            If ``None``, :class:`torch.nn.MSELoss` is used. Default is ``None``.</span>
+<span class="sd">        :type loss: torch.nn.Module | BaseDualLoss</span>
+<span class="sd">        :raises ValueError: If ``weighting`` is not an instance of</span>
+<span class="sd">            :class:`~pina.weighting.base_weighting.BaseWeighting`.</span>
+<span class="sd">        :raises ValueError: If ``loss`` is not a valid PyTorch loss or</span>
+<span class="sd">            :class:`~pina.loss.base_dual_loss.BaseDualLoss`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If no weighting schema is provided, use a default no-weighting schema</span>
+        <span class="k">if</span> <span class="n">weighting</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weighting</span> <span class="o">=</span> <span class="n">_NoWeighting</span><span class="p">()</span>
+
+        <span class="c1"># Set default loss function to MSE if not provided</span>
+        <span class="k">if</span> <span class="n">loss</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">weighting</span><span class="p">,</span> <span class="n">BaseWeighting</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="p">(</span><span class="n">BaseDualLoss</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">_Loss</span><span class="p">))</span>
+
+        <span class="c1"># Store the weighting and loss function for use in the solver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_weighting</span> <span class="o">=</span> <span class="n">weighting</span>
+        <span class="n">weighting</span><span class="o">.</span><span class="n">_solver</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span> <span class="o">=</span> <span class="n">loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="s2">&quot;reduction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">,</span> <span class="s2">&quot;reduction&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_init_solver_components</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">models</span><span class="p">,</span>
+        <span class="n">optimizers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">schedulers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the solver models, optimizers and schedulers.</span>
+
+<span class="sd">        :param models: The model or list of models used by the solver.</span>
+<span class="sd">        :type models: torch.nn.Module | list[torch.nn.Module]</span>
+<span class="sd">        :param optimizers: The optimizer or list of optimizers used by the</span>
+<span class="sd">            solver. If ``None``, the ``torch.optim.Adam`` optimizer with a</span>
+<span class="sd">            learning rate of ``0.001`` is used for each model.</span>
+<span class="sd">            Default is ``None``.</span>
+<span class="sd">        :type optimizers: TorchOptimizer | list[TorchOptimizer]</span>
+<span class="sd">        :param schedulers: The scheduler or list of schedulers used by the</span>
+<span class="sd">            solver. If ``None``, the ``torch.optim.lr_scheduler.ConstantLR``</span>
+<span class="sd">            scheduler with a factor of ``1.0`` is used for each model.</span>
+<span class="sd">            Default is ``None``.</span>
+<span class="sd">        :type schedulers: TorchScheduler | list[TorchScheduler]</span>
+<span class="sd">        :raises ValueError: If ``models`` are not instances of</span>
+<span class="sd">            :class:`torch.nn.Module`.</span>
+<span class="sd">        :raises ValueError: If ``optimizers`` are not instances of</span>
+<span class="sd">            :class:`~pina.optim.torch_optimizer.TorchOptimizer`.</span>
+<span class="sd">        :raises ValueError: If ``schedulers`` are not instances of</span>
+<span class="sd">            :class:`~pina.optim.torch_scheduler.TorchScheduler`.</span>
+<span class="sd">        :raises ValueError: If the number of optimizers does not match that of</span>
+<span class="sd">            models.</span>
+<span class="sd">        :raises ValueError: If the number of schedulers does not match that of</span>
+<span class="sd">            models.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Helper function to map single items to lists if needed</span>
+        <span class="n">_to_list</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="k">else</span> <span class="n">x</span>
+
+        <span class="c1"># Map models to list if a single model is provided</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">_to_list</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+
+        <span class="c1"># Set default optimizers to Adam if not provided</span>
+        <span class="k">if</span> <span class="n">optimizers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">optimizers</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">TorchOptimizer</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">))</span>
+            <span class="p">]</span>
+
+        <span class="c1"># Set default schedulers to ConstantLR if not provided</span>
+        <span class="k">if</span> <span class="n">schedulers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">schedulers</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">TorchScheduler</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ConstantLR</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">))</span>
+            <span class="p">]</span>
+
+        <span class="c1"># Map optimizers and schedulers to lists if single items are provided</span>
+        <span class="n">optimizers</span> <span class="o">=</span> <span class="n">_to_list</span><span class="p">(</span><span class="n">optimizers</span><span class="p">)</span>
+        <span class="n">schedulers</span> <span class="o">=</span> <span class="n">_to_list</span><span class="p">(</span><span class="n">schedulers</span><span class="p">)</span>
+
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">optimizers</span><span class="p">,</span> <span class="n">TorchOptimizer</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">schedulers</span><span class="p">,</span> <span class="n">TorchScheduler</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+
+        <span class="c1"># Check that the number of optimizers matches the number of models</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimizers</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;You must define one optimizer for each model.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span><span class="si">}</span><span class="s2"> models, and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">optimizers</span><span class="p">)</span><span class="si">}</span><span class="s2"> optimizers.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check that the number of schedulers matches the number of models</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">schedulers</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;You must define one scheduler for each model.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span><span class="si">}</span><span class="s2"> models, and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">schedulers</span><span class="p">)</span><span class="si">}</span><span class="s2"> schedulers.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Initialize the solver components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_models</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_optimizers</span> <span class="o">=</span> <span class="n">optimizers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pina_schedulers</span> <span class="o">=</span> <span class="n">schedulers</span>
+
+<div class="viewcode-block" id="BaseSolver.training_step">
+<a class="viewcode-back" href="../../../../_rst/solver/base_solver.html#pina._src.solver.base_solver.BaseSolver.training_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver training step.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :param int batch_idx: The index of the current batch.</span>
+<span class="sd">        :return: The loss of the training step.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_evaluation_step</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="o">=</span><span class="n">batch_idx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;train_loss&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">logging_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+
+<div class="viewcode-block" id="BaseSolver.validation_step">
+<a class="viewcode-back" href="../../../../_rst/solver/base_solver.html#pina._src.solver.base_solver.BaseSolver.validation_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver validation step.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :param int batch_idx: The index of the current batch.</span>
+<span class="sd">        :return: The loss of the training step.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_evaluation_step</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="o">=</span><span class="n">batch_idx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;val_loss&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">logging_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+
+<div class="viewcode-block" id="BaseSolver.test_step">
+<a class="viewcode-back" href="../../../../_rst/solver/base_solver.html#pina._src.solver.base_solver.BaseSolver.test_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver test step.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :param int batch_idx: The index of the current batch.</span>
+<span class="sd">        :return: The loss of the training step.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_evaluation_step</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="o">=</span><span class="n">batch_idx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test_loss&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">logging_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_compute_condition_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the scalar loss for a given condition and its data.</span>
+
+<span class="sd">        :param BaseCondition condition: The condition for which to compute the</span>
+<span class="sd">            loss.</span>
+<span class="sd">        :param dict data: The data corresponding to the condition.</span>
+<span class="sd">        :param int batch_idx: The index of the current batch.</span>
+<span class="sd">        :return: The scalar loss for the condition.</span>
+<span class="sd">        :rtype: torch.Tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Clone the input tensor if it exists to avoid in-place modifications</span>
+        <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="s2">&quot;clone&quot;</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+        <span class="c1"># Prepare condition data, e.g. by enabling gradient for regularizations</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_condition_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># Compute and store the residual tensor for the condition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residual_tensor</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Retrieve condition name for more complex weighting schemes</span>
+        <span class="n">condition_name</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="c1"># Compute the tensor loss from the residual tensor</span>
+        <span class="n">condition_tensor_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_from_residual</span><span class="p">(</span><span class="n">condition_name</span><span class="p">)</span>
+
+        <span class="c1"># Optional regularization hook, e.g gradient-enhanced or residual-based</span>
+        <span class="n">condition_tensor_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regularize_condition_loss</span><span class="p">(</span>
+            <span class="n">condition_tensor_loss</span><span class="o">=</span><span class="n">condition_tensor_loss</span><span class="p">,</span>
+            <span class="n">condition_name</span><span class="o">=</span><span class="n">condition_name</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">batch_idx</span><span class="o">=</span><span class="n">batch_idx</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Compute the scalar loss from the tensor loss and return it</span>
+        <span class="n">condition_scalar_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_reduction</span><span class="p">(</span><span class="n">condition_tensor_loss</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">condition_scalar_loss</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_condition_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare the condition data for loss computation. This method can be</span>
+<span class="sd">        overridden by mixins to implement specific data preparation steps, such</span>
+<span class="sd">        as enabling gradient tracking for inputs in gradient-enhanced solvers.</span>
+
+<span class="sd">        :param dict data: The original condition data.</span>
+<span class="sd">        :return: The prepared condition data.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">_regularize_condition_loss</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">condition_tensor_loss</span><span class="p">,</span>
+        <span class="n">condition_name</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">batch_idx</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Regularize the condition loss if needed. This method can be overridden</span>
+<span class="sd">        by mixins to implement specific regularization strategies, such as</span>
+<span class="sd">        adding a gradient penalty in gradient-enhanced solvers or applying</span>
+<span class="sd">        residual-based attention.</span>
+
+<span class="sd">        :param condition_tensor_loss: The original tensor loss for the</span>
+<span class="sd">            condition.</span>
+<span class="sd">        :type condition_tensor_loss: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param str condition_name: The name of the condition.</span>
+<span class="sd">        :param dict data: The data corresponding to the condition.</span>
+<span class="sd">        :param int batch_idx: The index of the current batch.</span>
+<span class="sd">        :return: The regularized tensor loss for the condition.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">condition_tensor_loss</span>
+
+    <span class="k">def</span> <span class="nf">_loss_from_residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the tensor loss from the residual tensor.</span>
+
+<span class="sd">        :param str condition_name: The name of the condition.</span>
+<span class="sd">        :return: The tensor loss computed from the residual tensor.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute the loss tensor and appply reduction</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">residual_tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residual_tensor</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_apply_reduction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the specified reduction to the loss tensor.</span>
+
+<span class="sd">        :param value: The loss tensor to reduce.</span>
+<span class="sd">        :type value: torch.Tensor | LabelTensor</span>
+<span class="sd">        :return: The reduced loss.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the reduction function based on the specified reduction type</span>
+        <span class="n">reduction_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_AVAILABLE_REDUCTIONS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span><span class="p">)</span>
+
+        <span class="c1"># If the reduction type is not supported, raise an error</span>
+        <span class="k">if</span> <span class="n">reduction_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported reduction &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_reduction</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Available options include </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_AVAILABLE_REDUCTIONS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">reduction_fn</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseSolver.get_batch_size">
+<a class="viewcode-back" href="../../../../_rst/solver/base_solver.html#pina._src.solver.base_solver.BaseSolver.get_batch_size">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_batch_size</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the batch size.</span>
+
+<span class="sd">        :param list[tuple[str, dict]] batch: A batch of data. Each element is a</span>
+<span class="sd">            tuple containing a condition name and a dictionary of points.</span>
+<span class="sd">        :return: The size of the batch.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;input&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The problem instance.</span>
+
+<span class="sd">        :return: The problem instance.</span>
+<span class="sd">        :rtype: :class:`~pina.problem.base_problem.BaseProblem`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_problem</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">use_lt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Using LabelTensors as input during training.</span>
+
+<span class="sd">        :return: The use_lt attribute.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_lt</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">weighting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The weighting schema used by the solver.</span>
+
+<span class="sd">        :return: The weighting schema used by the solver.</span>
+<span class="sd">        :rtype: :class:`~pina.weighting.base_weighting.BaseWeighting`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pina_weighting</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The element-wise loss module used by the solver.</span>
+
+<span class="sd">        :return: The element-wise loss module used by the solver.</span>
+<span class="sd">        :rtype: torch.nn.Module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2026, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

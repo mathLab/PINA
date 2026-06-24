@@ -2,8 +2,8 @@ ParametricProblem
 ====================
 .. currentmodule:: pina.problem.parametric_problem
 
-.. automodule:: pina.problem.parametric_problem
+.. automodule:: pina._src.problem.parametric_problem
 
-.. autoclass:: ParametricProblem
+.. autoclass:: pina._src.problem.parametric_problem.ParametricProblem
     :members:
     :show-inheritance:

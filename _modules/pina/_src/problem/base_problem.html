@@ -1,0 +1,795 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pina._src.problem.base_problem &#8212; pina-mathlab 0.3.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/_src/problem/base_problem';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3.0" />
+    <meta name="docbuild:last-update" content="Jun 24, 2026"/>
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_tutorial.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i><span class="visually-hidden">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_tutorial.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i><span class="visually-hidden">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina._src.problem.base_problem</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pina._src.problem.base_problem</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for the BaseProblem class.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">pina._src.problem.problem_interface</span> <span class="kn">import</span> <span class="n">ProblemInterface</span>
+<span class="kn">from</span> <span class="nn">pina._src.domain.domain_interface</span> <span class="kn">import</span> <span class="n">DomainInterface</span>
+<span class="kn">from</span> <span class="nn">pina._src.core.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="kn">from</span> <span class="nn">pina._src.condition.condition</span> <span class="kn">import</span> <span class="n">Condition</span>
+<span class="kn">from</span> <span class="nn">pina._src.condition.domain_equation_condition</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DomainEquationCondition</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pina._src.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_consistency</span><span class="p">,</span>
+    <span class="n">check_positive_integer</span><span class="p">,</span>
+    <span class="n">merge_tensors</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="BaseProblem">
+<a class="viewcode-back" href="../../../../_rst/problem/base_problem.html#pina._src.problem.base_problem.BaseProblem">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseProblem</span><span class="p">(</span><span class="n">ProblemInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for all problems, implementing common functionality.</span>
+
+<span class="sd">    A problem is defined by core components, including input and output</span>
+<span class="sd">    variables, a set of conditions to be satisfied, and optionally the domains</span>
+<span class="sd">    on which these conditions are defined.</span>
+
+<span class="sd">    All problems must inherit from this class and implement abstract methods</span>
+<span class="sd">    defined in :class:`~pina.problem.problem_interface.ProblemInterface`.</span>
+
+<span class="sd">    This class is not meant to be instantiated directly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization of the :class:`BaseProblem` class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_discretised_domains</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Create a correspondence between the problem and the conditions</span>
+        <span class="k">for</span> <span class="n">condition_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span><span class="o">.</span><span class="n">problem</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">condition_name</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">condition_name</span>
+
+        <span class="c1"># Create a dictionary to store the domains of the problem</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;domains&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">domains</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Store all the domains object passed to the problem&#39;s conditions</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cond</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">DomainEquationCondition</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cond</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="n">DomainInterface</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">domain</span>
+                    <span class="n">cond</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a deep copy of the problem instance.</span>
+
+<span class="sd">        :param dict memo: The memorization dictionary used by the deepcopy</span>
+<span class="sd">            function.</span>
+<span class="sd">        :return: A deep copy of the problem instance.</span>
+<span class="sd">        :rtype: ProblemInterface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create a new instance of the same class and store it in a dictionary</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="c1"># Set the attributes of the new instance to deep copies of the original</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="BaseProblem.discretise_domain">
+<a class="viewcode-back" href="../../../../_rst/problem/base_problem.html#pina._src.problem.base_problem.BaseProblem.discretise_domain">[docs]</a>
+    <span class="k">def</span> <span class="nf">discretise_domain</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_rules</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Discretise the problem&#39;s domains by sampling a specified number of</span>
+<span class="sd">        points according to the selected sampling mode.</span>
+
+<span class="sd">        :param int n: The number of points to sample. This is ignored if</span>
+<span class="sd">            ``sample_rules`` is provided. Default is ``None``.</span>
+<span class="sd">        :param str mode: The sampling method. Available modes include:</span>
+<span class="sd">            ``&quot;random&quot;`` for random sampling, ``&quot;latin&quot;`` or ``&quot;lh&quot;`` for latin</span>
+<span class="sd">            hypercube sampling, ``&quot;chebyshev&quot;`` for Chebyshev sampling, and</span>
+<span class="sd">            ``&quot;grid&quot;`` for grid sampling. Default is ``&quot;random&quot;``.</span>
+<span class="sd">        :param domains: The domains from which to sample. If ``None``, all</span>
+<span class="sd">            domains are considered for sampling. Default is ``None``.</span>
+<span class="sd">        :type domains: str | list[str]</span>
+<span class="sd">        :param dict sample_rules: The dictionary specifying custom sampling</span>
+<span class="sd">            rules for each input variable. When provided, it overrides the</span>
+<span class="sd">            global ``n`` and ``mode`` arguments. Each key in the dictionary must</span>
+<span class="sd">            match one of the variables defined in :meth:`input_variables`, and</span>
+<span class="sd">            each value must be a dictionary containing two keys: ``n`` for the</span>
+<span class="sd">            number of points to sample for that variable, and ``mode`` for the</span>
+<span class="sd">            sampling method to use. If ``None``, the global ``n`` and ``mode``</span>
+<span class="sd">            parameters are used for all variables. Default is ``None``.</span>
+<span class="sd">        :raises ValueError: If ``sample_rules`` is provided but it is not a</span>
+<span class="sd">            dictionary.</span>
+<span class="sd">        :raises ValueError: If ``sample_rules`` is provided but its keys do not</span>
+<span class="sd">            match the input variables of the problem.</span>
+<span class="sd">        :raises ValueError: If ``sample_rules`` is provided but any of its rules</span>
+<span class="sd">            is not a dictionary containing both ``n`` and ``mode`` keys, with</span>
+<span class="sd">            ``n`` being a positive integer and ``mode`` being a string.</span>
+<span class="sd">        :raises AssertionError: If ``n`` is not a positive integer.</span>
+<span class="sd">        :raises ValueError: If ``mode`` is not a string</span>
+<span class="sd">        :raises ValueError: If ``domains`` is provided by it is neither a string</span>
+<span class="sd">            nor a list of strings.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            ``&quot;random&quot;`` is the only supported ``mode`` across all geometries:</span>
+<span class="sd">            :class:`~pina.domain.cartesian_domain.CartesianDomain`,</span>
+<span class="sd">            :class:`~pina.domain.ellipsoid_domain.EllipsoidDomain`, and</span>
+<span class="sd">            :class:`~pina.domain.simplex_domain.SimplexDomain`.</span>
+<span class="sd">            Sampling modes such as ``&quot;latin&quot;``, ``&quot;chebyshev&quot;``, and ``&quot;grid&quot;``</span>
+<span class="sd">            are only implemented for</span>
+<span class="sd">            :class:`~pina.domain.cartesian_domain.CartesianDomain`.</span>
+<span class="sd">            When custom discretisation is specified via ``sample_rules``, the</span>
+<span class="sd">            domain to be discretised must be an instance of</span>
+<span class="sd">            :class:`~pina.domain.cartesian_domain.CartesianDomain`.</span>
+
+<span class="sd">        :Example:</span>
+<span class="sd">            &gt;&gt;&gt; problem.discretise_domain(n=10, mode=&quot;random&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; problem.discretise_domain(n=10, mode=&quot;lh&quot;, domains=[&quot;boundary&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; problem.discretise_domain(</span>
+<span class="sd">            ...     sample_rules={</span>
+<span class="sd">            ...         &#39;x&#39;: {&#39;n&#39;: 10, &#39;mode&#39;: &#39;grid&#39;},</span>
+<span class="sd">            ...         &#39;y&#39;: {&#39;n&#39;: 100, &#39;mode&#39;: &#39;grid&#39;}</span>
+<span class="sd">            ...     },</span>
+<span class="sd">            ... )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialize the domains to be discretised</span>
+        <span class="k">if</span> <span class="n">domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">domains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domains</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">)):</span>
+            <span class="n">domains</span> <span class="o">=</span> <span class="p">[</span><span class="n">domains</span><span class="p">]</span>
+
+        <span class="c1"># Check sampling rules</span>
+        <span class="k">if</span> <span class="n">sample_rules</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">check_consistency</span><span class="p">(</span><span class="n">sample_rules</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+
+            <span class="c1"># Check that the keys of sample_rules match the input variables</span>
+            <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">sample_rules</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_variables</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The keys of the sample_rules dictionary must match the &quot;</span>
+                    <span class="s2">&quot;input variables.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Check that the rules for each variable are valid</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">rules</span> <span class="ow">in</span> <span class="n">sample_rules</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">check_consistency</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;n&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rules</span> <span class="ow">or</span> <span class="s2">&quot;mode&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rules</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Sampling rules for variable </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> must contain &#39;n&#39; &quot;</span>
+                        <span class="s2">&quot;and &#39;mode&#39; keys.&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">rules</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">check_consistency</span><span class="p">(</span><span class="n">rules</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
+
+        <span class="c1"># Check n only if sample_rules is not provided</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">domains</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+        <span class="c1"># If sample_rules is provided, apply custom discretisation</span>
+        <span class="k">if</span> <span class="n">sample_rules</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
+
+                <span class="c1"># Discretise each variable according to its custom rules</span>
+                <span class="n">discretised_tensor</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">rules</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">],</span> <span class="n">rules</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">],</span> <span class="n">var</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">rules</span> <span class="ow">in</span> <span class="n">sample_rules</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">]</span>
+
+                <span class="c1"># Merge the discretised tensors into a single one for the domain</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">discretised_domains</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">merge_tensors</span><span class="p">(</span><span class="n">discretised_tensor</span><span class="p">)</span>
+
+        <span class="c1"># Otherwise, apply the same n and mode to all specified domains</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">discretised_domains</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseProblem.add_points">
+<a class="viewcode-back" href="../../../../_rst/problem/base_problem.html#pina._src.problem.base_problem.BaseProblem.add_points">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_points_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append additional points to an already discretised domain.</span>
+
+<span class="sd">        :param dict new_points_dict: The dictionary mapping each domain to the</span>
+<span class="sd">            corresponding set of new points to be added. Each key in the</span>
+<span class="sd">            dictionary must match one of the domains defined in :attr:`domains`,</span>
+<span class="sd">            and each value must be a :class:`~pina.tensor.LabelTensor`</span>
+<span class="sd">            containing the new points to be added to that domain. The labels of</span>
+<span class="sd">            the points to be added must correspond to those of the domain to</span>
+<span class="sd">            which they are being added.</span>
+<span class="sd">        :raises ValueError: If ``new_points_dict`` is not a dictionary.</span>
+<span class="sd">        :raises ValueError: If any of the values in ``new_points_dict`` is not</span>
+<span class="sd">            a :class:`~pina.tensor.LabelTensor`.</span>
+<span class="sd">        :raises ValueError: If any of the keys in ``new_points_dict`` does not</span>
+<span class="sd">            match any of the domains defined in :attr:`domains`.</span>
+<span class="sd">        :raises ValueError: If any of the domains in ``new_points_dict`` has not</span>
+<span class="sd">            been discretised yet.</span>
+
+<span class="sd">        :Example:</span>
+<span class="sd">            &gt;&gt;&gt; additional_points = {</span>
+<span class="sd">            ...     &quot;boundary&quot;: LabelTensor(torch.rand(5, 2), labels=[&quot;x&quot;, &quot;y&quot;])</span>
+<span class="sd">            ... }</span>
+<span class="sd">            &gt;&gt;&gt; problem.add_points(additional_points)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">new_points_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+
+        <span class="c1"># Check the keys and values of the dictionary</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new_points_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">check_consistency</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> does not match any domain of the problem.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">discretised_domains</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Domain </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has not been discretised yet.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Append the new points to the corresponding discretised domains</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new_points_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">discretised_domains</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">discretised_domains</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">]</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseProblem.move_discretisation_into_conditions">
+<a class="viewcode-back" href="../../../../_rst/problem/base_problem.html#pina._src.problem.base_problem.BaseProblem.move_discretisation_into_conditions">[docs]</a>
+    <span class="k">def</span> <span class="nf">move_discretisation_into_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move the sampled points from the discretised domains into their</span>
+<span class="sd">        corresponding conditions. This ensures that the conditions are evaluated</span>
+<span class="sd">        on the correct set of points after discretisation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Move the discretised domains into their corresponding conditions</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cond</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="s2">&quot;domain&quot;</span><span class="p">):</span>
+
+                <span class="c1"># Create a new condition with the discretised domain as input</span>
+                <span class="n">new_condition</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span>
+                    <span class="nb">input</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">discretised_domains</span><span class="p">[</span><span class="n">cond</span><span class="o">.</span><span class="n">domain</span><span class="p">],</span>
+                    <span class="n">equation</span><span class="o">=</span><span class="n">cond</span><span class="o">.</span><span class="n">equation</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Set the domain and problem attributes of the new condition</span>
+                <span class="n">new_condition</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">cond</span><span class="o">.</span><span class="n">domain</span>
+                <span class="n">new_condition</span><span class="o">.</span><span class="n">problem</span> <span class="o">=</span> <span class="bp">self</span>
+                <span class="n">new_condition</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+                <span class="c1"># Replace the old condition in the conditions dictionary</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_condition</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The input variables of the problem.</span>
+
+<span class="sd">        :return: The input variables of the problem.</span>
+<span class="sd">        :rtype: list[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Define a helper function to convert a string to a list if needed</span>
+        <span class="n">_as_list</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span>
+
+        <span class="c1"># Collect the spatial, temporal, and parametric variables</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;spatial_variables&quot;</span><span class="p">):</span>
+            <span class="n">variables</span> <span class="o">+=</span> <span class="n">_as_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spatial_variables</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;temporal_variables&quot;</span><span class="p">):</span>
+            <span class="n">variables</span> <span class="o">+=</span> <span class="n">_as_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temporal_variables</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;parameters&quot;</span><span class="p">):</span>
+            <span class="n">variables</span> <span class="o">+=</span> <span class="n">_as_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">variables</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">discretised_domains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The dictionary containing the discretised domains of the problem. Each</span>
+<span class="sd">        key corresponds to a domain defined in :attr:`domains`, and each value</span>
+<span class="sd">        is a :class:`~pina.tensor.LabelTensor` containing the sampled points for</span>
+<span class="sd">        that domain.</span>
+
+<span class="sd">        :return: The discretised domains.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discretised_domains</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">are_all_domains_discretised</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Whether all domains of the problem have been discretised.</span>
+
+<span class="sd">        :return: ``True`` if all domains are discretised, ``False`` otherwise.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">discretised_domains</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2026, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

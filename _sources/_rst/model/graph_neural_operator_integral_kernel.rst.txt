@@ -2,6 +2,6 @@ GraphNeuralKernel
 =======================
 .. currentmodule:: pina.model.graph_neural_operator
 
-.. autoclass:: GraphNeuralKernel
+.. autoclass:: pina._src.model.graph_neural_operator.GraphNeuralKernel
    :members:
    :show-inheritance:

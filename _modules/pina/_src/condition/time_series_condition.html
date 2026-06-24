@@ -1,0 +1,740 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pina._src.condition.time_series_condition &#8212; pina-mathlab 0.3.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pina/_src/condition/time_series_condition';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.3.0" />
+    <meta name="docbuild:last-update" content="Jun 24, 2026"/>
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="light">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_tutorial.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i><span class="visually-hidden">Email</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_rst/_code.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_tutorial.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_contributing.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_team.html">
+    Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+    License
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mathLab/PINA" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/pina_mathlab?s=21" title="Twitter" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i><span class="visually-hidden">Twitter</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="mailto:pina.mathlab@gmail.com" title="Email" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i><span class="visually-hidden">Email</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pina._src.condition.time_series_condition</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pina._src.condition.time_series_condition</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for the TimeSeriesCondition class.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">pina._src.core.utils</span> <span class="kn">import</span> <span class="n">check_consistency</span><span class="p">,</span> <span class="n">check_positive_integer</span>
+<span class="kn">from</span> <span class="nn">pina._src.data.manager.data_manager</span> <span class="kn">import</span> <span class="n">_DataManager</span>
+<span class="kn">from</span> <span class="nn">pina._src.condition.base_condition</span> <span class="kn">import</span> <span class="n">BaseCondition</span>
+<span class="kn">from</span> <span class="nn">pina._src.core.label_tensor</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+
+
+<div class="viewcode-block" id="TimeSeriesCondition">
+<a class="viewcode-back" href="../../../../_rst/condition/time_series_condition.html#pina._src.condition.time_series_condition.TimeSeriesCondition">[docs]</a>
+<span class="k">class</span> <span class="nc">TimeSeriesCondition</span><span class="p">(</span><span class="n">BaseCondition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`TimeSeriesCondition` class represents an autoregressive time</span>
+<span class="sd">    series condition defined by temporal ``input`` data. The input is expected</span>
+<span class="sd">    to have shape ``[trajectories, time_steps, *features]``, where the second</span>
+<span class="sd">    dimension corresponds to the temporal evolution of each trajectory.</span>
+
+<span class="sd">    During training, the condition automatically extracts overlapping temporal</span>
+<span class="sd">    windows from the trajectories. The parameter ``unroll_length`` defines the</span>
+<span class="sd">    number of consecutive time steps contained in each temporal window, while</span>
+<span class="sd">    ``n_windows`` controls how many temporal windows are created from the</span>
+<span class="sd">    available trajectories.</span>
+
+<span class="sd">    Internally, the unrolled data is stored as a tensor of shape</span>
+<span class="sd">    ``[trajectories, n_windows, unroll_length, *features]``.</span>
+
+<span class="sd">    Supported data types include :class:`~pina.label_tensor.LabelTensor` and</span>
+<span class="sd">    :class:`torch.Tensor`.</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">    &gt;&gt;&gt; from pina import Condition, LabelTensor</span>
+<span class="sd">    &gt;&gt;&gt; import torch</span>
+
+<span class="sd">    &gt;&gt;&gt; data = LabelTensor(torch.rand(5, 10, 2), labels=[&quot;u&quot;, &quot;v&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; condition = Condition(input=data, unroll_length=5, n_windows=3)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Available fields and input data types</span>
+    <span class="n">__fields__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;unroll_length&quot;</span><span class="p">,</span> <span class="s2">&quot;n_windows&quot;</span><span class="p">,</span> <span class="s2">&quot;randomize&quot;</span><span class="p">]</span>
+    <span class="n">_avail_input_cls</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">n_windows</span><span class="p">,</span> <span class="n">unroll_length</span><span class="p">,</span> <span class="n">randomize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the input data and time-series parameters.</span>
+
+<span class="sd">        :param input: The temporal input data.</span>
+<span class="sd">        :type input: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param int n_windows: The maximum number of temporal windows to extract.</span>
+<span class="sd">        :param int unroll_length: The number of time steps in each window.</span>
+<span class="sd">        :param bool randomize: If ``True``, randomly permute the valid starting</span>
+<span class="sd">            indices before selecting the windows. Default is ``False``.</span>
+<span class="sd">        :raises ValueError: If ``input`` is not of type :class:`torch.Tensor` or</span>
+<span class="sd">            :class:`~pina.label_tensor.LabelTensor`.</span>
+<span class="sd">        :raises AssertionError: If ``unroll_length`` is not a positive integer.</span>
+<span class="sd">        :raises AssertionError: If ``n_windows`` is not a positive integer.</span>
+<span class="sd">        :raises ValueError: If ``randomize`` is not a boolean value.</span>
+<span class="sd">        :raises ValueError: If ``input`` has fewer than three dimensions.</span>
+<span class="sd">        :raises ValueError: If ``unroll_length`` is lower than 2.</span>
+<span class="sd">        :return: A new :class:`TimeSeriesCondition` instance.</span>
+<span class="sd">        :rtype: TimeSeriesCondition</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check consistency</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_avail_input_cls</span><span class="p">)</span>
+        <span class="n">check_consistency</span><span class="p">(</span><span class="n">randomize</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">n_windows</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">check_positive_integer</span><span class="p">(</span><span class="n">unroll_length</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Validate input</span>
+        <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The provided data tensor must have at least 3 dimensions: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[trajectories, time, *features]. Got shape </span><span class="si">{</span><span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Validate unroll_length</span>
+        <span class="k">if</span> <span class="n">unroll_length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;unroll_length must be strictly greater than 1 to create &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; temporal windows. Got unroll_length=</span><span class="si">{</span><span class="n">unroll_length</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TimeSeriesCondition.store_data">
+<a class="viewcode-back" href="../../../../_rst/condition/time_series_condition.html#pina._src.condition.time_series_condition.TimeSeriesCondition.store_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">store_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the unrolled time-series input data.</span>
+
+<span class="sd">        The method extracts the time-series input data and creates the temporal</span>
+<span class="sd">        windows based on the specified ``unroll_length`` and ``n_windows``.</span>
+
+<span class="sd">        :param dict kwargs: The keyword arguments containing the data to be</span>
+<span class="sd">            stored.</span>
+<span class="sd">        :return: A dictionary-like structure containing the stored data.</span>
+<span class="sd">        :rtype: _DataManager</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Extract unrolling parameters from kwargs</span>
+        <span class="n">unroll_length</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unroll_length&quot;</span><span class="p">)</span>
+        <span class="n">n_windows</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;n_windows&quot;</span><span class="p">)</span>
+        <span class="n">randomize</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;randomize&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create unrolled windows from the input data</span>
+        <span class="n">unrolled_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unroll</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">n_windows</span><span class="o">=</span><span class="n">n_windows</span><span class="p">,</span>
+            <span class="n">unroll_length</span><span class="o">=</span><span class="n">unroll_length</span><span class="p">,</span>
+            <span class="n">randomize</span><span class="o">=</span><span class="n">randomize</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Preserve labels if the input data is a LabelTensor</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+            <span class="n">unrolled_data</span> <span class="o">=</span> <span class="n">unrolled_data</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
+            <span class="n">unrolled_data</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">labels</span>
+
+        <span class="k">return</span> <span class="n">_DataManager</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">unrolled_data</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_unroll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n_windows</span><span class="p">,</span> <span class="n">unroll_length</span><span class="p">,</span> <span class="n">randomize</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build temporal windows from time-series data.</span>
+
+<span class="sd">        Given data with shape ``[trajectories, time_steps, *features]``, this</span>
+<span class="sd">        method returns a tensor of overlapping temporal windows with shape</span>
+<span class="sd">        ``[trajectories, windows, unroll_length, *features]``.</span>
+
+<span class="sd">        :param data: The temporal data tensor to be unrolled.</span>
+<span class="sd">        :type data: torch.Tensor | LabelTensor</span>
+<span class="sd">        :param int n_windows: The maximum number of temporal windows to extract.</span>
+<span class="sd">        :param int unroll_length: The number of time steps in each window.</span>
+<span class="sd">        :param bool randomize: If ``True``, starting indices are randomly</span>
+<span class="sd">            permuted before applying ``n_windows``. Default is ``True``.</span>
+<span class="sd">        :raises ValueError: If ``unroll_length`` is greater than the number of</span>
+<span class="sd">            time steps in the data.</span>
+<span class="sd">        :return: A tensor of unrolled windows.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Store the number of time steps in the data</span>
+        <span class="n">time_steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Compute the last valid starting index for unroll windows</span>
+        <span class="n">last_idx</span> <span class="o">=</span> <span class="n">time_steps</span> <span class="o">-</span> <span class="n">unroll_length</span>
+
+        <span class="c1"># Raise error if unroll_length is greater than time_steps</span>
+        <span class="k">if</span> <span class="n">last_idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot create unroll windows: unroll_length </span><span class="si">{</span><span class="n">unroll_length</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;exceeds the available number of time steps </span><span class="si">{</span><span class="n">time_steps</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Extract starting indices</span>
+        <span class="n">start_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">last_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Randomly permute starting indices if randomize is True</span>
+        <span class="k">if</span> <span class="n">randomize</span><span class="p">:</span>
+            <span class="n">start_indices</span> <span class="o">=</span> <span class="n">start_indices</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">start_indices</span><span class="p">))]</span>
+
+        <span class="c1"># Raise error if n_windows is greater than the number of valid windows</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">start_indices</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_windows</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot create </span><span class="si">{</span><span class="n">n_windows</span><span class="si">}</span><span class="s2"> unroll windows with the selected &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;unroll_length </span><span class="si">{</span><span class="n">unroll_length</span><span class="si">}</span><span class="s2"> from data with </span><span class="si">{</span><span class="n">time_steps</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;time steps. Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">start_indices</span><span class="p">)</span><span class="si">}</span><span class="s2"> valid windows are &quot;</span>
+                <span class="s2">&quot;available.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Limit the number of windows to n_windows</span>
+        <span class="n">start_indices</span> <span class="o">=</span> <span class="n">start_indices</span><span class="p">[:</span><span class="n">n_windows</span><span class="p">]</span>
+
+        <span class="c1"># Create unroll windows by slicing the input data at the starting idx</span>
+        <span class="n">windows</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[:,</span> <span class="n">s</span> <span class="p">:</span> <span class="n">s</span> <span class="o">+</span> <span class="n">unroll_length</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">start_indices</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">LabelTensor</span><span class="p">):</span>
+            <span class="c1"># Preserve labels if the input data is a LabelTensor</span>
+            <span class="n">unrolled_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">windows</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">LabelTensor</span><span class="p">)</span>
+            <span class="n">unrolled_data</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">labels</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unrolled_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">windows</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">unrolled_data</span>
+
+<div class="viewcode-block" id="TimeSeriesCondition.evaluate">
+<a class="viewcode-back" href="../../../../_rst/condition/time_series_condition.html#pina._src.condition.time_series_condition.TimeSeriesCondition.evaluate">[docs]</a>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the residual of the condition on the given batch using the</span>
+<span class="sd">        solver.</span>
+
+<span class="sd">        This method computes the per-step residuals through autoregressive</span>
+<span class="sd">        unrolling. A forward pass of the solver&#39;s model is performed at each</span>
+<span class="sd">        time step, and the per-step residuals (predicted - target) are</span>
+<span class="sd">        returned as a stacked tensor.</span>
+
+<span class="sd">        The returned tensor preserves all per-step residual values without</span>
+<span class="sd">        reduction or loss aggregation.</span>
+
+<span class="sd">        :param dict batch: The batch containing the data required by the</span>
+<span class="sd">            condition evaluation.</span>
+<span class="sd">        :param BaseSolver solver: The solver used to perform the forward pass</span>
+<span class="sd">            and compute the residual. The solver provides access to the model</span>
+<span class="sd">            and its parameters, which may be necessary for evaluating the</span>
+<span class="sd">            condition residual.</span>
+<span class="sd">        :raises ValueError: If the input tensor in the batch has less than 4</span>
+<span class="sd">            dimensions.</span>
+<span class="sd">        :return: The stacked per-step residual tensor of shape</span>
+<span class="sd">            ``[time_steps - 1, trajectories, windows, *features]``.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Raise error if input tensor does not have at least 4 dimensions</span>
+        <span class="k">if</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The provided input tensor must have at least 4 dimensions:&quot;</span>
+                <span class="s2">&quot; [trajectories, windows, time_steps, *features].&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; Got shape </span><span class="si">{</span><span class="n">batch</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Copy the kwargs to avoid modifying the original settings</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Extract the initial state and initialize the step-wise residuals list</span>
+        <span class="n">current_state</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">residuals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Iterate over the time steps</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+
+            <span class="c1"># Pre-process, forward, and post-process the current state</span>
+            <span class="n">processed_input</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">preprocess_step</span><span class="p">(</span><span class="n">current_state</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">processed_input</span><span class="p">)</span>
+            <span class="n">predicted_state</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">postprocess_step</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Retrieve the target and compute the step-wise residual</span>
+            <span class="n">target_state</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">step</span><span class="p">]</span>
+            <span class="n">step_residual</span> <span class="o">=</span> <span class="n">predicted_state</span> <span class="o">-</span> <span class="n">target_state</span>
+            <span class="n">residuals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_residual</span><span class="p">)</span>
+
+            <span class="c1"># Update the current state for the next iteration</span>
+            <span class="n">current_state</span> <span class="o">=</span> <span class="n">predicted_state</span>
+
+        <span class="c1"># Stack the step-wise residuals</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">residuals</span><span class="p">)</span><span class="o">.</span><span class="n">as_subclass</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The unrolled temporal input data.</span>
+
+<span class="sd">        :return: The input data.</span>
+<span class="sd">        :rtype: torch.Tensor | LabelTensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">input</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+<footer class="footer" style="border-top: 1px solid #ccc; padding-top: 10px">
+    <div class="container">
+        <div id="credits" style="width: 50%; float: left">
+            <p>
+                &#169; Copyright 2021-2026, <a
+                    href="https://github.com/mathLab/PINA/">PINA Developers</a>.<br />
+                Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and the <a
+                    href="https://pydata-sphinx-theme.readthedocs.io/en/stable/">PyData Theme</a>.<br />
+            </p>
+        </div>
+    </div>
+    </div>
+</footer>
+  </body>
+</html>

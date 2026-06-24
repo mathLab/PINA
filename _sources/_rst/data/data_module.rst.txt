@@ -2,14 +2,6 @@ DataModule
 ======================
 .. currentmodule:: pina.data.data_module
 
-.. autoclass:: Collator
-    :members:
-    :show-inheritance:
-
-.. autoclass:: PinaDataModule
-    :members:
-    :show-inheritance:
-
-.. autoclass:: PinaSampler
+.. autoclass:: pina._src.data.data_module.DataModule
     :members:
     :show-inheritance:

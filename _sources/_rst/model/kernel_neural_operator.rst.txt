@@ -2,6 +2,6 @@ KernelNeuralOperator
 =======================
 .. currentmodule:: pina.model.kernel_neural_operator
 
-.. autoclass:: KernelNeuralOperator
+.. autoclass:: pina._src.model.kernel_neural_operator.KernelNeuralOperator
    :members:
    :show-inheritance:
