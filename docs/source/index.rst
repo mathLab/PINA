@@ -1,3 +1,6 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
 :html_theme.sidebar_secondary.remove:
 
 Welcome to PINA's documentation!
@@ -74,7 +77,6 @@ Physics-Informed Neural Networks (PINNs), Neural Operators, and more.
          trainer = Trainer(solver, max_epochs=1000, accelerator="gpu")
          trainer.train()
 
-
    .. tab-item:: Physics-Informed Learning
 
       .. code-block:: python
@@ -118,7 +120,6 @@ Physics-Informed Neural Networks (PINNs), Neural Operators, and more.
          # Step 4. Train
          trainer = Trainer(solver, max_epochs=1000, accelerator="gpu")
          trainer.train()
-
 
 .. admonition:: What's New
    :class: tip
