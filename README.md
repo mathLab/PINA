@@ -97,7 +97,7 @@ PINA provides an intuitive framework for defining, experimenting with, and solvi
 
 
 
-<img src="https://raw.githubusercontent.com/mathLab/PINA/readme/readme/applications.gif"
+<img src="https://github.com/mathLab/PINA/blob/master/readme/applications.gif"
      alt="PINA pipeline"
      style="max-width: 100%; height: auto; margin-top: 20px;" />
 
