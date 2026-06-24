@@ -50,7 +50,6 @@ from pina.equation import Equation, FixedValue
 from pina.domain import CartesianDomain
 from pina.operator import grad, fast_grad, laplacian
 
-
 # Let's begin by defining the Burgers equation and its initial condition as Python functions. These functions will take the model's `input` (spatial and temporal coordinates) and `output` (predicted solution) as arguments. The goal is to compute the residuals for the Burgers equation, which we will minimize during training.
 
 # In[2]:
