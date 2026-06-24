@@ -21,7 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 
   </p>
   <a href="https://github.com/mathLab/PINA">
-    <img src="https://raw.githubusercontent.com/mathLab/PINA/readme/readme/pina.svg"
+    <img src="https://raw.githubusercontent.com/mathLab/PINA/refs/heads/master/readme/pina.svg"
          alt="PINA"
          width="60%"
          style="max-width: 220px; height: auto;" />
