@@ -10,6 +10,7 @@ Security fixes are given priority and might be enough to cause a new version to 
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 0.3     | ✅                |
 | 0.2     | ✅                |
 | 0.1     | ✅                |
 
