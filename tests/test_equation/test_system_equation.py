@@ -1,10 +1,12 @@
-from pina.equation import SystemEquation, FixedValue, FixedGradient
+from pina.equation import SystemEquation
+from pina.equation.zoo import FixedValue, FixedGradient
 from pina.operator import grad, laplacian
 from pina import LabelTensor
 import torch
 import pytest
 
 
+# Define equations for testing
 def eq1(input_, output_):
     u_grad = grad(output_, input_)
     u1_xx = grad(u_grad, input_, components=["du1dx"], d=["x"])
@@ -20,82 +22,63 @@ def eq2(input_, output_):
     return delta_u - force_term
 
 
-def foo():
-    pass
+def reduction_fn(residuals, dim):
+    return torch.sum(residuals, dim=dim) / residuals.shape[dim]
 
 
-@pytest.mark.parametrize("reduction", [None, "mean", "sum"])
-def test_constructor(reduction):
+# Test cases for the SystemEquation class
+eq_list1 = [eq1, eq2]
+eq_list2 = [FixedValue(value=0.0), FixedGradient(value=0.0, components=["u2"])]
+eq_list3 = [FixedValue(value=0.0, components=["u1"]), eq1]
 
-    # Constructor with callable functions
-    SystemEquation([eq1, eq2], reduction=reduction)
 
-    # Constructor with Equation instances
-    SystemEquation(
-        [
-            FixedValue(value=0.0, components=["u1"]),
-            FixedGradient(value=0.0, components=["u2"]),
-        ],
-        reduction=reduction,
-    )
+@pytest.mark.parametrize("eq_list", [eq_list1, eq_list2, eq_list3])
+@pytest.mark.parametrize("reduction", [None, "mean", "sum", reduction_fn])
+def test_constructor(eq_list, reduction):
 
-    # Constructor with mixed types
-    SystemEquation(
-        [
-            FixedValue(value=0.0, components=["u1"]),
-            eq1,
-        ],
-        reduction=reduction,
-    )
+    SystemEquation(list_equation=eq_list, reduction=reduction)
 
-    # Non-standard reduction not implemented
-    with pytest.raises(NotImplementedError):
-        SystemEquation([eq1, eq2], reduction="foo")
-
-    # Invalid input type
+    # Should fail if the list of equations is not a list
     with pytest.raises(ValueError):
-        SystemEquation(foo)
+        SystemEquation(list_equation=eq1, reduction=reduction)
+
+    # Should fail if any element of the list is neither callable nor Equation
+    with pytest.raises(ValueError):
+        SystemEquation(list_equation=[eq1, "equation"], reduction=reduction)
+
+    # Should fail if the reduction is not available
+    with pytest.raises(ValueError):
+        SystemEquation(list_equation=[eq1, eq2], reduction="foo")
 
 
-@pytest.mark.parametrize("reduction", [None, "mean", "sum"])
-def test_residual(reduction):
+@pytest.mark.parametrize("reduction", [None, "mean", "sum", reduction_fn])
+@pytest.mark.parametrize(
+    "eq_list, last_dim",
+    [(eq_list1, 3), (eq_list2, 4), (eq_list3, 3)],
+)
+def test_residual(eq_list, last_dim, reduction):
 
-    # Generate random points and output
-    pts = LabelTensor(torch.rand(10, 2), labels=["x", "y"])
-    pts.requires_grad = True
+    # Define the system of equations
+    system_eq = SystemEquation(list_equation=eq_list, reduction=reduction)
+
+    # Manage number of points and variables
+    n_pts = 10
+    input_vars = ["x", "y"]
+    output_vars = ["u1", "u2"]
+
+    # Define the input and output tensors
+    pts = LabelTensor(
+        torch.rand(n_pts, len(input_vars), requires_grad=True),
+        labels=input_vars,
+    )
     u = torch.pow(pts, 2)
-    u.labels = ["u1", "u2"]
+    u.labels = output_vars
 
-    # System with callable functions
-    system_eq = SystemEquation([eq1, eq2], reduction=reduction)
+    # Compute the residuals and check the shape
     res = system_eq.residual(pts, u)
-
-    # Checks on the shape of the residual
-    shape = torch.Size([10, 3]) if reduction is None else torch.Size([10])
-    assert res.shape == shape
-
-    # System with Equation instances
-    system_eq = SystemEquation(
-        [
-            FixedValue(value=0.0, components=["u1"]),
-            FixedGradient(value=0.0, components=["u2"]),
-        ],
-        reduction=reduction,
+    shape = (
+        torch.Size([n_pts, last_dim])
+        if reduction is None
+        else torch.Size([n_pts])
     )
-
-    # Checks on the shape of the residual
-    shape = torch.Size([10, 3]) if reduction is None else torch.Size([10])
-    assert res.shape == shape
-
-    # System with mixed types
-    system_eq = SystemEquation(
-        [
-            FixedValue(value=0.0, components=["u1"]),
-            eq1,
-        ],
-        reduction=reduction,
-    )
-
-    # Checks on the shape of the residual
-    shape = torch.Size([10, 3]) if reduction is None else torch.Size([10])
     assert res.shape == shape

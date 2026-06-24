@@ -1,7 +1,7 @@
 import torch
 import pytest
 
-from pina.label_tensor import LabelTensor
+from pina import LabelTensor
 
 data = torch.rand((20, 3))
 labels_column = {1: {"name": "space", "dof": ["x", "y", "z"]}}

@@ -1,15 +1,9 @@
-Data Conditions
+Data Condition
 ==================
 .. currentmodule:: pina.condition.data_condition
 
-.. autoclass:: DataCondition
-    :members:
-    :show-inheritance:
+.. automodule:: pina._src.condition.data_condition
 
-.. autoclass:: GraphDataCondition
-    :members:
-    :show-inheritance:
-
-.. autoclass:: TensorDataCondition
+.. autoclass:: pina._src.condition.data_condition.DataCondition
     :members:
     :show-inheritance:

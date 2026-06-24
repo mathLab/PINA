@@ -2,6 +2,6 @@ ResidualFeedForward
 ======================
 .. currentmodule:: pina.model.feed_forward
 
-.. autoclass:: ResidualFeedForward
+.. autoclass:: pina._src.model.feed_forward.ResidualFeedForward
    :members:
    :show-inheritance:

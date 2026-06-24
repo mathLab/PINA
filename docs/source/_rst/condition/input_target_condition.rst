@@ -2,22 +2,8 @@ Input Target Condition
 ===========================
 .. currentmodule:: pina.condition.input_target_condition
 
-.. autoclass:: InputTargetCondition
-    :members:
-    :show-inheritance:
+.. automodule:: pina._src.condition.input_target_condition
 
-.. autoclass:: TensorInputTensorTargetCondition
-    :members:
-    :show-inheritance:
-
-.. autoclass:: TensorInputGraphTargetCondition
-    :members:
-    :show-inheritance:
-
-.. autoclass:: GraphInputTensorTargetCondition
-    :members:
-    :show-inheritance:
-
-.. autoclass:: GraphInputGraphTargetCondition
+.. autoclass::  pina._src.condition.input_target_condition.InputTargetCondition
     :members:
     :show-inheritance:

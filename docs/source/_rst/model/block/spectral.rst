@@ -2,14 +2,14 @@ Spectral Convolution Block
 ============================
 .. currentmodule:: pina.model.block.spectral
     
-.. autoclass:: SpectralConvBlock1D
+.. autoclass:: pina._src.model.block.spectral.SpectralConvBlock1D
     :members:
     :show-inheritance:
 
-.. autoclass:: SpectralConvBlock2D
+.. autoclass:: pina._src.model.block.spectral.SpectralConvBlock2D
     :members:
     :show-inheritance:
 
-.. autoclass:: SpectralConvBlock3D
+.. autoclass:: pina._src.model.block.spectral.SpectralConvBlock3D
     :members:
     :show-inheritance:

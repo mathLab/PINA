@@ -3,6 +3,6 @@ Trainer
 
 .. automodule:: pina.trainer
 
-.. autoclass:: Trainer
+.. autoclass:: pina._src.core.trainer.Trainer
     :members:
     :show-inheritance:

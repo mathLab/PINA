@@ -1,7 +1,7 @@
-TorchScheduler
+Torch Scheduler
 ===============
 .. currentmodule:: pina.optim.torch_scheduler
 
-.. autoclass:: TorchScheduler
+.. autoclass:: pina._src.optim.torch_scheduler.TorchScheduler
    :members:
    :show-inheritance:
