@@ -1,3 +1,10 @@
+.. docmeta::
+   :status: needs-review
+   :needs_example: true
+   :needs_advanced_example: false
+   :reviewer:
+   :last_reviewed: 2026-06-24
+
 Helmholtz Equation
 =====================
 .. currentmodule:: pina.equation.zoo.helmholtz_equation

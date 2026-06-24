@@ -1,3 +1,10 @@
+.. docmeta::
+   :status: complete
+   :needs_example: false
+   :needs_advanced_example: false
+   :reviewer:
+   :last_reviewed: 2026-06-24
+
 Code Documentation
 ==================
 Welcome to PINA documentation! Here you can find the modules of the package divided in different sections.
