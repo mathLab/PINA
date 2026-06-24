@@ -67,6 +67,9 @@ SPDX-License-Identifier: Apache-2.0
       <b>[v0.3]</b> – <b>Conditions refactoring:</b> evaluation logic moved out of the solver and into the condition itself via a dedicated <code>evaluate</code> method, decoupling the training loop from problem-specific logic and enabling fully modular, solver-agnostic conditions.
     </li>
     <li>
+      <b>[v0.3]</b> – <b>Time-dependent conditions:</b> added dedicated time series and graph time series conditions to support time-dependent problems and autoregressive formulations across sequential and graph-structured data.
+    </li>
+    <li>
       <b>[v0.3]</b> – <b>Code cleanup:</b> core internals migrated to the <code>_src</code> pattern; interfaces and base classes introduced across conditions, problems (<code>AbstractProblem</code> → <code>BaseProblem</code>), losses, and data module; equation zoo reorganized with Burgers added.
     </li>
     <li>
