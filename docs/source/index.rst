@@ -48,76 +48,82 @@ Physics-Informed Neural Networks (PINNs), Neural Operators, and more.
 
 .. tab-set::
 
-   .. tab-item:: Physics-Informed NN
+   .. tab-item:: Data Driven Learning
 
       .. code-block:: python
 
-         from pina import Condition, Trainer
-         from pina.problem import SpatialProblem
-         from pina.solver import PINN
+         import torch
+         from pina import Trainer
          from pina.model import FeedForward
-         from pina.equation import Equation, FixedValue
+         from pina.problem.zoo import SupervisedProblem
+         from pina.solver import SupervisedSingleModelSolver
+
+         input_tensor  = torch.rand((10, 1))
+         target_tensor = input_tensor.pow(3)
+
+         # Step 1. Define problem
+         problem = SupervisedProblem(input_tensor, target_tensor)
+
+         # Step 2. Define model
+         model = FeedForward(input_dimensions=1, output_dimensions=1, layers=[64, 64])
+
+         # Step 3. Define solver
+         solver = SupervisedSingleModelSolver(problem, model, use_lt=False)
+
+         # Step 4. Train
+         trainer = Trainer(solver, max_epochs=1000, accelerator="gpu")
+         trainer.train()
+
+
+   .. tab-item:: Physics-Informed Learning
+
+      .. code-block:: python
+
+         from pina.operator import grad
+         from pina.model import FeedForward
+         from pina.equation import Equation
+         from pina import Trainer, Condition
          from pina.domain import CartesianDomain
+         from pina.problem import SpatialProblem
+         from pina.equation.zoo import FixedValue
+         from pina.solver import PhysicsInformedSingleModelSolver
 
-         class PoissonProblem(SpatialProblem):
-             output_variables = ["u"]
-             domains = {"domain": CartesianDomain({"x": [0, 1], "y": [0, 1]}),
-                        "boundary": CartesianDomain({"x": [0, 1], "y": [0, 1]})}
-             conditions = {"boundary": Condition(domain="boundary",
-                                                  equation=FixedValue(0)),
-                           "domain": Condition(domain="domain",
-                                                equation=Equation("d2(u,x)+d2(u,y)+sin(pi*x)*sin(pi*y)=0"))}
+         def ode_equation(input_, output_):
+            u_x = grad(output_, input_, components=["u"], d=["x"])
+            u = output_.extract(["u"])
+            return u_x - u
 
-         problem = PoissonProblem()
-         model = FeedForward(input_dimensions=2, output_dimensions=1)
-         pinn = PINN(problem=problem, model=model)
-         trainer = Trainer(solver=pinn, max_epochs=1000)
+         class SimpleODE(SpatialProblem):
+            output_variables = ["u"]
+            spatial_domain = CartesianDomain({"x": [0, 1]})
+            domains = {
+               "x0": CartesianDomain({"x": 0.0}),
+               "D": CartesianDomain({"x": [0, 1]}),
+            }
+            conditions = {
+               "bound_cond": Condition(domain="x0", equation=FixedValue(1.0)),
+               "phys_cond": Condition(domain="D", equation=Equation(ode_equation)),
+            }
+
+         # Step 1. Define problem
+         problem = SimpleODE()
+         problem.discretise_domain(n=100, mode="grid", domains=["D", "x0"])
+
+         # Step 2. Define model
+         model = FeedForward(input_dimensions=1, output_dimensions=1, layers=[64, 64])
+
+         # Step 3. Define solver
+         solver = PhysicsInformedSingleModelSolver(problem, model)
+
+         # Step 4. Train
+         trainer = Trainer(solver, max_epochs=1000, accelerator="gpu")
          trainer.train()
 
-   .. tab-item:: Neural Operator
-
-      .. code-block:: python
-
-         from pina import Condition, Trainer
-         from pina.problem import AbstractProblem
-         from pina.solver import SupervisedSolver
-         from pina.model import FNO
-
-         class DarcyProblem(AbstractProblem):
-             output_variables = ["u"]
-             conditions = {"data": Condition(input=("x", "y"), target="u")}
-
-         problem = DarcyProblem()
-         fno = FNO(input_dimensions=3, output_dimensions=1, n_modes=[16, 16])
-         solver = SupervisedSolver(problem=problem, model=fno)
-         trainer = Trainer(solver=solver, max_epochs=500)
-         trainer.train()
-
-   .. tab-item:: Supervised
-
-      .. code-block:: python
-
-         from pina import Condition, Trainer
-         from pina.problem import AbstractProblem
-         from pina.solver import SupervisedSolver
-         from pina.model import FeedForward
-
-         class RegressionProblem(AbstractProblem):
-             output_variables = ["y"]
-             conditions = {"data": Condition(input="x", target="y")}
-
-         problem = RegressionProblem()
-         model = FeedForward(input_dimensions=1, output_dimensions=1)
-         solver = SupervisedSolver(problem=problem, model=model)
-         trainer = Trainer(solver=solver, max_epochs=200)
-         trainer.train()
 
 .. admonition:: What's New
    :class: tip
 
-   * **Jan 2026**: Added Equivariant Graph Neural Operator and GAROM solvers.
-   * **Oct 2025**: New Self-Adaptive PINN and CausalPINN solvers available.
-   * **Jul 2025**: Major API overhaul with simplified :class:`~pina.condition.Condition` interface.
+   .. readme-news::
 
 .. grid:: 1 2 2 3
    :gutter: 3

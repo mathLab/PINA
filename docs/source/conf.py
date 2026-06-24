@@ -43,6 +43,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "paramref_extension",  # this extension is made to remove paramref links from lightining doc
     "docmeta_extension",   # register .. docmeta:: directive for doc state tracking
+    "readme_include",      # pull examples and news from the project README at build time
     "sphinx_copybutton",
     "sphinx_design",
 ]
