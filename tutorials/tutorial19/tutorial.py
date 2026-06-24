@@ -32,7 +32,6 @@ warnings.filterwarnings("ignore")
 
 from pina import LabelTensor, Graph
 
-
 # ## PyTorch Tensors
 #
 # A **tensor** is a multi-dimensional matrix used for storing and manipulating data in PyTorch. It's the basic building block for all computations in PyTorch, including deep learning models.

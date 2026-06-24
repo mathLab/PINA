@@ -39,7 +39,6 @@ from pina.domain import (
     BaseDomain,
 )
 
-
 # ## Built-in Geometries
 
 # We start with PINA’s built-in geometries. In particular, we define a Cartesian domain, an ellipsoid domain, and a simplex domain, all in two dimensions. Extending these constructions to higher dimensions follows the same principles.
