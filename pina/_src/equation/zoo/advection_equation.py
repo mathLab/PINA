@@ -16,6 +16,13 @@ class AdvectionEquation(Equation):
         \frac{\partial u}{\partial t} + c \cdot \nabla u = 0
 
     Here, :math:`c` is the advection velocity parameter.
+
+    :Example:
+
+        >>> from pina.equation import AdvectionEquation
+        >>> eq = AdvectionEquation(c=1.0)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, c):

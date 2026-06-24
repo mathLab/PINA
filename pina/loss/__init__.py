@@ -1,4 +1,16 @@
-"""Module for loss functions."""
+"""Module for loss functions.
+
+:Example:
+
+    >>> from pina.loss import LpLoss
+    >>> import torch
+    >>> loss_fn = LpLoss(p=2)
+    >>> x = torch.rand(10, 3)
+    >>> y = torch.rand(10, 3)
+    >>> loss = loss_fn(x, y)
+    >>> loss.ndim
+    0
+"""
 
 __all__ = [
     "DualLossInterface",

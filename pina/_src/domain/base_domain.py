@@ -14,6 +14,15 @@ class BaseDomain(DomainInterface, metaclass=ABCMeta):
     abstract methods of :class:`~pina.domain.domain_interface.DomainInterface`.
 
     This class is not meant to be instantiated directly.
+
+    :Example:
+
+        >>> from pina.domain import CartesianDomain
+        >>> domain = CartesianDomain({"x": [0, 1], "y": [0, 1]})
+        >>> domain.variables
+        ['x', 'y']
+        >>> domain.sample(5, mode="random")
+        LabelTensor([...], labels=["x", "y"])
     """
 
     def __init__(self, variables_dict=None):

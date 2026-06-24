@@ -28,6 +28,20 @@ class DeepTensorNetworkBlock(MessagePassing):
         (2017). *Quantum-Chemical Insights from Deep Tensor Neural Networks*.
         Nature Communications 8, 13890 (2017).
         DOI: `<https://doi.org/10.1038/ncomms13890>`_.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block.message_passing import (
+        ...     DeepTensorNetworkBlock
+        ... )
+        >>> block = DeepTensorNetworkBlock(
+        ...     node_feature_dim=16, edge_feature_dim=4
+        ... )
+        >>> x = torch.randn(10, 16)
+        >>> edge_index = torch.randint(0, 10, (2, 30))
+        >>> edge_attr = torch.randn(30, 4)
+        >>> out = block(x, edge_index, edge_attr)
     """
 
     def __init__(

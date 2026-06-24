@@ -13,6 +13,16 @@ class _GraphDataManager(_DataManagerInterface):
     """
     Data manager for graph-based data. It handles inputs stored as
     :class:`Graph`, :class:`Data`, or lists / tuples of these types.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.graph import Graph
+        >>> graph = Graph(pos=torch.randn(5, 2),
+        ...     edge_index=torch.tensor([[0, 1], [1, 0]]))
+        >>> manager = _GraphDataManager(data=graph, target=torch.randn(5, 1))
+        >>> len(manager)
+        1
     """
 
     def __init__(self, **kwargs):

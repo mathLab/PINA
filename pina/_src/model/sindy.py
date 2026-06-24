@@ -39,6 +39,15 @@ class SINDy(torch.nn.Module):
         Proceedings of the National Academy of Sciences, 113(15), 3932-3937.
         DOI: `10.1073/pnas.1517384113
         <https://doi.org/10.1073/pnas.1517384113>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import SINDy
+        >>> library = [lambda x: x, lambda x: x**2]
+        >>> model = SINDy(library=library, output_dimension=2)
+        >>> x = torch.randn(10, 2)
+        >>> out = model(x)
     """
 
     def __init__(self, library, output_dimension):

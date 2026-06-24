@@ -20,12 +20,12 @@ class Condition:
 
     It encapsulates all types of constraints - physical, boundary, initial, or
     data-driven - that the solver must satisfy during training. The specific
-    behavior is inferred from the arguments passed to the constructor.
+    behaviour is inferred from the arguments passed to the constructor.
 
     Multiple types of conditions can be used within the same problem, allowing
     for a high degree of flexibility in defining complex problems.
 
-    The :class:`Condition` class behavior specializes internally based on the
+    The :class:`Condition` class behaviour specializes internally based on the
     arguments provided during instantiation. Depending on the specified keyword
     arguments, the class automatically selects the appropriate internal
     implementation.

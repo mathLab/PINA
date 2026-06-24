@@ -23,6 +23,13 @@ class NeuralTangentKernelWeighting(BaseWeighting):
         A neural tangent kernel perspective*. Journal of
         Computational Physics 449 (2022): 110768.
         DOI: `10.1016 <https://doi.org/10.1016/j.jcp.2021.110768>`_.
+
+    :Example:
+
+        >>> from pina.weighting import NeuralTangentKernelWeighting
+        >>> weighting = NeuralTangentKernelWeighting(alpha=0.5)
+        >>> # Typically used within a PINA solver:
+        >>> # solver = PINN(problem=problem, weighting=weighting)
     """
 
     def __init__(self, update_every_n_epochs=1, alpha=0.5):

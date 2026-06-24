@@ -24,10 +24,17 @@ class MultiModelSolver(
     :class:`~pina._src.solver.base_solver.BaseSolver` with multi-model handling,
     manual optimization, and condition-wise loss aggregation.
 
-    Subclasses can inherit from this class to implement solver-specific behavior
+    Subclasses can inherit from this class to implement solver-specific behaviour
     while reusing the common logic for model registration, optimizer and
     scheduler setup, manual optimization, loss evaluation, weighting, and
     aggregation across problem conditions.
+
+    :Example:
+
+        >>> from pina.solver import MultiModelSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # Typically used as a base class.
+        >>> # solver = MultiModelSolver(problem=problem, models=[model1, model2])
     """
 
     def __init__(

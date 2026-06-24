@@ -12,6 +12,15 @@ class TorchScheduler(SchedulerInterface):
 
     This class wraps a ``torch.optim.lr_scheduler.LRScheduler`` class and defers
     its instantiation until runtime, once the optimizer instance is available.
+
+    :Example:
+
+        >>> from pina.optim import TorchScheduler
+        >>> import torch
+        >>> scheduler = TorchScheduler(
+        ...     torch.optim.lr_scheduler.StepLR, step_size=5)
+        >>> scheduler.scheduler_class
+        <class 'torch.optim.lr_scheduler.StepLR'>
     """
 
     def __init__(self, scheduler_class, **kwargs):

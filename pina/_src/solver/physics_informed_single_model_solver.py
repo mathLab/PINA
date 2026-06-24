@@ -49,6 +49,14 @@ class PhysicsInformedSingleModelSolver(PhysicsInformedMixin, SingleModelSolver):
         Nature Reviews Physics, 3, 422-440.
         DOI: `10.1038/s42254-021-00314-5
         <https://doi.org/10.1038/s42254-021-00314-5>`_.
+
+    :Example:
+
+        >>> from pina.solver import PINN
+        >>> from pina.problem import PoissonProblem
+        >>> # problem = PoissonProblem()
+        >>> # solver = PINN(problem=problem, model=model)
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

@@ -6,6 +6,13 @@ from abc import ABCMeta, abstractmethod
 class DomainInterface(metaclass=ABCMeta):
     """
     Abstract interface for all geometric domains.
+
+    :Example:
+
+        >>> from pina.domain import CartesianDomain
+        >>> domain = CartesianDomain({"x": [0, 1]})
+        >>> isinstance(domain, DomainInterface)
+        True
     """
 
     @abstractmethod

@@ -33,6 +33,24 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
     :math:`[B \times N_{out} \times N \times D]`, where :math:`B` is the
     batch_size, :math:`N_{out}` is the number of output fields, :math:`N`
     the number of points in the mesh, :math:`D` the dimension of the problem.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import BaseContinuousConv
+        >>> from pina.model.block.convolution import BaseContinuousConv
+        >>> class MyConv(BaseContinuousConv):
+        ...     def forward(self, X): return X
+        ...     def transpose_overlap(self, X): return X
+        ...     def transpose_no_overlap(self, X): return X
+        ...     def _initialize_convolution(self, X, type_): pass
+        >>> stride = {
+        ...     "domain": [10, 10],
+        ...     "start": [0, 0],
+        ...     "jump": [3, 3],
+        ...     "direction": [1, 1],
+        ... }
+        >>> conv = MyConv(1, 2, [3, 3], stride)
     """
 
     def __init__(
@@ -118,6 +136,14 @@ class BaseContinuousConv(torch.nn.Module, metaclass=ABCMeta):
     class DefaultKernel(torch.nn.Module):
         """
         The default kernel.
+
+        :Example:
+
+            >>> import torch
+            >>> from pina.model.block.convolution import BaseContinuousConv
+            >>> kernel = BaseContinuousConv.DefaultKernel(input_dim=2, output_dim=4)
+            >>> x = torch.randn(10, 2)
+            >>> out = kernel(x)
         """
 
         def __init__(self, input_dim, output_dim):

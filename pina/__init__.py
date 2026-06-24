@@ -1,7 +1,15 @@
 """
 A specialized framework for Scientific Machine Learning (SciML), providing
 tools for Physics-Informed Neural Networks (PINNs), Neural Operators,
-and data-driven physical modeling.
+and data-driven physical modelling.
+
+:Example:
+
+    >>> from pina import LabelTensor
+    >>> import torch
+    >>> t = LabelTensor(torch.rand(3, 2), ['x', 'y'])
+    >>> t.labels
+    ['x', 'y']
 """
 
 __all__ = [

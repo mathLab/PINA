@@ -46,6 +46,16 @@ class AdaptiveGELU(BaseAdaptiveFunction):
         physics-informed neural networks*.
         Journal of Computational Physics, 404.
         DOI: `JCP 10.1016 <https://doi.org/10.1016/j.jcp.2019.109136>`_.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.adaptive_function import AdaptiveGELU
+        >>> act = AdaptiveGELU()
+        >>> x = torch.randn(10, 3)
+        >>> out = act(x)
+        >>> out.shape
+        torch.Size([10, 3])
     """
 
     def __init__(self, alpha=None, beta=None, gamma=None, fixed=None):

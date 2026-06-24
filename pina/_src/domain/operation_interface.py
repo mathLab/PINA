@@ -7,6 +7,15 @@ from pina._src.domain.domain_interface import DomainInterface
 class OperationInterface(DomainInterface, metaclass=ABCMeta):
     """
     Abstract interface for all set operations defined on geometric domains.
+
+    :Example:
+
+        >>> from pina.domain import Union, CartesianDomain
+        >>> d1 = CartesianDomain({"x": [0, 1]})
+        >>> d2 = CartesianDomain({"x": [2, 3]})
+        >>> union = Union([d1, d2])
+        >>> isinstance(union, OperationInterface)
+        True
     """
 
     @property

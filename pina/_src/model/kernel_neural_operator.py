@@ -43,6 +43,22 @@ class KernelNeuralOperator(torch.nn.Module):
         *Neural operator: Learning maps between function spaces with
         applications to PDEs*.
         Journal of Machine Learning Research, 24(89), 1-97.
+
+    :Example:
+
+        >>> import torch
+        >>> from torch import nn
+        >>> from pina.model import KernelNeuralOperator
+        >>> lifting_net = nn.Linear(3, 20)
+        >>> integral_net = nn.Identity()
+        >>> projecting_net = nn.Linear(20, 1)
+        >>> model = KernelNeuralOperator(
+        ...     lifting_operator=lifting_net,
+        ...     integral_kernels=integral_net,
+        ...     projection_operator=projecting_net
+        ... )
+        >>> x = torch.randn(10, 3)
+        >>> out = model(x)
     """
 
     def __init__(self, lifting_operator, integral_kernels, projection_operator):

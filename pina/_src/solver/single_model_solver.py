@@ -16,10 +16,17 @@ class SingleModelSolver(SingleModelMixin, ConditionAggregatorMixin, BaseSolver):
     :class:`~pina._src.solver.base_solver.BaseSolver` with single-model handling
     and condition-wise loss aggregation.
 
-    Subclasses can inherit from this class to implement solver-specific behavior
+    Subclasses can inherit from this class to implement solver-specific behaviour
     while reusing the common logic for model registration, optimizer and
     scheduler setup, loss evaluation, weighting, and aggregation across problem
     conditions.
+
+    :Example:
+
+        >>> from pina.solver import SingleModelSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # Typically used as a base class.
+        >>> # solver = SingleModelSolver(problem=problem, model=model)
     """
 
     def __init__(

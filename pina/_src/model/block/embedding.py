@@ -51,6 +51,16 @@ class PeriodicBoundaryEmbedding(torch.nn.Module):
         the derivatives up to the order :math:`\sim 2,3`. This is not guaranteed
         for orders :math:`>3`. The PINA module is tested only for periodic
         boundary conditions on the function itself.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import PeriodicBoundaryEmbedding
+        >>> emb = PeriodicBoundaryEmbedding(
+        ...     input_dimension=2, periods={"x": 1.0, "y": 2.0}
+        ... )
+        >>> x = torch.randn(10, 2)
+        >>> out = emb(x)
     """
 
     def __init__(self, input_dimension, periods, output_dimension=None):
@@ -212,6 +222,16 @@ class FourierFeatureEmbedding(torch.nn.Module):
         113938.
         DOI: `10.1016/j.cma.2021.113938.
         <https://doi.org/10.1016/j.cma.2021.113938>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import FourierFeatureEmbedding
+        >>> emb = FourierFeatureEmbedding(
+        ...     input_dimension=2, output_dimension=16, sigma=2.0
+        ... )
+        >>> x = torch.randn(10, 2)
+        >>> out = emb(x)
     """
 
     def __init__(self, input_dimension, output_dimension, sigma):

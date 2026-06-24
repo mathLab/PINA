@@ -11,8 +11,16 @@ class TorchOptimizer(OptimizerInterface):
 
     This class wraps a ``torch.optim.Optimizer`` class and defers its
     instantiation until runtime. It enables a consistent interface across
-    different optimizer backends while leveraging PyTorch’s optimization
+    different optimizer backends while leveraging PyTorch's optimization
     algorithms.
+
+    :Example:
+
+        >>> from pina.optim import TorchOptimizer
+        >>> import torch
+        >>> optimizer = TorchOptimizer(torch.optim.Adam, lr=0.001)
+        >>> optimizer.optimizer_class
+        <class 'torch.optim.adam.Adam'>
     """
 
     def __init__(self, optimizer_class, **kwargs):

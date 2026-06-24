@@ -16,6 +16,16 @@ class ResidualBlock(nn.Module):
         Proceedings of the IEEE conference on computer vision and pattern
         recognition. 2016.
         DOI: `<https://arxiv.org/pdf/1512.03385.pdf>`_.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import ResidualBlock
+        >>> block = ResidualBlock(
+        ...     input_dim=10, output_dim=10, hidden_dim=20
+        ... )
+        >>> x = torch.randn(5, 10)
+        >>> out = block(x)
     """
 
     def __init__(
@@ -88,6 +98,16 @@ class EnhancedLinear(torch.nn.Module):
 
     This class is a wrapper for enhancing a linear layer with activation and/or
     dropout.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import EnhancedLinear
+        >>> layer = EnhancedLinear(
+        ...     torch.nn.Linear(10, 20), torch.nn.ReLU()
+        ... )
+        >>> x = torch.randn(5, 10)
+        >>> out = layer(x)
     """
 
     def __init__(self, layer, activation=None, dropout=None):

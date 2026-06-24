@@ -6,6 +6,15 @@ from abc import ABCMeta, abstractmethod
 class SchedulerInterface(metaclass=ABCMeta):
     """
     Abstract interface for all schedulers.
+
+    :Example:
+
+        >>> from pina.optim import TorchScheduler
+        >>> import torch
+        >>> sched = TorchScheduler(
+        ...     torch.optim.lr_scheduler.StepLR, step_size=5)
+        >>> isinstance(sched, SchedulerInterface)
+        True
     """
 
     @abstractmethod

@@ -16,6 +16,15 @@ class PODBlock(torch.nn.Module):
     .. note::
         All the POD modes are stored in memory, avoiding to recompute them when
         the rank changes, leading to increased memory usage.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import PODBlock
+        >>> block = PODBlock(rank=5)
+        >>> x = torch.randn(100, 20)
+        >>> block.fit(x)
+        >>> reduced = block(x)
     """
 
     def __init__(self, rank, scale_coefficients=True):

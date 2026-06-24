@@ -3,6 +3,12 @@
 This module provides specialized callbacks for training Scientific Machine
 Learning models, including adaptive sample refinement (R3), optimizer
 switching logic, and data normalization utilities.
+
+:Example:
+
+    >>> from pina.callback import MetricTracker, PINAProgressBar
+    >>> tracker = MetricTracker()
+    >>> # bar = PINAProgressBar()
 """
 
 __all__ = [

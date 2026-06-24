@@ -31,6 +31,28 @@ class ContinuousConvBlock(BaseContinuousConv):
         *A continuous convolutional trainable filter for modelling unstructured
         data*. Comput Mech 72, 253-265 (2023).
         DOI `<https://doi.org/10.1007/s00466-023-02291-1>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import ContinuousConvBlock
+        >>> class MLP(torch.nn.Module):
+        ...     def __init__(self):
+        ...         super().__init__()
+        ...         self.model = torch.nn.Sequential(
+        ...             torch.nn.Linear(2, 8), torch.nn.ReLU(),
+        ...             torch.nn.Linear(8, 8), torch.nn.ReLU(),
+        ...             torch.nn.Linear(8, 1)
+        ...         )
+        ...     def forward(self, x):
+        ...         return self.model(x)
+        >>> stride = {
+        ...     "domain": [10, 10],
+        ...     "start": [0, 0],
+        ...     "jumps": [3, 3],
+        ...     "direction": [1, 1],
+        ... }
+        >>> conv = ContinuousConvBlock(1, 2, [3, 3], stride, MLP)
     """
 
     def __init__(

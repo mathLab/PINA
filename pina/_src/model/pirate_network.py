@@ -26,6 +26,16 @@ class PirateNet(torch.nn.Module):
         Networks*.
         DOI: `arXiv preprint arXiv:2507.08972.
         <https://arxiv.org/abs/2507.08972>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import PirateNet
+        >>> model = PirateNet(
+        ...     input_dimension=2, inner_size=64, output_dimension=1
+        ... )
+        >>> x = torch.randn(10, 2)
+        >>> out = model(x)
     """
 
     def __init__(

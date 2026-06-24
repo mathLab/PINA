@@ -1,4 +1,15 @@
-"""Module for the message passing blocks of the graph neural models."""
+"""Module for the message passing blocks of the graph neural models.
+
+:Example:
+
+    >>> from pina.model.block.message_passing import (
+    ...     InteractionNetworkBlock,
+    ...     DeepTensorNetworkBlock,
+    ... )
+    >>> import torch
+    >>> block = InteractionNetworkBlock(input_dim=3, hidden_dim=16)
+    >>> # block processes graph-structured data
+"""
 
 __all__ = [
     "InteractionNetworkBlock",

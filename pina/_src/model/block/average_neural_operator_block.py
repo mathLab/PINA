@@ -32,6 +32,14 @@ class AVNOBlock(nn.Module):
         *The Nonlocal Neural Operator: Universal Approximation*.
         DOI: `arXiv preprint arXiv:2304.13221.
         <https://arxiv.org/abs/2304.13221>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import AVNOBlock
+        >>> block = AVNOBlock(hidden_size=20)
+        >>> x = torch.randn(10, 5, 20)
+        >>> out = block(x)
     """
 
     def __init__(self, hidden_size=100, func=nn.GELU):

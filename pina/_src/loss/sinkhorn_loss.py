@@ -64,6 +64,16 @@ class SinkhornLoss(BaseDualLoss):
         In Proceedings of the 35th Conference on Uncertainty in Artificial
         Intelligence.
         URL: `<https://openreview.net/forum?id=BygNqoR9tm>`_.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.loss import SinkhornLoss
+        >>> loss = SinkhornLoss(p=2, eps=0.1, iterations=50)
+        >>> input = torch.randn(10, 3)
+        >>> target = torch.randn(10, 3)
+        >>> loss(input, target)
+        tensor(...)
     """
 
     def __init__(self, p=2, eps=0.1, iterations=100):

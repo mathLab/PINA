@@ -15,6 +15,16 @@ class SpectralConvBlock1D(nn.Module):
     space.
     The block expects an input of size [``batch``, ``input_numb_fields``, ``N``]
     and returns an output of size [``batch``, ``output_numb_fields``, ``N``].
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import SpectralConvBlock1D
+        >>> block = SpectralConvBlock1D(
+        ...     input_numb_fields=2, output_numb_fields=2, n_modes=16
+        ... )
+        >>> x = torch.randn(10, 2, 50)
+        >>> out = block(x)
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
@@ -106,6 +116,16 @@ class SpectralConvBlock2D(nn.Module):
     [``batch``, ``input_numb_fields``, ``Nx``, ``Ny``]
     and returns an output of size
     [``batch``, ``output_numb_fields``, ``Nx``, ``Ny``].
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import SpectralConvBlock2D
+        >>> block = SpectralConvBlock2D(
+        ...     input_numb_fields=2, output_numb_fields=2, n_modes=[8, 8]
+        ... )
+        >>> x = torch.randn(10, 2, 50, 50)
+        >>> out = block(x)
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):
@@ -236,6 +256,16 @@ class SpectralConvBlock3D(nn.Module):
     [``batch``, ``input_numb_fields``, ``Nx``, ``Ny``, ``Nz``]
     and returns an output of size
     [``batch``, ``output_numb_fields``, ``Nx``, ``Ny``, ``Nz``].
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import SpectralConvBlock3D
+        >>> block = SpectralConvBlock3D(
+        ...     input_numb_fields=2, output_numb_fields=2, n_modes=[4, 4, 4]
+        ... )
+        >>> x = torch.randn(10, 2, 20, 20, 20)
+        >>> out = block(x)
     """
 
     def __init__(self, input_numb_fields, output_numb_fields, n_modes):

@@ -1,4 +1,12 @@
-"""Module for implemented equations."""
+"""Module for implemented equations.
+
+:Example:
+
+    >>> from pina.equation.zoo import PoissonEquation, FixedValue, Laplace
+    >>> poisson = PoissonEquation()
+    >>> dirichlet = FixedValue(value=0.0)
+    >>> laplace_eq = Laplace()
+"""
 
 __all__ = [
     "AdvectionEquation",

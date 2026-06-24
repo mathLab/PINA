@@ -19,6 +19,16 @@ class KolmogorovArnoldNetwork(torch.nn.Module):
         *KAN: Kolmogorov-Arnold Networks*.
         DOI: `arXiv preprint arXiv:2404.19756.
         <https://arxiv.org/abs/2404.19756>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import KolmogorovArnoldNetwork
+        >>> model = KolmogorovArnoldNetwork(
+        ...     layers=[2, 16, 1], spline_order=3, n_knots=10
+        ... )
+        >>> x = torch.randn(10, 2)
+        >>> out = model(x)
     """
 
     def __init__(

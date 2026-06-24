@@ -14,6 +14,13 @@ class AllenCahnEquation(Equation):
         \frac{\partial u}{\partial t} - \alpha \Delta u + \beta(u^3 - u) = 0
 
     Here, :math:`\alpha` and :math:`\beta` are parameters of the equation.
+
+    :Example:
+
+        >>> from pina.equation import AllenCahnEquation
+        >>> eq = AllenCahnEquation(alpha=1.0, beta=1.0)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, alpha, beta):

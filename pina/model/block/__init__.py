@@ -4,6 +4,15 @@ This module provides a comprehensive collection of neural network components,
 ranging from standard units (Residual, Enhanced Linear) to specialized layers
 for Scientific Machine Learning, including Neural Operator blocks (FNO, GNO,
 AVNO), spectral convolutions, and coordinate embeddings (Fourier Features).
+
+:Example:
+
+    >>> from pina.model.block import ResidualBlock, FourierFeatureEmbedding
+    >>> import torch
+    >>> block = ResidualBlock(input_dimension=10, output_dimension=10)
+    >>> x = torch.rand(5, 10)
+    >>> block(x).shape
+    torch.Size([5, 10])
 """
 
 __all__ = [

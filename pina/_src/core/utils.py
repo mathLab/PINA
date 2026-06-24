@@ -42,6 +42,13 @@ def check_consistency(object_, object_instance, subclass=False):
         of ``object_instance`` instead of an instance. Default is ``False``.
     :raises ValueError: If ``object_`` does not inherit from ``object_instance``
         as expected.
+
+    :Example:
+
+        >>> from pina import LabelTensor
+        >>> import torch
+        >>> tensor = LabelTensor(torch.randn(3, 2), labels=["x", "y"])
+        >>> check_consistency(tensor, LabelTensor)
     """
     if not isinstance(object_, (list, set, tuple)):
         object_ = [object_]
@@ -135,6 +142,16 @@ def merge_tensors(tensors):
     :raises ValueError: If the list of tensors is empty.
     :return: The merged tensor.
     :rtype: LabelTensor
+
+    :Example:
+
+        >>> from pina import LabelTensor
+        >>> import torch
+        >>> t1 = LabelTensor(torch.tensor([[1.0], [2.0]]), labels=["x"])
+        >>> t2 = LabelTensor(torch.tensor([[3.0], [4.0]]), labels=["y"])
+        >>> merged = merge_tensors([t1, t2])
+        >>> merged.labels
+        ['x', 'y']
     """
     if tensors:
         return reduce(merge_two_tensors, tensors[1:], tensors[0])
@@ -172,6 +189,12 @@ def torch_lhs(n, dim):
     :raises ValueError: If `dim` is less than 1.
     :return: The sampled points.
     :rtype: torch.tensor
+
+    :Example:
+
+        >>> samples = torch_lhs(10, 2)
+        >>> samples.shape
+        torch.Size([10, 2])
     """
 
     if not isinstance(n, int):
@@ -216,6 +239,12 @@ def chebyshev_roots(n):
     :param int n: The number of roots to return.
     :return: The roots of the Chebyshev polynomials.
     :rtype: torch.Tensor
+
+    :Example:
+
+        >>> roots = chebyshev_roots(5)
+        >>> roots.shape
+        torch.Size([5])
     """
     pi = torch.acos(torch.zeros(1)).item() * 2
     k = torch.arange(n)
@@ -254,6 +283,13 @@ def in_range(value, range_vals, strict=True):
         Default is True.
     :return: True if the value satisfies the range condition, False otherwise.
     :rtype: bool
+
+    :Example:
+
+        >>> in_range(5, [0, 10])
+        True
+        >>> in_range(10, [0, 10], strict=False)
+        True
     """
     # Validate inputs
     check_consistency(value, (float, int))

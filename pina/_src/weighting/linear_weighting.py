@@ -12,6 +12,21 @@ class LinearWeighting(BaseWeighting):
     transitioning from a set of initial values to corresponding final values.
     The update follows a linear schedule and is applied at each epoch until the
     specified target epoch is reached.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.weighting import LinearWeighting
+        >>> initial = {"residual": 1.0, "data": 0.5}
+        >>> final = {"residual": 0.1, "data": 1.0}
+        >>> weighting = LinearWeighting(
+        ...     initial_weights=initial,
+        ...     final_weights=final,
+        ...     target_epoch=100,
+        ... )
+        >>> # Weights are interpolated linearly over the first 100 epochs
+        >>> losses = {"residual": torch.tensor(0.1), "data": torch.tensor(0.2)}
+        >>> # The update_weights method is called internally via aggregate
     """
 
     def __init__(self, initial_weights, final_weights, target_epoch):

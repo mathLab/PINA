@@ -84,7 +84,7 @@ class LabelTensor(torch.Tensor):
     def full_labels(self):
         """
         Returns the full labels of the tensor, even for the dimensions that are
-        not labeled.
+        not labelled.
 
         :return: The full labels of the tensor
         :rtype: dict
@@ -240,6 +240,14 @@ class LabelTensor(torch.Tensor):
         """
 
         def get_label_indices(dim_labels, labels_te):
+            """Get the indices of the specified labels in the dimension labels.
+
+            :param list dim_labels: The list of dimension labels.
+            :param labels_te: The label(s) to find indices for.
+            :type labels_te: str | list[str]
+            :return: The indices or slice for the label(s).
+            :rtype: list[int] | slice
+            """
             if isinstance(labels_te, (int, str)):
                 labels_te = [labels_te]
             return (
@@ -621,6 +629,12 @@ class LabelTensor(torch.Tensor):
         """
 
         def arg_sort(lst):
+            """Return the indices that would sort the list.
+
+            :param list lst: The list to sort.
+            :return: The indices that sort the list.
+            :rtype: list[int]
+            """
             return sorted(range(len(lst)), key=lambda x: lst[x])
 
         if dim is None:

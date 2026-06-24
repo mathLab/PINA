@@ -130,6 +130,17 @@ class RBFBlock(torch.nn.Module):
         It reproduces the implementation of :class:`scipy.interpolate.RBFBlock`
         and it is inspired from the implementation in `torchrbf.
         <https://github.com/ArmanMaesumi/torchrbf>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import RBFBlock
+        >>> block = RBFBlock(kernel="gaussian", epsilon=1.0)
+        >>> y = torch.randn(50, 2)
+        >>> d = torch.randn(50, 1)
+        >>> block.fit(y, d)
+        >>> x = torch.randn(10, 2)
+        >>> out = block(x)
     """
 
     def __init__(
@@ -388,7 +399,7 @@ class RBFBlock(torch.nn.Module):
         Evaluate for all points ``x`` the radial functions with center ``y``.
 
         :param torch.Tensor x: The tensor of points.
-        :param torch.Tensor y: The tensor of centers.
+        :param torch.Tensor y: The tensor of centres.
         :param str kernel_func: Radial basis function to use.
         :return: The radial function values.
         :rtype: torch.Tensor

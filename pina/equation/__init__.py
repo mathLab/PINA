@@ -6,6 +6,13 @@ boundary conditions, and complex systems of equations. It includes
 pre-defined physical models such as Poisson, Helmholtz, and Wave equations,
 along with equations for common derivative-based constraints, such as
 FixedValue, FixedGradient, FixedFlux, and FixedLaplacian.
+
+:Example:
+
+    >>> from pina.equation import Equation, SystemEquation
+    >>> from pina.equation.zoo import PoissonEquation, FixedValue
+    >>> eq = PoissonEquation()
+    >>> bc = FixedValue(value=0.0)
 """
 
 __all__ = [

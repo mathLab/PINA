@@ -36,6 +36,16 @@ class PowerLoss(BaseDualLoss):
         \end{cases}
 
     where :math:`N` is the batch size.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.loss import PowerLoss
+        >>> loss = PowerLoss(p=2, reduction="mean")
+        >>> input = torch.randn(10, 3)
+        >>> target = torch.randn(10, 3)
+        >>> loss(input, target)
+        tensor(...)
     """
 
     def __init__(self, p=2, reduction="mean", relative=False):

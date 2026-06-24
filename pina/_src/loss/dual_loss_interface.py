@@ -8,6 +8,16 @@ class DualLossInterface(_Loss, metaclass=ABCMeta):
     """
     Abstract interface for all losses requiring both an input and a target
     tensor.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.loss import LpLoss
+        >>> loss = LpLoss(p=2)
+        >>> input = torch.randn(10, 3)
+        >>> target = torch.randn(10, 3)
+        >>> loss(input, target)
+        tensor(...)
     """
 
     @abstractmethod

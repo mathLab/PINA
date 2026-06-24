@@ -9,6 +9,12 @@ from pina._src.core.utils import check_consistency
 class MetricTracker(Callback):
     """
     Callback for collecting selected metrics logged during training.
+
+    :Example:
+
+        >>> tracker = MetricTracker(metrics=["train_loss"])
+        >>> tracker.metrics_to_track
+        ['train_loss']
     """
 
     def __init__(self, metrics_to_track=None):

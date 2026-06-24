@@ -9,7 +9,26 @@ class _Creator:
     Utility class for creating data loaders associated with multiple conditions.
 
     The class supports different batching strategies to adapt data loading
-    behavior to specific training requirements
+    behaviour to specific training requirements
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.condition import Condition
+        >>> from pina import LabelTensor
+        >>> from pina._src.data.condition_subset import _ConditionSubset
+        >>> pts = LabelTensor(torch.randn(20, 2), labels=["x", "y"])
+        >>> condition = Condition(input=pts)
+        >>> creator = _Creator(
+        ...     batching_mode="common_batch_size", batch_size=5,
+        ...     shuffle=False, automatic_batching=True,
+        ...     num_workers=0, pin_memory=False,
+        ...     conditions={"cond1": condition}
+        ... )
+        >>> datasets = {"cond1": _ConditionSubset(condition, list(range(20)), True)}
+        >>> dataloaders = creator(datasets)
+        >>> list(dataloaders.keys())
+        ['cond1']
     """
 
     def __init__(

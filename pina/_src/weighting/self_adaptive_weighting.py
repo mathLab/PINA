@@ -26,6 +26,13 @@ class SelfAdaptiveWeighting(BaseWeighting):
         Networks*.
         DOI: `arXiv preprint arXiv:2507.08972.
         <https://arxiv.org/abs/2507.08972>`_
+
+    :Example:
+
+        >>> from pina.weighting import SelfAdaptiveWeighting
+        >>> weighting = SelfAdaptiveWeighting(update_every_n_epochs=5)
+        >>> # Typically used within a PINA solver:
+        >>> # solver = PINN(problem=problem, weighting=weighting)
     """
 
     def __init__(self, update_every_n_epochs=1):

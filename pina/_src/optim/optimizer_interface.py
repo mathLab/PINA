@@ -6,6 +6,14 @@ from abc import ABCMeta, abstractmethod
 class OptimizerInterface(metaclass=ABCMeta):
     """
     Abstract interface for all optimizers.
+
+    :Example:
+
+        >>> from pina.optim import TorchOptimizer
+        >>> import torch
+        >>> opt = TorchOptimizer(torch.optim.Adam, lr=0.01)
+        >>> isinstance(opt, OptimizerInterface)
+        True
     """
 
     @abstractmethod

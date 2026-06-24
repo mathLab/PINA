@@ -8,6 +8,21 @@ class _Aggregator:
     The aggregator combines batches produced by multiple dataloaders according
     to the selected batching strategy. It is primarily used to coordinate the
     iteration of multiple training conditions within a single training loop.
+
+    :Example:
+
+        >>> import torch
+        >>> from torch.utils.data import DataLoader, TensorDataset
+        >>> ds1 = TensorDataset(torch.randn(10, 2))
+        >>> ds2 = TensorDataset(torch.randn(15, 2))
+        >>> dl1 = DataLoader(ds1, batch_size=5)
+        >>> dl2 = DataLoader(ds2, batch_size=5)
+        >>> aggregator = _Aggregator(
+        ...     {"cond1": dl1, "cond2": dl2},
+        ...     batching_mode="common_batch_size"
+        ... )
+        >>> len(aggregator)
+        3
     """
 
     def __init__(self, dataloaders, batching_mode):

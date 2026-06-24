@@ -1,4 +1,10 @@
-"""Module for weighting strategies in multi-objective optimization."""
+"""Module for weighting strategies in multi-objective optimization.
+
+:Example:
+
+    >>> from pina.weighting import LinearWeighting, ScalarWeighting
+    >>> weighting = LinearWeighting(weights=[0.3, 0.7])
+"""
 
 __all__ = [
     "WeightingInterface",

@@ -18,6 +18,15 @@ class BaseOperation(OperationInterface, BaseDomain, metaclass=ABCMeta):
     :class:`~pina.domain.domain_interface.DomainInterface`.
 
     This class is not meant to be instantiated directly.
+
+    :Example:
+
+        >>> from pina.domain import CartesianDomain, Union
+        >>> d1 = CartesianDomain({"x": [0, 1], "y": [0, 1]})
+        >>> d2 = CartesianDomain({"x": [1, 2], "y": [0, 1]})
+        >>> union = Union([d1, d2])
+        >>> isinstance(union, BaseOperation)
+        True
     """
 
     def __init__(self, geometries):

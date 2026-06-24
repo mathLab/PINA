@@ -20,6 +20,15 @@ class PirateNetBlock(torch.nn.Module):
         Networks*.
         DOI: `arXiv preprint arXiv:2507.08972.
         <https://arxiv.org/abs/2507.08972>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import PirateNetBlock
+        >>> block = PirateNetBlock(inner_size=64, activation=torch.nn.Tanh)
+        >>> x = torch.randn(10, 64)
+        >>> U, V = torch.randn(10, 64), torch.randn(10, 64)
+        >>> out = block(x, U, V)
     """
 
     def __init__(self, inner_size, activation):

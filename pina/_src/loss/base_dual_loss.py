@@ -13,6 +13,16 @@ class BaseDualLoss(DualLossInterface):
     abstract methods.
 
     This class is not meant to be instantiated directly.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.loss import PowerLoss
+        >>> loss = PowerLoss(p=2, reduction="mean")
+        >>> input = torch.randn(10, 3)
+        >>> target = torch.randn(10, 3)
+        >>> loss(input, target)
+        tensor(...)
     """
 
     # Define available reduction methods

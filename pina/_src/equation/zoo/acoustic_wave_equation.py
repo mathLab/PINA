@@ -22,6 +22,13 @@ class AcousticWaveEquation(Equation):
 
     Here, :math:`c` is the wave propagation speed, and :math:`\Box` is the
     d'Alembert operator.
+
+    :Example:
+
+        >>> from pina.equation import AcousticWaveEquation
+        >>> eq = AcousticWaveEquation(c=1.0)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, c):

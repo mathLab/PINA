@@ -6,6 +6,16 @@ from abc import ABCMeta, abstractmethod
 class AdaptiveFunctionInterface(metaclass=ABCMeta):
     """
     Abstract interface for all adaptive functions.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.adaptive_function import AdaptiveTanh
+        >>> act = AdaptiveTanh()
+        >>> x = torch.randn(10, 3)
+        >>> out = act(x)
+        >>> out.shape
+        torch.Size([10, 3])
     """
 
     @abstractmethod

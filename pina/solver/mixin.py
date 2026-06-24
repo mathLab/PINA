@@ -1,4 +1,14 @@
-"""Module for solver mixins."""
+"""Module for solver mixins.
+
+:Example:
+
+    >>> from pina.solver.mixin import (
+    ...     PhysicsInformedMixin,
+    ...     SingleModelMixin,
+    ...     AutoregressiveMixin,
+    ... )
+    >>> # Mixins are composed to build solver classes
+"""
 
 __all__ = [
     "SingleModelMixin",
