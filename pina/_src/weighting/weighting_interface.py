@@ -6,15 +6,6 @@ from abc import ABCMeta, abstractmethod
 class WeightingInterface(metaclass=ABCMeta):
     """
     Abstract interface for all weighting schemas.
-
-    :Example:
-
-        >>> import torch
-        >>> from pina.weighting import ScalarWeighting
-        >>> weighting = ScalarWeighting(weights={"loss_1": 0.5, "loss_2": 1.0})
-        >>> losses = {"loss_1": torch.tensor(0.1), "loss_2": torch.tensor(0.2)}
-        >>> weighting.aggregate(losses)
-        tensor(0.2500)
     """
 
     @abstractmethod

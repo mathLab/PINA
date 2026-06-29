@@ -1,11 +1,4 @@
 """Module for implemented problems.
-
-:Example:
-
-    >>> from pina.problem.zoo import Poisson2DSquareProblem, BurgersProblem
-    >>> problem = Poisson2DSquareProblem()
-    >>> problem.output_variables
-    ['u']
 """
 
 __all__ = [

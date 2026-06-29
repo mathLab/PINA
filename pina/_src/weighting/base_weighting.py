@@ -17,15 +17,6 @@ class BaseWeighting(WeightingInterface):
     defined in :class:`~pina.weighting.weighting_interface.WeightingInterface`.
 
     This class is not meant to be instantiated directly.
-
-    :Example:
-
-        >>> import torch
-        >>> from pina.weighting import ScalarWeighting
-        >>> weighting = ScalarWeighting(weights=1.0)
-        >>> losses = {"loss_a": torch.tensor(0.5), "loss_b": torch.tensor(0.3)}
-        >>> weighting.aggregate(losses)
-        tensor(0.8000)
     """
 
     # Supported aggregation methods

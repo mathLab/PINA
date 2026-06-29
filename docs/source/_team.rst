@@ -7,6 +7,11 @@ PINA Team
 
 **PINA** is part of the `PyTorch ecosystem <https://pytorch.landscape2.io/?item=modeling--ai-for-science-and-engineering--pina>`_ and currently developed at the `SISSA MathLab <https://mathlab.sissa.it/>`_, in collaboration with `Fast Computing <https://www.fastcomputing.net/>`_.
 
+.. image:: https://img.shields.io/badge/PyTorch%20ecosystem-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white&labelColor=555
+    :target: https://pytorch.landscape2.io/?item=modeling--ai-for-science-and-engineering--pina
+    :align: center
+    :width: 300
+
 .. figure:: index_files/fast_mathlab.png
     :align: center
     :width: 500

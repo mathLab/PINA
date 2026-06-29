@@ -3,13 +3,6 @@
 This module provides tools for defining the physical space of a problem,
 including primitive shapes (Cartesian, Ellipsoid, Simplex) and set-theoretic
 operations (Union, Intersection, etc.) for building complex geometries.
-
-:Example:
-
-    >>> from pina.domain import CartesianDomain, EllipsoidDomain, Union
-    >>> left = CartesianDomain({'x': [0, 1], 'y': [0, 1]})
-    >>> right = CartesianDomain({'x': [2, 3], 'y': [0, 1]})
-    >>> domain = Union([left, right])
 """
 
 __all__ = [

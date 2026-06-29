@@ -5,6 +5,8 @@
 RadiusGraph
 =============
 .. currentmodule:: pina.graph
+.. automodule:: pina._src.core.graph
+   :noindex:
 
 .. autoclass:: pina._src.core.graph.RadiusGraph
    :members:

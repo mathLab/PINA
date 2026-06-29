@@ -10,17 +10,6 @@ class _ConditionSubset:
 
     The class behaves similarly to :class:`torch.utils.data.Subset` and supports
     cyclic indexing together with optional automatic batching.
-
-    :Example:
-
-        >>> import torch
-        >>> from pina.condition import Condition
-        >>> from pina import LabelTensor
-        >>> pts = LabelTensor(torch.randn(20, 2), labels=["x", "y"])
-        >>> condition = Condition(input=pts)
-        >>> subset = _ConditionSubset(condition, [0, 1, 2, 3, 4], True)
-        >>> len(subset)
-        5
     """
 
     def __init__(self, condition, indices, automatic_batching):

@@ -1,12 +1,4 @@
 """Module for the Problems.
-
-:Example:
-
-    >>> from pina.problem import SpatialProblem
-    >>> from pina.domain import CartesianDomain
-    >>> class MyProblem(SpatialProblem):
-    ...     output_variables = ['u']
-    ...     domains = {'domain': CartesianDomain({'x': [0, 1]})}
 """
 
 __all__ = [

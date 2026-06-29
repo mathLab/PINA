@@ -1,9 +1,4 @@
 """Module containing utilities for dataset and data loader management.
-
-:Example:
-
-    >>> from pina.data import DataModule
-    >>> # datamodule = DataModule(solver=solver, batch_size=32)
 """
 
 __all__ = [

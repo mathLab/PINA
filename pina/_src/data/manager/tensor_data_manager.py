@@ -10,17 +10,6 @@ class _TensorDataManager(_DataManagerInterface):
     """
     Data manager for tensor-based data. It handles inputs stored as
     :class:`torch.Tensor` or :class:`~pina.label_tensor.LabelTensor`.
-
-    :Example:
-
-        >>> import torch
-        >>> from pina import LabelTensor
-        >>> manager = _TensorDataManager(
-        ...     input=LabelTensor(torch.randn(10, 2), labels=["x", "y"]),
-        ...     target=torch.randn(10, 1)
-        ... )
-        >>> len(manager)
-        10
     """
 
     def __init__(self, **kwargs):

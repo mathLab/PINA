@@ -1,10 +1,4 @@
 """Module for the Optimizers and Schedulers.
-
-:Example:
-
-    >>> from pina.optim import TorchOptimizer
-    >>> import torch
-    >>> optim = TorchOptimizer(torch.optim.Adam, lr=1e-3)
 """
 
 __all__ = [

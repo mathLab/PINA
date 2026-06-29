@@ -5,6 +5,7 @@
 Scheduler Interface
 =====================
 .. currentmodule:: pina.optim.scheduler_interface
+.. automodule:: pina._src.optim.scheduler_interface
 
 .. autoclass:: pina._src.optim.scheduler_interface.SchedulerInterface
    :members:

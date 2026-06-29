@@ -22,12 +22,6 @@ class BaseRefinement(Callback, RefinementInterface):
     implement its abstract methods.
 
     This class is not meant to be instantiated directly.
-
-    :Example:
-
-        >>> refinement = BaseRefinement(sample_every=100)
-        >>> refinement.sample_every
-        100
     """
 
     def __init__(self, sample_every, condition_to_update=None):

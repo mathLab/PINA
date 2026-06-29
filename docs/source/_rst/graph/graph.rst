@@ -5,6 +5,7 @@
 Graph
 ===========
 .. currentmodule:: pina.graph
+.. automodule:: pina._src.core.graph
 
 .. autoclass:: pina._src.core.graph.Graph
    :members:

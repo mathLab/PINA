@@ -13,12 +13,6 @@ class SolverInterface(lightning.pytorch.LightningModule, metaclass=ABCMeta):
 
     By inheriting from this base class, solvers gain access to built-in training
     loops, logging utilities, and optimization techniques.
-
-    :Example:
-
-        >>> from pina.solver import SolverInterface
-        >>> class MySolver(SolverInterface):
-        ...     pass
     """
 
     @abstractmethod

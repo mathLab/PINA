@@ -5,16 +5,6 @@ class _BatchManager(dict):
     """
     Dict-like container for batched data with attribute-style access and
     convenience methods for device placement.
-
-    :Example:
-
-        >>> import torch
-        >>> batch = _BatchManager({"x": torch.tensor([1, 2, 3]),
-        ...                        "y": torch.tensor([4, 5, 6])})
-        >>> batch.x
-        tensor([1, 2, 3])
-        >>> batch.to("cpu")
-        _BatchManager({'x': tensor([1, 2, 3]), 'y': tensor([4, 5, 6])})
     """
 
     def to(self, device):

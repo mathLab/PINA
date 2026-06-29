@@ -15,16 +15,6 @@ class _DataManager:
     :class:`~pina.data.manager.tensor_data_manager._TensorDataManager` or
     :class:`~pina.data.manager.graph_data_manager._GraphDataManager` depending
     on the types of the provided keyword arguments.
-
-    :Example:
-
-        >>> import torch
-        >>> from pina import LabelTensor
-        >>> input_tensor = LabelTensor(torch.randn(10, 2), labels=["x", "y"])
-        >>> target_tensor = torch.randn(10, 1)
-        >>> manager = _DataManager(input=input_tensor, target=target_tensor)
-        >>> type(manager).__name__
-        '_TensorDataManager'
     """
 
     def __new__(cls, **kwargs):

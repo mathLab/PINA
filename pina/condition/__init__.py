@@ -4,15 +4,6 @@ This module provides the interface and implementations for binding mathematical
 equations, experimental data, and neural network targets to specific spatial
 domains or graph structures. It supports various input-target mappings including
 tensor-based, graph-based, and equation-based constraints.
-
-:Example:
-
-    >>> from pina.condition import InputTargetCondition
-    >>> import torch
-    >>> condition = InputTargetCondition(
-    ...     input_points=torch.rand(10, 2),
-    ...     target_points=torch.rand(10, 1),
-    ... )
 """
 
 __all__ = [

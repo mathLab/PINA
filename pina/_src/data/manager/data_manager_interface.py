@@ -6,20 +6,6 @@ from abc import ABCMeta, abstractmethod
 class _DataManagerInterface(metaclass=ABCMeta):
     """
     Abstract interface for all data managers.
-
-    :Example:
-
-        >>> import torch
-        >>> class CustomManager(_DataManagerInterface):
-        ...     def __init__(self, data): self.data = data
-        ...     def __len__(self): return len(self.data)
-        ...     def __getitem__(self, idx): return self.data[idx]
-        ...     def to_batch(self): return self
-        ...     @staticmethod
-        ...     def create_batch(items): return items
-        >>> manager = CustomManager([1, 2, 3])
-        >>> len(manager)
-        3
     """
 
     @abstractmethod

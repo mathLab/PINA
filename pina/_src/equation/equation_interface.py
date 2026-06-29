@@ -6,13 +6,6 @@ from abc import ABCMeta, abstractmethod
 class EquationInterface(metaclass=ABCMeta):
     """
     Abstract interface for all equations.
-
-    :Example:
-
-        >>> # This class is not meant to be instantiated directly.
-        >>> # Use specific equation implementations instead:
-        >>> from pina.equation import PoissonEquation
-        >>> eq = PoissonEquation(forcing_term=lambda x: x**2)
     """
 
     @abstractmethod

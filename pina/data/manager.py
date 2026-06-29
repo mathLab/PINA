@@ -1,9 +1,4 @@
 """Module for condition data management.
-
-:Example:
-
-    >>> from pina.data.manager import _DataManager, _GraphDataManager
-    >>> # Internal API used by DataModule for batch management
 """
 
 __all__ = [

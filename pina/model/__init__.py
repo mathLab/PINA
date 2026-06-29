@@ -1,17 +1,5 @@
 """Module for the Neural model classes.
 
-:Example:
-
-    >>> from pina.model import FeedForward
-    >>> import torch
-    >>> model = FeedForward(
-    ...     input_dimensions=2,
-    ...     output_dimensions=1,
-    ...     layers=[20, 20],
-    ... )
-    >>> x = torch.rand(5, 2)
-    >>> model(x).shape
-    torch.Size([5, 1])
 """
 
 __all__ = [

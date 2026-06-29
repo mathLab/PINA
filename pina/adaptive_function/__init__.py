@@ -4,15 +4,6 @@ This module provides implementations of standard activation functions (ReLU,
 SiLU, Tanh, etc.) augmented with trainable weights, as well as specialized
 functions like SIREN, designed to improve convergence in PINNs and Neural
 Operators.
-
-:Example:
-
-    >>> from pina.adaptive_function import AdaptiveTanh, AdaptiveReLU
-    >>> import torch
-    >>> act = AdaptiveTanh()
-    >>> x = torch.rand(5, 3)
-    >>> act(x).shape
-    torch.Size([5, 3])
 """
 
 __all__ = [

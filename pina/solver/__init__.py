@@ -1,11 +1,4 @@
 """Module for all solvers in PINA.
-
-:Example:
-
-    >>> from pina.solver import PhysicsInformedSingleModelSolver
-    >>> from pina.model import FeedForward
-    >>> model = FeedForward(2, 1, [20, 20])
-    >>> # solver = PhysicsInformedSingleModelSolver(problem=problem, model=model)
 """
 
 __all__ = [

@@ -6,20 +6,6 @@ from abc import ABCMeta, abstractmethod
 class RefinementInterface(metaclass=ABCMeta):
     """
     Abstract interface for all refinement strategies.
-
-    :Example:
-
-        >>> class MyRefinement(RefinementInterface):
-        ...     def on_train_start(self, trainer, solver): pass
-        ...     def on_train_epoch_end(self, trainer, solver): pass
-        ...     def sample(self, pts, name, solver): return pts
-        ...     @property
-        ...     def dataset(self): return {}
-        ...     @property
-        ...     def initial_population_size(self): return {}
-        >>> ref = MyRefinement()
-        >>> ref.initial_population_size
-        {}
     """
 
     @abstractmethod
