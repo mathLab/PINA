@@ -1,6 +1,4 @@
-"""Module for the message passing blocks of the graph neural models.
-
-"""
+"""Module for the message passing blocks of the graph neural models."""
 
 __all__ = [
     "InteractionNetworkBlock",

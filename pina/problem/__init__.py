@@ -1,5 +1,4 @@
-"""Module for the Problems.
-"""
+"""Module for the Problems."""
 
 __all__ = [
     "ProblemInterface",

@@ -1,5 +1,4 @@
-"""Module containing utilities for dataset and data loader management.
-"""
+"""Module containing utilities for dataset and data loader management."""
 
 __all__ = [
     "DataModule",

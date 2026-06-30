@@ -1,5 +1,4 @@
-"""Module for weighting strategies in multi-objective optimization.
-"""
+"""Module for weighting strategies in multi-objective optimization."""
 
 __all__ = [
     "WeightingInterface",

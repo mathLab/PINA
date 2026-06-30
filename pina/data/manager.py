@@ -1,5 +1,4 @@
-"""Module for condition data management.
-"""
+"""Module for condition data management."""
 
 __all__ = [
     "_BatchManager",

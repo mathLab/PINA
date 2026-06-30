@@ -1,5 +1,4 @@
-"""Module for the Optimizers and Schedulers.
-"""
+"""Module for the Optimizers and Schedulers."""
 
 __all__ = [
     "OptimizerInterface",

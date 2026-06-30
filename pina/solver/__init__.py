@@ -1,5 +1,4 @@
-"""Module for all solvers in PINA.
-"""
+"""Module for all solvers in PINA."""
 
 __all__ = [
     "SolverInterface",

@@ -1,6 +1,4 @@
-"""Module for solver mixins.
-
-"""
+"""Module for solver mixins."""
 
 __all__ = [
     "SingleModelMixin",

@@ -1,5 +1,4 @@
-"""Module for implemented equations.
-"""
+"""Module for implemented equations."""
 
 __all__ = [
     "AdvectionEquation",

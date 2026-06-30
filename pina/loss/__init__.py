@@ -1,5 +1,4 @@
-"""Module for loss functions.
-"""
+"""Module for loss functions."""
 
 __all__ = [
     "DualLossInterface",
