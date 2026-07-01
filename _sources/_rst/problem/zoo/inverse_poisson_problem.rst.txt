@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 InversePoisson2DSquareProblem
 ==============================
 .. currentmodule:: pina.problem.zoo.inverse_poisson_problem

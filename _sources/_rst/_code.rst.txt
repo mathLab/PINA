@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Code Documentation
 ==================
 Welcome to PINA documentation! Here you can find the modules of the package divided in different sections.
@@ -8,7 +12,6 @@ The high-level structure of the package is depicted in our API.
     :align: center
     :width: 400
 
-
 The pipeline to solve differential equations with PINA follows just five steps:
 
     1. Define the `Problems`_ the user aim to solve
@@ -16,7 +19,6 @@ The pipeline to solve differential equations with PINA follows just five steps:
     3. Choose or build one or more `Models`_ to solve the problem
     4. Choose a solver across PINA available `Solvers`_, or build one using the :doc:`SolverInterface <solver/solver_interface>`
     5. Train the model with the PINA :doc:`Trainer <trainer>`, enhance the train with `Callbacks`_
-
 
 Trainer, Data Loader and Data Module
 ----------------------------------------
@@ -39,7 +41,6 @@ Data Types
     Graph <graph/graph.rst>
     LabelBatch <graph/label_batch.rst>
 
-
 Graphs Structures
 ------------------
 .. toctree::
@@ -48,7 +49,6 @@ Graphs Structures
     GraphBuilder <graph/graph_builder.rst>
     RadiusGraph <graph/radius_graph.rst>
     KNNGraph <graph/knn_graph.rst>
-
 
 Conditions
 -------------
@@ -173,7 +173,6 @@ Message Passing
     Radial Field Network Block <model/block/message_passing/radial_field_network_block.rst>
     EquivariantGraphNeuralOperatorBlock <model/block/message_passing/equivariant_graph_neural_operator_block.rst>
 
-
 Reduction and Embeddings
 --------------------------
 
@@ -218,7 +217,6 @@ Adaptive Functions
     Adaptive Softmin <adaptive_function/adaptive_softmin.rst>
     Adaptive Tanh <adaptive_function/adaptive_tanh.rst>
 
-
 Equations and Differential Operators
 ---------------------------------------
 
@@ -230,7 +228,6 @@ Equations and Differential Operators
     Equation <equation/equation.rst>
     System Equation <equation/system_equation.rst>
     Differential Operators <operator.rst>
-
 
 Equation Zoo
 ---------------------------------------
@@ -249,7 +246,6 @@ Equation Zoo
     Fixed Value <equation/zoo/fixed_value.rst>
     Helmholtz Equation <equation/zoo/helmholtz_equation.rst>
     Poisson Equation <equation/zoo/poisson_equation.rst>
-
 
 Problems
 --------------
@@ -279,7 +275,6 @@ Problem Zoo
     Inverse Poisson 2D Square Problem <problem/zoo/inverse_poisson_problem.rst>
     Poisson 2D Square Problem <problem/zoo/poisson_problem.rst>
     Supervised Problem <problem/zoo/supervised_problem.rst>
-
 
 Geometrical Domains
 --------------------
@@ -321,7 +316,6 @@ Callbacks
     Metric Tracker <callback/processing/metric_tracker.rst>
     PINA Progress Bar <callback/processing/pina_progress_bar.rst>
 
-
 Losses 
 ---------
 
@@ -333,7 +327,6 @@ Losses
     LpLoss <loss/lp_loss.rst>
     PowerLoss <loss/power_loss.rst>
     SinkhornLoss <loss/sinkhorn_loss.rst>
-
 
 Weighting Schemas
 --------------------

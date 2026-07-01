@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 DomainInterface
 ================
 .. currentmodule:: pina.domain.domain_interface

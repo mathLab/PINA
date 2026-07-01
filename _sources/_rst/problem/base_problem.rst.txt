@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Base Problem
 ===============
 .. currentmodule:: pina.problem.base_problem

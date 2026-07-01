@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Operators &#8212; pina-mathlab 0.3.0.post2607 documentation</title>
+    <title>Operators &#8212; pina-mathlab 0.3.1 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=a8bca6df" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../_static/documentation_options.js?v=21e8fb32"></script>
+    <script src="../_static/documentation_options.js?v=4621528c"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +55,7 @@
     <link rel="prev" title="System Equation" href="equation/system_equation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0.post2607" />
+  <meta name="docsearch:version" content="0.3.1" />
     <meta name="docbuild:last-update" content="Jul 01, 2026"/>
   
     
@@ -125,8 +126,8 @@
     
     
     
-    <img src="../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
-    <img src="../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
+    <img src="../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.1 documentation - Home"/>
+    <img src="../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.1 documentation - Home"/>
   
   
 </a></div>
@@ -142,8 +143,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -163,13 +164,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../_contributing.html">
     Contributing
   </a>
@@ -182,13 +176,37 @@
   </a>
 </li>
 
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../_installation.html">
+    Installing
+  </a>
+</li>
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_LICENSE.html">
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../_LICENSE.html">
     License
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -292,8 +310,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -313,13 +331,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../_contributing.html">
     Contributing
   </a>
@@ -329,6 +340,20 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../_team.html">
     Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -826,7 +851,7 @@ the advection is computed. It must be a subset of the input labels.</p></li>
 <dd><p>Compute the gradient of the <code class="docutils literal notranslate"><span class="pre">output_</span></code> with respect to the <code class="docutils literal notranslate"><span class="pre">input</span></code>.</p>
 <p>This operator supports both vector-valued and scalar-valued functions with
 one or multiple input coordinates.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina._src.core.label_tensor.LabelTensor" title="pina._src.core.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The output tensor on which the gradient is
@@ -855,6 +880,16 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="label_tensor.html#pina._src.core.label_tensor.LabelTensor" title="pina._src.core.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grad</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+<span class="go">LabelTensor([[2.0 * x] ...], labels=[&quot;dudx&quot;])</span>
+</pre></div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
@@ -864,7 +899,7 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dd><p>Compute the divergence of the <code class="docutils literal notranslate"><span class="pre">output_</span></code> with respect to <code class="docutils literal notranslate"><span class="pre">input</span></code>.</p>
 <p>This operator supports vector-valued functions with multiple input
 coordinates.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina._src.core.label_tensor.LabelTensor" title="pina._src.core.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The output tensor on which the divergence is
@@ -892,6 +927,17 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="label_tensor.html#pina._src.core.label_tensor.LabelTensor" title="pina._src.core.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">div</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
+<span class="go">LabelTensor([...], labels=[&quot;div&quot;])</span>
+</pre></div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
@@ -901,7 +947,7 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dd><p>Compute the laplacian of the <code class="docutils literal notranslate"><span class="pre">output_</span></code> with respect to <code class="docutils literal notranslate"><span class="pre">input</span></code>.</p>
 <p>This operator supports both vector-valued and scalar-valued functions with
 one or multiple input coordinates.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina._src.core.label_tensor.LabelTensor" title="pina._src.core.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The output tensor on which the laplacian is
@@ -933,6 +979,16 @@ divergence of the gradient. Default is <code class="docutils literal notranslate
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="label_tensor.html#pina._src.core.label_tensor.LabelTensor" title="pina._src.core.label_tensor.LabelTensor">LabelTensor</a></p>
 </dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">laplacian</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+<span class="go">LabelTensor([...], labels=[&quot;ddu&quot;])</span>
+</pre></div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
@@ -942,7 +998,7 @@ divergence of the gradient. Default is <code class="docutils literal notranslate
 <dd><p>Perform the advection operation on the <code class="docutils literal notranslate"><span class="pre">output_</span></code> with respect to the
 <code class="docutils literal notranslate"><span class="pre">input</span></code>. This operator supports vector-valued functions with multiple
 input coordinates.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>output</strong> (<a class="reference internal" href="label_tensor.html#pina._src.core.label_tensor.LabelTensor" title="pina._src.core.label_tensor.LabelTensor"><em>LabelTensor</em></a>) – The output tensor on which the advection is
@@ -974,6 +1030,18 @@ match that of the input tensor.</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="label_tensor.html#pina._src.core.label_tensor.LabelTensor" title="pina._src.core.label_tensor.LabelTensor">LabelTensor</a></p>
+</dd>
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">LabelTensor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">advection</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">velocity_field</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
+<span class="go">LabelTensor([...], labels=[&quot;adv_u&quot;])</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>

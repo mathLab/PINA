@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Base Solver
 =================================
 .. currentmodule:: pina.solver.base_solver

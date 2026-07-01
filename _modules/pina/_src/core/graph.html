@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina._src.core.graph &#8212; pina-mathlab 0.3.0.post2607 documentation</title>
+    <title>pina._src.core.graph &#8212; pina-mathlab 0.3.1 documentation</title>
   
   
   
@@ -32,6 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=a8bca6df" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
@@ -39,7 +40,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../../../_static/documentation_options.js?v=21e8fb32"></script>
+    <script src="../../../../_static/documentation_options.js?v=4621528c"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,7 +52,7 @@
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0.post2607" />
+  <meta name="docsearch:version" content="0.3.1" />
     <meta name="docbuild:last-update" content="Jul 01, 2026"/>
   
     
@@ -122,8 +123,8 @@
     
     
     
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.1 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.1 documentation - Home"/>
   
   
 </a></div>
@@ -139,8 +140,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../../../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -160,13 +161,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_contributing.html">
     Contributing
   </a>
@@ -179,13 +173,37 @@
   </a>
 </li>
 
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../_LICENSE.html">
     License
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -287,8 +305,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../../../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -308,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_contributing.html">
     Contributing
   </a>
@@ -324,6 +335,20 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_team.html">
     Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -457,6 +482,17 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extends :class:`~torch_geometric.data.Data` class to include additional</span>
 <span class="sd">    checks and functionalities.</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; from pina.graph import Graph</span>
+<span class="sd">        &gt;&gt;&gt; pos = torch.randn(5, 2)</span>
+<span class="sd">        &gt;&gt;&gt; edge_index = torch.tensor([[0, 1, 2, 3, 4],</span>
+<span class="sd">        ...                            [1, 2, 3, 4, 0]])</span>
+<span class="sd">        &gt;&gt;&gt; graph = Graph(pos=pos, edge_index=edge_index, x=pos)</span>
+<span class="sd">        &gt;&gt;&gt; graph.num_nodes</span>
+<span class="sd">        5</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span>
@@ -670,6 +706,17 @@
 <span class="k">class</span> <span class="nc">GraphBuilder</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class that allows an easy definition of :class:`Graph` instances.</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; from pina.graph import GraphBuilder</span>
+<span class="sd">        &gt;&gt;&gt; pos = torch.randn(5, 2)</span>
+<span class="sd">        &gt;&gt;&gt; edge_index = torch.tensor([[0, 1, 2, 3, 4],</span>
+<span class="sd">        ...                            [1, 2, 3, 4, 0]])</span>
+<span class="sd">        &gt;&gt;&gt; graph = GraphBuilder(pos=pos, edge_index=edge_index, loop=True)</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(graph, Graph)</span>
+<span class="sd">        True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span>
@@ -772,6 +819,15 @@
 <span class="sd">    Extends the :class:`~pina.graph.GraphBuilder` class to compute</span>
 <span class="sd">    ``edge_index`` based on a radius. Each point is connected to all the points</span>
 <span class="sd">    within the radius.</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; from pina.graph import RadiusGraph</span>
+<span class="sd">        &gt;&gt;&gt; pos = torch.randn(5, 2)</span>
+<span class="sd">        &gt;&gt;&gt; graph = RadiusGraph(pos=pos, radius=0.5)</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(graph, Graph)</span>
+<span class="sd">        True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -824,6 +880,15 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extends the :class:`~pina.graph.GraphBuilder` class to compute</span>
 <span class="sd">    ``edge_index`` based on a K-nearest neighbors algorithm.</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; from pina.graph import KNNGraph</span>
+<span class="sd">        &gt;&gt;&gt; pos = torch.randn(10, 2)</span>
+<span class="sd">        &gt;&gt;&gt; graph = KNNGraph(pos=pos, neighbours=3)</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(graph, Graph)</span>
+<span class="sd">        True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neighbours</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -878,6 +943,16 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extends the :class:`~torch_geometric.data.Batch` class to include</span>
 <span class="sd">    :class:`~pina.label_tensor.LabelTensor` objects.</span>
+
+<span class="sd">    :Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; from pina.graph import Graph, LabelBatch</span>
+<span class="sd">        &gt;&gt;&gt; graphs = [Graph(pos=torch.randn(3, 2),</span>
+<span class="sd">        ...     edge_index=torch.tensor([[0, 1], [1, 0]])) for _ in range(2)]</span>
+<span class="sd">        &gt;&gt;&gt; batch = LabelBatch.from_data_list(graphs)</span>
+<span class="sd">        &gt;&gt;&gt; batch.num_graphs</span>
+<span class="sd">        2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="LabelBatch.from_data_list">

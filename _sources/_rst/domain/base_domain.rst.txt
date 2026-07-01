@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 BaseDomain
 ===========
 .. currentmodule:: pina.domain.base_domain

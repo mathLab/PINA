@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Data Manager
 ======================
 .. currentmodule:: pina.data.manager.data_manager

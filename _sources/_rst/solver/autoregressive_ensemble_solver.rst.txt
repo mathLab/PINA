@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Autoregressive Ensemble Solver
 =================================
 .. currentmodule:: pina.solver.autoregressive_ensemble_solver

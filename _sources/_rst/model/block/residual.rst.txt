@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Residual Block
 ===================
 .. currentmodule:: pina.model.block.residual

@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 AcousticWaveProblem
 =====================
 .. currentmodule:: pina.problem.zoo.acoustic_wave_problem

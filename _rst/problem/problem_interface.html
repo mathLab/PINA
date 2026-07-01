@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>ProblemInterface &#8212; pina-mathlab 0.3.0.post2607 documentation</title>
+    <title>ProblemInterface &#8212; pina-mathlab 0.3.1 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=a8bca6df" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=21e8fb32"></script>
+    <script src="../../_static/documentation_options.js?v=4621528c"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +55,7 @@
     <link rel="prev" title="Poisson Equation" href="../equation/zoo/poisson_equation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0.post2607" />
+  <meta name="docsearch:version" content="0.3.1" />
     <meta name="docbuild:last-update" content="Jul 01, 2026"/>
   
     
@@ -125,8 +126,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.1 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.1 documentation - Home"/>
   
   
 </a></div>
@@ -142,8 +143,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -163,13 +164,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_contributing.html">
     Contributing
   </a>
@@ -182,13 +176,37 @@
   </a>
 </li>
 
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../_LICENSE.html">
     License
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -292,8 +310,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -313,13 +331,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_contributing.html">
     Contributing
   </a>
@@ -329,6 +340,20 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_team.html">
     Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -724,27 +749,13 @@ When custom discretisation is specified via <code class="docutils literal notran
 domain to be discretised must be an instance of
 <code class="xref py py-class docutils literal notranslate"><span class="pre">CartesianDomain</span></code>.</p>
 </div>
-<dl class="field-list">
-<dt class="field-odd">Example<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;boundary&quot;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">sample_rules</span><span class="o">=</span><span class="p">{</span>
-<span class="gp">... </span>        <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;grid&#39;</span><span class="p">},</span>
-<span class="gp">... </span>        <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;grid&#39;</span><span class="p">}</span>
-<span class="gp">... </span>    <span class="p">},</span>
-<span class="gp">... </span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pina._src.problem.problem_interface.ProblemInterface.add_points">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_points_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pina/_src/problem/problem_interface.html#ProblemInterface.add_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pina._src.problem.problem_interface.ProblemInterface.add_points" title="Link to this definition">#</a></dt>
 <dd><p>Append additional points to an already discretised domain.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>new_points_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – The dictionary mapping each domain to the
 corresponding set of new points to be added. Each key in the
@@ -753,14 +764,6 @@ and each value must be a <code class="xref py py-class docutils literal notransl
 containing the new points to be added to that domain. The labels of
 the points to be added must correspond to those of the domain to
 which they are being added.</p>
-</dd>
-<dt class="field-even">Example<span class="colon">:</span></dt>
-<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">additional_points</span> <span class="o">=</span> <span class="p">{</span>
-<span class="gp">... </span>    <span class="s2">&quot;boundary&quot;</span><span class="p">:</span> <span class="n">LabelTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">])</span>
-<span class="gp">... </span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">problem</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span><span class="n">additional_points</span><span class="p">)</span>
-</pre></div>
-</div>
 </dd>
 </dl>
 </dd></dl>

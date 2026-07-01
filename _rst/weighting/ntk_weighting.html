@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NeuralTangentKernelWeighting &#8212; pina-mathlab 0.3.0.post2607 documentation</title>
+    <title>NeuralTangentKernelWeighting &#8212; pina-mathlab 0.3.1 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=a8bca6df" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=21e8fb32"></script>
+    <script src="../../_static/documentation_options.js?v=4621528c"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +55,7 @@
     <link rel="prev" title="LinearWeighting" href="linear_weighting.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0.post2607" />
+  <meta name="docsearch:version" content="0.3.1" />
     <meta name="docbuild:last-update" content="Jul 01, 2026"/>
   
     
@@ -125,8 +126,8 @@
     
     
     
-    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
-    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.1 documentation - Home"/>
+    <img src="../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.1 documentation - Home"/>
   
   
 </a></div>
@@ -142,8 +143,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -163,13 +164,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_contributing.html">
     Contributing
   </a>
@@ -182,13 +176,37 @@
   </a>
 </li>
 
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_LICENSE.html">
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../_LICENSE.html">
     License
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -292,8 +310,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -313,13 +331,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_contributing.html">
     Contributing
   </a>
@@ -329,6 +340,20 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../_team.html">
     Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -698,6 +723,16 @@ A neural tangent kernel perspective</em>. Journal of
 Computational Physics 449 (2022): 110768.
 DOI: <a class="reference external" href="https://doi.org/10.1016/j.jcp.2021.110768">10.1016</a>.</p>
 </div>
+<dl class="field-list">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pina.weighting</span> <span class="kn">import</span> <span class="n">NeuralTangentKernelWeighting</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">weighting</span> <span class="o">=</span> <span class="n">NeuralTangentKernelWeighting</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Typically used within a PINA solver:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># solver = PINN(problem=problem, weighting=weighting)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 <p>Initialization of the <a class="reference internal" href="#pina._src.weighting.ntk_weighting.NeuralTangentKernelWeighting" title="pina._src.weighting.ntk_weighting.NeuralTangentKernelWeighting"><code class="xref py py-class docutils literal notranslate"><span class="pre">NeuralTangentKernelWeighting</span></code></a> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

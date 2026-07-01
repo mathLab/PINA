@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Welcome to PINA’s documentation! &#8212; pina-mathlab 0.3.0.post2607 documentation</title>
+    <title>Welcome to PINA’s documentation! &#8212; pina-mathlab 0.3.1 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=a8bca6df" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=21e8fb32"></script>
+    <script src="_static/documentation_options.js?v=4621528c"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,10 +52,10 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="_installation.html" />
+    <link rel="next" title="Quickstart" href="_quickstart.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0.post2607" />
+  <meta name="docsearch:version" content="0.3.1" />
     <meta name="docbuild:last-update" content="Jul 01, 2026"/>
   
     
@@ -125,8 +126,8 @@
     
     
     
-    <img src="_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
-    <img src="_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
+    <img src="_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.1 documentation - Home"/>
+    <img src="_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.1 documentation - Home"/>
   
   
 </a></div>
@@ -142,8 +143,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -163,13 +164,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="_contributing.html">
     Contributing
   </a>
@@ -182,13 +176,37 @@
   </a>
 </li>
 
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="_installation.html">
+    Installing
+  </a>
+</li>
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="_LICENSE.html">
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="_LICENSE.html">
     License
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -290,8 +308,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -311,13 +329,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="_contributing.html">
     Contributing
   </a>
@@ -327,6 +338,20 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="_team.html">
     Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -418,37 +443,47 @@
                   
   <section id="welcome-to-pina-s-documentation">
 <h1>Welcome to PINA’s documentation!<a class="headerlink" href="#welcome-to-pina-s-documentation" title="Link to this heading">#</a></h1>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
-<div class="sd-row sd-row-cols-6 sd-row-cols-xs-6 sd-row-cols-sm-6 sd-row-cols-md-6 sd-row-cols-lg-6 sd-g-1 sd-g-xs-1 sd-g-sm-1 sd-g-md-1 sd-g-lg-1 docutils">
-<div class="sd-col sd-d-flex-column docutils">
-<a class="reference external image-reference" href="tutorial2/tutorial.html"><img alt="_images/tutorial_13_3.png" src="_images/tutorial_13_3.png" />
-</a>
-</div>
-<div class="sd-col sd-d-flex-column docutils">
-<a class="reference external image-reference" href="tutorial4/tutorial.html"><img alt="_images/tutorial_32_0.png" src="_images/tutorial_32_0.png" />
-</a>
-</div>
-<div class="sd-col sd-d-flex-column docutils">
-<a class="reference external image-reference" href="tutorial9/tutorial.html"><img alt="_images/tutorial_13_01.png" src="_images/tutorial_13_01.png" />
-</a>
-</div>
-<div class="sd-col sd-d-flex-column docutils">
-<a class="reference external image-reference" href="tutorial6/tutorial.html"><img alt="_images/tutorial_36_0.png" src="_images/tutorial_36_0.png" />
-</a>
-</div>
-<div class="sd-col sd-d-flex-column docutils">
-<a class="reference external image-reference" href="tutorial13/tutorial.html"><img alt="_images/tutorial_15_0.png" src="_images/tutorial_15_0.png" />
-</a>
-</div>
-<div class="sd-col sd-d-flex-column docutils">
-<a class="reference external image-reference" href="tutorial10/tutorial.html"><img alt="_images/tutorial_5_0.png" src="_images/tutorial_5_0.png" />
-</a>
+<div class="hero">
+
+<img src="_static/PINA_logo.png" alt="PINA" style="max-width: 320px;"/>
+
+<p class="tagline">A Unified Framework for Scientific Machine Learning</p>
+
+<a href="_installation.html" class="btn btn-primary" style="margin: 0.25rem;">Get Started</a>
+<a href="_quickstart.html" class="btn btn-primary" style="margin: 0.25rem;">Quickstart</a>
+<a href="https://github.com/mathLab/PINA" class="btn btn-primary" style="margin: 0.25rem;">View on GitHub</a>
+
+</div><div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-3 sd-g-2 sd-g-xs-2 sd-g-sm-2 sd-g-md-2 sd-g-lg-2 docutils">
+<div class="sd-col sd-d-flex-row sd-p-3 docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body text-center docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+🧩 Modular Architecture</div>
+<p class="sd-card-text">Designed with composable abstractions — plug, replace, or extend components freely.</p>
 </div>
 </div>
 </div>
-<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
-<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-3 sd-row-cols-lg-3 docutils">
-<div class="sd-col sd-d-flex-column sd-col-12 sd-col-xs-12 sd-col-sm-12 sd-col-md-8 sd-col-lg-8 docutils">
+<div class="sd-col sd-d-flex-row sd-p-3 docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body text-center docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+🚀 Scalable Performance</div>
+<p class="sd-card-text">Native multi-device training with minimal overhead for large-scale problems.</p>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row sd-p-3 docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body text-center docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+⚙️ Highly Flexible</div>
+<p class="sd-card-text">Full automation or granular control — PINA adapts to your workflow.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p><strong>PINA</strong> is an open-source Python library designed to simplify and accelerate
 the development of Scientific Machine Learning (SciML) solutions.
 Built on top of <a class="reference external" href="https://pytorch.org/">PyTorch</a>, <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/">PyTorch Lightning</a>,
@@ -456,33 +491,167 @@ and <a class="reference external" href="https://pytorch-geometric.readthedocs.io
 PINA provides an intuitive framework for defining, experimenting with,
 and solving complex problems using Neural Networks,
 Physics-Informed Neural Networks (PINNs), Neural Operators, and more.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Data Driven Learning</label><div class="sd-tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">Trainer</span>
+<span class="kn">from</span> <span class="nn">pina.model</span> <span class="kn">import</span> <span class="n">FeedForward</span>
+<span class="kn">from</span> <span class="nn">pina.problem.zoo</span> <span class="kn">import</span> <span class="n">SupervisedProblem</span>
+<span class="kn">from</span> <span class="nn">pina.solver</span> <span class="kn">import</span> <span class="n">SupervisedSingleModelSolver</span>
+
+<span class="n">input_tensor</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">target_tensor</span> <span class="o">=</span> <span class="n">input_tensor</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Step 1. Define problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">SupervisedProblem</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">target_tensor</span><span class="p">)</span>
+
+<span class="c1"># Step 2. Define model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">FeedForward</span><span class="p">(</span><span class="n">input_dimensions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">output_dimensions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">])</span>
+
+<span class="c1"># Step 3. Define solver</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">SupervisedSingleModelSolver</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">use_lt</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Step 4. Train</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span> <span class="n">max_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">accelerator</span><span class="o">=</span><span class="s2">&quot;gpu&quot;</span><span class="p">)</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Physics-Informed Learning</label><div class="sd-tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pina.operator</span> <span class="kn">import</span> <span class="n">grad</span>
+<span class="kn">from</span> <span class="nn">pina.model</span> <span class="kn">import</span> <span class="n">FeedForward</span>
+<span class="kn">from</span> <span class="nn">pina.equation</span> <span class="kn">import</span> <span class="n">Equation</span>
+<span class="kn">from</span> <span class="nn">pina</span> <span class="kn">import</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">Condition</span>
+<span class="kn">from</span> <span class="nn">pina.domain</span> <span class="kn">import</span> <span class="n">CartesianDomain</span>
+<span class="kn">from</span> <span class="nn">pina.problem</span> <span class="kn">import</span> <span class="n">SpatialProblem</span>
+<span class="kn">from</span> <span class="nn">pina.equation.zoo</span> <span class="kn">import</span> <span class="n">FixedValue</span>
+<span class="kn">from</span> <span class="nn">pina.solver</span> <span class="kn">import</span> <span class="n">PhysicsInformedSingleModelSolver</span>
+
+<span class="k">def</span> <span class="nf">ode_equation</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">output_</span><span class="p">):</span>
+   <span class="n">u_x</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">output_</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+   <span class="n">u</span> <span class="o">=</span> <span class="n">output_</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">&quot;u&quot;</span><span class="p">])</span>
+   <span class="k">return</span> <span class="n">u_x</span> <span class="o">-</span> <span class="n">u</span>
+
+<span class="k">class</span> <span class="nc">SimpleODE</span><span class="p">(</span><span class="n">SpatialProblem</span><span class="p">):</span>
+   <span class="n">output_variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span>
+   <span class="n">spatial_domain</span> <span class="o">=</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+   <span class="n">domains</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}),</span>
+      <span class="s2">&quot;D&quot;</span><span class="p">:</span> <span class="n">CartesianDomain</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}),</span>
+   <span class="p">}</span>
+   <span class="n">conditions</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">&quot;bound_cond&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;x0&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">FixedValue</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)),</span>
+      <span class="s2">&quot;phys_cond&quot;</span><span class="p">:</span> <span class="n">Condition</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">equation</span><span class="o">=</span><span class="n">Equation</span><span class="p">(</span><span class="n">ode_equation</span><span class="p">)),</span>
+   <span class="p">}</span>
+
+<span class="c1"># Step 1. Define problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">SimpleODE</span><span class="p">()</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">discretise_domain</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="n">domains</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;x0&quot;</span><span class="p">])</span>
+
+<span class="c1"># Step 2. Define model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">FeedForward</span><span class="p">(</span><span class="n">input_dimensions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">output_dimensions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">])</span>
+
+<span class="c1"># Step 3. Define solver</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">PhysicsInformedSingleModelSolver</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+<span class="c1"># Step 4. Train</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">solver</span><span class="p">,</span> <span class="n">max_epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">accelerator</span><span class="o">=</span><span class="s2">&quot;gpu&quot;</span><span class="p">)</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">What’s New</p>
 <ul class="simple">
-<li><p><strong>Modular Architecture</strong>: Designed with modularity in mind and relying on powerful yet composable abstractions, PINA allows users to easily plug, replace, or extend components, making experimentation and customization straightforward.</p></li>
-<li><p><strong>Scalable Performance</strong>: With native support for multi-device training, PINA handles large datasets efficiently, offering performance close to hand-crafted implementations with minimal overhead.</p></li>
-<li><p><strong>Highly Flexible</strong>: Whether you’re looking for full automation or granular control, PINA adapts to your workflow. High-level abstractions simplify model definition, while expert users can dive deep to fine-tune every aspect of the training and inference process.</p></li>
+<li><p><strong>[v0.3]</strong> – <strong>New solvers:</strong> autoregressive solver for sequential prediction tasks and multi-model solver support. Internals redesigned around a <strong>mixin architecture</strong> — lightweight, single-responsibility mixins (preprocessing, forward, postprocessing) that can be freely composed, with residual computation and loss aggregation clearly separated.</p></li>
+<li><p><strong>[v0.3]</strong> – <strong>Conditions refactoring:</strong> evaluation logic moved out of the solver and into the condition itself via a dedicated evaluate method, decoupling the training loop from problem-specific logic and enabling fully modular, solver-agnostic conditions.</p></li>
+<li><p><strong>[v0.3]</strong> – <strong>Time-dependent conditions:</strong> added dedicated time series and graph time series conditions to support time-dependent problems and autoregressive formulations across sequential and graph-structured data.</p></li>
+<li><p><strong>[v0.3]</strong> – <strong>Code cleanup:</strong> core internals migrated to the _src pattern; interfaces and base classes introduced across conditions, problems (AbstractProblem → BaseProblem), losses, and data module; equation zoo reorganized with Burgers added.</p></li>
+<li><p><strong>[v0.3]</strong> – <strong>KAN support:</strong> Kolmogorov–Arnold Networks with fully vectorized spline basis and analytical derivatives.</p></li>
 </ul>
-<p>For further information or questions about <strong>PINA</strong> contact us by email.</p>
+</div>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-3 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+📖 Installation</div>
+<p class="sd-card-text">Install PINA via pip, from source, or with extras.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference external" href="_installation.html"><span>_installation.html</span></a></div>
 </div>
 <div class="sd-col sd-d-flex-row docutils">
-<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
-<div class="sd-card-body sd-pl-4 docutils">
-<div class="sd-card-title sd-font-weight-bold sd-fs-5 docutils">
-Contents</div>
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+🚀 Quickstart</div>
+<p class="sd-card-text">Get up and running in 5 minutes.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference external" href="_quickstart.html"><span>_quickstart.html</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+📚 API Reference</div>
+<p class="sd-card-text">Complete API docs for problems, solvers, models, and more.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference external" href="_rst/_code.html"><span>_rst/_code.html</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+🎓 Tutorials</div>
+<p class="sd-card-text">Step-by-step tutorials covering PINNs, Neural Operators, and more.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference external" href="_tutorial.html"><span>_tutorial.html</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+📄 Cite PINA</div>
+<p class="sd-card-text">Citation and BibTeX for academic use.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference external" href="_cite.html"><span>_cite.html</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+🤝 Contributing</div>
+<p class="sd-card-text">Guide for contributors, bug reports, and PRs.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference external" href="_contributing.html"><span>_contributing.html</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+👥 Team</div>
+<p class="sd-card-text">Meet the PINA team and our funding sources.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference external" href="_team.html"><span>_team.html</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+📜 License</div>
+<p class="sd-card-text">Open-source license information.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference external" href="_LICENSE.html"><span>_LICENSE.html</span></a></div>
+</div>
+</div>
+</div>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="_installation.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_rst/_code.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_tutorial.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_cite.html">Cite PINA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_team.html">Team &amp; Foundings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="_LICENSE.html">License</a></li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
 </div>
 </section>
 

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pina._src.core.label_tensor &#8212; pina-mathlab 0.3.0.post2607 documentation</title>
+    <title>pina._src.core.label_tensor &#8212; pina-mathlab 0.3.1 documentation</title>
   
   
   
@@ -32,6 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=a8bca6df" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
@@ -39,7 +40,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../../../_static/documentation_options.js?v=21e8fb32"></script>
+    <script src="../../../../_static/documentation_options.js?v=4621528c"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,7 +52,7 @@
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0.post2607" />
+  <meta name="docsearch:version" content="0.3.1" />
     <meta name="docbuild:last-update" content="Jul 01, 2026"/>
   
     
@@ -122,8 +123,8 @@
     
     
     
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
-    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.1 documentation - Home"/>
+    <img src="../../../../_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.1 documentation - Home"/>
   
   
 </a></div>
@@ -139,8 +140,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../../../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -160,13 +161,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_contributing.html">
     Contributing
   </a>
@@ -179,13 +173,37 @@
   </a>
 </li>
 
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_LICENSE.html">
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../_LICENSE.html">
     License
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -287,8 +305,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="../../../../_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -308,13 +326,6 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_contributing.html">
     Contributing
   </a>
@@ -324,6 +335,20 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../_team.html">
     Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -529,7 +554,7 @@
     <span class="k">def</span> <span class="nf">full_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the full labels of the tensor, even for the dimensions that are</span>
-<span class="sd">        not labeled.</span>
+<span class="sd">        not labelled.</span>
 
 <span class="sd">        :return: The full labels of the tensor</span>
 <span class="sd">        :rtype: dict</span>
@@ -693,6 +718,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">get_label_indices</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">,</span> <span class="n">labels_te</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Get the indices of the specified labels in the dimension labels.</span>
+
+<span class="sd">            :param list dim_labels: The list of dimension labels.</span>
+<span class="sd">            :param labels_te: The label(s) to find indices for.</span>
+<span class="sd">            :type labels_te: str | list[str]</span>
+<span class="sd">            :return: The indices or slice for the label(s).</span>
+<span class="sd">            :rtype: list[int] | slice</span>
+<span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels_te</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
                 <span class="n">labels_te</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels_te</span><span class="p">]</span>
             <span class="k">return</span> <span class="p">(</span>
@@ -1101,6 +1134,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">arg_sort</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Return the indices that would sort the list.</span>
+
+<span class="sd">            :param list lst: The list to sort.</span>
+<span class="sd">            :return: The indices that sort the list.</span>
+<span class="sd">            :rtype: list[int]</span>
+<span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">lst</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

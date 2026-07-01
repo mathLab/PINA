@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Fourier Feature Embedding
 =======================================
 .. currentmodule:: pina.model.block.embedding

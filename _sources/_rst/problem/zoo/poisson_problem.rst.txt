@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Poisson2DSquareProblem
 ========================
 .. currentmodule:: pina.problem.zoo.poisson_problem

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Contributing to PINA &#8212; pina-mathlab 0.3.0.post2607 documentation</title>
+    <title>Contributing to PINA &#8212; pina-mathlab 0.3.1 documentation</title>
   
   
   
@@ -33,6 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=a8bca6df" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
@@ -40,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=21e8fb32"></script>
+    <script src="_static/documentation_options.js?v=4621528c"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,10 +52,10 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="PINA Team" href="_team.html" />
-    <link rel="prev" title="Cite PINA" href="_cite.html" />
+    <link rel="prev" title="Welcome to the PINA Tutorials" href="_tutorial.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.3.0.post2607" />
+  <meta name="docsearch:version" content="0.3.1" />
     <meta name="docbuild:last-update" content="Jul 01, 2026"/>
   
     
@@ -125,8 +126,8 @@
     
     
     
-    <img src="_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
-    <img src="_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.0.post2607 documentation - Home"/>
+    <img src="_static/PINA_logo.png" class="logo__image only-light" alt="pina-mathlab 0.3.1 documentation - Home"/>
+    <img src="_static/PINA_logo.png" class="logo__image only-dark pst-js-only" alt="pina-mathlab 0.3.1 documentation - Home"/>
   
   
 </a></div>
@@ -142,8 +143,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -162,13 +163,6 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
     Contributing
@@ -182,13 +176,37 @@
   </a>
 </li>
 
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="_installation.html">
+    Installing
+  </a>
+</li>
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="_LICENSE.html">
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="_cite.html">
+    Cite PINA
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="_LICENSE.html">
     License
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -292,8 +310,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="_installation.html">
-    Installing
+  <a class="nav-link nav-internal" href="_quickstart.html">
+    Quickstart
   </a>
 </li>
 
@@ -312,13 +330,6 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="_cite.html">
-    Cite PINA
-  </a>
-</li>
-
-
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
     Contributing
@@ -329,6 +340,20 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="_team.html">
     Team & Foundings
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="_installation.html">
+    Installing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="_cite.html">
+    Cite PINA
   </a>
 </li>
 
@@ -444,24 +469,13 @@
                   
   <section id="contributing-to-pina">
 <h1>Contributing to PINA<a class="headerlink" href="#contributing-to-pina" title="Link to this heading">#</a></h1>
-<p>First off, thanks for taking the time to contribute to <strong>PINA</strong>! 🎉 Your help makes the project better for everyone. This document outlines the process for contributing, reporting issues, suggesting features, and submitting pull requests.</p>
-<section id="table-of-contents">
-<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p><a class="reference internal" href="#how-to-contribute">How to Contribute</a></p></li>
-<li><p><a class="reference internal" href="#reporting-bugs">Reporting Bugs</a></p></li>
-<li><p><a class="reference internal" href="#suggesting-enhancements">Suggesting Enhancements</a></p></li>
-<li><p><a class="reference internal" href="#pull-request-process">Pull Request Process</a></p></li>
-<li><p><a class="reference internal" href="#code-style-guidelines">Code Style &amp; Guidelines</a></p></li>
-<li><p><a class="reference internal" href="#community-standards">Community Standards</a></p></li>
-</ol>
-</section>
+<p>First off, thanks for taking the time to contribute to <strong>PINA</strong>! Your help makes the project better for everyone. This document outlines the process for contributing, reporting issues, suggesting features, and submitting pull requests.</p>
 <section id="how-to-contribute">
 <h2>How to Contribute<a class="headerlink" href="#how-to-contribute" title="Link to this heading">#</a></h2>
 <p>You can contribute in several ways:</p>
 <ul class="simple">
 <li><p>Reporting bugs</p></li>
-<li><p>Suggesting features/enhancements</p></li>
+<li><p>Suggesting features or enhancements</p></li>
 <li><p>Submitting fixes or improvements via Pull Requests (PRs)</p></li>
 <li><p>Improving documentation</p></li>
 </ul>
@@ -485,17 +499,17 @@
 <ol class="arabic simple">
 <li><p>Check the <a class="reference external" href="https://github.com/mathLab/PINA/issues">issue tracker</a> or the <a class="reference external" href="https://github.com/mathLab/PINA/discussions">discussions</a> to see if someone has already suggested it.</p></li>
 <li><p>If not, open a new issue describing:
-- The enhancement you’d like
+- The enhancement you would like
 - Why it would be useful
 - Any ideas on how to implement it (optional but helpful)</p></li>
-<li><p>If you are not sure about (something of) the enhancement, we suggest opening a discussion to collaborate on it with the PINA community.</p></li>
+<li><p>If you are not sure about the enhancement, open a discussion to collaborate with the PINA community.</p></li>
 </ol>
 </section>
 <section id="pull-request-process">
 <h2>Pull Request Process<a class="headerlink" href="#pull-request-process" title="Link to this heading">#</a></h2>
 <p>Before submitting a PR:</p>
 <ol class="arabic">
-<li><p>Ensure there’s an open issue related to your contribution (or create one).</p></li>
+<li><p>Ensure there is an open issue related to your contribution (or create one).</p></li>
 <li><p><a class="reference external" href="https://help.github.com/articles/fork-a-repo">Fork</a> the repository and create a new branch from <code class="docutils literal notranslate"><span class="pre">master</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/my-feature
 </pre></div>
@@ -510,16 +524,14 @@
 </pre></div>
 </div>
 </li>
-<li><p>Properly format your code. If you want to save time, simply run:</p>
+<li><p>Format your code:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>code_formatter.sh
 </pre></div>
 </div>
 </li>
-</ol>
-<ol class="arabic simple" start="7">
 <li><p>Submit a <a class="reference external" href="https://help.github.com/articles/creating-a-pull-request">pull request</a> with a clear explanation of your changes and reference the related issue if applicable.</p></li>
 </ol>
-<p>Pull Request Checklist</p>
+<p>Pull Request Checklist:</p>
 <ol class="arabic simple">
 <li><p>Code follows the project’s style guidelines</p></li>
 <li><p>Tests have been added or updated</p></li>
@@ -539,6 +551,13 @@
 <section id="community-standards">
 <h2>Community Standards<a class="headerlink" href="#community-standards" title="Link to this heading">#</a></h2>
 <p>By participating in this project, you agree to abide by our Code of Conduct. We are committed to maintaining a welcoming and inclusive community.</p>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="_installation.html"><span class="doc">Installation guide</span></a></p></li>
+<li><p><a class="reference internal" href="_rst/_code.html"><span class="doc">API Reference</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -565,13 +584,13 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-contribute">How to Contribute</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reporting-bugs">Reporting Bugs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#suggesting-enhancements">Suggesting Enhancements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-request-process">Pull Request Process</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-style-guidelines">Code Style &amp; Guidelines</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#community-standards">Community Standards</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See Also</a></li>
 </ul>
   </nav></div>
 
