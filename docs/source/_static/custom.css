@@ -1,0 +1,35 @@
+/* Hero section */
+.hero {
+  text-align: center;
+  padding: 3rem 0;
+}
+.hero img {
+  max-width: 320px;
+}
+.hero .tagline {
+  font-size: 1.25rem;
+  color: var(--pst-color-text-muted);
+  margin: 1rem 0 2rem;
+}
+
+/* Feature cards — subtle lift on hover */
+.sd-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.sd-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Card links — no underline */
+.sd-card a {
+  text-decoration: none;
+}
+
+/* Hero buttons — always white text */
+.hero .btn {
+  color: #fff !important;
+}
+.hero .btn:hover {
+  color: #fff !important;
+}

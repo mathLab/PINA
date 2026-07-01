@@ -8,6 +8,13 @@ from pina._src.core.utils import check_consistency
 class FixedGradient(Equation):
     """
     Equation to enforce a fixed gradient for a specific condition.
+
+    :Example:
+
+        >>> from pina.equation import FixedGradient
+        >>> eq = FixedGradient(value=0.0)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, value, components=None, d=None):

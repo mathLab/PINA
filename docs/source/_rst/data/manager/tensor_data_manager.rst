@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Tensor Data Manager
 ======================
 .. currentmodule:: pina.data.manager.tensor_data_manager

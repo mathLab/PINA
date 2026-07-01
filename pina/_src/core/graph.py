@@ -12,6 +12,17 @@ class Graph(Data):
     """
     Extends :class:`~torch_geometric.data.Data` class to include additional
     checks and functionalities.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.graph import Graph
+        >>> pos = torch.randn(5, 2)
+        >>> edge_index = torch.tensor([[0, 1, 2, 3, 4],
+        ...                            [1, 2, 3, 4, 0]])
+        >>> graph = Graph(pos=pos, edge_index=edge_index, x=pos)
+        >>> graph.num_nodes
+        5
     """
 
     def __new__(
@@ -201,6 +212,17 @@ class Graph(Data):
 class GraphBuilder:
     """
     A class that allows an easy definition of :class:`Graph` instances.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.graph import GraphBuilder
+        >>> pos = torch.randn(5, 2)
+        >>> edge_index = torch.tensor([[0, 1, 2, 3, 4],
+        ...                            [1, 2, 3, 4, 0]])
+        >>> graph = GraphBuilder(pos=pos, edge_index=edge_index, loop=True)
+        >>> isinstance(graph, Graph)
+        True
     """
 
     def __new__(
@@ -294,6 +316,15 @@ class RadiusGraph(GraphBuilder):
     Extends the :class:`~pina.graph.GraphBuilder` class to compute
     ``edge_index`` based on a radius. Each point is connected to all the points
     within the radius.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.graph import RadiusGraph
+        >>> pos = torch.randn(5, 2)
+        >>> graph = RadiusGraph(pos=pos, radius=0.5)
+        >>> isinstance(graph, Graph)
+        True
     """
 
     def __new__(cls, pos, radius, **kwargs):
@@ -340,6 +371,15 @@ class KNNGraph(GraphBuilder):
     """
     Extends the :class:`~pina.graph.GraphBuilder` class to compute
     ``edge_index`` based on a K-nearest neighbors algorithm.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.graph import KNNGraph
+        >>> pos = torch.randn(10, 2)
+        >>> graph = KNNGraph(pos=pos, neighbours=3)
+        >>> isinstance(graph, Graph)
+        True
     """
 
     def __new__(cls, pos, neighbours, **kwargs):
@@ -388,6 +428,16 @@ class LabelBatch(Batch):
     """
     Extends the :class:`~torch_geometric.data.Batch` class to include
     :class:`~pina.label_tensor.LabelTensor` objects.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.graph import Graph, LabelBatch
+        >>> graphs = [Graph(pos=torch.randn(3, 2),
+        ...     edge_index=torch.tensor([[0, 1], [1, 0]])) for _ in range(2)]
+        >>> batch = LabelBatch.from_data_list(graphs)
+        >>> batch.num_graphs
+        2
     """
 
     @classmethod

@@ -8,6 +8,13 @@ class FixedValue(Equation):
     """
     Equation to enforce a fixed value. Can be used to enforce Dirichlet Boundary
     conditions.
+
+    :Example:
+
+        >>> from pina.equation import FixedValue
+        >>> eq = FixedValue(value=0.0)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, value, components=None):

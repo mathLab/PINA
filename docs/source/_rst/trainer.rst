@@ -1,8 +1,14 @@
-Trainer
-===========
+.. docmeta::
+   :last_reviewed: 2026-06-24
 
-.. automodule:: pina.trainer
+
+Trainer
+=======
+.. currentmodule:: pina.trainer
+
+.. automodule:: pina._src.core.trainer
+   :no-members:
 
 .. autoclass:: pina._src.core.trainer.Trainer
-    :members:
-    :show-inheritance:
+   :members:
+   :show-inheritance:

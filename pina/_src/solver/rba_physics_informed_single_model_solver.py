@@ -72,6 +72,15 @@ class RBAPhysicsInformedSingleModelSolver(
         Computer Methods in Applied Mechanics and Engineering, 421, 116805.
         DOI: `10.1016/j.cma.2024.116805
         <https://doi.org/10.1016/j.cma.2024.116805>`_.
+
+    :Example:
+
+        >>> from pina.solver import RBAPhysicsInformedSingleModelSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # solver = RBAPhysicsInformedSingleModelSolver(
+        >>> #     problem=problem, model=model, eta=0.001, gamma=0.999
+        >>> # )
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

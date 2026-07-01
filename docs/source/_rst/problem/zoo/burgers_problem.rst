@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Burgers' Problem
 =====================
 .. currentmodule:: pina.problem.zoo.burgers_problem

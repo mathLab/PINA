@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Continuous Convolution Interface
 ==================================
 .. currentmodule:: pina.model.block.convolution

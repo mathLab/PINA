@@ -13,6 +13,14 @@ class OrthogonalBlock(torch.nn.Module):
     Gram Schmidt orthogonalization, see
     `here <https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process>` for
     details.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import OrthogonalBlock
+        >>> block = OrthogonalBlock(dim=-1)
+        >>> x = torch.randn(5, 3)
+        >>> out = block(x)
     """
 
     def __init__(self, dim=-1, requires_grad=True):

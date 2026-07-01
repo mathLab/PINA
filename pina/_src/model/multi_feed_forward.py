@@ -12,6 +12,17 @@ class MultiFeedForward(torch.nn.Module, ABC):
     This model allows to create a network with multiple Feed Forward neural
     networks combined together. The user is required to define the ``forward``
     method to choose how to combine the networks.
+
+    :Example:
+
+        >>> from pina.model import MultiFeedForward
+        >>> class MyModel(MultiFeedForward):
+        ...     def forward(self, x):
+        ...         return self.ffn1(x) + self.ffn2(x)
+        >>> model = MyModel({
+        ...     "ffn1": {"input_dimensions": 2, "output_dimensions": 1},
+        ...     "ffn2": {"input_dimensions": 2, "output_dimensions": 1},
+        ... })
     """
 
     def __init__(self, ffn_dict):

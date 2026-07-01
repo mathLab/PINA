@@ -56,16 +56,6 @@ class ProblemInterface(metaclass=ABCMeta):
             When custom discretisation is specified via ``sample_rules``, the
             domain to be discretised must be an instance of
             :class:`~pina.domain.cartesian_domain.CartesianDomain`.
-
-        :Example:
-            >>> problem.discretise_domain(n=10, mode="random")
-            >>> problem.discretise_domain(n=10, mode="lh", domains=["boundary"])
-            >>> problem.discretise_domain(
-            ...     sample_rules={
-            ...         'x': {'n': 10, 'mode': 'grid'},
-            ...         'y': {'n': 100, 'mode': 'grid'}
-            ...     },
-            ... )
         """
 
     @abstractmethod
@@ -80,12 +70,6 @@ class ProblemInterface(metaclass=ABCMeta):
             containing the new points to be added to that domain. The labels of
             the points to be added must correspond to those of the domain to
             which they are being added.
-
-        :Example:
-            >>> additional_points = {
-            ...     "boundary": LabelTensor(torch.rand(5, 2), labels=["x", "y"])
-            ... }
-            >>> problem.add_points(additional_points)
         """
 
     @abstractmethod

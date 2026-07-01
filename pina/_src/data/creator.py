@@ -9,7 +9,7 @@ class _Creator:
     Utility class for creating data loaders associated with multiple conditions.
 
     The class supports different batching strategies to adapt data loading
-    behavior to specific training requirements
+    behaviour to specific training requirements
     """
 
     def __init__(

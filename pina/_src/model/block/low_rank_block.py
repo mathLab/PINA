@@ -16,6 +16,17 @@ class LowRankBlock(torch.nn.Module):
         (2023). *Neural operator: Learning maps between function
         spaces with applications to PDEs*. Journal of Machine Learning
         Research, 24(89), 1-97.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import LowRankBlock
+        >>> block = LowRankBlock(
+        ...     input_dimensions=3, embedding_dimenion=20, rank=10
+        ... )
+        >>> x = torch.randn(10, 20)
+        >>> coords = torch.randn(10, 3)
+        >>> out = block(x, coords)
     """
 
     def __init__(

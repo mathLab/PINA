@@ -1,7 +1,7 @@
 """
 A specialized framework for Scientific Machine Learning (SciML), providing
 tools for Physics-Informed Neural Networks (PINNs), Neural Operators,
-and data-driven physical modeling.
+and data-driven physical modelling.
 """
 
 __all__ = [

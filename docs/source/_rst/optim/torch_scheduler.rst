@@ -1,4 +1,8 @@
-Torch Scheduler
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
+TorchScheduler
 ===============
 .. currentmodule:: pina.optim.torch_scheduler
 

@@ -68,6 +68,15 @@ class SelfAdaptivePhysicsInformedSolver(PhysicsInformedMixin, MultiModelSolver):
         Journal of Computational Physics, 474, 111722.
         DOI: `10.1016/j.jcp.2022.111722
         <https://doi.org/10.1016/j.jcp.2022.111722>`_.
+
+    :Example:
+
+        >>> from pina.solver import SelfAdaptivePhysicsInformedSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # solver = SelfAdaptivePhysicsInformedSolver(
+        >>> #     problem=problem, model=model
+        >>> # )
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

@@ -15,6 +15,13 @@ class BurgersEquation(Equation):
         \frac{\partial u}{\partial t} + u \cdot \nabla u = \nu \Delta u
 
     Here, :math:`\nu` is the viscosity coefficient.
+
+    :Example:
+
+        >>> from pina.equation import BurgersEquation
+        >>> eq = BurgersEquation(nu=0.01)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, nu):

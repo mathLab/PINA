@@ -15,6 +15,20 @@ class ParametricProblem(BaseProblem):
     different evaluations and influence the solution.
 
     This class is not meant to be instantiated directly.
+
+    :Example:
+
+        >>> from pina.problem import ParametricProblem
+        >>> from pina.domain import CartesianDomain
+        >>> class MyParametricProblem(ParametricProblem):
+        ...     @property
+        ...     def parameter_domain(self):
+        ...         return CartesianDomain({"mu": [0.1, 10.0]})
+        ...     @property
+        ...     def conditions(self): return {}
+        >>> problem = MyParametricProblem()
+        >>> problem.parameters
+        ['mu']
     """
 
     @property

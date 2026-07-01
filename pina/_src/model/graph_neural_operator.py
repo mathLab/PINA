@@ -18,7 +18,19 @@ class GraphNeuralKernel(torch.nn.Module):
         Liu, B., Bhattacharya, K., Stuart, A., Anandkumar, A. (2020).
         *Neural Operator: Graph Kernel Network for Partial Differential
         Equations*.
-        DOI: `arXiv preprint arXiv:2003.03485 <https://arxiv.org/abs/2003.03485>`_
+        DOI: `arXiv preprint arXiv:2003.03485         <https://arxiv.org/abs/2003.03485>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model._src.model.graph_neural_operator import (
+        ...     GraphNeuralKernel
+        ... )
+        >>> model = GraphNeuralKernel(width=16, edge_features=4)
+        >>> x = torch.randn(10, 16)
+        >>> edge_index = torch.randint(0, 10, (2, 20))
+        >>> edge_attr = torch.randn(20, 4)
+        >>> out = model(x, edge_index, edge_attr)
     """
 
     def __init__(
@@ -152,6 +164,18 @@ class GraphNeuralOperator(KernelNeuralOperator):
         Equations*.
         DOI: `arXiv preprint arXiv:2003.03485.
         <https://arxiv.org/abs/2003.03485>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import GraphNeuralOperator, FeedForward
+        >>> lifting_net = FeedForward(input_dimensions=3, output_dimensions=16)
+        >>> projecting_net = FeedForward(input_dimensions=16, output_dimensions=1)
+        >>> model = GraphNeuralOperator(
+        ...     lifting_operator=lifting_net,
+        ...     projection_operator=projecting_net,
+        ...     edge_features=4
+        ... )
     """
 
     def __init__(

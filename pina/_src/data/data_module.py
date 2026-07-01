@@ -26,6 +26,26 @@ class DataModule(LightningDataModule):
     resulting subsets are wrapped into :class:`_ConditionSubset` objects.
     Dataloaders are then created and aggregated according to the selected
     batching strategy.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina import LabelTensor
+        >>> from pina.condition import Condition
+        >>> from pina.problem import BaseProblem
+        >>> class MyProblem(BaseProblem):
+        ...     def __init__(self):
+        ...         super().__init__()
+        ...         pts = LabelTensor(torch.randn(100, 2), labels=["x", "y"])
+        ...         self.conditions = {"cond1": Condition(input=pts)}
+        >>> problem = MyProblem()
+        >>> dm = DataModule(problem, train_size=0.8, val_size=0.1,
+        ...     test_size=0.1, batch_size=32, batching_mode="common_batch_size",
+        ...     automatic_batching=False, shuffle=True, num_workers=0,
+        ...     pin_memory=False)
+        >>> dm.setup("fit")
+        >>> list(dm.train_datasets.keys())
+        ['cond1']
     """
 
     def __init__(

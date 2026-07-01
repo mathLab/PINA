@@ -44,6 +44,15 @@ class PhysicsInformedEnsembleSolver(PhysicsInformedMixin, EnsembleSolver):
 
     where :math:`\mathcal{L}` is the selected loss function, typically the
     mean squared error.
+
+    :Example:
+
+        >>> from pina.solver import PhysicsInformedEnsembleSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # solver = PhysicsInformedEnsembleSolver(
+        >>> #     problem=problem, models=[model1, model2, model3]
+        >>> # )
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

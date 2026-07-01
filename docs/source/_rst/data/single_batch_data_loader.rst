@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Single-Batch Data Loader
 ===========================
 .. currentmodule:: pina.data.single_batch_data_loader

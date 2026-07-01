@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Allen Cahn Equation
 =====================
 .. currentmodule:: pina.equation.zoo.allen_cahn_equation

@@ -27,6 +27,18 @@ class FourierIntegralKernel(torch.nn.Module):
         *Fourier neural operator for parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model._src.model.fourier_neural_operator import (
+        ...     FourierIntegralKernel
+        ... )
+        >>> model = FourierIntegralKernel(
+        ...     input_numb_fields=2, output_numb_fields=2, n_modes=16
+        ... )
+        >>> x = torch.randn(10, 2, 50)
+        >>> out = model(x)
     """
 
     def __init__(
@@ -262,6 +274,19 @@ class FNO(KernelNeuralOperator):
         *Fourier neural operator for parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import FNO, FeedForward
+        >>> lifting_net = FeedForward(input_dimensions=3, output_dimensions=20)
+        >>> projecting_net = FeedForward(input_dimensions=20, output_dimensions=1)
+        >>> model = FNO(
+        ...     lifting_net=lifting_net, projecting_net=projecting_net,
+        ...     n_modes=16, dimensions=2
+        ... )
+        >>> x = torch.randn(10, 2, 50, 3)
+        >>> out = model(x)
     """
 
     def __init__(

@@ -23,6 +23,16 @@ class EquivariantGraphNeuralOperatorBlock(torch.nn.Module):
         *Equivariant Graph Neural Operator for Modeling 3D Dynamics*
         DOI: `arXiv preprint arXiv:2401.11037.
         <https://arxiv.org/abs/2401.11037>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block.message_passing import (
+        ...     EquivariantGraphNeuralOperatorBlock
+        ... )
+        >>> block = EquivariantGraphNeuralOperatorBlock(
+        ...     node_feature_dim=16, edge_feature_dim=4, pos_dim=3, modes=8
+        ... )
     """
 
     def __init__(

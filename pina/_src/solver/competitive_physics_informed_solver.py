@@ -62,6 +62,15 @@ class CompetitivePhysicsInformedSolver(PhysicsInformedMixin, MultiModelSolver):
         *Competitive physics informed networks.*
         International Conference on Learning Representations, ICLR 2022.
         `OpenReview Preprint <https://openreview.net/forum?id=z9SIj-IM7tn>`_.
+
+    :Example:
+
+        >>> from pina.solver import CompetitivePhysicsInformedSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # solver = CompetitivePhysicsInformedSolver(
+        >>> #     problem=problem, model=model
+        >>> # )
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

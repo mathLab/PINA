@@ -15,6 +15,13 @@ class PoissonEquation(Equation):
             \Delta u - f = 0
 
     Here, :math:`f` is the forcing term.
+
+    :Example:
+
+        >>> from pina.equation import PoissonEquation
+        >>> eq = PoissonEquation(forcing_term=lambda x: x**2)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, forcing_term):

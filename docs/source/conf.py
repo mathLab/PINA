@@ -42,6 +42,8 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.intersphinx",
     "paramref_extension",  # this extension is made to remove paramref links from lightining doc
+    "docmeta_extension",   # register .. docmeta:: directive for doc state tracking
+    "readme_include",      # pull examples and news from the project README at build time
     "sphinx_copybutton",
     "sphinx_design",
 ]
@@ -145,7 +147,7 @@ html_theme_options = {
     "show_prev_next": False,
     "navbar_start": ["navbar-logo"],
     "navbar_end": ["navbar-icon-links"],
-    "header_links_before_dropdown": 8,
+    "header_links_before_dropdown": 5,
 }
 
 html_context = {
@@ -171,9 +173,13 @@ htmlhelp_basename = "pinadoc"
 # Link to external html files
 html_extra_path = ["tutorials"]
 
+html_static_path = ["_static"]
+html_css_files = ["custom.css"]
+
 # Avoid side bar for html files
 html_sidebars = {
     "_tutorial": [],
+    "_quickstart": [],
     "_team": [],
     "_cite": [],
     "_contributing": [],

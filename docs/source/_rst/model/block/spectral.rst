@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Spectral Convolution Block
 ============================
 .. currentmodule:: pina.model.block.spectral

@@ -222,8 +222,8 @@ Want to dive deeper? Check out the official
 import torch
 from pina import Trainer
 from pina.model import FeedForward
-from pina.solver import SupervisedSolver
 from pina.problem.zoo import SupervisedProblem
+from pina.solver import SupervisedSingleModelSolver
 
 input_tensor  = torch.rand((10, 1))
 target_tensor = input_tensor.pow(3)
@@ -235,7 +235,7 @@ problem = SupervisedProblem(input_tensor, target_tensor)
 model = FeedForward(input_dimensions=1, output_dimensions=1, layers=[64, 64])
 
 # Step 3. Define solver
-solver = SupervisedSolver(problem, model, use_lt=False)
+solver = SupervisedSingleModelSolver(problem, model, use_lt=False)
 
 # Step 4. Train
 trainer = Trainer(solver, max_epochs=1000, accelerator="gpu")
@@ -264,13 +264,14 @@ In PINA, this can be implemented as:
 </p>
 
 ```python
-from pina import Trainer, Condition
-from pina.problem import SpatialProblem
 from pina.operator import grad
-from pina.solver import PINN
 from pina.model import FeedForward
+from pina.equation import Equation
+from pina import Trainer, Condition
 from pina.domain import CartesianDomain
-from pina.equation import Equation, FixedValue
+from pina.problem import SpatialProblem
+from pina.equation.zoo import FixedValue
+from pina.solver import PhysicsInformedSingleModelSolver
 
 def ode_equation(input_, output_):
     u_x = grad(output_, input_, components=["u"], d=["x"])
@@ -297,7 +298,7 @@ problem.discretise_domain(n=100, mode="grid", domains=["D", "x0"])
 model = FeedForward(input_dimensions=1, output_dimensions=1, layers=[64, 64])
 
 # Step 3. Define solver
-solver = PINN(problem, model)
+solver = PhysicsInformedSingleModelSolver(problem, model)
 
 # Step 4. Train
 trainer = Trainer(solver, max_epochs=1000, accelerator="gpu")

@@ -30,6 +30,14 @@ class SplineSurface(torch.nn.Module):
     - :math:`X = \{ x_1, x_2, \dots, x_m \}` and
       :math:`Y = \{ y_1, y_2, \dots, y_l \}` are the non-decreasing knot
       vectors along the two directions.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import SplineSurface
+        >>> model = SplineSurface(orders=[3, 3])
+        >>> x = torch.tensor([[0.5, 0.3], [0.2, 0.8]])
+        >>> out = model(x)
     """
 
     def __init__(self, orders, knots_u=None, knots_v=None, control_points=None):

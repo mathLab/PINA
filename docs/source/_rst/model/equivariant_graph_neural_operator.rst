@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 EquivariantGraphNeuralOperator
 =================================
 .. currentmodule:: pina.model.equivariant_graph_neural_operator
