@@ -118,16 +118,6 @@ class BaseProblem(ProblemInterface):
             When custom discretisation is specified via ``sample_rules``, the
             domain to be discretised must be an instance of
             :class:`~pina.domain.cartesian_domain.CartesianDomain`.
-
-        :Example:
-            >>> problem.discretise_domain(n=10, mode="random")
-            >>> problem.discretise_domain(n=10, mode="lh", domains=["boundary"])
-            >>> problem.discretise_domain(
-            ...     sample_rules={
-            ...         'x': {'n': 10, 'mode': 'grid'},
-            ...         'y': {'n': 100, 'mode': 'grid'}
-            ...     },
-            ... )
         """
         # Initialize the domains to be discretised
         if domains is None:
@@ -203,12 +193,6 @@ class BaseProblem(ProblemInterface):
             match any of the domains defined in :attr:`domains`.
         :raises ValueError: If any of the domains in ``new_points_dict`` has not
             been discretised yet.
-
-        :Example:
-            >>> additional_points = {
-            ...     "boundary": LabelTensor(torch.rand(5, 2), labels=["x", "y"])
-            ... }
-            >>> problem.add_points(additional_points)
         """
         # Check consistency
         check_consistency(new_points_dict, dict)

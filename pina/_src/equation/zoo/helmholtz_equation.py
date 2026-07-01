@@ -16,6 +16,13 @@ class HelmholtzEquation(Equation):
 
     Here, :math:`k` is the squared wavenumber, while :math:`f` is the
     forcing term.
+
+    :Example:
+
+        >>> from pina.equation import HelmholtzEquation
+        >>> eq = HelmholtzEquation(k=1.0, forcing_term=lambda x: x**2)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, k, forcing_term):

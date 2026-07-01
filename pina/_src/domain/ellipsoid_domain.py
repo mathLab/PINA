@@ -51,7 +51,7 @@ class EllipsoidDomain(BaseDomain):
 
     def compute_center_axes(self):
         """
-        Compute centers and axes for the ellipsoid.
+        Compute centres and axes for the ellipsoid.
         """
         if self._range:
             rng_vars = sorted(self._range.keys())

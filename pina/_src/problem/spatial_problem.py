@@ -14,6 +14,20 @@ class SpatialProblem(BaseProblem):
     dimensions) on which the solution is evaluated.
 
     This class is not meant to be instantiated directly.
+
+    :Example:
+
+        >>> from pina.problem import SpatialProblem
+        >>> from pina.domain import CartesianDomain
+        >>> class MySpatialProblem(SpatialProblem):
+        ...     @property
+        ...     def spatial_domain(self):
+        ...         return CartesianDomain({"x": [0, 1], "y": [0, 1]})
+        ...     @property
+        ...     def conditions(self): return {}
+        >>> problem = MySpatialProblem()
+        >>> problem.spatial_variables
+        ['x', 'y']
     """
 
     @property

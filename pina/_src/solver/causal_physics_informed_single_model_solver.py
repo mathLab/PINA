@@ -76,6 +76,15 @@ class CausalPhysicsInformedSingleModelSolver(
 
         This solver is compatible only with problems inheriting from
         :class:`~pina.problem.time_dependent_problem.TimeDependentProblem`.
+
+    :Example:
+
+        >>> from pina.solver import CausalPhysicsInformedSingleModelSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # solver = CausalPhysicsInformedSingleModelSolver(
+        >>> #     problem=problem, model=model, eps=100.0, n_steps=10
+        >>> # )
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

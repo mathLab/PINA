@@ -39,9 +39,17 @@ class AutoregressiveSingleModelSolver(AutoregressiveMixin, SingleModelSolver):
     differently to the total loss depending on its accumulated difficulty. Steps
     with larger running losses are assigned larger weights, so that the solver
     focuses more on parts of the rollout where prediction errors tend to
-    accumulate. The parameter ``eps`` controls the strength of this effect:
+    accumulate.     The parameter ``eps`` controls the strength of this effect:
     ``eps = 0`` disables adaptive weighting, while larger values increase the
     influence of high-loss steps on the final training objective.
+
+    :Example:
+
+        >>> from pina.solver import AutoregressiveSingleModelSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # solver = AutoregressiveSingleModelSolver(
+        >>> #     problem=problem, model=model, eps=0.1
+        >>> # )
     """
 
     # Accepted conditions types for this solver

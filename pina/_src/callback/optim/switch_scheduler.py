@@ -12,6 +12,16 @@ class SwitchScheduler(Callback):
     This callback enables switching to new scheduler(s) at a specified epoch
     without interrupting the training loop. It is useful for staged training
     strategies where different learning rate policies are applied sequentially.
+
+    :Example:
+
+        >>> from pina.optim import TorchScheduler
+        >>> import torch
+        >>> scheduler = TorchScheduler(
+        ...     torch.optim.lr_scheduler.StepLR, step_size=5)
+        >>> switch = SwitchScheduler(new_schedulers=scheduler, epoch_switch=10)
+        >>> switch._epoch_switch
+        10
     """
 
     def __init__(self, new_schedulers, epoch_switch):

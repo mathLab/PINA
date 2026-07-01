@@ -18,7 +18,7 @@ class FourierBlock1D(nn.Module):
 
     The module computes the spectral convolution of the input with a linear
     kernel in the fourier space, and then it maps the input back to the physical
-    space. The output is then added to a Linear tranformation of the input in
+    space. The output is then added to a Linear transformation of the input in
     the physical space. Finally an activation function is applied to the output.
 
     .. seealso::
@@ -29,6 +29,15 @@ class FourierBlock1D(nn.Module):
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
 
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import FourierBlock1D
+        >>> block = FourierBlock1D(
+        ...     input_numb_fields=2, output_numb_fields=2, n_modes=16
+        ... )
+        >>> x = torch.randn(10, 2, 50)
+        >>> out = block(x)
     """
 
     def __init__(
@@ -83,7 +92,7 @@ class FourierBlock2D(nn.Module):
 
     The module computes the spectral convolution of the input with a linear
     kernel in the fourier space, and then it maps the input back to the physical
-    space. The output is then added to a Linear tranformation of the input in
+    space. The output is then added to a Linear transformation of the input in
     the physical space. Finally an activation function is applied to the output.
 
     .. seealso::
@@ -93,6 +102,16 @@ class FourierBlock2D(nn.Module):
         *Fourier neural operator for parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import FourierBlock2D
+        >>> block = FourierBlock2D(
+        ...     input_numb_fields=2, output_numb_fields=2, n_modes=[8, 8]
+        ... )
+        >>> x = torch.randn(10, 2, 50, 50)
+        >>> out = block(x)
     """
 
     def __init__(
@@ -147,7 +166,7 @@ class FourierBlock3D(nn.Module):
 
     The module computes the spectral convolution of the input with a linear
     kernel in the fourier space, and then it maps the input back to the physical
-    space. The output is then added to a Linear tranformation of the input in
+    space. The output is then added to a Linear transformation of the input in
     the physical space. Finally an activation function is applied to the output.
 
     .. seealso::
@@ -157,6 +176,16 @@ class FourierBlock3D(nn.Module):
         *Fourier neural operator for parametric partial differential equations*.
         DOI: `arXiv preprint arXiv:2010.08895.
         <https://arxiv.org/abs/2010.08895>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import FourierBlock3D
+        >>> block = FourierBlock3D(
+        ...     input_numb_fields=2, output_numb_fields=2, n_modes=[4, 4, 4]
+        ... )
+        >>> x = torch.randn(10, 2, 20, 20, 20)
+        >>> out = block(x)
     """
 
     def __init__(

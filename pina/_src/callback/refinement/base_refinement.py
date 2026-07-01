@@ -16,7 +16,7 @@ class BaseRefinement(Callback, RefinementInterface):
 
     A refinement strategy is responsible for dynamically updating the training
     dataset during optimization, typically by resampling points in the domain
-    based on model behavior (e.g., error-driven refinement).
+    based on model behaviour (e.g., error-driven refinement).
 
     All specific refinement strategies should inherit from this class and
     implement its abstract methods.

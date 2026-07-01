@@ -17,6 +17,15 @@ class SwitchOptimizer(Callback):
     At the target epoch, the provided optimizers are hooked to the model
     parameters and replace the current optimizers in both the PINA solver and
     the Lightning trainer strategy.
+
+    :Example:
+
+        >>> from pina.optim import TorchOptimizer
+        >>> import torch
+        >>> optimizer = TorchOptimizer(torch.optim.Adam, lr=0.01)
+        >>> switch = SwitchOptimizer(new_optimizers=optimizer, epoch_switch=10)
+        >>> switch._epoch_switch
+        10
     """
 
     def __init__(self, new_optimizers, epoch_switch):

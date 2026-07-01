@@ -25,6 +25,20 @@ class LowRankNeuralOperator(KernelNeuralOperator):
         *Neural operator: Learning maps between function spaces with
         applications to PDEs*.
         Journal of Machine Learning Research, 24(89), 1-97.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import LowRankNeuralOperator, FeedForward
+        >>> lifting_net = FeedForward(input_dimensions=4, output_dimensions=20)
+        >>> projecting_net = FeedForward(input_dimensions=22, output_dimensions=1)
+        >>> model = LowRankNeuralOperator(
+        ...     lifting_net, projecting_net,
+        ...     field_indices=["f"], coordinates_indices=["x", "y", "z"],
+        ...     n_kernel_layers=2, rank=10
+        ... )
+        >>> x = torch.randn(10, 5, 4)
+        >>> out = model(x)
     """
 
     def __init__(

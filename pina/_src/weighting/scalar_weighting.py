@@ -11,6 +11,20 @@ class ScalarWeighting(BaseWeighting):
     This scheme assigns a constant multiplicative weight to each loss term,
     without adapting over time. The same weight can be applied to all terms,
     or distinct weights can be specified for individual conditions.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.weighting import ScalarWeighting
+        >>> # Uniform weighting
+        >>> weighting = ScalarWeighting(weights=1.0)
+        >>> losses = {"residual": torch.tensor(0.1), "data": torch.tensor(0.2)}
+        >>> weighting.aggregate(losses)
+        tensor(0.3000)
+        >>> # Per-condition weighting
+        >>> weighting = ScalarWeighting(weights={"residual": 0.5, "data": 2.0})
+        >>> weighting.aggregate(losses)
+        tensor(0.4500)
     """
 
     def __init__(self, weights):

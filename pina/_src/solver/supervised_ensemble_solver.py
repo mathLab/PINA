@@ -33,6 +33,15 @@ class SupervisedEnsembleSolver(EnsembleSolver):
 
     where :math:`\mathcal{L}` is the selected loss function, typically the
     mean squared error.
+
+    :Example:
+
+        >>> from pina.solver import SupervisedEnsembleSolver
+        >>> from pina.problem import SupervisedProblem
+        >>> # solver = SupervisedEnsembleSolver(
+        >>> #     problem=problem, models=[model1, model2, model3]
+        >>> # )
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

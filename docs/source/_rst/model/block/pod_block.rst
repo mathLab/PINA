@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Proper Orthogonal Decomposition Block
 ============================================
 .. currentmodule:: pina.model.block.pod_block

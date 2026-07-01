@@ -21,8 +21,7 @@ class BaseSolver(SolverInterface, metaclass=ABCMeta):
     All solvers must inherit from this class and implement abstract methods
     defined in :class:`~pina.solver.solver_interface.SolverInterface`.
 
-    This class is not meant to be instantiated directly.
-    """
+    This class is not meant to be instantiated directly."""
 
     # Define the available reductions for loss computation
     _AVAILABLE_REDUCTIONS = {

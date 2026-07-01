@@ -33,6 +33,17 @@ class RadialFieldNetworkBlock(MessagePassing):
         Densities*.
         In International Conference on Machine Learning.
         DOI: `<https://doi.org/10.48550/arXiv.2006.02425>`_.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block.message_passing import (
+        ...     RadialFieldNetworkBlock
+        ... )
+        >>> block = RadialFieldNetworkBlock(node_feature_dim=16)
+        >>> x = torch.randn(10, 16)
+        >>> edge_index = torch.randint(0, 10, (2, 30))
+        >>> out = block(x, edge_index)
     """
 
     def __init__(

@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Condition Subset
 ================
 .. currentmodule:: pina.data.condition_subset

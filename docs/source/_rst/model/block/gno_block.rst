@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Graph Neural Operator Block
 ===============================
 .. currentmodule:: pina.model.block.gno_block

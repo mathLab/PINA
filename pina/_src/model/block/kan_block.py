@@ -21,6 +21,14 @@ class KANBlock(torch.nn.Module):
         *KAN: Kolmogorov-Arnold Networks*.
         DOI: `arXiv preprint arXiv:2404.19756.
         <https://arxiv.org/abs/2404.19756>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import KANBlock
+        >>> block = KANBlock(input_dimensions=2, output_dimensions=1)
+        >>> x = torch.randn(10, 2)
+        >>> out = block(x)
     """
 
     def __init__(

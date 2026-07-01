@@ -6,6 +6,17 @@ import torch
 class Stride:
     """
     Stride class for continuous convolution.
+
+    :Example:
+
+        >>> from pina.model.block import Stride
+        >>> stride_dict = {
+        ...     "domain": [4, 4],
+        ...     "start": [-4, 2],
+        ...     "jump": [2, 2],
+        ...     "direction": [1, 1],
+        ... }
+        >>> stride = Stride(stride_dict)
     """
 
     def __init__(self, dict_):

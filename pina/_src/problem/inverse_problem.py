@@ -14,6 +14,21 @@ class InverseProblem(BaseProblem):
     estimated from observed data.
 
     This class is not meant to be instantiated directly.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.problem import InverseProblem
+        >>> from pina.domain import CartesianDomain
+        >>> class MyInverseProblem(InverseProblem):
+        ...     @property
+        ...     def unknown_parameter_domain(self):
+        ...         return CartesianDomain({"k": [0.1, 5.0]})
+        ...     @property
+        ...     def conditions(self): return {}
+        >>> problem = MyInverseProblem()
+        >>> problem.unknown_variables
+        ['k']
     """
 
     def __init__(self):

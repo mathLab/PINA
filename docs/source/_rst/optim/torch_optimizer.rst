@@ -1,4 +1,8 @@
-Torch Optimizer
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
+TorchOptimizer
 ===============
 .. currentmodule:: pina.optim.torch_optimizer
 

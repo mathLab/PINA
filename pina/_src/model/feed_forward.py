@@ -10,6 +10,16 @@ class FeedForward(torch.nn.Module):
     """
     Feed Forward neural network model class, also known as Multi-layer
     Perceptron.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import FeedForward
+        >>> model = FeedForward(input_dimensions=2, output_dimensions=1)
+        >>> x = torch.randn(10, 2)
+        >>> out = model(x)
+        >>> out.shape
+        torch.Size([10, 1])
     """
 
     def __init__(
@@ -118,6 +128,16 @@ class ResidualFeedForward(torch.nn.Module):
         SIAM Journal on Scientific Computing 43.5 (2021): A3055-A3081.
         DOI: `10.1137/20M1318043
         <https://epubs.siam.org/doi/abs/10.1137/20M1318043>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import ResidualFeedForward
+        >>> model = ResidualFeedForward(
+        ...     input_dimensions=2, output_dimensions=1
+        ... )
+        >>> x = torch.randn(10, 2)
+        >>> out = model(x)
     """
 
     def __init__(

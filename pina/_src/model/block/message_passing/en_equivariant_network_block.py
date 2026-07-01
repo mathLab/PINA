@@ -39,6 +39,16 @@ class EnEquivariantNetworkBlock(MessagePassing):
         (2021). *E(n) Equivariant Graph Neural Networks.*
         In International Conference on Machine Learning.
         DOI: `<https://doi.org/10.48550/arXiv.2102.09844>`_.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block.message_passing import (
+        ...     EnEquivariantNetworkBlock
+        ... )
+        >>> block = EnEquivariantNetworkBlock(
+        ...     node_feature_dim=16, edge_feature_dim=4, pos_dim=3
+        ... )
     """
 
     def __init__(

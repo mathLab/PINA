@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 Low Rank Neural Operator Block
 =================================
 .. currentmodule:: pina.model.block.low_rank_block

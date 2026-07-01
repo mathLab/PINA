@@ -7,6 +7,16 @@ from torch_geometric.nn import MessagePassing
 class GNOBlock(MessagePassing):
     """
     The inner block of the Graph Neural Operator, based on Message Passing.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block import GNOBlock
+        >>> block = GNOBlock(width=16, edges_features=4)
+        >>> x = torch.randn(10, 16)
+        >>> edge_index = torch.randint(0, 10, (2, 30))
+        >>> edge_attr = torch.randn(30, 4)
+        >>> out = block(x, edge_index, edge_attr)
     """
 
     def __init__(

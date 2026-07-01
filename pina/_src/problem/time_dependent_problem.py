@@ -13,6 +13,20 @@ class TimeDependentProblem(BaseProblem):
     variables represent the time at which the solution is evaluated.
 
     This class is not meant to be instantiated directly.
+
+    :Example:
+
+        >>> from pina.problem import TimeDependentProblem
+        >>> from pina.domain import CartesianDomain
+        >>> class MyTimeProblem(TimeDependentProblem):
+        ...     @property
+        ...     def temporal_domain(self):
+        ...         return CartesianDomain({"t": [0.0, 1.0]})
+        ...     @property
+        ...     def conditions(self): return {}
+        >>> problem = MyTimeProblem()
+        >>> problem.temporal_variables
+        ['t']
     """
 
     @property

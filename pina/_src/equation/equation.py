@@ -11,6 +11,13 @@ class Equation(BaseEquation):
 
     It can be passed to a :class:`~pina.condition.condition.Condition` object to
     define the conditions under which the model is trained.
+
+    :Example:
+
+        >>> from pina.equation import Equation
+        >>> eq = Equation(lambda x, u: u - x)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, equation):

@@ -22,6 +22,19 @@ class AveragingNeuralOperator(KernelNeuralOperator):
         *The Nonlocal Neural Operator: Universal Approximation*.
         DOI: `arXiv preprint arXiv:2304.13221.
         <https://arxiv.org/abs/2304.13221>`_
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model import AveragingNeuralOperator, FeedForward
+        >>> lifting_net = FeedForward(input_dimensions=4, output_dimensions=20)
+        >>> projecting_net = FeedForward(input_dimensions=22, output_dimensions=1)
+        >>> model = AveragingNeuralOperator(
+        ...     lifting_net, projecting_net,
+        ...     field_indices=["f"], coordinates_indices=["x", "y", "z"]
+        ... )
+        >>> x = torch.randn(10, 5, 4)
+        >>> out = model(x)
     """
 
     def __init__(

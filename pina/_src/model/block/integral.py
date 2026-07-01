@@ -6,6 +6,15 @@ import torch
 class Integral:
     """
     Class allowing integration for continous convolution.
+
+    :Example:
+
+        >>> from pina.model.block import Integral
+        >>> integral = Integral("discrete")
+        >>> x = torch.tensor([1.0, 2.0, 3.0])
+        >>> y = torch.tensor([4.0, 5.0, 6.0])
+        >>> idx = [2, 1]
+        >>> integral(x, y, idx)
     """
 
     def __init__(self, param):

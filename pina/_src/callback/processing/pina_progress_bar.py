@@ -18,6 +18,12 @@ class PINAProgressBar(TQDMProgressBar):
     names assigned to the problem conditions, or to global losses. Global losses
     are selected using ``"train"``, ``"val"``, or ``"test"``, and are internally
     expanded to the corresponding logged loss metrics.
+
+    :Example:
+
+        >>> progress_bar = PINAProgressBar(metrics="val")
+        >>> progress_bar._sorted_metrics
+        ['val']
     """
 
     GLOBAL_LOSS_KEYS = ("train", "val", "test")
@@ -67,7 +73,7 @@ class PINAProgressBar(TQDMProgressBar):
         :rtype: dict
 
         .. note::
-            This method overrides the default Lightning behavior. It can be
+            This method overrides the default Lightning behaviour. It can be
             further customized by subclassing.
         """
         # Retrieve standard metrics and user-selected progress bar metrics

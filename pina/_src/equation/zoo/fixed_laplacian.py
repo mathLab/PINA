@@ -9,6 +9,13 @@ from pina._src.core.utils import check_consistency
 class FixedLaplacian(Equation):
     """
     Equation to enforce a fixed laplacian for a specific condition.
+
+    :Example:
+
+        >>> from pina.equation import FixedLaplacian
+        >>> eq = FixedLaplacian(value=0.0)
+        >>> # Use within a Condition:
+        >>> # condition = Condition(domain=domain, equation=eq)
     """
 
     def __init__(self, value, components=None, d=None):
@@ -59,6 +66,13 @@ class FixedLaplacian(Equation):
 
 # Back-compatibility with version 0.2, to be removed soon
 class Laplace(FixedLaplacian):
+    """
+    Deprecated wrapper for :class:`FixedLaplacian` with ``value=0.0``.
+
+    .. deprecated:: 0.3
+        Use :class:`FixedLaplacian` with ``value=0.0`` instead.
+    """
+
     def __init__(self, components=None, d=None):
         warnings.warn(
             "Laplace is deprecated, use FixedLaplacian with value=0.0 instead.",

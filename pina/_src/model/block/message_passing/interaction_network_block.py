@@ -30,6 +30,19 @@ class InteractionNetworkBlock(MessagePassing):
         Physics*.
         In Advances in Neural Information Processing Systems (NeurIPS 2016).
         DOI: `<https://doi.org/10.48550/arXiv.1612.00222>`_.
+
+    :Example:
+
+        >>> import torch
+        >>> from pina.model.block.message_passing import (
+        ...     InteractionNetworkBlock
+        ... )
+        >>> block = InteractionNetworkBlock(
+        ...     node_feature_dim=16, hidden_dim=64
+        ... )
+        >>> x = torch.randn(10, 16)
+        >>> edge_index = torch.randint(0, 10, (2, 30))
+        >>> out = block(x, edge_index)
     """
 
     def __init__(

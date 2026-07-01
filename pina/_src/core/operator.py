@@ -338,6 +338,15 @@ def grad(output_, input_, components=None, d=None):
     :raises RuntimeError: If component labels are missing from the ``output_``.
     :return: The computed gradient tensor.
     :rtype: LabelTensor
+
+    :Example:
+
+        >>> from pina import LabelTensor
+        >>> import torch
+        >>> x = LabelTensor(torch.rand(5, 1), labels=["x"])
+        >>> u = LabelTensor(x ** 2, labels=["u"])
+        >>> grad(u, x, components=["u"], d=["x"])
+        LabelTensor([[2.0 * x] ...], labels=["dudx"])
     """
     components, d = _check_values(
         output_=output_, input_=input_, components=components, d=d
@@ -369,6 +378,16 @@ def div(output_, input_, components=None, d=None):
     :raises ValueError: If the length of ``components`` and ``d`` do not match.
     :return: The computed divergence tensor.
     :rtype: LabelTensor
+
+    :Example:
+
+        >>> from pina import LabelTensor
+        >>> import torch
+        >>> x = LabelTensor(torch.rand(5, 2), labels=["x", "y"])
+        >>> u = LabelTensor(torch.cat([x.extract("x")**2,
+        ...     x.extract("y")**2], dim=-1), labels=["u", "v"])
+        >>> div(u, x, components=["u", "v"], d=["x", "y"])
+        LabelTensor([...], labels=["div"])
     """
     components, d = _check_values(
         output_=output_, input_=input_, components=components, d=d
@@ -411,6 +430,15 @@ def laplacian(output_, input_, components=None, d=None, method="std"):
     :raises ValueError: If the passed method is neither ``std`` nor ``divgrad``.
     :return: The computed laplacian tensor.
     :rtype: LabelTensor
+
+    :Example:
+
+        >>> from pina import LabelTensor
+        >>> import torch
+        >>> x = LabelTensor(torch.rand(5, 1), labels=["x"])
+        >>> u = LabelTensor(x ** 3, labels=["u"])
+        >>> laplacian(u, x, components=["u"], d=["x"])
+        LabelTensor([...], labels=["ddu"])
     """
     components, d = _check_values(
         output_=output_, input_=input_, components=components, d=d
@@ -454,6 +482,17 @@ def advection(output_, input_, velocity_field, components=None, d=None):
         match that of the input tensor.
     :return: The computed advection tensor.
     :rtype: LabelTensor
+
+    :Example:
+
+        >>> from pina import LabelTensor
+        >>> import torch
+        >>> x = LabelTensor(torch.rand(5, 2), labels=["x", "y"])
+        >>> u = LabelTensor(torch.cat([x.extract("x")**2,
+        ...     torch.zeros(5, 2)], dim=-1), labels=["u", "v", "w", "z"])
+        >>> advection(u, x, velocity_field=["v", "w"],
+        ...     components=["u"], d=["x", "y"])
+        LabelTensor([...], labels=["adv_u"])
     """
     components, d = _check_values(
         output_=output_, input_=input_, components=components, d=d

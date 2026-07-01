@@ -1,3 +1,7 @@
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
 NeuralTangentKernelWeighting
 =============================
 .. currentmodule:: pina.weighting.ntk_weighting

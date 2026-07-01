@@ -1,8 +1,10 @@
-Condition
+.. docmeta::
+   :last_reviewed: 2026-06-24
+
+
+Conditions
 =============
 .. currentmodule:: pina.condition.condition
-
-.. automodule:: pina._src.condition.condition
 
 .. autoclass:: pina._src.condition.condition.Condition
     :members:

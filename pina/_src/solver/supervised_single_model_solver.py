@@ -28,6 +28,15 @@ class SupervisedSingleModelSolver(SingleModelSolver):
 
     where :math:`\mathcal{L}` is the selected loss function, typically the mean
     squared error.
+
+    :Example:
+
+        >>> from pina.solver import SupervisedSingleModelSolver
+        >>> from pina.problem import SupervisedProblem
+        >>> # solver = SupervisedSingleModelSolver(
+        >>> #     problem=problem, model=model
+        >>> # )
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

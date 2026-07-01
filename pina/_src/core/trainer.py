@@ -24,6 +24,16 @@ class Trainer(lightning.pytorch.Trainer):
     The trainer configures solver execution, dataset splitting, batching,
     logging, device placement for unknown parameters, and gradient tracking
     requirements for physics-informed solvers.
+
+    :Example:
+
+        >>> from pina.solver import BaseSolver
+        >>> from pina.problem import BaseProblem
+        >>> import torch
+        >>> # Trainer is typically used with a solver and problem:
+        >>> # trainer = Trainer(solver=solver_instance, batch_size=32,
+        >>> #     max_epochs=100)
+        >>> # trainer.train()
     """
 
     # Available batching modes

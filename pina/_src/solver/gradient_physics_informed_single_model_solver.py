@@ -61,6 +61,15 @@ class GradientPhysicsInformedSingleModelSolver(
         Engineering, 393, 114823.
         DOI: `10.1016/j.cma.2022.114823
         <https://doi.org/10.1016/j.cma.2022.114823>`_.
+
+    :Example:
+
+        >>> from pina.solver import GradientPhysicsInformedSingleModelSolver
+        >>> from pina.problem import PoissonProblem
+        >>> # solver = GradientPhysicsInformedSingleModelSolver(
+        >>> #     problem=problem, model=model, regularization_weight=0.1
+        >>> # )
+        >>> # solver.train()
     """
 
     # Accepted conditions types for this solver

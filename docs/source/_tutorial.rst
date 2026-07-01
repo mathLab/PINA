@@ -1,9 +1,12 @@
-🚀 Welcome to the PINA Tutorials!
-==================================
+.. docmeta::
+   :last_reviewed: 2026-06-24
 
 
-In this folder we collect useful tutorials in order to understand the principles and the potential of **PINA**. 
-Whether you're just getting started or looking to deepen your understanding, these resources are here to guide you.
+Welcome to the PINA Tutorials
+==============================
+
+This section collects step-by-step tutorials to help you understand the principles and potential of **PINA**.
+Whether you are just getting started or looking to deepen your understanding, these resources will guide you.
 
 Getting started with PINA
 -------------------------
@@ -22,7 +25,7 @@ Physics Informed Neural Networks
 - `Introductory Tutorial: Physics Informed Neural Networks with PINA <tutorial1/tutorial.html>`_
 - `Enhancing PINNs with Extra Features to solve the Poisson Problem <tutorial2/tutorial.html>`_
 - `Applying Hard Constraints in PINNs to solve the Wave Problem <tutorial3/tutorial.html>`_
-- `Applying Periodic Boundary Conditions in PINNs to solve the Helmotz Problem <tutorial9/tutorial.html>`_
+- `Applying Periodic Boundary Conditions in PINNs to solve the Helmholtz Problem <tutorial9/tutorial.html>`_
 - `Inverse Problem Solving with Physics-Informed Neural Network <tutorial7/tutorial.html>`_
 - `Learning Multiscale PDEs Using Fourier Feature Networks <tutorial13/tutorial.html>`_
 - `Learning Bifurcating PDE Solutions with Physics-Informed Deep Ensembles <tutorial14/tutorial.html>`_
@@ -38,9 +41,15 @@ Neural Operator Learning
 Supervised Learning
 -------------------
 
-- `Introductory Tutorial: Supervised Learning with PINA  <tutorial20/tutorial.html>`_
+- `Introductory Tutorial: Supervised Learning with PINA <tutorial20/tutorial.html>`_
 - `Chemical Properties Prediction with Graph Neural Networks <tutorial15/tutorial.html>`_
 - `Reduced Order Model with Graph Neural Networks for Unstructured Domains <tutorial22/tutorial.html>`_
 - `Data-driven System Identification with SINDy <tutorial23/tutorial.html>`_
 - `Unstructured Convolutional Autoencoders with Continuous Convolution <tutorial4/tutorial.html>`_
 - `Reduced Order Modeling with POD-RBF and POD-NN Approaches for Fluid Dynamics <tutorial8/tutorial.html>`_
+
+See Also
+--------
+
+* :doc:`Quickstart guide <_quickstart>`
+* :doc:`API Reference <_rst/_code>`
